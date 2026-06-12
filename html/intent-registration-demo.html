@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Intent Registration Demo</title>
+  <style>
+    :root {
+      --bg: #0b0b10;
+      --panel: #151720;
+      --panel-soft: rgba(255,255,255,.04);
+      --line: rgba(255,255,255,.1);
+      --text: #f5f5f5;
+      --muted: #b9bac4;
+      --accent: #ef4444;
+      --accent-dark: #dc2626;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --radius: 20px;
+      --shadow: 0 24px 60px rgba(0,0,0,.26);
+      --max: 1180px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(239,68,68,.16), transparent 28%),
+        linear-gradient(180deg, #09090d 0%, #0b0b10 100%);
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .page { width: min(var(--max), calc(100% - 24px)); margin: 0 auto; padding: 24px 0 40px; }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .hero, .layout, .cards, .steps, .forms, .intents { display: grid; gap: 14px; }
+    .hero { grid-template-columns: 1.2fr .8fr; margin-bottom: 16px; }
+    .layout { grid-template-columns: 1.12fr .88fr; }
+    .hero .card, .layout .card { padding: 22px; }
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(239,68,68,.14);
+      color: #fecaca;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    h1, h2, h3 { margin: 0; letter-spacing: -.04em; }
+    h1 { margin-top: 16px; font-size: clamp(34px, 5vw, 56px); line-height: .96; max-width: 12ch; }
+    h2 { font-size: clamp(26px, 3vw, 34px); line-height: 1; }
+    h3 { font-size: 22px; line-height: 1.04; }
+    p, li { color: var(--muted); line-height: 1.6; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .cards { grid-template-columns: repeat(3, 1fr); margin-top: 18px; }
+    .mini, .step, .formbox, .side-mini {
+      padding: 16px;
+      border-radius: 16px;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+    }
+    .status { display: grid; gap: 10px; margin-top: 16px; }
+    .status-row {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 14px; border-radius: 16px; background: var(--panel-soft); border: 1px solid var(--line);
+    }
+    .badge { padding: 6px 9px; border-radius: 999px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+    .ok { background: rgba(34,197,94,.14); color: #86efac; }
+    .warn { background: rgba(245,158,11,.14); color: #fcd34d; }
+    .bad { background: rgba(239,68,68,.14); color: #fca5a5; }
+    .section-head { margin: 20px 0 14px; }
+    .label { color: #fca5a5; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+    .intents { grid-template-columns: repeat(4, 1fr); margin-bottom: 14px; }
+    .intent {
+      padding: 14px; text-align: left; border-radius: 16px;
+      border: 1px solid var(--line); background: var(--panel-soft); color: var(--muted);
+    }
+    .intent.active { border-color: rgba(239,68,68,.34); background: rgba(239,68,68,.14); color: var(--text); }
+    .flow-box { padding: 16px; border-radius: 16px; background: var(--panel-soft); border: 1px solid var(--line); margin-bottom: 14px; }
+    .steps { grid-template-columns: repeat(3, 1fr); margin-bottom: 14px; }
+    .pane { display: none; }
+    .pane.active { display: block; }
+    .forms { grid-template-columns: repeat(2, 1fr); }
+    .field { display: grid; gap: 6px; margin-bottom: 12px; }
+    .field label { font-size: 13px; font-weight: 700; }
+    .field input, .field select, .field textarea {
+      width: 100%; min-height: 46px; padding: 12px 13px; color: var(--text);
+      background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 14px; outline: none;
+    }
+    .field textarea { min-height: 92px; resize: vertical; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    .btn { min-height: 48px; padding: 0 16px; border: 0; border-radius: 999px; font-weight: 800; }
+    .btn-primary { color: white; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); }
+    .btn-secondary { color: var(--text); background: rgba(255,255,255,.08); border: 1px solid var(--line); }
+    .hint, .output {
+      margin-top: 14px; padding: 14px 16px; border-radius: 16px;
+    }
+    .hint { background: rgba(255,255,255,.03); border: 1px dashed rgba(255,255,255,.14); color: var(--muted); }
+    .output { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.18); color: #ffe4e6; min-height: 90px; }
+    .side-stack { position: sticky; top: 16px; display: grid; gap: 14px; }
+    @media (max-width: 1040px) { .hero, .layout { grid-template-columns: 1fr; } .side-stack { position: static; } }
+    @media (max-width: 760px) { .cards, .intents, .steps, .forms { grid-template-columns: 1fr; } h1 { max-width: none; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <div class="card">
+        <span class="eyebrow">Updated flow</span>
+        <h1>Единая регистрация. Разные intents. Филиал как главная клубная сущность.</h1>
+        <p>Эта страница показывает новый onboarding для модели <code>Account -> intent -> onboarding</code>, где ключевые публичные сущности: <code>TrainerProfile</code>, <code>Brand</code> и <code>ClubBranch</code>.</p>
+        <div class="cards">
+          <div class="mini"><strong>Один account</strong><p>Auth не делится по ролям.</p></div>
+          <div class="mini"><strong>Branch-first</strong><p>Адрес, SEO и тренеры живут на уровне филиала.</p></div>
+          <div class="mini"><strong>Brand сверху</strong><p>Франшизы и сети собираются через бренд.</p></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Что считаем верным</h2>
+        <div class="status">
+          <div class="status-row"><span class="badge ok">Core</span><div><strong>TrainerProfile канонический</strong><p>Тренер не зависит от филиала.</p></div></div>
+          <div class="status-row"><span class="badge ok">Core</span><div><strong>ClubBranch вместо плоского клуба</strong><p>Каждая точка получает свою страницу и тренеров.</p></div></div>
+          <div class="status-row"><span class="badge warn">Flow</span><div><strong>Сначала auth, потом onboarding</strong><p>Не грузим первую форму лишними полями.</p></div></div>
+          <div class="status-row"><span class="badge bad">No</span><div><strong>Без owner/admin/manager</strong><p>Нужны права доступа, а не оргструктура клуба.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-head">
+      <div class="label">Demo</div>
+      <h2>Один auth-flow, четыре точки входа</h2>
+      <p>Пользователь выбирает intent, проходит регистрацию и попадает в соответствующий onboarding в личном кабинете.</p>
+    </div>
+
+    <section class="layout">
+      <div class="card" style="padding:22px">
+        <div class="intents">
+          <button class="intent active" data-target="trainer"><strong>Я тренер</strong><br><span>Создать карточку тренера</span></button>
+          <button class="intent" data-target="branch"><strong>Добавить филиал</strong><br><span>Создать страницу точки</span></button>
+          <button class="intent" data-target="brand"><strong>Добавить бренд</strong><br><span>Создать сеть или франшизу</span></button>
+          <button class="intent" data-target="claim"><strong>Это мой профиль</strong><br><span>Забрать существующую карточку</span></button>
+        </div>
+
+        <div class="flow-box">
+          <h3 id="flow-title">Flow: trainer_create</h3>
+          <p id="flow-description">Сначала пользователь проходит общую регистрацию. Затем в кабинете запускается onboarding тренера и создается <code>TrainerProfile</code>.</p>
+          <ul id="flow-list">
+            <li>единый auth</li>
+            <li>intent = <code>trainer_create</code></li>
+            <li>отдельный onboarding после входа</li>
+          </ul>
+        </div>
+
+        <div class="steps">
+          <div class="step"><strong>Step 1</strong><p>Entry point</p><p><code id="entry-badge">trainer_create</code></p></div>
+          <div class="step"><strong>Step 2</strong><p>Телефон/email -> код -> сессия</p><p><code>shared auth</code></p></div>
+          <div class="step"><strong>Step 3</strong><p id="onboarding-text">Создание trainer profile.</p><p><code id="entity-badge">TrainerProfile</code></p></div>
+        </div>
+
+        <div class="pane active" id="pane-trainer">
+          <div class="forms">
+            <form class="formbox" data-demo-name="Общая регистрация" data-intent="trainer_create">
+              <h3>1. Общая регистрация</h3>
+              <div class="field"><label for="trainer-contact">Телефон или email</label><input id="trainer-contact" placeholder="+375 (29) 000-00-00"></div>
+              <div class="field"><label for="trainer-code">Код подтверждения</label><input id="trainer-code" placeholder="123456"></div>
+              <div class="actions"><button class="btn btn-primary" type="submit">Зарегистрироваться</button><button class="btn btn-secondary" type="button">Отправить код</button></div>
+            </form>
+            <form class="formbox" data-demo-name="Онбординг тренера" data-intent="trainer_create">
+              <h3>2. Онбординг тренера</h3>
+              <div class="field"><label for="trainer-name">Имя и фамилия</label><input id="trainer-name" placeholder="Иван Петров"></div>
+              <div class="field"><label for="trainer-sport">Основное направление</label><select id="trainer-sport"><option>Кикбоксинг</option><option>Бокс</option><option>Тайский бокс</option></select></div>
+              <div class="field"><label for="trainer-city">Город</label><input id="trainer-city" placeholder="Минск"></div>
+              <div class="field"><label for="trainer-bio">Кратко о себе</label><textarea id="trainer-bio" placeholder="С чем работаю и кого тренирую"></textarea></div>
+              <div class="actions"><button class="btn btn-primary" type="submit">Создать TrainerProfile</button><button class="btn btn-secondary" type="button">Сохранить draft</button></div>
+            </form>
+          </div>
+        </div>
+
+        <div class="pane" id="pane-branch">
+          <div class="forms">
+            <form class="formbox" data-demo-name="Общая регистрация" data-intent="branch_create">
+              <h3>1. Общая регистрация</h3>
+              <div class="field"><label for="branch-contact">Телефон или email</label><input id="branch-contact" placeholder="+375 (29) 111-11-11"></div>
+              <div class="field"><label for="branch-code">Код подтверждения</label><input id="branch-code" placeholder="123456"></div>
+              <div class="actions"><button class="btn btn-primary" type="submit">Создать account</button><button class="btn btn-secondary" type="button">Повторно отправить код</button></div>
+            </form>
+            <form class="formbox" data-demo-name="Онбординг филиала" data-intent="branch_create">
+              <h3>2. Онбординг филиала</h3>
+              <div class="field"><label for="branch-name">Название филиала</label><input id="branch-name" placeholder="Адреналин Уручье"></div>
+              <div class="field"><label for="branch-brand">Бренд или сеть</label><input id="branch-brand" placeholder="Адреналин"></div>
+              <div class="field"><label for="branch-address">Адрес</label><input id="branch-address" placeholder="Минск, Уручье, ул. ..."></div>
+              <div class="field"><label for="branch-desc">Описание точки</label><textarea id="branch-desc" placeholder="Что есть именно в этом филиале"></textarea></div>
+              <div class="actions"><button class="btn btn-primary" type="submit">Создать ClubBranch</button><button class="btn btn-secondary" type="button">Привязать к Brand позже</button></div>
+            </form>
+          </div>
+        </div>
+
+        <div class="pane" id="pane-brand">
+          <div class="forms">
+            <form class="formbox" data-demo-name="Общая регистрация" data-intent="brand_create">
+              <h3>1. Общая регистрация</h3>
+              <div class="field"><label for="brand-contact">Телефон или email</label><input id="brand-contact" placeholder="network@example.com"></div>
+              <div class="field"><label for="brand-code">Код подтверждения</label><input id="brand-code" placeholder="123456"></div>
+              <div class="actions"><button class="btn btn-primary" type="submit">Создать account</button><button class="btn btn-secondary" type="button">Отправить код</button></div>
+            </form>
+            <form class="formbox" data-demo-name="Онбординг бренда" data-intent="brand_create">
+              <h3>2. Онбординг бренда</h3>
+              <div class="field"><label for="brand-name">Название бренда</label><input id="brand-name" placeholder="Адреналин"></div>
+              <div class="field"><label for="brand-site">Сайт или соцсеть</label><input id="brand-site" placeholder="https://..."></div>
+              <div class="field"><label for="brand-about">Описание сети</label><textarea id="brand-about" placeholder="Кратко о бренде и географии"></textarea></div>
+              <div class="actions"><button class="btn btn-primary" type="submit">Создать Brand</button><button class="btn btn-secondary" type="button">Добавить филиал позже</button></div>
+            </form>
+          </div>
+        </div>
+
+        <div class="pane" id="pane-claim">
+          <div class="forms">
+            <form class="formbox" data-demo-name="Общая регистрация" data-intent="trainer_claim">
+              <h3>1. Общая регистрация или вход</h3>
+              <div class="field"><label for="claim-contact">Телефон или email</label><input id="claim-contact" placeholder="+375 (29) 222-22-22"></div>
+              <div class="field"><label for="claim-code">Код подтверждения</label><input id="claim-code" placeholder="123456"></div>
+              <div class="actions"><button class="btn btn-primary" type="submit">Войти и продолжить</button><button class="btn btn-secondary" type="button">Получить код</button></div>
+            </form>
+            <form class="formbox" data-demo-name="Онбординг claim" data-intent="trainer_claim">
+              <h3>2. Claim existing profile</h3>
+              <div class="field"><label for="claim-link">Ссылка или slug профиля</label><input id="claim-link" placeholder="/trainers/farkhad-akhmedjanov"></div>
+              <div class="field"><label for="claim-method">Способ подтверждения</label><select id="claim-method"><option>SMS</option><option>Email</option><option>Соцсеть из профиля</option><option>Ручная проверка</option></select></div>
+              <div class="field"><label for="claim-comment">Комментарий</label><textarea id="claim-comment" placeholder="Если есть спорный кейс, можно объяснить ситуацию"></textarea></div>
+              <div class="actions"><button class="btn btn-primary" type="submit">Подать ClaimRequest</button><button class="btn btn-secondary" type="button">Проверить статус</button></div>
+            </form>
+          </div>
+        </div>
+
+        <div class="hint"><strong>Идея:</strong> один экран регистрации, один auth-flow, разный onboarding после входа по сохраненному <code>intent</code>.</div>
+      </div>
+
+      <div class="side-stack">
+        <div class="card" style="padding:22px">
+          <h3>Что создается в данных</h3>
+          <div class="cards" style="grid-template-columns:1fr; margin-top:14px">
+            <div class="side-mini"><strong>trainer_create</strong><p><code>Account</code> -> <code>TrainerProfile</code></p></div>
+            <div class="side-mini"><strong>branch_create</strong><p><code>Account</code> -> <code>ClubBranch</code></p></div>
+            <div class="side-mini"><strong>brand_create</strong><p><code>Account</code> -> <code>Brand</code></p></div>
+            <div class="side-mini"><strong>trainer_claim</strong><p><code>Account</code> -> <code>ClaimRequest</code> -> ownership профиля</p></div>
+          </div>
+        </div>
+        <div class="card" style="padding:22px">
+          <h3>Как думать про филиалы</h3>
+          <div class="cards" style="grid-template-columns:1fr; margin-top:14px">
+            <div class="side-mini"><strong>Бренд</strong><p>"Адреналин" как верхний уровень сети.</p></div>
+            <div class="side-mini"><strong>Филиал</strong><p>"Адреналин Уручье" и "Адреналин Малиновка" как отдельные страницы.</p></div>
+            <div class="side-mini"><strong>Тренер</strong><p>Связан именно с филиалом, а не с абстрактным клубом.</p></div>
+          </div>
+          <div class="output" id="demo-output">Здесь будет результат выбранного сценария.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const flows = {
+      trainer: { title: "Flow: trainer_create", description: "Сначала пользователь проходит общую регистрацию. Затем в кабинете запускается onboarding тренера и создается TrainerProfile.", list: ["единый auth", "intent = trainer_create", "создается TrainerProfile"], entry: "trainer_create", onboarding: "Создание trainer profile.", entity: "TrainerProfile" },
+      branch: { title: "Flow: branch_create", description: "Пользователь добавляет конкретный филиал: адрес, район, описание и контакты.", list: ["единый auth", "intent = branch_create", "создается ClubBranch"], entry: "branch_create", onboarding: "Создание страницы филиала.", entity: "ClubBranch" },
+      brand: { title: "Flow: brand_create", description: "После общей регистрации создается верхний уровень Brand для сети или франшизы.", list: ["единый auth", "intent = brand_create", "создается Brand"], entry: "brand_create", onboarding: "Создание сети или франшизы.", entity: "Brand" },
+      claim: { title: "Flow: trainer_claim", description: "Пользователь входит в систему и подает ClaimRequest, чтобы забрать существующую карточку тренера.", list: ["единый auth", "intent = trainer_claim", "создается ClaimRequest"], entry: "trainer_claim", onboarding: "Claim existing trainer profile.", entity: "ClaimRequest" }
+    };
+
+    const outputMap = {
+      "Общая регистрация": (intent) => "Создать <strong>Account</strong>, подтвердить контакт и сохранить <code>intent = " + intent + "</code>.",
+      "Онбординг тренера": () => "Создать <strong>TrainerProfile</strong> и связать его с текущим account как self-created сущность.",
+      "Онбординг филиала": () => "Создать <strong>ClubBranch</strong> и при необходимости позже связать его с <code>Brand</code>.",
+      "Онбординг бренда": () => "Создать <strong>Brand</strong>, после чего сеть сможет добавлять филиалы.",
+      "Онбординг claim": () => "Создать <strong>ClaimRequest</strong>. После approve назначить ownership нужного <code>TrainerProfile</code>."
+    };
+
+    const buttons = document.querySelectorAll(".intent");
+    const panes = { trainer: document.getElementById("pane-trainer"), branch: document.getElementById("pane-branch"), brand: document.getElementById("pane-brand"), claim: document.getElementById("pane-claim") };
+    const flowTitle = document.getElementById("flow-title");
+    const flowDescription = document.getElementById("flow-description");
+    const flowList = document.getElementById("flow-list");
+    const entryBadge = document.getElementById("entry-badge");
+    const onboardingText = document.getElementById("onboarding-text");
+    const entityBadge = document.getElementById("entity-badge");
+    const output = document.getElementById("demo-output");
+
+    function setFlow(key) {
+      buttons.forEach((btn) => btn.classList.toggle("active", btn.dataset.target === key));
+      Object.entries(panes).forEach(([paneKey, pane]) => pane.classList.toggle("active", paneKey === key));
+      const flow = flows[key];
+      flowTitle.textContent = flow.title;
+      flowDescription.textContent = flow.description;
+      flowList.innerHTML = flow.list.map((item) => "<li>" + item + "</li>").join("");
+      entryBadge.textContent = flow.entry;
+      onboardingText.textContent = flow.onboarding;
+      entityBadge.textContent = flow.entity;
+    }
+
+    buttons.forEach((btn) => btn.addEventListener("click", () => setFlow(btn.dataset.target)));
+    document.querySelectorAll("form").forEach((form) => {
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const label = form.dataset.demoName;
+        const intent = form.dataset.intent;
+        const message = outputMap[label] ? outputMap[label](intent) : "Сценарий обработан.";
+        output.innerHTML = "<strong>" + label + "</strong><br><span style='color:#fca5a5'>Intent:</span> <code>" + intent + "</code><br>" + message;
+      });
+    });
+  </script>
+</body>
+</html>

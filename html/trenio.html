@@ -1,0 +1,1928 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trenio.by Hero</title>
+
+  <style>
+    :root {
+      --primary: #f04b50;
+      --primary-dark: #c9343a;
+      --dark: #111827;
+      --light-bg: #fff5f5;
+      --neutral-bg: #f9fafb;
+      --text: #1f2937;
+      --accent-cyan: #4bf0eb;
+      --primary-rgb: 240, 75, 80;
+      --dark-rgb: 17, 24, 39;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --white: #ffffff;
+      --shadow: 0 24px 70px rgba(var(--primary-rgb), 0.18);
+      --radius-xl: 44px;
+      --radius-lg: 34px;
+      --radius-md: 22px;
+      --form-audience-w: 132px;
+      --form-format-w: 158px;
+      --form-sport-w-header: 212px;
+      --form-location-w-header: 148px;
+      --header-clearance: 88px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Manrope, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: var(--light-bg);
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 300;
+      background: transparent;
+      transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body.is-search-docked .site-header {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 rgba(var(--dark-rgb), 0.06), 0 10px 36px rgba(var(--dark-rgb), 0.05);
+    }
+
+    .site-header__inner {
+      width: 100%;
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 28px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body.is-search-docked .site-header__inner {
+      padding: 12px 36px;
+      gap: 14px;
+    }
+
+    .site-header__search {
+      flex: 1;
+      min-width: 0;
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+      pointer-events: none;
+      transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+                  max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body.is-search-docked .site-header__search {
+      max-width: 100%;
+      opacity: 1;
+      overflow: visible;
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .hero-top {
+      min-height: 60vh;
+      margin-top: calc(var(--header-clearance) * -1);
+      padding: var(--header-clearance) 36px 40px;
+      display: flex;
+      flex-direction: column;
+      background:
+        radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.96) 0, rgba(255, 255, 255, 0.78) 28%, rgba(255, 245, 245, 0.72) 52%, rgba(var(--primary-rgb), 0.16) 100%),
+        linear-gradient(180deg, var(--light-bg) 0%, var(--light-bg) 46%, #ffe8e8 100%);
+    }
+
+    .hero-top-inner {
+      width: 100%;
+      max-width: 1360px;
+      margin: 0 auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .category-strip {
+      width: 100%;
+      padding: 18px 0 22px;
+      background: var(--light-bg);
+    }
+
+    .logo {
+      font-size: 32px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: var(--primary);
+      text-decoration: none;
+      flex: 0 0 auto;
+      transition: color 0.35s ease;
+    }
+
+    .site-header .logo {
+      font-size: 28px;
+    }
+
+    .logo__mark {
+      display: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      place-items: center;
+      line-height: 1;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      font-size: 15px;
+      font-weight: 750;
+    }
+
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-links__static {
+      color: var(--muted);
+      cursor: default;
+    }
+
+    .help {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--dark);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .hero-stack {
+      position: relative;
+      width: 100%;
+      max-width: 920px;
+      margin: auto;
+      padding-top: clamp(24px, 5vh, 48px);
+      text-align: center;
+    }
+
+    .hero-search-zone {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .search-block {
+      width: 100%;
+    }
+
+    .search-block--hero {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .search-block--header {
+      width: fit-content;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    .search-block--hero .search-intent__compact {
+      display: none;
+    }
+
+    .intent-dropdown__trigger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+      min-height: 38px;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .intent-dropdown__trigger svg {
+      width: 17px;
+      height: 17px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      color: var(--muted);
+      flex: 0 0 auto;
+    }
+
+    .search-block--header .search-shell {
+      width: max-content;
+      max-width: 100%;
+      min-width: 0;
+      min-height: 48px;
+      padding: 5px 6px;
+      box-shadow: 0 4px 18px rgba(var(--dark-rgb), 0.06);
+      grid-template-columns:
+        var(--form-audience-w)
+        var(--form-format-w)
+        var(--form-sport-w-header)
+        var(--form-location-w-header)
+        38px;
+    }
+
+    .search-block--header .search-field.intent-select {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-block--header .search-field {
+      height: 38px;
+      padding: 0 12px;
+      gap: 8px;
+    }
+
+    .search-block--header .combo-input {
+      font-size: 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .search-block--header .search-icon svg,
+    .search-block--header .chevron-icon svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .search-block--header .search-submit {
+      width: 38px;
+      height: 38px;
+    }
+
+    .search-block--header .search-submit svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .hero-title {
+      margin: 0 0 36px;
+      font-size: clamp(42px, 6vw, 68px);
+      line-height: 1.04;
+      letter-spacing: -0.055em;
+      font-weight: 900;
+      color: var(--dark);
+    }
+
+    .search-block--hero .search-intent {
+      margin-bottom: 16px;
+    }
+
+    .search-dock-sentinel {
+      width: 100%;
+      height: 1px;
+      margin: 0;
+      pointer-events: none;
+    }
+
+    .site-header__nav {
+      flex: 0 0 auto;
+    }
+
+    .search-intent {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0 auto 18px;
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 650;
+    }
+
+    .intent-group {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    .intent-label {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .audience-tab,
+    .format-tab {
+      border: 0;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--muted);
+      opacity: 0.5;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease, opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    .audience-tab:hover,
+    .format-tab:hover {
+      transform: translateY(-1px);
+    }
+
+    .audience-tab.is-active,
+    .format-tab.is-active {
+      background: var(--primary);
+      color: #ffffff;
+      opacity: 1;
+      box-shadow: 0 10px 24px rgba(var(--primary-rgb), 0.22);
+    }
+
+    .search-shell {
+      min-height: 62px;
+      padding: 7px 8px;
+      background: var(--white);
+      border: 1px solid rgba(var(--dark-rgb), 0.08);
+      border-radius: 999px;
+      box-shadow: 0 12px 36px rgba(var(--dark-rgb), 0.08);
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr) auto;
+      align-items: center;
+      gap: 0;
+      text-align: left;
+    }
+
+    .search-field {
+      min-width: 0;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 20px;
+    }
+
+    .search-field:focus-within .search-icon {
+      color: var(--accent-cyan);
+    }
+
+    .search-field + .search-field {
+      border-left: 1px solid var(--line);
+    }
+
+    .search-icon,
+    .chevron-icon {
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+    }
+
+    .search-icon svg,
+    .chevron-icon svg {
+      width: 21px;
+      height: 21px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .field-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .combo-select {
+      position: relative;
+      min-width: 0;
+    }
+
+    .combo-input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .combo-input::placeholder {
+      color: var(--muted);
+    }
+
+    .combo-menu {
+      position: absolute;
+      z-index: 3;
+      top: calc(100% + 12px);
+      left: 8px;
+      right: 8px;
+      min-width: 260px;
+      padding: 7px;
+      border: 1px solid rgba(var(--dark-rgb), 0.08);
+      border-radius: 20px;
+      background: var(--white);
+      box-shadow: 0 18px 46px rgba(var(--dark-rgb), 0.13);
+      display: none;
+    }
+
+    .combo-menu::before {
+      content: "";
+      position: absolute;
+      top: -6px;
+      left: 24px;
+      width: 12px;
+      height: 12px;
+      background: var(--white);
+      border-left: 1px solid rgba(var(--dark-rgb), 0.08);
+      border-top: 1px solid rgba(var(--dark-rgb), 0.08);
+      transform: rotate(45deg);
+    }
+
+    .combo-select.is-open .combo-menu {
+      display: grid;
+      gap: 1px;
+    }
+
+    .combo-option {
+      border: 0;
+      width: 100%;
+      min-height: 42px;
+      padding: 0 13px;
+      border-radius: 14px;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 650;
+      text-align: left;
+    }
+
+    .combo-option:hover,
+    .combo-option.is-active {
+      background: var(--light-bg);
+      color: var(--primary-dark);
+    }
+
+    .search-submit {
+      width: 48px;
+      height: 48px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #ffffff;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease;
+      display: grid;
+      place-items: center;
+    }
+
+    .search-submit svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+      stroke-width: 2.4;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .search-submit:hover {
+      transform: translateY(-1px);
+      background: var(--primary-dark);
+    }
+
+    .category-slider {
+      width: 100%;
+      margin: 0;
+      padding: 0 16px;
+      background: none;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .category-slider-nav {
+      width: 40px;
+      height: 40px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--white);
+      color: var(--text);
+      cursor: pointer;
+      display: none;
+      place-items: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(var(--dark-rgb), 0.06);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    }
+
+    .category-slider-nav.is-visible {
+      display: grid;
+    }
+
+    .category-slider-nav:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(var(--dark-rgb), 0.1);
+    }
+
+    .category-slider-nav svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .category-slider-viewport {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .category-slider-track {
+      display: flex;
+      align-items: flex-start;
+      gap: 28px;
+      padding: 4px 12px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .category-slider-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .category-chip {
+      flex: 0 0 auto;
+      min-width: 68px;
+      max-width: 92px;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+      color: var(--text);
+      text-decoration: none;
+      transition: color 0.18s ease, transform 0.18s ease;
+    }
+
+    .category-chip:hover {
+      transform: translateY(-2px);
+    }
+
+    .category-chip:hover .category-chip-icon {
+      color: var(--accent-cyan);
+    }
+
+    .category-chip-icon {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      color: var(--dark);
+      transition: color 0.18s ease;
+    }
+
+    .category-chip-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .category-chip-label {
+      font-size: 11px;
+      line-height: 1.25;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+      text-align: center;
+    }
+
+    .page-main {
+      background: var(--neutral-bg);
+      padding: 48px 36px 72px;
+    }
+
+    .page-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: clamp(26px, 3vw, 34px);
+      letter-spacing: -0.04em;
+      font-weight: 900;
+      color: var(--dark);
+    }
+
+    .section-link {
+      color: var(--primary);
+      font-size: 15px;
+      font-weight: 750;
+      text-decoration: none;
+    }
+
+    .trainer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .trainer-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      border: 1px solid rgba(var(--dark-rgb), 0.06);
+      border-radius: var(--radius-md);
+      background: var(--white);
+      color: inherit;
+      text-decoration: none;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .trainer-card:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 3px;
+    }
+
+    .trainer-card__media {
+      position: relative;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      background: linear-gradient(160deg, var(--neutral-bg) 0%, var(--line) 100%);
+    }
+
+    .trainer-card__photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .trainer-card__badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.94);
+      color: var(--primary-dark);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      box-shadow: 0 6px 18px rgba(var(--dark-rgb), 0.08);
+    }
+
+    .trainer-card__save {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--muted);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 6px 18px rgba(var(--dark-rgb), 0.08);
+    }
+
+    .trainer-card__save.is-saved {
+      color: var(--primary);
+    }
+
+    .trainer-card__save svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .trainer-card__save.is-saved svg {
+      fill: currentColor;
+    }
+
+    .trainer-card__body {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 18px 20px 20px;
+    }
+
+    .trainer-card__head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .trainer-card__name {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      font-weight: 850;
+      color: var(--dark);
+    }
+
+    .trainer-card__rating {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--dark);
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .trainer-card__rating svg {
+      width: 13px;
+      height: 13px;
+      fill: #ffb400;
+      stroke: none;
+    }
+
+    .trainer-card__rating span {
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .trainer-card__sport {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .trainer-card__desc {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 500;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+
+    .trainer-card__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .trainer-card__tag {
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--light-bg);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: -0.01em;
+    }
+
+    .trainer-card__tag--accent {
+      background: rgba(var(--primary-rgb), 0.1);
+      color: var(--primary-dark);
+    }
+
+    .trainer-card__footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 2px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .trainer-card__location {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .trainer-card__location svg {
+      flex: 0 0 auto;
+      width: 13px;
+      height: 13px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .trainer-card__location span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .trainer-card__price {
+      flex: 0 0 auto;
+      color: var(--dark);
+      font-size: 14px;
+      font-weight: 850;
+      letter-spacing: -0.02em;
+    }
+
+    .trainer-card__price small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    /* Категории — текстовые плитки без фото */
+    .category-card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--white);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .category-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      letter-spacing: -0.03em;
+    }
+
+    .category-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .category-card__meta {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .content-section + .content-section {
+      margin-top: 48px;
+    }
+
+    .site-footer {
+      background: var(--dark);
+      color: #f2f2f2;
+      padding: 56px 36px 28px;
+    }
+
+    .site-footer__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .site-footer__grid {
+      display: grid;
+      grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr));
+      gap: 36px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .site-footer__brand .logo {
+      color: var(--primary);
+      display: inline-block;
+      margin-bottom: 14px;
+    }
+
+    .site-footer__tagline {
+      margin: 0;
+      max-width: 280px;
+      color: rgba(255, 255, 255, 0.58);
+      font-size: 14px;
+      line-height: 1.55;
+      font-weight: 500;
+    }
+
+    .site-footer__col h4 {
+      margin: 0 0 16px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    .site-footer__links {
+      display: grid;
+      gap: 10px;
+    }
+
+    .site-footer__links a {
+      color: rgba(255, 255, 255, 0.58);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .site-footer__links a:hover {
+      color: #ffffff;
+    }
+
+    .site-footer__bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-top: 24px;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .site-footer__bottom a {
+      color: rgba(255, 255, 255, 0.58);
+      text-decoration: none;
+    }
+
+    .site-footer__bottom a:hover {
+      color: #ffffff;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .site-header,
+      .site-header__inner,
+      .site-header__search,
+      .hero-title,
+      .logo,
+      .nav-links {
+        transition: none;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .site-header__inner {
+        padding: 24px 18px;
+      }
+
+      body.is-search-docked .site-header__inner {
+        padding: 10px 18px;
+      }
+
+      .hero-top {
+        min-height: 60vh;
+        padding: var(--header-clearance) 18px 32px;
+      }
+
+      .nav-links {
+        gap: 24px;
+        font-size: 14px;
+      }
+
+      .search-block {
+        max-width: 100%;
+      }
+
+      .search-block--header .search-shell {
+        grid-template-columns:
+          minmax(0, var(--form-audience-w))
+          minmax(0, var(--form-format-w))
+          minmax(0, var(--form-sport-w-header))
+          minmax(0, var(--form-location-w-header))
+          auto;
+      }
+
+      .search-shell {
+        grid-template-columns: minmax(0, 3fr) minmax(0, 2fr) auto;
+        padding: 8px 9px;
+      }
+
+      .search-submit {
+        width: 48px;
+        height: 48px;
+        margin-top: 0;
+      }
+
+      .category-slider {
+        padding: 0 8px;
+      }
+
+      .category-slider-track {
+        gap: 22px;
+      }
+
+      .trainer-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .page-main {
+        padding: 36px 18px 56px;
+      }
+
+      .site-footer {
+        padding: 44px 18px 24px;
+      }
+
+      .site-footer__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 28px;
+      }
+
+      .site-footer__brand {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 620px) {
+      body.is-search-docked .nav-links a[href="/clubs"],
+      body.is-search-docked .nav-links a[href="club.html"] {
+        display: none;
+      }
+
+      .search-block--header .intent-dropdown__trigger {
+        font-size: 13px;
+      }
+
+      .logo {
+        font-size: 28px;
+      }
+
+      .search-intent {
+        font-size: 14px;
+        justify-content: center;
+      }
+
+      .hero-title {
+        margin-bottom: 22px;
+        font-size: clamp(36px, 11vw, 52px);
+        letter-spacing: -0.05em;
+      }
+
+      .search-field {
+        padding-inline: 12px;
+      }
+
+      .combo-input {
+        font-size: 17px;
+      }
+
+      .combo-menu {
+        left: 6px;
+        right: 6px;
+        min-width: 220px;
+      }
+
+      .category-slider-nav {
+        width: 36px;
+        height: 36px;
+      }
+
+      .category-chip {
+        min-width: 60px;
+      }
+
+      .category-chip-label {
+        font-size: 10px;
+      }
+
+      .trainer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .site-footer__grid {
+        grid-template-columns: 1fr;
+      }
+
+      .site-footer__bottom {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header" id="site-header">
+    <div class="site-header__inner">
+      <a href="#" class="logo" id="header-logo" aria-label="trenio">
+        <span class="logo__full">trenio</span>
+        <span class="logo__mark" aria-hidden="true">t</span>
+      </a>
+
+      <div class="site-header__search" id="search-host">
+        <div class="search-block search-block--header" id="search-block-header">
+          <form class="search-shell" data-search-form="header">
+            <div class="search-field intent-select combo-select" data-intent-dropdown="audience">
+              <button class="intent-dropdown__trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+                <span class="intent-dropdown__value">для себя</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+              </button>
+              <div class="combo-menu" role="listbox" aria-label="Для кого">
+                <button class="combo-option is-active" type="button" data-value="adult" data-label="для себя">для себя</button>
+                <button class="combo-option" type="button" data-value="child" data-label="для ребёнка">для ребёнка</button>
+              </div>
+            </div>
+
+            <div class="search-field intent-select combo-select" data-intent-dropdown="format">
+              <button class="intent-dropdown__trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+                <span class="intent-dropdown__value">индивидуально</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+              </button>
+              <div class="combo-menu" role="listbox" aria-label="Формат занятий">
+                <button class="combo-option is-active" type="button" data-value="individual" data-label="индивидуально">индивидуально</button>
+                <button class="combo-option" type="button" data-value="group" data-label="в группе">в группе</button>
+              </div>
+            </div>
+
+            <label class="search-field combo-select" data-combo="sport">
+              <span class="search-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M5 19V5h14v14" />
+                  <path d="M8 16h8" />
+                  <path d="M8 12h8" />
+                  <path d="M8 8h4" />
+                </svg>
+              </span>
+              <span class="field-label">Вид спорта</span>
+              <input class="combo-input" type="search" name="sport" placeholder="Вид спорта" autocomplete="off" />
+              <div class="combo-menu" role="listbox" aria-label="Подсказки по видам спорта">
+                <button class="combo-option" type="button" data-value="Бокс" data-keywords="бокс боксу единоборства">Бокс</button>
+                <button class="combo-option" type="button" data-value="Плавание" data-keywords="плавание плаванию бассейн">Плавание</button>
+                <button class="combo-option" type="button" data-value="Фитнес" data-keywords="фитнес зал тренажерный тренажёрный">Фитнес</button>
+                <button class="combo-option" type="button" data-value="Йога" data-keywords="йога йоге растяжка">Йога</button>
+                <button class="combo-option" type="button" data-value="Футбол" data-keywords="футбол футболу">Футбол</button>
+                <button class="combo-option" type="button" data-value="Теннис" data-keywords="теннис теннису">Теннис</button>
+              </div>
+            </label>
+
+            <label class="search-field combo-select" data-combo="location">
+              <span class="search-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" />
+                  <circle cx="12" cy="9" r="2.4" />
+                </svg>
+              </span>
+              <span class="field-label">Локация</span>
+              <input class="combo-input" type="search" name="location" placeholder="Город или район" value="в Минске" autocomplete="off" />
+              <div class="combo-menu" role="listbox" aria-label="Подсказки по городам">
+                <button class="combo-option is-active" type="button" data-value="в Минске" data-keywords="минск минске">в Минске</button>
+                <button class="combo-option" type="button" data-value="в Гомеле" data-keywords="гомель гомеле">в Гомеле</button>
+                <button class="combo-option" type="button" data-value="в Бресте" data-keywords="брест бресте">в Бресте</button>
+                <button class="combo-option" type="button" data-value="в Витебске" data-keywords="витебск витебске">в Витебске</button>
+                <button class="combo-option" type="button" data-value="в Гродно" data-keywords="гродно">в Гродно</button>
+                <button class="combo-option" type="button" data-value="в Могилёве" data-keywords="могилев могилёв могилеве могилёве">в Могилёве</button>
+              </div>
+            </label>
+
+            <button class="search-submit" type="submit" aria-label="Найти">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="6.5" />
+                <path d="M16 16l4 4" />
+              </svg>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <nav class="nav-links site-header__nav" id="header-nav">
+        <a href="#" class="help">?</a>
+        <a href="club.html">Клубы</a>
+        <span class="nav-links__static">Добавить тренера</span>
+        <a href="#">Войти</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero-top">
+    <div class="hero-top-inner">
+      <main class="hero-stack">
+        <h1 class="hero-title">Я ищу тренера</h1>
+
+        <div class="hero-search-zone">
+          <div class="search-block search-block--hero" id="search-block-hero">
+            <div class="search-intent" aria-label="Тип поиска">
+              <div class="search-intent__tabs">
+                <span class="intent-group">
+                  <span class="intent-label">Для:</span>
+                  <button class="audience-tab is-active" type="button" data-audience="adult">для себя</button>
+                  <button class="audience-tab" type="button" data-audience="child">для ребёнка</button>
+                </span>
+                <span class="intent-group">
+                  <span class="intent-label">Формат:</span>
+                  <button class="format-tab is-active" type="button" data-format="individual">индивидуально</button>
+                  <button class="format-tab" type="button" data-format="group">в группе</button>
+                </span>
+              </div>
+            </div>
+
+            <form class="search-shell" data-search-form="hero">
+              <label class="search-field combo-select" data-combo="sport">
+                <span class="search-icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M5 19V5h14v14" />
+                    <path d="M8 16h8" />
+                    <path d="M8 12h8" />
+                    <path d="M8 8h4" />
+                  </svg>
+                </span>
+                <span class="field-label">Вид спорта</span>
+                <input class="combo-input" type="search" name="sport" placeholder="Вид спорта" autocomplete="off" />
+                <div class="combo-menu" role="listbox" aria-label="Подсказки по видам спорта">
+                  <button class="combo-option" type="button" data-value="Бокс" data-keywords="бокс боксу единоборства">Бокс</button>
+                  <button class="combo-option" type="button" data-value="Плавание" data-keywords="плавание плаванию бассейн">Плавание</button>
+                  <button class="combo-option" type="button" data-value="Фитнес" data-keywords="фитнес зал тренажерный тренажёрный">Фитнес</button>
+                  <button class="combo-option" type="button" data-value="Йога" data-keywords="йога йоге растяжка">Йога</button>
+                  <button class="combo-option" type="button" data-value="Футбол" data-keywords="футбол футболу">Футбол</button>
+                  <button class="combo-option" type="button" data-value="Теннис" data-keywords="теннис теннису">Теннис</button>
+                </div>
+              </label>
+
+              <label class="search-field combo-select" data-combo="location">
+                <span class="search-icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" />
+                    <circle cx="12" cy="9" r="2.4" />
+                  </svg>
+                </span>
+                <span class="field-label">Локация</span>
+                <input class="combo-input" type="search" name="location" placeholder="Город или район" value="в Минске" autocomplete="off" />
+                <div class="combo-menu" role="listbox" aria-label="Подсказки по городам">
+                  <button class="combo-option is-active" type="button" data-value="в Минске" data-keywords="минск минске">в Минске</button>
+                  <button class="combo-option" type="button" data-value="в Гомеле" data-keywords="гомель гомеле">в Гомеле</button>
+                  <button class="combo-option" type="button" data-value="в Бресте" data-keywords="брест бресте">в Бресте</button>
+                  <button class="combo-option" type="button" data-value="в Витебске" data-keywords="витебск витебске">в Витебске</button>
+                  <button class="combo-option" type="button" data-value="в Гродно" data-keywords="гродно">в Гродно</button>
+                  <button class="combo-option" type="button" data-value="в Могилёве" data-keywords="могилев могилёв могилеве могилёве">в Могилёве</button>
+                </div>
+              </label>
+
+              <button class="search-submit" type="submit" aria-label="Найти">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="6.5" />
+                  <path d="M16 16l4 4" />
+                </svg>
+              </button>
+            </form>
+          </div>
+
+          <div class="search-dock-sentinel" id="search-dock-sentinel" aria-hidden="true"></div>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <section class="category-strip" aria-label="Категории спорта">
+    <div class="category-slider">
+      <button class="category-slider-nav category-slider-prev" type="button" aria-label="Прокрутить категории назад" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6l-6 6 6 6" /></svg>
+      </button>
+
+      <div class="category-slider-viewport">
+        <div class="category-slider-track" id="category-track"></div>
+      </div>
+
+      <button class="category-slider-nav category-slider-next" type="button" aria-label="Прокрутить категории вперёд" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6" /></svg>
+      </button>
+    </div>
+  </section>
+
+  <section class="page-main">
+    <div class="page-inner">
+      <section class="content-section" aria-labelledby="trainers-heading">
+        <div class="section-head">
+          <h2 class="section-title" id="trainers-heading">Тренеры в Минске</h2>
+          <a class="section-link" href="/trainers">Смотреть всех</a>
+        </div>
+
+        <div class="trainer-grid">
+          <a class="trainer-card" href="trainer.html">
+            <div class="trainer-card__media">
+              <img class="trainer-card__photo" src="../assets/portraits/akhmedjanov.png" alt="Фархад Ахмеджанов — тренер по кикбоксингу" width="480" height="600" loading="lazy" />
+              <span class="trainer-card__badge">Топ</span>
+              <button class="trainer-card__save" type="button" aria-label="Сохранить тренера" data-save>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" /></svg>
+              </button>
+            </div>
+            <div class="trainer-card__body">
+              <div class="trainer-card__head">
+                <h3 class="trainer-card__name">Фархад Ахмеджанов</h3>
+                <span class="trainer-card__rating" aria-label="Рейтинг 4.9 из 5, 38 отзывов">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z" /></svg>
+                  4.9 <span>(38)</span>
+                </span>
+              </div>
+              <p class="trainer-card__sport">Кикбоксинг</p>
+              <p class="trainer-card__desc">Группы для новичков и опытных — техника, связки и рабочий темп.</p>
+              <div class="trainer-card__tags">
+                <span class="trainer-card__tag trainer-card__tag--accent">Индивидуально</span>
+                <span class="trainer-card__tag">Группа</span>
+                <span class="trainer-card__tag">Взрослые</span>
+              </div>
+              <div class="trainer-card__footer">
+                <span class="trainer-card__location">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.4" /></svg>
+                  <span>Минск</span>
+                </span>
+                <span class="trainer-card__price"><small>от </small>45 BYN</span>
+              </div>
+            </div>
+          </a>
+
+          <a class="trainer-card" href="/trainers/hotin">
+            <div class="trainer-card__media">
+              <img class="trainer-card__photo" src="../assets/portraits/hotin.png" alt="Дмитрий Хотин — тренер по тайскому боксу для детей" width="480" height="600" loading="lazy" />
+              <button class="trainer-card__save" type="button" aria-label="Сохранить тренера" data-save>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" /></svg>
+              </button>
+            </div>
+            <div class="trainer-card__body">
+              <div class="trainer-card__head">
+                <h3 class="trainer-card__name">Дмитрий Хотин</h3>
+                <span class="trainer-card__rating" aria-label="Рейтинг 5.0 из 5, 24 отзыва">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z" /></svg>
+                  5.0 <span>(24)</span>
+                </span>
+              </div>
+              <p class="trainer-card__sport">Тайский бокс</p>
+              <p class="trainer-card__desc">Детские группы 7–12 лет — постепенный набор техники и безопасность на ринге.</p>
+              <div class="trainer-card__tags">
+                <span class="trainer-card__tag trainer-card__tag--accent">Группа</span>
+                <span class="trainer-card__tag">Дети</span>
+              </div>
+              <div class="trainer-card__footer">
+                <span class="trainer-card__location">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.4" /></svg>
+                  <span>Минск</span>
+                </span>
+                <span class="trainer-card__price"><small>от </small>50 BYN</span>
+              </div>
+            </div>
+          </a>
+
+          <a class="trainer-card" href="/trainers/ovsyannikov">
+            <div class="trainer-card__media">
+              <img class="trainer-card__photo" src="../assets/portraits/ovsyannikov.png" alt="Сергей Овсяников — тренер по тайскому боксу" width="480" height="600" loading="lazy" />
+              <button class="trainer-card__save" type="button" aria-label="Сохранить тренера" data-save>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" /></svg>
+              </button>
+            </div>
+            <div class="trainer-card__body">
+              <div class="trainer-card__head">
+                <h3 class="trainer-card__name">Сергей Овсяников</h3>
+                <span class="trainer-card__rating" aria-label="Рейтинг 4.8 из 5, 19 отзывов">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z" /></svg>
+                  4.8 <span>(19)</span>
+                </span>
+              </div>
+              <p class="trainer-card__sport">Тайский бокс</p>
+              <p class="trainer-card__desc">Вечерние группы — работа на снарядах, техника и комфортный спарринг.</p>
+              <div class="trainer-card__tags">
+                <span class="trainer-card__tag trainer-card__tag--accent">Индивидуально</span>
+                <span class="trainer-card__tag">Группа</span>
+                <span class="trainer-card__tag">Взрослые</span>
+              </div>
+              <div class="trainer-card__footer">
+                <span class="trainer-card__location">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.4" /></svg>
+                  <span>Минск</span>
+                </span>
+                <span class="trainer-card__price"><small>от </small>42 BYN</span>
+              </div>
+            </div>
+          </a>
+
+          <a class="trainer-card" href="/trainers/romanovich">
+            <div class="trainer-card__media">
+              <img class="trainer-card__photo" src="../assets/portraits/romanovich.png" alt="Артем Романович — тренер по боксу" width="480" height="600" loading="lazy" />
+              <span class="trainer-card__badge">Новый</span>
+              <button class="trainer-card__save" type="button" aria-label="Сохранить тренера" data-save>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" /></svg>
+              </button>
+            </div>
+            <div class="trainer-card__body">
+              <div class="trainer-card__head">
+                <h3 class="trainer-card__name">Артем Романович</h3>
+                <span class="trainer-card__rating" aria-label="Рейтинг 4.9 из 5, 12 отзывов">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z" /></svg>
+                  4.9 <span>(12)</span>
+                </span>
+              </div>
+              <p class="trainer-card__sport">Бокс</p>
+              <p class="trainer-card__desc">Классический бокс для начинающих — стойка, база и работа в ритме группы.</p>
+              <div class="trainer-card__tags">
+                <span class="trainer-card__tag trainer-card__tag--accent">Группа</span>
+                <span class="trainer-card__tag">Взрослые</span>
+              </div>
+              <div class="trainer-card__footer">
+                <span class="trainer-card__location">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.4" /></svg>
+                  <span>Минск</span>
+                </span>
+                <span class="trainer-card__price"><small>от </small>38 BYN</span>
+              </div>
+            </div>
+          </a>
+
+          <a class="trainer-card" href="/trainers/antipenko">
+            <div class="trainer-card__media">
+              <img class="trainer-card__photo" src="../assets/portraits/antipenko.png" alt="Владимир Антипенко — тренер по кикбоксингу" width="480" height="600" loading="lazy" />
+              <button class="trainer-card__save" type="button" aria-label="Сохранить тренера" data-save>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" /></svg>
+              </button>
+            </div>
+            <div class="trainer-card__body">
+              <div class="trainer-card__head">
+                <h3 class="trainer-card__name">Владимир Антипенко</h3>
+                <span class="trainer-card__rating" aria-label="Рейтинг 4.7 из 5, 31 отзыв">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z" /></svg>
+                  4.7 <span>(31)</span>
+                </span>
+              </div>
+              <p class="trainer-card__sport">Кикбоксинг</p>
+              <p class="trainer-card__desc">Дети и подростки — техника, координация и нагрузка по возрасту.</p>
+              <div class="trainer-card__tags">
+                <span class="trainer-card__tag trainer-card__tag--accent">Группа</span>
+                <span class="trainer-card__tag">Дети</span>
+                <span class="trainer-card__tag">Подростки</span>
+              </div>
+              <div class="trainer-card__footer">
+                <span class="trainer-card__location">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.4" /></svg>
+                  <span>Минск</span>
+                </span>
+                <span class="trainer-card__price"><small>от </small>35 BYN</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="content-section" aria-labelledby="popular-heading">
+        <div class="section-head">
+          <h2 class="section-title" id="popular-heading">Популярные направления</h2>
+          <a class="section-link" href="/categories">Все категории</a>
+        </div>
+
+        <div class="trainer-grid">
+          <a class="category-card" href="/categories/edinoborstva">
+            <h3>Единоборства</h3>
+            <p>Бокс, кикбоксинг, MMA и другие направления.</p>
+            <p class="category-card__meta">Категория</p>
+          </a>
+          <a class="category-card" href="/categories/fitnes">
+            <h3>Фитнес и зал</h3>
+            <p>Персональный фитнес, силовой и функциональный тренинг.</p>
+            <p class="category-card__meta">Категория</p>
+          </a>
+          <a class="category-card" href="/categories/yoga">
+            <h3>Йога и растяжка</h3>
+            <p>Йога, пилатес, стретчинг, здоровая спина.</p>
+            <p class="category-card__meta">Категория</p>
+          </a>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div class="site-footer__grid">
+        <div class="site-footer__brand">
+          <a href="#" class="logo">trenio</a>
+          <p class="site-footer__tagline">Поиск тренеров и спортивных занятий в Беларуси — индивидуально и в группе.</p>
+        </div>
+
+        <div class="site-footer__col">
+          <h4>Поиск</h4>
+          <div class="site-footer__links">
+            <a href="/trainers">Тренеры</a>
+            <a href="club.html">Клубы</a>
+            <a href="/categories">Категории</a>
+          </div>
+        </div>
+
+        <div class="site-footer__col">
+          <h4>Тренерам</h4>
+          <div class="site-footer__links">
+            <a href="#">Добавить профиль</a>
+            <a href="#">Тарифы</a>
+            <a href="#">Помощь</a>
+          </div>
+        </div>
+
+        <div class="site-footer__col">
+          <h4>Компания</h4>
+          <div class="site-footer__links">
+            <a href="#">О сервисе</a>
+            <a href="#">Контакты</a>
+            <a href="#">Политика конфиденциальности</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="site-footer__bottom">
+        <span>© 2026 trenio.by</span>
+        <a href="mailto:hello@trenio.by">hello@trenio.by</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const categoryIcons = {
+      martial: '<path d="M8 8h8v3H8zM7 14h10v4H7z"/><path d="M9 6v2M15 6v2"/>',
+      boxing: '<circle cx="9" cy="10" r="2.5"/><circle cx="15" cy="10" r="2.5"/><path d="M6 14c1 2 4 3 6 3s5-1 6-3"/>',
+      kick: '<path d="M8 6l4 14M16 6l-4 14"/><path d="M6 10h12"/>',
+      fitness: '<path d="M4 10h4l2-4 2 8 2-8 2 4h4"/>',
+      yoga: '<circle cx="12" cy="5" r="2"/><path d="M12 7v5M9 18l3-6 3 6M8 12h8"/>',
+      swim: '<path d="M4 14c3-2 6-2 8 0s5 2 8 0"/><path d="M6 10c2-1 4-1 6 0s4 1 6 0"/>',
+      ball: '<circle cx="12" cy="12" r="6"/><path d="M12 6v12M6 12h12"/>',
+      racket: '<circle cx="8" cy="16" r="4"/><path d="M11 13l7-7"/>',
+      run: '<circle cx="12" cy="6" r="2"/><path d="M10 9l-2 8M14 9l2 5M12 12l-3 5"/>',
+      dance: '<path d="M9 18V8l3-3 3 3v10"/><path d="M6 18h12"/>',
+      winter: '<path d="M6 18l6-14 6 14"/><path d="M8 14h8"/>',
+      bike: '<circle cx="7" cy="16" r="2"/><circle cx="17" cy="16" r="2"/><path d="M9 16h6l-3-8-3 5h4"/>',
+      climb: '<path d="M6 18V8l6-4 6 4v10"/><path d="M9 12h6"/>',
+      mind: '<rect x="5" y="5" width="14" height="14" rx="2"/><path d="M8 8h8M8 12h5"/>',
+      rehab: '<path d="M12 4v16M8 8h8M8 16h8"/>',
+      other: '<circle cx="12" cy="12" r="5"/><path d="M12 9v6M9 12h6"/>',
+    };
+
+    const sportCategories = [
+      { label: 'Единоборства', slug: 'edinoborstva', icon: 'martial' },
+      { label: 'Бокс', slug: 'boks', icon: 'boxing' },
+      { label: 'Кикбоксинг', slug: 'kikboksing', icon: 'kick' },
+      { label: 'MMA', slug: 'mma', icon: 'kick' },
+      { label: 'Фитнес', slug: 'fitnes', icon: 'fitness' },
+      { label: 'ОФП', slug: 'ofp', icon: 'fitness' },
+      { label: 'Йога', slug: 'yoga', icon: 'yoga' },
+      { label: 'Пилатес', slug: 'pilates', icon: 'yoga' },
+      { label: 'Плавание', slug: 'plavanie', icon: 'swim' },
+      { label: 'Футбол', slug: 'futbol', icon: 'ball' },
+      { label: 'Баскетбол', slug: 'basketbol', icon: 'ball' },
+      { label: 'Волейбол', slug: 'volejbol', icon: 'ball' },
+      { label: 'Теннис', slug: 'tennis', icon: 'racket' },
+      { label: 'Бадминтон', slug: 'badminton', icon: 'racket' },
+      { label: 'Бег', slug: 'beg', icon: 'run' },
+      { label: 'Танцы', slug: 'tancy', icon: 'dance' },
+      { label: 'Гимнастика', slug: 'gimnastika', icon: 'dance' },
+      { label: 'Хоккей', slug: 'hokkej', icon: 'winter' },
+      { label: 'Сноуборд', slug: 'snoubord', icon: 'winter' },
+      { label: 'Велоспорт', slug: 'velosport', icon: 'bike' },
+      { label: 'Ролики', slug: 'roliki', icon: 'bike' },
+      { label: 'Кроссфит', slug: 'krossfit', icon: 'fitness' },
+      { label: 'Скалолазание', slug: 'skalolazanie', icon: 'climb' },
+      { label: 'Паркур', slug: 'parkur', icon: 'climb' },
+      { label: 'ЛФК', slug: 'lfk', icon: 'rehab' },
+      { label: 'Аквафитнес', slug: 'akvafitnes', icon: 'swim' },
+      { label: 'Самооборона', slug: 'samooborona', icon: 'martial' },
+      { label: 'Фигурное катание', slug: 'figurnoe-katanie', icon: 'winter' },
+      { label: 'Шахматы', slug: 'shahmaty', icon: 'mind' },
+      { label: 'Другое', slug: 'drugoe', icon: 'other' },
+    ];
+
+    const siteHeader = document.querySelector('#site-header');
+    const searchDockSentinel = document.querySelector('#search-dock-sentinel');
+
+    const syncHeaderClearance = () => {
+      document.documentElement.style.setProperty('--header-clearance', `${siteHeader.offsetHeight}px`);
+    };
+
+    syncHeaderClearance();
+
+    const sportInputs = document.querySelectorAll('input[name="sport"]');
+    const locationInputs = document.querySelectorAll('input[name="location"]');
+
+    const getHeaderOffset = () => siteHeader.getBoundingClientRect().height;
+
+    let dockObserver = null;
+
+    const bindDockObserver = () => {
+      if (dockObserver) dockObserver.disconnect();
+
+      dockObserver = new IntersectionObserver(
+        ([entry]) => {
+          document.body.classList.toggle('is-search-docked', !entry.isIntersecting);
+        },
+        {
+          root: null,
+          rootMargin: `-${getHeaderOffset()}px 0px 0px 0px`,
+          threshold: 0,
+        },
+      );
+
+      dockObserver.observe(searchDockSentinel);
+    };
+
+    bindDockObserver();
+    window.addEventListener('resize', () => {
+      syncHeaderClearance();
+      bindDockObserver();
+    });
+
+    const syncPairedInputs = (source, targets) => {
+      targets.forEach((input) => {
+        if (input === source || input.value === source.value) return;
+        input.value = source.value;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+    };
+
+    sportInputs.forEach((input) => {
+      input.addEventListener('input', () => syncPairedInputs(input, sportInputs));
+    });
+
+    locationInputs.forEach((input) => {
+      input.addEventListener('input', () => syncPairedInputs(input, locationInputs));
+    });
+
+    const categoryTrack = document.querySelector('#category-track');
+    const categoryPrev = document.querySelector('.category-slider-prev');
+    const categoryNext = document.querySelector('.category-slider-next');
+
+    sportCategories.forEach((category) => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'category-chip';
+      chip.dataset.sport = category.label;
+      chip.dataset.slug = category.slug;
+      chip.innerHTML = `
+        <span class="category-chip-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">${categoryIcons[category.icon]}</svg>
+        </span>
+        <span class="category-chip-label">${category.label}</span>
+      `;
+      categoryTrack.appendChild(chip);
+    });
+
+    const updateCategoryNav = () => {
+      const maxScroll = categoryTrack.scrollWidth - categoryTrack.clientWidth;
+      const canScrollLeft = categoryTrack.scrollLeft > 4;
+      const canScrollRight = categoryTrack.scrollLeft < maxScroll - 4;
+
+      categoryPrev.classList.toggle('is-visible', canScrollLeft);
+      categoryNext.classList.toggle('is-visible', canScrollRight);
+      categoryPrev.hidden = !canScrollLeft;
+      categoryNext.hidden = !canScrollRight;
+    };
+
+    const scrollCategories = (direction) => {
+      const amount = Math.max(220, categoryTrack.clientWidth * 0.55);
+      categoryTrack.scrollBy({ left: direction * amount, behavior: 'smooth' });
+    };
+
+    categoryPrev.addEventListener('click', () => scrollCategories(-1));
+    categoryNext.addEventListener('click', () => scrollCategories(1));
+    categoryTrack.addEventListener('scroll', updateCategoryNav, { passive: true });
+    window.addEventListener('resize', updateCategoryNav);
+    requestAnimationFrame(updateCategoryNav);
+
+    categoryTrack.addEventListener('click', (event) => {
+      const chip = event.target.closest('.category-chip');
+      if (!chip) return;
+
+      sportInputs.forEach((input) => {
+        input.value = chip.dataset.sport;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      sportInputs[0].focus();
+    });
+
+    const audienceTabs = document.querySelectorAll('.search-block--hero .audience-tab');
+    const formatTabs = document.querySelectorAll('.search-block--hero .format-tab');
+    const intentDropdowns = document.querySelectorAll('.search-block--header [data-intent-dropdown]');
+    const searchForms = document.querySelectorAll('[data-search-form]');
+    const comboSelects = document.querySelectorAll('.combo-select[data-combo]');
+
+    let activeAudience = 'adult';
+    let activeFormat = 'individual';
+
+    const setAudience = (value) => {
+      activeAudience = value;
+      audienceTabs.forEach((item) => item.classList.toggle('is-active', item.dataset.audience === value));
+
+      document.querySelectorAll('.search-block--header [data-intent-dropdown="audience"]').forEach((field) => {
+        field.querySelectorAll('.combo-option').forEach((option) => {
+          const isActive = option.dataset.value === value;
+          option.classList.toggle('is-active', isActive);
+          if (isActive) {
+            field.querySelector('.intent-dropdown__value').textContent = option.dataset.label;
+          }
+        });
+      });
+    };
+
+    const setFormat = (value) => {
+      activeFormat = value;
+      formatTabs.forEach((item) => item.classList.toggle('is-active', item.dataset.format === value));
+
+      document.querySelectorAll('.search-block--header [data-intent-dropdown="format"]').forEach((field) => {
+        field.querySelectorAll('.combo-option').forEach((option) => {
+          const isActive = option.dataset.value === value;
+          option.classList.toggle('is-active', isActive);
+          if (isActive) {
+            field.querySelector('.intent-dropdown__value').textContent = option.dataset.label;
+          }
+        });
+      });
+    };
+
+    audienceTabs.forEach((tab) => {
+      tab.addEventListener('click', () => setAudience(tab.dataset.audience));
+    });
+
+    formatTabs.forEach((tab) => {
+      tab.addEventListener('click', () => setFormat(tab.dataset.format));
+    });
+
+    intentDropdowns.forEach((field) => {
+      const trigger = field.querySelector('.intent-dropdown__trigger');
+      const options = field.querySelectorAll('.combo-option');
+      const kind = field.dataset.intentDropdown;
+
+      trigger.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const willOpen = !field.classList.contains('is-open');
+
+        intentDropdowns.forEach((item) => {
+          item.classList.remove('is-open');
+          item.querySelector('.intent-dropdown__trigger').setAttribute('aria-expanded', 'false');
+        });
+        comboSelects.forEach((combo) => combo.classList.remove('is-open'));
+
+        field.classList.toggle('is-open', willOpen);
+        trigger.setAttribute('aria-expanded', String(willOpen));
+      });
+
+      options.forEach((option) => {
+        option.addEventListener('click', () => {
+          if (kind === 'audience') {
+            setAudience(option.dataset.value);
+          } else {
+            setFormat(option.dataset.value);
+          }
+
+          field.classList.remove('is-open');
+          trigger.setAttribute('aria-expanded', 'false');
+        });
+      });
+    });
+
+    comboSelects.forEach((combo) => {
+      const input = combo.querySelector('.combo-input');
+      const options = combo.querySelectorAll('.combo-option');
+
+      input.addEventListener('focus', () => {
+        intentDropdowns.forEach((field) => {
+          field.classList.remove('is-open');
+          field.querySelector('.intent-dropdown__trigger').setAttribute('aria-expanded', 'false');
+        });
+        combo.classList.add('is-open');
+      });
+
+      input.addEventListener('input', () => {
+        const value = input.value.trim().toLowerCase();
+
+        options.forEach((option) => {
+          const keywords = option.dataset.keywords || option.dataset.value;
+          option.hidden = Boolean(value) && !keywords.toLowerCase().includes(value);
+        });
+
+        combo.classList.add('is-open');
+      });
+
+      options.forEach((option) => {
+        option.addEventListener('click', () => {
+          input.value = option.dataset.value;
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          options.forEach((item) => item.classList.toggle('is-active', item === option));
+          combo.classList.remove('is-open');
+        });
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      comboSelects.forEach((combo) => {
+        if (!combo.contains(event.target)) {
+          combo.classList.remove('is-open');
+        }
+      });
+
+      intentDropdowns.forEach((field) => {
+        if (!field.contains(event.target)) {
+          field.classList.remove('is-open');
+          field.querySelector('.intent-dropdown__trigger').setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+
+    document.querySelectorAll('[data-save]').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        button.classList.toggle('is-saved');
+        button.setAttribute(
+          'aria-label',
+          button.classList.contains('is-saved') ? 'Убрать из сохранённых' : 'Сохранить тренера',
+        );
+      });
+    });
+
+    const handleSearchSubmit = (event) => {
+      event.preventDefault();
+
+      const sport = sportInputs[0].value.trim();
+      const location = locationInputs[0].value.trim();
+      const params = new URLSearchParams();
+
+      if (sport) params.set('sport', sport);
+      if (location) params.set('location', location);
+      params.set('audience', activeAudience);
+      params.set('format', activeFormat);
+
+      window.location.href = `/trainers?${params.toString()}`;
+    };
+
+    searchForms.forEach((form) => {
+      form.addEventListener('submit', handleSearchSubmit);
+    });
+  </script>
+</body>
+</html>
