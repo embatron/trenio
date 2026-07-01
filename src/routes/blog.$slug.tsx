@@ -171,8 +171,8 @@ const ARTICLE_CSS = `
   min-height: 100vh;
 }
 
-.article-main { padding: 28px 36px 72px; }
-.article-inner { max-width: 760px; margin: 0 auto; }
+.article-main { padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 72px); }
+.article-inner { max-width: var(--layout-prose-max); margin: 0 auto; }
 
 .article-breadcrumbs {
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
@@ -253,8 +253,7 @@ const ARTICLE_CSS = `
 }
 .article-share__btn:hover { transform: translateY(-1px); border-color: var(--primary); }
 
-@media (max-width: 720px) {
-  .article-main { padding: 20px 18px 48px; }
+@media (max-width: 960px) {
   .article-body { font-size: 16px; line-height: 1.65; }
 }
 `;

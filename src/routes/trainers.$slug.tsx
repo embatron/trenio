@@ -138,14 +138,14 @@ const CSS = `
   --primary-rgb: 240,75,80; --dark-rgb: 17,24,39;
   --muted: #6b7280; --line: #e5e7eb; --white: #ffffff;
   --radius-xl: 44px; --radius-lg: 34px; --radius-md: 22px;
-  --content-max: 1200px; --aside-w: minmax(360px, 38%);
+  --content-max: var(--layout-max); --aside-w: minmax(360px, 38%);
   font-family: Inter, Manrope, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text); background: var(--neutral-bg); min-height: 100vh;
 }
 
 
 
-.page-shell { max-width: var(--content-max); margin: 0 auto; padding: 20px 36px 72px; }
+.page-shell { max-width: var(--layout-max); margin: 0 auto; padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 72px); }
 
 .breadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 24px; padding: 0; list-style: none; font-size: 13px; font-weight: 650; color: var(--muted); }
 .breadcrumbs a { color: var(--muted); text-decoration: none; }
@@ -268,11 +268,11 @@ const CSS = `
 .mobile-contact-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 200; padding: 10px 14px; background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); border-top: 1px solid var(--line); display: none; }
 .mobile-contact-bar__inner { max-width: 600px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-@media (max-width: 980px) {
+@media (max-width: 960px) {
   .profile-layout { grid-template-columns: 1fr; gap: 22px; }
   .profile-aside { position: static; }
   .mobile-contact-bar { display: block; }
-  .page-shell { padding: 16px 16px 110px; }
+  .page-shell { padding-block: clamp(16px, 3vw, 20px) clamp(72px, 12vw, 110px); }
 }
 
 `;

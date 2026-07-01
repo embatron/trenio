@@ -138,12 +138,12 @@ const CSS = `
   --primary: #f04b50; --primary-dark: #c9343a; --dark: #111827; --light-bg: #fff5f5;
   --neutral-bg: #f9fafb; --text: #1f2937; --muted: #6b7280; --line: #e5e7eb; --white: #ffffff;
   --primary-rgb: 240,75,80; --dark-rgb: 17,24,39;
-  --radius-md: 22px; --content-max: 1200px; --club-sidebar-w: 320px;
+  --radius-md: 22px; --content-max: var(--layout-max); --club-sidebar-w: 320px;
   font-family: Inter, Manrope, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text); background: var(--neutral-bg); min-height: 100vh;
 }
 
-.page-shell { max-width: var(--content-max); margin: 0 auto; padding: 20px 36px 72px; }
+.page-shell { max-width: var(--layout-max); margin: 0 auto; padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 72px); }
 
 .breadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 24px; padding: 0; list-style: none; font-size: 13px; font-weight: 650; color: var(--muted); }
 .breadcrumbs a { color: var(--muted); text-decoration: none; }
@@ -282,8 +282,8 @@ const CSS = `
   .direction-grid { grid-template-columns: 1fr; }
   .amenity-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
 }
-@media (max-width: 980px) {
-  .page-shell { padding: 16px 16px 110px; }
+@media (max-width: 960px) {
+  .page-shell { padding-block: clamp(16px, 3vw, 20px) clamp(72px, 12vw, 110px); }
   .gallery-frame { aspect-ratio: 16/10; }
   .club-hero__sheet { grid-template-columns: auto minmax(0,1fr); margin-top: 14px; }
   .club-hero__save { grid-column: 2; grid-row: 1; }

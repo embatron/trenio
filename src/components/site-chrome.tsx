@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { CategoryLink } from "@/lib/catalog/category-routes";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const CHROME_CSS = `
@@ -18,11 +19,11 @@ body.is-search-docked .site-header,
 }
 
 .site-header__inner {
-  width: 100%; max-width: 1360px; margin: 0 auto; padding: 24px 36px;
+  width: 100%; max-width: var(--layout-max); margin: 0 auto; padding: 24px var(--layout-gutter);
   display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 28px;
   transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-body.is-search-docked .site-header__inner { padding: 12px 36px; column-gap: 20px; }
+body.is-search-docked .site-header__inner { padding: 12px var(--layout-gutter); column-gap: 20px; }
 .site-header__search {
   min-width: 0; overflow: hidden; opacity: 0; max-height: 0; pointer-events: none;
   display: flex; align-items: center; justify-content: center;
@@ -68,7 +69,7 @@ body.is-search-docked .site-header__search {
 .mega-overlay.is-open { opacity: 1; pointer-events: auto; }
 .mega-panel {
   position: fixed; left: 50%; top: 84px; z-index: 295;
-  width: min(1240px, calc(100vw - 32px));
+  width: min(var(--layout-max), calc(100vw - 2 * var(--layout-gutter)));
   transform: translate3d(-50%, -6px, 0);
   transform-origin: top center;
   background: #fff; border-radius: 24px;
@@ -103,8 +104,8 @@ body.is-search-docked .mega-panel { top: 64px; }
 .mega-footer a { color: var(--text); text-decoration: none; font-weight: 700; margin-right: 16px; }
 .mega-footer a:hover { color: var(--primary); }
 
-.site-footer { background: var(--dark); color: #f2f2f2; padding: 56px 36px 28px; }
-.site-footer__inner { max-width: 1200px; margin: 0 auto; }
+.site-footer { background: var(--dark); color: #f2f2f2; padding: var(--layout-section-y) var(--layout-gutter) 28px; }
+.site-footer__inner { max-width: var(--layout-max); margin: 0 auto; }
 .site-footer__grid { display: grid; grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr)); gap: 36px; padding-bottom: 40px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
 .site-footer__brand .logo { color: var(--primary); display: inline-block; margin-bottom: 14px; }
 .site-footer__brand .logo__tld { color: rgba(255,255,255,0.55); }
@@ -117,15 +118,15 @@ body.is-search-docked .mega-panel { top: 64px; }
 .site-footer__bottom a { color: rgba(255, 255, 255, 0.58); text-decoration: none; }
 .site-footer__bottom a:hover { color: #fff; }
 
-@media (max-width: 980px) {
-  .site-header__inner { padding: 20px 18px; column-gap: 14px; }
-  body.is-search-docked .site-header__inner { padding: 10px 18px; }
+@media (max-width: 960px) {
+  .site-header__inner { padding: 20px var(--layout-gutter); column-gap: 14px; }
+  body.is-search-docked .site-header__inner { padding: 10px var(--layout-gutter); }
   .burger-btn__label { display: none; }
   .burger-btn { min-width: 0; width: 40px; padding: 0; }
   .mega-panel { top: 72px; padding: 22px; }
   .mega-grid { grid-template-columns: 1fr 1fr; gap: 22px; }
   .mega-col__hero { grid-column: 1 / -1; }
-  .site-footer { padding: 44px 18px 24px; }
+  .site-footer { padding: clamp(36px, 6vw, 44px) var(--layout-gutter) 24px; }
   .site-footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .site-footer__brand { grid-column: 1 / -1; }
 }
@@ -175,13 +176,13 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           <div className="mega-col">
             <h5>Виды спорта</h5>
             <ul>
-              <li><Link to="/category/$slug" params={{ slug: "boks" }} onClick={onClose}>Бокс</Link></li>
-              <li><Link to="/category/$slug" params={{ slug: "edinoborstva" }} onClick={onClose}>Единоборства</Link></li>
-              <li><Link to="/category/$slug" params={{ slug: "joga" }} onClick={onClose}>Йога</Link></li>
-              <li><Link to="/category/$slug" params={{ slug: "fitnes" }} onClick={onClose}>Фитнес</Link></li>
-              <li><Link to="/category/$slug" params={{ slug: "plavanie" }} onClick={onClose}>Плавание</Link></li>
-              <li><Link to="/category/$slug" params={{ slug: "tennis" }} onClick={onClose}>Теннис</Link></li>
-              <li><Link to="/category/$slug" params={{ slug: "futbol" }} onClick={onClose}>Футбол</Link></li>
+              <li><CategoryLink route={{ parentSlug: "edinoborstva", childSlug: "boks" }} onClick={onClose}>Бокс</CategoryLink></li>
+              <li><CategoryLink route={{ parentSlug: "edinoborstva" }} onClick={onClose}>Единоборства</CategoryLink></li>
+              <li><CategoryLink route={{ parentSlug: "yoga-pilates-i-rastyazhka", childSlug: "yoga" }} onClick={onClose}>Йога</CategoryLink></li>
+              <li><CategoryLink route={{ parentSlug: "fitnes-i-trenirovki-v-zale" }} onClick={onClose}>Фитнес</CategoryLink></li>
+              <li><CategoryLink route={{ parentSlug: "plavanie-i-vodnye-trenirovki", childSlug: "plavanie" }} onClick={onClose}>Плавание</CategoryLink></li>
+              <li><CategoryLink route={{ parentSlug: "tennis-i-igry-s-raketkoy", childSlug: "bolshoj-tennis" }} onClick={onClose}>Теннис</CategoryLink></li>
+              <li><CategoryLink route={{ parentSlug: "futbol-i-komandnye-igry", childSlug: "futbol" }} onClick={onClose}>Футбол</CategoryLink></li>
             </ul>
           </div>
           <div className="mega-col">
@@ -294,7 +295,7 @@ export function SiteFooter() {
               <div className="site-footer__links">
                 <Link to="/">Тренеры</Link>
                 <Link to="/clubs">Клубы</Link>
-                <Link to="/category/$slug" params={{ slug: "boks" }}>Категории</Link>
+                <Link to="/categories/">Категории</Link>
               </div>
             </div>
             <div className="site-footer__col">

@@ -161,6 +161,16 @@
   --muted: #6b7280;
   --line: #e5e7eb;
   --white: #ffffff;
+
+  /* Unified layout grid */
+  --layout-max: 1240px;
+  --layout-prose-max: 760px;
+  --layout-gutter: clamp(20px, 4vw, 36px);
+  --layout-section-y: clamp(28px, 5vw, 56px);
+  --layout-block-gap: 32px;
+  --layout-sidebar-w: 280px;
+  --layout-sidebar-gap: 32px;
+  --header-clearance: 88px;
 }
 
 html, body {
@@ -170,3 +180,90 @@ html, body {
 }
 body { margin: 0; }
 *, *::before, *::after { box-sizing: border-box; }
+
+/* ============================================================
+   Unified layout utilities — use across all routes
+   ============================================================ */
+.page-shell {
+  min-height: 100vh;
+  background: var(--light-bg);
+  color: var(--text);
+}
+
+.layout-container {
+  width: 100%;
+  max-width: var(--layout-max);
+  margin-inline: auto;
+  padding-inline: var(--layout-gutter);
+}
+
+.layout-container--prose {
+  max-width: var(--layout-prose-max);
+}
+
+.layout-section {
+  padding-block: var(--layout-section-y);
+}
+
+.layout-section--main {
+  padding-block: var(--layout-section-y) clamp(40px, 6vw, 72px);
+}
+
+.layout-with-sidebar {
+  max-width: var(--layout-max);
+  margin-inline: auto;
+  padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 60px);
+  display: grid;
+  grid-template-columns: var(--layout-sidebar-w) minmax(0, 1fr);
+  gap: var(--layout-sidebar-gap);
+  align-items: start;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.section-head--stacked {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.section-eyebrow {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(var(--primary-rgb), 0.1);
+  color: var(--primary-dark);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.section-title {
+  margin: 0;
+  font-size: clamp(26px, 3vw, 34px);
+  letter-spacing: -0.04em;
+  font-weight: 900;
+  color: var(--dark);
+}
+
+.section-link {
+  color: var(--primary);
+  font-size: 15px;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+@media (max-width: 960px) {
+  .layout-with-sidebar {
+    grid-template-columns: 1fr;
+    padding-block: clamp(20px, 4vw, 28px) clamp(32px, 5vw, 40px);
+  }
+}

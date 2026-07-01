@@ -142,8 +142,8 @@ const PRIVACY_CSS = `
   min-height: 100vh;
 }
 
-.privacy-main { padding: 28px 36px 72px; }
-.privacy-inner { max-width: 800px; margin: 0 auto; }
+.privacy-main { padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 72px); }
+.privacy-inner { max-width: var(--layout-prose-max); margin: 0 auto; }
 
 .privacy-breadcrumbs {
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
@@ -187,8 +187,7 @@ const PRIVACY_CSS = `
 .privacy-section a { color: var(--primary-dark); font-weight: 700; text-decoration: none; }
 .privacy-section a:hover { text-decoration: underline; }
 
-@media (max-width: 720px) {
-  .privacy-main { padding: 20px 18px 48px; }
+@media (max-width: 960px) {
   .privacy-body { font-size: 15px; line-height: 1.65; }
 }
 `;

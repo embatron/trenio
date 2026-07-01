@@ -62,8 +62,8 @@ const POPULAR_SPORTS = ["Бокс", "Йога", "Фитнес", "Плавани�
 
 const CSS = `
 .sr-page { min-height: 100vh; background: var(--bg); }
-.sr-hero { background: linear-gradient(180deg, rgba(var(--primary-rgb), 0.06), transparent); padding: 36px 36px 28px; border-bottom: 1px solid rgba(var(--dark-rgb), 0.06); }
-.sr-hero__inner { max-width: 1240px; margin: 0 auto; }
+.sr-hero { background: linear-gradient(180deg, rgba(var(--primary-rgb), 0.06), transparent); padding: var(--layout-section-y) var(--layout-gutter) 28px; border-bottom: 1px solid rgba(var(--dark-rgb), 0.06); }
+.sr-hero__inner { max-width: var(--layout-max); margin: 0 auto; }
 .sr-crumbs { font-size: 13px; color: var(--muted); margin-bottom: 14px; font-weight: 650; }
 .sr-crumbs a { color: var(--muted); text-decoration: none; }
 .sr-crumbs a:hover { color: var(--primary); }
@@ -77,7 +77,7 @@ const CSS = `
 .sr-form button { padding: 12px 22px; background: var(--primary); color: #fff; border: 0; border-radius: 12px; font: inherit; font-weight: 800; cursor: pointer; font-size: 14px; }
 .sr-form button:hover { background: var(--primary-dark); }
 
-.sr-body { max-width: 1240px; margin: 0 auto; padding: 28px 36px 60px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; }
+.sr-body { max-width: var(--layout-max); margin: 0 auto; padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 60px); display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; }
 .sr-count b { color: var(--dark); }
 .sr-sort { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); font-weight: 650; }
 .sr-sort select { padding: 9px 14px; border: 1px solid var(--line); border-radius: 10px; font: inherit; font-size: 13px; background: #fff; font-weight: 700; color: var(--dark); cursor: pointer; }
@@ -121,8 +121,7 @@ const CSS = `
 .sr-empty__btn--primary { background: var(--primary); color: #fff; }
 .sr-empty__btn--ghost { background: #fff; color: var(--dark); border: 1.5px solid var(--line); }
 
-@media (max-width: 720px) {
-  .sr-hero, .sr-body { padding-left: 18px; padding-right: 18px; }
+@media (max-width: 960px) {
   .sr-form { grid-template-columns: 1fr; }
   .sr-form input { border-right: 0; border-bottom: 1px solid rgba(var(--dark-rgb), 0.08); }
 }

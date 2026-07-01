@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { CategoryLink } from "@/lib/catalog/category-routes";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 
 export const Route = createFileRoute("/city/$slug")({
@@ -36,14 +37,14 @@ type City = {
 };
 
 const POPULAR_SPORTS = [
-  { slug: "boks", label: "Бокс" },
-  { slug: "fitnes", label: "Фитнес" },
-  { slug: "yoga", label: "Йога" },
-  { slug: "plavanie", label: "Плавание" },
-  { slug: "mma", label: "MMA" },
-  { slug: "tennis", label: "Теннис" },
-  { slug: "futbol", label: "Футбол" },
-  { slug: "edinoborstva", label: "Единоборства" },
+  { slug: "boks", parentSlug: "edinoborstva", childSlug: "boks", label: "Бокс" },
+  { slug: "fitnes", parentSlug: "fitnes-i-trenirovki-v-zale", label: "Фитнес" },
+  { slug: "yoga", parentSlug: "yoga-pilates-i-rastyazhka", childSlug: "yoga", label: "Йога" },
+  { slug: "plavanie", parentSlug: "plavanie-i-vodnye-trenirovki", childSlug: "plavanie", label: "Плавание" },
+  { slug: "mma", parentSlug: "edinoborstva", childSlug: "mma", label: "MMA" },
+  { slug: "tennis", parentSlug: "tennis-i-igry-s-raketkoy", childSlug: "bolshoj-tennis", label: "Теннис" },
+  { slug: "futbol", parentSlug: "futbol-i-komandnye-igry", childSlug: "futbol", label: "Футбол" },
+  { slug: "edinoborstva", parentSlug: "edinoborstva", label: "Единоборства" },
 ];
 
 const CITIES: Record<string, City> = {
@@ -175,7 +176,7 @@ function placeholder(seed: string) {
 
 const PAGE_CSS = `
 .city-hero { background: linear-gradient(180deg, rgba(var(--primary-rgb), 0.06) 0%, rgba(var(--primary-rgb), 0) 100%); padding: 36px 0 28px; border-bottom: 1px solid var(--line); }
-.city-hero__inner { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+.city-hero__inner { max-width: var(--layout-max); margin: 0 auto; padding-inline: var(--layout-gutter); }
 .city-breadcrumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 18px; }
 .city-breadcrumbs a { color: var(--muted); text-decoration: none; }
 .city-breadcrumbs a:hover { color: var(--primary); }
@@ -195,14 +196,14 @@ const PAGE_CSS = `
 .city-hero__map-pin { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 18px; height: 18px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 0 8px rgba(var(--primary-rgb), 0.25), 0 0 0 18px rgba(var(--primary-rgb), 0.12); }
 .city-hero__map-label { position: absolute; left: 22px; bottom: 22px; padding: 8px 14px; background: rgba(0,0,0,0.55); backdrop-filter: blur(8px); border-radius: 999px; font-size: 13px; font-weight: 700; }
 
-.city-quickrow { max-width: 1240px; margin: 24px auto 0; padding: 0 32px; }
+.city-quickrow { max-width: var(--layout-max); margin: 24px auto 0; padding-inline: var(--layout-gutter); }
 .city-quickrow__title { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
 .city-quickrow__chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .city-quickrow__chip { padding: 9px 14px; border-radius: 999px; background: var(--white); border: 1px solid var(--line); color: var(--dark); font-size: 13px; font-weight: 700; text-decoration: none; cursor: pointer; transition: all 0.16s ease; }
 .city-quickrow__chip:hover { border-color: var(--primary); color: var(--primary); }
 .city-quickrow__chip.is-active { background: var(--primary); border-color: var(--primary); color: #fff; }
 
-.city-body { max-width: 1240px; margin: 0 auto; padding: 28px 32px 60px; display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 32px; }
+.city-body { max-width: var(--layout-max); margin: 0 auto; padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 60px); display: grid; grid-template-columns: var(--layout-sidebar-w) minmax(0, 1fr); gap: var(--layout-sidebar-gap); }
 .city-filters { position: sticky; top: calc(var(--header-clearance, 80px) + 16px); align-self: start; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 22px; max-height: calc(100vh - var(--header-clearance, 80px) - 32px); overflow-y: auto; }
 .city-filters h3 { margin: 0 0 16px; font-size: 17px; letter-spacing: -0.02em; font-weight: 850; }
 .city-filter { border-top: 1px solid var(--line); padding: 16px 0; }
@@ -242,7 +243,7 @@ const PAGE_CSS = `
 .city-district b { font-size: 15px; font-weight: 850; letter-spacing: -0.01em; }
 .city-district span { color: var(--muted); font-size: 13px; font-weight: 700; }
 
-.city-extra { max-width: 1240px; margin: 0 auto; padding: 0 32px 60px; display: grid; gap: 48px; }
+.city-extra { max-width: var(--layout-max); margin: 0 auto; padding: 0 var(--layout-gutter) clamp(40px, 6vw, 60px); display: grid; gap: 48px; }
 .city-block { display: grid; gap: 18px; }
 .city-block h2 { margin: 0; font-size: clamp(24px, 3vw, 32px); letter-spacing: -0.03em; font-weight: 900; color: var(--dark); }
 
@@ -271,12 +272,11 @@ const PAGE_CSS = `
 @media (max-width: 960px) {
   .city-hero__grid { grid-template-columns: 1fr; }
   .city-hero__map { max-width: 420px; }
-  .city-body { grid-template-columns: 1fr; padding: 20px 20px 40px; }
+  .city-body { grid-template-columns: 1fr; padding-block: clamp(20px, 4vw, 28px) clamp(32px, 5vw, 40px); }
   .city-filters { position: static; max-height: none; }
   .city-article { grid-template-columns: 1fr; }
   .city-cta { grid-template-columns: 1fr; padding: 32px 26px; }
-  .city-extra { padding: 0 20px 40px; gap: 36px; }
-  .city-hero__inner, .city-quickrow { padding: 0 20px; }
+  .city-extra { padding-inline: var(--layout-gutter); gap: 36px; }
 }
 @media (max-width: 620px) {
   .city-grid { grid-template-columns: 1fr; }
@@ -543,7 +543,9 @@ function CityPage() {
                   <h4>Популярные направления</h4>
                   <div className="city-related">
                     {POPULAR_SPORTS.slice(0, 6).map((s) => (
-                      <Link key={s.slug} to="/category/$slug" params={{ slug: s.slug }}>{s.label}</Link>
+                      <CategoryLink key={s.slug} route={{ parentSlug: s.parentSlug, childSlug: s.childSlug }}>
+                        {s.label}
+                      </CategoryLink>
                     ))}
                   </div>
                 </div>

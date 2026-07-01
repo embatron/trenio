@@ -314,8 +314,8 @@ function EarningsTab() {
 
 const ADMIN_CSS = `
 .admin-page { min-height: 100vh; display: flex; flex-direction: column; background: #f6f6f7; }
-.admin-main { flex: 1; padding: 36px 24px 64px; }
-.admin-shell { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 260px 1fr; gap: 28px; }
+.admin-main { flex: 1; padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 64px); }
+.admin-shell { max-width: var(--layout-max); margin: 0 auto; display: grid; grid-template-columns: 260px 1fr; gap: 28px; }
 
 .admin-sidebar { background: #fff; border-radius: 22px; padding: 22px; border: 1px solid rgba(var(--dark-rgb), 0.06); align-self: start; position: sticky; top: 100px; }
 .admin-id { display: flex; align-items: center; gap: 12px; padding-bottom: 18px; border-bottom: 1px solid rgba(var(--dark-rgb), 0.06); margin-bottom: 14px; }

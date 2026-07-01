@@ -2,10 +2,10 @@ const AUTH_CSS = `
 .auth-page { min-height: 100vh; display: flex; flex-direction: column; background:
   radial-gradient(circle at 50% -10%, rgba(var(--primary-rgb), 0.16) 0, rgba(255,245,245,0.6) 36%, #fafafa 70%);
 }
-.auth-main { flex: 1; display: grid; place-items: center; padding: 56px 24px 80px; }
+.auth-main { flex: 1; display: grid; place-items: center; padding: var(--layout-section-y) var(--layout-gutter) clamp(48px, 8vw, 80px); }
 .auth-card {
   width: 100%; max-width: 460px; background: #fff; border-radius: 28px;
-  padding: 40px 36px; box-shadow: 0 30px 80px rgba(var(--dark-rgb), 0.10), 0 2px 0 rgba(var(--dark-rgb), 0.02);
+  padding: clamp(28px, 5vw, 40px) var(--layout-gutter); box-shadow: 0 30px 80px rgba(var(--dark-rgb), 0.10), 0 2px 0 rgba(var(--dark-rgb), 0.02);
   border: 1px solid rgba(var(--dark-rgb), 0.05);
 }
 .auth-card--wide { max-width: 620px; }

@@ -46,7 +46,7 @@ const DIRECTIONS = ["Все направления", "Бокс", "Единобо
 
 const CSS = `
 .clubs-page { min-height: 100vh; background: var(--bg); }
-.clubs-hero { padding: 56px 36px 36px; max-width: 1360px; margin: 0 auto; }
+.clubs-hero { padding: var(--layout-section-y) var(--layout-gutter) 36px; max-width: var(--layout-max); margin: 0 auto; }
 .clubs-hero__crumbs { font-size: 13px; color: var(--muted); font-weight: 650; margin-bottom: 14px; }
 .clubs-hero__crumbs a { color: var(--muted); text-decoration: none; }
 .clubs-hero__crumbs a:hover { color: var(--primary); }
@@ -56,15 +56,15 @@ const CSS = `
 .clubs-hero__stat strong { display: block; font-size: 28px; font-weight: 900; letter-spacing: -0.03em; color: var(--dark); }
 .clubs-hero__stat span { font-size: 13px; color: var(--muted); font-weight: 650; }
 
-.clubs-toolbar { position: sticky; top: 72px; z-index: 80; background: rgba(255,245,245,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(var(--dark-rgb), 0.06); padding: 14px 36px; }
-.clubs-toolbar__inner { max-width: 1360px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.clubs-toolbar { position: sticky; top: 72px; z-index: 80; background: rgba(255,245,245,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(var(--dark-rgb), 0.06); padding: 14px var(--layout-gutter); }
+.clubs-toolbar__inner { max-width: var(--layout-max); margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
 .chip-select { position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px; border: 1.5px solid rgba(var(--dark-rgb), 0.12); background: #fff; font-size: 14px; font-weight: 700; color: var(--dark); cursor: pointer; }
 .chip-select select { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .chip-select svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .toolbar-spacer { flex: 1; }
 .toolbar-count { font-size: 14px; color: var(--muted); font-weight: 650; }
 
-.clubs-grid-wrap { max-width: 1360px; margin: 0 auto; padding: 32px 36px 64px; }
+.clubs-grid-wrap { max-width: var(--layout-max); margin: 0 auto; padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 64px); }
 .clubs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 22px; }
 .club-card {
   background: #fff; border-radius: 22px; overflow: hidden; text-decoration: none; color: inherit;
@@ -94,7 +94,7 @@ const CSS = `
 .clubs-empty { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 16px; }
 
 .clubs-cta {
-  max-width: 1360px; margin: 0 auto 64px; padding: 0 36px;
+  max-width: var(--layout-max); margin: 0 auto var(--layout-section-y); padding-inline: var(--layout-gutter);
 }
 .clubs-cta__inner {
   background: linear-gradient(135deg, var(--dark) 0%, #1f1f2e 100%); color: #fff;
@@ -104,8 +104,7 @@ const CSS = `
 .clubs-cta__inner p { margin: 0; color: rgba(255,255,255,0.7); font-size: 15px; max-width: 480px; }
 .clubs-cta__btn { background: var(--primary); color: #fff; padding: 14px 26px; border-radius: 14px; font-size: 15px; font-weight: 800; text-decoration: none; }
 
-@media (max-width: 720px) {
-  .clubs-hero, .clubs-toolbar, .clubs-grid-wrap, .clubs-cta { padding-left: 18px; padding-right: 18px; }
+@media (max-width: 960px) {
   .clubs-cta__inner { padding: 32px 24px; }
 }
 `;
