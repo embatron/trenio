@@ -16,7 +16,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "tsx --env-file=.env src/db/seed.ts"
+    "db:seed": "tsx --env-file=.env src/db/seed.ts",
+    "settlements:import": "node scripts/import-belarus-settlements.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

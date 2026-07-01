@@ -1,28 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { SportIcon } from "@/components/sport-icon";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
+import { TOP_LEVEL_SPORT_CATEGORIES } from "@/lib/catalog/sport-taxonomy";
 
-type PopularItem = {
-  slug: string;
-  title: string;
-  desc: string;
-  count: string;
-  icon: string;
-  bg: string;
-};
+const HOMEPAGE_CATEGORIES = TOP_LEVEL_SPORT_CATEGORIES;
 
-const POPULAR_ITEMS: PopularItem[] = [
-  { slug: "edinoborstva", title: "Единоборства", desc: "Бокс, кикбоксинг, MMA и борьба.", count: "120+ тренеров", icon: "martial", bg: "linear-gradient(135deg, #ffe1e2 0%, #ffb3b6 100%)" },
-  { slug: "fitnes", title: "Фитнес и зал", desc: "Силовой, функциональный, кроссфит.", count: "180+ тренеров", icon: "fitness", bg: "linear-gradient(135deg, #fff1d6 0%, #ffd08a 100%)" },
-  { slug: "yoga", title: "Йога и растяжка", desc: "Хатха, пилатес, стретчинг, спина.", count: "90+ тренеров", icon: "yoga", bg: "linear-gradient(135deg, #e3f0ff 0%, #a9caff 100%)" },
-  { slug: "plavanie", title: "Плавание", desc: "Для детей и взрослых, любой уровень.", count: "60+ тренеров", icon: "swim", bg: "linear-gradient(135deg, #d8f3ff 0%, #8edcff 100%)" },
-  { slug: "tennis", title: "Теннис", desc: "Большой и настольный теннис.", count: "45+ тренеров", icon: "racket", bg: "linear-gradient(135deg, #e2f8e0 0%, #9fe3a0 100%)" },
-  { slug: "futbol", title: "Футбол", desc: "Индивидуальная и групповая работа.", count: "70+ тренеров", icon: "ball", bg: "linear-gradient(135deg, #ecebff 0%, #b6b1ff 100%)" },
-  { slug: "tanci", title: "Танцы", desc: "Хореография, современные, бальные.", count: "55+ тренеров", icon: "dance", bg: "linear-gradient(135deg, #ffe6f4 0%, #ffa8d4 100%)" },
-  { slug: "boks", title: "Бокс", desc: "Техника, спарринги, подготовка.", count: "80+ тренеров", icon: "boxing", bg: "linear-gradient(135deg, #ffdede 0%, #ff9b9b 100%)" },
-];
-
-function PopularSlider() {
+function CategoryStrip() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(true);
@@ -49,62 +33,211 @@ function PopularSlider() {
   const scrollBy = (dir: number) => {
     const el = trackRef.current;
     if (!el) return;
+    const amount = Math.max(220, el.clientWidth * 0.55);
+    el.scrollBy({ left: dir * amount, behavior: "smooth" });
+  };
+
+  return (
+    <div className="category-slider">
+      <button
+        className={`category-slider-nav category-slider-prev${canPrev ? " is-visible" : ""}`}
+        type="button"
+        aria-label="Назад"
+        hidden={!canPrev}
+        onClick={() => scrollBy(-1)}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M14 6l-6 6 6 6" />
+        </svg>
+      </button>
+      <div className="category-slider-viewport">
+        <div className="category-slider-track" ref={trackRef}>
+          {HOMEPAGE_CATEGORIES.map((category) => (
+            <Link
+              key={category.slug}
+              className="category-chip"
+              to="/categories/$slug"
+              params={{ slug: category.slug }}
+            >
+              <span className="category-chip-icon" aria-hidden="true">
+                <SportIcon iconKey={category.iconKey} />
+              </span>
+              <span className="category-chip-label">{category.label}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+      <button
+        className={`category-slider-nav category-slider-next${canNext ? " is-visible" : ""}`}
+        type="button"
+        aria-label="Вперёд"
+        hidden={!canNext}
+        onClick={() => scrollBy(1)}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 6l6 6-6 6" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+function PopularSlider() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(true);
+
+  const update = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    setCanPrev(el.scrollLeft > 4);
+    setCanNext(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+  };
+
+  useEffect(() => {
+    update();
+    const el = trackRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+
+    let startX = 0;
+    let startScrollLeft = 0;
+    let dragging = false;
+    let suppressClick = false;
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      startX = e.touches[0].clientX;
+      startScrollLeft = el.scrollLeft;
+      dragging = true;
+      suppressClick = false;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!dragging || e.touches.length !== 1) return;
+      const dx = startX - e.touches[0].clientX;
+      if (Math.abs(dx) > 8) {
+        suppressClick = true;
+        el.scrollLeft = startScrollLeft + dx;
+      }
+    };
+
+    const onTouchEnd = () => {
+      dragging = false;
+    };
+
+    const onClickCapture = (e: Event) => {
+      if (!suppressClick) return;
+      e.preventDefault();
+      e.stopPropagation();
+      suppressClick = false;
+    };
+
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: true });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    el.addEventListener("touchcancel", onTouchEnd, { passive: true });
+    el.addEventListener("click", onClickCapture, true);
+
+    return () => {
+      el.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+      el.removeEventListener("touchcancel", onTouchEnd);
+      el.removeEventListener("click", onClickCapture, true);
+    };
+  }, []);
+
+  const scrollBy = (dir: number) => {
+    const el = trackRef.current;
+    if (!el) return;
     const amount = Math.min(el.clientWidth * 0.85, 600);
     el.scrollBy({ left: dir * amount, behavior: "smooth" });
   };
 
   return (
     <div className="popular">
+      <button
+        type="button"
+        className={`popular__edge popular__edge--prev${canPrev ? " is-visible" : ""}`}
+        aria-label="Назад"
+        hidden={!canPrev}
+        onClick={() => scrollBy(-1)}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M14 6l-6 6 6 6" />
+        </svg>
+      </button>
       <div className="popular__viewport">
         <div className="popular__track" ref={trackRef}>
-          {POPULAR_ITEMS.map((it) => (
-            <Link key={it.slug} className="popular-card" to="/category/$slug" params={{ slug: it.slug }}>
-              <span className="popular-card__bg" aria-hidden="true" style={{ background: it.bg }} />
-              <span className="popular-card__glow" aria-hidden="true" />
-              <span className="popular-card__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" dangerouslySetInnerHTML={{ __html: categoryIcons[it.icon] ?? categoryIcons.other }} />
-              </span>
-              <h3>{it.title}</h3>
-              <p>{it.desc}</p>
-              <span className="popular-card__meta">
-                {it.count}
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-              </span>
+          {HOMEPAGE_CATEGORIES.map((category) => (
+            <Link
+              key={category.slug}
+              className="popular-card"
+              to="/categories/$slug"
+              params={{ slug: category.slug }}
+              draggable={false}
+            >
+              <div className="popular-card__media">
+                <span
+                  className="popular-card__bg"
+                  aria-hidden="true"
+                  style={
+                    category.image
+                      ? { backgroundImage: `url(${category.image})` }
+                      : { background: category.bg }
+                  }
+                />
+                <span className="popular-card__icon" aria-hidden="true">
+                  <SportIcon iconKey={category.iconKey} />
+                </span>
+              </div>
+              <div className="popular-card__content">
+                <h3>{category.label}</h3>
+                <p>{category.description}</p>
+                <span className="popular-card__meta">
+                  {category.count}
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </span>
+              </div>
             </Link>
           ))}
         </div>
-        <button
-          type="button"
-          className="popular__edge popular__edge--prev"
-          aria-label="Назад"
-          disabled={!canPrev}
-          onClick={() => scrollBy(-1)}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6l-6 6 6 6"/></svg>
-        </button>
-        <button
-          type="button"
-          className="popular__edge popular__edge--next"
-          aria-label="Вперёд"
-          disabled={!canNext}
-          onClick={() => scrollBy(1)}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6"/></svg>
-        </button>
       </div>
+      <button
+        type="button"
+        className={`popular__edge popular__edge--next${canNext ? " is-visible" : ""}`}
+        aria-label="Вперёд"
+        hidden={!canNext}
+        onClick={() => scrollBy(1)}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 6l6 6-6 6" />
+        </svg>
+      </button>
     </div>
   );
 }
-
-
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "trenio.by — поиск тренеров в Беларуси" },
-      { name: "description", content: "Trenio.by — поиск тренеров и спортивных занятий в Беларуси. Индивидуальные и групповые тренировки." },
+      {
+        name: "description",
+        content:
+          "Trenio.by — поиск тренеров и спортивных занятий в Беларуси. Индивидуальные и групповые тренировки.",
+      },
       { property: "og:title", content: "trenio.by — поиск тренеров в Беларуси" },
-      { property: "og:description", content: "Поиск тренеров и спортивных занятий в Беларуси — индивидуально и в группе." },
+      {
+        property: "og:description",
+        content: "Поиск тренеров и спортивных занятий в Беларуси — индивидуально и в группе.",
+      },
     ],
   }),
   component: Index,
@@ -155,11 +288,11 @@ body.is-search-docked .site-header {
   border-bottom-color: rgba(var(--primary-rgb), 0.12);
 }
 .site-header__inner {
-  width: 100%; max-width: 1360px; margin: 0 auto; padding: 28px 36px;
+  width: 100%; max-width: var(--layout-max); margin: 0 auto; padding: 28px var(--layout-gutter);
   display: flex; align-items: center; justify-content: space-between; gap: 20px;
   transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-body.is-search-docked .site-header__inner { padding: 12px 36px; gap: 14px; }
+body.is-search-docked .site-header__inner { padding: 12px var(--layout-gutter); gap: 14px; }
 .site-header__search {
   flex: 1; min-width: 0; max-width: 0; opacity: 0; overflow: hidden; pointer-events: none;
   transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -171,13 +304,13 @@ body.is-search-docked .site-header__search {
 .hero-top {
   min-height: 60vh;
   margin-top: calc(var(--header-clearance) * -1);
-  padding: var(--header-clearance) 36px 0;
+  padding: var(--header-clearance) var(--layout-gutter) 0;
   display: flex; flex-direction: column;
   background:
     radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.96) 0, rgba(255, 255, 255, 0.78) 28%, rgba(255, 245, 245, 0.72) 52%, rgba(var(--primary-rgb), 0.16) 100%),
     linear-gradient(180deg, var(--light-bg) 0%, var(--light-bg) 46%, #ffe8e8 100%);
 }
-.hero-top-inner { width: 100%; max-width: 1360px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; padding-bottom: 40px; }
+.hero-top-inner { width: 100%; max-width: var(--layout-max); margin: 0 auto; flex: 1; display: flex; flex-direction: column; padding-bottom: 40px; }
 .category-strip { width: 100%; padding: 8px 0 28px; background: transparent; }
 
 .logo {
@@ -259,25 +392,22 @@ body.is-search-docked .site-header__search {
 .search-submit { width: 48px; height: 48px; border: 0; border-radius: 50%; background: var(--primary); color: #fff; cursor: pointer; transition: transform 0.18s ease, background 0.18s ease; display: grid; place-items: center; }
 .search-submit svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .search-submit:hover { transform: translateY(-1px); background: var(--primary-dark); }
-.category-slider { width: 100%; margin: 0; padding: 0 16px; display: flex; align-items: center; gap: 8px; }
+.category-slider { width: min(100%, 1120px); margin: 0 auto; padding: 0 12px; display: flex; align-items: center; gap: 8px; }
 .category-slider-nav { width: 40px; height: 40px; border: 0; border-radius: 50%; background: var(--white); color: var(--text); cursor: pointer; display: none; place-items: center; flex-shrink: 0; box-shadow: 0 4px 14px rgba(var(--dark-rgb), 0.06); transition: transform 0.18s ease, box-shadow 0.18s ease; }
 .category-slider-nav.is-visible { display: grid; }
 .category-slider-nav:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(var(--dark-rgb), 0.1); }
 .category-slider-nav svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .category-slider-viewport { flex: 1; min-width: 0; overflow: hidden; }
-.category-slider-track { display: flex; align-items: flex-start; gap: 28px; padding: 4px 12px; overflow-x: auto; scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none; }
+.category-slider-track { display: flex; align-items: flex-start; gap: 14px; padding: 4px 8px; overflow-x: auto; scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; touch-action: pan-x; overscroll-behavior-x: contain; }
 .category-slider-track::-webkit-scrollbar { display: none; }
-.category-chip { flex: 0 0 auto; min-width: 68px; max-width: 92px; border: 0; background: transparent; padding: 0; cursor: pointer; display: grid; justify-items: center; gap: 8px; color: var(--text); text-decoration: none; transition: color 0.18s ease, transform 0.18s ease; }
+.category-chip { flex: 0 0 96px; min-width: 96px; max-width: 96px; border: 0; background: transparent; padding: 0; cursor: pointer; display: grid; justify-items: center; gap: 8px; color: var(--text); text-decoration: none; transition: color 0.18s ease, transform 0.18s ease; }
 .category-chip:hover { transform: translateY(-2px); }
 .category-chip:hover .category-chip-icon { color: var(--accent-cyan); }
-.category-chip-icon { width: 30px; height: 30px; display: grid; place-items: center; color: var(--dark); transition: color 0.18s ease; }
-.category-chip-icon svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.category-chip-label { font-size: 11px; line-height: 1.25; font-weight: 650; letter-spacing: -0.01em; text-align: center; }
-.page-main { background: transparent; padding: 48px 36px 72px; }
-.page-inner { max-width: 1200px; margin: 0 auto; }
-.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
-.section-title { margin: 0; font-size: clamp(26px, 3vw, 34px); letter-spacing: -0.04em; font-weight: 900; color: var(--dark); }
-.section-link { color: var(--primary); font-size: 15px; font-weight: 750; text-decoration: none; }
+.category-chip-icon { width: 32px; height: 32px; display: grid; place-items: center; color: var(--dark); transition: color 0.18s ease; }
+.category-chip-icon svg { width: 28px; height: 28px; }
+.category-chip-label { font-size: 11px; line-height: 1.25; font-weight: 650; letter-spacing: -0.01em; text-align: center; text-wrap: balance; }
+.page-main { background: transparent; }
+.page-inner { width: 100%; max-width: var(--layout-max); margin: 0 auto; padding-inline: var(--layout-gutter); }
 .trainer-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
 .trainer-card { position: relative; display: flex; flex-direction: column; min-width: 0; border: 1px solid rgba(var(--dark-rgb), 0.06); border-radius: var(--radius-md); background: var(--white); color: inherit; text-decoration: none; overflow: hidden; cursor: pointer; }
 .trainer-card__media { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: linear-gradient(160deg, var(--neutral-bg) 0%, var(--line) 100%); }
@@ -310,97 +440,110 @@ body.is-search-docked .site-header__search {
 .category-card__meta { margin-top: 14px; color: var(--muted); font-size: 13px; font-weight: 650; }
 
 /* Popular destinations slider */
-.popular { position: relative; }
-.popular__viewport { position: relative; overflow: visible; margin: 0 -8px; }
+.popular { display: flex; align-items: center; gap: 8px; width: 100%; }
+.popular__viewport { flex: 1; min-width: 0; overflow: hidden; }
 .popular__track {
-  display: flex; gap: 18px; padding: 8px 8px 12px; overflow-x: auto;
-  scroll-snap-type: x mandatory; scroll-behavior: smooth;
+  display: flex; gap: 18px; padding: 8px 4px 12px; overflow-x: auto;
+  scroll-behavior: smooth;
   scrollbar-width: none; -ms-overflow-style: none;
-  scroll-padding-left: 8px;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
 }
 .popular__track::-webkit-scrollbar { display: none; }
 .popular-card {
-  flex: 0 0 280px; scroll-snap-align: start;
-  position: relative; isolation: isolate; overflow: hidden;
-  border-radius: var(--radius-md); padding: 22px 22px 20px;
+  flex: 0 0 280px;
+  position: relative; overflow: hidden;
+  border-radius: var(--radius-md); padding: 0;
   text-decoration: none; color: var(--text);
-  background: transparent;
+  background: var(--white);
   border: 1px solid rgba(var(--dark-rgb), 0.08);
-  display: flex; flex-direction: column; gap: 10px;
-  min-height: 220px;
-  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+  display: flex; flex-direction: column;
+  transition: transform 0.28s ease, border-color 0.28s ease;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+.popular-card__media {
+  position: relative;
+  flex: 0 0 auto;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
 }
 .popular-card__bg {
-  position: absolute; inset: 0; z-index: 0; border-radius: inherit;
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: transform 0.45s ease;
 }
-.popular-card__glow {
-  position: absolute; width: 220px; height: 220px;
-  top: -70px; right: -70px; z-index: 0; pointer-events: none;
-  background: radial-gradient(circle at center, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 70%);
+.popular-card__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 55%, rgba(15, 23, 42, 0.1) 100%);
 }
-.popular-card > * { position: relative; z-index: 1; }
-.popular-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.35); box-shadow: 0 18px 40px rgba(var(--dark-rgb), 0.12); }
+.popular-card__content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px 16px;
+  background: var(--white);
+}
+.popular-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(var(--primary-rgb), 0.22);
+}
+.popular-card:hover .popular-card__bg { transform: scale(1.05); }
 .popular-card__icon {
-  width: 46px; height: 46px; border-radius: 14px;
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(6px);
-  display: grid; place-items: center; color: var(--primary);
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 1;
+  width: 40px; height: 40px; border-radius: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  display: grid; place-items: center; color: var(--primary-dark);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6px 16px rgba(var(--dark-rgb), 0.12);
 }
-.popular-card__icon svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.popular-card h3 { margin: 0; font-size: 22px; letter-spacing: -0.035em; font-weight: 900; line-height: 1.1; color: var(--dark); }
-.popular-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; font-weight: 500; }
+.popular-card__icon svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.popular-card h3 { margin: 0; font-size: 19px; letter-spacing: -0.035em; font-weight: 900; line-height: 1.12; color: var(--dark); }
+.popular-card p {
+  margin: 0; color: rgba(var(--dark-rgb), 0.68); font-size: 13px; line-height: 1.45; font-weight: 550;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+}
 .popular-card__meta {
-  margin-top: auto; display: inline-flex; align-items: center; gap: 6px;
-  font-size: 13px; font-weight: 800; color: var(--primary);
+  margin-top: auto; padding-top: 4px; display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 800; color: var(--primary-dark);
 }
 .popular-card__meta svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.2s ease; }
 .popular-card:hover .popular-card__meta svg { transform: translateX(3px); }
 
 .popular__edge {
-  position: absolute; top: 50%; transform: translateY(-50%);
   width: 44px; height: 44px; border-radius: 999px;
   border: 1px solid rgba(var(--dark-rgb), 0.08);
   background: var(--white); color: var(--dark); cursor: pointer;
-  display: grid; place-items: center; z-index: 4;
+  display: none; place-items: center; flex-shrink: 0;
   box-shadow: 0 10px 28px rgba(var(--dark-rgb), 0.14);
-  transition: border-color 0.18s ease, color 0.18s ease, transform 0.18s ease, opacity 0.18s ease;
+  transition: border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
 }
-.popular__edge--prev { left: -14px; }
-.popular__edge--next { right: -14px; }
-.popular__edge:hover { border-color: var(--primary); color: var(--primary); }
-.popular__edge[disabled] { opacity: 0; pointer-events: none; }
+.popular__edge.is-visible { display: grid; }
+.popular__edge:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
 .popular__edge svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
 .content-section + .content-section { margin-top: 48px; }
 
-.site-footer { background: var(--dark); color: #f2f2f2; padding: 56px 36px 28px; }
-.site-footer__inner { max-width: 1200px; margin: 0 auto; }
-.site-footer__grid { display: grid; grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr)); gap: 36px; padding-bottom: 40px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-.site-footer__brand .logo { color: var(--primary); display: inline-block; margin-bottom: 14px; }
-.site-footer__tagline { margin: 0; max-width: 280px; color: rgba(255, 255, 255, 0.58); font-size: 14px; line-height: 1.55; font-weight: 500; }
-.site-footer__col h4 { margin: 0 0 16px; font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; }
-.site-footer__links { display: grid; gap: 10px; }
-.site-footer__links a { color: rgba(255, 255, 255, 0.58); font-size: 14px; font-weight: 600; text-decoration: none; transition: color 0.2s ease; }
-.site-footer__links a:hover { color: #fff; }
-.site-footer__bottom { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 24px; color: rgba(255, 255, 255, 0.5); font-size: 13px; font-weight: 600; }
-.site-footer__bottom a { color: rgba(255, 255, 255, 0.58); text-decoration: none; }
-.site-footer__bottom a:hover { color: #fff; }
-@media (max-width: 980px) {
-  .site-header__inner { padding: 24px 18px; }
-  body.is-search-docked .site-header__inner { padding: 10px 18px; }
-  .hero-top { min-height: 60vh; padding: var(--header-clearance) 18px 32px; }
+@media (max-width: 960px) {
+  .site-header__inner { padding: 24px var(--layout-gutter); }
+  body.is-search-docked .site-header__inner { padding: 10px var(--layout-gutter); }
+  .hero-top { min-height: 60vh; padding: var(--header-clearance) var(--layout-gutter) 32px; }
   .nav-links { gap: 24px; font-size: 14px; }
   .search-block { max-width: 100%; }
   .search-block--header .search-shell { grid-template-columns: minmax(0, var(--form-audience-w)) minmax(0, var(--form-format-w)) minmax(0, var(--form-sport-w-header)) minmax(0, var(--form-location-w-header)) auto; }
   .search-shell { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr) auto; padding: 8px 9px; }
-  .category-slider { padding: 0 8px; }
+  .category-slider { width: 100%; padding: 0 6px; }
   .trainer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-  .page-main { padding: 36px 18px 56px; }
-  .site-footer { padding: 44px 18px 24px; }
-  .site-footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
-  .site-footer__brand { grid-column: 1 / -1; }
 }
 @media (max-width: 620px) {
   .logo { font-size: 28px; }
@@ -409,17 +552,14 @@ body.is-search-docked .site-header__search {
   .search-field { padding-inline: 12px; }
   .combo-input { font-size: 17px; }
   .combo-menu { left: 6px; right: 6px; min-width: 220px; }
-  .category-chip { min-width: 60px; }
+  .category-chip { flex-basis: 88px; min-width: 88px; max-width: 88px; }
   .category-chip-label { font-size: 10px; }
   .trainer-grid { grid-template-columns: 1fr; }
-  .popular-card { flex-basis: 78vw; min-height: 200px; }
-  .popular__edge { display: none; }
-  .site-footer__grid { grid-template-columns: 1fr; }
-  .site-footer__bottom { flex-direction: column; align-items: flex-start; }
+  .popular-card { flex-basis: 78vw; }
+  .popular__edge { display: none !important; }
 }
 
 /* === Extended sections === */
-.section-eyebrow { display: inline-block; margin-bottom: 10px; padding: 5px 11px; border-radius: 999px; background: rgba(var(--primary-rgb), 0.1); color: var(--primary-dark); font-size: 12px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
 .section-sub { margin: 6px 0 0; color: var(--muted); font-size: 15px; font-weight: 600; max-width: 620px; }
 
 /* How it works */
@@ -457,6 +597,7 @@ body.is-search-docked .site-header__search {
 .cta-banner::before { content: ""; position: absolute; right: -80px; top: -80px; width: 320px; height: 320px; border-radius: 50%; background: rgba(255, 255, 255, 0.12); }
 .cta-banner::after { content: ""; position: absolute; left: -60px; bottom: -120px; width: 260px; height: 260px; border-radius: 50%; background: rgba(0, 0, 0, 0.08); }
 .cta-banner__content { position: relative; z-index: 1; }
+.cta-banner .section-eyebrow { background: rgba(255, 255, 255, 0.18); color: #fff; }
 .cta-banner h2 { margin: 0 0 10px; font-size: clamp(26px, 3vw, 36px); font-weight: 900; letter-spacing: -0.04em; line-height: 1.08; }
 .cta-banner p { margin: 0; color: rgba(255, 255, 255, 0.86); font-size: 15px; line-height: 1.55; max-width: 460px; font-weight: 500; }
 .cta-banner__perks { position: relative; z-index: 1; display: grid; gap: 10px; }
@@ -478,7 +619,7 @@ body.is-search-docked .site-header__search {
 .faq-item[open] .faq-item__icon { transform: rotate(45deg); background: var(--primary); color: #fff; }
 .faq-item__body { padding: 0 22px 20px; color: var(--muted); font-size: 14.5px; line-height: 1.6; font-weight: 500; }
 
-@media (max-width: 980px) {
+@media (max-width: 960px) {
   .steps-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stats-band { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 10px; padding: 28px 18px; }
   .stat-item:nth-child(3) { border-left: 0; }
@@ -493,64 +634,59 @@ body.is-search-docked .site-header__search {
 }
 `;
 
-const categoryIcons: Record<string, string> = {
-  martial: '<path d="M8 8h8v3H8zM7 14h10v4H7z"/><path d="M9 6v2M15 6v2"/>',
-  boxing: '<circle cx="9" cy="10" r="2.5"/><circle cx="15" cy="10" r="2.5"/><path d="M6 14c1 2 4 3 6 3s5-1 6-3"/>',
-  kick: '<path d="M8 6l4 14M16 6l-4 14"/><path d="M6 10h12"/>',
-  fitness: '<path d="M4 10h4l2-4 2 8 2-8 2 4h4"/>',
-  yoga: '<circle cx="12" cy="5" r="2"/><path d="M12 7v5M9 18l3-6 3 6M8 12h8"/>',
-  swim: '<path d="M4 14c3-2 6-2 8 0s5 2 8 0"/><path d="M6 10c2-1 4-1 6 0s4 1 6 0"/>',
-  ball: '<circle cx="12" cy="12" r="6"/><path d="M12 6v12M6 12h12"/>',
-  racket: '<circle cx="8" cy="16" r="4"/><path d="M11 13l7-7"/>',
-  run: '<circle cx="12" cy="6" r="2"/><path d="M10 9l-2 8M14 9l2 5M12 12l-3 5"/>',
-  dance: '<path d="M9 18V8l3-3 3 3v10"/><path d="M6 18h12"/>',
-  winter: '<path d="M6 18l6-14 6 14"/><path d="M8 14h8"/>',
-  bike: '<circle cx="7" cy="16" r="2"/><circle cx="17" cy="16" r="2"/><path d="M9 16h6l-3-8-3 5h4"/>',
-  climb: '<path d="M6 18V8l6-4 6 4v10"/><path d="M9 12h6"/>',
-  mind: '<rect x="5" y="5" width="14" height="14" rx="2"/><path d="M8 8h8M8 12h5"/>',
-  rehab: '<path d="M12 4v16M8 8h8M8 16h8"/>',
-  other: '<circle cx="12" cy="12" r="5"/><path d="M12 9v6M9 12h6"/>',
-};
-
-const sportCategories = [
-  { label: "Единоборства", slug: "edinoborstva", icon: "martial" },
-  { label: "Бокс", slug: "boks", icon: "boxing" },
-  { label: "Кикбоксинг", slug: "kikboksing", icon: "kick" },
-  { label: "MMA", slug: "mma", icon: "kick" },
-  { label: "Фитнес", slug: "fitnes", icon: "fitness" },
-  { label: "ОФП", slug: "ofp", icon: "fitness" },
-  { label: "Йога", slug: "yoga", icon: "yoga" },
-  { label: "Пилатес", slug: "pilates", icon: "yoga" },
-  { label: "Плавание", slug: "plavanie", icon: "swim" },
-  { label: "Футбол", slug: "futbol", icon: "ball" },
-  { label: "Баскетбол", slug: "basketbol", icon: "ball" },
-  { label: "Волейбол", slug: "volejbol", icon: "ball" },
-  { label: "Теннис", slug: "tennis", icon: "racket" },
-  { label: "Бадминтон", slug: "badminton", icon: "racket" },
-  { label: "Бег", slug: "beg", icon: "run" },
-  { label: "Танцы", slug: "tancy", icon: "dance" },
-  { label: "Гимнастика", slug: "gimnastika", icon: "dance" },
-  { label: "Хоккей", slug: "hokkej", icon: "winter" },
-  { label: "Сноуборд", slug: "snoubord", icon: "winter" },
-  { label: "Велоспорт", slug: "velosport", icon: "bike" },
-  { label: "Ролики", slug: "roliki", icon: "bike" },
-  { label: "Кроссфит", slug: "krossfit", icon: "fitness" },
-  { label: "Скалолазание", slug: "skalolazanie", icon: "climb" },
-  { label: "Паркур", slug: "parkur", icon: "climb" },
-  { label: "ЛФК", slug: "lfk", icon: "rehab" },
-  { label: "Аквафитнес", slug: "akvafitnes", icon: "swim" },
-  { label: "Самооборона", slug: "samooborona", icon: "martial" },
-  { label: "Фигурное катание", slug: "figurnoe-katanie", icon: "winter" },
-  { label: "Шахматы", slug: "shahmaty", icon: "mind" },
-  { label: "Другое", slug: "drugoe", icon: "other" },
-];
-
 const trainers = [
-  { slug: "farkhad-akhmedjanov", name: "Фархад Ахмеджанов", sport: "Кикбоксинг", desc: "Группы для новичков и опытных — техника, связки и рабочий темп.", tags: ["Индивидуально", "Группа", "Взрослые"], rating: "4.9", reviews: 38, price: 45, badge: "Топ" },
-  { slug: "dmitriy-hotin", name: "Дмитрий Хотин", sport: "Тайский бокс", desc: "Детские группы 7–12 лет — постепенный набор техники и безопасность на ринге.", tags: ["Группа", "Дети"], rating: "5.0", reviews: 24, price: 50 },
-  { slug: "sergey-ovsyannikov", name: "Сергей Овсяников", sport: "Тайский бокс", desc: "Вечерние группы — работа на снарядах, техника и комфортный спарринг.", tags: ["Индивидуально", "Группа", "Взрослые"], rating: "4.8", reviews: 19, price: 42 },
-  { slug: "artem-romanovich", name: "Артем Романович", sport: "Бокс", desc: "Классический бокс для начинающих — стойка, база и работа в ритме группы.", tags: ["Группа", "Взрослые"], rating: "4.9", reviews: 12, price: 38, badge: "Новый" },
-  { slug: "vladimir-antipenko", name: "Владимир Антипенко", sport: "Кикбоксинг", desc: "Дети и подростки — техника, координация и нагрузка по возрасту.", tags: ["Группа", "Дети", "Подростки"], rating: "4.7", reviews: 31, price: 35 },
+  {
+    slug: "farkhad-akhmedjanov",
+    name: "Фархад Ахмеджанов",
+    sport: "Кикбоксинг",
+    desc: "Группы для новичков и опытных — техника, связки и рабочий темп.",
+    tags: ["Индивидуально", "Группа", "Взрослые"],
+    rating: "4.9",
+    reviews: 38,
+    price: 45,
+    badge: "Топ",
+  },
+  {
+    slug: "dmitriy-hotin",
+    name: "Дмитрий Хотин",
+    sport: "Тайский бокс",
+    desc: "Детские группы 7–12 лет — постепенный набор техники и безопасность на ринге.",
+    tags: ["Группа", "Дети"],
+    rating: "5.0",
+    reviews: 24,
+    price: 50,
+  },
+  {
+    slug: "sergey-ovsyannikov",
+    name: "Сергей Овсяников",
+    sport: "Тайский бокс",
+    desc: "Вечерние группы — работа на снарядах, техника и комфортный спарринг.",
+    tags: ["Индивидуально", "Группа", "Взрослые"],
+    rating: "4.8",
+    reviews: 19,
+    price: 42,
+  },
+  {
+    slug: "artem-romanovich",
+    name: "Артем Романович",
+    sport: "Бокс",
+    desc: "Классический бокс для начинающих — стойка, база и работа в ритме группы.",
+    tags: ["Группа", "Взрослые"],
+    rating: "4.9",
+    reviews: 12,
+    price: 38,
+    badge: "Новый",
+  },
+  {
+    slug: "vladimir-antipenko",
+    name: "Владимир Антипенко",
+    sport: "Кикбоксинг",
+    desc: "Дети и подростки — техника, координация и нагрузка по возрасту.",
+    tags: ["Группа", "Дети", "Подростки"],
+    rating: "4.7",
+    reviews: 31,
+    price: 35,
+  },
 ];
 
 function placeholder(seed: string) {
@@ -564,7 +700,10 @@ function Index() {
     if (!siteHeader || !sentinel) return;
 
     const syncHeaderClearance = () => {
-      document.documentElement.style.setProperty("--header-clearance", `${siteHeader.offsetHeight}px`);
+      document.documentElement.style.setProperty(
+        "--header-clearance",
+        `${siteHeader.offsetHeight}px`,
+      );
     };
     syncHeaderClearance();
 
@@ -600,44 +739,15 @@ function Index() {
     sportInputs.forEach((i) => i.addEventListener("input", () => syncPaired(i, sportInputs)));
     locationInputs.forEach((i) => i.addEventListener("input", () => syncPaired(i, locationInputs)));
 
-    // Build category chips
-    const track = document.querySelector<HTMLElement>("#category-track");
-    const prev = document.querySelector<HTMLButtonElement>(".category-slider-prev");
-    const next = document.querySelector<HTMLButtonElement>(".category-slider-next");
-    if (track && prev && next) {
-      track.innerHTML = "";
-      sportCategories.forEach((c) => {
-        const chip = document.createElement("a");
-        chip.className = "category-chip";
-        chip.href = `/category/${c.slug}`;
-        chip.dataset.sport = c.label;
-        chip.innerHTML = `<span class="category-chip-icon" aria-hidden="true"><svg viewBox="0 0 24 24">${categoryIcons[c.icon]}</svg></span><span class="category-chip-label">${c.label}</span>`;
-        track.appendChild(chip);
-      });
-      const updateNav = () => {
-        const max = track.scrollWidth - track.clientWidth;
-        const left = track.scrollLeft > 4;
-        const right = track.scrollLeft < max - 4;
-        prev.classList.toggle("is-visible", left);
-        next.classList.toggle("is-visible", right);
-        prev.hidden = !left;
-        next.hidden = !right;
-      };
-      const scrollBy = (dir: number) => {
-        const amount = Math.max(220, track.clientWidth * 0.55);
-        track.scrollBy({ left: dir * amount, behavior: "smooth" });
-      };
-      prev.addEventListener("click", () => scrollBy(-1));
-      next.addEventListener("click", () => scrollBy(1));
-      track.addEventListener("scroll", updateNav, { passive: true });
-      window.addEventListener("resize", updateNav);
-      requestAnimationFrame(updateNav);
-    }
-
-
-    const audienceTabs = document.querySelectorAll<HTMLButtonElement>(".search-block--hero .audience-tab");
-    const formatTabs = document.querySelectorAll<HTMLButtonElement>(".search-block--hero .format-tab");
-    const intentDropdowns = document.querySelectorAll<HTMLElement>(".search-block--header [data-intent-dropdown]");
+    const audienceTabs = document.querySelectorAll<HTMLButtonElement>(
+      ".search-block--hero .audience-tab",
+    );
+    const formatTabs = document.querySelectorAll<HTMLButtonElement>(
+      ".search-block--hero .format-tab",
+    );
+    const intentDropdowns = document.querySelectorAll<HTMLElement>(
+      ".search-block--header [data-intent-dropdown]",
+    );
     const comboSelects = document.querySelectorAll<HTMLElement>(".combo-select[data-combo]");
 
     let activeAudience = "adult";
@@ -646,33 +756,39 @@ function Index() {
     const setAudience = (v: string) => {
       activeAudience = v;
       audienceTabs.forEach((it) => it.classList.toggle("is-active", it.dataset.audience === v));
-      document.querySelectorAll<HTMLElement>('.search-block--header [data-intent-dropdown="audience"]').forEach((field) => {
-        field.querySelectorAll<HTMLElement>(".combo-option").forEach((opt) => {
-          const active = opt.dataset.value === v;
-          opt.classList.toggle("is-active", active);
-          if (active) {
-            const label = field.querySelector(".intent-dropdown__value");
-            if (label) label.textContent = opt.dataset.label || "";
-          }
+      document
+        .querySelectorAll<HTMLElement>('.search-block--header [data-intent-dropdown="audience"]')
+        .forEach((field) => {
+          field.querySelectorAll<HTMLElement>(".combo-option").forEach((opt) => {
+            const active = opt.dataset.value === v;
+            opt.classList.toggle("is-active", active);
+            if (active) {
+              const label = field.querySelector(".intent-dropdown__value");
+              if (label) label.textContent = opt.dataset.label || "";
+            }
+          });
         });
-      });
     };
     const setFormat = (v: string) => {
       activeFormat = v;
       formatTabs.forEach((it) => it.classList.toggle("is-active", it.dataset.format === v));
-      document.querySelectorAll<HTMLElement>('.search-block--header [data-intent-dropdown="format"]').forEach((field) => {
-        field.querySelectorAll<HTMLElement>(".combo-option").forEach((opt) => {
-          const active = opt.dataset.value === v;
-          opt.classList.toggle("is-active", active);
-          if (active) {
-            const label = field.querySelector(".intent-dropdown__value");
-            if (label) label.textContent = opt.dataset.label || "";
-          }
+      document
+        .querySelectorAll<HTMLElement>('.search-block--header [data-intent-dropdown="format"]')
+        .forEach((field) => {
+          field.querySelectorAll<HTMLElement>(".combo-option").forEach((opt) => {
+            const active = opt.dataset.value === v;
+            opt.classList.toggle("is-active", active);
+            if (active) {
+              const label = field.querySelector(".intent-dropdown__value");
+              if (label) label.textContent = opt.dataset.label || "";
+            }
+          });
         });
-      });
     };
 
-    audienceTabs.forEach((t) => t.addEventListener("click", () => setAudience(t.dataset.audience!)));
+    audienceTabs.forEach((t) =>
+      t.addEventListener("click", () => setAudience(t.dataset.audience!)),
+    );
     formatTabs.forEach((t) => t.addEventListener("click", () => setFormat(t.dataset.format!)));
 
     intentDropdowns.forEach((field) => {
@@ -756,7 +872,8 @@ function Index() {
       e.preventDefault();
       const form = e.currentTarget as HTMLFormElement;
       const sport = form.querySelector<HTMLInputElement>('input[name="sport"]')?.value.trim() || "";
-      const location = form.querySelector<HTMLInputElement>('input[name="location"]')?.value.trim() || "";
+      const location =
+        form.querySelector<HTMLInputElement>('input[name="location"]')?.value.trim() || "";
       const params = new URLSearchParams();
       if (sport) params.set("sport", sport);
       if (location) params.set("location", location);
@@ -779,53 +896,137 @@ function Index() {
       {variant === "header" && (
         <>
           <div className="search-field intent-select combo-select" data-intent-dropdown="audience">
-            <button className="intent-dropdown__trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+            <button
+              className="intent-dropdown__trigger"
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+            >
               <span className="intent-dropdown__value">для себя</span>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" />
+              </svg>
             </button>
             <div className="combo-menu" role="listbox" aria-label="Для кого">
-              <button className="combo-option is-active" type="button" data-value="adult" data-label="для себя">для себя</button>
-              <button className="combo-option" type="button" data-value="child" data-label="для ребёнка">для ребёнка</button>
+              <button
+                className="combo-option is-active"
+                type="button"
+                data-value="adult"
+                data-label="для себя"
+              >
+                для себя
+              </button>
+              <button
+                className="combo-option"
+                type="button"
+                data-value="child"
+                data-label="для ребёнка"
+              >
+                для ребёнка
+              </button>
             </div>
           </div>
           <div className="search-field intent-select combo-select" data-intent-dropdown="format">
-            <button className="intent-dropdown__trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+            <button
+              className="intent-dropdown__trigger"
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+            >
               <span className="intent-dropdown__value">индивидуально</span>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" />
+              </svg>
             </button>
             <div className="combo-menu" role="listbox" aria-label="Формат">
-              <button className="combo-option is-active" type="button" data-value="individual" data-label="индивидуально">индивидуально</button>
-              <button className="combo-option" type="button" data-value="group" data-label="в группе">в группе</button>
+              <button
+                className="combo-option is-active"
+                type="button"
+                data-value="individual"
+                data-label="индивидуально"
+              >
+                индивидуально
+              </button>
+              <button
+                className="combo-option"
+                type="button"
+                data-value="group"
+                data-label="в группе"
+              >
+                в группе
+              </button>
             </div>
           </div>
         </>
       )}
       <label className="search-field combo-select" data-combo="sport">
         <span className="search-icon">
-          <svg viewBox="0 0 24 24"><path d="M5 19V5h14v14" /><path d="M8 16h8" /><path d="M8 12h8" /><path d="M8 8h4" /></svg>
+          <svg viewBox="0 0 24 24">
+            <path d="M5 19V5h14v14" />
+            <path d="M8 16h8" />
+            <path d="M8 12h8" />
+            <path d="M8 8h4" />
+          </svg>
         </span>
         <span className="field-label">Вид спорта</span>
-        <input className="combo-input" type="search" name="sport" placeholder="Вид спорта" autoComplete="off" />
+        <input
+          className="combo-input"
+          type="search"
+          name="sport"
+          placeholder="Вид спорта"
+          autoComplete="off"
+        />
         <div className="combo-menu" role="listbox">
           {["Бокс", "Плавание", "Фитнес", "Йога", "Футбол", "Теннис"].map((s) => (
-            <button key={s} className="combo-option" type="button" data-value={s} data-keywords={s.toLowerCase()}>{s}</button>
+            <button
+              key={s}
+              className="combo-option"
+              type="button"
+              data-value={s}
+              data-keywords={s.toLowerCase()}
+            >
+              {s}
+            </button>
           ))}
         </div>
       </label>
       <label className="search-field combo-select" data-combo="location">
         <span className="search-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.4" /></svg>
+          <svg viewBox="0 0 24 24">
+            <path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" />
+            <circle cx="12" cy="9" r="2.4" />
+          </svg>
         </span>
         <span className="field-label">Локация</span>
-        <input className="combo-input" type="search" name="location" placeholder="Город или район" defaultValue="в Минске" autoComplete="off" />
+        <input
+          className="combo-input"
+          type="search"
+          name="location"
+          placeholder="Город или район"
+          defaultValue="в Минске"
+          autoComplete="off"
+        />
         <div className="combo-menu" role="listbox">
-          {["в Минске", "в Гомеле", "в Бресте", "в Витебске", "в Гродно", "в Могилёве"].map((c, i) => (
-            <button key={c} className={`combo-option${i === 0 ? " is-active" : ""}`} type="button" data-value={c} data-keywords={c.toLowerCase()}>{c}</button>
-          ))}
+          {["в Минске", "в Гомеле", "в Бресте", "в Витебске", "в Гродно", "в Могилёве"].map(
+            (c, i) => (
+              <button
+                key={c}
+                className={`combo-option${i === 0 ? " is-active" : ""}`}
+                type="button"
+                data-value={c}
+                data-keywords={c.toLowerCase()}
+              >
+                {c}
+              </button>
+            ),
+          )}
         </div>
       </label>
       <button className="search-submit" type="submit" aria-label="Найти">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M16 16l4 4" /></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5" />
+          <path d="M16 16l4 4" />
+        </svg>
       </button>
     </>
   );
@@ -844,7 +1045,6 @@ function Index() {
         }
       />
 
-
       <section className="hero-top">
         <div className="hero-top-inner">
           <main className="hero-stack">
@@ -852,16 +1052,35 @@ function Index() {
             <div className="hero-search-zone">
               <div className="search-block search-block--hero">
                 <div className="search-intent" aria-label="Тип поиска">
-                  <div className="search-intent__tabs" style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
+                  <div
+                    className="search-intent__tabs"
+                    style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}
+                  >
                     <span className="intent-group">
                       <span className="intent-label">Для:</span>
-                      <button className="audience-tab is-active" type="button" data-audience="adult">для себя</button>
-                      <button className="audience-tab" type="button" data-audience="child">для ребёнка</button>
+                      <button
+                        className="audience-tab is-active"
+                        type="button"
+                        data-audience="adult"
+                      >
+                        для себя
+                      </button>
+                      <button className="audience-tab" type="button" data-audience="child">
+                        для ребёнка
+                      </button>
                     </span>
                     <span className="intent-group">
                       <span className="intent-label">Формат:</span>
-                      <button className="format-tab is-active" type="button" data-format="individual">индивидуально</button>
-                      <button className="format-tab" type="button" data-format="group">в группе</button>
+                      <button
+                        className="format-tab is-active"
+                        type="button"
+                        data-format="individual"
+                      >
+                        индивидуально
+                      </button>
+                      <button className="format-tab" type="button" data-format="group">
+                        в группе
+                      </button>
                     </span>
                   </div>
                 </div>
@@ -874,44 +1093,61 @@ function Index() {
           </main>
         </div>
         <section className="category-strip" aria-label="Категории спорта">
-          <div className="category-slider">
-            <button className="category-slider-nav category-slider-prev" type="button" aria-label="Назад" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6l-6 6 6 6" /></svg>
-            </button>
-            <div className="category-slider-viewport">
-              <div className="category-slider-track" id="category-track" />
-            </div>
-            <button className="category-slider-nav category-slider-next" type="button" aria-label="Вперёд" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6" /></svg>
-            </button>
-          </div>
+          <CategoryStrip />
         </section>
       </section>
 
-
-      <section className="page-main">
+      <section className="page-main layout-section--main">
         <div className="page-inner">
           <section className="content-section" aria-labelledby="trainers-heading">
             <div className="section-head">
-              <h2 className="section-title" id="trainers-heading">Тренеры в Минске</h2>
-              <a className="section-link" href="#">Смотреть всех</a>
+              <div>
+                <span className="section-eyebrow">Тренеры</span>
+                <h2 className="section-title" id="trainers-heading">
+                  Тренеры в Минске
+                </h2>
+              </div>
+              <a className="section-link" href="#">
+                Смотреть всех
+              </a>
             </div>
 
             <div className="trainer-grid">
               {trainers.map((t) => (
-                <Link key={t.slug} className="trainer-card" to="/trainers/$slug" params={{ slug: t.slug }}>
+                <Link
+                  key={t.slug}
+                  className="trainer-card"
+                  to="/trainers/$slug"
+                  params={{ slug: t.slug }}
+                >
                   <div className="trainer-card__media">
-                    <img className="trainer-card__photo" src={placeholder(t.name)} alt={t.name} width={480} height={600} loading="lazy" />
+                    <img
+                      className="trainer-card__photo"
+                      src={placeholder(t.name)}
+                      alt={t.name}
+                      width={480}
+                      height={600}
+                      loading="lazy"
+                    />
                     {t.badge && <span className="trainer-card__badge">{t.badge}</span>}
-                    <button className="trainer-card__save" type="button" aria-label="Сохранить" data-save>
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" /></svg>
+                    <button
+                      className="trainer-card__save"
+                      type="button"
+                      aria-label="Сохранить"
+                      data-save
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" />
+                      </svg>
                     </button>
                   </div>
                   <div className="trainer-card__body">
                     <div className="trainer-card__head">
                       <h3 className="trainer-card__name">{t.name}</h3>
                       <span className="trainer-card__rating">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z" /></svg>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z" />
+                        </svg>
                         {t.rating} <span>({t.reviews})</span>
                       </span>
                     </div>
@@ -919,15 +1155,26 @@ function Index() {
                     <p className="trainer-card__desc">{t.desc}</p>
                     <div className="trainer-card__tags">
                       {t.tags.map((tag, i) => (
-                        <span key={tag} className={`trainer-card__tag${i === 0 ? " trainer-card__tag--accent" : ""}`}>{tag}</span>
+                        <span
+                          key={tag}
+                          className={`trainer-card__tag${i === 0 ? " trainer-card__tag--accent" : ""}`}
+                        >
+                          {tag}
+                        </span>
                       ))}
                     </div>
                     <div className="trainer-card__footer">
                       <span className="trainer-card__location">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.4" /></svg>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" />
+                          <circle cx="12" cy="9" r="2.4" />
+                        </svg>
                         <span>Минск</span>
                       </span>
-                      <span className="trainer-card__price"><small>от </small>{t.price} BYN</span>
+                      <span className="trainer-card__price">
+                        <small>от </small>
+                        {t.price} BYN
+                      </span>
                     </div>
                   </div>
                 </Link>
@@ -937,32 +1184,82 @@ function Index() {
 
           <section className="content-section" aria-labelledby="popular-heading">
             <div className="section-head">
-              <h2 className="section-title" id="popular-heading">Популярные направления</h2>
-              <Link className="section-link" to="/category/$slug" params={{ slug: "edinoborstva" }}>Все категории</Link>
+              <div>
+                <span className="section-eyebrow">Каталог</span>
+                <h2 className="section-title" id="popular-heading">
+                  Категории спорта
+                </h2>
+              </div>
+              <Link className="section-link" to="/categories/">
+                Все категории
+              </Link>
             </div>
             <PopularSlider />
           </section>
 
-
-
           <section className="content-section" aria-labelledby="how-heading">
-            <div className="section-head" style={{ flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
+            <div className="section-head section-head--stacked">
               <div>
                 <span className="section-eyebrow">Как это работает</span>
-                <h2 className="section-title" id="how-heading">Найти тренера — за 4 шага</h2>
-                <p className="section-sub">Всё прозрачно: вы выбираете специалиста, договариваетесь о времени и тренируетесь.</p>
+                <h2 className="section-title" id="how-heading">
+                  Найти тренера — за 4 шага
+                </h2>
+                <p className="section-sub">
+                  Всё прозрачно: вы выбираете специалиста, договариваетесь о времени и тренируетесь.
+                </p>
               </div>
             </div>
             <div className="steps-grid">
               {[
-                { n: "01", t: "Выберите спорт", d: "Более 30 направлений — от бокса до йоги и плавания.", icon: <><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></> },
-                { n: "02", t: "Посмотрите тренеров", d: "Реальные отзывы, рейтинги, цены и условия занятий.", icon: <><path d="M4 6h16M4 12h16M4 18h10"/></> },
-                { n: "03", t: "Свяжитесь и забронируйте", d: "Напишите в один клик и согласуйте удобное время.", icon: <><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></> },
-                { n: "04", t: "Тренируйтесь и развивайтесь", d: "Оставьте отзыв и помогите другим выбрать тренера.", icon: <><path d="M20 6L9 17l-5-5"/></> },
+                {
+                  n: "01",
+                  t: "Выберите категорию",
+                  d: "Категории первого уровня и десятки направлений — от единоборств до йоги и плавания.",
+                  icon: (
+                    <>
+                      <circle cx="11" cy="11" r="6.5" />
+                      <path d="M16 16l4 4" />
+                    </>
+                  ),
+                },
+                {
+                  n: "02",
+                  t: "Посмотрите тренеров",
+                  d: "Реальные отзывы, рейтинги, цены и условия занятий.",
+                  icon: (
+                    <>
+                      <path d="M4 6h16M4 12h16M4 18h10" />
+                    </>
+                  ),
+                },
+                {
+                  n: "03",
+                  t: "Свяжитесь и забронируйте",
+                  d: "Напишите в один клик и согласуйте удобное время.",
+                  icon: (
+                    <>
+                      <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+                    </>
+                  ),
+                },
+                {
+                  n: "04",
+                  t: "Тренируйтесь и развивайтесь",
+                  d: "Оставьте отзыв и помогите другим выбрать тренера.",
+                  icon: (
+                    <>
+                      <path d="M20 6L9 17l-5-5" />
+                    </>
+                  ),
+                },
               ].map((s) => (
                 <div key={s.n} className="step-card">
                   <span className="step-card__num">{s.n}</span>
-                  <span className="step-card__icon"><svg viewBox="0 0 24 24" aria-hidden="true">{s.icon}</svg></span>
+                  <span className="step-card__icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      {s.icon}
+                    </svg>
+                  </span>
                   <h3>{s.t}</h3>
                   <p>{s.d}</p>
                 </div>
@@ -970,7 +1267,15 @@ function Index() {
             </div>
           </section>
 
-          <section className="content-section" aria-label="trenio в цифрах">
+          <section className="content-section" aria-labelledby="stats-heading">
+            <div className="section-head section-head--stacked">
+              <div>
+                <span className="section-eyebrow">Платформа</span>
+                <h2 className="section-title" id="stats-heading">
+                  trenio в цифрах
+                </h2>
+              </div>
+            </div>
             <div className="stats-band">
               {[
                 { n: "500+", l: "тренеров на платформе" },
@@ -987,28 +1292,53 @@ function Index() {
           </section>
 
           <section className="content-section" aria-labelledby="reviews-heading">
-            <div className="section-head" style={{ flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
+            <div className="section-head section-head--stacked">
               <div>
                 <span className="section-eyebrow">Отзывы</span>
-                <h2 className="section-title" id="reviews-heading">Что говорят клиенты</h2>
-                <p className="section-sub">Реальные истории людей, которые нашли своего тренера на trenio.by.</p>
+                <h2 className="section-title" id="reviews-heading">
+                  Что говорят клиенты
+                </h2>
+                <p className="section-sub">
+                  Реальные истории людей, которые нашли своего тренера на trenio.by.
+                </p>
               </div>
             </div>
             <div className="reviews-grid">
               {[
-                { text: "Искала тренера по плаванию для дочки — нашла за вечер. Очень удобно, что видно отзывы и цены сразу.", name: "Анна К.", role: "Минск · мама ученицы" },
-                { text: "Записался на бокс, тренер связался в тот же день. Через месяц уже видны результаты — техника пошла.", name: "Дмитрий П.", role: "Минск · новичок" },
-                { text: "Перешла к новому тренеру по йоге через trenio. Атмосфера и подход — то, что искала.", name: "Ольга М.", role: "Гомель · 2 года практики" },
+                {
+                  text: "Искала тренера по плаванию для дочки — нашла за вечер. Очень удобно, что видно отзывы и цены сразу.",
+                  name: "Анна К.",
+                  role: "Минск · мама ученицы",
+                },
+                {
+                  text: "Записался на бокс, тренер связался в тот же день. Через месяц уже видны результаты — техника пошла.",
+                  name: "Дмитрий П.",
+                  role: "Минск · новичок",
+                },
+                {
+                  text: "Перешла к новому тренеру по йоге через trenio. Атмосфера и подход — то, что искала.",
+                  name: "Ольга М.",
+                  role: "Гомель · 2 года практики",
+                },
               ].map((r) => (
                 <article key={r.name} className="review-card">
                   <span className="review-card__stars" aria-label="5 из 5">
-                    {[0,1,2,3,4].map((i) => (
-                      <svg key={i} viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z"/></svg>
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <svg key={i} viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z" />
+                      </svg>
                     ))}
                   </span>
                   <p className="review-card__text">«{r.text}»</p>
                   <div className="review-card__author">
-                    <img className="review-card__avatar" src={`https://placehold.co/88x88/fff5f5/c9343a?text=${encodeURIComponent(r.name.charAt(0))}`} alt="" width={44} height={44} loading="lazy" />
+                    <img
+                      className="review-card__avatar"
+                      src={`https://placehold.co/88x88/fff5f5/c9343a?text=${encodeURIComponent(r.name.charAt(0))}`}
+                      alt=""
+                      width={44}
+                      height={44}
+                      loading="lazy"
+                    />
                     <div className="review-card__meta">
                       <span className="review-card__name">{r.name}</span>
                       <span className="review-card__role">{r.role}</span>
@@ -1022,13 +1352,32 @@ function Index() {
           <section className="content-section" aria-labelledby="cta-heading">
             <div className="cta-banner">
               <div className="cta-banner__content">
+                <span className="section-eyebrow">Для тренеров</span>
                 <h2 id="cta-heading">Вы тренер? Принимайте клиентов через trenio</h2>
-                <p>Создайте профиль за 5 минут и получайте обращения от заинтересованных учеников — без комиссии за первый месяц.</p>
+                <p>
+                  Создайте профиль за 5 минут и получайте обращения от заинтересованных учеников —
+                  без комиссии за первый месяц.
+                </p>
                 <div className="cta-banner__actions">
-                  <a className="cta-btn cta-btn--primary" href="#">Стать тренером
-                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                  <a className="cta-btn cta-btn--primary" href="#">
+                    Стать тренером
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      stroke="currentColor"
+                      strokeWidth="2.4"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
                   </a>
-                  <a className="cta-btn cta-btn--ghost" href="#">Узнать о тарифах</a>
+                  <a className="cta-btn cta-btn--ghost" href="#">
+                    Узнать о тарифах
+                  </a>
                 </div>
               </div>
               <div className="cta-banner__perks">
@@ -1039,7 +1388,9 @@ function Index() {
                   "Поддержка платформы 7 дней в неделю",
                 ].map((p) => (
                   <span key={p} className="cta-banner__perk">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
                     {p}
                   </span>
                 ))}
@@ -1048,25 +1399,46 @@ function Index() {
           </section>
 
           <section className="content-section" aria-labelledby="faq-heading">
-            <div className="section-head" style={{ flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
+            <div className="section-head section-head--stacked">
               <div>
                 <span className="section-eyebrow">Вопросы</span>
-                <h2 className="section-title" id="faq-heading">Частые вопросы</h2>
-                <p className="section-sub">Если не нашли ответ — напишите нам, поможем разобраться.</p>
+                <h2 className="section-title" id="faq-heading">
+                  Частые вопросы
+                </h2>
+                <p className="section-sub">
+                  Если не нашли ответ — напишите нам, поможем разобраться.
+                </p>
               </div>
             </div>
             <div className="faq-grid">
               {[
-                { q: "Сколько стоит занятие с тренером?", a: "Цены зависят от вида спорта, опыта тренера и формата (индивидуально или в группе). В среднем — от 30 до 70 BYN за занятие в Минске." },
-                { q: "Как оплачивать тренировки?", a: "Оплата проходит напрямую тренеру — наличными, переводом или по реквизитам. Условия каждый специалист указывает в своём профиле." },
-                { q: "Что, если тренер не подошёл?", a: "Вы можете в любой момент сменить тренера — обязательств нет. После занятия можно оставить отзыв, чтобы помочь другим." },
-                { q: "Безопасно ли заниматься с тренерами с платформы?", a: "Мы проверяем профили перед публикацией, а рейтинги и отзывы реальных учеников помогают выбрать проверенного специалиста." },
-                { q: "Можно ли найти тренера для ребёнка?", a: "Да — в поиске есть фильтр «для ребёнка», а в карточках тренеров указано, с какими возрастами они работают." },
+                {
+                  q: "Сколько стоит занятие с тренером?",
+                  a: "Цены зависят от вида спорта, опыта тренера и формата (индивидуально или в группе). В среднем — от 30 до 70 BYN за занятие в Минске.",
+                },
+                {
+                  q: "Как оплачивать тренировки?",
+                  a: "Оплата проходит напрямую тренеру — наличными, переводом или по реквизитам. Условия каждый специалист указывает в своём профиле.",
+                },
+                {
+                  q: "Что, если тренер не подошёл?",
+                  a: "Вы можете в любой момент сменить тренера — обязательств нет. После занятия можно оставить отзыв, чтобы помочь другим.",
+                },
+                {
+                  q: "Безопасно ли заниматься с тренерами с платформы?",
+                  a: "Мы проверяем профили перед публикацией, а рейтинги и отзывы реальных учеников помогают выбрать проверенного специалиста.",
+                },
+                {
+                  q: "Можно ли найти тренера для ребёнка?",
+                  a: "Да — в поиске есть фильтр «для ребёнка», а в карточках тренеров указано, с какими возрастами они работают.",
+                },
               ].map((f) => (
                 <details key={f.q} className="faq-item">
                   <summary>
                     {f.q}
-                    <span className="faq-item__icon" aria-hidden="true">+</span>
+                    <span className="faq-item__icon" aria-hidden="true">
+                      +
+                    </span>
                   </summary>
                   <div className="faq-item__body">{f.a}</div>
                 </details>
@@ -1075,7 +1447,6 @@ function Index() {
           </section>
         </div>
       </section>
-
 
       <SiteFooter />
     </div>

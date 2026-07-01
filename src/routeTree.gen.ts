@@ -14,16 +14,20 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ClubsIndexRouteImport } from './routes/clubs.index'
+import { Route as CategoriesIndexRouteImport } from './routes/categories.index'
 import { Route as TrainersSlugRouteImport } from './routes/trainers.$slug'
 import { Route as ClubsSlugRouteImport } from './routes/clubs.$slug'
 import { Route as CitySlugRouteImport } from './routes/city.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
+import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthVerifyEmailRouteImport } from './routes/auth.verify-email'
 import { Route as AuthSignupRouteImport } from './routes/auth.signup'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
+import { Route as CategoryParentSlugChildSlugRouteImport } from './routes/category.$parentSlug.$childSlug'
+import { Route as CategoriesParentSlugChildSlugRouteImport } from './routes/categories.$parentSlug.$childSlug'
 
 const TrainerAdminRoute = TrainerAdminRouteImport.update({
   id: '/trainer-admin',
@@ -50,6 +54,11 @@ const ClubsIndexRoute = ClubsIndexRouteImport.update({
   path: '/clubs/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CategoriesIndexRoute = CategoriesIndexRouteImport.update({
+  id: '/categories/',
+  path: '/categories/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TrainersSlugRoute = TrainersSlugRouteImport.update({
   id: '/trainers/$slug',
   path: '/trainers/$slug',
@@ -68,6 +77,11 @@ const CitySlugRoute = CitySlugRouteImport.update({
 const CategorySlugRoute = CategorySlugRouteImport.update({
   id: '/category/$slug',
   path: '/category/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesSlugRoute = CategoriesSlugRouteImport.update({
+  id: '/categories/$slug',
+  path: '/categories/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
@@ -100,6 +114,18 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/auth/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CategoryParentSlugChildSlugRoute =
+  CategoryParentSlugChildSlugRouteImport.update({
+    id: '/category/$parentSlug/$childSlug',
+    path: '/category/$parentSlug/$childSlug',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const CategoriesParentSlugChildSlugRoute =
+  CategoriesParentSlugChildSlugRouteImport.update({
+    id: '/categories/$parentSlug/$childSlug',
+    path: '/categories/$parentSlug/$childSlug',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -112,11 +138,15 @@ export interface FileRoutesByFullPath {
   '/auth/signup': typeof AuthSignupRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/categories/$slug': typeof CategoriesSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/city/$slug': typeof CitySlugRoute
   '/clubs/$slug': typeof ClubsSlugRoute
   '/trainers/$slug': typeof TrainersSlugRoute
+  '/categories/': typeof CategoriesIndexRoute
   '/clubs/': typeof ClubsIndexRoute
+  '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
+  '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -129,11 +159,15 @@ export interface FileRoutesByTo {
   '/auth/signup': typeof AuthSignupRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/categories/$slug': typeof CategoriesSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/city/$slug': typeof CitySlugRoute
   '/clubs/$slug': typeof ClubsSlugRoute
   '/trainers/$slug': typeof TrainersSlugRoute
+  '/categories': typeof CategoriesIndexRoute
   '/clubs': typeof ClubsIndexRoute
+  '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
+  '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -147,11 +181,15 @@ export interface FileRoutesById {
   '/auth/signup': typeof AuthSignupRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/categories/$slug': typeof CategoriesSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/city/$slug': typeof CitySlugRoute
   '/clubs/$slug': typeof ClubsSlugRoute
   '/trainers/$slug': typeof TrainersSlugRoute
+  '/categories/': typeof CategoriesIndexRoute
   '/clubs/': typeof ClubsIndexRoute
+  '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
+  '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -166,11 +204,15 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/auth/verify-email'
     | '/blog/$slug'
+    | '/categories/$slug'
     | '/category/$slug'
     | '/city/$slug'
     | '/clubs/$slug'
     | '/trainers/$slug'
+    | '/categories/'
     | '/clubs/'
+    | '/categories/$parentSlug/$childSlug'
+    | '/category/$parentSlug/$childSlug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -183,11 +225,15 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/auth/verify-email'
     | '/blog/$slug'
+    | '/categories/$slug'
     | '/category/$slug'
     | '/city/$slug'
     | '/clubs/$slug'
     | '/trainers/$slug'
+    | '/categories'
     | '/clubs'
+    | '/categories/$parentSlug/$childSlug'
+    | '/category/$parentSlug/$childSlug'
   id:
     | '__root__'
     | '/'
@@ -200,11 +246,15 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/auth/verify-email'
     | '/blog/$slug'
+    | '/categories/$slug'
     | '/category/$slug'
     | '/city/$slug'
     | '/clubs/$slug'
     | '/trainers/$slug'
+    | '/categories/'
     | '/clubs/'
+    | '/categories/$parentSlug/$childSlug'
+    | '/category/$parentSlug/$childSlug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -218,11 +268,15 @@ export interface RootRouteChildren {
   AuthSignupRoute: typeof AuthSignupRoute
   AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  CategoriesSlugRoute: typeof CategoriesSlugRoute
   CategorySlugRoute: typeof CategorySlugRoute
   CitySlugRoute: typeof CitySlugRoute
   ClubsSlugRoute: typeof ClubsSlugRoute
   TrainersSlugRoute: typeof TrainersSlugRoute
+  CategoriesIndexRoute: typeof CategoriesIndexRoute
   ClubsIndexRoute: typeof ClubsIndexRoute
+  CategoriesParentSlugChildSlugRoute: typeof CategoriesParentSlugChildSlugRoute
+  CategoryParentSlugChildSlugRoute: typeof CategoryParentSlugChildSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -262,6 +316,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClubsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/categories/': {
+      id: '/categories/'
+      path: '/categories'
+      fullPath: '/categories/'
+      preLoaderRoute: typeof CategoriesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/trainers/$slug': {
       id: '/trainers/$slug'
       path: '/trainers/$slug'
@@ -288,6 +349,13 @@ declare module '@tanstack/react-router' {
       path: '/category/$slug'
       fullPath: '/category/$slug'
       preLoaderRoute: typeof CategorySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories/$slug': {
+      id: '/categories/$slug'
+      path: '/categories/$slug'
+      fullPath: '/categories/$slug'
+      preLoaderRoute: typeof CategoriesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/$slug': {
@@ -332,6 +400,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/category/$parentSlug/$childSlug': {
+      id: '/category/$parentSlug/$childSlug'
+      path: '/category/$parentSlug/$childSlug'
+      fullPath: '/category/$parentSlug/$childSlug'
+      preLoaderRoute: typeof CategoryParentSlugChildSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories/$parentSlug/$childSlug': {
+      id: '/categories/$parentSlug/$childSlug'
+      path: '/categories/$parentSlug/$childSlug'
+      fullPath: '/categories/$parentSlug/$childSlug'
+      preLoaderRoute: typeof CategoriesParentSlugChildSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -346,11 +428,15 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSignupRoute: AuthSignupRoute,
   AuthVerifyEmailRoute: AuthVerifyEmailRoute,
   BlogSlugRoute: BlogSlugRoute,
+  CategoriesSlugRoute: CategoriesSlugRoute,
   CategorySlugRoute: CategorySlugRoute,
   CitySlugRoute: CitySlugRoute,
   ClubsSlugRoute: ClubsSlugRoute,
   TrainersSlugRoute: TrainersSlugRoute,
+  CategoriesIndexRoute: CategoriesIndexRoute,
   ClubsIndexRoute: ClubsIndexRoute,
+  CategoriesParentSlugChildSlugRoute: CategoriesParentSlugChildSlugRoute,
+  CategoryParentSlugChildSlugRoute: CategoryParentSlugChildSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
