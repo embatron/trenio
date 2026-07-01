@@ -1,13 +1,24 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
-import { SiteHeader, SiteFooter } from "@/components/site-chrome";
+
 import { AuthStyles } from "@/components/auth-styles";
+import { SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
+import { loginFn } from "@/lib/auth/functions";
 
 export const Route = createFileRoute("/auth/login")({
+  beforeLoad: async ({ context }) => {
+    if (context.user) {
+      throw redirect({ to: "/" });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Вход — trenio.by" },
-      { name: "description", content: "Войдите в аккаунт trenio.by, чтобы управлять профилем тренера или находить тренировки." },
+      {
+        name: "description",
+        content: "Войдите в аккаунт trenio.by, чтобы управлять профилем тренера или находить тренировки.",
+      },
     ],
   }),
   component: LoginPage,
@@ -15,6 +26,13 @@ export const Route = createFileRoute("/auth/login")({
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(true);
+  const login = useAuthServerFn(loginFn);
+  const router = useRouter();
+  const { error, pending, run, redirectTo } = useAuthSubmit();
+
   return (
     <div className="auth-page">
       <AuthStyles />
@@ -26,28 +44,40 @@ function LoginPage() {
             <p className="auth-sub">Войдите, чтобы продолжить тренироваться или вести свой профиль.</p>
           </div>
 
-          <div className="auth-social">
-            <button type="button" className="auth-social__btn">
-              <span className="auth-social__icon" aria-hidden>G</span>
-              Войти через Google
-            </button>
-            <button type="button" className="auth-social__btn">
-              <span className="auth-social__icon" aria-hidden></span>
-              Войти через Apple
-            </button>
-          </div>
+          <AuthAlert message={error} />
 
-          <div className="auth-divider"><span>или по e-mail</span></div>
-
-          <form className="auth-form" onSubmit={(e) => e.preventDefault()}>
+          <form
+            className="auth-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void run(
+                () => login({ data: { email, password, remember } }),
+                async (result) => {
+                  if (result?.redirectTo) {
+                    await router.invalidate();
+                    redirectTo(result.redirectTo);
+                  }
+                },
+              );
+            }}
+          >
             <label className="auth-field">
               <span className="auth-field__label">E-mail</span>
-              <input type="email" required placeholder="you@example.com" autoComplete="email" />
+              <input
+                type="email"
+                required
+                placeholder="you@example.com"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </label>
             <label className="auth-field">
               <span className="auth-field__label">
                 Пароль
-                <Link to="/auth/forgot-password" className="auth-field__hint">Забыли пароль?</Link>
+                <Link to="/auth/forgot-password" className="auth-field__hint">
+                  Забыли пароль?
+                </Link>
               </span>
               <div className="auth-field__input-wrap">
                 <input
@@ -55,19 +85,31 @@ function LoginPage() {
                   required
                   placeholder="Введите пароль"
                   autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
-                <button type="button" className="auth-field__toggle" onClick={() => setShowPassword((v) => !v)}>
+                <button
+                  type="button"
+                  className="auth-field__toggle"
+                  onClick={() => setShowPassword((v) => !v)}
+                >
                   {showPassword ? "Скрыть" : "Показать"}
                 </button>
               </div>
             </label>
 
             <label className="auth-check">
-              <input type="checkbox" defaultChecked />
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+              />
               <span>Запомнить меня на этом устройстве</span>
             </label>
 
-            <button type="submit" className="auth-submit">Войти</button>
+            <button type="submit" className="auth-submit" disabled={pending}>
+              {pending ? "Вход…" : "Войти"}
+            </button>
           </form>
 
           <p className="auth-foot">

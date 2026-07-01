@@ -70,12 +70,16 @@ const AUTH_CSS = `
 .auth-role strong { display: block; font-size: 15px; font-weight: 800; color: var(--dark); margin-bottom: 4px; letter-spacing: -0.01em; }
 .auth-role span { display: block; font-size: 13px; color: var(--muted); line-height: 1.35; }
 .auth-role.is-active { border-color: var(--primary); background: rgba(var(--primary-rgb), 0.05); }
+.auth-roleswitch--3 { grid-template-columns: repeat(3, 1fr); }
+.auth-alert { padding: 12px 14px; border-radius: 12px; background: rgba(var(--primary-rgb), 0.08); border: 1px solid rgba(var(--primary-rgb), 0.2); color: var(--dark); font-size: 14px; line-height: 1.45; }
+.auth-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
 
 @media (max-width: 600px) {
   .auth-card { padding: 28px 22px; border-radius: 22px; }
   .auth-title { font-size: 26px; }
   .auth-form--grid { grid-template-columns: 1fr; }
   .auth-roleswitch { grid-template-columns: 1fr; }
+  .auth-roleswitch--3 { grid-template-columns: 1fr; }
 }
 `;
 

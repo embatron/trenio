@@ -10,7 +10,9 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import type { PublicUser } from "@/lib/auth/schemas";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { getSessionFn } from "@/lib/auth/functions";
 
 function NotFoundComponent() {
   return (
@@ -72,11 +74,19 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+  user: PublicUser | null;
+}>()({
+  beforeLoad: async () => {
+    const user = await getSessionFn();
+    return { user };
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "theme-color", content: "#f04b50" },
       { title: "trenio.by — поиск тренеров в Беларуси" },
       { name: "description", content: "Trenio.by — поиск тренеров и спортивных занятий в Беларуси." },
       { name: "author", content: "trenio.by" },
