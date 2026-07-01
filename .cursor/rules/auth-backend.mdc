@@ -1,0 +1,40 @@
+---
+description: Auth, database, and server function conventions
+globs: "{src/auth/**,src/lib/auth/**,src/db/**,src/routes/auth.*}"
+alwaysApply: false
+---
+
+# Auth & Database Rules
+
+## Paths
+
+| Concern | Location |
+| --- | --- |
+| DB schema | `src/db/schema/` |
+| Auth service | `src/auth/service.ts` |
+| Session cookies | `src/auth/session.ts` |
+| Server RPC | `src/lib/auth/functions.ts` |
+| Zod schemas | `src/lib/auth/schemas.ts` |
+
+## Server functions
+
+```typescript
+// ✅ Mutations and private reads
+export const myFn = createServerFn({ method: "POST" })
+  .validator(zodSchema)
+  .middleware([requireAuthMiddleware])
+  .handler(async ({ data, context }) => { ... });
+```
+
+## Security
+
+- scrypt passwords; timing-safe login
+- Password reset: same response whether email exists
+- Session rotation on login and password change
+- Never store session tokens in localStorage
+
+## Roles
+
+Public signup: `user`, `trainer`, `club`. Staff: `admin`, `superadmin` via seed only.
+
+Update `docs/TECH_SPEC.md` §4 and `docs/ACCOUNT_MODEL.md` when changing auth model.

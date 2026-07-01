@@ -1,0 +1,32 @@
+---
+description: PWA 100% compatibility requirements for Trenio.by
+alwaysApply: true
+---
+
+# PWA Requirements (mandatory)
+
+Trenio.by is a **100% PWA-compatible** project. Treat every change as part of an installable web app.
+
+## Before shipping UI or routing changes
+
+- [ ] Works in standalone display mode (no broken layout without browser chrome)
+- [ ] No hard dependency on APIs unavailable offline without graceful fallback
+- [ ] Static assets/icons go in `public/` when added
+- [ ] New routes consider offline UX (message, not blank screen)
+- [ ] SSR hydration succeeds (no client-only crashes on first paint)
+- [ ] Auth cookies remain HttpOnly; scope compatible with PWA origin
+
+## Target artifacts (implement when touching PWA)
+
+- `public/manifest.webmanifest`
+- Service worker + cache strategy
+- `/offline` route
+- Icons 192×192, 512×512
+
+## When adding features
+
+Ask: *Does this break installability, caching, or offline behavior?*
+
+If yes — add fallback or document in `docs/TECH_SPEC.md` §6.
+
+Use skill `.cursor/skills/trenio-pwa-audit/` for full audit checklist.

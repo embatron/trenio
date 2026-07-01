@@ -1,0 +1,39 @@
+---
+description: Core Trenio.by stack, structure, and agent constraints
+alwaysApply: true
+---
+
+# Trenio.by — Core Rules
+
+Read `docs/TECH_SPEC.md` for full architecture.
+
+## Stack
+
+- TanStack Start + Router, React 19, Tailwind v4, shadcn/ui
+- PostgreSQL + Drizzle (`src/db/`), auth in `src/auth/` + `src/lib/auth/functions.ts`
+- Node >= 22.12
+
+## Structure
+
+- Pages: **only** `src/routes/*.tsx` — never `src/pages/` or Next.js `app/`
+- Do not edit `src/routeTree.gen.ts`
+- Import `@/` → `src/`
+- Do not import `src/auth/` or `src/db/` from client components
+
+## Lovable git safety
+
+No force push, no amend/squash of pushed commits (see `AGENTS.md`).
+
+## Mandatory cross-cutting concerns
+
+Every implementation must consider:
+
+1. **PWA 100%** — see `.cursor/rules/pwa-requirements.mdc`
+2. **Mobile-first** — see `.cursor/rules/mobile-first.mdc`
+3. **Docs sync** — update `docs/` when routes, auth, schema, or architecture change
+
+## Auth
+
+- Server functions for mutations; middleware for session
+- Roles: user, trainer, club, admin, superadmin
+- Route `beforeLoad` is UX only — not the security boundary

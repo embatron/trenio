@@ -1,0 +1,26 @@
+---
+description: Documentation sync obligations after code changes
+alwaysApply: true
+---
+
+# Documentation Sync
+
+After tasks that change behavior or structure, update docs **in the same PR/session**.
+
+## Map
+
+| Change | Update |
+| --- | --- |
+| New/removed route | `docs/README.md` routes table |
+| Auth, roles, DB schema | `docs/TECH_SPEC.md` §4, `docs/ACCOUNT_MODEL.md` |
+| Env variable | `.env.example`, `docs/TECH_SPEC.md` §8 |
+| Product/SEO/taxonomy | `docs/PRODUCT.md` |
+| PWA/SW/manifest | `docs/TECH_SPEC.md` §6 checklist status |
+| Architecture/stack | `docs/TECH_SPEC.md` |
+
+## Do not
+
+- Duplicate content across docs — cross-link instead
+- Leave `TECH_SPEC.md` checklist stale (mark Planned → Done when implemented)
+
+Use skill `.cursor/skills/trenio-docs-sync/` at end of feature work.

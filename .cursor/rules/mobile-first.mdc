@@ -1,0 +1,31 @@
+---
+description: Mobile-first UI and touch requirements for Trenio.by
+globs: "{src/**/*.tsx,src/**/*.css}"
+alwaysApply: false
+---
+
+# Mobile-First Requirements
+
+Design and implement for **320–767px first**, then enhance at `md:` (768px+).
+
+## Breakpoint
+
+- Mobile: `<768px` — use `useIsMobile()` or Tailwind `max-md:` / mobile-first `md:`
+- Reference: `src/hooks/use-mobile.tsx`
+
+## Checklist (every UI change)
+
+- [ ] Layout OK at 320px width
+- [ ] Touch targets ≥44×44px (buttons, links, toggles)
+- [ ] No accidental horizontal page scroll
+- [ ] Forms usable with on-screen keyboard
+- [ ] Header/nav usable on touch (burger, mega menu)
+- [ ] Desktop-only UI has mobile alternative (Sheet/Drawer, stack layout)
+
+## Patterns in this repo
+
+- Auth: `auth-styles.tsx` — single column under 600px
+- Site chrome: `site-chrome.tsx` — responsive header
+- Prefer shadcn `Sheet`/`Drawer` over hover-only desktop menus on mobile
+
+Use skill `.cursor/skills/trenio-mobile-audit/` before finishing layout work.
