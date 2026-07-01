@@ -6,23 +6,23 @@
 
 ## Документы
 
-| Документ | Содержание |
-| --- | --- |
-| [TECH_SPEC.md](./TECH_SPEC.md) | **Техническая спецификация** — архитектура, auth, DB, PWA, mobile-first |
-| [PRODUCT.md](./PRODUCT.md) | Продукт, маршруты, таксономия, SEO, UX-профили, empty states, админка |
+| Документ                               | Содержание                                                                     |
+| -------------------------------------- | ------------------------------------------------------------------------------ |
+| [TECH_SPEC.md](./TECH_SPEC.md)         | **Техническая спецификация** — архитектура, auth, DB, PWA, mobile-first        |
+| [PRODUCT.md](./PRODUCT.md)             | Продукт, маршруты, таксономия, SEO, UX-профили, empty states, админка          |
 | [ACCOUNT_MODEL.md](./ACCOUNT_MODEL.md) | Доменная модель: Account, TrainerProfile, ClubBranch, intent-onboarding, claim |
 
 **Разделение:** TECH_SPEC — _как устроен код_; PRODUCT — _что видит пользователь_; ACCOUNT_MODEL — _сущности и onboarding_.
 
-Cursor automation: `.cursor/rules/`, `.cursor/skills/`, `.cursor/hooks.json` (см. TECH_SPEC §13).
+Cursor automation: `.cursor/rules/`, `.cursor/skills/`, slash-команда `/hooks` (см. TECH_SPEC §13).
 
 ## Стек и команды
 
-| Слой | Технология |
-| --- | --- |
-| Framework | TanStack Start + TanStack Router (file-based routes) |
-| UI | React 19, Tailwind CSS v4, shadcn/ui (`src/components/ui/`) |
-| SSR | `src/server.ts`, `src/start.ts` |
+| Слой      | Технология                                                  |
+| --------- | ----------------------------------------------------------- |
+| Framework | TanStack Start + TanStack Router (file-based routes)        |
+| UI        | React 19, Tailwind CSS v4, shadcn/ui (`src/components/ui/`) |
+| SSR       | `src/server.ts`, `src/start.ts`                             |
 
 ```bash
 nvm use 22          # TanStack Start требует Node >= 22.12
@@ -31,6 +31,7 @@ npm run db:up       # PostgreSQL в Docker (порт 5433)
 cp .env.example .env
 npm run db:push     # применить схему
 npm run db:seed     # admin@trenio.by / super@trenio.by
+npm run settlements:import  # public/data/belarus-settlements.json (GeoNames BY)
 npm run dev         # http://localhost:8080
 npm run build
 npm run preview
@@ -39,12 +40,12 @@ npm run lint
 
 ## Auth и роли
 
-| Роль | Назначение |
-| --- | --- |
-| `user` | Обычный пользователь (ищет тренера) |
-| `trainer` | Тренер |
-| `club` | Представитель клуба / филиала |
-| `admin` | Администратор и модератор |
+| Роль         | Назначение                                    |
+| ------------ | --------------------------------------------- |
+| `user`       | Обычный пользователь (ищет тренера)           |
+| `trainer`    | Тренер                                        |
+| `club`       | Представитель клуба / филиала                 |
+| `admin`      | Администратор и модератор                     |
 | `superadmin` | Суперадмин (в т.ч. будущий доступ к финансам) |
 
 Публичная регистрация: `user`, `trainer`, `club`. Роли `admin` / `superadmin` — только через seed или назначение staff.
@@ -69,6 +70,8 @@ src/
 ├── server.ts
 └── start.ts
 
+public/               # Статика (WebP для UI; PWA icons/manifest — planned)
+assets/               # Исходники медиа (images, portraits)
 docs/                 # Документация
 .cursor/              # Rules, skills, hooks
 AGENTS.md             # Entry point для агентов
@@ -79,23 +82,26 @@ AGENTS.md             # Entry point для агентов
 
 ## Реализованные маршруты (frontend)
 
-| URL | Файл | Назначение |
-| --- | --- | --- |
-| `/` | `index.tsx` | Главная, поиск, популярные направления |
-| `/search` | `search.tsx` | Результаты поиска с фильтрами |
-| `/category/$slug` | `category.$slug.tsx` | Страница спортивной категории |
-| `/city/$slug` | `city.$slug.tsx` | Спорт в городе |
-| `/trainers/$slug` | `trainers.$slug.tsx` | Профиль тренера |
-| `/clubs` | `clubs.index.tsx` | Каталог клубов |
-| `/clubs/$slug` | `clubs.$slug.tsx` | Профиль клуба / филиала |
-| `/blog/$slug` | `blog.$slug.tsx` | Статья блога |
-| `/auth/login` | `auth.login.tsx` | Вход |
-| `/auth/signup` | `auth.signup.tsx` | Регистрация |
-| `/auth/forgot-password` | `auth.forgot-password.tsx` | Запрос сброса пароля |
-| `/auth/reset-password` | `auth.reset-password.tsx` | Новый пароль по токену |
-| `/auth/verify-email` | `auth.verify-email.tsx` | Подтверждение e-mail |
-| `/trainer-admin` | `trainer-admin.tsx` | Кабинет тренера (прототип) |
-| `/privacy` | `privacy.tsx` | Политика конфиденциальности |
+| URL                     | Файл                       | Назначение                                                    |
+| ----------------------- | -------------------------- | ------------------------------------------------------------- |
+| `/`                     | `index.tsx`                | Главная, поиск, категории первого уровня, витрина направлений |
+| `/search`               | `search.tsx`               | Результаты поиска с фильтрами                                 |
+| `/categories`                     | `categories.index.tsx`               | Каталог всех спортивных категорий                             |
+| `/categories/$slug`                 | `categories.$slug.tsx`               | Родительская спортивная категория                             |
+| `/categories/$parentSlug/$childSlug` | `categories.$parentSlug.$childSlug.tsx` | Конкретный вид спорта внутри категории                        |
+| `/category/*`                       | `category.*.tsx`                     | Редирект на `/categories/*` (legacy)                          |
+| `/city/$slug`           | `city.$slug.tsx`           | Спорт в городе                                                |
+| `/trainers/$slug`       | `trainers.$slug.tsx`       | Профиль тренера                                               |
+| `/clubs`                | `clubs.index.tsx`          | Каталог клубов                                                |
+| `/clubs/$slug`          | `clubs.$slug.tsx`          | Профиль клуба / филиала                                       |
+| `/blog/$slug`           | `blog.$slug.tsx`           | Статья блога                                                  |
+| `/auth/login`           | `auth.login.tsx`           | Вход                                                          |
+| `/auth/signup`          | `auth.signup.tsx`          | Регистрация                                                   |
+| `/auth/forgot-password` | `auth.forgot-password.tsx` | Запрос сброса пароля                                          |
+| `/auth/reset-password`  | `auth.reset-password.tsx`  | Новый пароль по токену                                        |
+| `/auth/verify-email`    | `auth.verify-email.tsx`    | Подтверждение e-mail                                          |
+| `/trainer-admin`        | `trainer-admin.tsx`        | Кабинет тренера (прототип)                                    |
+| `/privacy`              | `privacy.tsx`              | Политика конфиденциальности                                   |
 
 Полная целевая карта URL (включая backend и SEO-страницы каталога) — в [PRODUCT.md §3](./PRODUCT.md#3-маршруты-и-страницы).
 

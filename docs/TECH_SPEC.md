@@ -22,17 +22,17 @@ TanStack Start (SSR + client hydration)
 PostgreSQL (Drizzle ORM, src/db/)
 ```
 
-| Слой | Технология | Путь |
-| --- | --- | --- |
-| Framework | TanStack Start + TanStack Router | `src/routes/`, `src/router.tsx` |
-| UI | React 19, Tailwind CSS v4, shadcn/ui | `src/components/ui/` |
-| Site UI | Кастомные компоненты каталога | `src/components/site-chrome.tsx`, `auth-styles.tsx` |
-| SSR entry | Nitro / Cloudflare preset (Lovable) | `src/server.ts`, `vite.config.ts` |
-| Start instance | Request middleware | `src/start.ts` |
-| Auth (server) | Sessions, password, RBAC | `src/auth/` |
-| Auth (RPC) | `createServerFn` | `src/lib/auth/functions.ts` |
-| DB | Drizzle + postgres.js | `src/db/` |
-| Hooks / utils | Shared client helpers | `src/lib/`, `src/hooks/` |
+| Слой           | Технология                           | Путь                                                |
+| -------------- | ------------------------------------ | --------------------------------------------------- |
+| Framework      | TanStack Start + TanStack Router     | `src/routes/`, `src/router.tsx`                     |
+| UI             | React 19, Tailwind CSS v4, shadcn/ui | `src/components/ui/`                                |
+| Site UI        | Кастомные компоненты каталога        | `src/components/site-chrome.tsx`, `auth-styles.tsx` |
+| SSR entry      | Nitro / Cloudflare preset (Lovable)  | `src/server.ts`, `vite.config.ts`                   |
+| Start instance | Request middleware                   | `src/start.ts`                                      |
+| Auth (server)  | Sessions, password, RBAC             | `src/auth/`                                         |
+| Auth (RPC)     | `createServerFn`                     | `src/lib/auth/functions.ts`                         |
+| DB             | Drizzle + postgres.js                | `src/db/`                                           |
+| Hooks / utils  | Shared client helpers                | `src/lib/`, `src/hooks/`                            |
 
 **Node.js:** >= 22.12 (TanStack Start). **Package manager:** npm (есть `bun.lock`, но npm — основной для CI/seed).
 
@@ -46,10 +46,12 @@ src/
 ├── components/
 │   ├── ui/              # shadcn primitives
 │   ├── site-chrome.tsx  # Header, footer, mega menu
-│   └── auth-styles.tsx
+│   ├── auth-styles.tsx
+│   └── sport-icon.tsx   # Реестр и рендер category icons
 ├── auth/                # Server-only auth (НЕ src/server/auth/)
 ├── lib/
-│   └── auth/            # Schemas, server fns, client hooks
+│   ├── auth/            # Schemas, server fns, client hooks
+│   └── catalog/         # Таксономия спорта и shared catalog data
 ├── db/
 │   ├── schema/          # Drizzle tables
 │   └── seed.ts
@@ -74,13 +76,13 @@ AGENTS.md                # Entry point для агентов
 
 File-based TanStack Router: `src/routes/<name>.tsx` → URL.
 
-| Паттерн | Пример |
-| --- | --- |
-| `index.tsx` | `/` |
-| `search.tsx` | `/search` |
-| `trainers.$slug.tsx` | `/trainers/:slug` |
-| `auth.login.tsx` | `/auth/login` |
-| `__root.tsx` | App shell, session in `beforeLoad` |
+| Паттерн              | Пример                             |
+| -------------------- | ---------------------------------- |
+| `index.tsx`          | `/`                                |
+| `search.tsx`         | `/search`                          |
+| `trainers.$slug.tsx` | `/trainers/:slug`                  |
+| `auth.login.tsx`     | `/auth/login`                      |
+| `__root.tsx`         | App shell, session in `beforeLoad` |
 
 Root context: `{ queryClient, user: PublicUser | null }` — сессия через `getSessionFn`.
 
@@ -96,13 +98,13 @@ Root context: `{ queryClient, user: PublicUser | null }` — сессия чер
 
 ### 4.2 Схема (MVP auth)
 
-| Таблица | Назначение |
-| --- | --- |
-| `users` | email, phone, password_hash, status, last_signup_intent |
-| `user_roles` | RBAC: user, trainer, club, admin, superadmin |
-| `sessions` | HttpOnly cookie sessions (token hash) |
-| `password_reset_tokens` | Сброс пароля (30 мин) |
-| `email_verification_tokens` | Подтверждение e-mail |
+| Таблица                     | Назначение                                              |
+| --------------------------- | ------------------------------------------------------- |
+| `users`                     | email, phone, password_hash, status, last_signup_intent |
+| `user_roles`                | RBAC: user, trainer, club, admin, superadmin            |
+| `sessions`                  | HttpOnly cookie sessions (token hash)                   |
+| `password_reset_tokens`     | Сброс пароля (30 мин)                                   |
+| `email_verification_tokens` | Подтверждение e-mail                                    |
 
 ### 4.3 Server functions
 
@@ -124,12 +126,12 @@ Root context: `{ queryClient, user: PublicUser | null }` — сессия чер
 
 ### 4.5 Роли
 
-| Роль | Регистрация | Назначение |
-| --- | --- | --- |
-| `user` | Публичная | Ищет тренера |
-| `trainer` | Публичная | Тренер |
-| `club` | Публичная | Представитель клуба |
-| `admin` | Seed / staff | Модерация |
+| Роль         | Регистрация  | Назначение                          |
+| ------------ | ------------ | ----------------------------------- |
+| `user`       | Публичная    | Ищет тренера                        |
+| `trainer`    | Публичная    | Тренер                              |
+| `club`       | Публичная    | Представитель клуба                 |
+| `admin`      | Seed / staff | Модерация                           |
 | `superadmin` | Seed / staff | Полный доступ (+ финансы в будущем) |
 
 ---
@@ -147,12 +149,12 @@ Root context: `{ queryClient, user: PublicUser | null }` — сессия чер
 
 Каталог (тренеры, клубы, поиск) — **inline mock** в route-файлах. Целевое состояние — PostgreSQL + server functions / loaders.
 
-| Область | Статус |
-| --- | --- |
-| Auth | PostgreSQL ✓ |
+| Область                 | Статус                   |
+| ----------------------- | ------------------------ |
+| Auth                    | PostgreSQL ✓             |
 | Каталог тренеров/клубов | Mock (миграция в планах) |
-| Filament admin | Не подключён |
-| Email (Resend) | Dev log only |
+| Filament admin          | Не подключён             |
+| Email (Resend)          | Dev log only             |
 
 ---
 
@@ -162,21 +164,21 @@ Root context: `{ queryClient, user: PublicUser | null }` — сессия чер
 
 ### 6.1 Целевой чеклист
 
-| # | Требование | Статус |
-| --- | --- | --- |
-| 1 | Web App Manifest (`name`, `icons`, `theme_color`, `display: standalone`) | Planned |
-| 2 | Service Worker (precache + runtime caching) | Planned |
-| 3 | Offline fallback route (`/offline`) | Planned |
-| 4 | HTTPS в production | Required |
-| 5 | Responsive icons 192/512 | Planned |
-| 6 | `viewport` + `theme-color` meta | ✓ (`__root.tsx`) |
-| 7 | Не ломать SW при deploy (cache busting) | Required |
-| 8 | Auth cookies совместимы с PWA scope | ✓ SameSite=Lax |
+| #   | Требование                                                               | Статус           |
+| --- | ------------------------------------------------------------------------ | ---------------- |
+| 1   | Web App Manifest (`name`, `icons`, `theme_color`, `display: standalone`) | Planned          |
+| 2   | Service Worker (precache + runtime caching)                              | Planned          |
+| 3   | Offline fallback route (`/offline`)                                      | Planned          |
+| 4   | HTTPS в production                                                       | Required         |
+| 5   | Responsive icons 192/512                                                 | Planned          |
+| 6   | `viewport` + `theme-color` meta                                          | ✓ (`__root.tsx`) |
+| 7   | Не ломать SW при deploy (cache busting)                                  | Required         |
+| 8   | Auth cookies совместимы с PWA scope                                      | ✓ SameSite=Lax   |
 
 ### 6.2 Правила реализации
 
 - Не использовать APIs, недоступные в SW context, без fallback
-- Статика и icons — `public/` (создать при добавлении PWA)
+- Статика для UI и будущего PWA — `public/` (сейчас: `public/images/categories/*.webp`; manifest/icons/SW — planned, §6.3)
 - Новые route — учитывать offline UX (empty state, не белый экран)
 - SSR страницы должны hydrates без ошибок в standalone mode
 - Тестировать: Lighthouse PWA audit, «Add to Home Screen» на Android/iOS
@@ -190,6 +192,16 @@ public/icons/icon-512.png
 public/sw.js (или vite-plugin-pwa)
 src/routes/offline.tsx
 ```
+
+### 6.4 Текущие статические assets
+
+| Путь                                      | Назначение                                                                                    |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `public/images/categories/*-card.webp`    | Карточки «Категории спорта» на главной (~720×480 WebP)                                        |
+| `public/images/categories/*.webp`         | Featured image родительских категорий на `/categories/$slug` (~960×640 WebP)                    |
+| `public/images/popular/*.webp`            | Legacy thumbnails (заменены на `categories/`; можно удалить после проверки)                   |
+| `public/data/belarus-settlements.json`    | Населённые пункты Беларуси для фильтра локации (GeoNames, ~21k, CC-BY 4.0)                    |
+| `assets/images/*.jpg`                     | Исходники для оптимизации (не отдаются напрямую клиенту)                                      |
 
 ---
 
@@ -205,16 +217,16 @@ src/routes/offline.tsx
 
 ### 7.2 Чеклист для UI-изменений
 
-| # | Проверка |
-| --- | --- |
-| 1 | Layout не ломается на 320px width |
-| 2 | Нет horizontal scroll на mobile (кроме intentional carousels) |
-| 3 | Header/burger/mega menu работают на touch |
-| 4 | Forms usable с виртуальной клавиатурой |
-| 5 | Font size ≥14px для body, контраст WCAG AA |
-| 6 | Sticky/fixed elements не перекрывают контент |
-| 7 | `@media (max-width: …)` или Tailwind mobile-first (`sm:`, `md:`) |
-| 8 | Desktop-only features имеют mobile alternative |
+| #   | Проверка                                                         |
+| --- | ---------------------------------------------------------------- |
+| 1   | Layout не ломается на 320px width                                |
+| 2   | Нет horizontal scroll на mobile (кроме intentional carousels)    |
+| 3   | Header/burger/mega menu работают на touch                        |
+| 4   | Forms usable с виртуальной клавиатурой                           |
+| 5   | Font size ≥14px для body, контраст WCAG AA                       |
+| 6   | Sticky/fixed elements не перекрывают контент                     |
+| 7   | `@media (max-width: …)` или Tailwind mobile-first (`sm:`, `md:`) |
+| 8   | Desktop-only features имеют mobile alternative                   |
 
 ### 7.3 Компоненты
 
@@ -223,17 +235,34 @@ src/routes/offline.tsx
 - shadcn `Sheet` / `Drawer` — предпочтительны для mobile overlays
 - Карточки каталога — stack on mobile, grid on desktop
 
+### 7.4 Единая layout-сетка
+
+Глобальные токены и утилиты в `src/styles.css`:
+
+| Token / class | Значение |
+| --- | --- |
+| `--layout-max` | `1240px` — ширина контента (header, footer, каталог) |
+| `--layout-prose-max` | `760px` — узкий текст (blog, privacy) |
+| `--layout-gutter` | `clamp(20px, 4vw, 36px)` — горизонтальные отступы |
+| `--layout-section-y` | вертикальные отступы секций |
+| `--layout-sidebar-w` | `280px` — колонка фильтров |
+| `.layout-container` | центрированный контейнер с gutter |
+| `.layout-with-sidebar` | фильтры + контент (категории, города) |
+| `.section-head`, `.section-eyebrow`, `.section-title` | заголовки секций |
+
+Breakpoint для collapse sidebar/grid: **`960px`**. Новые страницы используют CSS-переменные, не хардкод `1200`/`1360px`.
+
 ---
 
 ## 8. Environment variables
 
-| Variable | Назначение |
-| --- | --- |
-| `DATABASE_URL` | PostgreSQL connection string |
-| `SESSION_SECRET` | Session signing (min 32 chars prod) |
-| `APP_ORIGIN` | CSRF origin check |
-| `APP_URL` | Absolute URLs (email, reset links) |
-| `AUTH_DEV_LOG_EMAILS` | Log auth links to console |
+| Variable              | Назначение                          |
+| --------------------- | ----------------------------------- |
+| `DATABASE_URL`        | PostgreSQL connection string        |
+| `SESSION_SECRET`      | Session signing (min 32 chars prod) |
+| `APP_ORIGIN`          | CSRF origin check                   |
+| `APP_URL`             | Absolute URLs (email, reset links)  |
+| `AUTH_DEV_LOG_EMAILS` | Log auth links to console           |
 
 См. `.env.example`. `.env` в `.gitignore`.
 
@@ -276,38 +305,39 @@ npm run format
 
 ## 12. Карта документации
 
-| Файл | Когда обновлять |
-| --- | --- |
-| [README.md](./README.md) | Routes, команды, auth summary |
-| [PRODUCT.md](./PRODUCT.md) | Продукт, таксономия, SEO, UX |
-| [ACCOUNT_MODEL.md](./ACCOUNT_MODEL.md) | Сущности, intent, claim |
-| **TECH_SPEC.md** (этот файл) | Архитектура, стек, PWA/mobile, auth, DB |
-| `AGENTS.md` | Entry point, Lovable constraints |
-| `.cursor/rules/*.mdc` | Cursor agent rules |
-| `.cursor/skills/*/SKILL.md` | Workflows (PWA audit, mobile, docs) |
+| Файл                                   | Когда обновлять                         |
+| -------------------------------------- | --------------------------------------- |
+| [README.md](./README.md)               | Routes, команды, auth summary           |
+| [PRODUCT.md](./PRODUCT.md)             | Продукт, таксономия, SEO, UX            |
+| [ACCOUNT_MODEL.md](./ACCOUNT_MODEL.md) | Сущности, intent, claim                 |
+| **TECH_SPEC.md** (этот файл)           | Архитектура, стек, PWA/mobile, auth, DB |
+| `AGENTS.md`                            | Entry point, Lovable constraints        |
+| `.cursor/rules/*.mdc`                  | Cursor agent rules                      |
+| `.cursor/skills/*/SKILL.md`            | Workflows (PWA audit, mobile, docs)     |
 
 ### Триггеры синхронизации docs
 
-| Изменение в коде | Обновить |
-| --- | --- |
-| Новый/удалён route | `docs/README.md` § routes |
+| Изменение в коде      | Обновить                              |
+| --------------------- | ------------------------------------- |
+| Новый/удалён route    | `docs/README.md` § routes             |
 | Auth / roles / schema | `TECH_SPEC.md` §4, `ACCOUNT_MODEL.md` |
-| Новая env variable | `TECH_SPEC.md` §8, `.env.example` |
-| PWA assets / SW | `TECH_SPEC.md` §6 checklist |
-| Продуктовая логика | `PRODUCT.md` |
-| Cursor rules/hooks | `TECH_SPEC.md` §13 |
+| Новая env variable    | `TECH_SPEC.md` §8, `.env.example`     |
+| PWA assets / SW       | `TECH_SPEC.md` §6 checklist           |
+| Продуктовая логика    | `PRODUCT.md`                          |
+| Cursor rules/hooks    | `TECH_SPEC.md` §13                    |
 
 ---
 
 ## 13. Cursor automation
 
-| Артефакт | Назначение |
-| --- | --- |
-| `.cursor/rules/` | Persistent rules (PWA, mobile, stack) |
-| `.cursor/skills/` | Workflows: feature dev, PWA audit, mobile audit, docs sync |
-| `.cursor/hooks.json` | Session context, post-edit reminders, stop audit |
+| Артефакт                    | Назначение                                                            |
+| --------------------------- | --------------------------------------------------------------------- |
+| `.cursor/rules/`            | Persistent rules (PWA, mobile, stack)                                 |
+| `.cursor/skills/`           | Workflows: feature dev, PWA audit, mobile audit, docs sync            |
+| `.cursor/commands/hooks.md` | Slash-команда `/hooks` — ручной closing checklist (PWA, mobile, docs) |
+| `.cursor/hooks.json`        | Пустой (авто-hooks отключены); legacy-скрипты в `.cursor/hooks/`      |
 
-Hooks запускаются автоматически — см. `.cursor/hooks/README.md`.
+Чеклист запускается вручную: `/hooks` в чате Cursor. См. `.cursor/hooks/README.md`.
 
 ---
 

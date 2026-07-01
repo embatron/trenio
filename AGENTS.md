@@ -49,4 +49,4 @@
 
 ## Hooks
 
-Project hooks in `.cursor/hooks.json` inject PWA/mobile reminders and trigger doc-sync audit on agent stop.
+Автоматические hooks **отключены**. В конце задачи запускай slash-команду **`/hooks`** (`.cursor/commands/hooks.md`) — PWA audit, mobile audit, docs sync.

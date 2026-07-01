@@ -1,22 +1,4 @@
 {
   "version": 1,
-  "hooks": {
-    "sessionStart": [
-      {
-        "command": "node .cursor/hooks/session-start.mjs"
-      }
-    ],
-    "postToolUse": [
-      {
-        "command": "node .cursor/hooks/post-ui-edit.mjs",
-        "matcher": "Write|StrReplace|EditNotebook"
-      }
-    ],
-    "stop": [
-      {
-        "command": "node .cursor/hooks/stop-checklist.mjs",
-        "loop_limit": 1
-      }
-    ]
-  }
+  "hooks": {}
 }

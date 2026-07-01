@@ -1,38 +1,29 @@
 # Trenio.by Cursor Hooks
 
-Hooks автоматизируют проверки PWA, mobile-first и синхронизацию документации.
+Автоматические hooks **отключены** — проверки запускаются вручную через slash-команду **`/hooks`**.
 
-## Конфигурация
+## Ручной чеклист
 
-Файл: `.cursor/hooks.json`
-
-| Hook | Скрипт | Когда |
+| Команда | Файл | Когда |
 | --- | --- | --- |
-| `sessionStart` | `session-start.mjs` | Старт сессии — inject PWA/mobile/docs constraints |
-| `postToolUse` | `post-ui-edit.mjs` | После Write/StrReplace UI файлов (`src/routes`, `src/components`, `styles.css`) |
-| `stop` | `stop-checklist.mjs` | Завершение задачи агента — follow-up checklist (max 1 loop) |
+| `/hooks` | `.cursor/commands/hooks.md` | В конце задачи, когда нужны PWA + mobile + docs sync |
 
-## Что проверяется
+В чате Cursor: набери `/`, выбери **hooks**.
 
-### PWA 100%
+## Скрипты (legacy, не подключены)
 
-Проект обязан оставаться совместимым с installable PWA. Напоминания при каждой правке UI и в финальном checklist.
+Скрипты в `.cursor/hooks/` сохранены как справочник; в `.cursor/hooks.json` hooks пустой:
 
-### Mobile-first
+| Скрипт | Было |
+| --- | --- |
+| `session-start.mjs` | Inject constraints at session start |
+| `post-ui-edit.mjs` | Reminder after UI edits |
+| `stop-checklist.mjs` | Follow-up checklist on agent stop |
 
-Breakpoint 768px, touch targets, responsive layout — напоминание после правок `.tsx`/`.css`.
-
-### Docs sync
-
-При `stop` агент получает follow-up: проверить и обновить `docs/` если менялись routes, auth, schema, env.
+Чтобы снова включить автоматику — добавь нужные entries в `hooks.json` (см. [Cursor hooks docs](https://cursor.com/docs/agent/hooks)).
 
 ## Отладка
 
-1. Cursor → Settings → Hooks — убедиться что hooks загружены
-2. Hooks output channel — логи скриптов
+1. Cursor → Settings → Hooks — убедиться что `hooks.json` загружен
+2. Hooks output channel — логи скриптов (если hooks включены)
 3. После правки `hooks.json` — перезапуск Cursor при необходимости
-
-## Зависимости
-
-- Node.js (>= 22 рекомендуется, как у проекта)
-- Скрипты executable: `chmod +x .cursor/hooks/*.mjs`
