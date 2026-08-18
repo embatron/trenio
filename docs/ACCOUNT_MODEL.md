@@ -46,7 +46,7 @@ TrainerProfile ↔ TrainerBranchLink ↔ ClubBranch
 
 Таблица `users` + `user_roles` — см. [TECH_SPEC.md §4](./TECH_SPEC.md#4-backend-и-база-данных).
 
-- `id`, `email`, `phone`, `password_hash`, `first_name`, `last_name`
+- `id`, `email`, `phone` (после SMS-verify), nullable `password_hash`, `first_name`, `last_name`
 - `status`: `pending_verification` | `active` | `suspended` | `deleted`
 - `last_signup_intent` — onboarding intent после регистрации
 - Сессии: HttpOnly cookie, таблица `sessions`
@@ -121,7 +121,7 @@ Brand
 
 ### Общий auth-flow
 
-Телефон или email → код подтверждения → вход. Длинные формы профиля — после входа.
+Email + имя + intent, **без пароля** → письмо set-password → сессия → `/account` (телефон по SMS). Длинные формы профиля тренера/клуба — после входа, по intent.
 
 ### Intent
 

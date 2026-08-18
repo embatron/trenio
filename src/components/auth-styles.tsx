@@ -74,6 +74,16 @@ const AUTH_CSS = `
 .auth-alert { padding: 12px 14px; border-radius: 12px; background: rgba(var(--primary-rgb), 0.08); border: 1px solid rgba(var(--primary-rgb), 0.2); color: var(--dark); font-size: 14px; line-height: 1.45; }
 .auth-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
 
+.auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 22px; }
+.auth-tab {
+  height: 44px; border-radius: 12px; border: 2px solid rgba(var(--dark-rgb), 0.08);
+  background: #fff; color: var(--muted); font-size: 14px; font-weight: 800; cursor: pointer;
+}
+.auth-tab.is-active { border-color: var(--primary); background: rgba(var(--primary-rgb), 0.05); color: var(--dark); }
+.auth-otp { display: flex; justify-content: center; }
+.auth-otp [data-slot] { min-width: 44px; min-height: 44px; }
+.auth-dev { margin: 0; font-size: 13px; color: var(--muted); text-align: center; word-break: break-all; }
+
 @media (max-width: 600px) {
   .auth-card { padding: 28px 22px; border-radius: 22px; }
   .auth-title { font-size: 26px; }

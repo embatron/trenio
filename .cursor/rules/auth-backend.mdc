@@ -1,10 +1,17 @@
 ---
-description: Auth, database, and server function conventions
-globs: "{src/auth/**,src/lib/auth/**,src/db/**,src/routes/auth.*}"
+description: Login, signup, sessions, anti-enumeration, rate limits, email links
+globs:
+  - src/auth/**
+  - src/lib/auth/**
+  - src/db/**
+  - src/routes/auth.*
+  - docs/AUTH.md
 alwaysApply: false
 ---
 
-# Auth & Database Rules
+# Auth (Trenio.by)
+
+Полный контракт: [docs/AUTH.md](../../docs/AUTH.md). Очередь внедрения: [docs/AUTH_ADOPTION.md](../../docs/AUTH_ADOPTION.md).
 
 ## Paths
 
@@ -16,25 +23,25 @@ alwaysApply: false
 | Server RPC | `src/lib/auth/functions.ts` |
 | Zod schemas | `src/lib/auth/schemas.ts` |
 
-## Server functions
+Mutations only via `createServerFn` + middleware. `beforeLoad` is UX, not the security boundary. Never `localStorage` for session tokens.
 
-```typescript
-// ✅ Mutations and private reads
-export const myFn = createServerFn({ method: "POST" })
-  .validator(zodSchema)
-  .middleware([requireAuthMiddleware])
-  .handler(async ({ data, context }) => { ... });
-```
+## Target flow
 
-## Security
+1. Signup: имя + email (+ intent), **без пароля**.
+2. Письмо `{APP_URL}/auth/set-password?token=` (24 ч) → пароль → кабинет / onboarding.
+3. Email считается подтверждённым после клика по ссылке. Смена email — письмо на **новый** адрес; `users.email` не менять до клика.
+4. Вход: email + пароль **или** подтверждённый мобильный РБ + SMS.
+5. Одна учётка, роли в `user_roles`. Не делать два портала `/member` и `/admin`.
 
-- scrypt passwords; timing-safe login
-- Password reset: same response whether email exists
-- Session rotation on login and password change
-- Never store session tokens in localStorage
+## Non-negotiables
 
-## Roles
+- Ссылки в письмах только из `APP_URL`, не из `Host` / `getRequestUrl().origin`.
+- Rate limit по `X-Real-IP`, не по `X-Forwarded-For[0]`.
+- Одинаковые ответы: логин, forgot-password, занятый email, honeypot signup (успех «проверьте почту»).
+- Не светить `EMAIL_TAKEN` клиенту.
+- Токены: CSPRNG ≥ 32 байта, SHA-256 в БД, одноразовые. Новый reset/email-change отзывает unused того же user.
+- Сброс и смена пароля: `revokeAllUserSessions`, затем новая сессия (таблица `sessions`, не cookie-only version).
+- Пароли: **scrypt**. Honeypot `company_url`. Dev-ссылки только при `AUTH_DEV_LOG_EMAILS` / non-production.
+- Public signup: `user`, `trainer`, `club`. `admin` / `superadmin` — seed/staff.
 
-Public signup: `user`, `trainer`, `club`. Staff: `admin`, `superadmin` via seed only.
-
-Update `docs/TECH_SPEC.md` §4 and `docs/ACCOUNT_MODEL.md` when changing auth model.
+Update `docs/TECH_SPEC.md` §4, `docs/ACCOUNT_MODEL.md`, and `docs/AUTH.md` when the model changes.

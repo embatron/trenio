@@ -21,6 +21,7 @@
 - `docs/TECH_SPEC.md`
 - `docs/PRODUCT.md`
 - `docs/ACCOUNT_MODEL.md`
+- `docs/AUTH.md` (если менялся логин / регистрация)
 
 ## Результат
 

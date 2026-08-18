@@ -12,6 +12,7 @@ const docsToMention = [
   "docs/TECH_SPEC.md",
   "docs/PRODUCT.md",
   "docs/ACCOUNT_MODEL.md",
+  "docs/AUTH.md",
 ].filter((f) => fs.existsSync(path.join(root, f)));
 
 const followup = [

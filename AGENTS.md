@@ -20,14 +20,15 @@
 | 1 | [docs/TECH_SPEC.md](docs/TECH_SPEC.md) — architecture, auth, PWA, mobile-first |
 | 2 | [docs/PRODUCT.md](docs/PRODUCT.md) — product & catalog |
 | 3 | [docs/ACCOUNT_MODEL.md](docs/ACCOUNT_MODEL.md) — domain entities |
-| 4 | [docs/README.md](docs/README.md) — routes & commands |
+| 4 | [docs/AUTH.md](docs/AUTH.md) — login/signup contract |
+| 5 | [docs/README.md](docs/README.md) — routes & commands |
 
 ## Non-negotiable constraints
 
 1. **PWA 100%** — every UI/feature change must stay installable-app compatible (manifest, SW, offline). See `TECH_SPEC.md` §6.
 2. **Mobile-first** — design for `<768px` first; touch targets ≥44px. See `TECH_SPEC.md` §7.
 3. **Routes** — only `src/routes/`, never `src/pages/`.
-4. **Auth boundary** — private data in `createServerFn` + middleware, not route guards alone.
+4. **Auth boundary** — private data in `createServerFn` + middleware, not route guards alone. Follow `docs/AUTH.md` and `.cursor/rules/auth-backend.mdc`.
 5. **No `src/server/auth/`** — canonical auth path is `src/auth/`; server fns in `src/lib/auth/functions.ts`.
 6. **Docs sync** — after structural changes, update relevant `docs/` files (see TECH_SPEC §12).
 
@@ -37,6 +38,7 @@
 - TanStack Start + Router, React 19, Tailwind v4, shadcn/ui
 - PostgreSQL via Drizzle (`npm run db:up`, `db:push`, `db:seed`)
 - Roles: `user`, `trainer`, `club`, `admin`, `superadmin`
+- Auth: [docs/AUTH.md](docs/AUTH.md) · SMS.BY: [docs/sms-by.md](docs/sms-by.md)
 
 ## Cursor skills (project)
 

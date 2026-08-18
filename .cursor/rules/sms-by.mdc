@@ -1,0 +1,28 @@
+---
+description: SMS.BY — транзакционные SMS и OTP; ключ только в server .env
+globs:
+  - docs/sms-by.md
+  - src/lib/sms/**
+alwaysApply: false
+---
+
+# SMS.BY (trenio.by)
+
+Полная инструкция: [docs/sms-by.md](../../docs/sms-by.md). API: [sms.by/api-docs](https://sms.by/api-docs/sms-messages). PHP-референс: [sms-by-code/sms-php](https://github.com/sms-by-code/sms-php) (порт на Node, не PHP).
+
+OTP-вход и подтверждение номера **реализованы** (`requestSmsLogin` / `requestPhoneVerify`). Боевая отправка только при `SMS_BY_ENABLED=true`.
+
+## Env
+
+```env
+SMS_BY_ENABLED=false
+SMS_BY_API_KEY=
+SMS_BY_ALPHANAME_ID=
+```
+
+- `token` в API = `SMS_BY_API_KEY` (не login-token кабинета).
+- База: `https://app.sms.by/api/v1/{command}`.
+- Телефон: `375XXXXXXXXX` без `+`.
+- **Sandbox нет:** тест = реальное SMS на свой номер после баланса.
+
+Не коммитить ключ, не слать тестовые кампании на боевую базу без команды.

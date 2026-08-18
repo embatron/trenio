@@ -5,6 +5,8 @@ import {
   varchar,
   timestamp,
   text,
+  integer,
+  bigint,
   uniqueIndex,
   index,
   primaryKey,
@@ -44,7 +46,7 @@ export const users = pgTable(
     emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
     phone: varchar("phone", { length: 32 }),
     phoneVerifiedAt: timestamp("phone_verified_at", { withTimezone: true }),
-    passwordHash: text("password_hash").notNull(),
+    passwordHash: text("password_hash"),
     firstName: varchar("first_name", { length: 100 }).notNull(),
     lastName: varchar("last_name", { length: 100 }),
     status: userStatusEnum("status").notNull().default("pending_verification"),
@@ -127,6 +129,50 @@ export const emailVerificationTokens = pgTable(
   },
   (table) => [index("email_verification_tokens_user_id_idx").on(table.userId)],
 );
+
+/** Email change: mail the *new* inbox; users.email stays until the link is opened. */
+export const emailChangeTokens = pgTable(
+  "email_change_tokens",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    newEmail: varchar("new_email", { length: 320 }).notNull(),
+    tokenHash: varchar("token_hash", { length: 64 }).notNull().unique(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    usedAt: timestamp("used_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("email_change_tokens_user_id_idx").on(table.userId)],
+);
+
+export const otpPurposeEnum = pgEnum("otp_purpose", ["login", "verify_phone"]);
+
+export const authOtpChallenges = pgTable(
+  "auth_otp_challenges",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    phone: varchar("phone", { length: 32 }).notNull(),
+    purpose: otpPurposeEnum("purpose").notNull(),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
+    codeHash: varchar("code_hash", { length: 64 }).notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    attemptCount: integer("attempt_count").notNull().default(0),
+    consumedAt: timestamp("consumed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("auth_otp_challenges_phone_purpose_idx").on(table.phone, table.purpose),
+    index("auth_otp_challenges_user_id_idx").on(table.userId),
+  ],
+);
+
+export const authRateLimits = pgTable("auth_rate_limits", {
+  key: varchar("key", { length: 191 }).primaryKey(),
+  windowStartedAt: bigint("window_started_at", { mode: "number" }).notNull(),
+  count: integer("count").notNull(),
+});
 
 export const usersRelations = relations(users, ({ many }) => ({
   roles: many(userRoles),

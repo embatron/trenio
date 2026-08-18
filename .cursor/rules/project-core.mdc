@@ -37,3 +37,4 @@ Every implementation must consider:
 - Server functions for mutations; middleware for session
 - Roles: user, trainer, club, admin, superadmin
 - Route `beforeLoad` is UX only — not the security boundary
+- Contract: [docs/AUTH.md](../../docs/AUTH.md) · adoption: [docs/AUTH_ADOPTION.md](../../docs/AUTH_ADOPTION.md) · rule: `auth-backend.mdc`

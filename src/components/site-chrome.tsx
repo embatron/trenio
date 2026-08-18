@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import { CategoryLink } from "@/lib/catalog/category-routes";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
@@ -230,6 +230,7 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
 }
 
 export function SiteHeader({ middleSlot }: { middleSlot?: ReactNode }) {
+  const { user } = useRouteContext({ from: "__root__" });
   const [menuOpen, setMenuOpen] = useState(false);
   const close = () => setMenuOpen(false);
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -256,9 +257,15 @@ export function SiteHeader({ middleSlot }: { middleSlot?: ReactNode }) {
           <div className="site-header__search">{middleSlot}</div>
           <nav className="site-header__nav" aria-label="Основное меню">
             <Link to="/" className="icon-btn icon-btn--help" aria-label="Помощь" title="Помощь">?</Link>
-            <Link to="/auth/login" className="icon-btn" aria-label="Войти" title="Войти">
-              <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
-            </Link>
+            {user ? (
+              <Link to="/account" className="icon-btn" aria-label="Кабинет" title="Кабинет">
+                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </Link>
+            ) : (
+              <Link to="/auth/login" className="icon-btn" aria-label="Войти" title="Войти">
+                <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
+              </Link>
+            )}
             <button
               ref={btnRef}
               type="button"

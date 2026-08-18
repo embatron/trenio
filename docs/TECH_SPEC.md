@@ -100,29 +100,39 @@ Root context: `{ queryClient, user: PublicUser | null }` — сессия чер
 
 | Таблица                     | Назначение                                              |
 | --------------------------- | ------------------------------------------------------- |
-| `users`                     | email, phone, password_hash, status, last_signup_intent |
+| `users`                     | email, phone (после verify), nullable password_hash, status, intent |
 | `user_roles`                | RBAC: user, trainer, club, admin, superadmin            |
 | `sessions`                  | HttpOnly cookie sessions (token hash)                   |
 | `password_reset_tokens`     | Сброс пароля (30 мин)                                   |
-| `email_verification_tokens` | Подтверждение e-mail                                    |
+| `email_verification_tokens` | Ссылка set-password (24 ч)                              |
+| `email_change_tokens`       | Смена email: письмо на новый адрес                      |
+| `auth_otp_challenges`       | SMS OTP (login / verify_phone)                          |
+| `auth_rate_limits`          | Лимиты по X-Real-IP                                     |
 
 ### 4.3 Server functions
 
 Все мутации и приватные данные — через `createServerFn` в `src/lib/auth/functions.ts`:
 
 - `getSessionFn`, `loginFn`, `signupFn`, `logoutFn`
-- `forgotPasswordFn`, `resetPasswordFn`, `verifyEmailFn`
+- `forgotPasswordFn`, `resetPasswordFn`, `setPasswordFn`, `verifyEmailFn`
+- `requestSmsLoginFn`, `confirmSmsLoginFn`, `confirmEmailChangeFn`
+- `requestPhoneVerifyFn`, `confirmPhoneVerifyFn`
 
 **Правило:** auth проверяется в middleware/handler server fn, не только в route `beforeLoad`.
 
 ### 4.4 Безопасность auth
 
-- Пароли: **scrypt** (Node.js crypto), min 8 + цифра + заглавная
-- Timing-safe login (dummy hash при несуществующем email)
-- Session rotation при login / reset password
-- Cookie: HttpOnly, SameSite=Lax, Secure в production
-- Password reset: одинаковый ответ (anti-enumeration)
-- Dev: `AUTH_DEV_LOG_EMAILS=true` — ссылки в console
+Целевой контракт: [AUTH.md](./AUTH.md). SMS: [sms-by.md](./sms-by.md). Правило агента: `.cursor/rules/auth-backend.mdc`.
+
+- Пароли: **scrypt** (Node.js crypto); dummy hash при несуществующем email
+- Ссылки в письмах только из `APP_URL`, не из Host запроса
+- Cookie: HttpOnly, SameSite=Lax, Secure в production; сессии в таблице `sessions`
+- Login / reset / set-password: `revokeAllUserSessions`, затем новая сессия
+- Password reset: одинаковый ответ, есть email или нет; новый токен отзывает unused
+- Signup без пароля, письмо set-password, занятый email не светить
+- Rate limit по X-Real-IP; honeypot `company_url`
+- SMS OTP: generic-ответ даже если `SMS_BY_ENABLED=false`
+- Dev: `AUTH_DEV_LOG_EMAILS=true` — ссылки в console, не в production API
 
 ### 4.5 Роли
 
@@ -263,6 +273,9 @@ Breakpoint для collapse sidebar/grid: **`960px`**. Новые страниц�
 | `APP_ORIGIN`          | CSRF origin check                   |
 | `APP_URL`             | Absolute URLs (email, reset links)  |
 | `AUTH_DEV_LOG_EMAILS` | Log auth links to console           |
+| `SMS_BY_ENABLED`      | Live SMS send (`true` only when wired) |
+| `SMS_BY_API_KEY`      | SMS.BY API token (server only)      |
+| `SMS_BY_ALPHANAME_ID` | Approved alphaname id               |
 
 См. `.env.example`. `.env` в `.gitignore`.
 
@@ -310,6 +323,9 @@ npm run format
 | [README.md](./README.md)               | Routes, команды, auth summary           |
 | [PRODUCT.md](./PRODUCT.md)             | Продукт, таксономия, SEO, UX            |
 | [ACCOUNT_MODEL.md](./ACCOUNT_MODEL.md) | Сущности, intent, claim                 |
+| [AUTH.md](./AUTH.md)                   | Контракт логина и регистрации            |
+| [AUTH_ADOPTION.md](./AUTH_ADOPTION.md) | Статус внедрения auth                    |
+| [sms-by.md](./sms-by.md)               | SMS.BY OTP и кампании                    |
 | **TECH_SPEC.md** (этот файл)           | Архитектура, стек, PWA/mobile, auth, DB |
 | `AGENTS.md`                            | Entry point, Lovable constraints        |
 | `.cursor/rules/*.mdc`                  | Cursor agent rules                      |
@@ -320,7 +336,8 @@ npm run format
 | Изменение в коде      | Обновить                              |
 | --------------------- | ------------------------------------- |
 | Новый/удалён route    | `docs/README.md` § routes             |
-| Auth / roles / schema | `TECH_SPEC.md` §4, `ACCOUNT_MODEL.md` |
+| Auth / roles / schema | `TECH_SPEC.md` §4, `ACCOUNT_MODEL.md`, `AUTH.md` |
+| SMS.BY                | `sms-by.md`                           |
 | Новая env variable    | `TECH_SPEC.md` §8, `.env.example`     |
 | PWA assets / SW       | `TECH_SPEC.md` §6 checklist           |
 | Продуктовая логика    | `PRODUCT.md`                          |
@@ -332,7 +349,7 @@ npm run format
 
 | Артефакт                    | Назначение                                                            |
 | --------------------------- | --------------------------------------------------------------------- |
-| `.cursor/rules/`            | Persistent rules (PWA, mobile, stack)                                 |
+| `.cursor/rules/`            | Persistent rules (PWA, mobile, stack, **auth**)               |
 | `.cursor/skills/`           | Workflows: feature dev, PWA audit, mobile audit, docs sync            |
 | `.cursor/commands/hooks.md` | Slash-команда `/hooks` — ручной closing checklist (PWA, mobile, docs) |
 | `.cursor/hooks.json`        | Пустой (авто-hooks отключены); legacy-скрипты в `.cursor/hooks/`      |

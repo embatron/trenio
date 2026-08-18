@@ -12,7 +12,8 @@ After tasks that change behavior or structure, update docs **in the same PR/sess
 | Change | Update |
 | --- | --- |
 | New/removed route | `docs/README.md` routes table |
-| Auth, roles, DB schema | `docs/TECH_SPEC.md` §4, `docs/ACCOUNT_MODEL.md` |
+| Auth, roles, DB schema | `docs/TECH_SPEC.md` §4, `docs/ACCOUNT_MODEL.md`, `docs/AUTH.md` |
+| SMS.BY | `docs/sms-by.md` |
 | Env variable | `.env.example`, `docs/TECH_SPEC.md` §8 |
 | Product/SEO/taxonomy | `docs/PRODUCT.md` |
 | PWA/SW/manifest | `docs/TECH_SPEC.md` §6 checklist status |

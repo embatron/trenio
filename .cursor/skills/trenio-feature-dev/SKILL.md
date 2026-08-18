@@ -11,8 +11,9 @@ description: >-
 ## Before coding
 
 1. Read `docs/TECH_SPEC.md` and relevant product/account docs
-2. Confirm scope: route-only UI vs server fn + DB
-3. Plan mobile layout first (320px), then desktop
+2. Auth flows: follow `docs/AUTH.md` and `.cursor/rules/auth-backend.mdc` (adoption: `docs/AUTH_ADOPTION.md`)
+3. Confirm scope: route-only UI vs server fn + DB
+4. Plan mobile layout first (320px), then desktop
 
 ## Route workflow
 

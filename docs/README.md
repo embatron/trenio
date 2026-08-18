@@ -11,8 +11,11 @@
 | [TECH_SPEC.md](./TECH_SPEC.md)         | **Техническая спецификация** — архитектура, auth, DB, PWA, mobile-first        |
 | [PRODUCT.md](./PRODUCT.md)             | Продукт, маршруты, таксономия, SEO, UX-профили, empty states, админка          |
 | [ACCOUNT_MODEL.md](./ACCOUNT_MODEL.md) | Доменная модель: Account, TrainerProfile, ClubBranch, intent-onboarding, claim |
+| [AUTH.md](./AUTH.md)                   | Контракт логина и регистрации                                                  |
+| [AUTH_ADOPTION.md](./AUTH_ADOPTION.md) | Статус внедрения auth                                                          |
+| [sms-by.md](./sms-by.md)               | SMS.BY: OTP и транзакционные SMS                                               |
 
-**Разделение:** TECH_SPEC — _как устроен код_; PRODUCT — _что видит пользователь_; ACCOUNT_MODEL — _сущности и onboarding_.
+**Разделение:** TECH_SPEC — _как устроен код_; PRODUCT — _что видит пользователь_; ACCOUNT_MODEL — _сущности и onboarding_; AUTH — _контракт логина и регистрации_.
 
 Cursor automation: `.cursor/rules/`, `.cursor/skills/`, slash-команда `/hooks` (см. TECH_SPEC §13).
 
@@ -50,7 +53,7 @@ npm run lint
 
 Публичная регистрация: `user`, `trainer`, `club`. Роли `admin` / `superadmin` — только через seed или назначение staff.
 
-Маршруты auth: `/auth/login`, `/auth/signup`, `/auth/forgot-password`, `/auth/reset-password`, `/auth/verify-email`.
+Маршруты auth: `/auth/login`, `/auth/signup`, `/auth/forgot-password`, `/auth/reset-password`, `/auth/set-password`, `/auth/confirm-email`, `/account`. `/auth/verify-email` редиректит на set-password. SMS: [sms-by.md](./sms-by.md).
 
 Подробнее о доменной модели — [ACCOUNT_MODEL.md](./ACCOUNT_MODEL.md).
 
@@ -95,11 +98,14 @@ AGENTS.md             # Entry point для агентов
 | `/clubs`                | `clubs.index.tsx`          | Каталог клубов                                                |
 | `/clubs/$slug`          | `clubs.$slug.tsx`          | Профиль клуба / филиала                                       |
 | `/blog/$slug`           | `blog.$slug.tsx`           | Статья блога                                                  |
-| `/auth/login`           | `auth.login.tsx`           | Вход                                                          |
-| `/auth/signup`          | `auth.signup.tsx`          | Регистрация                                                   |
-| `/auth/forgot-password` | `auth.forgot-password.tsx` | Запрос сброса пароля                                          |
-| `/auth/reset-password`  | `auth.reset-password.tsx`  | Новый пароль по токену                                        |
-| `/auth/verify-email`    | `auth.verify-email.tsx`    | Подтверждение e-mail                                          |
+| `/auth/login`           | `auth.login.tsx`           | Вход (e-mail или SMS)                                     |
+| `/auth/signup`          | `auth.signup.tsx`          | Регистрация без пароля                                    |
+| `/auth/forgot-password` | `auth.forgot-password.tsx` | Запрос сброса пароля                                      |
+| `/auth/reset-password`  | `auth.reset-password.tsx`  | Новый пароль по токену                                    |
+| `/auth/set-password`    | `auth.set-password.tsx`    | Пароль по ссылке из письма регистрации                    |
+| `/auth/confirm-email`   | `auth.confirm-email.tsx`   | Подтверждение нового e-mail                               |
+| `/auth/verify-email`    | `auth.verify-email.tsx`    | Редирект на set-password                                  |
+| `/account`              | `account.tsx`              | Имя, смена e-mail, подтверждение телефона                 |
 | `/trainer-admin`        | `trainer-admin.tsx`        | Кабинет тренера (прототип)                                    |
 | `/privacy`              | `privacy.tsx`              | Политика конфиденциальности                                   |
 

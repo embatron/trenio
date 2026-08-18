@@ -1,0 +1,64 @@
+# Auth — контракт Trenio.by
+
+Реализация: `src/auth/`, RPC `src/lib/auth/functions.ts`, маршруты `/auth/*` и `/account`. SMS: [sms-by.md](./sms-by.md).
+
+## 1. Модель
+
+Одна учётка (`users` + `user_roles`). Идентификаторы: **email** и **подтверждённый мобильный РБ**. Публичный ник в URL нет.
+
+Роли: `user`, `trainer`, `club` (публичная регистрация + `last_signup_intent`); `admin`, `superadmin` только seed/staff.
+
+Сессии: таблица `sessions` (хеш токена), cookie HttpOnly / Secure в production / SameSite=lax. На логин, сброс и установку пароля — отозвать все сессии и выдать новую.
+
+Письма: абсолютные URL только из **`APP_URL`**. Пока нет почтового провайдера — ссылки в console при `AUTH_DEV_LOG_EMAILS` / non-production.
+
+Pending-регистрация: строка `users` со статусом `pending_verification` и `password_hash = null`. Вход до set-password невозможен.
+
+## 2. Регистрация (email verified через ссылку)
+
+1. Форма: имя, email, intent (роль). **Пароля нет.**
+2. Письмо `{APP_URL}/auth/set-password?token=…` (24 ч). Старые unused-токены того же user отзываются.
+3. Пароль → `email_verified_at`, статус `active`, сессия, `/account` (телефон).
+4. Повтор той же почты до завершения: данные обновляются, токен заменяется. Занятый email активного аккаунта — тот же успех «проверьте почту», без `EMAIL_TAKEN`.
+5. Старые ссылки `/auth/verify-email` редиректят на set-password.
+
+Смена email в `/account` не пишет новый адрес сразу. Письмо на **новый** ящик `/auth/confirm-email?token=`. Старый email остаётся до клика.
+
+## 3. Вход
+
+- E-mail + пароль.
+- Подтверждённый мобильный РБ + SMS (6 цифр, 10 мин, повтор 60 с). Поле сразу с `+375`.
+
+## 4. Анти-перечисление и спам
+
+| Сценарий | Ответ клиенту |
+|----------|----------------|
+| Неверный email/пароль, honeypot логина | Одна фраза |
+| Forgot-password, email есть или нет | Одна фраза |
+| Signup, email занят; honeypot signup | Успех «мы отправили письмо» |
+| SMS-запрос, номер есть или нет, SMS выключен | Одна generic-фраза |
+
+Honeypot: скрытое поле `company_url`. Лимиты по **X-Real-IP**. Не брать первый hop `X-Forwarded-For`.
+
+## 5. Токены и пароль
+
+- Секрет ссылки: ≥ 32 байта CSPRNG, в БД SHA-256, одноразовый.
+- Reset: 30 мин. Setup / confirm-email: 24 ч.
+- Новый reset или email-change помечает старые unused того же user как used.
+- Пароли: **scrypt**. Минимум 8 символов, цифра и заглавная буква.
+- OTP: HMAC + `timingSafeEqual`, 6 цифр, 10 мин, 5 попыток, повтор 60 с. Телефон в `users` только после verify.
+
+Dev-ссылки и dev-код OTP — только non-production, никогда в production-ответе API.
+
+## 6. Файлы
+
+| Путь | Роль |
+|------|------|
+| `src/auth/service.ts` | Сценарии |
+| `src/auth/session.ts` | Cookie |
+| `src/auth/otp.ts` | OTP |
+| `src/auth/rate-limit.ts` | Лимиты |
+| `src/lib/auth/functions.ts` | Server RPC |
+| `src/lib/sms/` | SMS.BY |
+| `src/db/schema/` | Drizzle |
+| `.cursor/rules/auth-backend.mdc` | Правило агента |

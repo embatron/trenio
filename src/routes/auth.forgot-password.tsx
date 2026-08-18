@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { AuthStyles } from "@/components/auth-styles";
+import { HoneypotField, honeypotFromForm } from "@/components/auth/honeypot-field";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { forgotPasswordFn } from "@/lib/auth/functions";
@@ -46,9 +47,13 @@ function ForgotPasswordPage() {
                 className="auth-form"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  void run(() => forgotPassword({ data: { email } }), () => setSent(true));
+                  void run(
+                    () => forgotPassword({ data: { email, company_url: honeypotFromForm(e.currentTarget) } }),
+                    () => setSent(true),
+                  );
                 }}
               >
+                <HoneypotField />
                 <label className="auth-field">
                   <span className="auth-field__label">E-mail</span>
                   <input
