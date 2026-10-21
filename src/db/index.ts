@@ -11,22 +11,33 @@ function getDatabaseUrl() {
   return url;
 }
 
-let client: ReturnType<typeof postgres> | null = null;
-let db: ReturnType<typeof drizzle<typeof schema>> | null = null;
+type PgClient = ReturnType<typeof postgres>;
+type AppDb = ReturnType<typeof drizzle<typeof schema>>;
+
+// Vite re-evaluates this module on reload. A module-level pool would leak
+// connections until Postgres refuses new clients.
+const globalForDb = globalThis as typeof globalThis & {
+  __trenioPg?: PgClient;
+  __trenioDb?: AppDb;
+};
 
 export function getDb() {
-  if (!db) {
-    client = postgres(getDatabaseUrl(), { max: 10 });
-    db = drizzle(client, { schema });
+  if (!globalForDb.__trenioDb) {
+    const client = postgres(getDatabaseUrl(), {
+      max: 10,
+      idle_timeout: 20,
+    });
+    globalForDb.__trenioPg = client;
+    globalForDb.__trenioDb = drizzle(client, { schema });
   }
-  return db;
+  return globalForDb.__trenioDb;
 }
 
 export async function closeDb() {
-  if (client) {
-    await client.end();
-    client = null;
-    db = null;
+  if (globalForDb.__trenioPg) {
+    await globalForDb.__trenioPg.end({ timeout: 5 });
+    globalForDb.__trenioPg = undefined;
+    globalForDb.__trenioDb = undefined;
   }
 }
 

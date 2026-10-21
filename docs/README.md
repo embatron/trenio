@@ -11,13 +11,10 @@
 | [TECH_SPEC.md](./TECH_SPEC.md)         | **Техническая спецификация** — архитектура, auth, DB, PWA, mobile-first        |
 | [PRODUCT.md](./PRODUCT.md)             | Продукт, маршруты, таксономия, SEO, UX-профили, empty states, админка          |
 | [ACCOUNT_MODEL.md](./ACCOUNT_MODEL.md) | Доменная модель: Account, TrainerProfile, ClubBranch, intent-onboarding, claim |
-| [AUTH.md](./AUTH.md)                   | Контракт логина и регистрации                                                  |
-| [AUTH_ADOPTION.md](./AUTH_ADOPTION.md) | Статус внедрения auth                                                          |
-| [sms-by.md](./sms-by.md)               | SMS.BY: OTP и транзакционные SMS                                               |
 
-**Разделение:** TECH_SPEC — _как устроен код_; PRODUCT — _что видит пользователь_; ACCOUNT_MODEL — _сущности и onboarding_; AUTH — _контракт логина и регистрации_.
+**Разделение:** TECH_SPEC — _как устроен код_; PRODUCT — _что видит пользователь_; ACCOUNT_MODEL — _сущности и onboarding_.
 
-Cursor automation: `.cursor/rules/`, `.cursor/skills/`, slash-команда `/hooks` (см. TECH_SPEC §13).
+Cursor automation: `.cursor/rules/`, `.cursor/skills/`, slash-команды `/hooks` и `/import-instagram-trainers` (см. TECH_SPEC §13).
 
 ## Стек и команды
 
@@ -35,11 +32,14 @@ cp .env.example .env
 npm run db:push     # применить схему
 npm run db:seed     # admin@trenio.by / super@trenio.by
 npm run settlements:import  # public/data/belarus-settlements.json (GeoNames BY)
-npm run dev         # http://localhost:8080
+npm run dev          # http://trenio.local (Apache проксирует на порт 8080)
+npm run geoip:update # база GeoLite2 для города в фильтре категории
 npm run build
 npm run preview
 npm run lint
 ```
+
+Локальный адрес — `http://trenio.local`. В `/etc/hosts` строка `127.0.0.9 trenio.local`. Apache (`trenio.local.conf`) проксирует этот хост на Vite `127.0.0.1:8080`, включая WebSocket для HMR.
 
 ## Auth и роли
 
@@ -53,7 +53,7 @@ npm run lint
 
 Публичная регистрация: `user`, `trainer`, `club`. Роли `admin` / `superadmin` — только через seed или назначение staff.
 
-Маршруты auth: `/auth/login`, `/auth/signup`, `/auth/forgot-password`, `/auth/reset-password`, `/auth/set-password`, `/auth/confirm-email`, `/account`. `/auth/verify-email` редиректит на set-password. SMS: [sms-by.md](./sms-by.md).
+Маршруты auth: `/auth/login` (e-mail, SMS, Telegram), `/auth/signup`, `/auth/forgot-password` (e-mail или SMS), `/auth/reset-password`, `/auth/verify-email`.
 
 Подробнее о доменной модели — [ACCOUNT_MODEL.md](./ACCOUNT_MODEL.md).
 
@@ -95,18 +95,28 @@ AGENTS.md             # Entry point для агентов
 | `/category/*`                       | `category.*.tsx`                     | Редирект на `/categories/*` (legacy)                          |
 | `/city/$slug`           | `city.$slug.tsx`           | Спорт в городе                                                |
 | `/trainers/$slug`       | `trainers.$slug.tsx`       | Профиль тренера                                               |
+| `/favorites`            | `favorites.tsx`            | Редирект на `/account/favorites`                              |
+| `/account`              | `account.tsx`              | Оболочка кабинета. `/account` открывает отзывы                |
+| `/account/reviews`      | `account.reviews.tsx`      | Свои отзывы и статус                                          |
+| `/account/bookings`     | `account.bookings.tsx`     | Записи на тренировки, раздел в разработке                     |
+| `/account/favorites`    | `account.favorites.tsx`    | Избранные тренеры карточками. Сердечко в шапке ведёт сюда     |
+| `/account/settings`     | `account.settings.tsx`     | Имя и фамилия одним полем, аватар, пароль. Почта и телефон закрыты, пока не нажато «Редактировать»; подтверждение кодом. Сообщения в окне |
 | `/clubs`                | `clubs.index.tsx`          | Каталог клубов                                                |
 | `/clubs/$slug`          | `clubs.$slug.tsx`          | Профиль клуба / филиала                                       |
 | `/blog/$slug`           | `blog.$slug.tsx`           | Статья блога                                                  |
-| `/auth/login`           | `auth.login.tsx`           | Вход (e-mail или SMS)                                     |
-| `/auth/signup`          | `auth.signup.tsx`          | Регистрация без пароля                                    |
-| `/auth/forgot-password` | `auth.forgot-password.tsx` | Запрос сброса пароля                                      |
-| `/auth/reset-password`  | `auth.reset-password.tsx`  | Новый пароль по токену                                    |
-| `/auth/set-password`    | `auth.set-password.tsx`    | Пароль по ссылке из письма регистрации                    |
-| `/auth/confirm-email`   | `auth.confirm-email.tsx`   | Подтверждение нового e-mail                               |
-| `/auth/verify-email`    | `auth.verify-email.tsx`    | Редирект на set-password                                  |
-| `/account`              | `account.tsx`              | Имя, смена e-mail, подтверждение телефона                 |
-| `/trainer-admin`        | `trainer-admin.tsx`        | Кабинет тренера (прототип)                                    |
+| `/auth/login`           | `auth.login.tsx`           | Вход: e-mail, SMS, Telegram                                   |
+| `/auth/signup`          | `auth.signup.tsx`          | Регистрация                                                   |
+| `/auth/forgot-password` | `auth.forgot-password.tsx` | Сброс пароля по e-mail или SMS                                |
+| `/auth/reset-password`  | `auth.reset-password.tsx`  | Новый пароль по токену                                        |
+| `/auth/verify-email`    | `auth.verify-email.tsx`    | Подтверждение e-mail                                          |
+| `/admin`                | `admin.tsx`, `admin.index.tsx` | Оболочка кабинета администратора и обзор |
+| `/admin/trainers`       | `admin.trainers.index.tsx` | Таблица тренеров: аватар, имя ведёт в карточку, фильтр и сортировка. «Не привязан» — у карточки нет пользователя |
+| `/admin/trainers/$slug` | `admin.trainers.$slug.tsx` | Карточка тренера: поля, до 9 фото, город Беларуси, входы, логи и данные |
+| `/admin/reviews`        | `admin.reviews.tsx`        | Модерация отзывов |
+| `/admin/accounts`       | `admin.accounts.tsx`       | Аккаунты |
+| `/admin/finance`        | `admin.finance.tsx`        | Бухгалтерия, раздел в разработке |
+| `/admin/settings`       | `admin.settings.tsx`       | Параметры аккаунта администратора |
+| `/trainer-admin`        | `trainer-admin.tsx`        | Кабинет тренера. Также открыт клубу и сотрудникам             |
 | `/privacy`              | `privacy.tsx`              | Политика конфиденциальности                                   |
 
 Полная целевая карта URL (включая backend и SEO-страницы каталога) — в [PRODUCT.md §3](./PRODUCT.md#3-маршруты-и-страницы).

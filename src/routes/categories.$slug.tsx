@@ -1,24 +1,51 @@
 import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CategoryLink } from "@/lib/catalog/category-routes";
+import { canonicalCategoryPath } from "@/lib/catalog/slug-policy";
 import {
   getSportTaxonomyChild,
   getSportTaxonomyChildInCategory,
   getSportTaxonomyParent,
-  getTopLevelSportCategory,
   getParentCategoryFeaturedImage,
+  getTopLevelSportCategory,
+  categorySearchDescription,
   type CategoryRouteRef,
 } from "@/lib/catalog/sport-taxonomy";
+import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
+import { trainersForCategory, type PublishedTrainer } from "@/lib/catalog/published-trainers";
+import { compareByPopularity, compareByRating, compareByReviews, ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
+import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
+import { FavoriteButton } from "@/components/favorite-button";
+import { TrainerRating } from "@/components/trainer-rating";
+import { pluralRu } from "@/lib/ru-plural";
+import { toggleFilterValue } from "@/lib/catalog/belarus-settlements";
+import { BELARUS_QUICK_CITIES, filterBelarusCities } from "@/lib/catalog/city-taxonomy";
 import {
-  BELARUS_QUICK_CITIES,
-  filterBelarusSettlements,
-  loadBelarusSettlements,
-  toggleFilterValue,
-} from "@/lib/catalog/belarus-settlements";
+  emptyCatalogPlace,
+  resolveVisitorPlaceFn,
+  writeVisitorPlace,
+  type CatalogPlace,
+  type VisitorPlace,
+} from "@/lib/catalog/visitor-place";
+import { catalogFilterCities, resolveSearchCity, readVisitorPlaceCookie } from "@/lib/catalog/search-city";
 
 export const Route = createFileRoute("/categories/$slug")({
   beforeLoad: ({ params }) => {
+    const canonical = canonicalCategoryPath(params.slug);
+    if (canonical?.childSlug) {
+      throw redirect({
+        to: "/categories/$parentSlug/$childSlug",
+        params: { parentSlug: canonical.parentSlug, childSlug: canonical.childSlug },
+      });
+    }
+    if (canonical) {
+      throw redirect({
+        to: "/categories/$slug",
+        params: { slug: canonical.parentSlug },
+      });
+    }
+
     const child = getSportTaxonomyChild(params.slug);
     if (child && !getTopLevelSportCategory(params.slug)) {
       throw redirect({
@@ -29,8 +56,13 @@ export const Route = createFileRoute("/categories/$slug")({
   },
   head: ({ params }) => {
     const c = resolveParentCategory(params.slug);
-    const title = `Тренеры — ${c.title} в Беларуси | trenio.by`;
-    const desc = `${c.title}: ${c.lead} Подбор по городу, цене, формату и опыту.`;
+    const keyword = categoryKeyword(c);
+    const title = categoryPageTitle(keyword);
+    const desc = categorySearchDescription(
+      title.replace(" | trenio.by", ""),
+      categoryHeroLead(keyword, categoryTopicLabels(c)),
+      getTopLevelSportCategory(params.slug)?.aliases,
+    );
     return {
       meta: [
         { title },
@@ -40,6 +72,13 @@ export const Route = createFileRoute("/categories/$slug")({
       ],
     };
   },
+  loader: async () => {
+    const [ratings, place] = await Promise.all([
+      listTrainerRatingSummariesFn(),
+      resolveVisitorPlaceFn(),
+    ]);
+    return { ratings, place };
+  },
   component: CategoryPage,
 });
 
@@ -47,7 +86,6 @@ type Category = {
   slug: string;
   title: string;
   titleGenitive: string;
-  eyebrow: string;
   lead: string;
   subSports: string[];
   related: (CategoryRouteRef & { label: string })[];
@@ -61,9 +99,9 @@ const RELATED_DEFAULT: Category["related"] = [
   { parentSlug: "edinoborstva", childSlug: "boks", label: "Бокс" },
   { parentSlug: "edinoborstva", childSlug: "kikboksing", label: "Кикбоксинг" },
   { parentSlug: "edinoborstva", childSlug: "mma", label: "MMA" },
-  { parentSlug: "fitnes-i-trenirovki-v-zale", label: "Фитнес и зал" },
-  { parentSlug: "yoga-pilates-i-rastyazhka", childSlug: "yoga", label: "Йога" },
-  { parentSlug: "plavanie-i-vodnye-trenirovki", childSlug: "plavanie", label: "Плавание" },
+  { parentSlug: "fitnes", label: "Фитнес" },
+  { parentSlug: "yoga", childSlug: "yoga", label: "Йога" },
+  { parentSlug: "plavanie", childSlug: "plavanie", label: "Плавание" },
 ];
 
 const CATEGORIES: Record<string, Category> = {
@@ -71,7 +109,6 @@ const CATEGORIES: Record<string, Category> = {
     slug: "boks",
     title: "Бокс",
     titleGenitive: "бокса",
-    eyebrow: "Единоборства · Бокс",
     lead: "Найдите тренера по боксу — от первого занятия до подготовки к соревнованиям.",
     subSports: [
       "Классический бокс",
@@ -85,8 +122,8 @@ const CATEGORIES: Record<string, Category> = {
       { parentSlug: "edinoborstva", childSlug: "kikboksing", label: "Кикбоксинг" },
       { parentSlug: "edinoborstva", childSlug: "mma", label: "MMA" },
       { parentSlug: "edinoborstva", label: "Единоборства" },
-      { parentSlug: "ofp-i-sportivnaya-podgotovka", childSlug: "ofp", label: "ОФП" },
-      { parentSlug: "fitnes-i-trenirovki-v-zale", label: "Фитнес и зал" },
+      { parentSlug: "ofp", label: "ОФП" },
+      { parentSlug: "fitnes", label: "Фитнес" },
       { parentSlug: "edinoborstva", childSlug: "samooborona", label: "Самооборона" },
     ],
     about: [
@@ -121,13 +158,12 @@ const CATEGORIES: Record<string, Category> = {
         a: "В среднем 35–55 BYN за персональное и 15–25 BYN за групповое. В пакете из 10 занятий цена ниже.",
       },
     ],
-    stats: { trainers: 48, clubs: 14, avgPrice: 42, avgRating: 4.8 },
+    stats: { trainers: 0, clubs: 0, avgPrice: 0, avgRating: 0 },
   },
   edinoborstva: {
     slug: "edinoborstva",
     title: "Единоборства",
     titleGenitive: "единоборств",
-    eyebrow: "Спорт · Единоборства",
     lead: "Тренеры по боксу, кикбоксингу, MMA, тайскому боксу и борьбе — для взрослых и детей.",
     subSports: [
       "Бокс",
@@ -160,13 +196,12 @@ const CATEGORIES: Record<string, Category> = {
         a: "На уровне тренировок — нет. Контактные спарринги тренер подключает постепенно и только в защитной экипировке.",
       },
     ],
-    stats: { trainers: 120, clubs: 32, avgPrice: 40, avgRating: 4.8 },
+    stats: { trainers: 0, clubs: 0, avgPrice: 0, avgRating: 0 },
   },
   yoga: {
     slug: "yoga",
     title: "Йога",
     titleGenitive: "йоги",
-    eyebrow: "Здоровье · Йога",
     lead: "Тренеры по йоге, пилатесу и стретчингу — для разных уровней подготовки.",
     subSports: [
       "Хатха-йога",
@@ -177,11 +212,11 @@ const CATEGORIES: Record<string, Category> = {
       "Йога-терапия",
     ],
     related: [
-      { parentSlug: "yoga-pilates-i-rastyazhka", childSlug: "pilates", label: "Пилатес" },
-      { parentSlug: "fitnes-i-trenirovki-v-zale", label: "Фитнес и зал" },
-      { parentSlug: "reabilitaciya-i-vosstanovlenie", childSlug: "lfk", label: "ЛФК" },
-      { parentSlug: "tancy-i-horeografiya", label: "Танцы" },
-      { parentSlug: "plavanie-i-vodnye-trenirovki", childSlug: "plavanie", label: "Плавание" },
+      { parentSlug: "yoga", childSlug: "pilates", label: "Пилатес" },
+      { parentSlug: "fitnes", label: "Фитнес" },
+      { parentSlug: "reabilitaciya", childSlug: "lfk", label: "ЛФК" },
+      { parentSlug: "tancy", label: "Танцы" },
+      { parentSlug: "plavanie", childSlug: "plavanie", label: "Плавание" },
     ],
     about: [
       {
@@ -195,13 +230,12 @@ const CATEGORIES: Record<string, Category> = {
         a: "Нет. Большинство учеников приходят без подготовки — это нормально.",
       },
     ],
-    stats: { trainers: 36, clubs: 9, avgPrice: 38, avgRating: 4.9 },
+    stats: { trainers: 0, clubs: 0, avgPrice: 0, avgRating: 0 },
   },
   fitnes: {
     slug: "fitnes",
     title: "Фитнес",
     titleGenitive: "фитнеса",
-    eyebrow: "Зал · Фитнес",
     lead: "Персональные тренеры по фитнесу, силовому и функциональному тренингу.",
     subSports: [
       "Похудение",
@@ -224,20 +258,19 @@ const CATEGORIES: Record<string, Category> = {
         a: "Обычно 2–3 раза. Этого достаточно для устойчивого прогресса при адекватной нагрузке.",
       },
     ],
-    stats: { trainers: 72, clubs: 21, avgPrice: 45, avgRating: 4.8 },
+    stats: { trainers: 0, clubs: 0, avgPrice: 0, avgRating: 0 },
   },
   kerling: {
     slug: "kerling",
     title: "Кёрлинг",
     titleGenitive: "кёрлингу",
-    eyebrow: "Новое направление · Зимние виды",
     lead: "Пока ни одного тренера на платформе. Будьте первым — или подпишитесь и мы напишем, когда появятся.",
     subSports: ["Для начинающих", "Команды", "Дети", "Соревнования"],
     related: [
-      { parentSlug: "zimnie-vidy-sporta", childSlug: "hokkej", label: "Хоккей" },
-      { parentSlug: "zimnie-vidy-sporta", childSlug: "figurnoe-katanie", label: "Фигурное катание" },
-      { parentSlug: "zimnie-vidy-sporta", childSlug: "snoubord", label: "Сноуборд" },
-      { parentSlug: "fitnes-i-trenirovki-v-zale", label: "Фитнес и зал" },
+      { parentSlug: "zima", childSlug: "hokkej", label: "Хоккей" },
+      { parentSlug: "zima", childSlug: "figurnoe-katanie", label: "Фигурное катание" },
+      { parentSlug: "zima", childSlug: "snoubord", label: "Сноуборд" },
+      { parentSlug: "fitnes", label: "Фитнес" },
     ],
     about: [
       {
@@ -258,6 +291,44 @@ const CATEGORIES: Record<string, Category> = {
 
 function resolveParentCategory(slug: string): Category {
   return CATEGORIES[slug] ?? fallbackCategory(slug);
+}
+
+/** Dative phrase after «по»: «командным играм», «футболу». */
+export function categoryKeyword(category: Pick<Category, "slug" | "titleGenitive">, parentSlug?: string) {
+  if (parentSlug) {
+    return getSportTaxonomyChildInCategory(parentSlug, category.slug)?.titleGenitive ?? category.titleGenitive;
+  }
+  return getTopLevelSportCategory(category.slug)?.titleGenitive ?? category.titleGenitive;
+}
+
+export function categoryPageTitle(keyword: string) {
+  return `Найти тренера по ${keyword} | trenio.by`;
+}
+
+export function categoryTopicLabels(category: Pick<Category, "slug" | "subSports">, parentSlug?: string) {
+  if (!parentSlug) {
+    const children = getTopLevelSportCategory(category.slug)?.children ?? [];
+    if (children.length) return children.map((child) => child.label);
+  }
+  return category.subSports;
+}
+
+function topicInSentence(item: string) {
+  const first = item.charAt(0);
+  if (/[A-Za-z0-9]/.test(first)) return item;
+  return first.toLowerCase() + item.slice(1);
+}
+
+export function categoryHeroLead(keyword: string, topics: string[], aliases: string[] = []) {
+  const list = topics.slice(0, 4).map(topicInSentence).join(", ");
+  const extra = aliases
+    .filter((alias) => alias.toLowerCase() !== keyword.toLowerCase())
+    .slice(0, 2)
+    .join(", ");
+  const focus = list
+    ? `Тренеры по ${keyword} в Беларуси: ${list}.`
+    : `Тренеры по ${keyword} в Беларуси${extra ? `, в том числе ${extra}` : ""}.`;
+  return `${focus} Подбор по городу, цене и формату — индивидуально или в группе, для взрослых и детей.`;
 }
 
 export function resolveChildCategory(parentSlug: string, childSlug: string): Category | null {
@@ -296,7 +367,6 @@ function fallbackChildCategory(parentSlug: string, childSlug: string): Category 
     slug: childSlug,
     title: child.label,
     titleGenitive: child.titleGenitive ?? child.label.toLowerCase(),
-    eyebrow: `${parentCategory.label} · направление`,
     lead: `${child.label} в разделе «${parentCategory.label}»: подбор тренера по городу, цене и формату занятий.`,
     subSports: [
       "С нуля",
@@ -329,18 +399,11 @@ function fallbackChildCategory(parentSlug: string, childSlug: string): Category 
         a: "На странице тренера есть кнопка «Написать» — сообщение придёт ему в Telegram. Можно также показать телефон.",
       },
     ],
-    stats: { trainers: 12, clubs: 4, avgPrice: 40, avgRating: 4.7 },
+    stats: { trainers: 0, clubs: 0, avgPrice: 0, avgRating: 0 },
   };
 }
-function getStatsFromCount(count: string): Category["stats"] {
-  const trainers = Number.parseInt(count, 10);
-  const normalizedTrainers = Number.isFinite(trainers) ? trainers : 12;
-  return {
-    trainers: normalizedTrainers,
-    clubs: Math.max(2, Math.round(normalizedTrainers / 4)),
-    avgPrice: 40,
-    avgRating: 4.7,
-  };
+function getStatsFromCount(_count: string): Category["stats"] {
+  return { trainers: 0, clubs: 0, avgPrice: 0, avgRating: 0 };
 }
 
 function fallbackCategory(slug: string): Category {
@@ -390,13 +453,8 @@ function fallbackCategory(slug: string): Category {
   const stats = topLevelCategory
     ? getStatsFromCount(topLevelCategory.count)
     : parentCategory
-      ? {
-          trainers: 12,
-          clubs: 4,
-          avgPrice: 40,
-          avgRating: 4.7,
-        }
-      : { trainers: 12, clubs: 4, avgPrice: 40, avgRating: 4.7 };
+      ? { trainers: 0, clubs: 0, avgPrice: 0, avgRating: 0 }
+      : { trainers: 0, clubs: 0, avgPrice: 0, avgRating: 0 };
   const taxonomyItems = topLevelCategory?.sports.length
     ? topLevelCategory.sports
     : parentCategory?.sports;
@@ -404,11 +462,6 @@ function fallbackCategory(slug: string): Category {
     slug,
     title,
     titleGenitive: topLevelCategory?.titleGenitive ?? child?.titleGenitive ?? title.toLowerCase(),
-    eyebrow: topLevelCategory
-      ? "Категория спорта"
-      : parentCategory
-        ? `${parentCategory.label} · направление`
-        : "Направление",
     lead,
     subSports,
     related,
@@ -433,6 +486,7 @@ function fallbackCategory(slug: string): Category {
 type TrainerCard = {
   slug: string;
   name: string;
+  photo: string;
   sub: string;
   desc: string;
   tags: string[];
@@ -443,171 +497,72 @@ type TrainerCard = {
   district: string;
   badge?: string;
   experience: number;
-  audience: "adult" | "kid" | "teen";
-  format: "individual" | "group";
+  audiences: Array<"adult" | "kid" | "teen">;
+  formats: Array<"individual" | "group">;
 };
 
-function generateTrainers(c: Category): TrainerCard[] {
-  if (c.isEmpty) return [];
-  const first = [
-    "Фархад",
-    "Дмитрий",
-    "Сергей",
-    "Артем",
-    "Владимир",
-    "Анна",
-    "Ольга",
-    "Игорь",
-    "Павел",
-    "Никита",
-    "Юлия",
-    "Михаил",
-  ];
-  const last = [
-    "Ахмеджанов",
-    "Хотин",
-    "Овсяников",
-    "Романович",
-    "Антипенко",
-    "Ковалёва",
-    "Сидорова",
-    "Зайцев",
-    "Левин",
-    "Гомель",
-    "Дроздова",
-    "Беленький",
-  ];
-  const districts = [
-    "Центр",
-    "Уручье",
-    "Малиновка",
-    "Серебрянка",
-    "Каменная Горка",
-    "Восток",
-    "Юг",
-  ];
-  const cities = ["Минск", "Минск", "Минск", "Гомель", "Брест", "Гродно", "Витебск", "Могилёв"];
-  const tagsPool = [
-    "Индивидуально",
-    "Группа",
-    "Взрослые",
-    "Дети",
-    "Подростки",
-    "Онлайн",
-    "С нуля",
-    "Соревнования",
-  ];
-  return Array.from({ length: 12 }).map((_, i) => {
-    const f = first[i % first.length];
-    const l = last[(i * 3) % last.length];
-    const sub = c.subSports[i % c.subSports.length];
-    const aud = i % 4 === 0 ? "kid" : i % 5 === 0 ? "teen" : "adult";
-    const fmt = i % 3 === 0 ? "group" : "individual";
-    const tags = [
-      fmt === "group" ? "Группа" : "Индивидуально",
-      aud === "kid" ? "Дети" : aud === "teen" ? "Подростки" : "Взрослые",
-      tagsPool[(i + 4) % tagsPool.length],
-    ];
-    return {
-      slug: `${c.slug}-trainer-${i + 1}`,
-      name: `${f} ${l}`,
-      sub,
-      desc: `${sub} — постановка техники, безопасность и понятный темп. Работаю в малых группах и индивидуально.`,
-      tags,
-      rating: (4.5 + (i % 6) * 0.08).toFixed(1),
-      reviews: 6 + ((i * 7) % 60),
-      price: 28 + ((i * 9) % 38),
-      city: cities[i % cities.length],
-      district: districts[i % districts.length],
-      badge: i === 0 ? "Топ" : i === 3 ? "Новый" : undefined,
-      experience: 1 + ((i * 3) % 14),
-      audience: aud,
-      format: fmt,
-    };
-  });
+function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, TrainerRatingSnapshot>): TrainerCard {
+  const rating = ratingFor(trainer.slug, ratings);
+  return {
+    slug: trainer.slug,
+    name: trainer.name,
+    photo: trainer.photo,
+    sub: trainer.primarySport.label,
+    desc: trainer.bio,
+    tags: trainer.sports.map((sport) => sport.label),
+    rating: rating.rating,
+    reviews: rating.reviews,
+    price: 0,
+    city: trainer.city.label,
+    district: trainer.district,
+    experience: trainer.experience,
+    audiences: trainer.audiences,
+    formats: trainer.formats,
+  };
 }
 
-function placeholder(seed: string) {
-  return `https://placehold.co/480x600/fff5f5/c9343a?text=${encodeURIComponent(seed)}`;
+function generateTrainers(category: Category, ratings: Record<string, TrainerRatingSnapshot>): TrainerCard[] {
+  return trainersForCategory(category.slug).map((trainer) => toCategoryCard(trainer, ratings));
 }
 
 const PAGE_CSS = `
 
-body.is-cat-hero .site-header:not(.is-scrolled) .logo { color: #fff; }
-body.is-cat-hero .site-header:not(.is-scrolled) .logo__mark { color: #fff; }
-body.is-cat-hero .site-header:not(.is-scrolled) .logo__tld { color: rgba(255, 255, 255, 0.72); }
-body.is-cat-hero .site-header:not(.is-scrolled) .icon-btn { color: #fff; }
-
-.cat-hero {
-  margin-top: calc(var(--header-clearance, 88px) * -1);
-  padding: 0;
-}
-.cat-hero__inner { max-width: none; width: 100%; margin: 0; }
-.cat-hero__banner {
-  position: relative;
-  padding: calc(var(--header-clearance, 88px) + 32px) var(--layout-gutter) 48px;
-  border-radius: 0;
-  background: linear-gradient(120deg, var(--primary) 0%, #ff7a5c 55%, var(--primary-dark) 100%);
-  color: #fff;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-.cat-hero__banner::before {
-  content: "";
-  position: absolute;
-  right: -80px;
-  top: -80px;
-  width: 320px;
-  height: 320px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
-  pointer-events: none;
-}
-.cat-hero__banner::after {
-  content: "";
-  position: absolute;
-  left: -60px;
-  bottom: -120px;
-  width: 260px;
-  height: 260px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.08);
-  pointer-events: none;
-}
-.cat-hero__banner > * { position: relative; z-index: 1; max-width: var(--layout-max); margin-left: auto; margin-right: auto; width: 100%; }
-.cat-hero__banner--photo {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-.cat-breadcrumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; color: rgba(255, 255, 255, 0.72); margin-bottom: 18px; }
-.cat-breadcrumbs a { color: rgba(255, 255, 255, 0.72); text-decoration: none; }
-.cat-breadcrumbs a:hover { color: #fff; }
-.cat-breadcrumbs span { color: #fff; font-weight: 700; }
-.cat-hero__eyebrow { display: inline-block; padding: 5px 11px; border-radius: 999px; background: rgba(255, 255, 255, 0.18); color: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px; }
-.cat-hero__title { margin: 0; font-size: clamp(34px, 5vw, 56px); line-height: 1.02; letter-spacing: -0.035em; font-weight: 900; color: #fff; }
-.cat-hero__lead { margin: 14px 0 22px; font-size: 17px; line-height: 1.5; color: rgba(255, 255, 255, 0.86); max-width: 56ch; font-weight: 550; }
-.cat-hero__stats { display: flex; flex-wrap: wrap; gap: 10px; }
-.cat-hero__stat { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 14px; font-size: 13px; font-weight: 700; color: #fff; }
-.cat-hero__stat b { color: #fff; font-weight: 900; font-size: 16px; }
-.cat-child-nav { max-width: var(--layout-max); margin: 0 auto; padding-inline: var(--layout-gutter); }
+.cat-page { background: var(--white); }
+.cat-hero { padding-top: 16px; background: var(--white); }
+.cat-hero .layout-container { display: grid; gap: var(--layout-gap); align-items: center; }
+.cat-hero .layout-container:has(.cat-hero__photo) { grid-template-columns: minmax(0, 1fr) 320px; }
+.cat-hero__copy { display: grid; gap: var(--layout-gap); min-width: 0; }
+.cat-hero__head { display: grid; gap: 10px; }
+.cat-hero__crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; font-size: 13px; line-height: 1.3; font-weight: var(--fw-title); color: var(--muted); }
+.cat-hero__crumbs a { color: var(--muted); text-decoration: none; }
+.cat-hero__crumbs a:hover { color: var(--primary); }
+.cat-hero__crumbs .is-current { color: var(--dark); }
+.cat-hero__photo { width: 100%; aspect-ratio: 1; object-fit: contain; border-radius: var(--card-radius); display: block; }
+.cat-hero__title { margin: 0; font-size: var(--fs-page); line-height: 1.15; letter-spacing: var(--tracking-heading); font-weight: var(--fw-heading); color: var(--dark); }
+.cat-hero__title em { font-style: normal; color: var(--primary); }
+.cat-hero__lead { margin: 0; font-size: var(--fs-meta); line-height: 1.45; color: var(--muted); max-width: 68ch; font-weight: var(--fw-body); }
+.cat-hero__stats { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
+.cat-hero__stat { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; line-height: 1.2; font-weight: var(--fw-ui); color: var(--muted); }
+.cat-hero__stat b { color: var(--dark); font-weight: var(--fw-title); }
+.cat-hero__stat svg { width: 16px; height: 16px; flex: 0 0 auto; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; color: var(--dark); }
+.cat-hero__stat svg.is-star { fill: #ffb400; stroke: none; }
+.cat-child-nav { padding-top: 16px; }
 .cat-child-nav__inner {
   display: flex;
-  gap: 12px;
   flex-wrap: wrap;
-  padding: 28px 0 8px;
+  gap: 8px;
 }
 .cat-child-nav__tile {
-  flex: 0 0 auto;
-  min-width: clamp(152px, 20vw, 220px);
-  min-height: 60px;
-  padding: 18px 24px;
-  border-radius: 18px;
+  min-width: 0;
+  width: auto;
+  min-height: 44px;
+  padding: 6px 12px;
+  border-radius: var(--radius-control);
   background: var(--white);
   border: 1.5px solid var(--line);
   color: var(--dark);
-  font-size: 15px;
-  font-weight: 850;
+  font-size: var(--fs-ui);
+  font-weight: var(--fw-ui);
   letter-spacing: -0.01em;
   text-decoration: none;
   display: inline-flex;
@@ -637,21 +592,22 @@ body.is-cat-hero .site-header:not(.is-scrolled) .icon-btn { color: #fff; }
   color: #fff;
 }
 
-.cat-body { max-width: var(--layout-max); margin: 0 auto; padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 60px); display: grid; grid-template-columns: var(--layout-sidebar-w) minmax(0, 1fr); gap: var(--layout-sidebar-gap); }
-.cat-filters { position: sticky; top: calc(var(--header-clearance, 80px) + 16px); align-self: start; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 22px; }
+.cat-body { align-items: start; }
+.cat-filters { position: sticky; top: calc(var(--header-clearance, 80px) + 16px); align-self: start; background: var(--white); border: 1px solid var(--line); border-radius: var(--card-radius); padding: 22px; }
 .cat-filter { border-top: 1px solid var(--line); padding: 16px 0; }
 .cat-filter:first-of-type { border-top: 0; padding-top: 0; }
-.cat-filter__title { font-size: 12px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.cat-filter__title { font-size: 12px; font-weight: var(--fw-title); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.cat-place-note { margin: 8px 0 0; font-size: 12px; line-height: 1.4; color: var(--muted); }
 .cat-city-field { position: relative; }
 .cat-city-input {
   width: 100%;
   min-height: 44px;
   padding: 10px 36px 10px 12px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius-control);
   font: inherit;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: var(--fw-ui);
   color: var(--dark);
   background: var(--white);
 }
@@ -691,25 +647,24 @@ body.is-cat-hero .site-header:not(.is-scrolled) .icon-btn { color: #fff; }
   text-align: left;
   padding: 8px 10px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--light-bg);
   color: var(--dark);
   font: inherit;
   font-size: 13px;
-  font-weight: 650;
+  font-weight: var(--fw-title);
   cursor: pointer;
 }
 .cat-city-suggest button:hover { background: rgba(var(--primary-rgb), 0.08); color: var(--primary-dark); }
 .cat-city-quick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-.cat-filter__hint { margin: 6px 0 0; font-size: 11px; font-weight: 650; color: var(--muted); line-height: 1.35; }
 .cat-filter__opts { display: flex; flex-wrap: wrap; gap: 6px; }
-.cat-pill { padding: 7px 12px; border-radius: 999px; background: var(--light-bg); border: 1px solid transparent; color: var(--dark); font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.16s ease; }
+.cat-pill { padding: 7px 12px; border-radius: 999px; background: var(--light-bg); border: 1px solid transparent; color: var(--dark); font-size: var(--fs-caption); font-weight: var(--fw-ui); cursor: pointer; transition: all 0.16s ease; }
 .cat-pill:hover { background: rgba(var(--primary-rgb), 0.08); }
 .cat-pill.is-active { background: var(--primary); color: #fff; }
 .cat-filter__check { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 14px; cursor: pointer; color: var(--dark); }
 .cat-filter__check input { accent-color: var(--primary); }
 .cat-price__values { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--dark); margin-bottom: 10px; gap: 8px; }
-.cat-price__values b { font-size: 14px; font-weight: 800; color: var(--ink); }
+.cat-price__values b { font-size: 14px; font-weight: var(--fw-title); color: var(--ink); }
 .cat-price__values span { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; display: block; }
 .cat-price__slider { position: relative; height: 28px; margin: 0 10px; }
 .cat-price__track { position: absolute; left: 0; right: 0; top: 50%; height: 4px; transform: translateY(-50%); background: var(--line); border-radius: 999px; }
@@ -719,122 +674,134 @@ body.is-cat-hero .site-header:not(.is-scrolled) .icon-btn { color: #fff; }
 .cat-price__slider input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--white); border: 2px solid var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,.18); cursor: pointer; pointer-events: auto; border-width: 2px; }
 .cat-price__slider input[type="range"]::-moz-range-track { background: transparent; }
 .cat-price__bounds { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 6px; }
-.cat-filter__reset { width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); color: var(--dark); font-weight: 700; font-size: 13px; cursor: pointer; margin-top: 8px; }
+.cat-filter__reset { width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--dark); font-weight: var(--fw-heading); font-size: 13px; cursor: pointer; margin-top: 8px; }
 .cat-filter__reset:hover { border-color: var(--primary); color: var(--primary); }
 
-.cat-results__head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
-.cat-results__count { font-size: 15px; color: var(--muted); font-weight: 600; }
-.cat-results__count b { color: var(--dark); font-weight: 850; }
+.cat-results__head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--layout-gap); margin-bottom: var(--layout-gap); }
+.cat-results__count { font-size: 15px; color: var(--muted); font-weight: var(--fw-ui); }
+.cat-results__count b { color: var(--dark); font-weight: var(--fw-title); }
 .cat-results__sort { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
-.cat-results__sort select { padding: 9px 14px; border: 1px solid var(--line); border-radius: 10px; font: inherit; font-size: 13px; background: var(--white); cursor: pointer; font-weight: 700; color: var(--dark); }
-.cat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
-@media (max-width: 1100px) { .cat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.cat-results__sort select { padding: 9px 14px; border: 1px solid var(--line); border-radius: var(--radius-control); font: inherit; font-size: 13px; background: var(--white); cursor: pointer; font-weight: var(--fw-heading); color: var(--dark); }
+.cat-grid { align-items: stretch; }
 .cat-empty {
-  padding: 56px 36px; text-align: center; border-radius: var(--radius-md);
+  padding: 56px 36px; text-align: center; border-radius: var(--card-radius);
   background: linear-gradient(180deg, rgba(var(--primary-rgb), 0.06) 0%, rgba(var(--primary-rgb), 0) 100%);
   border: 1px solid rgba(var(--primary-rgb), 0.16); color: var(--text);
   display: grid; gap: 18px; justify-items: center;
 }
 .cat-empty__icon { width: 96px; height: 96px; border-radius: 50%; background: #fff; box-shadow: 0 12px 30px -12px rgba(var(--dark-rgb), 0.18); display: grid; place-items: center; color: var(--primary); }
-.cat-empty__icon svg { width: 44px; height: 44px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.cat-empty h3 { margin: 0; font-size: 24px; font-weight: 900; letter-spacing: -0.025em; color: var(--dark); }
+.cat-empty__icon svg { width: 44px; height: 44px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.cat-empty h3 { margin: 0; font-size: 24px; font-weight: var(--fw-heading); letter-spacing: -0.025em; color: var(--dark); }
 .cat-empty p { margin: 0; max-width: 540px; color: var(--muted); font-size: 15px; line-height: 1.55; }
 .cat-empty__actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 4px; }
-.cat-empty__btn { padding: 12px 22px; border-radius: 12px; font-size: 14px; font-weight: 800; text-decoration: none; cursor: pointer; border: 0; }
+.cat-empty__btn { padding: 12px 22px; border-radius: var(--radius-control); font-size: 14px; font-weight: var(--fw-title); text-decoration: none; cursor: pointer; border: 0; }
 .cat-empty__btn--primary { background: var(--primary); color: #fff; }
 .cat-empty__btn--ghost { background: #fff; color: var(--dark); border: 1.5px solid var(--line); }
 .cat-empty__suggest { margin-top: 22px; padding-top: 22px; border-top: 1px dashed rgba(var(--dark-rgb), 0.12); width: 100%; max-width: 640px; }
-.cat-empty__suggest h4 { margin: 0 0 12px; font-size: 13px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.cat-empty__suggest h4 { margin: 0 0 12px; font-size: 13px; font-weight: var(--fw-title); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .cat-empty__chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-.cat-empty__chip { padding: 8px 14px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font-size: 13px; font-weight: 700; color: var(--dark); text-decoration: none; transition: border-color 0.15s ease, color 0.15s ease; }
+.cat-empty__chip { padding: 8px 14px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font-size: 13px; font-weight: var(--fw-heading); color: var(--dark); text-decoration: none; transition: border-color 0.15s ease, color 0.15s ease; }
 .cat-empty__chip:hover { border-color: var(--primary); color: var(--primary); }
 
-.cat-map-banner { margin-top: 28px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: center; padding: 22px 26px; border: 1px solid var(--line); border-radius: var(--radius-md); background: linear-gradient(135deg, #1a1a1f 0%, #2a1a1a 100%); color: #fff; }
-.cat-map-banner h3 { margin: 0 0 4px; font-size: 19px; font-weight: 850; letter-spacing: -0.02em; }
+.cat-map-banner { margin-top: var(--layout-gap); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--layout-gap); align-items: center; padding: 22px 26px; border: 1px solid var(--line); border-radius: var(--card-radius); background: linear-gradient(135deg, #1a1a1f 0%, #2a1a1a 100%); color: #fff; }
+.cat-map-banner h3 { margin: 0 0 4px; font-size: 19px; font-weight: var(--fw-title); letter-spacing: -0.02em; }
 .cat-map-banner p { margin: 0; color: rgba(255,255,255,0.7); font-size: 14px; }
-.cat-map-banner button { padding: 12px 22px; border: 0; border-radius: 12px; background: var(--primary); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
+.cat-map-banner button { min-height: 44px; padding: 12px 22px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
 
-.cat-extra { max-width: var(--layout-max); margin: 0 auto; padding: 0 var(--layout-gutter) clamp(40px, 6vw, 60px); display: grid; gap: 48px; }
-.cat-block { display: grid; gap: 18px; }
-.cat-block h2 { margin: 0; font-size: clamp(24px, 3vw, 32px); letter-spacing: -0.03em; font-weight: 900; color: var(--dark); }
-.cat-clubs-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
-@media (max-width: 1100px) { .cat-clubs-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.cat-club { display: flex; flex-direction: column; padding: 18px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--white); text-decoration: none; color: inherit; transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease; }
+.cat-extra { display: grid; gap: var(--layout-section-y); padding-bottom: clamp(40px, 6vw, 60px); }
+.cat-block { display: grid; gap: var(--layout-gap); }
+.cat-block h2 { margin: 0; font-size: var(--fs-section); letter-spacing: -0.03em; font-weight: var(--fw-heading); color: var(--dark); }
+.cat-clubs-row { align-items: stretch; }
+.cat-club { display: flex; flex-direction: column; padding: 18px; border: 1px solid var(--line); border-radius: var(--card-radius); background: var(--white); text-decoration: none; color: inherit; transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease; }
 .cat-club:hover { transform: translateY(-3px); border-color: rgba(var(--primary-rgb), 0.3); box-shadow: 0 12px 30px -16px rgba(var(--dark-rgb), 0.18); }
-.cat-club__logo { width: 56px; height: 56px; border-radius: 14px; background: var(--light-bg); display: grid; place-items: center; font-size: 22px; font-weight: 900; color: var(--primary); margin-bottom: 12px; }
-.cat-club h4 { margin: 0 0 4px; font-size: 16px; font-weight: 850; letter-spacing: -0.02em; }
+.cat-club__logo { width: 56px; height: 56px; border-radius: var(--radius-tile); background: var(--light-bg); display: grid; place-items: center; font-size: 22px; font-weight: var(--fw-heading); color: var(--primary); margin-bottom: 12px; }
+.cat-club h4 { margin: 0 0 4px; font-size: 16px; font-weight: var(--fw-title); letter-spacing: -0.02em; color: var(--dark); transition: color 0.16s ease; }
+.cat-club:hover h4,
+.cat-club:focus-visible h4 { color: var(--primary); }
 .cat-club p { margin: 0; color: var(--muted); font-size: 13px; }
-.cat-club__meta { margin-top: auto; padding-top: 12px; display: flex; gap: 12px; font-size: 12px; color: var(--muted); font-weight: 700; }
+.cat-club__meta { margin-top: auto; padding-top: 12px; display: flex; gap: 12px; font-size: 12px; color: var(--muted); font-weight: var(--fw-heading); }
 
-.cat-article { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 40px; align-items: start; }
-.cat-article__body { display: grid; gap: 22px; }
-.cat-article__body h3 { margin: 0 0 6px; font-size: 20px; letter-spacing: -0.02em; font-weight: 850; }
+.cat-article { display: grid; grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr); gap: var(--layout-gap); align-items: start; }
+.cat-article__body { display: grid; gap: var(--layout-gap); }
+.cat-article__body h3 { margin: 0 0 6px; font-size: 20px; letter-spacing: -0.02em; font-weight: var(--fw-title); }
 .cat-article__body p { margin: 0; color: #4a4a4f; font-size: 15px; line-height: 1.65; }
-.cat-article__aside { background: var(--light-bg); border-radius: var(--radius-md); padding: 26px; }
-.cat-article__aside h4 { margin: 0 0 14px; font-size: 16px; font-weight: 850; letter-spacing: -0.02em; }
+.cat-article__aside { background: var(--light-bg); border-radius: var(--card-radius); padding: 26px; }
+.cat-article__aside h4 { margin: 0 0 14px; font-size: 16px; font-weight: var(--fw-title); letter-spacing: -0.02em; }
 .cat-related { display: flex; flex-wrap: wrap; gap: 8px; }
-.cat-related a { padding: 9px 14px; border-radius: 999px; background: var(--white); border: 1px solid var(--line); font-size: 13px; font-weight: 700; color: var(--dark); text-decoration: none; transition: all 0.16s ease; }
+.cat-related a { padding: 9px 14px; border-radius: 999px; background: var(--white); border: 1px solid var(--line); font-size: 13px; font-weight: var(--fw-heading); color: var(--dark); text-decoration: none; transition: all 0.16s ease; }
 .cat-related a:hover { border-color: var(--primary); color: var(--primary); }
 
-.cat-faq { display: grid; gap: 8px; max-width: 820px; }
-.cat-faq details { background: var(--white); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
-.cat-faq summary { padding: 18px 22px; font-weight: 800; cursor: pointer; font-size: 15px; letter-spacing: -0.01em; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.cat-faq summary::after { content: "+"; font-size: 22px; color: var(--primary); font-weight: 700; }
+.cat-faq { display: grid; gap: var(--layout-gap); }
+.cat-faq details { background: var(--white); border: 1px solid var(--line); border-radius: var(--card-radius); overflow: hidden; }
+.cat-faq summary { padding: 18px 22px; font-weight: var(--fw-title); cursor: pointer; font-size: 15px; letter-spacing: -0.01em; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.cat-faq summary::after { content: "+"; font-size: 22px; color: var(--primary); font-weight: var(--fw-heading); }
 .cat-faq details[open] summary::after { content: "−"; }
 .cat-faq details > div { padding: 0 22px 20px; color: var(--muted); font-size: 14px; line-height: 1.6; }
 
-.cat-cta { background: linear-gradient(135deg, var(--primary) 0%, #e63946 60%, #ad2030 100%); border-radius: 28px; padding: 44px 48px; color: #fff; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: center; }
-.cat-cta h2 { margin: 0 0 6px; font-size: clamp(22px, 2.6vw, 30px); font-weight: 900; letter-spacing: -0.025em; }
+.cat-cta { background: linear-gradient(135deg, var(--primary) 0%, #e63946 60%, #ad2030 100%); border-radius: var(--card-radius); padding: 44px 48px; color: #fff; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: center; }
+.cat-cta h2 { margin: 0 0 6px; font-size: var(--fs-section); font-weight: var(--fw-heading); letter-spacing: -0.025em; }
 .cat-cta p { margin: 0; color: rgba(255,255,255,0.85); font-size: 15px; max-width: 56ch; }
-.cat-cta a { padding: 14px 24px; border-radius: 14px; background: #fff; color: var(--primary-dark); font-weight: 850; text-decoration: none; white-space: nowrap; }
+.cat-cta a { display: inline-flex; align-items: center; min-height: 44px; padding: 12px 22px; border-radius: 999px; background: #fff; color: var(--primary-dark); font-weight: var(--fw-title); text-decoration: none; white-space: nowrap; }
 
 @media (max-width: 960px) {
-  .cat-hero__banner { padding: calc(var(--header-clearance, 88px) + 24px) var(--layout-gutter) 32px; }
-  .cat-child-nav__inner { flex-wrap: nowrap; overflow-x: auto; padding: 20px 0 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-  .cat-child-nav__inner::-webkit-scrollbar { display: none; }
-  .cat-child-nav__tile { min-width: 168px; min-height: 56px; padding: 16px 20px; font-size: 14px; }
-  .cat-body { grid-template-columns: 1fr; padding-block: clamp(20px, 4vw, 28px) clamp(32px, 5vw, 40px); }
-  .cat-filters { position: static; }
+  .cat-hero .layout-container:has(.cat-hero__photo) { grid-template-columns: minmax(0, 1fr) 220px; }
   .cat-article { grid-template-columns: 1fr; }
-  .cat-cta { grid-template-columns: 1fr; padding: 32px 26px; }
-  .cat-extra { padding-inline: var(--layout-gutter); gap: 36px; }
+  .cat-filters { position: static; }
+  .cat-cta { grid-template-columns: 1fr; padding: var(--layout-block-gap) var(--layout-gap); }
 }
-@media (max-width: 620px) {
-  .cat-grid { grid-template-columns: 1fr; }
+@media (max-width: 640px) {
+  .cat-hero .layout-container:has(.cat-hero__photo) { grid-template-columns: 1fr; }
+  .cat-hero__photo { display: none; }
   .cat-map-banner { grid-template-columns: 1fr; }
 }
 `;
 
 function CategoryPage() {
   const { slug } = Route.useParams();
+  const { ratings, place } = Route.useLoaderData();
   const category = resolveParentCategory(slug);
-  return <CategoryCatalogPage category={category} />;
+  return <CategoryCatalogPage category={category} ratings={ratings} place={place} />;
 }
 
 type CategoryCatalogPageProps = {
   category: Category;
   parentCategory?: { slug: string; label: string };
+  ratings?: Record<string, TrainerRatingSnapshot>;
+  place?: CatalogPlace;
 };
 
-export function CategoryCatalogPage({ category, parentCategory }: CategoryCatalogPageProps) {
+export function CategoryCatalogPage({
+  category,
+  parentCategory,
+  ratings = {},
+  place = emptyCatalogPlace,
+}: CategoryCatalogPageProps) {
   const navigate = useNavigate();
-  const allTrainers = useMemo(() => generateTrainers(category), [category]);
-  const featuredImage = getParentCategoryFeaturedImage(parentCategory?.slug ?? category.slug);
+  const allTrainers = useMemo(() => generateTrainers(category, ratings), [category, ratings]);
   const parentSlug = parentCategory?.slug ?? category.slug;
+  const keyword = categoryKeyword(category, parentCategory?.slug);
+  const heroAliases = parentCategory
+    ? (getSportTaxonomyChildInCategory(parentCategory.slug, category.slug)?.aliases ?? [])
+    : [];
+  const heroLead = categoryHeroLead(
+    keyword,
+    parentCategory ? [] : categoryTopicLabels(category),
+    heroAliases,
+  );
   const topLevelCategory = getTopLevelSportCategory(parentSlug);
+  const heroImage = getParentCategoryFeaturedImage(parentSlug);
   const navChildren = topLevelCategory?.children ?? [];
   const activeChildSlug = parentCategory ? category.slug : null;
 
-  const [selectedCities, setSelectedCities] = useState<string[]>([]);
-  const [cityQuery, setCityQuery] = useState("");
-  const [settlements, setSettlements] = useState<string[]>([]);
-  const citySuggestions = useMemo(
-    () => filterBelarusSettlements(settlements, cityQuery),
-    [settlements, cityQuery],
+  const [selectedCities, setSelectedCities] = useState<string[]>(() => catalogFilterCities(place));
+  const [cityQuery, setCityQuery] = useState(place.query);
+  const [cityFocused, setCityFocused] = useState(false);
+  const [placeNote, setPlaceNote] = useState<"detected" | "saved" | null>(
+    place.source === "none" ? null : place.source,
   );
+  const citySuggestions = useMemo(() => filterBelarusCities(cityQuery), [cityQuery]);
 
   useEffect(() => {
-    document.body.classList.add("is-cat-hero");
     const siteHeader = document.querySelector<HTMLElement>("#site-header");
     const syncHeaderClearance = () => {
       if (siteHeader) {
@@ -847,15 +814,11 @@ export function CategoryCatalogPage({ category, parentCategory }: CategoryCatalo
     syncHeaderClearance();
     window.addEventListener("resize", syncHeaderClearance);
     return () => {
-      document.body.classList.remove("is-cat-hero");
       window.removeEventListener("resize", syncHeaderClearance);
     };
   }, []);
 
-  useEffect(() => {
-    void loadBelarusSettlements().then(setSettlements);
-  }, []);
-  const [audiences, setAudiences] = useState<Array<"adult" | "kid" | "teen">>([]);
+  const [audience, setAudience] = useState<"self" | "child" | null>(null);
   const [formats, setFormats] = useState<Array<"individual" | "group">>([]);
   const priceBounds = useMemo(() => {
     if (!allTrainers.length) return { min: 0, max: 100 };
@@ -868,7 +831,7 @@ export function CategoryCatalogPage({ category, parentCategory }: CategoryCatalo
     setPriceMin(priceBounds.min);
     setPriceMax(priceBounds.max);
   }, [priceBounds.min, priceBounds.max]);
-  const [minRatings, setMinRatings] = useState<number[]>([]);
+  const [minExperience, setMinExperience] = useState<number | null>(null);
   const [sort, setSort] = useState("popular");
 
   const locationSummary = useMemo(() => {
@@ -888,93 +851,172 @@ export function CategoryCatalogPage({ category, parentCategory }: CategoryCatalo
         const matchesQuery = q && cityLower.includes(q);
         if (!matchesQuick && !matchesQuery) return false;
       }
-      if (audiences.length > 0 && !audiences.includes(t.audience)) return false;
-      if (formats.length > 0 && !formats.includes(t.format)) return false;
+      if (audience === "self" && t.audiences.length > 0 && !t.audiences.includes("adult")) return false;
+      if (
+        audience === "child" &&
+        t.audiences.length > 0 &&
+        !t.audiences.some((item) => item === "kid" || item === "teen")
+      ) {
+        return false;
+      }
+      if (formats.length > 0 && t.formats.length > 0 && !t.formats.some((item) => formats.includes(item))) return false;
       if (priceMin && t.price < Number(priceMin)) return false;
       if (priceMax && t.price > Number(priceMax)) return false;
-      if (minRatings.length > 0) {
-        const rating = Number(t.rating);
-        if (!minRatings.some((min) => rating >= min)) return false;
-      }
+      if (minExperience != null && t.experience < minExperience) return false;
       return true;
     });
     if (sort === "price-asc") list = [...list].sort((a, b) => a.price - b.price);
     else if (sort === "price-desc") list = [...list].sort((a, b) => b.price - a.price);
-    else if (sort === "rating")
-      list = [...list].sort((a, b) => Number(b.rating) - Number(a.rating));
-    else if (sort === "reviews") list = [...list].sort((a, b) => b.reviews - a.reviews);
+    else if (sort === "rating") list = [...list].sort(compareByRating);
+    else if (sort === "reviews") list = [...list].sort(compareByReviews);
+    else list = [...list].sort(compareByPopularity);
     return list;
-  }, [allTrainers, selectedCities, cityQuery, audiences, formats, priceMin, priceMax, minRatings, sort]);
+  }, [allTrainers, selectedCities, cityQuery, audience, formats, priceMin, priceMax, minExperience, sort]);
+
+  const cityPills = useMemo(() => {
+    const quick = new Set<string>(BELARUS_QUICK_CITIES);
+    return [...selectedCities.filter((city) => !quick.has(city)), ...BELARUS_QUICK_CITIES];
+  }, [selectedCities]);
+  const committedPlace = useRef({ cities: place.cities, query: place.query });
+  const skipCityBlur = useRef(false);
+  const userTouchedPlace = useRef(false);
+
+  const applyPlace = (cities: string[], query: string, origin: VisitorPlace["origin"] = "chosen") => {
+    userTouchedPlace.current = true;
+    const trimmed = query.trim();
+    setSelectedCities(cities);
+    setCityQuery(trimmed);
+    committedPlace.current = { cities, query: trimmed };
+    const empty = cities.length === 0 && trimmed.length === 0;
+    writeVisitorPlace({ cities, query: trimmed, dismissed: empty, origin });
+    setPlaceNote(empty ? null : origin === "detected" ? "detected" : "saved");
+  };
+
+  useEffect(() => {
+    if (place.cities.length > 0 || place.query.trim()) return;
+    let cancel = false;
+    void resolveSearchCity().then((city) => {
+      if (cancel || userTouchedPlace.current) return;
+      setSelectedCities((current) => (current.length === 1 && current[0] === city ? current : [city]));
+      const saved = readVisitorPlaceCookie();
+      const remembered = saved && !saved.dismissed && (saved.cities[0] === city || saved.query === city);
+      if (remembered) setPlaceNote(saved.origin === "detected" ? "detected" : "saved");
+    });
+    return () => {
+      cancel = true;
+    };
+  }, [place.cities, place.query]);
 
   const reset = () => {
+    userTouchedPlace.current = true;
     setSelectedCities([]);
     setCityQuery("");
-    setAudiences([]);
+    setAudience(null);
     setFormats([]);
     setPriceMin(priceBounds.min);
     setPriceMax(priceBounds.max);
-    setMinRatings([]);
+    setMinExperience(null);
+    writeVisitorPlace({ cities: [], query: "", dismissed: true, origin: "chosen" });
+    setPlaceNote(null);
   };
 
   return (
-    <div className="page-shell">
+    <div className="page-shell cat-page">
       <style dangerouslySetInnerHTML={{ __html: PAGE_CSS }} />
-      <SiteHeader />
+      <SiteHeader
+        middleSlot={
+          <CatalogSearchForm
+            key={`${category.slug}:${selectedCities.join("|")}`}
+            variant="header"
+            sport={parentCategory ? category.title : (topLevelCategory?.label ?? category.title)}
+            location={selectedCities[0]}
+          />
+        }
+      />
 
       <main>
         <section className="cat-hero">
-          <div className="cat-hero__inner">
-            <div
-              className={`cat-hero__banner${featuredImage ? " cat-hero__banner--photo" : ""}`}
-              style={
-                featuredImage
-                  ? {
-                      backgroundImage: `linear-gradient(120deg, rgba(240,75,80,0.94) 0%, rgba(255,122,92,0.9) 55%, rgba(201,52,58,0.95) 100%), url(${featuredImage})`,
-                    }
-                  : undefined
-              }
-            >
-              <nav className="cat-breadcrumbs" aria-label="breadcrumbs">
-                <Link to="/">Главная</Link>
-                <span>/</span>
-                <Link to="/categories/">Категории</Link>
-                <span>/</span>
-                {parentCategory ? (
-                  <>
-                    <CategoryLink route={{ parentSlug: parentCategory.slug }}>
-                      {parentCategory.label}
-                    </CategoryLink>
-                    <span>/</span>
-                  </>
-                ) : null}
-                <span>{category.title}</span>
-              </nav>
-              <div>
-                <span className="cat-hero__eyebrow">{category.eyebrow}</span>
-                <h1 className="cat-hero__title">Тренеры по {category.titleGenitive} в Беларуси</h1>
-                <p className="cat-hero__lead">{category.lead}</p>
-                <div className="cat-hero__stats">
-                  <span className="cat-hero__stat">
-                    <b>{category.stats.trainers}</b> тренеров
+          <div className="layout-container">
+            <div className="cat-hero__copy">
+              <div className="cat-hero__head">
+                <nav className="cat-hero__crumbs" aria-label="breadcrumbs">
+                  <Link to="/" activeOptions={{ exact: true }}>Главная</Link>
+                  <span aria-hidden="true">/</span>
+                  <Link to="/categories/" activeOptions={{ exact: true }}>Категории</Link>
+                  <span aria-hidden="true">/</span>
+                  {parentCategory ? (
+                    <>
+                      <CategoryLink
+                        route={{ parentSlug: parentCategory.slug }}
+                        activeOptions={{ exact: true }}
+                      >
+                        {parentCategory.label}
+                      </CategoryLink>
+                      <span aria-hidden="true">/</span>
+                    </>
+                  ) : null}
+                  <span className="is-current" aria-current="page">
+                    {category.title}
                   </span>
-                  <span className="cat-hero__stat">
-                    <b>{category.stats.clubs}</b> клубов
-                  </span>
-                  <span className="cat-hero__stat">
-                    <b>{category.stats.avgPrice}</b> BYN средн.
-                  </span>
-                  <span className="cat-hero__stat">
-                    <b>{category.stats.avgRating}</b> рейтинг
-                  </span>
-                </div>
+                </nav>
+                <h1 className="cat-hero__title">
+                  Найти тренера по <em>{keyword}</em>
+                </h1>
               </div>
+              <p className="cat-hero__lead">{heroLead}</p>
+              {category.stats.trainers || category.stats.clubs || category.stats.avgPrice || category.stats.avgRating ? (
+              <div className="cat-hero__stats">
+                <span className="cat-hero__stat">
+                  Тренеры:
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="8" r="3.2" />
+                    <path d="M5.5 19.5v-.8a4.2 4.2 0 0 1 4.2-4.2h4.6a4.2 4.2 0 0 1 4.2 4.2v.8" />
+                  </svg>
+                  <b>{category.stats.trainers}</b>
+                </span>
+                <span className="cat-hero__stat">
+                  Клубы:
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 21V6.5L12 3l8 3.5V21" />
+                    <path d="M4 21h16" />
+                    <path d="M9 21v-5h6v5" />
+                    <path d="M9 9h.01M15 9h.01M9 13h.01M15 13h.01" />
+                  </svg>
+                  <b>{category.stats.clubs}</b>
+                </span>
+                <span className="cat-hero__stat">
+                  Цена:
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 12V5h7l9 9-7 7-9-9z" />
+                    <circle cx="8.5" cy="8.5" r="1.1" />
+                  </svg>
+                  <b>{category.stats.avgPrice} BYN</b>
+                </span>
+                <span className="cat-hero__stat">
+                  Рейтинг:
+                  <svg className="is-star" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z" />
+                  </svg>
+                  <b>{category.stats.avgRating}</b>
+                </span>
+              </div>
+              ) : null}
             </div>
+            {heroImage ? (
+              <img
+                className="cat-hero__photo"
+                src={heroImage}
+                alt={topLevelCategory?.label ?? category.title}
+                width={1024}
+                height={1024}
+              />
+            ) : null}
           </div>
         </section>
 
         {navChildren.length > 0 ? (
           <nav className="cat-child-nav" aria-label="Направления категории">
-            <div className="cat-child-nav__inner">
+            <div className="layout-container cat-child-nav__inner">
               <CategoryLink
                 route={{ parentSlug }}
                 className={`cat-child-nav__tile${activeChildSlug === null ? " is-active" : ""}`}
@@ -996,8 +1038,29 @@ export function CategoryCatalogPage({ category, parentCategory }: CategoryCatalo
           </nav>
         ) : null}
 
-        <div className="cat-body">
+        <div className="layout-with-sidebar cat-body">
           <aside className="cat-filters">
+            <div className="cat-filter">
+              <div className="cat-filter__title">Ищу тренера</div>
+              <div className="cat-filter__opts">
+                {(
+                  [
+                    { v: "self" as const, l: "для себя" },
+                    { v: "child" as const, l: "для ребёнка" },
+                  ]
+                ).map((option) => (
+                  <button
+                    key={option.v}
+                    type="button"
+                    className={`cat-pill${audience === option.v ? " is-active" : ""}`}
+                    aria-pressed={audience === option.v}
+                    onClick={() => setAudience((prev) => (prev === option.v ? null : option.v))}
+                  >
+                    {option.l}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="cat-filter">
               <div className="cat-filter__title">Город или населённый пункт</div>
               <div className="cat-city-field">
@@ -1007,6 +1070,24 @@ export function CategoryCatalogPage({ category, parentCategory }: CategoryCatalo
                   placeholder="Начните вводить название"
                   value={cityQuery}
                   onChange={(e) => setCityQuery(e.target.value)}
+                  onFocus={() => setCityFocused(true)}
+                  onBlur={() => {
+                    setCityFocused(false);
+                    if (skipCityBlur.current) {
+                      skipCityBlur.current = false;
+                      return;
+                    }
+                    const trimmed = cityQuery.trim();
+                    const committed = committedPlace.current;
+                    const sameCities =
+                      selectedCities.length === committed.cities.length &&
+                      selectedCities.every((city, index) => city === committed.cities[index]);
+                    if (sameCities && trimmed === committed.query) {
+                      if (trimmed !== cityQuery) setCityQuery(trimmed);
+                      return;
+                    }
+                    applyPlace(selectedCities, trimmed);
+                  }}
                   autoComplete="off"
                   aria-label="Город или населённый пункт"
                 />
@@ -1015,17 +1096,29 @@ export function CategoryCatalogPage({ category, parentCategory }: CategoryCatalo
                     type="button"
                     className="cat-city-clear"
                     aria-label="Очистить"
-                    onClick={() => setCityQuery("")}
+                    onClick={() => applyPlace(selectedCities, "")}
                   >
                     ×
                   </button>
                 ) : null}
               </div>
-              {citySuggestions.length > 0 && cityQuery.trim() ? (
+              {cityFocused && citySuggestions.length > 0 ? (
                 <ul className="cat-city-suggest" aria-label="Подсказки">
                   {citySuggestions.map((name) => (
                     <li key={name}>
-                      <button type="button" onClick={() => setCityQuery(name)}>
+                      <button
+                        type="button"
+                        onMouseDown={(event) => {
+                          event.preventDefault();
+                          skipCityBlur.current = true;
+                        }}
+                        onClick={() =>
+                          applyPlace(
+                            selectedCities.includes(name) ? selectedCities : [...selectedCities, name],
+                            "",
+                          )
+                        }
+                      >
                         {name}
                       </button>
                     </li>
@@ -1033,39 +1126,23 @@ export function CategoryCatalogPage({ category, parentCategory }: CategoryCatalo
                 </ul>
               ) : null}
               <div className="cat-city-quick" role="group" aria-label="Крупные города">
-                {BELARUS_QUICK_CITIES.map((city) => (
+                {cityPills.map((city) => (
                   <button
                     key={city}
                     type="button"
                     className={`cat-pill${selectedCities.includes(city) ? " is-active" : ""}`}
                     aria-pressed={selectedCities.includes(city)}
-                    onClick={() => setSelectedCities((prev) => toggleFilterValue(prev, city))}
+                    onClick={() => applyPlace(toggleFilterValue(selectedCities, city), cityQuery)}
                   >
                     {city}
                   </button>
                 ))}
               </div>
-              <p className="cat-filter__hint">Можно выбрать несколько городов</p>
-            </div>
-            <div className="cat-filter">
-              <div className="cat-filter__title">Аудитория</div>
-              <div className="cat-filter__opts">
-                {[
-                  { v: "adult" as const, l: "Взрослые" },
-                  { v: "teen" as const, l: "Подростки" },
-                  { v: "kid" as const, l: "Дети" },
-                ].map((o) => (
-                  <button
-                    key={o.v}
-                    type="button"
-                    className={`cat-pill${audiences.includes(o.v) ? " is-active" : ""}`}
-                    aria-pressed={audiences.includes(o.v)}
-                    onClick={() => setAudiences((prev) => toggleFilterValue(prev, o.v))}
-                  >
-                    {o.l}
-                  </button>
-                ))}
-              </div>
+              {placeNote && (selectedCities.length > 0 || cityQuery.trim()) ? (
+                <p className="cat-place-note">
+                  {placeNote === "detected" ? "Определили по IP и запомнили" : "Запомнили город"}
+                </p>
+              ) : null}
             </div>
             <div className="cat-filter">
               <div className="cat-filter__title">Формат</div>
@@ -1130,17 +1207,22 @@ export function CategoryCatalogPage({ category, parentCategory }: CategoryCatalo
               </div>
             </div>
             <div className="cat-filter">
-              <div className="cat-filter__title">Рейтинг</div>
+              <div className="cat-filter__title">Опыт</div>
               <div className="cat-filter__opts">
-                {[4, 4.5, 4.8].map((r) => (
+                {[
+                  { years: 1, label: "от 1 года" },
+                  { years: 3, label: "от 3 лет" },
+                  { years: 5, label: "от 5 лет" },
+                  { years: 10, label: "от 10 лет" },
+                ].map((option) => (
                   <button
-                    key={r}
+                    key={option.years}
                     type="button"
-                    className={`cat-pill${minRatings.includes(r) ? " is-active" : ""}`}
-                    aria-pressed={minRatings.includes(r)}
-                    onClick={() => setMinRatings((prev) => toggleFilterValue(prev, r))}
+                    className={`cat-pill${minExperience === option.years ? " is-active" : ""}`}
+                    aria-pressed={minExperience === option.years}
+                    onClick={() => setMinExperience((prev) => (prev === option.years ? null : option.years))}
                   >
-                    {`${r}+`}
+                    {option.label}
                   </button>
                 ))}
               </div>
@@ -1153,7 +1235,7 @@ export function CategoryCatalogPage({ category, parentCategory }: CategoryCatalo
           <div>
             <div className="cat-results__head">
               <div className="cat-results__count">
-                <b>{filtered.length}</b> тренеров{locationSummary ? ` · ${locationSummary}` : ""}
+                <b>{filtered.length}</b> {pluralRu(filtered.length, "тренер", "тренера", "тренеров")}{locationSummary ? ` · ${locationSummary}` : ""}
               </div>
               <label className="cat-results__sort">
                 Сортировка:
@@ -1177,17 +1259,17 @@ export function CategoryCatalogPage({ category, parentCategory }: CategoryCatalo
                   </svg>
                 </div>
                 <h3>
-                  {category.isEmpty
+                  {allTrainers.length === 0 || category.isEmpty
                     ? `Тренеров по ${category.titleGenitive} пока нет`
                     : "По вашим фильтрам ничего не нашлось"}
                 </h3>
                 <p>
-                  {category.isEmpty
+                  {allTrainers.length === 0 || category.isEmpty
                     ? "Направление только открылось на trenio.by. Будьте первым тренером или подпишитесь — мы напишем, когда кто-то добавится."
                     : "Попробуйте сбросить часть фильтров, расширить ценовой диапазон или посмотреть похожие направления."}
                 </p>
                 <div className="cat-empty__actions">
-                  {category.isEmpty ? (
+                  {allTrainers.length === 0 || category.isEmpty ? (
                     <>
                       <Link to="/auth/signup" className="cat-empty__btn cat-empty__btn--primary">
                         Стать первым тренером
@@ -1237,45 +1319,30 @@ export function CategoryCatalogPage({ category, parentCategory }: CategoryCatalo
                     key={t.slug}
                     className="trainer-card"
                     to="/trainers/$slug"
-                    params={{ slug: "farkhad-akhmedjanov" }}
+                    params={{ slug: t.slug }}
                   >
                     <div className="trainer-card__media">
                       <img
                         className="trainer-card__photo"
-                        src={placeholder(t.name)}
+                        src={t.photo}
                         alt={t.name}
                         width={480}
                         height={600}
                         loading="lazy"
                       />
                       {t.badge && <span className="trainer-card__badge">{t.badge}</span>}
-                      <button
-                        className="trainer-card__save"
-                        type="button"
-                        aria-label="Сохранить"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
-                      >
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" />
-                        </svg>
-                      </button>
+                      <FavoriteButton target={{ type: "trainer", slug: t.slug }} className="trainer-card__save" />
                     </div>
                     <div className="trainer-card__body">
                       <div className="trainer-card__head">
                         <h3 className="trainer-card__name">{t.name}</h3>
-                        <span className="trainer-card__rating">
-                          <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z" />
-                          </svg>
-                          {t.rating} <span>({t.reviews})</span>
-                        </span>
+                        <TrainerRating rating={t.rating} reviews={t.reviews} />
                       </div>
                       <p className="trainer-card__sport">
-                        {t.sub} · опыт {t.experience}{" "}
-                        {t.experience === 1 ? "год" : t.experience < 5 ? "года" : "лет"}
+                        {t.tags.join(", ")}
+                        {t.experience > 0
+                          ? ` · опыт ${t.experience} ${pluralRu(t.experience, "год", "года", "лет")}`
+                          : ""}
                       </p>
                       <p className="trainer-card__desc">{t.desc}</p>
                       <div className="trainer-card__tags">
@@ -1295,13 +1362,15 @@ export function CategoryCatalogPage({ category, parentCategory }: CategoryCatalo
                             <circle cx="12" cy="9" r="2.4" />
                           </svg>
                           <span>
-                            {t.city}, {t.district}
+                            {t.district ? `${t.city}, ${t.district}` : t.city}
                           </span>
                         </span>
-                        <span className="trainer-card__price">
-                          <small>от </small>
-                          {t.price} BYN
-                        </span>
+                        {t.price > 0 ? (
+                          <span className="trainer-card__price">
+                            <small>от </small>
+                            {t.price} BYN
+                          </span>
+                        ) : null}
                       </div>
                     </div>
                   </Link>
@@ -1319,29 +1388,7 @@ export function CategoryCatalogPage({ category, parentCategory }: CategoryCatalo
           </div>
         </div>
 
-        <div className="cat-extra">
-          <section className="cat-block">
-            <h2>Лучшие клубы по направлению</h2>
-            <div className="cat-clubs-row">
-              {["BronxGym", "Champion", "FightLab", "Atlet"].map((name, i) => (
-                <Link
-                  key={name}
-                  className="cat-club"
-                  to="/clubs/$slug"
-                  params={{ slug: "bronxgym" }}
-                >
-                  <div className="cat-club__logo">{name[0]}</div>
-                  <h4>{name}</h4>
-                  <p>Зал в Минске, тренеры по {category.titleGenitive} и смежным направлениям.</p>
-                  <div className="cat-club__meta">
-                    <span>★ {(4.6 + i * 0.08).toFixed(1)}</span>
-                    <span>{6 + i * 3} тренеров</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-
+        <div className="layout-container cat-extra">
           <section className="cat-block">
             <h2>О направлении</h2>
             <div className="cat-article">

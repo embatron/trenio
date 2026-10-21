@@ -15,13 +15,14 @@ OTP-вход и подтверждение номера **реализованы
 ## Env
 
 ```env
-SMS_BY_ENABLED=false
+SMS_BY_ENABLED=true
 SMS_BY_API_KEY=
-SMS_BY_ALPHANAME_ID=
+SMS_BY_ALPHANAME_ID=7027
 ```
 
-- `token` в API = `SMS_BY_API_KEY` (не login-token кабинета).
+- `token` в API = `SMS_BY_API_KEY` (не login-token кабинета). Ключ тот же, что у BronxGym.
 - База: `https://app.sms.by/api/v1/{command}`.
+- Отправитель только `TRENIO.BY`, id `7027`. Пустой `SMS_BY_ALPHANAME_ID` подставляет этот id.
 - Телефон: `375XXXXXXXXX` без `+`.
 - **Sandbox нет:** тест = реальное SMS на свой номер после баланса.
 

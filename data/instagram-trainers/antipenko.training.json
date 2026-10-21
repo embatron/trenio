@@ -1,0 +1,59 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/antipenko.training/",
+  "handle": "antipenko.training",
+  "slug": "vladimir-antipenko",
+  "status": "published",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Владимир",
+  "lastName": "Антипенко",
+  "fullName": "Владимир Антипенко",
+  "nameQuotes": [
+    "Владимир"
+  ],
+  "headline": "Тренер по кикбоксингу",
+  "bio": "🙋🏻‍♂️Владимир 📍Минск 🥊Кикбоксинг и бокс 🏋🏻ОФП для любого уровня подготовки ☎️+375(33)637-62-68 📩Вопросы в ЛС @bronxgym.by",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    },
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "ofp",
+      "label": "ОФП",
+      "evidence": "ОФП"
+    }
+  ],
+  "primarySport": {
+    "slug": "kikboksing",
+    "parentSlug": "edinoborstva",
+    "label": "Кикбоксинг"
+  },
+  "audiences": ["adult", "teen"],
+  "city": "Минск",
+  "cityCandidates": ["Минск"],
+  "priceFrom": null,
+  "languages": [],
+  "avatarPath": "/trainers/instagram/antipenko.training.jpg",
+  "contacts": {
+    "instagram": "https://www.instagram.com/antipenko.training/",
+    "phone": "+375 33 637-62-68",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "pinnedPosts"
+  ]
+}

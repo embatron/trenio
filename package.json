@@ -17,7 +17,8 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx --env-file=.env src/db/seed.ts",
-    "settlements:import": "node scripts/import-belarus-settlements.mjs"
+    "settlements:import": "node scripts/import-belarus-settlements.mjs",
+    "geoip:update": "node scripts/update-geoip.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -59,6 +60,7 @@
     "drizzle-orm": "^0.45.2",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
+    "ip-location-api": "^5.0.2",
     "lucide-react": "^0.575.0",
     "postgres": "^3.4.9",
     "react": "^19.2.0",
@@ -66,6 +68,7 @@
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.71.2",
     "react-resizable-panels": "^4.6.5",
+    "react-simple-wysiwyg": "^3.4.1",
     "recharts": "^2.15.4",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",

@@ -1,22 +1,25 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 
-import { clientIpFromHeaders } from "@/auth/request-meta";
 import { AuthError, isAuthError } from "@/lib/auth/errors";
 import { getPostLoginPath } from "@/lib/auth/roles";
 import {
-  confirmEmailSchema,
-  confirmPhoneVerifySchema,
-  confirmSmsSchema,
   forgotPasswordSchema,
   loginSchema,
-  requestEmailChangeSchema,
-  requestPhoneVerifySchema,
-  requestSmsSchema,
   resetPasswordSchema,
-  setPasswordSchema,
   signupSchema,
-  updateNameSchema,
+  smsConfirmSchema,
+  smsRequestSchema,
+  smsResetSchema,
+  telegramWebAppSchema,
+  telegramWidgetSchema,
+  accountAvatarSchema,
+  changePasswordSchema,
+  accountEmailCodeSchema,
+  accountEmailSchema,
+  accountPhoneCodeSchema,
+  accountPhoneSchema,
+  profileNameSchema,
   verifyEmailSchema,
   type PublicUser,
 } from "@/lib/auth/schemas";
@@ -25,18 +28,27 @@ import {
   requireAuthMiddleware,
 } from "@/auth/middleware";
 import {
-  buildSessionUser,
-  completeSetPassword,
-  confirmEmailChange,
-  confirmPhoneVerify,
+  confirmPasswordResetByPhone,
   confirmSmsLogin,
+  consumeForgotEmailLimit,
+  consumePasswordLoginLimit,
+  loginWithTelegramWebApp,
+  loginWithTelegramWidget,
+  requestPasswordResetByPhone,
+  requestSmsLogin,
+} from "@/auth/login-channels";
+import { getTelegramLoginConfig } from "@/auth/telegram";
+import {
   getSessionUserFromToken,
   loginUser,
   registerUser,
-  requestEmailChange,
   requestPasswordReset,
-  requestPhoneVerify,
-  requestSmsLogin,
+  changeAccountPassword,
+  confirmAccountEmailCode,
+  confirmAccountPhoneCode,
+  requestAccountEmailCode,
+  requestAccountPhoneCode,
+  setAccountAvatar,
   resetPassword,
   revokeSessionByToken,
   updateAccountName,
@@ -51,8 +63,7 @@ function toPublicUser(user: SessionUser): PublicUser {
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
-    phone: user.phone,
-    phoneVerified: user.phoneVerified,
+    avatarPath: user.avatarPath,
     emailVerified: user.emailVerified,
     roles: user.roles,
     status: user.status,
@@ -62,21 +73,23 @@ function toPublicUser(user: SessionUser): PublicUser {
 
 function getRequestMeta() {
   const request = getRequest();
+  const ipAddress =
+    request.headers.get("cf-connecting-ip") ??
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    null;
   return {
-    ipAddress: clientIpFromHeaders(request.headers.get("x-real-ip")),
+    ipAddress,
     userAgent: request.headers.get("user-agent"),
+    clientKey: ipAddress ?? "local",
   };
 }
 
-function rethrowAuth(error: unknown): never {
-  if (isAuthError(error)) throw error;
-  console.error(error);
-  throw new AuthError("Произошла ошибка. Попробуйте ещё раз.", "VALIDATION");
-}
-
-async function sessionResponse(token: string, remember = true) {
-  setSessionCookie(token, remember);
-  const user = await getSessionUserFromToken(token);
+async function finishLogin(
+  session: { token: string },
+  remember = true,
+) {
+  setSessionCookie(session.token, remember);
+  const user = await getSessionUserFromToken(session.token);
   if (!user) {
     throw new AuthError("Не удалось создать сессию.", "VALIDATION");
   }
@@ -85,6 +98,12 @@ async function sessionResponse(token: string, remember = true) {
     user: toPublicUser(user),
     redirectTo: getPostLoginPath(user.roles),
   };
+}
+
+function rethrowAuth(error: unknown): never {
+  if (isAuthError(error)) throw error;
+  console.error(error);
+  throw new AuthError("Произошла ошибка. Попробуйте ещё раз.", "VALIDATION");
 }
 
 export const getSessionFn = createServerFn({ method: "GET" })
@@ -97,46 +116,102 @@ export const loginFn = createServerFn({ method: "POST" })
   .validator(loginSchema)
   .handler(async ({ data }) => {
     try {
+      if (data.honeypot?.trim()) {
+        throw new AuthError("Неверный e-mail или пароль.", "INVALID_CREDENTIALS");
+      }
       const meta = getRequestMeta();
+      consumePasswordLoginLimit(data.email, meta.clientKey);
       const session = await loginUser({
         email: data.email,
         password: data.password,
         remember: data.remember,
-        honeypot: data.company_url,
-        ...meta,
+        ipAddress: meta.ipAddress,
+        userAgent: meta.userAgent,
       });
-      return sessionResponse(session.token, data.remember);
+      return finishLogin(session, data.remember);
     } catch (error) {
       rethrowAuth(error);
     }
   });
 
 export const requestSmsLoginFn = createServerFn({ method: "POST" })
-  .validator(requestSmsSchema)
+  .validator(smsRequestSchema)
   .handler(async ({ data }) => {
     try {
-      return await requestSmsLogin(data.phone, {
-        ...getRequestMeta(),
-        honeypot: data.company_url,
-      });
+      return await requestSmsLogin(data.phone, { ...getRequestMeta(), honeypot: data.honeypot });
     } catch (error) {
       rethrowAuth(error);
     }
   });
 
 export const confirmSmsLoginFn = createServerFn({ method: "POST" })
-  .validator(confirmSmsSchema)
+  .validator(smsConfirmSchema)
   .handler(async ({ data }) => {
     try {
-      const meta = getRequestMeta();
-      const session = await confirmSmsLogin({
-        phone: data.phone,
-        code: data.code,
-        remember: data.remember,
-        honeypot: data.company_url,
-        ...meta,
+      const session = await confirmSmsLogin(data.phone, data.code, {
+        ...getRequestMeta(),
+        honeypot: data.honeypot,
       });
-      return sessionResponse(session.token, data.remember);
+      return finishLogin(session);
+    } catch (error) {
+      rethrowAuth(error);
+    }
+  });
+
+export const loginWithTelegramFn = createServerFn({ method: "POST" })
+  .validator(telegramWidgetSchema)
+  .handler(async ({ data }) => {
+    try {
+      const session = await loginWithTelegramWidget(data, {
+        ...getRequestMeta(),
+        honeypot: data.honeypot,
+      });
+      return finishLogin(session);
+    } catch (error) {
+      rethrowAuth(error);
+    }
+  });
+
+export const loginWithTelegramWebAppFn = createServerFn({ method: "POST" })
+  .validator(telegramWebAppSchema)
+  .handler(async ({ data }) => {
+    try {
+      const session = await loginWithTelegramWebApp(data.initData, {
+        ...getRequestMeta(),
+        honeypot: data.honeypot,
+      });
+      return finishLogin(session);
+    } catch (error) {
+      rethrowAuth(error);
+    }
+  });
+
+export const getTelegramLoginConfigFn = createServerFn({ method: "GET" }).handler(async () => {
+  return getTelegramLoginConfig();
+});
+
+export const requestPasswordResetSmsFn = createServerFn({ method: "POST" })
+  .validator(smsRequestSchema)
+  .handler(async ({ data }) => {
+    try {
+      return await requestPasswordResetByPhone(data.phone, {
+        ...getRequestMeta(),
+        honeypot: data.honeypot,
+      });
+    } catch (error) {
+      rethrowAuth(error);
+    }
+  });
+
+export const confirmPasswordResetSmsFn = createServerFn({ method: "POST" })
+  .validator(smsResetSchema)
+  .handler(async ({ data }) => {
+    try {
+      const session = await confirmPasswordResetByPhone(
+        { phone: data.phone, code: data.code, password: data.password },
+        { ...getRequestMeta(), honeypot: data.honeypot },
+      );
+      return finishLogin(session);
     } catch (error) {
       rethrowAuth(error);
     }
@@ -146,15 +221,19 @@ export const signupFn = createServerFn({ method: "POST" })
   .validator(signupSchema)
   .handler(async ({ data }) => {
     try {
-      const result = await registerUser({
+      await registerUser({
         email: data.email,
+        password: data.password,
         firstName: data.firstName,
         lastName: data.lastName,
+        phone: data.phone,
         signupRole: data.signupRole,
-        honeypot: data.company_url,
-        ipAddress: getRequestMeta().ipAddress,
       });
-      return { ok: true as const, ...result };
+
+      return {
+        ok: true as const,
+        message: "Аккаунт создан. Проверьте e-mail для подтверждения, затем войдите.",
+      };
     } catch (error) {
       rethrowAuth(error);
     }
@@ -175,10 +254,10 @@ export const forgotPasswordFn = createServerFn({ method: "POST" })
   .validator(forgotPasswordSchema)
   .handler(async ({ data }) => {
     try {
-      await requestPasswordReset(data.email, {
-        ...getRequestMeta(),
-        honeypot: data.company_url,
-      });
+      if (!data.honeypot?.trim()) {
+        consumeForgotEmailLimit(getRequestMeta().clientKey);
+        await requestPasswordReset(data.email);
+      }
       return { ok: true as const };
     } catch (error) {
       rethrowAuth(error);
@@ -189,27 +268,10 @@ export const resetPasswordFn = createServerFn({ method: "POST" })
   .validator(resetPasswordSchema)
   .handler(async ({ data }) => {
     try {
-      const session = await resetPassword(data.token, data.password, getRequestMeta());
-      return sessionResponse(session.token, true);
-    } catch (error) {
-      rethrowAuth(error);
-    }
-  });
-
-export const setPasswordFn = createServerFn({ method: "POST" })
-  .validator(setPasswordSchema)
-  .handler(async ({ data }) => {
-    try {
-      const session = await completeSetPassword(data.token, data.password);
-      setSessionCookie(session.token, true);
-      const user = await getSessionUserFromToken(session.token);
-      if (!user) {
-        throw new AuthError("Не удалось создать сессию.", "VALIDATION");
-      }
+      await resetPassword(data.token, data.password);
       return {
         ok: true as const,
-        user: toPublicUser(user),
-        redirectTo: "/account",
+        message: "Пароль обновлён. Теперь можно войти с новым паролем.",
       };
     } catch (error) {
       rethrowAuth(error);
@@ -231,73 +293,90 @@ export const verifyEmailFn = createServerFn({ method: "POST" })
   });
 
 export const confirmEmailChangeFn = createServerFn({ method: "POST" })
-  .validator(confirmEmailSchema)
-  .handler(async ({ data }) => {
+  .validator(verifyEmailSchema)
+  .handler(async () => {
+    throw new AuthError("Ссылка недействительна или устарела.", "INVALID_TOKEN");
+  });
+
+export const requestAccountEmailCodeFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(accountEmailSchema)
+  .handler(async ({ data, context }) => {
     try {
-      const userId = await confirmEmailChange(data.token);
-      const user = await buildSessionUser(userId);
-      return {
-        ok: true as const,
-        user: user ? toPublicUser(user) : null,
-        redirectTo: "/account",
-      };
+      return await requestAccountEmailCode(context.user.id, data.email);
     } catch (error) {
       rethrowAuth(error);
     }
   });
 
-export const requestEmailChangeFn = createServerFn({ method: "POST" })
+export const confirmAccountEmailCodeFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
-  .validator(requestEmailChangeSchema)
-  .handler(async ({ context, data }) => {
+  .validator(accountEmailCodeSchema)
+  .handler(async ({ data, context }) => {
     try {
-      return {
-        ok: true as const,
-        ...(await requestEmailChange(context.user.id, data.email, getRequestMeta())),
-      };
+      return await confirmAccountEmailCode(context.user.id, data.email, data.code);
     } catch (error) {
       rethrowAuth(error);
     }
   });
 
-export const updateNameFn = createServerFn({ method: "POST" })
+export const requestAccountPhoneCodeFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
-  .validator(updateNameSchema)
-  .handler(async ({ context, data }) => {
+  .validator(accountPhoneSchema)
+  .handler(async ({ data, context }) => {
     try {
-      await updateAccountName(context.user.id, data.firstName, data.lastName);
-      const user = await buildSessionUser(context.user.id);
-      return { ok: true as const, user: user ? toPublicUser(user) : null };
+      return await requestAccountPhoneCode(context.user.id, data.phone);
     } catch (error) {
       rethrowAuth(error);
     }
   });
 
-export const requestPhoneVerifyFn = createServerFn({ method: "POST" })
+export const confirmAccountPhoneCodeFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
-  .validator(requestPhoneVerifySchema)
-  .handler(async ({ context, data }) => {
+  .validator(accountPhoneCodeSchema)
+  .handler(async ({ data, context }) => {
     try {
-      return {
-        ok: true as const,
-        ...(await requestPhoneVerify(context.user.id, data.phone, {
-          ...getRequestMeta(),
-          honeypot: data.company_url,
-        })),
-      };
+      return await confirmAccountPhoneCode(context.user.id, data.phone, data.code);
     } catch (error) {
       rethrowAuth(error);
     }
   });
 
-export const confirmPhoneVerifyFn = createServerFn({ method: "POST" })
+export const changePasswordFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
-  .validator(confirmPhoneVerifySchema)
-  .handler(async ({ context, data }) => {
+  .validator(changePasswordSchema)
+  .handler(async ({ data, context }) => {
     try {
-      await confirmPhoneVerify(context.user.id, data.phone, data.code, data.company_url);
-      const user = await buildSessionUser(context.user.id);
-      return { ok: true as const, user: user ? toPublicUser(user) : null };
+      return await changeAccountPassword(
+        context.user.id,
+        data.currentPassword,
+        data.newPassword,
+        readSessionToken(),
+      );
+    } catch (error) {
+      rethrowAuth(error);
+    }
+  });
+
+export const setAccountAvatarFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(accountAvatarSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      return await setAccountAvatar(context.user.id, data.image);
+    } catch (error) {
+      rethrowAuth(error);
+    }
+  });
+
+export const updateProfileFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(profileNameSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      const parts = data.name.trim().split(/\s+/);
+      await updateAccountName(context.user.id, parts[0] ?? "", parts.slice(1).join(" "));
+      return { ok: true as const };
     } catch (error) {
       rethrowAuth(error);
     }

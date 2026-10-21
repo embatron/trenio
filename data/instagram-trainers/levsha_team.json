@@ -1,0 +1,53 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/levsha_team/",
+  "handle": "levsha_team",
+  "slug": "ovsyannikov",
+  "status": "published",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Сергей",
+  "lastName": "Овсянников",
+  "fullName": "Сергей Овсянников",
+  "nameQuotes": [
+    "Сергей Овсяников"
+  ],
+  "headline": "Тренер по кикбоксингу",
+  "bio": "🥊Тренер по МуайТай и кикбоксингу в Минске 📍(Петровщина/Пушкина) 👉стаж 30 лет 🏆Мастер спорта по тайскому боксу 🏆Мастер спорта по рукопашному бою",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    },
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "муай тай"
+    }
+  ],
+  "primarySport": {
+    "slug": "kikboksing",
+    "parentSlug": "edinoborstva",
+    "label": "Кикбоксинг"
+  },
+  "city": "Минск",
+  "cityCandidates": ["Минск"],
+  "priceFrom": null,
+  "languages": [],
+  "avatarPath": "/trainers/instagram/levsha_team.jpg",
+  "contacts": {
+    "instagram": "https://www.instagram.com/levsha_team/",
+    "phone": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "pinnedPosts"
+  ]
+}

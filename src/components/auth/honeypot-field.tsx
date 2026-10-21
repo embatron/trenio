@@ -1,19 +1,15 @@
-import { HONEYPOT_FIELD } from "@/lib/auth/honeypot";
+export const HONEYPOT_FIELD = "company_website";
 
-/** Visually hidden trap field. Do not label it as honeypot in the DOM. */
 export function HoneypotField() {
   return (
-    <div className="sr-only" aria-hidden="true">
-      <label htmlFor={HONEYPOT_FIELD}>Сайт компании</label>
-      <input
-        id={HONEYPOT_FIELD}
-        name={HONEYPOT_FIELD}
-        type="text"
-        tabIndex={-1}
-        autoComplete="off"
-        defaultValue=""
-      />
-    </div>
+    <input
+      className="auth-hp"
+      tabIndex={-1}
+      autoComplete="off"
+      name={HONEYPOT_FIELD}
+      defaultValue=""
+      aria-hidden
+    />
   );
 }
 

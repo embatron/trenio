@@ -46,5 +46,5 @@ export async function sendQuickSms(phone: string, message: string): Promise<SmsS
 }
 
 export function otpSmsText(code: string): string {
-  return `Trenio: код ${code}. Никому не сообщайте.`;
+  return `Trenio.by: код ${code}. Никому не сообщайте.`;
 }

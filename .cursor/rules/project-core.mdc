@@ -28,13 +28,15 @@ No force push, no amend/squash of pushed commits (see `AGENTS.md`).
 
 Every implementation must consider:
 
-1. **PWA 100%** — see `.cursor/rules/pwa-requirements.mdc`
-2. **Mobile-first** — see `.cursor/rules/mobile-first.mdc`
-3. **Docs sync** — update `docs/` when routes, auth, schema, or architecture change
+1. **Layout grid** — every screen uses the one content grid in `src/styles.css`. See `.cursor/rules/layout-grid.mdc`
+2. **Icons** — line icons at `--icon-stroke`; sport marks from `SportIcon`. See `.cursor/rules/icons.mdc`
+3. **Process language** — rules, skills, commands, hooks, and `AGENTS.md` are English. Product UI and `docs/` stay Russian. See `.cursor/rules/process-language.mdc`
+4. **PWA 100%** — see `.cursor/rules/pwa-requirements.mdc`
+5. **Mobile-first** — see `.cursor/rules/mobile-first.mdc`
+6. **Docs sync** — update `docs/` when routes, auth, schema, or architecture change
 
 ## Auth
 
 - Server functions for mutations; middleware for session
 - Roles: user, trainer, club, admin, superadmin
 - Route `beforeLoad` is UX only — not the security boundary
-- Contract: [docs/AUTH.md](../../docs/AUTH.md) · adoption: [docs/AUTH_ADOPTION.md](../../docs/AUTH_ADOPTION.md) · rule: `auth-backend.mdc`

@@ -1,0 +1,73 @@
+{
+  "updatedAt": "2026-10-21T08:27:41.955Z",
+  "profiles": [
+    {
+      "handle": "antipenko.training",
+      "slug": "vladimir-antipenko",
+      "fullName": "Владимир Антипенко",
+      "primarySport": "Кикбоксинг",
+      "city": "Минск",
+      "status": "published",
+      "missing": [
+        "price",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/antipenko.training.json"
+    },
+    {
+      "handle": "levsha_team",
+      "slug": "ovsyannikov",
+      "fullName": "Сергей Овсянников",
+      "primarySport": "Кикбоксинг",
+      "city": "Минск",
+      "status": "published",
+      "missing": [
+        "price",
+        "phone",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/levsha_team.json"
+    },
+    {
+      "handle": "ar.boxing.by",
+      "slug": "artem-romanovich",
+      "fullName": "Артём Романович",
+      "primarySport": "Бокс",
+      "city": "Минск",
+      "status": "published",
+      "missing": [
+        "price",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/ar.boxing.by.json"
+    },
+    {
+      "handle": "farkhad_akhmejanau",
+      "slug": "akhmejanau",
+      "fullName": "Farkhad Akhmejanau",
+      "primarySport": "Кикбоксинг",
+      "city": "Минск",
+      "status": "published",
+      "missing": [
+        "price",
+        "phone",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/farkhad_akhmejanau.json"
+    },
+    {
+      "handle": "shum_ann",
+      "slug": "shumilova",
+      "fullName": "Анна Шумилова",
+      "primarySport": "Походы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/shum_ann.json"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
+import { pluralRu } from "@/lib/ru-plural";
 
 export const Route = createFileRoute("/clubs/")({
   head: () => ({
@@ -29,17 +30,7 @@ type ClubItem = {
   amenities: string[];
 };
 
-const CLUBS_LIST: ClubItem[] = [
-  { slug: "bronxgym", name: "BronxGym", city: "Минск", area: "пр-т Пушкина", directions: ["Кикбоксинг", "Бокс", "Тайский бокс"], rating: 4.8, reviews: 52, priceFrom: 45, badge: "Топ месяца", cover: "https://placehold.co/640x420/png?text=BronxGym", logo: "BG", amenities: ["Ринг", "Душевые", "Парковка"] },
-  { slug: "iron-yard", name: "Iron Yard", city: "Минск", area: "Немига", directions: ["Кроссфит", "Силовая", "ОФП"], rating: 4.9, reviews: 71, priceFrom: 35, badge: "Новый", cover: "https://placehold.co/640x420/png?text=Iron+Yard", logo: "IY", amenities: ["Штанги", "Душевые"] },
-  { slug: "lotus-studio", name: "Lotus Studio", city: "Минск", area: "Каменная Горка", directions: ["Йога", "Пилатес", "Стретчинг"], rating: 4.7, reviews: 38, priceFrom: 25, cover: "https://placehold.co/640x420/png?text=Lotus+Studio", logo: "LS", amenities: ["Душевые", "Чай"] },
-  { slug: "akva-arena", name: "Аква Арена", city: "Гомель", area: "ул. Советская", directions: ["Плавание", "Аквааэробика"], rating: 4.6, reviews: 24, priceFrom: 30, cover: "https://placehold.co/640x420/png?text=Aqua+Arena", logo: "AA", amenities: ["Бассейн 25 м", "Сауна"] },
-  { slug: "grand-court", name: "Grand Court", city: "Брест", area: "ул. Ленина", directions: ["Теннис", "Сквош"], rating: 4.5, reviews: 18, priceFrom: 50, cover: "https://placehold.co/640x420/png?text=Grand+Court", logo: "GC", amenities: ["4 корта", "Прокат"] },
-  { slug: "energy-club", name: "Energy Club", city: "Гродно", area: "ул. Горького", directions: ["Фитнес", "Силовая", "Групповые"], rating: 4.4, reviews: 29, priceFrom: 28, cover: "https://placehold.co/640x420/png?text=Energy+Club", logo: "EC", amenities: ["Зал 600 м²", "Душевые", "Парковка"] },
-  { slug: "spartak-arena", name: "Спартак Арена", city: "Витебск", area: "пр-т Фрунзе", directions: ["Бокс", "Борьба", "ОФП"], rating: 4.6, reviews: 34, priceFrom: 32, cover: "https://placehold.co/640x420/png?text=Spartak+Arena", logo: "SA", amenities: ["Ринг", "Татами", "Душевые"] },
-  { slug: "moonrise-yoga", name: "Moonrise Yoga", city: "Минск", area: "Зыбицкая", directions: ["Йога", "Медитация"], rating: 5.0, reviews: 41, priceFrom: 30, badge: "Премиум", cover: "https://placehold.co/640x420/png?text=Moonrise+Yoga", logo: "MR", amenities: ["Чайная", "Душевые"] },
-  { slug: "city-runners", name: "City Runners", city: "Могилёв", area: "пл. Ленина", directions: ["Бег", "ОФП"], rating: 4.3, reviews: 12, priceFrom: 18, cover: "https://placehold.co/640x420/png?text=City+Runners", logo: "CR", amenities: ["Раздевалка"] },
-];
+const CLUBS_LIST: ClubItem[] = [];
 
 const CITIES = ["Все города", "Минск", "Гомель", "Брест", "Гродно", "Витебск", "Могилёв"];
 const DIRECTIONS = ["Все направления", "Бокс", "Единоборства", "Фитнес", "Йога", "Плавание", "Теннис", "Бег"];
@@ -47,49 +38,51 @@ const DIRECTIONS = ["Все направления", "Бокс", "Единобо
 const CSS = `
 .clubs-page { min-height: 100vh; background: var(--bg); }
 .clubs-hero { padding: var(--layout-section-y) var(--layout-gutter) 36px; max-width: var(--layout-max); margin: 0 auto; }
-.clubs-hero__crumbs { font-size: 13px; color: var(--muted); font-weight: 650; margin-bottom: 14px; }
+.clubs-hero__crumbs { font-size: 13px; color: var(--muted); font-weight: var(--fw-title); margin-bottom: 14px; }
 .clubs-hero__crumbs a { color: var(--muted); text-decoration: none; }
 .clubs-hero__crumbs a:hover { color: var(--primary); }
-.clubs-hero h1 { margin: 0 0 14px; font-size: clamp(34px, 4.4vw, 56px); line-height: 1.04; letter-spacing: -0.045em; font-weight: 900; color: var(--dark); max-width: 880px; }
+.clubs-hero h1 { margin: 0 0 14px; font-size: var(--fs-page); line-height: 1.15; letter-spacing: var(--tracking-heading); font-weight: var(--fw-heading); color: var(--dark); max-width: 880px; }
 .clubs-hero p { margin: 0 0 26px; font-size: 17px; line-height: 1.55; color: var(--text); max-width: 720px; }
-.clubs-hero__stats { display: flex; flex-wrap: wrap; gap: 28px 36px; padding: 22px 26px; background: #fff; border-radius: 20px; box-shadow: 0 6px 26px rgba(var(--dark-rgb), 0.06); border: 1px solid rgba(var(--dark-rgb), 0.04); }
-.clubs-hero__stat strong { display: block; font-size: 28px; font-weight: 900; letter-spacing: -0.03em; color: var(--dark); }
-.clubs-hero__stat span { font-size: 13px; color: var(--muted); font-weight: 650; }
+.clubs-hero__stats { display: flex; flex-wrap: wrap; gap: 28px 36px; padding: 22px 26px; background: #fff; border-radius: var(--card-radius); box-shadow: 0 6px 26px rgba(var(--dark-rgb), 0.06); border: 1px solid rgba(var(--dark-rgb), 0.04); }
+.clubs-hero__stat strong { display: block; font-size: 28px; font-weight: var(--fw-heading); letter-spacing: -0.03em; color: var(--dark); }
+.clubs-hero__stat span { font-size: 13px; color: var(--muted); font-weight: var(--fw-title); }
 
-.clubs-toolbar { position: sticky; top: 72px; z-index: 80; background: rgba(255,245,245,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(var(--dark-rgb), 0.06); padding: 14px var(--layout-gutter); }
-.clubs-toolbar__inner { max-width: var(--layout-max); margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
-.chip-select { position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px; border: 1.5px solid rgba(var(--dark-rgb), 0.12); background: #fff; font-size: 14px; font-weight: 700; color: var(--dark); cursor: pointer; }
+.clubs-toolbar { position: sticky; top: 72px; z-index: 80; background: rgba(255,245,245,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(var(--dark-rgb), 0.06); padding-block: 14px; }
+.clubs-toolbar__inner { max-width: var(--layout-max); margin: 0 auto; padding-inline: var(--layout-gutter); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.chip-select { position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px; border: 1.5px solid rgba(var(--dark-rgb), 0.12); background: #fff; font-size: 14px; font-weight: var(--fw-heading); color: var(--dark); cursor: pointer; }
 .chip-select select { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-.chip-select svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.chip-select svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .toolbar-spacer { flex: 1; }
-.toolbar-count { font-size: 14px; color: var(--muted); font-weight: 650; }
+.toolbar-count { font-size: 14px; color: var(--muted); font-weight: var(--fw-title); }
 
 .clubs-grid-wrap { max-width: var(--layout-max); margin: 0 auto; padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 64px); }
-.clubs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 22px; }
+.clubs-grid { align-items: stretch; }
 .club-card {
-  background: #fff; border-radius: 22px; overflow: hidden; text-decoration: none; color: inherit;
+  background: #fff; border-radius: var(--card-radius); overflow: hidden; text-decoration: none; color: inherit;
   border: 1px solid rgba(var(--dark-rgb), 0.05); box-shadow: 0 6px 24px rgba(var(--dark-rgb), 0.04);
   display: flex; flex-direction: column; transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 .club-card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(var(--dark-rgb), 0.10); }
 .club-card__cover { aspect-ratio: 16/10; position: relative; background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.12), rgba(var(--primary-rgb), 0.04)); display: grid; place-items: center; }
 .club-card__cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.club-card__badge { position: absolute; top: 14px; left: 14px; padding: 6px 12px; border-radius: 999px; background: #fff; font-size: 12px; font-weight: 800; color: var(--primary); box-shadow: 0 4px 12px rgba(var(--dark-rgb), 0.08); }
-.club-card__logo { position: absolute; bottom: -22px; left: 18px; width: 56px; height: 56px; border-radius: 16px; background: var(--dark); color: #fff; display: grid; place-items: center; font-size: 18px; font-weight: 900; letter-spacing: -0.02em; border: 3px solid #fff; box-shadow: 0 6px 18px rgba(var(--dark-rgb), 0.18); }
+.club-card__badge { position: absolute; top: 14px; left: 14px; padding: 6px 12px; border-radius: 999px; background: #fff; font-size: 12px; font-weight: var(--fw-title); color: var(--primary); box-shadow: 0 4px 12px rgba(var(--dark-rgb), 0.08); }
+.club-card__logo { position: absolute; bottom: -22px; left: 18px; width: 56px; height: 56px; border-radius: var(--radius-tile); background: var(--dark); color: #fff; display: grid; place-items: center; font-size: 18px; font-weight: var(--fw-heading); letter-spacing: -0.02em; border: 3px solid #fff; box-shadow: 0 6px 18px rgba(var(--dark-rgb), 0.18); }
 .club-card__body { padding: 30px 20px 20px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
 .club-card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-.club-card__name { margin: 0; font-size: 19px; font-weight: 900; letter-spacing: -0.025em; color: var(--dark); }
-.club-card__rating { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 800; color: var(--dark); }
+.club-card__name { margin: 0; font-size: 19px; font-weight: var(--fw-heading); letter-spacing: -0.025em; color: var(--dark); transition: color 0.16s ease; }
+.club-card:hover .club-card__name,
+.club-card:focus-visible .club-card__name { color: var(--primary); }
+.club-card__rating { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: var(--fw-title); color: var(--dark); }
 .club-card__rating .star { color: #f5a524; }
-.club-card__rating span { color: var(--muted); font-weight: 600; font-size: 13px; }
-.club-card__loc { font-size: 14px; color: var(--muted); font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
-.club-card__loc svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+.club-card__rating span { color: var(--muted); font-weight: var(--fw-ui); font-size: 13px; }
+.club-card__loc { font-size: 14px; color: var(--muted); font-weight: var(--fw-ui); display: inline-flex; align-items: center; gap: 6px; }
+.club-card__loc svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .club-card__dirs { display: flex; flex-wrap: wrap; gap: 6px; }
-.club-card__dirs span { font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 999px; background: rgba(var(--primary-rgb), 0.08); color: var(--primary); }
+.club-card__dirs span { font-size: 12px; font-weight: var(--fw-heading); padding: 5px 10px; border-radius: 999px; background: rgba(var(--primary-rgb), 0.08); color: var(--primary); }
 .club-card__foot { margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(var(--dark-rgb), 0.06); display: flex; justify-content: space-between; align-items: center; }
-.club-card__price { font-size: 13px; color: var(--muted); font-weight: 650; }
-.club-card__price strong { color: var(--dark); font-size: 16px; font-weight: 900; margin-left: 2px; }
-.club-card__cta { font-size: 13px; font-weight: 800; color: var(--primary); display: inline-flex; align-items: center; gap: 4px; }
+.club-card__price { font-size: 13px; color: var(--muted); font-weight: var(--fw-title); }
+.club-card__price strong { color: var(--dark); font-size: 16px; font-weight: var(--fw-heading); margin-left: 2px; }
+.club-card__cta { font-size: 13px; font-weight: var(--fw-title); color: var(--primary); display: inline-flex; align-items: center; gap: 4px; }
 
 .clubs-empty { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 16px; }
 
@@ -98,11 +91,11 @@ const CSS = `
 }
 .clubs-cta__inner {
   background: linear-gradient(135deg, var(--dark) 0%, #1f1f2e 100%); color: #fff;
-  border-radius: 28px; padding: 44px 48px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  border-radius: var(--card-radius); padding: 44px 48px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
 }
-.clubs-cta__inner h3 { margin: 0 0 8px; font-size: 28px; font-weight: 900; letter-spacing: -0.03em; }
+.clubs-cta__inner h3 { margin: 0 0 8px; font-size: 28px; font-weight: var(--fw-heading); letter-spacing: -0.03em; }
 .clubs-cta__inner p { margin: 0; color: rgba(255,255,255,0.7); font-size: 15px; max-width: 480px; }
-.clubs-cta__btn { background: var(--primary); color: #fff; padding: 14px 26px; border-radius: 14px; font-size: 15px; font-weight: 800; text-decoration: none; }
+.clubs-cta__btn { display: inline-flex; align-items: center; min-height: 44px; background: var(--primary); color: #fff; padding: 12px 22px; border-radius: 999px; font-size: 15px; font-weight: var(--fw-title); text-decoration: none; }
 
 @media (max-width: 960px) {
   .clubs-cta__inner { padding: 32px 24px; }
@@ -136,10 +129,10 @@ function ClubsListPage() {
         <h1>Спортивные клубы и залы Беларуси</h1>
         <p>Каталог проверенных клубов, студий и залов. Адреса, цены, направления и тренеры — в одном месте.</p>
         <div className="clubs-hero__stats">
-          <div className="clubs-hero__stat"><strong>{CLUBS_LIST.length * 18}+</strong><span>клубов и студий</span></div>
-          <div className="clubs-hero__stat"><strong>7</strong><span>городов</span></div>
-          <div className="clubs-hero__stat"><strong>30+</strong><span>направлений</span></div>
-          <div className="clubs-hero__stat"><strong>4.7</strong><span>средний рейтинг</span></div>
+          <div className="clubs-hero__stat"><strong>—</strong><span>клубов и студий</span></div>
+          <div className="clubs-hero__stat"><strong>—</strong><span>городов</span></div>
+          <div className="clubs-hero__stat"><strong>—</strong><span>направлений</span></div>
+          <div className="clubs-hero__stat"><strong>—</strong><span>средний рейтинг</span></div>
         </div>
       </section>
 
@@ -169,13 +162,17 @@ function ClubsListPage() {
             </select>
           </label>
           <div className="toolbar-spacer" />
-          <div className="toolbar-count">Найдено: <strong>{list.length}</strong></div>
+          <div className="toolbar-count">Найдено: <strong>{list.length}</strong> {pluralRu(list.length, "клуб", "клуба", "клубов")}</div>
         </div>
       </div>
 
       <section className="clubs-grid-wrap">
         {list.length === 0 ? (
-          <div className="clubs-empty">По заданным фильтрам ничего не нашлось. Попробуйте другие настройки.</div>
+          <div className="clubs-empty">
+            {CLUBS_LIST.length === 0
+              ? "Клубов пока нет. Каталог заполнится, когда появятся опубликованные залы."
+              : "По заданным фильтрам ничего не нашлось. Попробуйте другие настройки."}
+          </div>
         ) : (
           <div className="clubs-grid">
             {list.map((club) => (
@@ -193,7 +190,7 @@ function ClubsListPage() {
                     </div>
                   </div>
                   <div className="club-card__loc">
-                    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.4" /></svg>
                     {club.city} · {club.area}
                   </div>
                   <div className="club-card__dirs">

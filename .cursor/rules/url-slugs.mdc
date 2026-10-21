@@ -1,0 +1,27 @@
+---
+description: Short SEO slugs for every public Trenio URL
+alwaysApply: true
+---
+
+# URL slugs
+
+Public paths use a short Latin slug, not a transliteration of the full title.
+
+## Shape
+
+- Lowercase `a-z`, digits, hyphens. No underscores, no stop-words (`i`, `v`, `na`, `k`, `po`, `dlya`, `s`).
+- One segment is the search keyword: 1–2 words, **at most 18 characters**.
+- A nested sport URL is `/categories/{parent}/{child}`. The child does not repeat the parent word.
+- Profiles: `/trainers/{slug}`, `/clubs/{slug}` — given name + family name, same length limit.
+- Cities, blog, auth stay short and stable (`minsk`, `kak-vybrat-trenera`, `/auth/login`).
+- Query filters are not indexable URLs.
+
+## Examples
+
+- `/categories/gimnastika/sportivnaya` — not `/categories/gimnastika-i-akrobatika/sportivnaya-gimnastika`
+- `/categories/fitnes/personalnyj` — not `personalnyj-fitnes` under a parent that already says fitness
+- `/categories/yoga`, `/categories/plavanie`, `/categories/zima/konki`
+
+## When a slug changes
+
+Keep the old segment in `src/lib/catalog/slug-policy.ts` (`LEGACY_CATALOG_SLUGS`) and redirect to the canonical path. Do not rename image files just because the slug changed.

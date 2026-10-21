@@ -54,16 +54,15 @@ export function canAccessFinance(userRoles: UserRole[]): boolean {
 }
 
 export function getPostLoginPath(roles: UserRole[]): string {
-  if (hasRole(roles, "superadmin") || hasRole(roles, "admin")) {
-    return "/trainer-admin";
-  }
-  if (hasRole(roles, "trainer")) {
-    return "/trainer-admin";
-  }
-  if (hasRole(roles, "club")) {
-    return "/trainer-admin";
-  }
-  return "/";
+  if (isStaff(roles)) return "/admin";
+  if (hasAnyRole(roles, ["trainer", "club"])) return "/trainer-admin";
+  return "/account/reviews";
+}
+
+export function getCabinetPath(roles: UserRole[]): "/admin" | "/trainer-admin" | "/account/reviews" {
+  if (isStaff(roles)) return "/admin";
+  if (hasAnyRole(roles, ["trainer", "club"])) return "/trainer-admin";
+  return "/account/reviews";
 }
 
 export const ROLE_LABELS: Record<UserRole, string> = {

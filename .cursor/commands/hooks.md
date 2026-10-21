@@ -1,29 +1,33 @@
 # Trenio.by — closing checklist (manual)
 
-Запускай эту команду **в конце задачи**, когда нужны проверки PWA, mobile-first и синхронизация документации. Автоматические Cursor hooks отключены — чеклист только по явному запросу.
+Run this command at the end of a task when layout, PWA, mobile-first, or documentation checks are required. Automatic Cursor hooks are off. This checklist runs only when asked.
 
-## Контекст проекта
+## Project context
 
-- **PWA 100%** — каждая правка должна оставаться совместимой с installable app (`docs/TECH_SPEC.md` §6).
-- **Mobile-first** — дизайн с `<768px`, touch targets ≥44px (`docs/TECH_SPEC.md` §7).
-- **Stack**: TanStack Start, маршруты в `src/routes/`, auth через `createServerFn`.
-- **Docs sync** — после структурных изменений обновлять `docs/` (`docs/TECH_SPEC.md` §12).
+- **Layout grid** — every screen uses one content grid (`.cursor/rules/layout-grid.mdc`, `docs/TECH_SPEC.md` §7.4).
+- **Icons** — line icons at `--icon-stroke` (`.cursor/rules/icons.mdc`).
+- **PWA 100%** — the change stays compatible with an installable app (`docs/TECH_SPEC.md` §6).
+- **Mobile-first** — design from `<768px`; touch targets are at least 44px (`docs/TECH_SPEC.md` §7).
+- **Stack**: TanStack Start, routes in `src/routes/`, auth through `createServerFn`.
+- **Docs sync** — after structural changes, update `docs/` (`docs/TECH_SPEC.md` §12).
+- **Language** — process files in English; product UI and `docs/` in Russian (`.cursor/rules/process-language.mdc`).
 
-## Выполни сейчас
+## Do this now
 
-1. **PWA audit** — прочитай и примени skill `.cursor/skills/trenio-pwa-audit/SKILL.md`: manifest/SW/offline impact, standalone mode, `public/` assets, no SW-breaking changes.
-2. **Mobile audit** — прочитай и примени skill `.cursor/skills/trenio-mobile-audit/SKILL.md`: layout 320px, touch targets, responsive nav/forms, no hover-only actions.
-3. **Docs sync** — прочитай и примени skill `.cursor/skills/trenio-docs-sync/SKILL.md`. Обнови документы, если менялись routes, auth, DB schema, env или architecture.
+1. **Layout grid** — changed screens use `.layout-container` / `.layout-with-sidebar` and the shared card-grid classes from `src/styles.css`. Rule: `.cursor/rules/layout-grid.mdc`.
+2. **Icons** — new icons match `.cursor/rules/icons.mdc` (24px line icons, one glyph per idea, sport marks from `SportIcon`).
+3. **PWA audit** — read and apply `.cursor/skills/trenio-pwa-audit/SKILL.md`: manifest, service worker, offline, standalone mode, `public/` assets.
+4. **Mobile audit** — read and apply `.cursor/skills/trenio-mobile-audit/SKILL.md`: 320px layout, touch targets, responsive nav and forms, no hover-only actions.
+5. **Docs sync** — read and apply `.cursor/skills/trenio-docs-sync/SKILL.md`. Update docs when routes, auth, DB schema, env, or architecture changed.
 
-Документы для проверки:
+Documents to check:
 
 - `docs/README.md`
 - `docs/TECH_SPEC.md`
 - `docs/PRODUCT.md`
 - `docs/ACCOUNT_MODEL.md`
-- `docs/AUTH.md` (если менялся логин / регистрация)
 
-## Результат
+## Result
 
-- Если всё compliant и docs актуальны — кратко сообщи, что чеклист пройден.
-- Если есть проблемы — исправь код и документы сейчас, не откладывай.
+- If the change complies and the docs are current, say the checklist passed.
+- If something fails, fix the code and the docs in this pass.

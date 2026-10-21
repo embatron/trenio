@@ -1,13 +1,14 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { FavoriteButton } from "@/components/favorite-button";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
+import { pluralRu } from "@/lib/ru-plural";
 
 type Club = {
   slug: string;
   name: string;
   logo: string;
   city: { slug: string; label: string };
-  eyebrow: string;
   address: string;
   hours: string;
   phone: string;
@@ -29,84 +30,17 @@ type Club = {
   reviews: Array<{ author: string; date: string; rating: number; text: string }>;
 };
 
-const CLUBS: Record<string, Club> = {
-  bronxgym: {
-    slug: "bronxgym",
-    name: "BronxGym",
-    logo: "BG",
-    city: { slug: "minsk", label: "Минск" },
-    eyebrow: "Клуб единоборств · Минск",
-    address: "пр-т Пушкина, 68А, Минск, 220073",
-    hours: "пн–сб 08:00–22:00 · вс 10:00–19:00",
-    phone: "+375 29 755-20-00",
-    telegram: "https://t.me/BronxGymMinsk",
-    mapUrl: "https://yandex.by/maps/157/minsk/",
-    rating: { value: "4.8", ratingCount: 52, reviewCount: 4, fillPct: 96 },
-    badge: "400 м²",
-    stats: [
-      { label: "400 м²", accent: true },
-      { label: "5 тренеров" },
-      { label: "3 направления" },
-      { label: "Первая групповая — бесплатно" },
-    ],
-    about: [
-      "BronxGym — клуб единоборств в Минске: кикбоксинг, бокс, тайский бокс и свободные тренировки в зале на 400 м². Есть ринг, мешки, ОФП-зона и место для групповой работы.",
-      "Фокус на технике, нагрузке и тренере, который видит группу. Новичкам не нужен опыт; тем, кто уже тренируется, подберём темп и формат.",
-    ],
-    formats: [
-      { label: "Группа", accent: true },
-      { label: "Свободные тренировки" },
-      { label: "Взрослые" },
-      { label: "Дети" },
-      { label: "Подростки" },
-    ],
-    amenities: ["Ринг", "Мешки", "ОФП-зона", "Групповой зал"],
-    note: "Групповые тренировки: разминка, техника, лапы и мешки, работа в парах — темп под уровень.",
-    prices: {
-      single: [
-        { name: "Пробное групповое", price: "бесплатно" },
-        { name: "Групповое занятие", price: "от 45 BYN" },
-        { name: "Свободная тренировка в зале", price: "от 25 BYN" },
-      ],
-      packs: [
-        { name: "8 групповых занятий", price: "320 BYN" },
-        { name: "12 групповых занятий", price: "450 BYN" },
-        { name: "Месяц безлимит (группы)", price: "280 BYN" },
-      ],
-    },
-    directions: [
-      { slug: "kikboksing", label: "Кикбоксинг", meta: "Группы и персональные · взрослые и дети" },
-      { slug: "boks", label: "Бокс", meta: "Классика · группы для начинающих" },
-      { slug: "tajskij-boks", label: "Тайский бокс", meta: "Техника, лапы, мешки · вечерние группы" },
-      { slug: "svobodnye-trenirovki", label: "Свободные тренировки", meta: "Самостоятельная работа в зале · мешки и ОФП" },
-    ],
-    trainers: [
-      { slug: "farkhad-akhmedjanov", name: "Фархад Ахмеджанов", sport: "Кикбоксинг", meta: "Группа · индивидуально", price: "от 45 BYN" },
-      { slug: "dmitriy-hotin", name: "Дмитрий Хотин", sport: "Тайский бокс", meta: "Детские группы", price: "от 50 BYN" },
-      { slug: "sergey-ovsyannikov", name: "Сергей Овсяников", sport: "Тайский бокс", meta: "Вечерние группы", price: "от 42 BYN" },
-      { slug: "artem-romanovich", name: "Артем Романович", sport: "Бокс", meta: "Начинающие", price: "от 38 BYN" },
-      { slug: "vladimir-antipenko", name: "Владимир Антипенко", sport: "Кикбоксинг", meta: "Дети · подростки", price: "от 35 BYN" },
-    ],
-    reviews: [
-      { author: "Андрей", date: "февраль 2026", rating: 5, text: "Удобный зал — ринг, мешки, нормальная вентиляция. Группы разные по уровню, можно начать с нуля." },
-      { author: "Ольга", date: "январь 2026", rating: 5, text: "Привела сына на детскую группу — аккуратно, без лишнего шума. Тренер объясняет понятно." },
-      { author: "Павел", date: "декабрь 2025", rating: 5, text: "Хожу на вечерние группы. Зал не перегружен, есть где поработать на мешках." },
-      { author: "Наталья", date: "ноябрь 2025", rating: 4, text: "Пробная тренировка прошла спокойно — объяснили формат и помогли с экипировкой." },
-    ],
-  },
-};
+const CLUBS: Record<string, Club> = {};
 
-function getClub(slug: string): Club {
-  const base = CLUBS[slug];
-  if (base) return base;
-  const pretty = slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  return { ...CLUBS["bronxgym"], slug, name: pretty };
+function getClub(slug: string): Club | undefined {
+  return CLUBS[slug];
 }
 
 export const Route = createFileRoute("/clubs/$slug")({
   loader: ({ params }) => {
-    if (!params.slug) throw notFound();
-    return { club: getClub(params.slug) };
+    const club = params.slug ? getClub(params.slug) : undefined;
+    if (!club) throw notFound();
+    return { club };
   },
   head: ({ loaderData }) => {
     const c = loaderData?.club;
@@ -138,139 +72,138 @@ const CSS = `
   --primary: #f04b50; --primary-dark: #c9343a; --dark: #111827; --light-bg: #fff5f5;
   --neutral-bg: #f9fafb; --text: #1f2937; --muted: #6b7280; --line: #e5e7eb; --white: #ffffff;
   --primary-rgb: 240,75,80; --dark-rgb: 17,24,39;
-  --radius-md: 22px; --content-max: var(--layout-max); --club-sidebar-w: 320px;
+  --content-max: var(--layout-max); --club-sidebar-w: var(--layout-sidebar-w);
   font-family: Inter, Manrope, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text); background: var(--neutral-bg); min-height: 100vh;
 }
 
 .page-shell { max-width: var(--layout-max); margin: 0 auto; padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 72px); }
 
-.breadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 24px; padding: 0; list-style: none; font-size: 13px; font-weight: 650; color: var(--muted); }
+.breadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 24px; padding: 0; list-style: none; font-size: 13px; font-weight: var(--fw-title); color: var(--muted); }
 .breadcrumbs a { color: var(--muted); text-decoration: none; }
 .breadcrumbs a:hover { color: var(--primary-dark); }
 .breadcrumbs li + li::before { content: "›"; margin-right: 8px; color: var(--line); }
 
 .club-hero { margin-bottom: 28px; }
 .club-gallery { position: relative; }
-.gallery-frame { position: relative; aspect-ratio: 21/9; border-radius: var(--radius-md); overflow: hidden; background: linear-gradient(160deg, var(--neutral-bg), var(--line)); }
+.gallery-frame { position: relative; aspect-ratio: 21/9; border-radius: var(--card-radius); overflow: hidden; background: linear-gradient(160deg, var(--neutral-bg), var(--line)); }
 .gallery-track { display: flex; height: 100%; transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); }
 .gallery-slide { flex: 0 0 100%; height: 100%; }
 .gallery-slide img { width: 100%; height: 100%; object-fit: cover; display: block; user-select: none; }
-.gallery-badge { position: absolute; top: 14px; left: 14px; z-index: 2; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,0.94); color: var(--primary-dark); font-size: 11px; font-weight: 800; letter-spacing: 0.02em; text-transform: uppercase; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
+.gallery-badge { position: absolute; top: 14px; left: 14px; z-index: 2; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,0.94); color: var(--primary-dark); font-size: 11px; font-weight: var(--fw-title); letter-spacing: 0.02em; text-transform: uppercase; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
 .gallery-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.92); color: var(--dark); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.12); z-index: 2; }
 .gallery-nav--prev { left: 12px; } .gallery-nav--next { right: 12px; }
-.gallery-nav svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2.2; fill: none; }
+.gallery-nav svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .gallery-save { position: absolute; top: 12px; right: 12px; z-index: 2; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(255,255,255,0.92); color: var(--muted); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
 .gallery-save.is-saved { color: var(--primary); }
 .gallery-save svg { width: 20px; height: 20px; fill: currentColor; }
 .gallery-thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-.gallery-thumb { width: 70px; height: 70px; padding: 0; border: 2px solid transparent; border-radius: 12px; overflow: hidden; cursor: pointer; background: var(--line); opacity: 0.75; transition: opacity 0.16s, border-color 0.16s, transform 0.16s; }
+.gallery-thumb { width: 70px; height: 70px; padding: 0; border: 2px solid transparent; border-radius: var(--radius-tile); overflow: hidden; cursor: pointer; background: var(--line); opacity: 0.75; transition: opacity 0.16s, border-color 0.16s, transform 0.16s; }
 .gallery-thumb:hover { opacity: 0.95; }
 .gallery-thumb.is-active { border-color: var(--primary); opacity: 1; transform: translateY(-1px); }
 .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-.club-hero__sheet { display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 18px 22px; align-items: center; margin-top: -32px; padding: 20px 22px; border-radius: var(--radius-md); background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); box-shadow: 0 16px 48px rgba(var(--dark-rgb),0.08); position: relative; z-index: 2; }
-.club-hero__logo { width: 72px; height: 72px; border-radius: 18px; background: var(--dark); color: var(--white); display: grid; place-items: center; font-size: 22px; font-weight: 900; letter-spacing: -0.04em; }
-.club-hero__eyebrow { margin: 0 0 4px; color: var(--primary-dark); font-size: 13px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
-.club-hero__title { margin: 0 0 10px; font-size: clamp(26px, 3.5vw, 34px); line-height: 1.08; letter-spacing: -0.04em; font-weight: 900; color: var(--dark); }
+.club-hero__sheet { display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 18px 22px; align-items: center; margin-top: -32px; padding: 20px 22px; border-radius: var(--card-radius); background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); box-shadow: 0 16px 48px rgba(var(--dark-rgb),0.08); position: relative; z-index: 2; }
+.club-hero__logo { width: 72px; height: 72px; border-radius: var(--radius-tile); background: var(--dark); color: var(--white); display: grid; place-items: center; font-size: 22px; font-weight: var(--fw-heading); letter-spacing: -0.04em; }
+.club-hero__title { margin: 0 0 10px; font-size: var(--fs-page); line-height: 1.15; letter-spacing: var(--tracking-heading); font-weight: var(--fw-heading); color: var(--dark); }
 .club-hero__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
-.club-hero__location { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 14px; font-weight: 650; }
-.club-hero__location svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2; fill: none; }
-.club-rating { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; font-size: 14px; font-weight: 800; color: var(--dark); }
+.club-hero__location { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 14px; font-weight: var(--fw-title); }
+.club-hero__location svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.club-rating { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; font-size: 14px; font-weight: var(--fw-title); color: var(--dark); }
 .club-rating__stars { position: relative; display: inline-flex; flex-shrink: 0; }
 .club-rating__stars-empty, .club-rating__stars-fill { display: inline-flex; gap: 2px; }
 .club-rating__stars-empty svg, .club-rating__stars-fill svg { width: 15px; height: 15px; }
 .club-rating__stars-empty svg { fill: var(--line); }
 .club-rating__stars-filled { position: absolute; inset: 0 auto 0 0; overflow: hidden; }
 .club-rating__stars-fill svg { fill: #ffb400; }
-.club-rating__counts { color: var(--muted); font-size: 13px; font-weight: 650; }
-.club-rating__link { color: var(--primary-dark); font-weight: 750; text-decoration: none; cursor: pointer; background: none; border: 0; padding: 0; }
+.club-rating__counts { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
+.club-rating__link { color: var(--primary-dark); font-weight: var(--fw-ui); text-decoration: none; cursor: pointer; background: none; border: 0; padding: 0; }
 .club-rating__link:hover { text-decoration: underline; }
 .club-hero__save { width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--neutral-bg); color: var(--muted); cursor: pointer; display: grid; place-items: center; justify-self: end; align-self: start; }
 .club-hero__save.is-saved { color: var(--primary); }
-.club-hero__save svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; }
+.club-hero__save svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .club-hero__save.is-saved svg { fill: currentColor; }
 .club-hero__stats { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.club-stat { padding: 7px 12px; border-radius: 999px; background: var(--neutral-bg); color: var(--dark); font-size: 13px; font-weight: 750; }
+.club-stat { padding: 7px 12px; border-radius: 999px; background: var(--neutral-bg); color: var(--dark); font-size: 13px; font-weight: var(--fw-ui); }
 .club-stat--accent { background: rgba(var(--primary-rgb),0.1); color: var(--primary-dark); }
 
 .club-layout { display: grid; grid-template-columns: minmax(0,1fr) var(--club-sidebar-w); gap: 32px; align-items: start; }
 .club-main { min-width: 0; }
 
-.club-panel { border-radius: var(--radius-md); background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); box-shadow: 0 14px 42px rgba(var(--dark-rgb),0.07); overflow: hidden; min-width: 0; }
+.club-panel { border-radius: var(--card-radius); background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); box-shadow: 0 14px 42px rgba(var(--dark-rgb),0.07); overflow: hidden; min-width: 0; }
 .club-tabs { display: flex; flex-wrap: nowrap; gap: 6px; padding: 8px; background: var(--neutral-bg); border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
 .club-tabs::-webkit-scrollbar { display: none; }
-.club-tabs__btn { flex: 0 0 auto; padding: 10px 14px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font-size: 14px; font-weight: 750; cursor: pointer; white-space: nowrap; transition: background 0.16s, color 0.16s, box-shadow 0.16s; }
+.club-tabs__btn { flex: 0 0 auto; padding: 10px 14px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font-size: 14px; font-weight: var(--fw-ui); cursor: pointer; white-space: nowrap; transition: background 0.16s, color 0.16s, box-shadow 0.16s; }
 .club-tabs__btn:hover { color: var(--dark); }
 .club-tabs__btn[aria-selected="true"] { background: var(--white); color: var(--dark); box-shadow: 0 2px 10px rgba(var(--dark-rgb),0.08); }
 .club-panel__body { padding: 22px; }
 .club-tab-panel { display: grid; gap: 14px; }
 
-.club-section__title { margin: 0; font-size: 14px; font-weight: 850; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.club-section__title { margin: 0; font-size: 14px; font-weight: var(--fw-title); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
 .club-text { margin: 0; font-size: 15px; line-height: 1.65; font-weight: 500; color: var(--text); }
 .club-text + .club-text { margin-top: 4px; }
 .club-note { margin: 0; font-size: 13px; line-height: 1.55; font-weight: 500; color: var(--muted); }
 
 .taxonomy-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.taxonomy-tag { padding: 7px 12px; border-radius: 999px; background: var(--light-bg); color: var(--muted); font-size: 12px; font-weight: 750; }
+.taxonomy-tag { padding: 7px 12px; border-radius: 999px; background: var(--light-bg); color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); }
 .taxonomy-tag--accent { background: rgba(var(--primary-rgb),0.1); color: var(--primary-dark); }
 
 .amenity-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
-.amenity-tile { padding: 14px 12px; border-radius: 16px; background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); text-align: center; font-size: 13px; font-weight: 750; color: var(--dark); }
+.amenity-tile { padding: 14px 12px; border-radius: var(--radius-tile); background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); text-align: center; font-size: 13px; font-weight: var(--fw-ui); color: var(--dark); }
 
 .club-price-groups { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 20px 24px; }
 .club-price-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.club-price-list__row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 12px; background: var(--neutral-bg); }
-.club-price-list__name { font-size: 14px; font-weight: 700; color: var(--dark); }
-.club-price-list__amount { flex: 0 0 auto; font-size: 14px; font-weight: 850; color: var(--dark); white-space: nowrap; }
+.club-price-list__row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: var(--radius-control); background: var(--neutral-bg); }
+.club-price-list__name { font-size: 14px; font-weight: var(--fw-heading); color: var(--dark); }
+.club-price-list__amount { flex: 0 0 auto; font-size: 14px; font-weight: var(--fw-title); color: var(--dark); white-space: nowrap; }
 
 .direction-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
-.direction-card { display: grid; gap: 6px; padding: 16px 18px; border-radius: var(--radius-md); background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); box-shadow: 0 8px 28px rgba(var(--dark-rgb),0.04); text-decoration: none; color: inherit; transition: border-color 0.16s, box-shadow 0.16s; }
+.direction-card { display: grid; gap: 6px; padding: 16px 18px; border-radius: var(--card-radius); background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); box-shadow: 0 8px 28px rgba(var(--dark-rgb),0.04); text-decoration: none; color: inherit; transition: border-color 0.16s, box-shadow 0.16s; }
 .direction-card:hover { border-color: rgba(var(--primary-rgb),0.22); box-shadow: 0 12px 34px rgba(var(--dark-rgb),0.07); }
-.direction-card__label { font-size: 16px; font-weight: 850; letter-spacing: -0.02em; color: var(--dark); }
-.direction-card__meta { font-size: 13px; font-weight: 550; color: var(--muted); line-height: 1.4; }
+.direction-card__label { font-size: 16px; font-weight: var(--fw-title); letter-spacing: -0.02em; color: var(--dark); }
+.direction-card__meta { font-size: 13px; font-weight: var(--fw-body); color: var(--muted); line-height: 1.4; }
 
 .club-trainer-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
-.club-trainer-card { display: flex; flex-direction: column; min-width: 0; border: 1px solid rgba(var(--dark-rgb),0.06); border-radius: var(--radius-md); background: var(--white); color: inherit; text-decoration: none; overflow: hidden; box-shadow: 0 8px 28px rgba(var(--dark-rgb),0.04); transition: border-color 0.16s, transform 0.16s; }
+.club-trainer-card { display: flex; flex-direction: column; min-width: 0; border: 1px solid rgba(var(--dark-rgb),0.06); border-radius: var(--card-radius); background: var(--white); color: inherit; text-decoration: none; overflow: hidden; box-shadow: 0 8px 28px rgba(var(--dark-rgb),0.04); transition: border-color 0.16s, transform 0.16s; }
 .club-trainer-card:hover { border-color: rgba(var(--primary-rgb),0.22); transform: translateY(-1px); }
 .club-trainer-card__photo-wrap { aspect-ratio: 4/3; overflow: hidden; background: linear-gradient(160deg, var(--neutral-bg), var(--line)); }
 .club-trainer-card__photo { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
 .club-trainer-card__body { display: grid; gap: 4px; padding: 12px 14px 14px; }
-.club-trainer-card__name { margin: 0; font-size: 15px; font-weight: 850; color: var(--dark); letter-spacing: -0.02em; }
-.club-trainer-card__sport { margin: 0; font-size: 13px; font-weight: 650; color: var(--primary-dark); }
-.club-trainer-card__meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 4px; font-size: 13px; font-weight: 750; color: var(--muted); }
+.club-trainer-card__name { margin: 0; font-size: 15px; font-weight: var(--fw-title); color: var(--dark); letter-spacing: -0.02em; }
+.club-trainer-card__sport { margin: 0; font-size: 13px; font-weight: var(--fw-title); color: var(--primary-dark); }
+.club-trainer-card__meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 4px; font-size: 13px; font-weight: var(--fw-ui); color: var(--muted); }
 .club-trainer-card__price { color: var(--dark); white-space: nowrap; }
 
 .review-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
-.review-item { display: grid; gap: 8px; padding: 16px 18px; border-radius: var(--radius-md); background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); }
+.review-item { display: grid; gap: 8px; padding: 16px 18px; border-radius: var(--card-radius); background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); }
 .review-item__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
-.review-item__author { font-size: 14px; font-weight: 800; color: var(--dark); }
-.review-item__date { color: var(--muted); font-size: 12px; font-weight: 650; }
+.review-item__author { font-size: 14px; font-weight: var(--fw-title); color: var(--dark); }
+.review-item__date { color: var(--muted); font-size: 12px; font-weight: var(--fw-title); }
 .review-item__stars { display: inline-flex; gap: 2px; }
 .review-item__stars svg { width: 13px; height: 13px; fill: #ffb400; }
 .review-item__stars svg.is-empty { fill: var(--line); }
 .review-item__text { margin: 0; font-size: 14px; line-height: 1.55; font-weight: 500; }
-.reviews-more { margin-top: 4px; align-self: start; padding: 11px 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--white); color: var(--dark); font-size: 14px; font-weight: 750; cursor: pointer; }
+.reviews-more { margin-top: 4px; align-self: start; padding: 11px 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--white); color: var(--dark); font-size: 14px; font-weight: var(--fw-ui); cursor: pointer; }
 .reviews-more:hover { background: var(--light-bg); border-color: rgba(var(--primary-rgb),0.3); color: var(--primary-dark); }
 
 .club-sidebar { position: sticky; top: 96px; min-width: 0; }
-.club-contact { padding: 20px 18px; border-radius: var(--radius-md); background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); box-shadow: 0 14px 42px rgba(var(--dark-rgb),0.07); }
-.club-contact__title { margin: 0 0 16px; font-size: 14px; font-weight: 850; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.club-contact { padding: 20px 18px; border-radius: var(--card-radius); background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); box-shadow: 0 14px 42px rgba(var(--dark-rgb),0.07); }
+.club-contact__title { margin: 0 0 16px; font-size: 14px; font-weight: var(--fw-title); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
 .club-contact__block + .club-contact__block { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
-.club-contact__label { margin: 0 0 6px; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-.club-contact__text { margin: 0; font-size: 14px; line-height: 1.55; font-weight: 550; color: var(--dark); }
-.club-contact__link { display: inline-block; margin-top: 6px; color: var(--primary-dark); font-size: 13px; font-weight: 750; text-decoration: none; }
+.club-contact__label { margin: 0 0 6px; font-size: 11px; font-weight: var(--fw-title); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.club-contact__text { margin: 0; font-size: 14px; line-height: 1.55; font-weight: var(--fw-body); color: var(--dark); }
+.club-contact__link { display: inline-block; margin-top: 6px; color: var(--primary-dark); font-size: 13px; font-weight: var(--fw-ui); text-decoration: none; }
 .club-contact__link:hover { text-decoration: underline; }
 .contact-actions { display: grid; gap: 8px; margin-top: 18px; }
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 20px; border: 0; border-radius: 999px; font-size: 15px; font-weight: 800; cursor: pointer; text-decoration: none; transition: transform 0.16s, background 0.16s; width: 100%; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 20px; border: 0; border-radius: 999px; font-size: 15px; font-weight: var(--fw-title); cursor: pointer; text-decoration: none; transition: transform 0.16s, background 0.16s; width: 100%; }
 .btn:hover { transform: translateY(-1px); }
 .btn--primary { background: var(--primary); color: #fff; }
 .btn--primary:hover { background: var(--primary-dark); }
 .btn--secondary { background: var(--neutral-bg); color: var(--dark); border: 1px solid var(--line); }
-.btn svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; flex: 0 0 auto; }
-.contact-reveal { display: none; margin-top: 12px; padding: 12px; border-radius: 14px; background: var(--light-bg); text-align: center; }
+.btn svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+.contact-reveal { display: none; margin-top: 12px; padding: 12px; border-radius: var(--radius-control); background: var(--light-bg); text-align: center; }
 .contact-reveal.is-visible { display: block; }
-.contact-reveal__phone { display: block; margin-bottom: 4px; font-size: 18px; font-weight: 900; color: var(--dark); text-decoration: none; }
+.contact-reveal__phone { display: block; margin-bottom: 4px; font-size: 18px; font-weight: var(--fw-heading); color: var(--dark); text-decoration: none; }
 .contact-reveal__hint { margin: 0; font-size: 12px; color: var(--muted); }
 
 .mobile-contact-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 200; padding: 10px 14px; background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); border-top: 1px solid var(--line); display: none; }
@@ -317,7 +250,6 @@ function ClubPage() {
   const { club: c } = Route.useLoaderData() as { club: Club };
   const [tab, setTab] = useState<TabKey>("about");
   const [photoIdx, setPhotoIdx] = useState(0);
-  const [saved, setSaved] = useState(false);
   const [phoneVisible, setPhoneVisible] = useState(false);
   const [reviewsShown, setReviewsShown] = useState(5);
 
@@ -364,9 +296,7 @@ function ClubPage() {
                   ))}
                 </div>
                 {c.badge && <span className="gallery-badge">{c.badge}</span>}
-                <button className={`gallery-save${saved ? " is-saved" : ""}`} type="button" aria-label="Сохранить клуб" onClick={() => setSaved((s) => !s)}>
-                  <svg viewBox="0 0 24 24"><path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" /></svg>
-                </button>
+                <FavoriteButton target={{ type: "club", slug: c.slug }} className="gallery-save" />
                 <button className="gallery-nav gallery-nav--prev" type="button" aria-label="Предыдущее фото" onClick={() => setPhotoIdx((i) => (i - 1 + photos.length) % photos.length)}>
                   <svg viewBox="0 0 24 24"><path d="M14 6l-6 6 6 6" /></svg>
                 </button>
@@ -379,14 +309,13 @@ function ClubPage() {
             <div className="club-hero__sheet">
               <span className="club-hero__logo" aria-hidden="true">{c.logo}</span>
               <div>
-                <p className="club-hero__eyebrow">{c.eyebrow}</p>
                 <h1 className="club-hero__title">{c.name}</h1>
                 <div className="club-hero__meta">
                   <span className="club-hero__location">
                     <svg viewBox="0 0 24 24"><path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.4" /></svg>
                     {c.address.split(",").slice(0, 2).join(",")}
                   </span>
-                  <div className="club-rating" aria-label={`Рейтинг ${c.rating.value} из 5, ${c.rating.ratingCount} оценок, ${c.rating.reviewCount} отзывов`}>
+                  <div className="club-rating" aria-label={`Рейтинг ${c.rating.value} из 5, ${c.rating.ratingCount} ${pluralRu(c.rating.ratingCount, "оценка", "оценки", "оценок")}, ${c.rating.reviewCount} ${pluralRu(c.rating.reviewCount, "отзыв", "отзыва", "отзывов")}`}>
                     <span className="club-rating__stars" aria-hidden="true">
                       <span className="club-rating__stars-empty">
                         {Array.from({ length: 5 }).map((_, i) => (
@@ -403,14 +332,12 @@ function ClubPage() {
                     </span>
                     <span>{c.rating.value}</span>
                     <span className="club-rating__counts">
-                      ({c.rating.ratingCount} оценок · <button type="button" className="club-rating__link" onClick={openReviews}>{c.rating.reviewCount} отзывов</button>)
+                      ({c.rating.ratingCount} {pluralRu(c.rating.ratingCount, "оценка", "оценки", "оценок")} · <button type="button" className="club-rating__link" onClick={openReviews}>{c.rating.reviewCount} {pluralRu(c.rating.reviewCount, "отзыв", "отзыва", "отзывов")}</button>)
                     </span>
                   </div>
                 </div>
               </div>
-              <button className={`club-hero__save${saved ? " is-saved" : ""}`} type="button" aria-label="Сохранить клуб" onClick={() => setSaved((s) => !s)}>
-                <svg viewBox="0 0 24 24"><path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" /></svg>
-              </button>
+              <FavoriteButton target={{ type: "club", slug: c.slug }} className="club-hero__save" />
               <ul className="club-hero__stats">
                 {c.stats.map((s) => (
                   <li key={s.label} className={`club-stat${s.accent ? " club-stat--accent" : ""}`}>{s.label}</li>

@@ -1,0 +1,110 @@
+import { randomBytes } from "node:crypto";
+
+import { eq } from "drizzle-orm";
+
+import { getDb } from "./index";
+import { trainerProfiles, type TrainerPinnedPost, type TrainerSportRecord } from "./schema";
+
+export type ImportedTrainerDraft = {
+  handle: string;
+  slug: string;
+  sourceUrl: string;
+  status?: "draft" | "published" | "hidden" | "archived";
+  claimStatus?: "unclaimed" | "claimed" | "disputed";
+  createdSource?: "self" | "branch_created" | "admin_created" | "import";
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  headline: string;
+  bio: string;
+  sourceBio?: string;
+  about?: string[];
+  pinned?: TrainerPinnedPost[];
+  sports?: TrainerSportRecord[];
+  primarySport?: TrainerSportRecord | null;
+  audiences?: Array<"adult" | "teen" | "kid">;
+  formats?: Array<"individual" | "group">;
+  city: string;
+  citySlug?: string;
+  district?: string;
+  priceFrom?: number | null;
+  languages?: string[];
+  avatarPath?: string;
+  phone?: string;
+  website?: string;
+  instagramUrl?: string;
+  experienceYears?: number;
+};
+
+const CITY_SLUGS: Record<string, string> = {
+  Минск: "minsk",
+  Гомель: "gomel",
+  Брест: "brest",
+  Гродно: "grodno",
+  Витебск: "vitebsk",
+  Могилёв: "mogilev",
+};
+
+export function claimPathFor(token: string) {
+  return `/trainers/claim/${token}`;
+}
+
+function newClaimToken() {
+  return randomBytes(32).toString("base64url");
+}
+
+export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
+  const db = getDb();
+  const [existing] = await db
+    .select()
+    .from(trainerProfiles)
+    .where(eq(trainerProfiles.instagramHandle, draft.handle))
+    .limit(1);
+
+  const claimToken = existing?.claimToken ?? newClaimToken();
+  const claimPath = existing?.claimPath ?? claimPathFor(claimToken);
+  const values = {
+    slug: draft.slug,
+    instagramHandle: draft.handle,
+    sourceUrl: draft.sourceUrl,
+    status: draft.status ?? "draft",
+    claimStatus: existing?.claimStatus === "claimed" ? "claimed" : (draft.claimStatus ?? "unclaimed"),
+    createdSource: draft.createdSource ?? "import",
+    firstName: draft.firstName,
+    lastName: draft.lastName,
+    fullName: draft.fullName,
+    headline: draft.headline,
+    bio: draft.bio,
+    sourceBio: draft.sourceBio ?? draft.bio,
+    about: draft.about ?? [],
+    pinnedPosts: draft.pinned ?? [],
+    sports: draft.sports ?? [],
+    primarySport: draft.primarySport ?? null,
+    audiences: draft.audiences ?? [],
+    formats: draft.formats ?? [],
+    city: draft.city,
+    citySlug: draft.citySlug || CITY_SLUGS[draft.city] || "",
+    district: draft.district ?? "",
+    priceFrom: draft.priceFrom ?? null,
+    languages: draft.languages ?? [],
+    avatarPath: draft.avatarPath ?? "",
+    phone: draft.phone ?? "",
+    website: draft.website ?? "",
+    instagramUrl: draft.instagramUrl || draft.sourceUrl,
+    experienceYears: draft.experienceYears ?? 0,
+    claimToken,
+    claimPath,
+    updatedAt: new Date(),
+  } as const;
+
+  if (existing) {
+    await db.update(trainerProfiles).set(values).where(eq(trainerProfiles.id, existing.id));
+    return { id: existing.id, claimPath, created: false };
+  }
+
+  const [created] = await db
+    .insert(trainerProfiles)
+    .values(values)
+    .returning({ id: trainerProfiles.id, claimPath: trainerProfiles.claimPath });
+  return { id: created.id, claimPath: created.claimPath, created: true };
+}

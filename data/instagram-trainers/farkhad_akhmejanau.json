@@ -1,0 +1,49 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/farkhad_akhmejanau/",
+  "handle": "farkhad_akhmejanau",
+  "slug": "akhmejanau",
+  "status": "published",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Farkhad",
+  "lastName": "Akhmejanau",
+  "fullName": "Farkhad Akhmejanau",
+  "nameQuotes": [
+    "Farkhad Akhmejanau"
+  ],
+  "headline": "Тренер по кикбоксингу",
+  "bio": "Тренер по кикбоксингу / Минск - Групповые/персональные занятия",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    }
+  ],
+  "primarySport": {
+    "slug": "kikboksing",
+    "parentSlug": "edinoborstva",
+    "label": "Кикбоксинг"
+  },
+  "city": "Минск",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "languages": [],
+  "avatarPath": "/trainers/instagram/farkhad_akhmejanau.jpg",
+  "contacts": {
+    "instagram": "https://www.instagram.com/farkhad_akhmejanau/",
+    "phone": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "pinnedPosts"
+  ]
+}

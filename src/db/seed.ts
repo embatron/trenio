@@ -3,7 +3,7 @@ import "dotenv/config";
 import { eq } from "drizzle-orm";
 
 import { closeDb, getDb } from "./index";
-import { userRoles, users } from "./schema";
+import { trainerReviews, userRoles, users } from "./schema";
 import { hashPassword, normalizeEmail } from "../auth/password";
 
 async function seed() {
@@ -64,9 +64,74 @@ async function seed() {
   await upsertStaff(adminEmail, adminPassword, "Admin", ["admin"]);
   await upsertStaff(superEmail, superPassword, "Superadmin", ["superadmin", "admin"]);
 
+  const clientEmail = normalizeEmail("client@trenio.by");
+  const clientPassword = "Pa55word!";
+  const [existingClient] = await db.select().from(users).where(eq(users.email, clientEmail)).limit(1);
+  let clientId: string;
+  if (existingClient) {
+    clientId = existingClient.id;
+    await db
+      .update(users)
+      .set({
+        passwordHash: await hashPassword(clientPassword),
+        status: "active",
+        emailVerifiedAt: existingClient.emailVerifiedAt ?? new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, existingClient.id));
+    console.info(`Updated user ${clientEmail}`);
+  } else {
+    const [created] = await db
+      .insert(users)
+      .values({
+        email: clientEmail,
+        passwordHash: await hashPassword(clientPassword),
+        firstName: "Анна",
+        lastName: "Ковалёва",
+        status: "active",
+        emailVerifiedAt: new Date(),
+        lastSignupIntent: "client_signup",
+      })
+      .returning({ id: users.id });
+    clientId = created.id;
+    console.info(`Created user ${clientEmail}`);
+  }
+  await db.insert(userRoles).values({ userId: clientId, role: "user" }).onConflictDoNothing();
+  await db
+    .insert(trainerReviews)
+    .values([
+      {
+        trainerSlug: "ovsyannikov",
+        userId: clientId,
+        authorName: "Анна К.",
+        rating: 5,
+        body: "Занимаюсь у Сергея уже полгода. Техника ставится спокойно и по делу, на тренировке всегда понятно, что делать.",
+        status: "published",
+      },
+      {
+        trainerSlug: "vladimir-antipenko",
+        userId: clientId,
+        authorName: "Анна К.",
+        rating: 4,
+        body: "Хожу на кикбоксинг к Владимиру. Зал спокойный, объяснения понятные, пока жду, когда отзыв проверят.",
+        status: "pending",
+      },
+      {
+        trainerSlug: "akhmejanau",
+        userId: clientId,
+        authorName: "Анна К.",
+        rating: 3,
+        body: "Нормальный тренер, но в тексте мало подробностей о занятии.",
+        status: "rejected",
+        moderationNote: "В отзыве нет описания занятия, поэтому его нельзя публиковать.",
+      },
+    ])
+    .onConflictDoNothing();
+
   console.info("Seed complete.");
   console.info(`  Admin: ${adminEmail} / ${adminPassword}`);
   console.info(`  Superadmin: ${superEmail} / ${superPassword}`);
+  console.info(`  Client: ${clientEmail} / ${clientPassword}`);
 }
 
 seed()

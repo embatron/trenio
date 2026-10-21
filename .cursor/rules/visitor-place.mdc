@@ -1,0 +1,37 @@
+---
+description: Resolve the visitor city with the local GeoLite2 database, never a third-party geo API
+alwaysApply: true
+---
+
+# Visitor city
+
+The catalog suggests a Belarus city from the visitor IP. The lookup stays on our server.
+
+## Library
+
+Use `ip-location-api` with the free GeoLite2 City database (`language: ru`, `smallMemory: true`, `licenseKey: redist`). Database files live in `data/geoip/` and are not committed. Refresh them with `npm run geoip:update`.
+
+Do not call ip-api, ipinfo, ipstack, or any other hosted geolocation API to resolve a city. A public IP echo (such as ipify) is allowed only when the request itself has no public address, so the server can look that IP up locally.
+
+## What to store
+
+Match the GeoLite2 city to `BELARUS_CITIES` in `src/lib/catalog/city-taxonomy.ts`. If the IP is not in Belarus, or the place is not in that list, leave the city empty.
+
+Persist the chosen or detected place in the `trenio_place` cookie. The cookie stores the settlement name, not the IP.
+
+## Search form
+
+The homepage hero, the header, 403, 404, and an empty search result use one form: `CatalogSearchForm`.
+
+Sport suggestions come from `src/lib/catalog/sport-taxonomy.ts` (category labels, sport labels, and aliases). Do not keep a second sport list for that field.
+
+The city field shows the detected or saved settlement. When none is known, it shows `Минск`. Do not pick another fallback city. Sport category filters use that same city.
+
+```ts
+// wrong: ask a third party for the city
+const city = await fetch(`https://ipapi.co/${ip}/city`);
+
+// right: local database, then the taxonomy
+const hit = await lookup(ip);
+const city = hit?.country === "BY" ? canonicalCity(hit.city) : null;
+```

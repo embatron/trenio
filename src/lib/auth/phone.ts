@@ -15,10 +15,7 @@ export function digitsOnly(value: string): string {
   return value.replace(/\D/g, "");
 }
 
-/**
- * Normalize a Belarus mobile number to `375XXXXXXXXX`.
- * Accepts +375…, 375…, 80….
- */
+/** Normalize a Belarus mobile number to `375XXXXXXXXX`. Accepts +375…, 375…, 80…. */
 export function normalizeBelarusMobile(raw: string): string | null {
   let digits = digitsOnly(raw);
   if (digits.startsWith("80") && digits.length === 11) {
@@ -28,18 +25,17 @@ export function normalizeBelarusMobile(raw: string): string | null {
   return digits;
 }
 
+/** Stored on `users.phone`. */
+export function storedBelarusPhone(normalized: string): string {
+  return `+${normalized}`;
+}
+
 export function validateBelarusMobile(raw: string): string | null {
   if (!raw.trim()) return "Введите номер телефона";
   if (!normalizeBelarusMobile(raw)) {
     return "Укажите мобильный номер РБ: +375 25/29/33/44 …";
   }
   return null;
-}
-
-export function maskBelarusMobile(phone: string): string {
-  const normalized = normalizeBelarusMobile(phone);
-  if (!normalized) return "••••";
-  return `+${normalized.slice(0, 3)} ${normalized.slice(3, 5)} •••-${normalized.slice(8, 10)}-${normalized.slice(10)}`;
 }
 
 /** Keep +375 in the field; format operator + number as the user types. */

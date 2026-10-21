@@ -12,4 +12,19 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    ssr: {
+      external: ["ip-location-api"],
+    },
+    server: {
+      // Public URL is http://trenio.local (Apache on :80 → this dev server).
+      allowedHosts: ["trenio.local", "localhost", "127.0.0.1"],
+      origin: "http://trenio.local",
+      ws: {
+        host: "trenio.local",
+        protocol: "ws",
+        clientPort: 80,
+      },
+    },
+  },
 });

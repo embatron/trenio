@@ -1,0 +1,35 @@
+---
+description: One line-icon style for Trenio UI and sport marks
+globs: "{src/**/*.tsx,src/**/*.css}"
+alwaysApply: false
+---
+
+# Icons
+
+Interface icons are one line set. A filled pictogram does not sit next to a stroke icon for the same kind of control.
+
+## Stroke
+
+- View box `0 0 24 24`.
+- `fill: none`, `stroke: currentColor`, `stroke-width: var(--icon-stroke)` (`1.8` in `src/styles.css`).
+- `stroke-linecap` and `stroke-linejoin` are `round`.
+- Sport marks come only from `SportIcon` in `src/components/sport-icon.tsx`. Every key is a line icon on that same view box.
+
+## One glyph per idea
+
+Reuse the existing path. Do not draw a second pin, heart, chevron, or star.
+
+- Place: `M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z` plus a circle at `12,9` r `2.4`.
+- Direction: `M14 6l-6 6 6 6` and `M10 6l6 6-6 6`.
+
+## Allowed fills
+
+- Rating stars stay filled (`#ffb400`).
+- A saved heart may fill; the idle heart stays a stroke.
+- Brand marks stay their official shape (Telegram plane). Do not redraw them as generic line icons.
+
+## Do not
+
+- Mix a `0 0 1000 1000` filled library icon with a 24px line icon in one row.
+- Set a one-off `stroke-width: 2`, `2.2`, or `2.4` on a custom icon.
+- Restyle icons inside `src/components/ui/` (those stay Lucide).

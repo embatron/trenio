@@ -31,7 +31,7 @@ function PrivacyPage() {
 
           <header className="privacy-header">
             <h1 className="privacy-title">Политика конфиденциальности</h1>
-            <p className="privacy-updated">Последнее обновление: 15 июня 2026</p>
+            <p className="privacy-updated">Последнее обновление: 20 октября 2026</p>
           </header>
 
           <div className="privacy-body">
@@ -50,6 +50,11 @@ function PrivacyPage() {
                 <li>Имя, контактный телефон и адрес электронной почты — при регистрации или оформлении заявки.</li>
                 <li>Информация о предпочтениях по занятиям — вид спорта, город, формат занятий.</li>
                 <li>Технические данные — IP-адрес, тип устройства, браузер, файлы cookie.</li>
+                <li>
+                  Город для фильтра каталога. Если IP удаётся сопоставить с населённым пунктом Беларуси, город подставляется в фильтр.
+                  В cookie сохраняется только название населённого пункта, не сам IP-адрес. Для сопоставления используется база GeoLite2, созданная MaxMind и доступная на{" "}
+                  <a href="https://www.maxmind.com">maxmind.com</a>.
+                </li>
               </ul>
             </section>
 
@@ -147,7 +152,7 @@ const PRIVACY_CSS = `
 
 .privacy-breadcrumbs {
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
-  margin: 0 0 28px; font-size: 13px; font-weight: 650; color: var(--muted);
+  margin: 0 0 28px; font-size: 13px; font-weight: var(--fw-title); color: var(--muted);
 }
 .privacy-breadcrumbs a { color: var(--muted); text-decoration: none; }
 .privacy-breadcrumbs a:hover { color: var(--primary-dark); }
@@ -156,16 +161,16 @@ const PRIVACY_CSS = `
 .privacy-header { margin-bottom: 36px; }
 .privacy-title {
   margin: 0 0 10px;
-  font-size: clamp(28px, 4vw, 40px);
+  font-size: var(--fs-page);
   line-height: 1.08;
   letter-spacing: -0.04em;
-  font-weight: 900;
+  font-weight: var(--fw-heading);
   color: var(--dark);
 }
 .privacy-updated {
   margin: 0;
   font-size: 14px;
-  font-weight: 650;
+  font-weight: var(--fw-title);
   color: var(--muted);
 }
 
@@ -175,7 +180,7 @@ const PRIVACY_CSS = `
   margin: 0 0 12px;
   font-size: 18px;
   letter-spacing: -0.02em;
-  font-weight: 850;
+  font-weight: var(--fw-title);
   color: var(--dark);
 }
 .privacy-section p { margin: 0 0 14px; }
@@ -184,7 +189,7 @@ const PRIVACY_CSS = `
 }
 .privacy-section ul li { margin-bottom: 8px; padding-left: 4px; }
 .privacy-section ul li::marker { color: var(--primary); }
-.privacy-section a { color: var(--primary-dark); font-weight: 700; text-decoration: none; }
+.privacy-section a { color: var(--primary-dark); font-weight: var(--fw-heading); text-decoration: none; }
 .privacy-section a:hover { text-decoration: underline; }
 
 @media (max-width: 960px) {

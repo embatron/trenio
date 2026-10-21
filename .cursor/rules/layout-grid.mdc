@@ -1,0 +1,47 @@
+---
+description: One content grid for every Trenio screen
+alwaysApply: true
+---
+
+# Layout grid
+
+Every screen shares one content grid. Header, hero, filters, cards, and footer line up on the same left and right edges.
+
+Tokens and classes live in `src/styles.css`. Do not invent a second width, gutter, or column count.
+
+## Container
+
+- Full-bleed background. Content is one box: `max-width: var(--layout-max)` and `padding-inline: var(--layout-gutter)` on that same element.
+- Use `.layout-container`. A page shell may repeat those two declarations. It may not add a third width.
+- Horizontal padding goes on the content box only. An outer full-bleed block and an inner `max-width` box do not both get gutter padding.
+- Blog and privacy use `.layout-container--prose` (`--layout-prose-max: 760px`). Chrome around them still uses `--layout-max`.
+- Gap between columns and cards is `--layout-gap` (24px). Sidebar is `--layout-sidebar-w` (280px) via `.layout-with-sidebar`.
+- A horizontal scroller (icon rail, card rail) uses `.layout-rail`. The track scrolls inside that box. It does not use `100vw` or sit flush with the screen edge.
+- `--layout-gutter` already includes `env(safe-area-inset-*)`. The viewport meta keeps `viewport-fit=cover` so a standalone PWA does not draw content under the notch.
+
+## Columns
+
+Shared classes in `src/styles.css`. Do not set `grid-template-columns` on them in a route `<style>` — that block loads later and overrides the global grid.
+
+| Classes | Columns |
+| --- | --- |
+| `.card-grid`, `.clubs-grid`, `.categories-grid` | 3, then 2 at `960px`, then 1 at `640px` |
+| `.card-grid--4`, `.cat-clubs-row`, `.city-districts`, `.trainer-grid`, `.cat-grid`, `.city-grid`, `.sr-grid` | 4, then 2 at `960px`, then 1 at `640px` |
+| `.layout-with-sidebar` | `280px + 1fr`, then 1 column at `960px` |
+
+## Do not
+
+- `max-width: 1120px`, `820px`, `1100px`, or any other content width
+- `repeat(auto-fill, minmax(...))` for catalog cards
+- A flex-wrap row where the card grid should sit
+- Page CSS that resets `.trainer-grid`, `.cat-grid`, or the other shared grids
+
+```css
+/* wrong: gutter twice, content shifts left of the header */
+.hero { padding-inline: var(--layout-gutter); }
+.hero-inner { max-width: var(--layout-max); margin-inline: auto; }
+
+/* right */
+.hero { padding-inline: 0; }
+.hero-inner { max-width: var(--layout-max); margin-inline: auto; padding-inline: var(--layout-gutter); }
+```

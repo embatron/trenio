@@ -1,9 +1,9 @@
 ---
 name: trenio-mobile-audit
 description: >-
-  Audits Trenio.by UI for mobile-first compliance — breakpoints, touch targets,
-  responsive layout, mobile navigation. Use when editing components, routes,
-  styles, or auth pages in trenio.
+  Audits Trenio.by UI for the shared layout grid and mobile-first compliance —
+  content edges, column collapse, touch targets, responsive layout, mobile
+  navigation. Use when editing components, routes, styles, or auth pages in trenio.
 ---
 
 # Trenio Mobile-First Audit
@@ -17,6 +17,17 @@ Mobile-first is mandatory. Primary viewport: **320–767px**.
 - Site chrome: `src/components/site-chrome.tsx`
 
 ## Audit checklist
+
+### Content grid
+
+Rule: `.cursor/rules/layout-grid.mdc`. Tokens: `src/styles.css`.
+
+- [ ] Header logo, page title, and footer brand share one left edge
+- [ ] Content box is `--layout-max` with `--layout-gutter` once (no double padding)
+- [ ] Cards use the shared grid classes: trainer catalogs (`.trainer-grid`, `.cat-grid`, `.city-grid`, `.sr-grid`) are 4 columns; other card grids are 3. Both become 2 at 960px and 1 at 640px
+- [ ] Route CSS does not override `grid-template-columns` on those classes
+- [ ] Sidebar layout uses `.layout-with-sidebar` and stacks at 960px
+- [ ] Horizontal rails (`.layout-rail`) keep the same inline inset as the header; the track does not touch the screen edge
 
 ### Layout
 

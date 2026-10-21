@@ -1,0 +1,29 @@
+---
+description: English only for Trenio agent rules, skills, and internal process docs
+alwaysApply: true
+---
+
+# Process language
+
+The product is Russian. Agent process material is English, and it stays complete enough to follow without the chat that created it.
+
+## English
+
+Write these in English only. Do not leave Russian sentences, headings, or checklist items in them.
+
+- `.cursor/rules/*.mdc`
+- `.cursor/skills/**/SKILL.md`
+- `.cursor/commands/*.md`
+- `.cursor/hooks/**` (README and script comments)
+- `AGENTS.md`
+
+Each rule or skill states its purpose, the files it governs, what to do, what to avoid, and a concrete example when a pattern is easy to get wrong.
+
+## Russian
+
+Keep Russian in the product itself:
+
+- UI copy, routes, emails, and meta titles
+- `docs/` (`TECH_SPEC.md`, `PRODUCT.md`, `ACCOUNT_MODEL.md`, `README.md`)
+
+When a rule changes, update the Russian docs that point at it. Do not translate those docs into English.

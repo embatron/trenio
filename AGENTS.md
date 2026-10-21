@@ -11,7 +11,7 @@
 
 # Trenio.by — Agent Entry Point
 
-**Trenio.by** — PWA-ready, mobile-first спортивный каталог Беларуси (TanStack Start + PostgreSQL).
+**Trenio.by** — PWA-ready, mobile-first sports catalog for Belarus (TanStack Start + PostgreSQL). The product UI and `docs/` stay Russian. Agent rules, skills, commands, and this file stay English.
 
 ## Read first
 
@@ -20,17 +20,19 @@
 | 1 | [docs/TECH_SPEC.md](docs/TECH_SPEC.md) — architecture, auth, PWA, mobile-first |
 | 2 | [docs/PRODUCT.md](docs/PRODUCT.md) — product & catalog |
 | 3 | [docs/ACCOUNT_MODEL.md](docs/ACCOUNT_MODEL.md) — domain entities |
-| 4 | [docs/AUTH.md](docs/AUTH.md) — login/signup contract |
-| 5 | [docs/README.md](docs/README.md) — routes & commands |
+| 4 | [docs/README.md](docs/README.md) — routes & commands |
 
 ## Non-negotiable constraints
 
-1. **PWA 100%** — every UI/feature change must stay installable-app compatible (manifest, SW, offline). See `TECH_SPEC.md` §6.
-2. **Mobile-first** — design for `<768px` first; touch targets ≥44px. See `TECH_SPEC.md` §7.
-3. **Routes** — only `src/routes/`, never `src/pages/`.
-4. **Auth boundary** — private data in `createServerFn` + middleware, not route guards alone. Follow `docs/AUTH.md` and `.cursor/rules/auth-backend.mdc`.
-5. **No `src/server/auth/`** — canonical auth path is `src/auth/`; server fns in `src/lib/auth/functions.ts`.
-6. **Docs sync** — after structural changes, update relevant `docs/` files (see TECH_SPEC §12).
+1. **Layout grid** — every screen shares one content grid (header, hero, cards, footer). See `.cursor/rules/layout-grid.mdc` and `TECH_SPEC.md` §7.4.
+2. **Icons** — one line-icon style (`--icon-stroke`). Sport marks come from `SportIcon`. See `.cursor/rules/icons.mdc`.
+3. **PWA 100%** — every UI/feature change must stay installable-app compatible (manifest, SW, offline). See `TECH_SPEC.md` §6.
+4. **Mobile-first** — design for `<768px` first; touch targets ≥44px. See `TECH_SPEC.md` §7.
+5. **Routes** — only `src/routes/`, never `src/pages/`.
+6. **Auth boundary** — private data in `createServerFn` + middleware, not route guards alone.
+7. **No `src/server/auth/`** — canonical auth path is `src/auth/`; server fns in `src/lib/auth/functions.ts`.
+8. **Docs sync** — after structural changes, update relevant `docs/` files (see TECH_SPEC §12). Product docs stay Russian; this file and `.cursor/` stay English (`.cursor/rules/process-language.mdc`).
+9. **Visitor city** — resolve the city with local GeoLite2 (`ip-location-api`). Do not call a hosted geo API. The `trenio_place` cookie stores the city name, not the IP. Catalog search shows that city, or `Минск` when none is known. See `.cursor/rules/visitor-place.mdc`.
 
 ## Stack quick reference
 
@@ -38,7 +40,6 @@
 - TanStack Start + Router, React 19, Tailwind v4, shadcn/ui
 - PostgreSQL via Drizzle (`npm run db:up`, `db:push`, `db:seed`)
 - Roles: `user`, `trainer`, `club`, `admin`, `superadmin`
-- Auth: [docs/AUTH.md](docs/AUTH.md) · SMS.BY: [docs/sms-by.md](docs/sms-by.md)
 
 ## Cursor skills (project)
 
@@ -46,9 +47,10 @@
 | --- | --- |
 | `.cursor/skills/trenio-feature-dev/` | New pages, routes, catalog features |
 | `.cursor/skills/trenio-pwa-audit/` | PWA-related work or before finishing UI |
-| `.cursor/skills/trenio-mobile-audit/` | UI/layout/responsive changes |
+| `.cursor/skills/trenio-mobile-audit/` | UI/layout/responsive changes. Command: `/mobile-adapt` |
 | `.cursor/skills/trenio-docs-sync/` | After tasks — sync documentation |
+| `.cursor/skills/trenio-instagram-trainers/` | Import public Instagram trainer profiles into drafts. Command: `/import-instagram-trainers` |
 
 ## Hooks
 
-Автоматические hooks **отключены**. В конце задачи запускай slash-команду **`/hooks`** (`.cursor/commands/hooks.md`) — PWA audit, mobile audit, docs sync.
+Automatic hooks are **off**. At the end of a task, run the **`/hooks`** slash command (`.cursor/commands/hooks.md`) — layout grid, icons, PWA audit, mobile audit, docs sync. For a full phone and tablet pass over the latest UI, run **`/mobile-adapt`** (`.cursor/commands/mobile-adapt.md`).

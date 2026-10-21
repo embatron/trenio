@@ -2,36 +2,60 @@ import { z } from "zod";
 
 import type { UserRole } from "@/lib/auth/types";
 import { PUBLIC_SIGNUP_ROLES } from "@/lib/auth/roles";
-import { OTP_CODE_LENGTH } from "@/lib/auth/phone";
 
-const honeypotField = z.string().optional().default("");
+const honeypotSchema = z.string().max(200).optional();
 
 export const loginSchema = z.object({
   email: z.string().email("Введите корректный e-mail"),
   password: z.string().min(1, "Введите пароль"),
   remember: z.boolean().optional().default(true),
-  company_url: honeypotField,
+  honeypot: honeypotSchema,
+});
+
+export const smsRequestSchema = z.object({
+  phone: z.string().trim().min(7).max(32),
+  honeypot: honeypotSchema,
+});
+
+export const smsConfirmSchema = smsRequestSchema.extend({
+  code: z.string().trim().min(4).max(8),
+});
+
+export const smsResetSchema = smsConfirmSchema.extend({
+  password: z.string().min(8).max(128),
+});
+
+export const telegramWidgetSchema = z.object({
+  id: z.coerce.number().int().positive(),
+  first_name: z.string().optional(),
+  last_name: z.string().optional(),
+  username: z.string().optional(),
+  photo_url: z.string().optional(),
+  auth_date: z.coerce.number().int(),
+  hash: z.string().min(8),
+  honeypot: honeypotSchema,
+});
+
+export const telegramWebAppSchema = z.object({
+  initData: z.string().min(8).max(4096),
+  honeypot: honeypotSchema,
 });
 
 export const signupSchema = z.object({
   email: z.string().email("Введите корректный e-mail"),
+  password: z.string().min(8, "Минимум 8 символов"),
   firstName: z.string().trim().min(1, "Укажите имя").max(100),
   lastName: z.string().trim().max(100).optional(),
+  phone: z.string().trim().max(32).optional(),
   signupRole: z.enum(PUBLIC_SIGNUP_ROLES),
-  company_url: honeypotField,
 });
 
 export const forgotPasswordSchema = z.object({
   email: z.string().email("Введите корректный e-mail"),
-  company_url: honeypotField,
+  honeypot: honeypotSchema,
 });
 
 export const resetPasswordSchema = z.object({
-  token: z.string().min(1),
-  password: z.string().min(8, "Минимум 8 символов"),
-});
-
-export const setPasswordSchema = z.object({
   token: z.string().min(1),
   password: z.string().min(8, "Минимум 8 символов"),
 });
@@ -40,40 +64,33 @@ export const verifyEmailSchema = z.object({
   token: z.string().min(1),
 });
 
-export const confirmEmailSchema = z.object({
-  token: z.string().min(1),
+export const profileNameSchema = z.object({
+  name: z.string().trim().min(1, "Укажите имя").max(200),
 });
 
-export const requestSmsSchema = z.object({
-  phone: z.string().min(1, "Введите номер телефона"),
-  company_url: honeypotField,
+export const accountAvatarSchema = z.object({
+  image: z.string().min(32).max(2_200_000),
 });
 
-export const confirmSmsSchema = z.object({
-  phone: z.string().min(1),
-  code: z.string().min(OTP_CODE_LENGTH).max(OTP_CODE_LENGTH),
-  remember: z.boolean().optional().default(true),
-  company_url: honeypotField,
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Введите текущий пароль"),
+  newPassword: z.string().min(8, "Пароль должен содержать минимум 8 символов"),
 });
 
-export const requestEmailChangeSchema = z.object({
-  email: z.string().email("Введите корректный e-mail"),
+export const accountEmailSchema = z.object({
+  email: z.string().trim().email("Введите корректный e-mail"),
 });
 
-export const updateNameSchema = z.object({
-  firstName: z.string().trim().min(1, "Укажите имя").max(100),
-  lastName: z.string().trim().max(100).optional(),
+export const accountEmailCodeSchema = accountEmailSchema.extend({
+  code: z.string().trim().min(4).max(8),
 });
 
-export const requestPhoneVerifySchema = z.object({
-  phone: z.string().min(1, "Введите номер телефона"),
-  company_url: honeypotField,
+export const accountPhoneSchema = z.object({
+  phone: z.string().trim().min(7).max(32),
 });
 
-export const confirmPhoneVerifySchema = z.object({
-  phone: z.string().min(1),
-  code: z.string().min(OTP_CODE_LENGTH).max(OTP_CODE_LENGTH),
-  company_url: honeypotField,
+export const accountPhoneCodeSchema = accountPhoneSchema.extend({
+  code: z.string().trim().min(4).max(8),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -84,8 +101,7 @@ export type PublicUser = {
   email: string;
   firstName: string;
   lastName: string | null;
-  phone: string | null;
-  phoneVerified: boolean;
+  avatarPath: string;
   emailVerified: boolean;
   roles: UserRole[];
   status: string;

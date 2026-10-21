@@ -49,19 +49,7 @@ export function filterBelarusSettlements(
   return [...starts, ...includes].slice(0, limit);
 }
 
-/** Областные центры и крупнейшие города — быстрые переключатели в фильтре каталога */
-export const BELARUS_QUICK_CITIES = [
-  "Минск",
-  "Гомель",
-  "Могилёв",
-  "Витебск",
-  "Гродно",
-  "Брест",
-  "Бобруйск",
-  "Барановичи",
-  "Пинск",
-  "Орша",
-] as const;
+export { BELARUS_QUICK_CITIES } from "@/lib/catalog/city-taxonomy";
 
 export function toggleFilterValue<T>(values: T[], value: T): T[] {
   return values.includes(value) ? values.filter((v) => v !== value) : [...values, value];

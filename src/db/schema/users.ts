@@ -5,11 +5,10 @@ import {
   varchar,
   timestamp,
   text,
-  integer,
-  bigint,
   uniqueIndex,
   index,
   primaryKey,
+  bigint,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -46,18 +45,22 @@ export const users = pgTable(
     emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
     phone: varchar("phone", { length: 32 }),
     phoneVerifiedAt: timestamp("phone_verified_at", { withTimezone: true }),
-    passwordHash: text("password_hash"),
+    passwordHash: text("password_hash").notNull(),
     firstName: varchar("first_name", { length: 100 }).notNull(),
     lastName: varchar("last_name", { length: 100 }),
+    avatarPath: varchar("avatar_path", { length: 300 }).notNull().default(""),
     status: userStatusEnum("status").notNull().default("pending_verification"),
     lastSignupIntent: signupIntentEnum("last_signup_intent"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
     lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
+    telegramUserId: bigint("telegram_user_id", { mode: "number" }),
+    telegramUsername: varchar("telegram_username", { length: 64 }),
   },
   (table) => [
     uniqueIndex("users_email_unique").on(table.email),
     uniqueIndex("users_phone_unique").on(table.phone),
+    uniqueIndex("users_telegram_user_id_unique").on(table.telegramUserId),
     index("users_status_idx").on(table.status),
   ],
 );
@@ -123,56 +126,13 @@ export const emailVerificationTokens = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     tokenHash: varchar("token_hash", { length: 64 }).notNull().unique(),
+    pendingEmail: varchar("pending_email", { length: 320 }),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     usedAt: timestamp("used_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [index("email_verification_tokens_user_id_idx").on(table.userId)],
 );
-
-/** Email change: mail the *new* inbox; users.email stays until the link is opened. */
-export const emailChangeTokens = pgTable(
-  "email_change_tokens",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    newEmail: varchar("new_email", { length: 320 }).notNull(),
-    tokenHash: varchar("token_hash", { length: 64 }).notNull().unique(),
-    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
-    usedAt: timestamp("used_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  },
-  (table) => [index("email_change_tokens_user_id_idx").on(table.userId)],
-);
-
-export const otpPurposeEnum = pgEnum("otp_purpose", ["login", "verify_phone"]);
-
-export const authOtpChallenges = pgTable(
-  "auth_otp_challenges",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    phone: varchar("phone", { length: 32 }).notNull(),
-    purpose: otpPurposeEnum("purpose").notNull(),
-    userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
-    codeHash: varchar("code_hash", { length: 64 }).notNull(),
-    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
-    attemptCount: integer("attempt_count").notNull().default(0),
-    consumedAt: timestamp("consumed_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  },
-  (table) => [
-    index("auth_otp_challenges_phone_purpose_idx").on(table.phone, table.purpose),
-    index("auth_otp_challenges_user_id_idx").on(table.userId),
-  ],
-);
-
-export const authRateLimits = pgTable("auth_rate_limits", {
-  key: varchar("key", { length: 191 }).primaryKey(),
-  windowStartedAt: bigint("window_started_at", { mode: "number" }).notNull(),
-  count: integer("count").notNull(),
-});
 
 export const usersRelations = relations(users, ({ many }) => ({
   roles: many(userRoles),

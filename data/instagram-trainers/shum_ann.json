@@ -1,0 +1,69 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/shum_ann/",
+  "handle": "shum_ann",
+  "slug": "shumilova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анна",
+  "lastName": "Шумилова",
+  "fullName": "Анна Шумилова",
+  "nameQuotes": [
+    "Шумилова 🌝"
+  ],
+  "headline": "Тренер по походам",
+  "bio": "🏋🏽‍♀️ тренирую в Минске и онлайн (ОФК, ЛФК) 🥊 занимаюсь тайским боксом 🏕️ хожу в походы по Беларуси 🇧🇾 🪡 шью нижнее белье и корсеты",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pohod",
+      "parentSlug": "outdoor",
+      "label": "Походы",
+      "evidence": "Походы"
+    },
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    },
+    {
+      "slug": "lfk",
+      "parentSlug": "reabilitaciya",
+      "label": "ЛФК",
+      "evidence": "ЛФК"
+    },
+    {
+      "slug": "ofk",
+      "parentSlug": "reabilitaciya",
+      "label": "ОФК",
+      "evidence": "ОФК"
+    }
+  ],
+  "primarySport": {
+    "slug": "pohod",
+    "parentSlug": "outdoor",
+    "label": "Походы"
+  },
+  "city": "Минск",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "languages": [
+    "Беларуская"
+  ],
+  "avatarPath": "/trainers/instagram/shum_ann.jpg",
+  "contacts": {
+    "instagram": "https://www.instagram.com/shum_ann/",
+    "phone": "",
+    "website": "https://www.threads.com/@shum_ann?xmt=AQG0RjnKqssnLWVqufqQ9W7RU7izzc_fk2jVI7Hj0Lefddw"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "pinnedPosts"
+  ]
+}

@@ -2,7 +2,7 @@
 name: trenio-docs-sync
 description: >-
   Syncs Trenio.by documentation after code changes — updates docs/README,
-  TECH_SPEC, PRODUCT, ACCOUNT_MODEL, AUTH when routes, auth, schema, or architecture
+  TECH_SPEC, PRODUCT, ACCOUNT_MODEL when routes, auth, schema, or architecture
   change. Use at end of feature tasks or when hooks request doc review.
 ---
 
@@ -16,7 +16,7 @@ Keep `docs/` aligned with code. Read `docs/TECH_SPEC.md` §12 for the full map.
 2. **Open affected docs** — do not duplicate; cross-link
 3. **Update tables** — especially `docs/README.md` implemented routes
 4. **Update checklists** — `TECH_SPEC.md` §6 PWA status when implementing PWA pieces
-5. **Verify links** — README → PRODUCT, ACCOUNT_MODEL, TECH_SPEC, AUTH
+5. **Verify links** — README → PRODUCT, ACCOUNT_MODEL, TECH_SPEC
 
 ## Sync matrix
 
@@ -24,11 +24,13 @@ Keep `docs/` aligned with code. Read `docs/TECH_SPEC.md` §12 for the full map.
 | --- | --- |
 | `src/routes/*.tsx` add/remove | `docs/README.md` |
 | `src/db/schema/*` | `docs/TECH_SPEC.md` §4, maybe `ACCOUNT_MODEL.md` |
-| `src/lib/auth/*`, `src/auth/*`, `src/lib/sms/*` | `docs/TECH_SPEC.md` §4, `ACCOUNT_MODEL.md`, `AUTH.md`, `sms-by.md` |
+| `src/lib/auth/*`, `src/auth/*` | `docs/TECH_SPEC.md` §4, `ACCOUNT_MODEL.md` |
 | `.env.example` | `docs/TECH_SPEC.md` §8 |
 | Product/SEO/taxonomy | `docs/PRODUCT.md` |
 | PWA/manifest/SW | `docs/TECH_SPEC.md` §6 |
 | `.cursor/rules`, hooks | `docs/TECH_SPEC.md` §13, `AGENTS.md` |
+
+Process files (`.cursor/`, `AGENTS.md`) stay English. `docs/` stay Russian. See `.cursor/rules/process-language.mdc`.
 
 ## Do not edit unless changed
 

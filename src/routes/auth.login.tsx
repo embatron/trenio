@@ -1,23 +1,35 @@
 import { createFileRoute, Link, redirect, useRouter } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 
 import { AuthStyles } from "@/components/auth-styles";
-import { HoneypotField, honeypotFromForm } from "@/components/auth/honeypot-field";
+import { honeypotFromForm, HoneypotField } from "@/components/auth/honeypot-field";
+import {
+  clientValidatePhone,
+  PhoneOtpFields,
+  useCountdown,
+} from "@/components/auth/phone-otp-fields";
+import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
+import { TelegramWebAppAuthButton } from "@/components/auth/telegram-webapp-auth-button";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
-import { confirmSmsLoginFn, loginFn, requestSmsLoginFn } from "@/lib/auth/functions";
 import {
-  BY_PHONE_COUNTRY_PREFIX,
-  OTP_CODE_LENGTH,
-  constrainBelarusPhoneInput,
-  validateBelarusMobile,
-} from "@/lib/auth/phone";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+  confirmSmsLoginFn,
+  loginFn,
+  loginWithTelegramFn,
+  loginWithTelegramWebAppFn,
+  requestSmsLoginFn,
+} from "@/lib/auth/functions";
+import { BY_PHONE_COUNTRY_PREFIX, OTP_CODE_LENGTH } from "@/lib/auth/phone";
+import { safeReturnPath } from "@/lib/auth/return-path";
+import type { TelegramWidgetUser } from "@/lib/auth/telegram-widget";
 
 export const Route = createFileRoute("/auth/login")({
-  beforeLoad: async ({ context }) => {
+  validateSearch: (search: Record<string, unknown>): { redirect?: string } =>
+    typeof search.redirect === "string" ? { redirect: search.redirect } : {},
+  beforeLoad: async ({ context, search }) => {
     if (context.user) {
-      throw redirect({ to: "/" });
+      const next = safeReturnPath(search.redirect);
+      throw next ? redirect({ href: next }) : redirect({ to: "/" });
     }
   },
   head: () => ({
@@ -25,43 +37,64 @@ export const Route = createFileRoute("/auth/login")({
       { title: "Вход — trenio.by" },
       {
         name: "description",
-        content: "Войдите в аккаунт trenio.by по e-mail или по SMS на мобильный номер РБ.",
+        content: "Войдите в trenio.by по e-mail, телефону или Telegram, чтобы искать тренировки и вести профиль.",
       },
     ],
   }),
   component: LoginPage,
 });
 
-function useCountdown(initial: number) {
-  const [left, setLeft] = useState(initial);
-  useEffect(() => {
-    setLeft(initial);
-  }, [initial]);
-  useEffect(() => {
-    if (left <= 0) return;
-    const timer = window.setTimeout(() => setLeft((current) => current - 1), 1000);
-    return () => window.clearTimeout(timer);
-  }, [left]);
-  return { left, restart: (seconds: number) => setLeft(seconds) };
-}
+type LoginMethod = "email" | "phone" | "telegram";
 
 function LoginPage() {
-  const [method, setMethod] = useState<"password" | "sms">("password");
+  const [method, setMethod] = useState<LoginMethod>("email");
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(true);
   const [phone, setPhone] = useState(BY_PHONE_COUNTRY_PREFIX);
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
+  const [phoneError, setPhoneError] = useState<string | undefined>();
+  const [codeError, setCodeError] = useState<string | undefined>();
   const [devCode, setDevCode] = useState<string | null>(null);
   const countdown = useCountdown(0);
+  const phoneFormRef = useRef<HTMLFormElement>(null);
 
   const login = useAuthServerFn(loginFn);
   const requestSms = useAuthServerFn(requestSmsLoginFn);
   const confirmSms = useAuthServerFn(confirmSmsLoginFn);
+  const loginTelegram = useAuthServerFn(loginWithTelegramFn);
+  const loginTelegramWebApp = useAuthServerFn(loginWithTelegramWebAppFn);
   const router = useRouter();
+  const { redirect: returnPath } = Route.useSearch();
   const { error, pending, run, redirectTo, setError } = useAuthSubmit();
+
+  const goAfterLogin = async (result: { redirectTo?: string } | null) => {
+    const next = safeReturnPath(returnPath) ?? result?.redirectTo;
+    if (!next) return;
+    await router.invalidate();
+    if (safeReturnPath(returnPath)) {
+      window.location.assign(next);
+      return;
+    }
+    redirectTo(next);
+  };
+
+  const sendSms = async (form: HTMLFormElement) => {
+    const invalid = clientValidatePhone(phone);
+    if (invalid) {
+      setPhoneError(invalid);
+      return;
+    }
+    setPhoneError(undefined);
+    setCodeError(undefined);
+    setDevCode(null);
+    const result = await run(() => requestSms({ data: { phone, honeypot: honeypotFromForm(form) } }));
+    if (!result) return;
+    setOtpSent(true);
+    countdown.restart(result.retryAfterSec);
+    setDevCode(result.devCode ?? null);
+  };
 
   return (
     <div className="auth-page">
@@ -71,46 +104,64 @@ function LoginPage() {
         <div className="auth-card">
           <div className="auth-card__head">
             <h1 className="auth-title">С возвращением</h1>
-            <p className="auth-sub">Войдите по e-mail и паролю или по SMS на подтверждённый мобильный номер РБ.</p>
+            <p className="auth-sub">Войдите по почте, телефону или Telegram.</p>
           </div>
 
-          <div className="auth-tabs" role="tablist" aria-label="Способ входа">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={method === "password"}
-              className={`auth-tab ${method === "password" ? "is-active" : ""}`}
-              onClick={() => setMethod("password")}
-            >
-              E-mail
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={method === "sms"}
-              className={`auth-tab ${method === "sms" ? "is-active" : ""}`}
-              onClick={() => setMethod("sms")}
-            >
-              SMS
-            </button>
+          <TelegramWebAppAuthButton
+            onAuth={async (initData) => {
+              setError(null);
+              const result = await run(() => loginTelegramWebApp({ data: { initData } }));
+              await goAfterLogin(result);
+            }}
+          />
+
+          <div className="auth-roleswitch auth-roleswitch--3" role="tablist" aria-label="Способ входа">
+            {(
+              [
+                ["email", "Почта"],
+                ["phone", "Телефон"],
+                ["telegram", "Telegram"],
+              ] as const
+            ).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                role="tab"
+                aria-selected={method === value}
+                className={`auth-role auth-role--compact${method === value ? " is-active" : ""}`}
+                onClick={() => {
+                  setMethod(value);
+                  setError(null);
+                }}
+              >
+                <strong>{label}</strong>
+              </button>
+            ))}
           </div>
 
           <AuthAlert message={error} />
+          {devCode && method === "phone" ? (
+            <div className="auth-alert auth-alert--note" style={{ marginBottom: 16 }}>
+              Dev-код: {devCode}
+            </div>
+          ) : null}
 
-          {method === "password" ? (
+          {method === "email" ? (
             <form
               className="auth-form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                const company_url = honeypotFromForm(e.currentTarget);
+              onSubmit={(event) => {
+                event.preventDefault();
                 void run(
-                  () => login({ data: { email, password, remember, company_url } }),
-                  async (result) => {
-                    if (result?.redirectTo) {
-                      await router.invalidate();
-                      redirectTo(result.redirectTo);
-                    }
-                  },
+                  () =>
+                    login({
+                      data: {
+                        email,
+                        password,
+                        remember: true,
+                        honeypot: honeypotFromForm(event.currentTarget),
+                      },
+                    }),
+                  goAfterLogin,
                 );
               }}
             >
@@ -123,7 +174,7 @@ function LoginPage() {
                   placeholder="you@example.com"
                   autoComplete="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(event) => setEmail(event.target.value)}
                 />
               </label>
               <label className="auth-field">
@@ -140,135 +191,74 @@ function LoginPage() {
                     placeholder="Введите пароль"
                     autoComplete="current-password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(event) => setPassword(event.target.value)}
                   />
                   <button
                     type="button"
                     className="auth-field__toggle"
-                    onClick={() => setShowPassword((v) => !v)}
+                    onClick={() => setShowPassword((value) => !value)}
                   >
                     {showPassword ? "Скрыть" : "Показать"}
                   </button>
                 </div>
               </label>
-              <label className="auth-check">
-                <input
-                  type="checkbox"
-                  checked={remember}
-                  onChange={(e) => setRemember(e.target.checked)}
-                />
-                <span>Запомнить меня на этом устройстве</span>
-              </label>
+              <p className="auth-field__hint auth-field__hint--block">Сессия действует 3 недели.</p>
               <button type="submit" className="auth-submit" disabled={pending}>
                 {pending ? "Вход…" : "Войти"}
               </button>
             </form>
-          ) : (
+          ) : null}
+
+          {method === "phone" ? (
             <form
+              ref={phoneFormRef}
               className="auth-form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                const form = e.currentTarget;
-                const company_url = honeypotFromForm(form);
+              noValidate
+              onSubmit={(event) => {
+                event.preventDefault();
+                const form = event.currentTarget;
                 if (!otpSent) {
-                  const phoneError = validateBelarusMobile(phone);
-                  if (phoneError) {
-                    setError(phoneError);
-                    return;
-                  }
-                  void run(
-                    () => requestSms({ data: { phone, company_url } }),
-                    (result) => {
-                      setOtpSent(true);
-                      countdown.restart(result.retryAfterSec);
-                      setDevCode(result.devCode ?? null);
-                    },
-                  );
+                  void sendSms(form);
                   return;
                 }
                 if (otp.replace(/\D/g, "").length !== OTP_CODE_LENGTH) {
-                  setError("Введите код из 6 цифр");
+                  setCodeError("Введите код из 6 цифр");
                   return;
                 }
+                setCodeError(undefined);
                 void run(
-                  () => confirmSms({ data: { phone, code: otp, remember, company_url } }),
-                  async (result) => {
-                    if (result?.redirectTo) {
-                      await router.invalidate();
-                      redirectTo(result.redirectTo);
-                    }
-                  },
+                  () => confirmSms({ data: { phone, code: otp, honeypot: honeypotFromForm(form) } }),
+                  goAfterLogin,
                 );
               }}
             >
-              <HoneypotField />
-              <label className="auth-field">
-                <span className="auth-field__label">Телефон</span>
-                <input
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  value={constrainBelarusPhoneInput(phone)}
-                  onChange={(e) => setPhone(constrainBelarusPhoneInput(e.target.value))}
-                />
-                <span className="auth-field__hint auth-field__hint--block">
-                  Мобильный номер РБ. Код действует 10 минут, повтор — через 1 минуту.
-                </span>
-              </label>
-              {otpSent ? (
-                <div className="auth-field">
-                  <span className="auth-field__label">Код из SMS</span>
-                  <div className="auth-otp">
-                    <InputOTP maxLength={OTP_CODE_LENGTH} value={otp} onChange={setOtp}>
-                      <InputOTPGroup>
-                        {Array.from({ length: OTP_CODE_LENGTH }, (_, index) => (
-                          <InputOTPSlot key={index} index={index} className="h-11 w-11 text-base" />
-                        ))}
-                      </InputOTPGroup>
-                    </InputOTP>
-                  </div>
-                  {countdown.left > 0 ? (
-                    <span className="auth-field__hint auth-field__hint--block">
-                      Повторная отправка через {countdown.left} с.
-                    </span>
-                  ) : (
-                    <button
-                      type="button"
-                      className="auth-field__hint"
-                      disabled={pending}
-                      onClick={() => {
-                        void run(
-                          () => requestSms({ data: { phone, company_url: "" } }),
-                          (result) => {
-                            countdown.restart(result.retryAfterSec);
-                            setDevCode(result.devCode ?? null);
-                          },
-                        );
-                      }}
-                    >
-                      Отправить код снова
-                    </button>
-                  )}
-                </div>
-              ) : null}
-              {devCode ? <p className="auth-dev">Dev-код: {devCode}</p> : null}
-              <label className="auth-check">
-                <input
-                  type="checkbox"
-                  checked={remember}
-                  onChange={(e) => setRemember(e.target.checked)}
-                />
-                <span>Запомнить меня на этом устройстве</span>
-              </label>
-              <button
-                type="submit"
-                className="auth-submit"
-                disabled={pending || (otpSent && otp.replace(/\D/g, "").length !== OTP_CODE_LENGTH)}
-              >
-                {pending ? (otpSent ? "Проверка…" : "Отправка…") : otpSent ? "Войти" : "Получить код"}
-              </button>
+              <PhoneOtpFields
+                idPrefix="login"
+                phone={phone}
+                onPhoneChange={setPhone}
+                code={otp}
+                onCodeChange={setOtp}
+                phoneError={phoneError}
+                codeError={codeError}
+                sent={otpSent}
+                secondsLeft={countdown.left}
+                submitting={pending}
+                onResend={() => {
+                  if (phoneFormRef.current) void sendSms(phoneFormRef.current);
+                }}
+              />
             </form>
-          )}
+          ) : null}
+
+          {method === "telegram" ? (
+            <TelegramLoginButton
+              onAuth={async (telegram: TelegramWidgetUser) => {
+                setError(null);
+                const result = await run(() => loginTelegram({ data: telegram }));
+                await goAfterLogin(result);
+              }}
+            />
+          ) : null}
 
           <p className="auth-foot">
             Ещё нет аккаунта? <Link to="/auth/signup">Зарегистрироваться</Link>

@@ -1,8 +1,11 @@
-import { and, eq, gt, isNotNull, isNull, ne } from "drizzle-orm";
+import { randomInt } from "node:crypto";
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
+
+import { and, desc, eq, gt, isNotNull, isNull, ne } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import {
-  emailChangeTokens,
   emailVerificationTokens,
   passwordResetTokens,
   sessions,
@@ -11,8 +14,6 @@ import {
   type User,
   type UserRole,
 } from "@/db/schema";
-import { issueOtp, verifyOtp } from "@/auth/otp";
-import { consumeRateLimit, RATE_LIMITED_MESSAGE, RATE_LIMITS } from "@/auth/rate-limit";
 import {
   addDays,
   addMinutes,
@@ -23,48 +24,36 @@ import {
   getDummyPasswordHash,
   hashPassword,
   normalizeEmail,
+  normalizePhone,
   validatePasswordStrength,
   verifyPassword,
 } from "@/auth/password";
+import { issueOtp, verifyOtp } from "@/auth/otp";
+import { consumeRateLimit } from "@/auth/rate-limit";
+import { isSmsByEnabled } from "@/auth/sms";
 import { AuthError } from "@/lib/auth/errors";
-import { isHoneypotFilled } from "@/lib/auth/honeypot";
 import {
-  OTP_RESEND_SECONDS,
   normalizeBelarusMobile,
+  OTP_CODE_LENGTH,
+  storedBelarusPhone,
   validateBelarusMobile,
 } from "@/lib/auth/phone";
+import { sendMail } from "@/lib/mail/send.server";
 import {
   signupRoleToIntent,
   type PublicSignupRole,
 } from "@/lib/auth/roles";
-
-export const GENERIC_REGISTRATION_SENT =
-  "Мы отправили письмо со ссылкой. Проверьте почту и задайте пароль.";
-export const GENERIC_RESET_SENT =
-  "Если аккаунт с этим e-mail существует, мы отправили ссылку для сброса пароля.";
-export const GENERIC_OTP_SENT = "Если номер привязан к аккаунту, мы отправили SMS с кодом.";
-export const GENERIC_OTP_ERROR = "Неверный или устаревший код.";
-export const GENERIC_CREDENTIALS = "Неверный e-mail или пароль.";
-export const GENERIC_EMAIL_CHANGE_SENT =
-  "Мы отправили письмо на новый адрес. Откройте ссылку, чтобы подтвердить смену e-mail.";
 
 export type SessionUser = {
   id: string;
   email: string;
   firstName: string;
   lastName: string | null;
-  phone: string | null;
-  phoneVerified: boolean;
+  avatarPath: string;
   emailVerified: boolean;
   roles: UserRole[];
   status: User["status"];
   lastSignupIntent: User["lastSignupIntent"];
-};
-
-export type AuthRequestMeta = {
-  ipAddress?: string | null;
-  userAgent?: string | null;
-  honeypot?: string | null;
 };
 
 function toSessionUser(user: User, roles: UserRole[]): SessionUser {
@@ -73,8 +62,7 @@ function toSessionUser(user: User, roles: UserRole[]): SessionUser {
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
-    phone: user.phone,
-    phoneVerified: user.phoneVerifiedAt != null,
+    avatarPath: user.avatarPath ?? "",
     emailVerified: user.emailVerifiedAt != null,
     roles,
     status: user.status,
@@ -91,35 +79,12 @@ async function getUserRoles(userId: string): Promise<UserRole[]> {
   return rows.map((row) => row.role);
 }
 
-function clientKeyOf(meta?: AuthRequestMeta): string {
-  const ip = meta?.ipAddress?.trim() ?? "";
-  return ip || "unknown";
-}
-
-function allowDevSecrets(): boolean {
-  return process.env.NODE_ENV !== "production";
-}
-
-function getAppUrl() {
-  return process.env.APP_URL ?? "http://localhost:8080";
-}
-
-async function logDevEmail(
-  kind: "set-password" | "password-reset" | "email-change" | "email-taken",
-  email: string,
-  url: string,
-) {
-  if (process.env.AUTH_DEV_LOG_EMAILS === "true" || allowDevSecrets()) {
-    console.info(`[auth:${kind}] ${email} → ${url}`);
-  }
-}
-
-async function assertUserCanAuthenticate(user: User) {
+export async function assertUserCanAuthenticate(user: User) {
   if (user.status === "suspended") {
     throw new AuthError("Аккаунт заблокирован. Обратитесь в поддержку.", "ACCOUNT_SUSPENDED");
   }
-  if (user.status === "deleted" || user.status === "pending_verification" || !user.passwordHash) {
-    throw new AuthError(GENERIC_CREDENTIALS, "INVALID_CREDENTIALS");
+  if (user.status === "deleted") {
+    throw new AuthError("Неверный e-mail или пароль.", "INVALID_CREDENTIALS");
   }
 }
 
@@ -136,16 +101,6 @@ export async function findUserById(userId: string): Promise<User | null> {
   return user ?? null;
 }
 
-async function findUserByVerifiedPhone(phone: string): Promise<User | null> {
-  const db = getDb();
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(and(eq(users.phone, phone), isNotNull(users.phoneVerifiedAt)))
-    .limit(1);
-  return user ?? null;
-}
-
 export async function createSession(
   userId: string,
   meta?: { ipAddress?: string | null; userAgent?: string | null; remember?: boolean },
@@ -153,8 +108,7 @@ export async function createSession(
   const db = getDb();
   const rawToken = generateSecureToken();
   const tokenHash = hashToken(rawToken);
-  const remember = meta?.remember ?? true;
-  const expiresAt = remember ? addDays(new Date(), 30) : addDays(new Date(), 14);
+  const expiresAt = addDays(new Date(), 21);
 
   await db.insert(sessions).values({
     userId,
@@ -182,6 +136,61 @@ export async function revokeAllUserSessions(userId: string) {
   await db.delete(sessions).where(eq(sessions.userId, userId));
 }
 
+export async function changeAccountPassword(
+  userId: string,
+  currentPassword: string,
+  newPassword: string,
+  currentToken: string | null,
+) {
+  const user = await findUserById(userId);
+  if (!user) throw new AuthError("Требуется авторизация.", "UNAUTHORIZED");
+
+  const limit = consumeRateLimit(`password-change:${userId}`, 15 * 60_000, 8);
+  if (!limit.ok) {
+    throw new AuthError("Слишком много попыток. Подождите и попробуйте снова.", "RATE_LIMITED");
+  }
+
+  const matches = await verifyPassword(currentPassword, user.passwordHash);
+  if (!matches) throw new AuthError("Неверный текущий пароль.", "INVALID_CREDENTIALS");
+
+  const passwordError = validatePasswordStrength(newPassword);
+  if (passwordError) throw new AuthError(passwordError, "WEAK_PASSWORD");
+  if (currentPassword === newPassword) {
+    throw new AuthError("Новый пароль должен отличаться от текущего.", "VALIDATION");
+  }
+
+  await getDb()
+    .update(users)
+    .set({ passwordHash: await hashPassword(newPassword), updatedAt: new Date() })
+    .where(eq(users.id, userId));
+
+  if (currentToken) {
+    await getDb()
+      .delete(sessions)
+      .where(and(eq(sessions.userId, userId), ne(sessions.tokenHash, hashToken(currentToken))));
+  } else {
+    await revokeAllUserSessions(userId);
+  }
+
+  return { ok: true as const, message: "Пароль изменён." };
+}
+
+export async function setAccountAvatar(userId: string, dataUrl: string) {
+  const match = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=\s]+)$/.exec(dataUrl);
+  if (!match) throw new AuthError("Выберите изображение JPEG, PNG или WebP.", "VALIDATION");
+  const buffer = Buffer.from(match[2].replace(/\s/g, ""), "base64");
+  if (buffer.length < 32 || buffer.length > 1_500_000) {
+    throw new AuthError("Фото должно быть меньше 1,5 МБ.", "VALIDATION");
+  }
+  const ext = match[1] === "jpeg" ? "jpg" : match[1];
+  const relative = `/avatars/${userId}.${ext}`;
+  const dir = path.join(process.cwd(), "public", "avatars");
+  await mkdir(dir, { recursive: true });
+  await writeFile(path.join(dir, `${userId}.${ext}`), buffer);
+  await getDb().update(users).set({ avatarPath: relative, updatedAt: new Date() }).where(eq(users.id, userId));
+  return { ok: true as const, avatarPath: `${relative}?v=${Date.now()}`, message: "Фото обновлено." };
+}
+
 export async function findValidSession(rawToken: string): Promise<SessionUser | null> {
   const db = getDb();
   const tokenHash = hashToken(rawToken);
@@ -201,7 +210,7 @@ export async function findValidSession(rawToken: string): Promise<SessionUser | 
     return null;
   }
 
-  if (user.status === "suspended" || user.status === "deleted" || user.status === "pending_verification") {
+  if (user.status === "suspended" || user.status === "deleted") {
     await revokeAllUserSessions(user.id);
     return null;
   }
@@ -216,31 +225,16 @@ export async function loginUser(input: {
   ipAddress?: string | null;
   userAgent?: string | null;
   remember?: boolean;
-  honeypot?: string | null;
 }) {
-  if (isHoneypotFilled(input.honeypot)) {
-    throw new AuthError(GENERIC_CREDENTIALS, "INVALID_CREDENTIALS");
-  }
-
-  const ipLimit = await consumeRateLimit(
-    `login:ip:${clientKeyOf(input)}`,
-    RATE_LIMITS.loginIp.windowMs,
-    RATE_LIMITS.loginIp.max,
-  );
-  if (!ipLimit.ok) {
-    throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
-  }
-
   const user = await findUserByEmail(input.email);
   const hashToCheck = user?.passwordHash ?? (await getDummyPasswordHash());
   const passwordMatches = await verifyPassword(input.password, hashToCheck);
 
   if (!user || !passwordMatches) {
-    throw new AuthError(GENERIC_CREDENTIALS, "INVALID_CREDENTIALS");
+    throw new AuthError("Неверный e-mail или пароль.", "INVALID_CREDENTIALS");
   }
 
   await assertUserCanAuthenticate(user);
-  await revokeAllUserSessions(user.id);
   return createSession(user.id, {
     ipAddress: input.ipAddress,
     userAgent: input.userAgent,
@@ -248,33 +242,63 @@ export async function loginUser(input: {
   });
 }
 
-async function invalidateUnusedEmailVerification(userId: string) {
+export async function registerUser(input: {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName?: string | null;
+  phone?: string | null;
+  signupRole: PublicSignupRole;
+}) {
   const db = getDb();
-  await db
-    .update(emailVerificationTokens)
-    .set({ usedAt: new Date() })
-    .where(and(eq(emailVerificationTokens.userId, userId), isNull(emailVerificationTokens.usedAt)));
+  const email = normalizeEmail(input.email);
+  const phone = normalizePhone(input.phone);
+
+  const passwordError = validatePasswordStrength(input.password);
+  if (passwordError) {
+    throw new AuthError(passwordError, "WEAK_PASSWORD");
+  }
+
+  if (await findUserByEmail(email)) {
+    throw new AuthError("Аккаунт с таким e-mail уже существует.", "EMAIL_TAKEN");
+  }
+
+  if (phone) {
+    const [existingPhone] = await db.select().from(users).where(eq(users.phone, phone)).limit(1);
+    if (existingPhone) {
+      throw new AuthError("Этот телефон уже привязан к другому аккаунту.", "PHONE_TAKEN");
+    }
+  }
+
+  const passwordHash = await hashPassword(input.password);
+  const intent = signupRoleToIntent(input.signupRole);
+
+  const [user] = await db
+    .insert(users)
+    .values({
+      email,
+      phone,
+      passwordHash,
+      firstName: input.firstName.trim(),
+      lastName: input.lastName?.trim() || null,
+      status: "pending_verification",
+      lastSignupIntent: intent,
+    })
+    .returning();
+
+  await db.insert(userRoles).values({
+    userId: user.id,
+    role: input.signupRole,
+  });
+
+  const verification = await issueEmailVerification(user.id);
+  await logDevEmail("verification", email, verification.url);
+
+  return user;
 }
 
-async function invalidateUnusedPasswordResets(userId: string) {
+export async function issueEmailVerification(userId: string) {
   const db = getDb();
-  await db
-    .update(passwordResetTokens)
-    .set({ usedAt: new Date() })
-    .where(and(eq(passwordResetTokens.userId, userId), isNull(passwordResetTokens.usedAt)));
-}
-
-async function invalidateUnusedEmailChanges(userId: string) {
-  const db = getDb();
-  await db
-    .update(emailChangeTokens)
-    .set({ usedAt: new Date() })
-    .where(and(eq(emailChangeTokens.userId, userId), isNull(emailChangeTokens.usedAt)));
-}
-
-export async function issueSetPasswordToken(userId: string) {
-  const db = getDb();
-  await invalidateUnusedEmailVerification(userId);
   const rawToken = generateSecureToken();
   const tokenHash = hashToken(rawToken);
   const expiresAt = addDays(new Date(), 1);
@@ -285,143 +309,13 @@ export async function issueSetPasswordToken(userId: string) {
     expiresAt,
   });
 
-  const url = `${getAppUrl()}/auth/set-password?token=${encodeURIComponent(rawToken)}`;
+  const url = `${getAppUrl()}/auth/verify-email?token=${encodeURIComponent(rawToken)}`;
   return { token: rawToken, url, expiresAt };
 }
 
-export async function registerUser(input: {
-  email: string;
-  firstName: string;
-  lastName?: string | null;
-  signupRole: PublicSignupRole;
-  ipAddress?: string | null;
-  honeypot?: string | null;
-}): Promise<{ message: string; devUrl?: string }> {
-  if (isHoneypotFilled(input.honeypot)) {
-    return { message: GENERIC_REGISTRATION_SENT };
-  }
-
-  const ipLimit = await consumeRateLimit(
-    `register:ip:${clientKeyOf(input)}`,
-    RATE_LIMITS.registerIp.windowMs,
-    RATE_LIMITS.registerIp.max,
-  );
-  if (!ipLimit.ok) {
-    throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
-  }
-
-  const db = getDb();
-  const email = normalizeEmail(input.email);
-  const firstName = input.firstName.trim();
-  const lastName = input.lastName?.trim() || null;
-  const intent = signupRoleToIntent(input.signupRole);
-  const existing = await findUserByEmail(email);
-
-  if (existing && existing.status !== "pending_verification") {
-    if (existing.status === "active") {
-      await logDevEmail("email-taken", existing.email, `${getAppUrl()}/auth/login`);
-    }
-    return { message: GENERIC_REGISTRATION_SENT };
-  }
-
-  let userId: string;
-  if (existing) {
-    await db
-      .update(users)
-      .set({
-        firstName,
-        lastName,
-        lastSignupIntent: intent,
-        updatedAt: new Date(),
-      })
-      .where(eq(users.id, existing.id));
-    await db.delete(userRoles).where(eq(userRoles.userId, existing.id));
-    await db.insert(userRoles).values({ userId: existing.id, role: input.signupRole });
-    userId = existing.id;
-  } else {
-    const [user] = await db
-      .insert(users)
-      .values({
-        email,
-        passwordHash: null,
-        firstName,
-        lastName,
-        status: "pending_verification",
-        lastSignupIntent: intent,
-      })
-      .returning();
-    await db.insert(userRoles).values({
-      userId: user.id,
-      role: input.signupRole,
-    });
-    userId = user.id;
-  }
-
-  const setup = await issueSetPasswordToken(userId);
-  await logDevEmail("set-password", email, setup.url);
-
-  return {
-    message: GENERIC_REGISTRATION_SENT,
-    devUrl: allowDevSecrets() ? setup.url : undefined,
-  };
-}
-
-export async function completeSetPassword(rawToken: string, newPassword: string) {
-  const db = getDb();
-  const passwordError = validatePasswordStrength(newPassword);
-  if (passwordError) {
-    throw new AuthError(passwordError, "WEAK_PASSWORD");
-  }
-
-  const tokenHash = hashToken(rawToken.trim());
-  const now = new Date();
-  const [tokenRow] = await db
-    .select()
-    .from(emailVerificationTokens)
-    .where(
-      and(
-        eq(emailVerificationTokens.tokenHash, tokenHash),
-        gt(emailVerificationTokens.expiresAt, now),
-        isNull(emailVerificationTokens.usedAt),
-      ),
-    )
-    .limit(1);
-
-  if (!tokenRow) {
-    throw new AuthError("Ссылка недействительна или устарела.", "INVALID_TOKEN");
-  }
-
-  const user = await findUserById(tokenRow.userId);
-  if (!user || user.status === "deleted" || user.status === "suspended") {
-    throw new AuthError("Ссылка недействительна или устарела.", "INVALID_TOKEN");
-  }
-
-  const passwordHash = await hashPassword(newPassword);
-
-  await db
-    .update(emailVerificationTokens)
-    .set({ usedAt: now })
-    .where(eq(emailVerificationTokens.id, tokenRow.id));
-  await invalidateUnusedEmailVerification(user.id);
-
-  await db
-    .update(users)
-    .set({
-      passwordHash,
-      emailVerifiedAt: now,
-      status: "active",
-      updatedAt: now,
-    })
-    .where(eq(users.id, user.id));
-
-  await revokeAllUserSessions(user.id);
-  return createSession(user.id, { remember: true });
-}
-
-/** Legacy `/auth/verify-email` links: if the account already has a password, just confirm email. */
 export async function verifyEmailToken(rawToken: string) {
   const db = getDb();
-  const tokenHash = hashToken(rawToken.trim());
+  const tokenHash = hashToken(rawToken);
   const now = new Date();
 
   const [tokenRow] = await db
@@ -436,13 +330,8 @@ export async function verifyEmailToken(rawToken: string) {
     )
     .limit(1);
 
-  if (!tokenRow) {
+  if (!tokenRow || tokenRow.pendingEmail) {
     throw new AuthError("Ссылка недействительна или устарела.", "INVALID_TOKEN");
-  }
-
-  const user = await findUserById(tokenRow.userId);
-  if (!user?.passwordHash) {
-    throw new AuthError("Задайте пароль по ссылке из письма.", "INVALID_TOKEN");
   }
 
   await db
@@ -462,32 +351,17 @@ export async function verifyEmailToken(rawToken: string) {
   return tokenRow.userId;
 }
 
-export async function requestPasswordReset(email: string, meta?: AuthRequestMeta) {
-  if (isHoneypotFilled(meta?.honeypot)) {
-    return { ok: true as const };
-  }
-
-  const ipLimit = await consumeRateLimit(
-    `forgot:ip:${clientKeyOf(meta)}`,
-    RATE_LIMITS.forgotIp.windowMs,
-    RATE_LIMITS.forgotIp.max,
-  );
-  if (!ipLimit.ok) {
-    throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
-  }
-
+export async function requestPasswordReset(email: string) {
   const user = await findUserByEmail(email);
-  if (user?.passwordHash && user.status !== "deleted") {
+  if (user) {
     const reset = await issuePasswordReset(user.id);
     await logDevEmail("password-reset", user.email, reset.url);
-    return { ok: true as const, devUrl: allowDevSecrets() ? reset.url : undefined };
   }
   return { ok: true as const };
 }
 
 export async function issuePasswordReset(userId: string) {
   const db = getDb();
-  await invalidateUnusedPasswordResets(userId);
   const rawToken = generateSecureToken();
   const tokenHash = hashToken(rawToken);
   const expiresAt = addMinutes(new Date(), 30);
@@ -502,14 +376,14 @@ export async function issuePasswordReset(userId: string) {
   return { token: rawToken, url, expiresAt };
 }
 
-export async function resetPassword(rawToken: string, newPassword: string, meta?: AuthRequestMeta) {
+export async function resetPassword(rawToken: string, newPassword: string) {
   const db = getDb();
   const passwordError = validatePasswordStrength(newPassword);
   if (passwordError) {
     throw new AuthError(passwordError, "WEAK_PASSWORD");
   }
 
-  const tokenHash = hashToken(rawToken.trim());
+  const tokenHash = hashToken(rawToken);
   const now = new Date();
 
   const [tokenRow] = await db
@@ -534,300 +408,183 @@ export async function resetPassword(rawToken: string, newPassword: string, meta?
     .update(passwordResetTokens)
     .set({ usedAt: now })
     .where(eq(passwordResetTokens.id, tokenRow.id));
-  await invalidateUnusedPasswordResets(tokenRow.userId);
 
   await db
     .update(users)
-    .set({ passwordHash, updatedAt: now, status: "active", emailVerifiedAt: now })
+    .set({ passwordHash, updatedAt: now })
     .where(eq(users.id, tokenRow.userId));
 
   await revokeAllUserSessions(tokenRow.userId);
-  return createSession(tokenRow.userId, {
-    ipAddress: meta?.ipAddress,
-    userAgent: meta?.userAgent,
-    remember: true,
-  });
+
+  return { ok: true as const };
 }
 
-export async function requestEmailChange(userId: string, newEmailRaw: string, meta?: AuthRequestMeta) {
-  const ipLimit = await consumeRateLimit(
-    `email-change:ip:${clientKeyOf(meta)}`,
-    RATE_LIMITS.emailChangeIp.windowMs,
-    RATE_LIMITS.emailChangeIp.max,
-  );
-  if (!ipLimit.ok) {
-    throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
-  }
+function emailCode(): string {
+  const max = 10 ** OTP_CODE_LENGTH;
+  const min = 10 ** (OTP_CODE_LENGTH - 1);
+  return String(randomInt(min, max));
+}
 
-  const newEmail = normalizeEmail(newEmailRaw);
+export async function requestAccountEmailCode(userId: string, emailRaw: string) {
+  const email = normalizeEmail(emailRaw);
   const user = await findUserById(userId);
-  if (!user) {
-    throw new AuthError("Требуется авторизация.", "UNAUTHORIZED");
-  }
-  if (newEmail === user.email) {
-    return { message: "E-mail не изменился." };
+  if (!user) throw new AuthError("Требуется авторизация.", "UNAUTHORIZED");
+  if (email === user.email && user.emailVerifiedAt) {
+    return { ok: true as const, already: true, message: "Почта уже подтверждена." };
   }
 
-  const taken = await findUserByEmail(newEmail);
+  const taken = await findUserByEmail(email);
   if (taken && taken.id !== userId) {
-    return { message: GENERIC_EMAIL_CHANGE_SENT };
+    throw new AuthError("Этот e-mail уже занят.", "EMAIL_TAKEN");
+  }
+
+  const limit = consumeRateLimit(`email-confirm:${userId}`, 60_000, 1);
+  if (!limit.ok) {
+    throw new AuthError(`Код можно отправить снова через ${limit.retryAfterSec} с.`, "RATE_LIMITED");
   }
 
   const db = getDb();
-  await invalidateUnusedEmailChanges(userId);
-  const rawToken = generateSecureToken();
-  const tokenHash = hashToken(rawToken);
-  const expiresAt = addDays(new Date(), 1);
+  const now = new Date();
+  await db
+    .update(emailVerificationTokens)
+    .set({ usedAt: now })
+    .where(and(eq(emailVerificationTokens.userId, userId), isNull(emailVerificationTokens.usedAt), isNotNull(emailVerificationTokens.pendingEmail)));
 
-  await db.insert(emailChangeTokens).values({
+  const code = emailCode();
+  await db.insert(emailVerificationTokens).values({
     userId,
-    newEmail,
-    tokenHash,
-    expiresAt,
+    pendingEmail: email,
+    tokenHash: hashToken(`${userId}:${code}`),
+    expiresAt: addMinutes(now, 10),
   });
 
-  const url = `${getAppUrl()}/auth/confirm-email?token=${encodeURIComponent(rawToken)}`;
-  await logDevEmail("email-change", newEmail, url);
+  await sendMail({
+    to: [email],
+    subject: "Код подтверждения trenio.by",
+    text: `Код подтверждения почты: ${code}\nОн действует 10 минут. Никому не сообщайте.`,
+  });
 
+  const delivered = Boolean(process.env.RESEND_API_KEY?.trim() && process.env.MAIL_FROM?.trim());
   return {
-    message: GENERIC_EMAIL_CHANGE_SENT,
-    devUrl: allowDevSecrets() ? url : undefined,
+    ok: true as const,
+    already: false,
+    message: "Код отправлен на почту.",
+    devCode: !delivered && process.env.NODE_ENV !== "production" ? code : undefined,
   };
 }
 
-export async function confirmEmailChange(rawToken: string) {
-  const db = getDb();
-  const tokenHash = hashToken(rawToken.trim());
-  const now = new Date();
+export async function confirmAccountEmailCode(userId: string, emailRaw: string, codeRaw: string) {
+  const email = normalizeEmail(emailRaw);
+  const code = codeRaw.replace(/\D/g, "");
+  const limit = consumeRateLimit(`email-confirm-try:${userId}`, 15 * 60_000, 5);
+  if (!limit.ok) {
+    throw new AuthError("Слишком много попыток. Подождите и попробуйте снова.", "RATE_LIMITED");
+  }
 
+  const db = getDb();
+  const now = new Date();
   const [tokenRow] = await db
     .select()
-    .from(emailChangeTokens)
+    .from(emailVerificationTokens)
     .where(
-      and(eq(emailChangeTokens.tokenHash, tokenHash), gt(emailChangeTokens.expiresAt, now), isNull(emailChangeTokens.usedAt)),
+      and(
+        eq(emailVerificationTokens.userId, userId),
+        eq(emailVerificationTokens.pendingEmail, email),
+        isNull(emailVerificationTokens.usedAt),
+        gt(emailVerificationTokens.expiresAt, now),
+      ),
     )
+    .orderBy(desc(emailVerificationTokens.createdAt))
     .limit(1);
 
-  if (!tokenRow) {
-    throw new AuthError("Ссылка недействительна или устарела.", "INVALID_TOKEN");
+  if (!tokenRow || tokenRow.tokenHash !== hashToken(`${userId}:${code}`)) {
+    throw new AuthError("Неверный или устаревший код.", "INVALID_TOKEN");
   }
 
-  const taken = await db
-    .select({ id: users.id })
-    .from(users)
-    .where(and(eq(users.email, tokenRow.newEmail), ne(users.id, tokenRow.userId)))
-    .limit(1);
-  if (taken.length > 0) {
-    await db.update(emailChangeTokens).set({ usedAt: now }).where(eq(emailChangeTokens.id, tokenRow.id));
-    throw new AuthError("Ссылка недействительна или устарела.", "INVALID_TOKEN");
+  const taken = await findUserByEmail(email);
+  if (taken && taken.id !== userId) {
+    throw new AuthError("Этот e-mail уже занят.", "EMAIL_TAKEN");
   }
 
-  await db.update(emailChangeTokens).set({ usedAt: now }).where(eq(emailChangeTokens.id, tokenRow.id));
-  await invalidateUnusedEmailChanges(tokenRow.userId);
-
+  await db.update(emailVerificationTokens).set({ usedAt: now }).where(eq(emailVerificationTokens.id, tokenRow.id));
   await db
     .update(users)
-    .set({
-      email: tokenRow.newEmail,
-      emailVerifiedAt: now,
-      updatedAt: now,
-    })
-    .where(eq(users.id, tokenRow.userId));
+    .set({ email, emailVerifiedAt: now, status: "active", updatedAt: now })
+    .where(eq(users.id, userId));
 
-  return tokenRow.userId;
+  return { ok: true as const, message: "Почта подтверждена." };
 }
 
-export async function requestSmsLogin(phoneRaw: string, meta?: AuthRequestMeta) {
-  if (isHoneypotFilled(meta?.honeypot)) {
-    return { message: GENERIC_OTP_SENT, retryAfterSec: OTP_RESEND_SECONDS };
-  }
-
+export async function requestAccountPhoneCode(userId: string, phoneRaw: string) {
   const phoneError = validateBelarusMobile(phoneRaw);
-  if (phoneError) {
-    throw new AuthError(phoneError, "VALIDATION");
-  }
+  if (phoneError) throw new AuthError(phoneError, "VALIDATION");
   const phone = normalizeBelarusMobile(phoneRaw);
-  if (!phone) {
-    throw new AuthError("Укажите мобильный номер РБ.", "VALIDATION");
-  }
+  if (!phone) throw new AuthError("Укажите мобильный номер РБ.", "VALIDATION");
 
-  const ipLimit = await consumeRateLimit(
-    `otp:ip:${clientKeyOf(meta)}`,
-    RATE_LIMITS.otpIp.windowMs,
-    RATE_LIMITS.otpIp.max,
-  );
-  const phoneLimit = await consumeRateLimit(
-    `otp:phone:${phone}`,
-    RATE_LIMITS.otpPhone.windowMs,
-    RATE_LIMITS.otpPhone.max,
-  );
-  if (!ipLimit.ok || !phoneLimit.ok) {
-    const retryAfterSec = Math.max(
-      ipLimit.ok ? 0 : ipLimit.retryAfterSec,
-      phoneLimit.ok ? 0 : phoneLimit.retryAfterSec,
-    );
-    throw new AuthError(`Код можно отправить снова через ${retryAfterSec} с.`, "RATE_LIMITED");
-  }
-
-  const user = await findUserByVerifiedPhone(phone);
-  if (!user || user.status !== "active") {
-    return { message: GENERIC_OTP_SENT, retryAfterSec: OTP_RESEND_SECONDS };
-  }
-
-  const issued = await issueOtp({
-    phone,
-    purpose: "login",
-    userId: user.id,
-    send: true,
-  });
-
-  if (!issued.ok) {
-    if (issued.code === "rate_limited") {
-      throw new AuthError(issued.error, "RATE_LIMITED");
-    }
-    return { message: GENERIC_OTP_SENT, retryAfterSec: OTP_RESEND_SECONDS };
-  }
-
-  return {
-    message: GENERIC_OTP_SENT,
-    retryAfterSec: issued.retryAfterSec,
-    devCode: issued.devCode,
-  };
-}
-
-export async function confirmSmsLogin(input: {
-  phone: string;
-  code: string;
-  ipAddress?: string | null;
-  userAgent?: string | null;
-  remember?: boolean;
-  honeypot?: string | null;
-}) {
-  if (isHoneypotFilled(input.honeypot)) {
-    throw new AuthError(GENERIC_OTP_ERROR, "INVALID_TOKEN");
-  }
-
-  const phone = normalizeBelarusMobile(input.phone);
-  if (!phone) {
-    throw new AuthError(GENERIC_OTP_ERROR, "INVALID_TOKEN");
-  }
-
-  const ipLimit = await consumeRateLimit(
-    `login:ip:${clientKeyOf(input)}`,
-    RATE_LIMITS.loginIp.windowMs,
-    RATE_LIMITS.loginIp.max,
-  );
-  if (!ipLimit.ok) {
-    throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
-  }
-
-  const verified = await verifyOtp({ phone, purpose: "login", code: input.code });
-  const user = verified.ok ? await findUserByVerifiedPhone(phone) : null;
-  if (!verified.ok || !user || user.status !== "active") {
-    throw new AuthError(GENERIC_OTP_ERROR, "INVALID_TOKEN");
-  }
-
-  await assertUserCanAuthenticate(user);
-  await revokeAllUserSessions(user.id);
-  return createSession(user.id, {
-    ipAddress: input.ipAddress,
-    userAgent: input.userAgent,
-    remember: input.remember,
-  });
-}
-
-export async function requestPhoneVerify(userId: string, phoneRaw: string, meta?: AuthRequestMeta) {
-  if (isHoneypotFilled(meta?.honeypot)) {
-    return { message: GENERIC_OTP_SENT, retryAfterSec: OTP_RESEND_SECONDS };
-  }
-
-  const phoneError = validateBelarusMobile(phoneRaw);
-  if (phoneError) {
-    throw new AuthError(phoneError, "VALIDATION");
-  }
-  const phone = normalizeBelarusMobile(phoneRaw);
-  if (!phone) {
-    throw new AuthError("Укажите мобильный номер РБ.", "VALIDATION");
-  }
-
-  const ipLimit = await consumeRateLimit(
-    `otp:ip:${clientKeyOf(meta)}`,
-    RATE_LIMITS.otpIp.windowMs,
-    RATE_LIMITS.otpIp.max,
-  );
-  const phoneLimit = await consumeRateLimit(
-    `otp:phone:${phone}`,
-    RATE_LIMITS.otpPhone.windowMs,
-    RATE_LIMITS.otpPhone.max,
-  );
-  if (!ipLimit.ok || !phoneLimit.ok) {
-    const retryAfterSec = Math.max(
-      ipLimit.ok ? 0 : ipLimit.retryAfterSec,
-      phoneLimit.ok ? 0 : phoneLimit.retryAfterSec,
-    );
-    throw new AuthError(`Код можно отправить снова через ${retryAfterSec} с.`, "RATE_LIMITED");
-  }
-
-  const issued = await issueOtp({
-    phone,
-    purpose: "verify_phone",
-    userId,
-    send: true,
-  });
-
-  if (!issued.ok) {
-    if (issued.code === "rate_limited") {
-      throw new AuthError(issued.error, "RATE_LIMITED");
-    }
-    return { message: GENERIC_OTP_SENT, retryAfterSec: OTP_RESEND_SECONDS };
-  }
-
-  return {
-    message: GENERIC_OTP_SENT,
-    retryAfterSec: issued.retryAfterSec,
-    devCode: issued.devCode,
-  };
-}
-
-export async function confirmPhoneVerify(userId: string, phoneRaw: string, code: string, honeypot?: string | null) {
-  if (isHoneypotFilled(honeypot)) {
-    throw new AuthError(GENERIC_OTP_ERROR, "INVALID_TOKEN");
-  }
-
-  const phone = normalizeBelarusMobile(phoneRaw);
-  if (!phone) {
-    throw new AuthError(GENERIC_OTP_ERROR, "INVALID_TOKEN");
-  }
-
-  const verified = await verifyOtp({ phone, purpose: "verify_phone", code });
-  if (!verified.ok || (verified.userId && verified.userId !== userId)) {
-    throw new AuthError(GENERIC_OTP_ERROR, "INVALID_TOKEN");
-  }
-
-  const owner = await findUserByVerifiedPhone(phone);
-  if (owner && owner.id !== userId) {
-    throw new AuthError(GENERIC_OTP_ERROR, "INVALID_TOKEN");
-  }
-
+  const stored = storedBelarusPhone(phone);
   const db = getDb();
+  const user = await findUserById(userId);
+  if (!user) throw new AuthError("Требуется авторизация.", "UNAUTHORIZED");
+  if (user.phone === stored && user.phoneVerifiedAt) {
+    return { ok: true as const, already: true, message: "Телефон уже подтверждён." };
+  }
+
+  const [owner] = await db.select({ id: users.id }).from(users).where(and(eq(users.phone, stored), ne(users.id, userId))).limit(1);
+  if (owner) throw new AuthError("Этот телефон уже привязан к другому аккаунту.", "PHONE_TAKEN");
+
+  const ipLimit = consumeRateLimit(`otp:user:${userId}`, 60_000, 1);
+  if (!ipLimit.ok) {
+    throw new AuthError(`Код можно отправить снова через ${ipLimit.retryAfterSec} с.`, "RATE_LIMITED");
+  }
+
+  const issued = await issueOtp({ phone, purpose: "verify_phone", userId, send: true });
+  if (!issued.ok) {
+    throw new AuthError(issued.error, issued.code === "rate_limited" ? "RATE_LIMITED" : "VALIDATION");
+  }
+
+  return {
+    ok: true as const,
+    already: false,
+    message: "Код отправлен по SMS.",
+    retryAfterSec: issued.retryAfterSec,
+    devCode: isSmsByEnabled() ? undefined : issued.devCode,
+  };
+}
+
+export async function confirmAccountPhoneCode(userId: string, phoneRaw: string, codeRaw: string) {
+  const phone = normalizeBelarusMobile(phoneRaw);
+  if (!phone) throw new AuthError("Неверный или устаревший код.", "INVALID_TOKEN");
+
+  const verified = await verifyOtp({ phone, purpose: "verify_phone", code: codeRaw });
+  if (!verified.ok || (verified.userId && verified.userId !== userId)) {
+    throw new AuthError("Неверный или устаревший код.", "INVALID_TOKEN");
+  }
+
+  const stored = storedBelarusPhone(phone);
+  const db = getDb();
+  const [owner] = await db.select({ id: users.id }).from(users).where(and(eq(users.phone, stored), ne(users.id, userId))).limit(1);
+  if (owner) throw new AuthError("Этот телефон уже привязан к другому аккаунту.", "PHONE_TAKEN");
+
   const now = new Date();
   await db
     .update(users)
-    .set({ phone, phoneVerifiedAt: now, updatedAt: now })
+    .set({ phone: stored, phoneVerifiedAt: now, updatedAt: now })
     .where(eq(users.id, userId));
+
+  return { ok: true as const, message: "Телефон подтверждён." };
 }
 
-export async function updateAccountName(userId: string, firstName: string, lastName?: string | null) {
-  const trimmed = firstName.trim();
-  if (!trimmed) {
+export async function updateAccountName(userId: string, firstName: string, lastName: string) {
+  const trimmedFirst = firstName.trim();
+  const trimmedLast = lastName.trim();
+  if (!trimmedFirst) {
     throw new AuthError("Укажите имя.", "VALIDATION");
   }
-  const db = getDb();
-  await db
+  await getDb()
     .update(users)
     .set({
-      firstName: trimmed,
-      lastName: lastName?.trim() || null,
+      firstName: trimmedFirst.slice(0, 100),
+      lastName: trimmedLast ? trimmedLast.slice(0, 100) : null,
       updatedAt: new Date(),
     })
     .where(eq(users.id, userId));
@@ -836,6 +593,16 @@ export async function updateAccountName(userId: string, firstName: string, lastN
 export async function getSessionUserFromToken(rawToken: string | null): Promise<SessionUser | null> {
   if (!rawToken) return null;
   return findValidSession(rawToken);
+}
+
+function getAppUrl() {
+  return process.env.APP_URL ?? "http://localhost:8080";
+}
+
+async function logDevEmail(kind: "verification" | "password-reset", email: string, url: string) {
+  if (process.env.AUTH_DEV_LOG_EMAILS === "true") {
+    console.info(`[auth:${kind}] ${email} → ${url}`);
+  }
 }
 
 export async function buildSessionUser(userId: string): Promise<SessionUser | null> {

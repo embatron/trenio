@@ -1,9 +1,32 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { getTopLevelSportCategory } from "@/lib/catalog/sport-taxonomy";
-import { CategoryCatalogPage, resolveChildCategory } from "@/routes/categories.$slug";
+import { canonicalCategoryPath } from "@/lib/catalog/slug-policy";
+import { categorySearchDescription, getTopLevelSportCategory, getSportTaxonomyChildInCategory } from "@/lib/catalog/sport-taxonomy";
+import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
+import { resolveVisitorPlaceFn } from "@/lib/catalog/visitor-place";
+import {
+  CategoryCatalogPage,
+  categoryHeroLead,
+  categoryKeyword,
+  categoryPageTitle,
+  resolveChildCategory,
+} from "@/routes/categories.$slug";
 
 export const Route = createFileRoute("/categories/$parentSlug/$childSlug")({
   beforeLoad: ({ params }) => {
+    const canonical = canonicalCategoryPath(params.parentSlug, params.childSlug);
+    if (canonical?.childSlug) {
+      throw redirect({
+        to: "/categories/$parentSlug/$childSlug",
+        params: { parentSlug: canonical.parentSlug, childSlug: canonical.childSlug },
+      });
+    }
+    if (canonical) {
+      throw redirect({
+        to: "/categories/$slug",
+        params: { slug: canonical.parentSlug },
+      });
+    }
+
     const category = resolveChildCategory(params.parentSlug, params.childSlug);
     if (!category) {
       throw redirect({
@@ -18,8 +41,14 @@ export const Route = createFileRoute("/categories/$parentSlug/$childSlug")({
       return { meta: [{ title: "Категория | trenio.by" }] };
     }
 
-    const title = `Тренеры — ${category.title} в Беларуси | trenio.by`;
-    const desc = `${category.title}: ${category.lead} Подбор по городу, цене, формату и опыту.`;
+    const keyword = categoryKeyword(category, params.parentSlug);
+    const title = categoryPageTitle(keyword);
+    const aliases = getSportTaxonomyChildInCategory(params.parentSlug, params.childSlug)?.aliases;
+    const desc = categorySearchDescription(
+      title.replace(" | trenio.by", ""),
+      categoryHeroLead(keyword, [], aliases),
+      aliases,
+    );
     return {
       meta: [
         { title },
@@ -29,11 +58,19 @@ export const Route = createFileRoute("/categories/$parentSlug/$childSlug")({
       ],
     };
   },
+  loader: async () => {
+    const [ratings, place] = await Promise.all([
+      listTrainerRatingSummariesFn(),
+      resolveVisitorPlaceFn(),
+    ]);
+    return { ratings, place };
+  },
   component: ChildCategoryPage,
 });
 
 function ChildCategoryPage() {
   const { parentSlug, childSlug } = Route.useParams();
+  const { ratings, place } = Route.useLoaderData();
   const category = resolveChildCategory(parentSlug, childSlug);
 
   if (!category) return null;
@@ -43,5 +80,5 @@ function ChildCategoryPage() {
     ? { slug: parent.slug, label: parent.label }
     : { slug: parentSlug, label: parentSlug };
 
-  return <CategoryCatalogPage category={category} parentCategory={parentCategory} />;
+  return <CategoryCatalogPage category={category} parentCategory={parentCategory} ratings={ratings} place={place} />;
 }

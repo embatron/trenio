@@ -1,30 +1,40 @@
 import { createHmac, randomInt, timingSafeEqual } from "node:crypto";
+
 import { and, desc, eq, isNull } from "drizzle-orm";
 
 import { getDb } from "@/db";
-import { authOtpChallenges } from "@/db/schema";
+import { authOtpChallenges, type AuthOtpPurpose } from "@/db/schema";
 import {
   OTP_CODE_LENGTH,
   OTP_MAX_ATTEMPTS,
   OTP_RESEND_SECONDS,
   OTP_TTL_SECONDS,
 } from "@/lib/auth/phone";
-import { isSmsByEnabled } from "@/lib/sms/sms-by-config.server";
-import { otpSmsText, sendQuickSms } from "@/lib/sms/sms-by.server";
 
-export type OtpPurpose = "login" | "verify_phone";
+import { isSmsByEnabled, otpSmsText, sendQuickSms } from "./sms";
+
+export const GENERIC_OTP_SENT = "Если номер привязан к аккаунту, мы отправили код.";
+export const GENERIC_OTP_ERROR = "Неверный или устаревший код.";
 
 export type OtpIssueResult =
   | { ok: true; retryAfterSec: number; devCode?: string }
-  | { ok: false; error: string; retryAfterSec?: number; code: "rate_limited" | "sms_unavailable" | "send_failed" };
+  | {
+      ok: false;
+      error: string;
+      retryAfterSec?: number;
+      code: "rate_limited" | "sms_unavailable" | "send_failed";
+    };
 
 function otpPepper(): string {
-  const secret = process.env.SESSION_SECRET;
-  if (secret && secret.length >= 32) return secret;
-  return "dev-only-trenio-otp-pepper-32chars!!!!";
+  const secret = process.env.SESSION_SECRET ?? "";
+  if (secret.length >= 32) return secret;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("SESSION_SECRET must be at least 32 characters");
+  }
+  return "dev-only-trenio-otp-pepper-32chars!!";
 }
 
-export function hashOtpCode(phone: string, purpose: OtpPurpose, code: string): string {
+function hashOtpCode(phone: string, purpose: AuthOtpPurpose, code: string): string {
   return createHmac("sha256", otpPepper()).update(`${purpose}:${phone}:${code}`).digest("hex");
 }
 
@@ -38,17 +48,20 @@ function allowDevOtpReveal(): boolean {
   return process.env.NODE_ENV !== "production";
 }
 
-export async function secondsUntilOtpResend(phone: string, purpose: OtpPurpose): Promise<number> {
+export async function secondsUntilOtpResend(phone: string, purpose: AuthOtpPurpose): Promise<number> {
   const db = getDb();
   const [row] = await db
     .select({ createdAt: authOtpChallenges.createdAt })
     .from(authOtpChallenges)
     .where(
-      and(eq(authOtpChallenges.phone, phone), eq(authOtpChallenges.purpose, purpose), isNull(authOtpChallenges.consumedAt)),
+      and(
+        eq(authOtpChallenges.phone, phone),
+        eq(authOtpChallenges.purpose, purpose),
+        isNull(authOtpChallenges.consumedAt),
+      ),
     )
     .orderBy(desc(authOtpChallenges.createdAt))
     .limit(1);
-
   if (!row) return 0;
   const elapsed = Date.now() - row.createdAt.getTime();
   const waitMs = OTP_RESEND_SECONDS * 1000 - elapsed;
@@ -57,13 +70,18 @@ export async function secondsUntilOtpResend(phone: string, purpose: OtpPurpose):
 
 export async function issueOtp(input: {
   phone: string;
-  purpose: OtpPurpose;
+  purpose: AuthOtpPurpose;
   userId?: string | null;
   send: boolean;
 }): Promise<OtpIssueResult> {
   const retry = await secondsUntilOtpResend(input.phone, input.purpose);
   if (retry > 0) {
-    return { ok: false, error: `Код можно отправить снова через ${retry} с.`, retryAfterSec: retry, code: "rate_limited" };
+    return {
+      ok: false,
+      error: `Код можно отправить снова через ${retry} с.`,
+      retryAfterSec: retry,
+      code: "rate_limited",
+    };
   }
 
   const production = process.env.NODE_ENV === "production";
@@ -75,19 +93,22 @@ export async function issueOtp(input: {
     };
   }
 
-  const db = getDb();
-  const now = new Date();
   const code = generateOtpCode();
   const expiresAt = new Date(Date.now() + OTP_TTL_SECONDS * 1000);
+  const db = getDb();
 
   await db
     .update(authOtpChallenges)
-    .set({ consumedAt: now })
+    .set({ consumedAt: new Date() })
     .where(
-      and(eq(authOtpChallenges.phone, input.phone), eq(authOtpChallenges.purpose, input.purpose), isNull(authOtpChallenges.consumedAt)),
+      and(
+        eq(authOtpChallenges.phone, input.phone),
+        eq(authOtpChallenges.purpose, input.purpose),
+        isNull(authOtpChallenges.consumedAt),
+      ),
     );
 
-  const [inserted] = await db
+  const [created] = await db
     .insert(authOtpChallenges)
     .values({
       phone: input.phone,
@@ -100,22 +121,29 @@ export async function issueOtp(input: {
 
   if (input.send && isSmsByEnabled()) {
     const sent = await sendQuickSms(input.phone, otpSmsText(code));
-    if (!sent.ok) {
-      await db.update(authOtpChallenges).set({ consumedAt: now }).where(eq(authOtpChallenges.id, inserted.id));
-      return { ok: false, error: "Не удалось отправить SMS. Попробуйте позже.", code: "send_failed" };
+    if (!sent) {
+      await db
+        .update(authOtpChallenges)
+        .set({ consumedAt: new Date() })
+        .where(eq(authOtpChallenges.id, created.id));
+      return {
+        ok: false,
+        error: "Не удалось отправить SMS. Попробуйте позже.",
+        code: "send_failed",
+      };
     }
   } else if (input.send && production) {
-    await db.update(authOtpChallenges).set({ consumedAt: now }).where(eq(authOtpChallenges.id, inserted.id));
+    await db
+      .update(authOtpChallenges)
+      .set({ consumedAt: new Date() })
+      .where(eq(authOtpChallenges.id, created.id));
     return {
       ok: false,
       error: "Вход по SMS временно недоступен. Войдите по e-mail.",
       code: "sms_unavailable",
     };
   } else if (input.send) {
-    console.info("[sms] OTP issued in dev (not sent)", {
-      phone: `${input.phone.slice(0, 6)}***`,
-      purpose: input.purpose,
-    });
+    console.info(`[auth:sms] ${input.purpose} +${input.phone} → ${code}`);
   }
 
   return {
@@ -127,9 +155,9 @@ export async function issueOtp(input: {
 
 export async function verifyOtp(input: {
   phone: string;
-  purpose: OtpPurpose;
+  purpose: AuthOtpPurpose;
   code: string;
-}): Promise<{ ok: true; userId: string | null; id: string } | { ok: false }> {
+}): Promise<{ ok: true; userId: string | null } | { ok: false }> {
   const code = input.code.replace(/\D/g, "");
   if (code.length !== OTP_CODE_LENGTH) return { ok: false };
 
@@ -138,7 +166,11 @@ export async function verifyOtp(input: {
     .select()
     .from(authOtpChallenges)
     .where(
-      and(eq(authOtpChallenges.phone, input.phone), eq(authOtpChallenges.purpose, input.purpose), isNull(authOtpChallenges.consumedAt)),
+      and(
+        eq(authOtpChallenges.phone, input.phone),
+        eq(authOtpChallenges.purpose, input.purpose),
+        isNull(authOtpChallenges.consumedAt),
+      ),
     )
     .orderBy(desc(authOtpChallenges.createdAt))
     .limit(1);
@@ -155,10 +187,12 @@ export async function verifyOtp(input: {
   const expected = hashOtpCode(input.phone, input.purpose, code);
   const left = Buffer.from(expected, "hex");
   const right = Buffer.from(row.codeHash, "hex");
-  if (left.length !== right.length || !timingSafeEqual(left, right)) {
-    return { ok: false };
-  }
+  if (left.length !== right.length || !timingSafeEqual(left, right)) return { ok: false };
 
-  await db.update(authOtpChallenges).set({ consumedAt: new Date() }).where(eq(authOtpChallenges.id, row.id));
-  return { ok: true, userId: row.userId, id: row.id };
+  await db
+    .update(authOtpChallenges)
+    .set({ consumedAt: new Date() })
+    .where(eq(authOtpChallenges.id, row.id));
+
+  return { ok: true, userId: row.userId };
 }

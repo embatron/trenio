@@ -18,6 +18,15 @@ dist-ssr
 *.local
 .env
 
+# GeoLite2 city database (downloaded by ip-location-api, not committed)
+data/geoip/
+data/geoip-tmp/
+
+# User-uploaded cabinet photos
+public/avatars/
+public/trainers/self/
+public/trainers/admin/
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars

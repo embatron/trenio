@@ -165,19 +165,55 @@
   /* Unified layout grid */
   --layout-max: 1240px;
   --layout-prose-max: 760px;
-  --layout-gutter: clamp(20px, 4vw, 36px);
+  --layout-gutter: max(clamp(20px, 4vw, 36px), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   --layout-section-y: clamp(28px, 5vw, 56px);
   --layout-block-gap: 32px;
   --layout-sidebar-w: 280px;
-  --layout-sidebar-gap: 32px;
+  --layout-sidebar-gap: 24px;
+  --layout-gap: 24px;
+  /* Shape. Cards, panels, and banners share one corner.
+     Controls and icon wells stay one step tighter.
+     Pills are 999px, circles are 50%.
+     Do not use --radius-md for product UI: that token is shadcn's (~8px). */
+  --card-radius: 22px;
+  --radius-control: 12px;
+  --radius-tile: 14px;
+  --shadow: 0 24px 70px rgba(var(--primary-rgb), 0.18);
   --header-clearance: 88px;
+  --icon-stroke: 1.8;
+
+  /* Type scale. Headings stop at 700; card titles at 650; controls at 600. */
+  --fw-body: 450;
+  --fw-ui: 600;
+  --fw-title: 650;
+  --fw-heading: 700;
+  --fs-display: clamp(32px, 4.4vw, 48px);
+  --fs-page: clamp(26px, 3.2vw, 40px);
+  --fs-section: clamp(20px, 2.1vw, 26px);
+  --fs-card: 16px;
+  --fs-lead: 16px;
+  --fs-ui: 14px;
+  --fs-meta: 13px;
+  --fs-caption: 12px;
+  --tracking-heading: -0.028em;
 }
 
 html, body {
   font-family: Inter, Manrope, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 15px;
+  font-weight: var(--fw-body);
+  line-height: 1.5;
   color: var(--text);
   background: var(--light-bg);
 }
+h1, h2, h3, h4 {
+  font-weight: var(--fw-heading);
+  letter-spacing: var(--tracking-heading);
+  line-height: 1.2;
+}
+h1 { font-size: var(--fs-page); }
+h2 { font-size: var(--fs-section); }
+h3, h4 { font-size: var(--fs-card); font-weight: var(--fw-title); }
 body { margin: 0; }
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -190,12 +226,27 @@ body { margin: 0; }
   color: var(--text);
 }
 
-.layout-container {
+.layout-container,
+.layout-rail {
   width: 100%;
   max-width: var(--layout-max);
   margin-inline: auto;
   padding-inline: var(--layout-gutter);
 }
+
+.layout-rail__track {
+  display: flex;
+  gap: var(--layout-gap);
+  margin: 0;
+  padding-block: 4px;
+  overflow-x: auto;
+  scroll-padding-inline: 0;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+.layout-rail__track::-webkit-scrollbar { display: none; }
 
 .layout-container--prose {
   max-width: var(--layout-prose-max);
@@ -215,9 +266,85 @@ body { margin: 0; }
   padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 60px);
   display: grid;
   grid-template-columns: var(--layout-sidebar-w) minmax(0, 1fr);
-  gap: var(--layout-sidebar-gap);
+  gap: var(--layout-gap);
   align-items: start;
 }
+
+.card-grid,
+.clubs-grid,
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--layout-gap);
+}
+
+.card-grid--4,
+.cat-clubs-row,
+.city-districts,
+.trainer-grid,
+.cat-grid,
+.city-grid,
+.sr-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--layout-gap);
+}
+
+.trainer-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid rgba(var(--dark-rgb), 0.06);
+  border-radius: var(--card-radius);
+  background: var(--white);
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+  cursor: pointer;
+}
+.trainer-card__media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: linear-gradient(160deg, var(--neutral-bg) 0%, var(--line) 100%);
+}
+.trainer-card__photo { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+.trainer-card__badge {
+  position: absolute; top: 12px; left: 12px; padding: 5px 10px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94); color: var(--primary-dark); font-size: 11px;
+  font-weight: var(--fw-title); letter-spacing: 0.02em; text-transform: uppercase;
+  box-shadow: 0 6px 18px rgba(var(--dark-rgb), 0.08);
+}
+.trainer-card__save {
+  position: absolute; top: 8px; right: 8px; width: 44px; height: 44px; border: 0; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92); color: var(--muted); cursor: pointer;
+  display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb), 0.08);
+}
+.trainer-card__save.is-saved { color: var(--primary); }
+.trainer-card__save svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.trainer-card__save.is-saved svg { fill: currentColor; }
+.trainer-card__body { display: flex; flex-direction: column; gap: 8px; padding: 16px 16px 18px; }
+.trainer-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.trainer-card__name { margin: 0; font-size: var(--fs-card); line-height: 1.25; letter-spacing: -0.02em; font-weight: var(--fw-title); color: var(--dark); transition: color 0.16s ease; }
+.trainer-card:hover .trainer-card__name,
+.trainer-card:focus-visible .trainer-card__name { color: var(--primary); }
+.trainer-card__rating { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 4px; color: var(--dark); font-size: 13px; font-weight: var(--fw-title); white-space: nowrap; }
+.trainer-card__rating svg { width: 13px; height: 13px; fill: #ffb400; stroke: none; }
+.trainer-card__rating span { color: var(--muted); font-weight: var(--fw-ui); }
+.trainer-card__rating--empty { color: var(--muted); }
+.trainer-card__rating--empty svg { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); }
+.trainer-card__sport { margin: 0; color: var(--muted); font-size: var(--fs-meta); line-height: 1.35; font-weight: var(--fw-ui); }
+.trainer-card__desc { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; font-weight: var(--fw-body); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.trainer-card__tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.trainer-card__tag { padding: 5px 9px; border-radius: 999px; background: var(--light-bg); color: var(--muted); font-size: 11px; font-weight: var(--fw-ui); }
+.trainer-card__tag--accent { background: rgba(var(--primary-rgb), 0.1); color: var(--primary-dark); }
+.trainer-card__footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 2px; padding-top: 12px; border-top: 1px solid var(--line); }
+.trainer-card__location { display: inline-flex; align-items: center; gap: 5px; min-width: 0; color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); }
+.trainer-card__location svg { flex: 0 0 auto; width: 13px; height: 13px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.trainer-card__location span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trainer-card__price { flex: 0 0 auto; color: var(--dark); font-size: 14px; font-weight: var(--fw-title); }
+.trainer-card__price small { color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); }
 
 .section-head {
   display: flex;
@@ -233,31 +360,18 @@ body { margin: 0; }
   gap: 4px;
 }
 
-.section-eyebrow {
-  display: inline-block;
-  margin-bottom: 10px;
-  padding: 5px 11px;
-  border-radius: 999px;
-  background: rgba(var(--primary-rgb), 0.1);
-  color: var(--primary-dark);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
 .section-title {
   margin: 0;
-  font-size: clamp(26px, 3vw, 34px);
-  letter-spacing: -0.04em;
-  font-weight: 900;
+  font-size: var(--fs-section);
+  letter-spacing: var(--tracking-heading);
+  font-weight: var(--fw-heading);
   color: var(--dark);
 }
 
 .section-link {
   color: var(--primary);
-  font-size: 15px;
-  font-weight: 750;
+  font-size: var(--fs-ui);
+  font-weight: var(--fw-ui);
   text-decoration: none;
 }
 
@@ -265,5 +379,42 @@ body { margin: 0; }
   .layout-with-sidebar {
     grid-template-columns: 1fr;
     padding-block: clamp(20px, 4vw, 28px) clamp(32px, 5vw, 40px);
+  }
+  .card-grid,
+  .trainer-grid,
+  .cat-grid,
+  .city-grid,
+  .clubs-grid,
+  .categories-grid,
+  .sr-grid,
+  .card-grid--4,
+  .cat-clubs-row,
+  .city-districts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.review-html p { margin: 0 0 0.4em; }
+.review-html p:last-child { margin-bottom: 0; }
+.review-html ul, .review-html ol { margin: 0.2em 0 0.4em; padding-left: 1.2em; }
+.review-html a { color: var(--primary); }
+.review-editor .rsw-editor { border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); overflow: hidden; }
+.review-editor .rsw-toolbar { background: var(--light-bg); }
+.review-editor .rsw-btn { width: 44px; height: 44px; color: var(--dark); }
+.review-editor .rsw-ce { min-height: 120px; padding: 12px 14px; font: inherit; font-size: 15px; color: var(--text); }
+.review-editor.is-invalid .rsw-editor { border-color: var(--primary); }
+
+@media (max-width: 640px) {
+  .card-grid,
+  .trainer-grid,
+  .cat-grid,
+  .city-grid,
+  .clubs-grid,
+  .categories-grid,
+  .sr-grid,
+  .card-grid--4,
+  .cat-clubs-row,
+  .city-districts {
+    grid-template-columns: 1fr;
   }
 }
