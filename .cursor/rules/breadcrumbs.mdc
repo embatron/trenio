@@ -1,0 +1,33 @@
+---
+description: The current breadcrumb uses the brand color
+alwaysApply: true
+---
+
+# Breadcrumbs
+
+The last crumb is the current page. It uses the brand color. Earlier crumbs stay muted and stay links.
+
+## Current page
+
+- The last item has `class="is-current"` and `aria-current="page"`.
+- Its color is `var(--primary)` from the one rule in `src/styles.css`. Do not set another color on that item in a route.
+- Ancestors are links in `var(--muted)`. Hover may use `var(--primary)` or `var(--primary-dark)`.
+- Separators stay `var(--muted)` or `var(--line)`. They are not the current page.
+- `is-current` without `aria-current="page"` is not a breadcrumb. The claim-link state uses that class for a different color.
+
+## Example
+
+```tsx
+<nav aria-label="Хлебные крошки">
+  <Link to="/">Главная</Link>
+  <span aria-hidden="true">/</span>
+  <span className="is-current" aria-current="page">{name}</span>
+</nav>
+```
+
+```css
+/* wrong: the current page turns dark or gray */
+.crumbs .is-current { color: var(--dark); }
+
+/* right: leave the color to styles.css */
+```

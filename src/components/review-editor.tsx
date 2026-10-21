@@ -4,15 +4,17 @@ export function ReviewEditor({
   value,
   onChange,
   invalid = false,
+  placeholder = "Как прошли занятия",
 }: {
   value: string;
   onChange: (html: string) => void;
   invalid?: boolean;
+  placeholder?: string;
 }) {
   return (
     <div className={invalid ? "review-editor is-invalid" : "review-editor"}>
       <EditorProvider>
-      <Editor value={value} onChange={(event) => onChange(event.target.value)} placeholder="Как прошли занятия">
+      <Editor value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder}>
         <Toolbar>
           <BtnBold title="Жирный" />
           <BtnItalic title="Курсив" />

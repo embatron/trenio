@@ -16,7 +16,7 @@ export const Route = createFileRoute("/admin/trainers/")({
 });
 
 function AdminTrainersPage() {
-  const trainers = Route.useLoaderData();
+  const { trainers } = Route.useLoaderData();
 
   return (
     <article className="cabinet-card">

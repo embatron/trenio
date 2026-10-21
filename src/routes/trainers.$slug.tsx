@@ -1,7 +1,11 @@
-import { createFileRoute, Link, notFound, useRouteContext, useRouter } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute, Link, notFound, redirect, useRouteContext, useRouter } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+import { PhotoImage } from "@/components/photo-image";
+import { UserAvatar } from "@/components/user-avatar";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { isStaff } from "@/lib/auth/roles";
+import { formatBelarusPhone } from "@/lib/auth/phone";
 import { getSportTaxonomyChild, getTopLevelSportCategory } from "@/lib/catalog/sport-taxonomy";
 import {
   audienceLabels,
@@ -15,6 +19,7 @@ import {
   createTrainerReviewFn,
   listTrainerRatingSummariesFn,
   listTrainerReviewsFn,
+  replyToTrainerReviewFn,
   type PublicTrainerReview,
   type TrainerReviewSummary,
 } from "@/lib/catalog/trainer-reviews";
@@ -23,8 +28,10 @@ import { ReviewEditor } from "@/components/review-editor";
 import { ReviewHtml } from "@/components/review-html";
 import { reviewPlainText } from "@/lib/catalog/review-html";
 import { TrainerRating } from "@/components/trainer-rating";
+import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { getTrainerCertificatesFn } from "@/lib/catalog/trainer-certificates";
 import { pluralRu } from "@/lib/ru-plural";
+import { TRAINER_LEGACY_SLUGS } from "@/lib/catalog/trainer-slugs";
 
 type Trainer = {
   slug: string;
@@ -50,7 +57,7 @@ type Trainer = {
   photo: string;
   badge?: string;
   reviews: PublicTrainerReview[];
-  certificates: string[];
+  certificates: TrainerCertificate[];
   ownStatus: "pending" | "published" | "rejected" | null;
   ownComment: string | null;
   similar: Array<{ slug: string; name: string; sport: string; city: string; price: string; photo: string; rating: string; reviews: number }>;
@@ -63,7 +70,7 @@ function toTrainer(
   ratings: Record<string, TrainerRatingSnapshot>,
   ownStatus: Trainer["ownStatus"],
   ownComment: string | null,
-  certificates: string[],
+  certificates: TrainerCertificate[],
 ): Trainer {
   const formatLabel = (format: PublishedTrainer["formats"][number]) =>
     format === "group" ? "Группа" : "Индивидуально";
@@ -115,14 +122,20 @@ function toTrainer(
 
 export const Route = createFileRoute("/trainers/$slug")({
   loader: async ({ params }) => {
+    const legacy = TRAINER_LEGACY_SLUGS[params.slug];
+    if (legacy) throw redirect({ to: "/trainers/$slug", params: { slug: legacy } });
     const published = params.slug ? getPublishedTrainer(params.slug) : undefined;
     if (!published) throw notFound();
-    const [{ reviews, summary, ownStatus, ownComment }, ratings, certificates] = await Promise.all([
+    const [{ reviews, summary, ownStatus, ownComment, isOwner }, ratings, media] = await Promise.all([
       listTrainerReviewsFn({ data: { slug: published.slug } }),
       listTrainerRatingSummariesFn(),
       getTrainerCertificatesFn({ data: { slug: published.slug } }),
     ]);
-    return { trainer: toTrainer(published, summary, reviews, ratings, ownStatus ?? null, ownComment ?? null, certificates) };
+    return {
+      trainer: toTrainer(published, summary, reviews, ratings, ownStatus ?? null, ownComment ?? null, media.certificates),
+      isOwner,
+      photos: media.photos,
+    };
   },
   head: ({ loaderData }) => {
     const t = loaderData?.trainer;
@@ -159,26 +172,30 @@ const CSS = `
 .breadcrumbs li + li::before { content: "›"; margin-right: 8px; color: var(--line); }
 
 .profile-layout { display: grid; grid-template-columns: var(--aside-w) minmax(0, 1fr); gap: 32px; align-items: start; }
-.profile-main { display: grid; gap: 22px; min-width: 0; }
+.profile-main { position: relative; display: grid; gap: 22px; min-width: 0; }
+.profile-tools { position: absolute; top: 0; right: 0; z-index: 2; display: flex; }
+.profile-main.has-tools .profile-identity { padding-right: 96px; }
 .profile-aside { position: sticky; top: 96px; align-self: start; min-width: 0; }
 .profile-aside__card { display: flex; flex-direction: column; border-radius: var(--card-radius); overflow: hidden; background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); box-shadow: 0 14px 42px rgba(var(--dark-rgb),0.07); }
 
 .photo-slider { position: relative; }
 .photo-slider__frame { position: relative; aspect-ratio: 4/5; overflow: hidden; background: linear-gradient(160deg, var(--neutral-bg), var(--line)); }
-.photo-slider__viewport { width: 100%; height: 100%; overflow: hidden; }
-.photo-slider__track { display: flex; height: 100%; transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); }
-.photo-slider__slide { flex: 0 0 100%; height: 100%; }
+.photo-slider__viewport { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.photo-slider__viewport::-webkit-scrollbar { display: none; }
+.photo-slider__slide { flex: 0 0 100%; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; }
 .photo-slider__slide img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; user-select: none; }
 .photo-slider__badge { position: absolute; top: 12px; left: 12px; z-index: 2; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,0.94); color: var(--primary-dark); font-size: 11px; font-weight: var(--fw-title); letter-spacing: 0.02em; text-transform: uppercase; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
 .profile-save { position: absolute; top: 10px; right: 10px; z-index: 2; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(255,255,255,0.92); color: var(--muted); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
 .profile-save.is-saved { color: var(--primary); }
 .profile-save svg { width: 20px; height: 20px; fill: currentColor; }
-.photo-slider__nav { position: absolute; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.92); color: var(--dark); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); z-index: 2; }
+.photo-slider__nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.92); color: var(--dark); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); z-index: 2; }
 .photo-slider__nav--prev { left: 10px; } .photo-slider__nav--next { right: 10px; }
 .photo-slider__nav svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.photo-slider__dots { display: flex; justify-content: center; gap: 6px; padding: 10px 0; background: var(--white); }
-.photo-slider__dot { width: 8px; height: 8px; border-radius: 50%; border: 0; background: var(--line); cursor: pointer; padding: 0; }
-.photo-slider__dot.is-active { background: var(--primary); width: 22px; border-radius: 999px; }
+.photo-thumbs { display: flex; gap: 8px; margin: 0; padding: 10px 12px 12px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch; background: var(--white); list-style: none; }
+.photo-thumbs::-webkit-scrollbar { display: none; }
+.photo-thumbs button { width: 64px; height: 80px; flex: 0 0 auto; padding: 0; border: 2px solid transparent; border-radius: 10px; overflow: hidden; background: var(--neutral-bg); cursor: pointer; scroll-snap-align: center; }
+.photo-thumbs button.is-active { border-color: var(--primary); }
+.photo-thumbs img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
 
 .contact-panel { padding: 4px 18px 18px; background: var(--white); }
 .contact-prices { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px 14px; margin: 0 0 14px; }
@@ -205,7 +222,12 @@ const CSS = `
 
 .profile-intro { min-width: 0; }
 .profile-identity__sport { margin: 0 0 6px; font-size: 13px; font-weight: var(--fw-title); letter-spacing: 0.05em; text-transform: uppercase; color: var(--primary-dark); }
-.profile-identity__name { margin: 0 0 12px; font-size: var(--fs-page); font-weight: var(--fw-heading); letter-spacing: -0.035em; color: var(--dark); line-height: 1.05; }
+.profile-identity__title { display: flex; align-items: center; flex-wrap: wrap; gap: 0 2px; margin: 0 0 12px; }
+.profile-identity__name { margin: 0; font-size: var(--fs-page); font-weight: var(--fw-heading); letter-spacing: -0.035em; color: var(--dark); line-height: 1.05; }
+.profile-edit { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; color: var(--dark); text-decoration: none; }
+.profile-edit:hover { background: rgba(var(--dark-rgb), 0.04); color: var(--primary); }
+.profile-edit svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.review-reply__open { align-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--primary-dark); font: inherit; font-size: 14px; font-weight: var(--fw-title); cursor: pointer; }
 .profile-identity__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
 .profile-location { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 14px; font-weight: var(--fw-title); }
 .profile-location svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
@@ -222,16 +244,15 @@ const CSS = `
 
 .profile-body { display: grid; gap: 32px; min-width: 0; }
 .profile-block { display: grid; gap: 14px; }
+.profile-copy { display: grid; gap: 8px; }
 .profile-heading { margin: 0; font-size: 14px; font-weight: var(--fw-title); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
 .profile-text { margin: 0; color: var(--text); font-size: 15px; line-height: 1.65; font-weight: 500; }
 .profile-text + .profile-text { margin-top: 12px; }
-.cert-row { display: flex; gap: 8px; margin: 0; padding: 0; list-style: none; overflow-x: auto; }
-.cert-row button { width: 96px; height: 96px; flex: 0 0 auto; padding: 0; border: 1px solid var(--line); border-radius: var(--radius-control); overflow: hidden; background: var(--white); cursor: pointer; }
-.cert-row img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.cert-modal { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 16px; background: rgba(var(--dark-rgb), 0.72); }
-.cert-modal img { max-width: min(960px, 100%); max-height: 86vh; object-fit: contain; border-radius: var(--radius-control); background: var(--white); }
-.cert-modal__close { position: absolute; top: 16px; right: 16px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--white); color: var(--dark); display: grid; place-items: center; cursor: pointer; }
-.cert-modal__close svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.cert-list { display: grid; gap: 2px; margin: 0; padding: 0 0 0 1.15em; list-style: disc; }
+.cert-list li { margin: 0; min-width: 0; }
+.cert-list a { display: inline-flex; align-items: center; gap: 6px; padding: 2px 0; color: var(--primary); font-size: 15px; font-weight: var(--fw-title); line-height: 1.35; text-decoration: none; }
+.cert-list a:hover { text-decoration: underline; }
+.cert-list svg { width: 16px; height: 16px; flex: 0 0 auto; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .profile-taxonomy { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
 .profile-taxonomy__group { display: grid; gap: 8px; }
 .profile-taxonomy__group--merged { gap: 0; }
@@ -249,16 +270,21 @@ const CSS = `
 .profile-spotlight__action { padding: 10px 14px; border-radius: 999px; background: var(--neutral-bg); color: var(--dark); font-size: 13px; font-weight: var(--fw-ui); text-decoration: none; white-space: nowrap; }
 .profile-spotlight__action:hover { background: var(--light-bg); color: var(--primary-dark); }
 
-.review-list { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
-.review-item { display: grid; gap: 8px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
-.review-item:last-child { padding-bottom: 0; border-bottom: 0; }
-.review-item__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
-.review-item__author { font-size: 14px; font-weight: var(--fw-title); color: var(--dark); }
-.review-item__date { color: var(--muted); font-size: 12px; font-weight: var(--fw-title); }
-.review-item__stars { display: inline-flex; gap: 2px; }
-.review-item__stars svg { width: 13px; height: 13px; fill: #ffb400; }
+.review-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.review-item { display: grid; gap: 14px; padding: 18px 20px; border-radius: var(--card-radius); background: var(--white); border: 1px solid rgba(var(--dark-rgb), 0.06); box-shadow: 0 10px 32px rgba(var(--dark-rgb), 0.05); }
+.review-item__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.review-item__who { display: inline-flex; align-items: center; gap: 12px; min-width: 0; height: 40px; }
+.review-item__pair { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; min-width: 0; }
+.review-item__author { font-size: 18px; font-weight: var(--fw-title); letter-spacing: -0.02em; line-height: 40px; color: var(--dark); white-space: nowrap; }
+.review-item__date { color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); line-height: 40px; }
+.review-item__stars { display: inline-flex; align-items: center; justify-content: center; gap: 2px; height: 40px; flex: 0 0 auto; }
+.review-item__stars svg { width: 22px; height: 22px; display: block; fill: #ffb400; }
 .review-item__stars svg.is-empty { fill: var(--line); }
-.review-item__text { margin: 0; color: var(--text); font-size: 14px; line-height: 1.55; font-weight: 500; }
+.review-item__text { position: relative; margin: 0; padding: 2px 0 0 28px; color: var(--text); font-size: 16px; line-height: 1.6; font-weight: 500; }
+.review-item__text::before { content: "«"; position: absolute; left: 0; top: -8px; color: var(--primary); font-size: 34px; font-weight: var(--fw-heading); line-height: 1; }
+.review-reply { display: grid; gap: 4px; padding: 12px; border-radius: var(--radius-control); background: var(--neutral-bg); }
+.review-reply__who { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; font-weight: var(--fw-title); }
+.review-reply p { margin: 0; color: var(--text); font-size: 14px; line-height: 1.55; }
 
 .profile-block__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .profile-block__head-meta { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
@@ -266,7 +292,7 @@ const CSS = `
 .reviews-more:hover { background: var(--light-bg); border-color: rgba(var(--primary-rgb), 0.3); color: var(--primary-dark); }
 .review-add { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(var(--primary-rgb), 0.35); background: var(--white); color: var(--primary-dark); font-size: 14px; font-weight: var(--fw-title); cursor: pointer; text-decoration: none; }
 .review-add:hover { background: var(--light-bg); }
-.review-form { display: grid; gap: 12px; padding: 16px; border-radius: var(--card-radius); background: var(--white); border: 1px solid rgba(var(--dark-rgb), 0.06); }
+.review-form { display: grid; gap: 12px; padding: 16px; border-radius: var(--card-radius); background: var(--white); border: 1px solid rgba(var(--dark-rgb), 0.06); box-shadow: 0 10px 32px rgba(var(--dark-rgb), 0.05); scroll-margin: 88px 0 96px; }
 .review-form__label { margin: 0; font-size: 13px; font-weight: var(--fw-title); color: var(--muted); }
 .review-stars { display: flex; gap: 2px; }
 .review-stars button { width: 44px; height: 44px; border: 0; border-radius: 12px; background: transparent; color: var(--line); cursor: pointer; display: grid; place-items: center; transition: color 0.12s ease, transform 0.12s ease; }
@@ -306,6 +332,10 @@ const CSS = `
 
 .mobile-contact-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 200; padding: 10px var(--layout-gutter) calc(10px + env(safe-area-inset-bottom, 0px)); background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); border-top: 1px solid var(--line); display: none; }
 .mobile-contact-bar__inner { max-width: 600px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .photo-slider__viewport, .photo-thumbs { scroll-behavior: auto; }
+}
 
 @media (max-width: 960px) {
   .profile-layout { grid-template-columns: 1fr; gap: 22px; }
@@ -347,6 +377,7 @@ function ReviewStars({ rating }: { rating: number }) {
 }
 
 const STAR_PATH = "M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z";
+const EDIT_ICON = "M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z";
 
 function InstagramIcon() {
   return (
@@ -362,6 +393,7 @@ function phoneHref(phone: string) {
 
 function ReviewForm({ slug, onClose }: { slug: string; onClose: () => void }) {
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [text, setText] = useState("");
@@ -370,8 +402,16 @@ function ReviewForm({ slug, onClose }: { slug: string; onClose: () => void }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) return;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+    form.scrollIntoView({ block: "start", behavior: motion });
+  }, []);
+
   return (
     <form
+      ref={formRef}
       className="review-form"
       onSubmit={(event) => {
         const submitter = (event.nativeEvent as SubmitEvent).submitter;
@@ -469,14 +509,76 @@ function ReviewForm({ slug, onClose }: { slug: string; onClose: () => void }) {
   );
 }
 
+function ReviewReply({ id }: { id: string }) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
+  if (!open) {
+    return (
+      <button type="button" className="review-reply__open" onClick={() => setOpen(true)}>
+        Ответить
+      </button>
+    );
+  }
+  return (
+    <form
+      className="review-form"
+      onSubmit={(event) => {
+        event.preventDefault();
+        const reply = text.trim();
+        if (reply.length < 10) {
+          setError("Напишите хотя бы 10 символов.");
+          return;
+        }
+        setPending(true);
+        setError(null);
+        void replyToTrainerReviewFn({ data: { id, reply } })
+          .then(async () => {
+            setOpen(false);
+            await router.invalidate();
+          })
+          .catch((err: unknown) => setError(authErrorMessage(err)))
+          .finally(() => setPending(false));
+      }}
+    >
+      <label className="review-form__field">
+        <span className="review-form__label">Ответ</span>
+        <textarea
+          required
+          maxLength={1000}
+          value={text}
+          placeholder="Один ответ на этот отзыв"
+          onChange={(event) => {
+            setText(event.target.value);
+            if (error) setError(null);
+          }}
+        />
+      </label>
+      {error ? <p className="review-form__error" role="alert">{error}</p> : null}
+      <div className="review-form__actions">
+        <button className="review-form__submit" type="submit" disabled={pending}>
+          {pending ? "Публикация…" : "Ответить"}
+        </button>
+        <button className="review-form__cancel" type="button" onClick={() => setOpen(false)}>
+          Отмена
+        </button>
+      </div>
+    </form>
+  );
+}
+
 function TrainerPage() {
-  const { trainer: t } = Route.useLoaderData() as { trainer: Trainer };
+  const { trainer: t, isOwner, photos: storedPhotos } = Route.useLoaderData() as { trainer: Trainer; isOwner: boolean; photos: string[] };
   const { user } = useRouteContext({ from: "__root__" });
   const [photoIdx, setPhotoIdx] = useState(0);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const thumbsRef = useRef<HTMLUListElement>(null);
   const [reviewsShown, setReviewsShown] = useState(5);
   const [phoneVisible, setPhoneVisible] = useState(false);
+  const shownPhone = formatBelarusPhone(t.phone) || t.phone;
   const [reviewFormOpen, setReviewFormOpen] = useState(false);
-  const [certificate, setCertificate] = useState<string | null>(null);
   const ownNote = t.ownStatus === "pending"
     ? "Ваш отзыв на модерации"
     : t.ownStatus === "rejected"
@@ -485,37 +587,36 @@ function TrainerPage() {
         ? "Вы уже оставили отзыв"
         : null;
   const reviewLabel = t.reviews.length === 0 ? "Сделать первый отзыв" : "Добавить отзыв";
+  const staff = Boolean(user && isStaff(user.roles));
 
-  const photos = [t.photo];
+  const photos = storedPhotos.length > 0 ? storedPhotos : [t.photo].filter(Boolean);
+  const scrollMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" as const : "smooth" as const;
+  function showPhoto(index: number) {
+    const viewport = viewportRef.current;
+    if (!viewport || photos.length === 0) return;
+    const next = (index + photos.length) % photos.length;
+    viewport.scrollTo({ left: next * viewport.clientWidth, behavior: scrollMotion() });
+    setPhotoIdx(next);
+  }
   const hasPrices = t.prices.single.length > 0 || t.prices.packs.length > 0;
   const hasRating = t.rating.reviewCount > 0;
+
+  useEffect(() => {
+    const track = thumbsRef.current;
+    const thumb = track?.children[photoIdx] as HTMLElement | undefined;
+    if (!track || !thumb) return;
+    const left = thumb.offsetLeft - (track.clientWidth - thumb.clientWidth) / 2;
+    track.scrollTo({ left, behavior: scrollMotion() });
+  }, [photoIdx]);
 
   useEffect(() => {
     document.body.classList.add("page-trainer");
     return () => document.body.classList.remove("page-trainer");
   }, []);
 
-  useEffect(() => {
-    if (!certificate) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setCertificate(null);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [certificate]);
-
   return (
     <div className="page-shell trainer-page">
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-
-      {certificate ? (
-        <div className="cert-modal" role="dialog" aria-modal="true" aria-label="Документ" onClick={() => setCertificate(null)}>
-          <button type="button" className="cert-modal__close" aria-label="Закрыть" onClick={() => setCertificate(null)}>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
-          </button>
-          <img src={certificate} alt="Сертификат или диплом" onClick={(event) => event.stopPropagation()} />
-        </div>
-      ) : null}
 
       <SiteHeader />
 
@@ -532,7 +633,7 @@ function TrainerPage() {
                 <Link to="/categories/$parentSlug/$childSlug" params={{ parentSlug: t.primarySport.parentSlug, childSlug: t.primarySport.slug }}>{t.primarySport.label}</Link>
               )}
             </li>
-            <li aria-current="page">{t.name}</li>
+            <li className="is-current" aria-current="page">{t.name}</li>
           </ol>
         </nav>
 
@@ -541,34 +642,45 @@ function TrainerPage() {
             <div className="profile-aside__card">
               <div className="photo-slider">
                 <div className="photo-slider__frame">
-                  <div className="photo-slider__viewport">
-                    <div className="photo-slider__track" style={{ transform: `translateX(-${photoIdx * 100}%)` }}>
-                      {photos.map((src, i) => (
-                        <div key={i} className="photo-slider__slide">
-                          <img src={src} alt={`${t.name} — фото ${i + 1}`} width={680} height={850} draggable={false} loading={i === 0 ? "eager" : "lazy"} />
-                        </div>
-                      ))}
-                    </div>
+                  <div
+                    className="photo-slider__viewport"
+                    ref={viewportRef}
+                    onScroll={() => {
+                      const viewport = viewportRef.current;
+                      if (!viewport || viewport.clientWidth === 0) return;
+                      const next = Math.min(photos.length - 1, Math.max(0, Math.round(viewport.scrollLeft / viewport.clientWidth)));
+                      setPhotoIdx((current) => current === next ? current : next);
+                    }}
+                  >
+                    {photos.map((src, i) => (
+                      <div key={src} className="photo-slider__slide">
+                        <PhotoImage src={src} alt={`${t.name} — фото ${i + 1}`} preset="profile" width={680} height={850} loading={i === 0 ? "eager" : "lazy"} />
+                      </div>
+                    ))}
                   </div>
                   {t.badge && <span className="photo-slider__badge">{t.badge}</span>}
                   <FavoriteButton target={{ type: "trainer", slug: t.slug }} className="profile-save" />
                   {photos.length > 1 ? (
                     <>
-                      <button className="photo-slider__nav photo-slider__nav--prev" type="button" aria-label="Предыдущее фото" onClick={() => setPhotoIdx((i) => (i - 1 + photos.length) % photos.length)}>
+                      <button className="photo-slider__nav photo-slider__nav--prev" type="button" aria-label="Предыдущее фото" onClick={() => showPhoto(photoIdx - 1)}>
                         <svg viewBox="0 0 24 24"><path d="M14 6l-6 6 6 6" /></svg>
                       </button>
-                      <button className="photo-slider__nav photo-slider__nav--next" type="button" aria-label="Следующее фото" onClick={() => setPhotoIdx((i) => (i + 1) % photos.length)}>
+                      <button className="photo-slider__nav photo-slider__nav--next" type="button" aria-label="Следующее фото" onClick={() => showPhoto(photoIdx + 1)}>
                         <svg viewBox="0 0 24 24"><path d="M10 6l6 6-6 6" /></svg>
                       </button>
                     </>
                   ) : null}
                 </div>
                 {photos.length > 1 ? (
-                  <div className="photo-slider__dots" role="tablist" aria-label="Выбор фото">
-                    {photos.map((_, i) => (
-                      <button key={i} type="button" className={`photo-slider__dot${i === photoIdx ? " is-active" : ""}`} aria-label={`Фото ${i + 1}`} aria-selected={i === photoIdx} onClick={() => setPhotoIdx(i)} />
+                  <ul className="photo-thumbs" ref={thumbsRef} aria-label="Миниатюры фото">
+                    {photos.map((src, i) => (
+                      <li key={src}>
+                        <button type="button" className={i === photoIdx ? "is-active" : undefined} aria-label={`Фото ${i + 1}`} aria-current={i === photoIdx ? "true" : undefined} onClick={() => showPhoto(i)}>
+                          <PhotoImage src={src} alt="" preset="tile" width={64} height={80} />
+                        </button>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 ) : null}
               </div>
 
@@ -603,9 +715,9 @@ function TrainerPage() {
                 <div className="contact-actions">
                   {t.phone ? (
                     phoneVisible ? (
-                      <a className="btn btn--primary" href={phoneHref(t.phone)}>
+                      <a className="btn btn--primary" href={phoneHref(shownPhone)}>
                         <svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.5 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.5c.9.2 1.8.4 2.7.5A2 2 0 0 1 22 16.9z" /></svg>
-                        {t.phone}
+                        {shownPhone}
                       </a>
                     ) : (
                       <button className="btn btn--primary" type="button" onClick={() => setPhoneVisible(true)}>
@@ -623,11 +735,27 @@ function TrainerPage() {
             </div>
           </aside>
 
-          <div className="profile-main">
+          <div className={`profile-main${staff || isOwner ? " has-tools" : ""}`}>
+            {staff || isOwner ? (
+              <div className="profile-tools">
+                {staff ? (
+                  <Link className="profile-edit" to="/admin/trainers/$slug" params={{ slug: t.slug }} aria-label="Редактировать профиль" title="Редактировать профиль">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
+                  </Link>
+                ) : null}
+                {isOwner ? (
+                  <Link className="profile-edit" to="/trainer-admin" search={{ tab: "card" }} aria-label="Редактировать свой профиль" title="Редактировать свой профиль">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
+                  </Link>
+                ) : null}
+              </div>
+            ) : null}
             <header className="profile-intro">
               <div className="profile-identity">
                 <p className="profile-identity__sport">{t.sportLabel}</p>
-                <h1 className="profile-identity__name">{t.name}</h1>
+                <div className="profile-identity__title">
+                  <h1 className="profile-identity__name">{t.name}</h1>
+                </div>
                 <div className="profile-identity__meta">
                   <span className="profile-location">
                     <svg viewBox="0 0 24 24"><path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.4" /></svg>
@@ -646,22 +774,32 @@ function TrainerPage() {
 
             <div className="profile-body">
               <section className="profile-block">
-                {t.about.map((p, i) => (
-                  <p key={i} className="profile-text">{p}</p>
-                ))}
+                {t.about.some((paragraph) => paragraph.trim()) ? (
+                  <div className="profile-copy">
+                    <h2 className="profile-heading">Обо мне</h2>
+                    {t.about.filter((paragraph) => paragraph.trim()).map((paragraph, index) => (
+                      <p key={index} className="profile-text">{paragraph}</p>
+                    ))}
+                  </div>
+                ) : null}
                 {t.certificates.length > 0 ? (
-                  <>
+                  <div className="profile-copy">
                     <h2 className="profile-heading">Сертификаты и дипломы</h2>
-                    <ul className="cert-row">
-                      {t.certificates.map((src) => (
-                        <li key={src}>
-                          <button type="button" onClick={() => setCertificate(src)} aria-label="Открыть документ">
-                            <img src={src} alt="" />
-                          </button>
+                    <ul className="cert-list">
+                      {t.certificates.map((item) => (
+                        <li key={item.path}>
+                          <a href={item.path} target="_blank" rel="noopener noreferrer">
+                            {item.caption}
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <path d="M14 5h5v5" />
+                              <path d="M19 5l-8 8" />
+                              <path d="M17 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h5" />
+                            </svg>
+                          </a>
                         </li>
                       ))}
                     </ul>
-                  </>
+                  </div>
                 ) : null}
 
                 <ul className="profile-taxonomy" aria-label="Характеристики тренера">
@@ -711,7 +849,7 @@ function TrainerPage() {
                       {ownNote}. {t.ownComment ? `${t.ownComment} ` : null}
                       <Link to="/account/reviews">Кабинет</Link>
                     </p>
-                  ) : user ? (
+                  ) : isOwner ? null : user ? (
                     reviewFormOpen ? null : (
                       <button type="button" className="review-add" onClick={() => setReviewFormOpen(true)}>
                         {reviewLabel}
@@ -724,19 +862,39 @@ function TrainerPage() {
                   )}
                 </div>
                 {hasRating ? <p className="profile-block__head-meta">{t.rating.value} из 5 · {t.rating.ratingCount} {pluralRu(t.rating.ratingCount, "оценка", "оценки", "оценок")}</p> : null}
+                {reviewFormOpen && user ? <ReviewForm slug={t.slug} onClose={() => setReviewFormOpen(false)} /> : null}
                 {t.reviews.length === 0 ? <p className="profile-text">Отзывов пока нет.</p> : <ul className="review-list">
                   {t.reviews.slice(0, reviewsShown).map((r) => (
                     <li key={r.id} className="review-item">
                       <div className="review-item__head">
-                        <span className="review-item__author">{r.author}</span>
+                        <span className="review-item__who">
+                          <UserAvatar name={r.author} src={r.avatarPath} />
+                          <span className="review-item__pair">
+                            <span className="review-item__author">{r.author}</span>
+                            <ReviewStars rating={r.rating} />
+                          </span>
+                        </span>
                         <span className="review-item__date">{r.date}</span>
                       </div>
-                      <ReviewStars rating={r.rating} />
                       <ReviewHtml className="review-item__text" html={r.text} />
+                      {r.messages.map((message, index) => (
+                        <div key={`${r.id}-${index}`} className="review-reply">
+                          <span className="review-reply__who">
+                            <UserAvatar name={message.author} src={message.avatarPath} size={28} />
+                            <span>{message.role === "trainer" ? "Ответ тренера" : message.author}</span>
+                          </span>
+                          <p>{message.body}</p>
+                        </div>
+                      ))}
+                      {(() => {
+                        const last = r.messages.at(-1)?.role;
+                        const trainerTurn = isOwner && last !== "trainer";
+                        const authorTurn = r.isMine && !isOwner && last === "trainer";
+                        return trainerTurn || authorTurn ? <ReviewReply id={r.id} /> : null;
+                      })()}
                     </li>
                   ))}
                 </ul>}
-                {reviewFormOpen && user ? <ReviewForm slug={t.slug} onClose={() => setReviewFormOpen(false)} /> : null}
                 {reviewsShown < t.reviews.length && (
                   <button
                     type="button"
@@ -759,7 +917,7 @@ function TrainerPage() {
                   {t.similar.map((s) => (
                     <Link key={s.slug} className="similar-card" to="/trainers/$slug" params={{ slug: s.slug }}>
                       <div className="similar-card__media">
-                        <img className="similar-card__photo" src={s.photo} alt={s.name} width={420} height={525} loading="lazy" />
+                        <PhotoImage className="similar-card__photo" src={s.photo} alt={s.name} preset="card" width={420} height={525} loading="lazy" />
                       </div>
                       <div className="similar-card__body">
                         <div className="similar-card__head">
@@ -790,7 +948,7 @@ function TrainerPage() {
           </a>
           {t.phone ? (
             phoneVisible ? (
-              <a className="btn btn--primary" href={phoneHref(t.phone)}>{t.phone}</a>
+              <a className="btn btn--primary" href={phoneHref(shownPhone)}>{shownPhone}</a>
             ) : (
               <button className="btn btn--primary" type="button" onClick={() => setPhoneVisible(true)}>
                 Показать телефон

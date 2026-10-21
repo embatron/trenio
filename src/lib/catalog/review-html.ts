@@ -27,6 +27,15 @@ export function sanitizeReviewHtml(raw: string): string {
   });
 }
 
+export function editorHtml(parts: string[]) {
+  if (parts.length === 0) return "";
+  if (parts.length === 1) return parts[0];
+  return parts.map((part) => {
+    if (/<[a-z]/i.test(part)) return part;
+    return `<p>${part.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</p>`;
+  }).join("");
+}
+
 export function reviewPlainText(html: string): string {
   return sanitizeReviewHtml(html)
     .replace(/<br\s*\/?>/gi, "\n")

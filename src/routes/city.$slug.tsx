@@ -6,6 +6,7 @@ import { trainersForCity, type PublishedTrainer } from "@/lib/catalog/published-
 import { compareByPopularity, compareByRating, compareByReviews, ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { FavoriteButton } from "@/components/favorite-button";
+import { PhotoImage } from "@/components/photo-image";
 import { TrainerRating } from "@/components/trainer-rating";
 import { countRu, pluralRu } from "@/lib/ru-plural";
 
@@ -162,7 +163,7 @@ const PAGE_CSS = `
 .city-breadcrumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 18px; }
 .city-breadcrumbs a { color: var(--muted); text-decoration: none; }
 .city-breadcrumbs a:hover { color: var(--primary); }
-.city-breadcrumbs span { color: var(--dark); font-weight: var(--fw-heading); }
+.city-breadcrumbs [aria-hidden] { color: var(--muted); }
 .city-hero__grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr); gap: var(--layout-gap); align-items: center; }
 .city-hero__title { margin: 0; font-size: var(--fs-page); line-height: 1.15; letter-spacing: var(--tracking-heading); font-weight: var(--fw-heading); color: var(--dark); }
 .city-hero__lead { margin: 14px 0 22px; font-size: 17px; line-height: 1.5; color: var(--muted); max-width: 60ch; font-weight: var(--fw-body); }
@@ -307,10 +308,10 @@ function CityPage() {
           <div className="city-hero__inner">
             <nav className="city-breadcrumbs" aria-label="breadcrumbs">
               <Link to="/">Главная</Link>
-              <span>/</span>
+              <span aria-hidden="true">/</span>
               <Link to="/city/$slug" params={{ slug: "minsk" }}>Города</Link>
-              <span>/</span>
-              <span>{city.title}</span>
+              <span aria-hidden="true">/</span>
+              <span className="is-current" aria-current="page">{city.title}</span>
             </nav>
             <div className="city-hero__grid">
               <div>
@@ -459,7 +460,7 @@ function CityPage() {
                 {filtered.map((t) => (
                   <Link key={t.slug} className="trainer-card" to="/trainers/$slug" params={{ slug: t.slug }}>
                     <div className="trainer-card__media">
-                      <img className="trainer-card__photo" src={t.photo} alt={t.name} width={480} height={600} loading="lazy" />
+                      <PhotoImage className="trainer-card__photo" src={t.photo} alt={t.name} preset="card" width={480} height={600} loading="lazy" />
                       {t.badge && <span className="trainer-card__badge">{t.badge}</span>}
                       <FavoriteButton target={{ type: "trainer", slug: t.slug }} className="trainer-card__save" />
                     </div>

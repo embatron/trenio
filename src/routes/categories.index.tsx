@@ -137,11 +137,6 @@ const CSS = `
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-@media (max-width: 960px) {
-  .categories-grid {
-    grid-template-columns: 1fr;
-  }
-}
 `;
 
 function CategoriesIndexPage() {
@@ -155,7 +150,7 @@ function CategoriesIndexPage() {
           <nav className="categories-hero__crumbs" aria-label="breadcrumbs">
             <Link to="/">Главная</Link>
             <span>/</span>
-            <span>Категории спорта</span>
+            <span className="is-current" aria-current="page">Категории спорта</span>
           </nav>
           <h1>Категории спорта</h1>
           <p>

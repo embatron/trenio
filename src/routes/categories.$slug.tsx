@@ -12,6 +12,7 @@ import {
   type CategoryRouteRef,
 } from "@/lib/catalog/sport-taxonomy";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
+import { PhotoImage } from "@/components/photo-image";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { trainersForCategory, type PublishedTrainer } from "@/lib/catalog/published-trainers";
 import { compareByPopularity, compareByRating, compareByReviews, ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
@@ -536,7 +537,6 @@ const PAGE_CSS = `
 .cat-hero__crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; font-size: 13px; line-height: 1.3; font-weight: var(--fw-title); color: var(--muted); }
 .cat-hero__crumbs a { color: var(--muted); text-decoration: none; }
 .cat-hero__crumbs a:hover { color: var(--primary); }
-.cat-hero__crumbs .is-current { color: var(--dark); }
 .cat-hero__photo { width: 100%; aspect-ratio: 1; object-fit: contain; border-radius: var(--card-radius); display: block; }
 .cat-hero__title { margin: 0; font-size: var(--fs-page); line-height: 1.15; letter-spacing: var(--tracking-heading); font-weight: var(--fw-heading); color: var(--dark); }
 .cat-hero__title em { font-style: normal; color: var(--primary); }
@@ -681,7 +681,7 @@ const PAGE_CSS = `
 .cat-results__count { font-size: 15px; color: var(--muted); font-weight: var(--fw-ui); }
 .cat-results__count b { color: var(--dark); font-weight: var(--fw-title); }
 .cat-results__sort { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
-.cat-results__sort select { padding: 9px 14px; border: 1px solid var(--line); border-radius: var(--radius-control); font: inherit; font-size: 13px; background: var(--white); cursor: pointer; font-weight: var(--fw-heading); color: var(--dark); }
+.cat-results__sort select { min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-control); font: inherit; font-size: 14px; background: var(--white); cursor: pointer; font-weight: var(--fw-heading); color: var(--dark); }
 .cat-grid { align-items: stretch; }
 .cat-empty {
   padding: 56px 36px; text-align: center; border-radius: var(--card-radius);
@@ -1138,10 +1138,8 @@ export function CategoryCatalogPage({
                   </button>
                 ))}
               </div>
-              {placeNote && (selectedCities.length > 0 || cityQuery.trim()) ? (
-                <p className="cat-place-note">
-                  {placeNote === "detected" ? "Определили по IP и запомнили" : "Запомнили город"}
-                </p>
+              {placeNote === "detected" && (selectedCities.length > 0 || cityQuery.trim()) ? (
+                <p className="cat-place-note">Определили по IP и запомнили</p>
               ) : null}
             </div>
             <div className="cat-filter">
@@ -1322,14 +1320,7 @@ export function CategoryCatalogPage({
                     params={{ slug: t.slug }}
                   >
                     <div className="trainer-card__media">
-                      <img
-                        className="trainer-card__photo"
-                        src={t.photo}
-                        alt={t.name}
-                        width={480}
-                        height={600}
-                        loading="lazy"
-                      />
+                      <PhotoImage className="trainer-card__photo" src={t.photo} alt={t.name} preset="card" width={480} height={600} loading="lazy" />
                       {t.badge && <span className="trainer-card__badge">{t.badge}</span>}
                       <FavoriteButton target={{ type: "trainer", slug: t.slug }} className="trainer-card__save" />
                     </div>

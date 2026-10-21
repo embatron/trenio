@@ -2,52 +2,67 @@
   "source": "instagram",
   "sourceUrl": "https://www.instagram.com/levsha_team/",
   "handle": "levsha_team",
-  "slug": "ovsyannikov",
+  "slug": "levsha_team",
   "status": "published",
   "claimStatus": "unclaimed",
   "createdSource": "import",
   "firstName": "Сергей",
-  "lastName": "Овсянников",
-  "fullName": "Сергей Овсянников",
+  "lastName": "Овсяников",
+  "fullName": "Сергей Овсяников",
+  "gender": "male",
   "nameQuotes": [
     "Сергей Овсяников"
   ],
-  "headline": "Тренер по кикбоксингу",
+  "headline": "Тренер по тайскому боксу",
   "bio": "🥊Тренер по МуайТай и кикбоксингу в Минске 📍(Петровщина/Пушкина) 👉стаж 30 лет 🏆Мастер спорта по тайскому боксу 🏆Мастер спорта по рукопашному бою",
   "about": [],
   "pinned": [],
   "sports": [
     {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "Тайский бокс"
+    },
+    {
       "slug": "kikboksing",
       "parentSlug": "edinoborstva",
       "label": "Кикбоксинг",
       "evidence": "Кикбоксинг"
-    },
+    }
+  ],
+  "practicedSports": [
     {
-      "slug": "tajskij-boks",
-      "parentSlug": "edinoborstva",
-      "label": "Тайский бокс",
-      "evidence": "муай тай"
+      "slug": "rukopashnyj",
+      "label": "Рукопашный бой",
+      "quote": "Мастер спорта по рукопашному бою"
     }
   ],
   "primarySport": {
-    "slug": "kikboksing",
+    "slug": "tajskij-boks",
     "parentSlug": "edinoborstva",
-    "label": "Кикбоксинг"
+    "label": "Тайский бокс"
   },
   "city": "Минск",
-  "cityCandidates": ["Минск"],
+  "cityCandidates": [
+    "Минск"
+  ],
   "priceFrom": null,
+  "experienceYears": 30,
+  "formats": [],
   "languages": [],
   "avatarPath": "/trainers/instagram/levsha_team.jpg",
   "contacts": {
     "instagram": "https://www.instagram.com/levsha_team/",
     "phone": "",
+    "email": "",
+    "telegram": "https://t.me/levsha_team",
     "website": ""
   },
   "missing": [
     "price",
     "phone",
+    "email",
     "pinnedPosts"
   ]
 }

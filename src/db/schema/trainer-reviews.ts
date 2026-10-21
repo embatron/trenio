@@ -1,9 +1,15 @@
-import { index, integer, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import { index, integer, jsonb, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 
 import { users } from "./users";
 
 /** pending — на модерации, published — на странице тренера, rejected — отменено. */
 export const reviewStatusEnum = pgEnum("review_status", ["pending", "published", "rejected"]);
+
+export type TrainerReviewMessage = {
+  role: "trainer" | "author";
+  body: string;
+  at: string;
+};
 
 export const trainerReviews = pgTable(
   "trainer_reviews",
@@ -18,6 +24,10 @@ export const trainerReviews = pgTable(
     body: text("body").notNull(),
     status: reviewStatusEnum("status").notNull().default("published"),
     moderationNote: text("moderation_note"),
+    reply: text("reply"),
+    repliedAt: timestamp("replied_at", { withTimezone: true }),
+    /** Trainer and review author take turns. The original review is the author's first message. */
+    messages: jsonb("messages").$type<TrainerReviewMessage[]>().notNull().default([]),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [

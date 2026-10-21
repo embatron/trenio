@@ -2,6 +2,8 @@ import { useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { CabinetNotice } from "@/components/cabinet";
+import { PhotoImage } from "@/components/photo-image";
+import { UserAvatar } from "@/components/user-avatar";
 import { constrainBelarusPhoneInput, BY_PHONE_COUNTRY_PREFIX } from "@/lib/auth/phone";
 import { authErrorMessage } from "@/lib/auth/errors";
 import {
@@ -119,7 +121,7 @@ export function AccountProfileForm({
         }}
       >
         <div className="cabinet-avatar">
-          {avatarUrl ? <img className="cabinet-avatar__photo" src={avatarUrl} alt="" /> : <span className="cabinet-avatar__mark" aria-hidden="true">{name.trim().slice(0, 1) || "?"}</span>}
+          {avatarUrl ? <PhotoImage className="cabinet-avatar__photo" src={avatarUrl} alt="" preset="avatar" width={72} height={72} /> : <UserAvatar name={name} size={72} />}
           <label className="cabinet-edit">
             Изменить фото
             <input
@@ -146,7 +148,7 @@ export function AccountProfileForm({
         </div>
         <label>
           <span>Имя и фамилия</span>
-          <input value={name} maxLength={200} autoComplete="name" onChange={(event) => setName(event.target.value)} />
+          <input required value={name} maxLength={200} autoComplete="name" onChange={(event) => setName(event.target.value)} />
         </label>
         <label>
           <span className="cabinet-form__label-row">
@@ -161,7 +163,7 @@ export function AccountProfileForm({
               <button type="button" className="cabinet-edit" onClick={() => setEmailEditing(true)}>Редактировать</button>
             )}
           </span>
-          <input type="email" autoComplete="email" readOnly={!emailEditing} value={email} onChange={(event) => { setEmail(event.target.value); setEmailSent(false); }} />
+          <input type="email" required autoComplete="email" readOnly={!emailEditing} value={email} onChange={(event) => { setEmail(event.target.value); setEmailSent(false); }} />
         </label>
         {emailEditing ? (
           <div className="cabinet-form__actions">
@@ -188,7 +190,7 @@ export function AccountProfileForm({
         ) : null}
         {emailEditing && emailSent ? (
           <label>
-            <span>Код из письма</span>
+            <span className="is-required">Код из письма</span>
             <input inputMode="numeric" autoComplete="one-time-code" maxLength={8} value={emailCode} onChange={(event) => setEmailCode(event.target.value)} />
             <div className="cabinet-form__actions">
               <button
@@ -262,7 +264,7 @@ export function AccountProfileForm({
         ) : null}
         {phoneEditing && phoneSent ? (
           <label>
-            <span>Код из SMS</span>
+            <span className="is-required">Код из SMS</span>
             <input inputMode="numeric" autoComplete="one-time-code" maxLength={8} value={phoneCode} onChange={(event) => setPhoneCode(event.target.value)} />
             <div className="cabinet-form__actions">
               <button
@@ -322,15 +324,15 @@ export function AccountProfileForm({
       >
         <label>
           <span>Текущий пароль</span>
-          <input type="password" autoComplete="current-password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} />
+          <input type="password" required autoComplete="current-password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} />
         </label>
         <label>
           <span>Новый пароль</span>
-          <input type="password" autoComplete="new-password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} />
+          <input type="password" required minLength={8} autoComplete="new-password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} />
         </label>
         <label>
           <span>Повторите новый пароль</span>
-          <input type="password" autoComplete="new-password" value={repeatPassword} onChange={(event) => setRepeatPassword(event.target.value)} />
+          <input type="password" required minLength={8} autoComplete="new-password" value={repeatPassword} onChange={(event) => setRepeatPassword(event.target.value)} />
         </label>
         <button className="cabinet-form__submit" type="submit" disabled={pending}>{pending ? "Сохранение…" : "Сменить пароль"}</button>
         <p className="cabinet-note">Нужны минимум 8 символов, цифра и заглавная буква. Эта сессия останется, остальные устройства выйдут.</p>

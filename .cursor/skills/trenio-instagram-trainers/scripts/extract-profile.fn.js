@@ -41,16 +41,32 @@ async () => {
     width: img.naturalWidth || img.width || 0,
   }));
 
-  const externalUrl =
-    [...(header?.querySelectorAll("a[href]") || [])]
-      .map((anchor) => anchor.href)
-      .find((href) => /^https?:/i.test(href) && !/instagram\.com|facebook\.com|threads\.net|about\.instagram/i.test(href)) || "";
+  const more = [...(header?.querySelectorAll("button, [role=button]") || [])].find((button) => /^(more|ещё|еще)$/i.test((button.innerText || "").trim()));
+  if (more) more.click();
 
-  const highlights = [...(header?.querySelectorAll("li") || [])]
-    .map((item) => (item.innerText || "").trim().split("\n")[0] || "")
-    .map((line) => line.trim())
-    .filter((line) => line && line.length <= 40)
-    .slice(0, 12);
+  const pageHrefs = [...(header?.querySelectorAll("a[href]") || []), ...document.querySelectorAll("[role=dialog] a[href]")].map((anchor) => anchor.href);
+  const emails = [...new Set(pageHrefs.flatMap((href) => {
+    const match = href.match(/^mailto:([^?]+)/i);
+    return match ? [decodeURIComponent(match[1])] : [];
+  }))];
+  const phones = [...new Set(pageHrefs.flatMap((href) => {
+    const match = href.match(/^tel:([^?]+)/i);
+    return match ? [decodeURIComponent(match[1])] : [];
+  }))];
+  const telegrams = [...new Set(pageHrefs.filter((href) => /(?:t\.me|telegram\.me|telegram\.org)\//i.test(href)))];
+  const externalUrl =
+    pageHrefs.find((href) => /^https?:/i.test(href) && !/instagram\.com|facebook\.com|threads\.|about\.instagram|t\.me|telegram\./i.test(href)) || "";
+
+  const highlightLinks = [];
+  const seenHighlights = new Set();
+  for (const anchor of document.querySelectorAll('a[href*="/stories/highlights/"]')) {
+    const href = anchor.href.split("?")[0];
+    const title = (anchor.innerText || "").trim().split("\n")[0].trim();
+    if (!title || seenHighlights.has(href)) continue;
+    seenHighlights.add(href);
+    highlightLinks.push({ title, href });
+  }
+  const highlights = highlightLinks.map((item) => item.title);
 
   const tileRoot = (anchor) => {
     let node = anchor;
@@ -117,10 +133,12 @@ async () => {
     ogTitle,
     ogDescription,
     ogImage,
-    headerText,
+    headerText: (document.querySelector("header")?.innerText || headerText).trim(),
     headerImages: headerImages.map(({ alt, src, width }) => ({ alt, src, width })),
     externalUrl,
+    contacts: { emails, phones, telegrams },
     highlights,
+    highlightLinks,
     posts,
     pinnedPosts,
     avatarUrl,

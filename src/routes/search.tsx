@@ -5,6 +5,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { PUBLISHED_TRAINERS } from "@/lib/catalog/published-trainers";
 import { compareByPopularity, compareByRating, compareByReviews, ratingFor } from "@/lib/catalog/trainer-popularity";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
+import { PhotoImage } from "@/components/photo-image";
 import { TrainerRating } from "@/components/trainer-rating";
 import { pluralRu } from "@/lib/ru-plural";
 
@@ -81,7 +82,7 @@ const CSS = `
 .sr-body { max-width: var(--layout-max); margin: 0 auto; padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 60px); display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; }
 .sr-count b { color: var(--dark); }
 .sr-sort { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); font-weight: var(--fw-title); }
-.sr-sort select { padding: 9px 14px; border: 1px solid var(--line); border-radius: var(--radius-control); font: inherit; font-size: 13px; background: #fff; font-weight: var(--fw-heading); color: var(--dark); cursor: pointer; }
+.sr-sort select { min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-control); font: inherit; font-size: 14px; background: #fff; font-weight: var(--fw-heading); color: var(--dark); cursor: pointer; }
 
 .sr-grid { grid-column: 1 / -1; margin-top: 4px; }
 .sr-card {
@@ -166,7 +167,7 @@ function SearchPage() {
 
       <section className="sr-hero">
         <div className="sr-hero__inner">
-          <div className="sr-crumbs"><Link to="/">Главная</Link> · Поиск</div>
+          <div className="sr-crumbs"><Link to="/">Главная</Link> · <span className="is-current" aria-current="page">Поиск</span></div>
           <h1 className="sr-title">
             {queryLabel ? <>Результаты по запросу <em>«{queryLabel}»</em></> : "Поиск тренера"}
           </h1>
@@ -210,7 +211,7 @@ function SearchPage() {
             {filtered.map((r) => (
               <Link key={r.slug} to="/trainers/$slug" params={{ slug: r.slug }} className="sr-card">
                 <div className="sr-card__head">
-                  <img className="sr-card__avatar" src={r.photo} alt="" width={52} height={52} />
+                  <PhotoImage className="sr-card__avatar" src={r.photo} alt="" preset="avatar" width={52} height={52} />
                   <div className="sr-card__title">
                     <h3 className="sr-card__name">
                       {r.name}

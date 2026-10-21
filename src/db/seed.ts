@@ -101,7 +101,7 @@ async function seed() {
     .insert(trainerReviews)
     .values([
       {
-        trainerSlug: "ovsyannikov",
+        trainerSlug: "levsha_team",
         userId: clientId,
         authorName: "Анна К.",
         rating: 5,
@@ -109,7 +109,7 @@ async function seed() {
         status: "published",
       },
       {
-        trainerSlug: "vladimir-antipenko",
+        trainerSlug: "antipenko.training",
         userId: clientId,
         authorName: "Анна К.",
         rating: 4,
@@ -117,7 +117,7 @@ async function seed() {
         status: "pending",
       },
       {
-        trainerSlug: "akhmejanau",
+        trainerSlug: "farkhad_akhmejanau",
         userId: clientId,
         authorName: "Анна К.",
         rating: 3,

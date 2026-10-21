@@ -1,11 +1,16 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { ReviewStatus } from "@/components/cabinet";
+import { REVIEW_STATUS_LABEL, ReviewStatus } from "@/components/cabinet";
+import { TablePager, useTablePage } from "@/components/table-pager";
 import { ReviewHtml } from "@/components/review-html";
-import { getAdminReviewsFn } from "@/lib/admin/reviews";
+import { UserAvatar } from "@/components/user-avatar";
+import { getAdminReviewsFn, type AdminReview } from "@/lib/admin/reviews";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
-import { setTrainerReviewStatusFn, type ReviewStatus as ReviewStatusValue } from "@/lib/catalog/trainer-reviews";
+import { getSportTaxonomyChild, listSecondLevelSports, TOP_LEVEL_SPORT_CATEGORIES } from "@/lib/catalog/sport-taxonomy";
+import { REVIEW_STATUSES, setTrainerReviewStatusFn, type ReviewStatus as ReviewStatusValue } from "@/lib/catalog/trainer-reviews";
+
+type ReviewSort = "date-desc" | "date-asc" | "rating-desc" | "rating-asc";
 
 const CHECK = "M5 12l5 5L20 7";
 const CROSS = "M6 6l12 12M18 6L6 18";
@@ -21,6 +26,14 @@ export const Route = createFileRoute("/admin/reviews")({
   }),
   component: AdminReviewsPage,
 });
+
+function compareReviews(a: AdminReview, b: AdminReview, sort: ReviewSort) {
+  if (sort === "rating-desc" || sort === "rating-asc") {
+    const byRating = sort === "rating-desc" ? b.rating - a.rating : a.rating - b.rating;
+    return byRating || b.createdAt.localeCompare(a.createdAt);
+  }
+  return sort === "date-asc" ? a.createdAt.localeCompare(b.createdAt) : b.createdAt.localeCompare(a.createdAt);
+}
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric" }).format(new Date(value));
@@ -49,12 +62,32 @@ function IconButton({
 function AdminReviewsPage() {
   const reviews = Route.useLoaderData();
   const router = useRouter();
+  const [status, setStatus] = useState<"" | ReviewStatusValue>("");
+  const [category, setCategory] = useState("");
+  const [sport, setSport] = useState("");
+  const [sort, setSort] = useState<ReviewSort>("date-desc");
   const [busyReview, setBusyReview] = useState<string | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectNote, setRejectNote] = useState("");
   const [rejectError, setRejectError] = useState<string | null>(null);
   const setReviewStatus = useAuthServerFn(setTrainerReviewStatusFn);
   const rejecting = reviews.find((review) => review.id === rejectingId) ?? null;
+  const sportOptions = useMemo(
+    () => listSecondLevelSports().filter((item) => !category || item.parentSlug === category),
+    [category],
+  );
+  const visible = useMemo(() => {
+    const rows = reviews.filter((review) => {
+      const parents = review.trainerSportSlugs.map((slug) => getSportTaxonomyChild(slug)?.parentSlug);
+      if (status && review.status !== status) return false;
+      if (category && !parents.includes(category)) return false;
+      if (sport && !review.trainerSportSlugs.includes(sport)) return false;
+      return true;
+    });
+    rows.sort((a, b) => compareReviews(a, b, sort));
+    return rows;
+  }, [reviews, status, category, sport, sort]);
+  const pager = useTablePage(visible, `${status}|${category}|${sport}|${sort}`);
 
   useEffect(() => {
     if (!rejecting) return;
@@ -82,6 +115,54 @@ function AdminReviewsPage() {
     <article className="cabinet-card">
       <h2>Модерация отзывов</h2>
       {reviews.length === 0 ? <p className="cabinet-empty">Отзывов пока нет.</p> : (
+        <>
+          <div className="cabinet-filters">
+            <label>
+              <span>Статус</span>
+              <select value={status} onChange={(event) => setStatus(event.target.value as "" | ReviewStatusValue)}>
+                <option value="">Все статусы</option>
+                {REVIEW_STATUSES.map((item) => (
+                  <option key={item} value={item}>{REVIEW_STATUS_LABEL[item]}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span>Категория</span>
+              <select
+                value={category}
+                onChange={(event) => {
+                  const next = event.target.value;
+                  setCategory(next);
+                  if (sport && getSportTaxonomyChild(sport)?.parentSlug !== next && next) setSport("");
+                }}
+              >
+                <option value="">Все категории</option>
+                {TOP_LEVEL_SPORT_CATEGORIES.map((item) => (
+                  <option key={item.slug} value={item.slug}>{item.label}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span>Тип спорта</span>
+              <select value={sport} onChange={(event) => setSport(event.target.value)}>
+                <option value="">Все типы</option>
+                {sportOptions.map((item) => (
+                  <option key={item.slug} value={item.slug}>{item.label}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span>Сортировка</span>
+              <select value={sort} onChange={(event) => setSort(event.target.value as ReviewSort)}>
+                <option value="date-desc">Сначала новые</option>
+                <option value="date-asc">Сначала старые</option>
+                <option value="rating-desc">Сначала высокая оценка</option>
+                <option value="rating-asc">Сначала низкая оценка</option>
+              </select>
+            </label>
+          </div>
+          {visible.length === 0 ? <p className="cabinet-empty">Нет отзывов с таким фильтром.</p> : (
+        <>
         <div className="cabinet-table-wrap">
           <table className="cabinet-table">
             <thead>
@@ -95,11 +176,16 @@ function AdminReviewsPage() {
               </tr>
             </thead>
             <tbody>
-              {reviews.map((review) => (
+              {pager.rows.map((review) => (
                 <tr key={review.id}>
                   <td>
-                    <strong>{review.authorName}</strong>
-                    <span>{review.authorEmail}</span>
+                    <div className="cabinet-person">
+                      <UserAvatar name={review.authorName} src={review.authorAvatar} />
+                      <div>
+                        <Link className="cabinet-name-link" to="/admin/accounts/$id" params={{ id: review.authorId }} target="_blank" rel="noopener noreferrer">{review.authorName}</Link>
+                        <span>{review.authorEmail}</span>
+                      </div>
+                    </div>
                   </td>
                   <td>
                     <Link className="cabinet-inline-link" to="/trainers/$slug" params={{ slug: review.trainerSlug }}>{review.trainerName}</Link>
@@ -137,6 +223,10 @@ function AdminReviewsPage() {
             </tbody>
           </table>
         </div>
+        <TablePager page={pager.page} pages={pager.pages} total={pager.total} from={pager.from} to={pager.to} onPage={pager.setPage} />
+        </>
+      )}
+        </>
       )}
       {rejecting ? (
         <div className="cabinet-modal" onClick={() => setRejectingId(null)}>
@@ -159,7 +249,7 @@ function AdminReviewsPage() {
             <h2 id="reject-review-title">Отклонить отзыв</h2>
             <label>
               <span>Комментарий клиенту</span>
-              <textarea value={rejectNote} maxLength={500} autoFocus onChange={(event) => setRejectNote(event.target.value)} />
+              <textarea required value={rejectNote} maxLength={500} autoFocus onChange={(event) => setRejectNote(event.target.value)} />
             </label>
             {rejectError ? <p className="cabinet-form__error">{rejectError}</p> : null}
             <div className="cabinet-actions">

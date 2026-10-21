@@ -3,6 +3,7 @@ import "dotenv/config";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
+import { formatBelarusPhone } from "../lib/auth/phone";
 import { closeDb } from "./index";
 import { upsertImportedTrainer, type ImportedTrainerDraft } from "./trainer-profiles";
 import { PUBLISHED_TRAINERS } from "../lib/catalog/published-trainers";
@@ -17,6 +18,7 @@ type DraftFile = {
   firstName: string;
   lastName: string;
   fullName: string;
+  gender?: "male" | "female" | "";
   headline: string;
   bio: string;
   about?: string[];
@@ -25,9 +27,11 @@ type DraftFile = {
   primarySport?: ImportedTrainerDraft["primarySport"];
   city: string;
   priceFrom?: number | null;
+  experienceYears?: number | null;
+  formats?: ImportedTrainerDraft["formats"];
   languages?: string[];
   avatarPath?: string;
-  contacts?: { instagram?: string; phone?: string; website?: string };
+  contacts?: { instagram?: string; phone?: string; email?: string; telegram?: string; website?: string };
 };
 
 const DRAFT_DIR = join(process.cwd(), "data/instagram-trainers");
@@ -52,25 +56,28 @@ async function sync() {
       firstName: draft.firstName,
       lastName: draft.lastName,
       fullName: draft.fullName,
+      gender: draft.gender,
       headline: draft.headline,
-      bio: published?.bio || draft.bio,
+      bio: draft.bio || published?.bio || "",
       sourceBio: draft.bio,
       about: draft.about ?? [],
       pinned: draft.pinned ?? [],
       sports: draft.sports ?? [],
       primarySport: draft.primarySport ?? null,
       audiences: published?.audiences ?? [],
-      formats: published?.formats ?? [],
+      formats: draft.formats?.length ? draft.formats : published?.formats ?? [],
       city: draft.city,
       citySlug: published?.city.slug,
       district: published?.district ?? "",
       priceFrom: draft.priceFrom ?? null,
       languages: draft.languages ?? [],
       avatarPath: draft.avatarPath || published?.photo || "",
-      phone: draft.contacts?.phone || published?.phone || "",
+      phone: formatBelarusPhone(draft.contacts?.phone || published?.phone || ""),
+      email: draft.contacts?.email || "",
+      telegram: draft.contacts?.telegram || "",
       website: draft.contacts?.website || "",
       instagramUrl,
-      experienceYears: published?.experience ?? 0,
+      experienceYears: draft.experienceYears || published?.experience || 0,
     });
     console.info(`${saved.created ? "created" : "updated"} ${draft.handle} ${saved.claimPath}`);
   }

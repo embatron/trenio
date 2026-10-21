@@ -1,6 +1,17 @@
 export type TrainerAudience = "adult" | "teen" | "kid";
 export type TrainerFormat = "individual" | "group";
 
+export const TRAINER_FORMAT_OPTIONS: Array<{ id: TrainerFormat; label: string }> = [
+  { id: "individual", label: "Индивидуально" },
+  { id: "group", label: "Группа" },
+];
+
+export const TRAINER_AUDIENCE_OPTIONS: Array<{ id: TrainerAudience; label: string }> = [
+  { id: "adult", label: "Взрослые" },
+  { id: "kid", label: "Дети" },
+  { id: "teen", label: "Подростки" },
+];
+
 export type PublishedSport = {
   slug: string;
   parentSlug: string;
@@ -27,7 +38,7 @@ const MINSK = { slug: "minsk", label: "Минск" };
 
 export const PUBLISHED_TRAINERS: PublishedTrainer[] = [
   {
-    slug: "vladimir-antipenko",
+    slug: "antipenko.training",
     name: "Владимир Антипенко",
     photo: "/trainers/instagram/antipenko.training.jpg",
     city: MINSK,
@@ -37,7 +48,7 @@ export const PUBLISHED_TRAINERS: PublishedTrainer[] = [
       { slug: "ofp", parentSlug: "ofp", label: "ОФП" },
     ],
     primarySport: { slug: "kikboksing", parentSlug: "edinoborstva", label: "Кикбоксинг" },
-    bio: "Кикбоксинг и бокс, ОФП для любого уровня подготовки. Минск. Запись: +375 33 637-62-68. Зал @bronxgym.by.",
+    bio: "🙋🏻‍♂️Владимир 📍Минск 🥊Кикбоксинг и бокс 🏋🏻ОФП для любого уровня подготовки 📩Вопросы в ЛС @bronxgym.by",
     audiences: ["adult", "teen"],
     formats: [],
     phone: "+375 33 637-62-68",
@@ -46,16 +57,16 @@ export const PUBLISHED_TRAINERS: PublishedTrainer[] = [
     district: "",
   },
   {
-    slug: "ovsyannikov",
-    name: "Сергей Овсянников",
+    slug: "levsha_team",
+    name: "Сергей Овсяников",
     photo: "/trainers/instagram/levsha_team.jpg",
     city: MINSK,
     sports: [
-      { slug: "kikboksing", parentSlug: "edinoborstva", label: "Кикбоксинг" },
       { slug: "tajskij-boks", parentSlug: "edinoborstva", label: "Тайский бокс" },
+      { slug: "kikboksing", parentSlug: "edinoborstva", label: "Кикбоксинг" },
     ],
-    primarySport: { slug: "kikboksing", parentSlug: "edinoborstva", label: "Кикбоксинг" },
-    bio: "Тренер по муай-тай и кикбоксингу в Минске (Петровщина, проспект Пушкина). Стаж 30 лет. Мастер спорта по тайскому боксу и по рукопашному бою.",
+    primarySport: { slug: "tajskij-boks", parentSlug: "edinoborstva", label: "Тайский бокс" },
+    bio: "🥊Тренер по МуайТай и кикбоксингу в Минске 📍(Петровщина/Пушкина) 👉стаж 30 лет 🏆Мастер спорта по тайскому боксу 🏆Мастер спорта по рукопашному бою",
     audiences: [],
     formats: [],
     phone: "",
@@ -64,13 +75,13 @@ export const PUBLISHED_TRAINERS: PublishedTrainer[] = [
     district: "Петровщина",
   },
   {
-    slug: "artem-romanovich",
+    slug: "ar.boxing.by",
     name: "Артём Романович",
     photo: "/trainers/instagram/ar.boxing.by.jpg",
     city: MINSK,
     sports: [{ slug: "boks", parentSlug: "edinoborstva", label: "Бокс" }],
     primarySport: { slug: "boks", parentSlug: "edinoborstva", label: "Бокс" },
-    bio: "Тренер по боксу в Минске, проспект Пушкина 68а. Групповые и индивидуальные тренировки. Зал @bronxgym.by. Телефон +375 29 704-13-26.",
+    bio: "ТРЕНЕР ПО БОКСУ МИНСК проспект Пушкина 68а ▫️групповые и индивидуальные тренировки ▫️зал @bronxgym.by",
     audiences: [],
     formats: ["individual", "group"],
     phone: "+375 29 704-13-26",
@@ -79,13 +90,13 @@ export const PUBLISHED_TRAINERS: PublishedTrainer[] = [
     district: "",
   },
   {
-    slug: "akhmejanau",
+    slug: "farkhad_akhmejanau",
     name: "Farkhad Akhmejanau",
     photo: "/trainers/instagram/farkhad_akhmejanau.jpg",
     city: MINSK,
     sports: [{ slug: "kikboksing", parentSlug: "edinoborstva", label: "Кикбоксинг" }],
     primarySport: { slug: "kikboksing", parentSlug: "edinoborstva", label: "Кикбоксинг" },
-    bio: "Тренер по кикбоксингу в Минске. Групповые и персональные занятия.",
+    bio: "Тренер по кикбоксингу / Минск - Групповые/персональные занятия Prospekt Pushkina 68A, Minsk, Belarus 220002",
     audiences: [],
     formats: ["individual", "group"],
     phone: "",

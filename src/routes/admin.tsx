@@ -54,24 +54,26 @@ function AdminLayout() {
   ));
 
   return (
-    <CabinetShell
-      title="Кабинет администратора"
-      name={name}
-      role={role}
-      avatarUrl={user.avatarPath || null}
-      items={items}
-      active={active}
-      logoutPending={pending}
-      onLogout={() => {
-        setPending(true);
-        void logout()
-          .then(() => {
-            window.location.href = "/auth/login";
-          })
-          .finally(() => setPending(false));
-      }}
-    >
-      <Outlet />
-    </CabinetShell>
+    <div className="layout-staff">
+      <CabinetShell
+        title="Кабинет администратора"
+        name={name}
+        role={role}
+        avatarUrl={user.avatarPath || null}
+        items={items}
+        active={active}
+        logoutPending={pending}
+        onLogout={() => {
+          setPending(true);
+          void logout()
+            .then(() => {
+              window.location.href = "/auth/login";
+            })
+            .finally(() => setPending(false));
+        }}
+      >
+        <Outlet />
+      </CabinetShell>
+    </div>
   );
 }

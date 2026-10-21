@@ -1,11 +1,11 @@
-import { avg, count, desc, eq } from "drizzle-orm";
+import { and, avg, count, desc, eq } from "drizzle-orm";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { optionalAuthMiddleware, requireAuthMiddleware } from "@/auth/middleware";
 import type { SessionUser } from "@/auth/service";
 import { getDb } from "@/db";
-import { trainerReviews, users } from "@/db/schema";
+import { trainerProfiles, trainerReviews, users, type TrainerReviewMessage } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
 import { isStaff } from "@/lib/auth/roles";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
@@ -27,12 +27,22 @@ const reviewTextSchema = z
     return length >= 10 && length <= 1000;
   }, "Напишите от 10 до 1000 символов");
 
+export type PublicReviewMessage = {
+  role: "trainer" | "author";
+  author: string;
+  avatarPath: string;
+  body: string;
+  date: string;
+};
+
 export type PublicTrainerReview = {
   id: string;
   author: string;
+  avatarPath: string;
   date: string;
   rating: number;
   text: string;
+  messages: PublicReviewMessage[];
   isMine: boolean;
 };
 
@@ -47,6 +57,47 @@ const dateFormat = new Intl.DateTimeFormat("ru-RU", {
   month: "long",
   year: "numeric",
 });
+
+function storedThread(row: {
+  messages: TrainerReviewMessage[] | null;
+  reply: string | null;
+  repliedAt: Date | null;
+  createdAt: Date;
+}): TrainerReviewMessage[] {
+  const raw = Array.isArray(row.messages) ? row.messages : [];
+  const parsed = raw.flatMap((item) => {
+    if (!item || (item.role !== "trainer" && item.role !== "author") || !item.body?.trim()) return [];
+    return [{ role: item.role, body: item.body.trim(), at: item.at || row.createdAt.toISOString() }];
+  });
+  if (parsed.length) return parsed;
+  if (row.reply?.trim()) {
+    return [{ role: "trainer", body: row.reply.trim(), at: (row.repliedAt ?? row.createdAt).toISOString() }];
+  }
+  return [];
+}
+
+function publicMessages(
+  row: {
+    authorName: string;
+    messages: TrainerReviewMessage[] | null;
+    reply: string | null;
+    repliedAt: Date | null;
+    createdAt: Date;
+  },
+  faces: { author: string; trainer: string },
+): PublicReviewMessage[] {
+  return storedThread(row).map((message) => ({
+    role: message.role,
+    author: message.role === "trainer" ? "Тренер" : row.authorName,
+    avatarPath: message.role === "trainer" ? faces.trainer : faces.author,
+    body: message.body,
+    date: dateFormat.format(new Date(message.at)),
+  }));
+}
+
+function profileFace(row: { photos: string[] | null; avatarPath: string } | undefined) {
+  return (row?.photos?.[0] || row?.avatarPath || "").split("?")[0];
+}
 
 function authorName(user: SessionUser) {
   const last = user.lastName?.trim();
@@ -96,31 +147,55 @@ export const listTrainerReviewsFn = createServerFn({ method: "GET" })
       return {
         reviews: [] as PublicTrainerReview[],
         summary: summarize([]),
+        isOwner: false,
       };
     }
 
-    const rows = await getDb()
-      .select()
-      .from(trainerReviews)
-      .where(eq(trainerReviews.trainerSlug, data.slug))
-      .orderBy(desc(trainerReviews.createdAt));
+    const db = getDb();
+    const [rows, profile] = await Promise.all([
+      db
+        .select({ review: trainerReviews, avatarPath: users.avatarPath })
+        .from(trainerReviews)
+        .leftJoin(users, eq(users.id, trainerReviews.userId))
+        .where(eq(trainerReviews.trainerSlug, data.slug))
+        .orderBy(desc(trainerReviews.createdAt)),
+      db
+        .select({
+          ownerUserId: trainerProfiles.ownerUserId,
+          avatarPath: trainerProfiles.avatarPath,
+          photos: trainerProfiles.photos,
+        })
+        .from(trainerProfiles)
+        .where(eq(trainerProfiles.slug, data.slug))
+        .limit(1)
+        .then((found) => found[0]),
+    ]);
 
-    const published = rows.filter((row) => row.status === "published");
-    const own = context.user ? rows.find((row) => row.userId === context.user?.id) : undefined;
-    const reviews: PublicTrainerReview[] = published.map((row) => ({
-      id: row.id,
-      author: row.authorName,
-      date: dateFormat.format(row.createdAt),
-      rating: row.rating,
-      text: row.body,
-      isMine: context.user?.id === row.userId,
-    }));
+    const trainerAvatar = profileFace(profile);
+    const published = rows.filter((row) => row.review.status === "published");
+    const own = context.user ? rows.find((row) => row.review.userId === context.user?.id) : undefined;
+    const reviews: PublicTrainerReview[] = published.map((row) => {
+      const avatarPath = row.avatarPath ?? "";
+      return {
+        id: row.review.id,
+        author: row.review.authorName,
+        avatarPath,
+        date: dateFormat.format(row.review.createdAt),
+        rating: row.review.rating,
+        text: row.review.body,
+        messages: publicMessages(row.review, { author: avatarPath, trainer: trainerAvatar }),
+        isMine: context.user?.id === row.review.userId,
+      };
+    });
+
+    const isOwner = Boolean(context.user && profile?.ownerUserId === context.user.id);
 
     return {
       reviews,
-      summary: summarize(published),
-      ownStatus: (own?.status ?? null) as ReviewStatus | null,
-      ownComment: own?.status === "rejected" ? own.moderationNote : null,
+      summary: summarize(published.map((row) => row.review)),
+      ownStatus: (own?.review.status ?? null) as ReviewStatus | null,
+      ownComment: own?.review.status === "rejected" ? own.review.moderationNote : null,
+      isOwner,
     };
   });
 
@@ -136,6 +211,14 @@ export const createTrainerReviewFn = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     if (!getPublishedTrainer(data.slug)) {
       throw new AuthError("Тренер не найден.", "VALIDATION");
+    }
+    const [owned] = await getDb()
+      .select({ id: trainerProfiles.id })
+      .from(trainerProfiles)
+      .where(and(eq(trainerProfiles.slug, data.slug), eq(trainerProfiles.ownerUserId, context.user.id)))
+      .limit(1);
+    if (owned) {
+      throw new AuthError("Нельзя оставить отзыв о своём профиле.", "VALIDATION");
     }
 
     const inserted = await getDb()
@@ -224,4 +307,100 @@ export const setTrainerReviewStatusFn = createServerFn({ method: "POST" })
     }
 
     return { ok: true as const };
+  });
+
+const REVIEW_STATUS_LABEL = {
+  pending: "На модерации",
+  published: "Опубликован",
+  rejected: "Отклонён",
+} as const;
+
+export type OwnTrainerReview = {
+  id: string;
+  author: string;
+  avatarPath: string;
+  trainerAvatar: string;
+  date: string;
+  rating: number;
+  text: string;
+  status: ReviewStatus;
+  statusLabel: string;
+  messages: PublicReviewMessage[];
+  canReply: boolean;
+};
+
+export const listOwnTrainerReviewsFn = createServerFn({ method: "GET" })
+  .middleware([requireAuthMiddleware])
+  .handler(async ({ context }) => {
+    const db = getDb();
+    const [profile] = await db
+      .select({
+        slug: trainerProfiles.slug,
+        avatarPath: trainerProfiles.avatarPath,
+        photos: trainerProfiles.photos,
+      })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.ownerUserId, context.user.id))
+      .limit(1);
+    if (!profile) return [] as OwnTrainerReview[];
+
+    const trainerAvatar = profileFace(profile);
+    const rows = await db
+      .select({ review: trainerReviews, avatarPath: users.avatarPath })
+      .from(trainerReviews)
+      .leftJoin(users, eq(users.id, trainerReviews.userId))
+      .where(eq(trainerReviews.trainerSlug, profile.slug))
+      .orderBy(desc(trainerReviews.createdAt));
+
+    return rows.map((row) => {
+      const avatarPath = row.avatarPath ?? "";
+      return {
+        id: row.review.id,
+        author: row.review.authorName,
+        avatarPath,
+        trainerAvatar,
+        date: dateFormat.format(row.review.createdAt),
+        rating: row.review.rating,
+        text: row.review.body,
+        status: row.review.status,
+        statusLabel: REVIEW_STATUS_LABEL[row.review.status],
+        messages: publicMessages(row.review, { author: avatarPath, trainer: trainerAvatar }),
+        canReply: row.review.status === "published" && storedThread(row.review).at(-1)?.role !== "trainer",
+      };
+    });
+  });
+
+export const replyToTrainerReviewFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(z.object({
+    id: z.string().uuid(),
+    reply: z.string().trim().min(10, "Напишите хотя бы 10 символов").max(1000),
+  }))
+  .handler(async ({ data, context }) => {
+    const db = getDb();
+    const [profile] = await db
+      .select({ slug: trainerProfiles.slug })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.ownerUserId, context.user.id))
+      .limit(1);
+    const [review] = await db.select().from(trainerReviews).where(eq(trainerReviews.id, data.id)).limit(1);
+    if (!review || review.status !== "published") {
+      throw new AuthError("Ответить можно на опубликованный отзыв.", "VALIDATION");
+    }
+    const isOwner = Boolean(profile && review.trainerSlug === profile.slug);
+    const isAuthor = review.userId === context.user.id;
+    const thread = storedThread(review);
+    const lastRole = thread.at(-1)?.role ?? "author";
+    let role: TrainerReviewMessage["role"];
+    if (isOwner && !isAuthor && lastRole !== "trainer") role = "trainer";
+    else if (isAuthor && !isOwner && lastRole === "trainer") role = "author";
+    else throw new AuthError("Сейчас ответить нельзя.", "FORBIDDEN");
+
+    const now = new Date();
+    const next: TrainerReviewMessage[] = [...thread, { role, body: data.reply, at: now.toISOString() }];
+    await db.update(trainerReviews).set({
+      messages: next,
+      ...(role === "trainer" && !review.reply ? { reply: data.reply, repliedAt: now } : {}),
+    }).where(eq(trainerReviews.id, review.id));
+    return { ok: true as const, message: "Ответ опубликован." };
   });

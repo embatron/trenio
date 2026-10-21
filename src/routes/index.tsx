@@ -9,6 +9,7 @@ import { compareByPopularity, ratingFor } from "@/lib/catalog/trainer-popularity
 import { getHomeStatsFn } from "@/lib/catalog/home-stats";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { FavoriteButton } from "@/components/favorite-button";
+import { PhotoImage } from "@/components/photo-image";
 import { TrainerRating } from "@/components/trainer-rating";
 
 const HOMEPAGE_CATEGORIES = TOP_LEVEL_SPORT_CATEGORIES;
@@ -341,15 +342,15 @@ body.is-search-docked .site-header__search {
 }
 .intent-dropdown__trigger svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; color: var(--muted); flex: 0 0 auto; }
 .search-block--header .search-shell {
-  width: 100%; max-width: 100%; min-width: 0; min-height: 47px; padding: 4px 5px;
+  width: 100%; max-width: 100%; min-width: 0; min-height: 52px; padding: 4px 5px;
   box-shadow: 0 4px 18px rgba(var(--dark-rgb), 0.06);
-  grid-template-columns: minmax(0, 131fr) minmax(0, 157fr) minmax(0, 211fr) minmax(0, 147fr) 37px;
+  grid-template-columns: minmax(0, 131fr) minmax(0, 157fr) minmax(0, 211fr) minmax(0, 147fr) 44px;
 }
 .search-block--header .search-field.intent-select { position: relative; display: flex; align-items: center; }
-.search-block--header .search-field { height: 37px; padding: 0 11px; gap: 7px; }
+.search-block--header .search-field { height: 44px; padding: 0 11px; gap: 7px; }
 .search-block--header .combo-input { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .search-block--header .search-icon svg, .search-block--header .chevron-icon svg { width: 16px; height: 16px; }
-.search-block--header .search-submit { width: 37px; height: 37px; }
+.search-block--header .search-submit { width: 44px; height: 44px; }
 .search-block--header .search-submit svg { width: 17px; height: 17px; }
 .hero-title { margin: 0 0 36px; font-size: var(--fs-display); line-height: 1.12; letter-spacing: -0.04em; font-weight: var(--fw-heading); color: var(--dark); }
 .search-block--hero .search-intent { margin-bottom: 16px; }
@@ -719,14 +720,7 @@ function Index() {
                   params={{ slug: t.slug }}
                 >
                   <div className="trainer-card__media">
-                    <img
-                      className="trainer-card__photo"
-                      src={t.photo}
-                      alt={t.name}
-                      width={480}
-                      height={600}
-                      loading="lazy"
-                    />
+                    <PhotoImage className="trainer-card__photo" src={t.photo} alt={t.name} preset="card" width={480} height={600} loading="lazy" />
                     {t.badge && <span className="trainer-card__badge">{t.badge}</span>}
                     <FavoriteButton target={{ type: "trainer", slug: t.slug }} className="trainer-card__save" />
                   </div>

@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 
 import { FavoriteButton } from "@/components/favorite-button";
+import { TablePager, useTablePage } from "@/components/table-pager";
+import { PhotoImage } from "@/components/photo-image";
 import { TrainerRating } from "@/components/trainer-rating";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
 import { ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
@@ -51,8 +53,10 @@ export function FavoriteCards({
   ratings: Record<string, TrainerRatingSnapshot>;
 }) {
   const cards = keys.map((key) => toCard(key, ratings));
-  const trainers = cards.filter((card) => card.type === "trainer" && !card.missing);
-  const rest = cards.filter((card) => card.missing || card.type === "club");
+  const pager = useTablePage(cards);
+  const pageCards = pager.rows;
+  const trainers = pageCards.filter((card) => card.type === "trainer" && !card.missing);
+  const rest = pageCards.filter((card) => card.missing || card.type === "club");
 
   if (cards.length === 0) {
     return (
@@ -74,7 +78,7 @@ export function FavoriteCards({
           {trainers.map((card) => (
             <Link key={`${card.type}:${card.slug}`} className="trainer-card" to="/trainers/$slug" params={{ slug: card.slug }}>
               <div className="trainer-card__media">
-                <img className="trainer-card__photo" src={card.photo} alt={card.name} width={480} height={600} />
+                <PhotoImage className="trainer-card__photo" src={card.photo} alt={card.name} preset="card" width={480} height={600} />
                 <FavoriteButton target={{ type: card.type, slug: card.slug }} className="trainer-card__save" />
               </div>
               <div className="trainer-card__body">
@@ -102,6 +106,7 @@ export function FavoriteCards({
           ))}
         </ul>
       ) : null}
+      <TablePager page={pager.page} pages={pager.pages} total={pager.total} from={pager.from} to={pager.to} onPage={pager.setPage} />
       <style>{`
         .favorites-missing { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
         .favorites-missing li { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--card-radius); background: var(--white); }

@@ -6,6 +6,9 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+import { serveUploadFiles } from "./src/vite/serve-upload-files";
+
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
@@ -14,8 +17,9 @@ export default defineConfig({
   },
   vite: {
     ssr: {
-      external: ["ip-location-api"],
+      external: ["ip-location-api", "sharp"],
     },
+    plugins: [serveUploadFiles()],
     server: {
       // Public URL is http://trenio.local (Apache on :80 → this dev server).
       allowedHosts: ["trenio.local", "localhost", "127.0.0.1"],

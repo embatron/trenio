@@ -2,6 +2,7 @@ import { createFileRoute, getRouteApi, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { ReviewStatus } from "@/components/cabinet";
+import { TablePager, useTablePage } from "@/components/table-pager";
 import { ReviewHtml } from "@/components/review-html";
 
 const accountRoute = getRouteApi("/account");
@@ -24,6 +25,7 @@ function formatDate(value: string) {
 function AccountReviewsPage() {
   const { cabinet } = accountRoute.useLoaderData();
   const [rejectNote, setRejectNote] = useState<string | null>(null);
+  const pager = useTablePage(cabinet.reviews);
 
   return (
     <>
@@ -31,7 +33,7 @@ function AccountReviewsPage() {
         <h2>Мои отзывы</h2>
         {cabinet.reviews.length === 0 ? (
           <p className="cabinet-empty">Вы ещё не оставляли отзывы. После отправки со страницы тренера статус появится в этом списке.</p>
-        ) : cabinet.reviews.map((review) => (
+        ) : pager.rows.map((review) => (
           <div key={review.id} className="cabinet-row">
             <div>
               <strong>{review.trainerName} · {review.rating} из 5</strong>
@@ -60,6 +62,7 @@ function AccountReviewsPage() {
             </div>
           </div>
         ))}
+        <TablePager page={pager.page} pages={pager.pages} total={pager.total} from={pager.from} to={pager.to} onPage={pager.setPage} />
       </article>
       {rejectNote !== null ? <RejectionDialog note={rejectNote} onClose={() => setRejectNote(null)} /> : null}
     </>

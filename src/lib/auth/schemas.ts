@@ -6,7 +6,7 @@ import { PUBLIC_SIGNUP_ROLES } from "@/lib/auth/roles";
 const honeypotSchema = z.string().max(200).optional();
 
 export const loginSchema = z.object({
-  email: z.string().email("Введите корректный e-mail"),
+  email: z.string().trim().min(3, "Введите почту или ник").max(320),
   password: z.string().min(1, "Введите пароль"),
   remember: z.boolean().optional().default(true),
   honeypot: honeypotSchema,

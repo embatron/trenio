@@ -162,8 +162,9 @@
   --line: #e5e7eb;
   --white: #ffffff;
 
-  /* Unified layout grid */
+  /* Unified layout grid. Staff cabinet overrides --layout-max locally. */
   --layout-max: 1240px;
+  --layout-staff-max: 1680px;
   --layout-prose-max: 760px;
   --layout-gutter: max(clamp(20px, 4vw, 36px), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   --layout-section-y: clamp(28px, 5vw, 56px);
@@ -226,6 +227,11 @@ body { margin: 0; }
   color: var(--text);
 }
 
+/* Admin and superadmin cabinet only. Header, sidebar, and footer inside inherit the wider max. */
+.layout-staff {
+  --layout-max: var(--layout-staff-max);
+}
+
 .layout-container,
 .layout-rail {
   width: 100%;
@@ -251,6 +257,10 @@ body { margin: 0; }
 .layout-container--prose {
   max-width: var(--layout-prose-max);
 }
+
+.user-avatar { border-radius: 50%; overflow: hidden; flex: 0 0 auto; display: block; background: var(--light-bg); }
+.user-avatar img, .user-avatar svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+.review-item__who, .review-reply__who { display: flex; align-items: center; gap: 10px; min-width: 0; }
 
 .layout-section {
   padding-block: var(--layout-section-y);
@@ -398,6 +408,24 @@ body { margin: 0; }
 .review-html p:last-child { margin-bottom: 0; }
 .review-html ul, .review-html ol { margin: 0.2em 0 0.4em; padding-left: 1.2em; }
 .review-html a { color: var(--primary); }
+/* Current breadcrumb. Earlier crumbs stay muted. Do not recolor this in a route. */
+.is-current[aria-current="page"] { color: var(--primary); }
+form :is(label, .auth-field):has(:is(input, textarea, select):required) > .auth-field__label:not(:has(a)) { justify-content: flex-start; }
+form :is(label, .auth-field):has(:is(input, textarea, select):required) > .auth-field__label:not(:has(a))::after,
+form :is(label, .auth-field):has(:is(input, textarea, select):required) > .auth-field__label > span:first-child::after,
+.auth-check:has(input:required) > span::after,
+.claim-check:has(input:required) > span::after,
+form label:not(.auth-field):not(.auth-check):not(.claim-check):has(:is(input, textarea, select):required) > span:first-child:not(.cabinet-form__label-row)::after,
+form label:not(.auth-field):not(.auth-check):not(.claim-check):has(:is(input, textarea, select):required) > .cabinet-form__label-row > span:first-child::after,
+.is-required::after {
+  content: " *";
+  color: var(--primary);
+}
+input.is-locked {
+  background: #eceff3;
+  color: var(--muted);
+  cursor: default;
+}
 .review-editor .rsw-editor { border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); overflow: hidden; }
 .review-editor .rsw-toolbar { background: var(--light-bg); }
 .review-editor .rsw-btn { width: 44px; height: 44px; color: var(--dark); }

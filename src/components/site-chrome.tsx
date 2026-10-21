@@ -3,6 +3,7 @@ import { useFavorites } from "@/components/favorites-store";
 import { getCabinetPath } from "@/lib/auth/roles";
 import { pluralRu } from "@/lib/ru-plural";
 import { CategoryLink } from "@/lib/catalog/category-routes";
+import { BELARUS_OBLAST_CENTERS } from "@/lib/catalog/city-taxonomy";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
@@ -42,13 +43,13 @@ body.is-search-docked .site-header__search {
 }
 .search-block--header { width: min(100%, 700px); max-width: 100%; min-width: 0; }
 .search-block--header .search-shell {
-  width: 100%; max-width: 100%; min-width: 0; min-height: 47px; padding: 4px 5px;
+  width: 100%; max-width: 100%; min-width: 0; min-height: 52px; padding: 4px 5px;
   background: var(--white); border: 1px solid rgba(var(--dark-rgb), 0.08); border-radius: 999px;
   box-shadow: 0 4px 18px rgba(var(--dark-rgb), 0.06);
-  display: grid; grid-template-columns: minmax(0, 131fr) minmax(0, 157fr) minmax(0, 211fr) minmax(0, 147fr) 37px;
+  display: grid; grid-template-columns: minmax(0, 131fr) minmax(0, 157fr) minmax(0, 211fr) minmax(0, 147fr) 44px;
   align-items: center; gap: 0; text-align: left;
 }
-.search-block--header .search-field { min-width: 0; height: 37px; display: flex; align-items: center; gap: 7px; padding: 0 11px; }
+.search-block--header .search-field { min-width: 0; height: 44px; display: flex; align-items: center; gap: 7px; padding: 0 11px; }
 .search-block--header .search-field.intent-select { position: relative; }
 .search-block--header .search-field + .search-field { border-left: 1px solid var(--line); }
 .search-block--header .search-icon { flex: 0 0 auto; display: grid; place-items: center; color: var(--muted); }
@@ -76,13 +77,13 @@ body.is-search-docked .site-header__search {
 .search-block--header .combo-select.is-open .combo-menu { display: grid; gap: 1px; }
 .search-block--header .combo-select[data-combo="location"] .combo-menu { max-height: 320px; overflow-y: auto; }
 .search-block--header .combo-option {
-  border: 0; width: 100%; min-height: 41px; padding: 0 12px; border-radius: var(--radius-control);
+  border: 0; width: 100%; min-height: 44px; padding: 0 12px; border-radius: var(--radius-control);
   background: transparent; color: var(--text); cursor: pointer; font-size: 14px; font-weight: var(--fw-title); text-align: left;
 }
 .search-block--header .combo-option:hover,
 .search-block--header .combo-option.is-active { background: var(--light-bg); color: var(--primary-dark); }
 .search-block--header .search-submit {
-  width: 37px; height: 37px; border: 0; border-radius: 50%; background: var(--primary); color: #fff;
+  width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--primary); color: #fff;
   cursor: pointer; display: grid; place-items: center;
 }
 .search-block--header .search-submit svg { width: 17px; height: 17px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
@@ -321,12 +322,9 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           <div className="mega-col">
             <h5>Города</h5>
             <ul>
-              <li><Link to="/" onClick={onClose}>Минск</Link></li>
-              <li><Link to="/" onClick={onClose}>Гомель</Link></li>
-              <li><Link to="/" onClick={onClose}>Брест</Link></li>
-              <li><Link to="/" onClick={onClose}>Гродно</Link></li>
-              <li><Link to="/" onClick={onClose}>Витебск</Link></li>
-              <li><Link to="/" onClick={onClose}>Могилёв</Link></li>
+              {BELARUS_OBLAST_CENTERS.map((city) => (
+                <li key={city}><Link to="/" onClick={onClose}>{city}</Link></li>
+              ))}
             </ul>
           </div>
           <div className="mega-col">
@@ -357,6 +355,7 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           <div>
             <Link to="/" onClick={onClose}>О сервисе</Link>
             <Link to="/" onClick={onClose}>Контакты</Link>
+            <Link to="/offer" onClick={onClose}>Договор оферты</Link>
             <Link to="/privacy" onClick={onClose}>Политика конфиденциальности</Link>
           </div>
           <span>© 2026 trenio.by</span>
@@ -490,6 +489,7 @@ export function SiteFooter() {
               <div className="site-footer__links">
                 <a href="#">О сервисе</a>
                 <a href="#">Контакты</a>
+                <Link to="/offer">Договор оферты</Link>
                 <Link to="/privacy">Политика конфиденциальности</Link>
               </div>
             </div>

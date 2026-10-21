@@ -30,6 +30,7 @@ The layout grid is the primary layout rule. Read `.cursor/rules/layout-grid.mdc`
 - Horizontal icon or card rails use `.layout-rail`. Do not give them `width: 100vw` or zero side padding.
 - Card lists use `.card-grid` / `.trainer-grid` / `.cat-grid` and the other shared grid classes. Do not set `grid-template-columns` on them in route CSS.
 - Icons: `SportIcon` for sports, existing pin/chevron/heart/star paths for chrome. Stroke is `var(--icon-stroke)`. See `.cursor/rules/icons.mdc`.
+- Breadcrumbs: the current page has `is-current` and `aria-current="page"`. Color stays `var(--primary)` from `src/styles.css`. See `.cursor/rules/breadcrumbs.mdc`.
 - Filter + results pages use `.layout-with-sidebar`.
 - Reuse `site-chrome.tsx`, shadcn `src/components/ui/`
 - Auth pages: `AuthStyles` + `useAuthSubmit` pattern. The form can be narrow; the page chrome stays on `--layout-max`.
@@ -52,5 +53,5 @@ Run `.cursor/skills/trenio-docs-sync/SKILL.md` if routes, auth, or architecture 
 - Importing `src/db/` from client components
 - Auth only in `beforeLoad` without server fn middleware
 - Desktop-only hover menus without mobile fallback
-- A second content width, a double gutter, or `repeat(auto-fill, minmax(...))` for catalog cards
+- A content width other than `--layout-max`, `--layout-staff-max` (admin and superadmin cabinet only), or `--layout-prose-max`; a double gutter; or `repeat(auto-fill, minmax(...))` for catalog cards
 - A filled sport pictogram next to a line icon, or a one-off stroke width

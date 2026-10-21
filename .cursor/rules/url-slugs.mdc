@@ -13,6 +13,7 @@ Public paths use a short Latin slug, not a transliteration of the full title.
 - One segment is the search keyword: 1–2 words, **at most 18 characters**.
 - A nested sport URL is `/categories/{parent}/{child}`. The child does not repeat the parent word.
 - Profiles: `/trainers/{slug}`, `/clubs/{slug}` — given name + family name, same length limit.
+- An imported trainer is the exception: `/trainers/{handle}` is the Instagram handle itself, up to 30 characters, dots and underscores included. That same handle is the account nick. Old name slugs redirect to it.
 - Cities, blog, auth stay short and stable (`minsk`, `kak-vybrat-trenera`, `/auth/login`).
 - Query filters are not indexable URLs.
 

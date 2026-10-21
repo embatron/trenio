@@ -1,5 +1,5 @@
 import { randomInt } from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
+import { unlink } from "node:fs/promises";
 import path from "node:path";
 
 import { and, desc, eq, gt, isNotNull, isNull, ne } from "drizzle-orm";
@@ -9,6 +9,7 @@ import {
   emailVerificationTokens,
   passwordResetTokens,
   sessions,
+  trainerProfiles,
   userRoles,
   users,
   type User,
@@ -32,7 +33,10 @@ import { issueOtp, verifyOtp } from "@/auth/otp";
 import { consumeRateLimit } from "@/auth/rate-limit";
 import { isSmsByEnabled } from "@/auth/sms";
 import { AuthError } from "@/lib/auth/errors";
+import { resolveAccountLogin } from "@/lib/auth/login-name";
+import { writeImageSet } from "@/lib/images/store";
 import {
+  formatBelarusPhone,
   normalizeBelarusMobile,
   OTP_CODE_LENGTH,
   storedBelarusPhone,
@@ -93,6 +97,22 @@ export async function findUserByEmail(email: string): Promise<User | null> {
   const normalized = normalizeEmail(email);
   const [user] = await db.select().from(users).where(eq(users.email, normalized)).limit(1);
   return user ?? null;
+}
+
+/** Email matches `users.email`. A nick matches the trainer card address. */
+export async function findUserByLogin(value: string): Promise<User | null> {
+  const login = resolveAccountLogin(value);
+  const direct = await findUserByEmail(login);
+  if (direct) return direct;
+  const nick = login.endsWith("@nick.trenio.by") ? login.slice(0, -"@nick.trenio.by".length) : "";
+  if (!nick) return null;
+  const [profile] = await getDb()
+    .select({ ownerUserId: trainerProfiles.ownerUserId })
+    .from(trainerProfiles)
+    .where(eq(trainerProfiles.slug, nick))
+    .limit(1);
+  if (!profile?.ownerUserId) return null;
+  return findUserById(profile.ownerUserId);
 }
 
 export async function findUserById(userId: string): Promise<User | null> {
@@ -182,11 +202,9 @@ export async function setAccountAvatar(userId: string, dataUrl: string) {
   if (buffer.length < 32 || buffer.length > 1_500_000) {
     throw new AuthError("Фото должно быть меньше 1,5 МБ.", "VALIDATION");
   }
-  const ext = match[1] === "jpeg" ? "jpg" : match[1];
-  const relative = `/avatars/${userId}.${ext}`;
-  const dir = path.join(process.cwd(), "public", "avatars");
-  await mkdir(dir, { recursive: true });
-  await writeFile(path.join(dir, `${userId}.${ext}`), buffer);
+  const relative = `/avatars/${userId}.jpg`;
+  await writeImageSet(buffer, path.join(process.cwd(), "public", relative));
+  await Promise.all(["png", "webp"].map((ext) => unlink(path.join(process.cwd(), "public", "avatars", `${userId}.${ext}`)).catch(() => undefined)));
   await getDb().update(users).set({ avatarPath: relative, updatedAt: new Date() }).where(eq(users.id, userId));
   return { ok: true as const, avatarPath: `${relative}?v=${Date.now()}`, message: "Фото обновлено." };
 }
@@ -226,12 +244,12 @@ export async function loginUser(input: {
   userAgent?: string | null;
   remember?: boolean;
 }) {
-  const user = await findUserByEmail(input.email);
+  const user = await findUserByLogin(input.email);
   const hashToCheck = user?.passwordHash ?? (await getDummyPasswordHash());
   const passwordMatches = await verifyPassword(input.password, hashToCheck);
 
   if (!user || !passwordMatches) {
-    throw new AuthError("Неверный e-mail или пароль.", "INVALID_CREDENTIALS");
+    throw new AuthError("Неверный логин или пароль.", "INVALID_CREDENTIALS");
   }
 
   await assertUserCanAuthenticate(user);
@@ -570,6 +588,10 @@ export async function confirmAccountPhoneCode(userId: string, phoneRaw: string, 
     .update(users)
     .set({ phone: stored, phoneVerifiedAt: now, updatedAt: now })
     .where(eq(users.id, userId));
+  await db
+    .update(trainerProfiles)
+    .set({ phone: formatBelarusPhone(stored), updatedAt: now })
+    .where(eq(trainerProfiles.ownerUserId, userId));
 
   return { ok: true as const, message: "Телефон подтверждён." };
 }

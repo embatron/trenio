@@ -26,7 +26,7 @@ function PrivacyPage() {
           <nav className="privacy-breadcrumbs" aria-label="Breadcrumb">
             <Link to="/">Главная</Link>
             <span>/</span>
-            <span className="is-current">Политика конфиденциальности</span>
+            <span className="is-current" aria-current="page">Политика конфиденциальности</span>
           </nav>
 
           <header className="privacy-header">
@@ -156,7 +156,6 @@ const PRIVACY_CSS = `
 }
 .privacy-breadcrumbs a { color: var(--muted); text-decoration: none; }
 .privacy-breadcrumbs a:hover { color: var(--primary-dark); }
-.privacy-breadcrumbs .is-current { color: var(--text); }
 
 .privacy-header { margin-bottom: 36px; }
 .privacy-title {

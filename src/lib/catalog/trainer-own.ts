@@ -1,5 +1,4 @@
 import { randomBytes } from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { createServerFn } from "@tanstack/react-start";
@@ -8,11 +7,16 @@ import { z } from "zod";
 
 import { requireAuthMiddleware } from "@/auth/middleware";
 import { getDb } from "@/db";
-import { trainerProfiles } from "@/db/schema";
+import { trainerProfiles, users } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
+import { formatBelarusPhone } from "@/lib/auth/phone";
 import { hasAnyRole } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
 import { assertBelarusCity } from "@/lib/catalog/belarus-city.server";
+import { readCertificates, type TrainerCertificate } from "@/lib/catalog/certificate-file";
+import type { TrainerAudience, TrainerFormat } from "@/lib/catalog/published-trainers";
+import { editorHtml, reviewPlainText, sanitizeReviewHtml } from "@/lib/catalog/review-html";
+import { writeImageSet } from "@/lib/images/store";
 import { MAX_TRAINER_SPORTS, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 
 const CYR: Record<string, string> = {
@@ -38,10 +42,17 @@ export type OwnTrainerProfile = {
   phone: string;
   instagram: string;
   telegram: string;
+  email: string;
   experienceYears: number;
+  formats: TrainerFormat[];
+  audiences: TrainerAudience[];
   avatarPath: string;
   slug: string;
-  certificates: string[];
+  photos: string[];
+  certificates: TrainerCertificate[];
+  phoneVerified: boolean;
+  offerAccepted: boolean;
+  privacyAccepted: boolean;
 };
 
 const emptyProfile: OwnTrainerProfile = {
@@ -56,10 +67,17 @@ const emptyProfile: OwnTrainerProfile = {
   phone: "",
   instagram: "",
   telegram: "",
+  email: "",
   experienceYears: 1,
+  formats: [],
+  audiences: [],
   avatarPath: "",
   slug: "",
+  photos: [],
   certificates: [],
+  phoneVerified: false,
+  offerAccepted: false,
+  privacyAccepted: false,
 };
 
 const saveSchema = z.object({
@@ -71,10 +89,12 @@ const saveSchema = z.object({
   city: z.string().trim().max(120),
   district: z.string().trim().max(120),
   priceFrom: z.number().int().min(1).max(1_000_000),
-  phone: z.string().trim().max(32),
   instagram: z.string().trim().max(300),
   telegram: z.string().trim().max(300),
+  email: z.string().trim().max(320),
   experienceYears: z.number().int().min(1).max(80),
+  formats: z.array(z.enum(["individual", "group"])).max(2),
+  audiences: z.array(z.enum(["adult", "teen", "kid"])).max(3),
   image: z.string().max(2_200_000).optional(),
 });
 
@@ -94,28 +114,44 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
   .middleware([requireAuthMiddleware])
   .handler(async ({ context }) => {
     assertTrainer(context.user.roles);
-    const [row] = await getDb()
+    const db = getDb();
+    const [account] = await db
+      .select({ phone: users.phone, phoneVerifiedAt: users.phoneVerifiedAt })
+      .from(users)
+      .where(eq(users.id, context.user.id))
+      .limit(1);
+    const [row] = await db
       .select()
       .from(trainerProfiles)
       .where(eq(trainerProfiles.ownerUserId, context.user.id))
       .limit(1);
-    if (!row) return emptyProfile;
+    const phone = formatBelarusPhone(account?.phone || row?.phone || "");
+    const phoneVerified = account?.phoneVerifiedAt != null;
+    if (!row) return { ...emptyProfile, phone, phoneVerified };
+    const version = row.updatedAt.getTime();
     return {
       fullName: row.fullName,
       headline: row.headline,
       bio: row.bio,
-      about: row.about.join("\n\n"),
+      about: editorHtml(row.about),
       sportSlugs: trainerSportsFromSlugs(row.sports.map((sport) => sport.slug)).slugs,
       city: row.city,
       district: row.district,
       priceFrom: Math.max(1, row.priceFrom ?? 1),
-      phone: row.phone,
+      phone,
       instagram: row.instagramUrl,
       telegram: row.telegram,
+      email: row.email,
       experienceYears: Math.max(1, row.experienceYears || 1),
+      formats: row.formats,
+      audiences: row.audiences,
       avatarPath: row.avatarPath,
       slug: row.slug,
-      certificates: row.certificates.map((item) => `${item}?v=${row.updatedAt.getTime()}`),
+      photos: (row.photos.length > 0 ? row.photos : row.avatarPath ? [row.avatarPath] : []).map((item) => `${item}?v=${version}`),
+      certificates: readCertificates(row.certificates).map((item) => ({ ...item, path: `${item.path}?v=${version}` })),
+      phoneVerified,
+      offerAccepted: row.offerAcceptedAt != null,
+      privacyAccepted: row.privacyAcceptedAt != null,
     };
   });
 
@@ -143,6 +179,12 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
     }
     const sports = picked.sports;
     const city = await assertBelarusCity(data.city);
+    const [account] = await db
+      .select({ phone: users.phone })
+      .from(users)
+      .where(eq(users.id, context.user.id))
+      .limit(1);
+    const phone = formatBelarusPhone(account?.phone || existing?.phone || "");
     let avatarPath = existing?.avatarPath ?? "";
 
     if (data.image) {
@@ -150,10 +192,9 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       if (!match) throw new AuthError("Фото карточки должно быть изображением.", "VALIDATION");
       const buffer = Buffer.from(match[1].replace(/\s/g, ""), "base64");
       if (buffer.length > 1_500_000) throw new AuthError("Фото больше 1,5 МБ.", "VALIDATION");
-      const dir = path.join(process.cwd(), "public", "trainers", "self");
-      await mkdir(dir, { recursive: true });
-      await writeFile(path.join(dir, `${context.user.id}.jpg`), buffer);
-      avatarPath = `/trainers/self/${context.user.id}.jpg?v=${Date.now()}`;
+      const relative = `/trainers/self/${context.user.id}.jpg`;
+      await writeImageSet(buffer, path.join(process.cwd(), "public", relative));
+      avatarPath = `${relative}?v=${Date.now()}`;
     }
 
     const storedAvatar = avatarPath.split("?")[0];
@@ -165,19 +206,25 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       lastName,
       fullName: data.fullName.slice(0, 200),
       headline: data.headline,
-      bio: data.bio,
-      about: data.about.split(/\n\s*\n/).map((item) => item.trim()).filter(Boolean),
+      bio: sanitizeReviewHtml(data.bio),
+      about: (() => {
+        const html = sanitizeReviewHtml(data.about);
+        return reviewPlainText(html) ? [html] : [];
+      })(),
       sports,
       primarySport: sports[0] ?? null,
       city,
       citySlug: city ? slugify(city) : "",
       district: data.district,
       priceFrom: data.priceFrom,
-      phone: data.phone,
+      phone,
       instagramUrl: data.instagram,
       telegram: data.telegram,
+      email: data.email,
       instagramHandle: instagramHandle(data.instagram, context.user.id),
       experienceYears: data.experienceYears,
+      formats: [...new Set(data.formats)],
+      audiences: [...new Set(data.audiences)],
       avatarPath: storedAvatar,
       ...(photos ? { photos } : {}),
       updatedAt: new Date(),

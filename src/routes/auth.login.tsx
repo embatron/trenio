@@ -118,7 +118,7 @@ function LoginPage() {
           <div className="auth-roleswitch auth-roleswitch--3" role="tablist" aria-label="Способ входа">
             {(
               [
-                ["email", "Почта"],
+                ["email", "Почта или ник"],
                 ["phone", "Телефон"],
                 ["telegram", "Telegram"],
               ] as const
@@ -167,19 +167,19 @@ function LoginPage() {
             >
               <HoneypotField />
               <label className="auth-field">
-                <span className="auth-field__label">E-mail</span>
+                <span className="auth-field__label">Почта или ник</span>
                 <input
-                  type="email"
+                  type="text"
                   required
-                  placeholder="you@example.com"
-                  autoComplete="email"
+                  placeholder="you@example.com или nick"
+                  autoComplete="username"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                 />
               </label>
               <label className="auth-field">
                 <span className="auth-field__label">
-                  Пароль
+                  <span>Пароль</span>
                   <Link to="/auth/forgot-password" className="auth-field__hint">
                     Забыли пароль?
                   </Link>

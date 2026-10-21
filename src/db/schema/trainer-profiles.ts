@@ -49,7 +49,7 @@ export const trainerProfiles = pgTable(
   "trainer_profiles",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    slug: varchar("slug", { length: 18 }).notNull(),
+    slug: varchar("slug", { length: 30 }).notNull(),
     instagramHandle: varchar("instagram_handle", { length: 30 }).notNull(),
     sourceUrl: varchar("source_url", { length: 300 }).notNull(),
     status: trainerProfileStatusEnum("status").notNull().default("draft"),
@@ -59,6 +59,8 @@ export const trainerProfiles = pgTable(
     firstName: varchar("first_name", { length: 100 }).notNull().default(""),
     lastName: varchar("last_name", { length: 100 }).notNull().default(""),
     fullName: varchar("full_name", { length: 200 }).notNull().default(""),
+    /** `male` or `female` from the Instagram import. Empty when the name is ambiguous. Staff-only. */
+    gender: varchar("gender", { length: 8 }).notNull().default(""),
     headline: varchar("headline", { length: 200 }).notNull().default(""),
     /** Text shown on the public profile. */
     bio: text("bio").notNull().default(""),
@@ -78,9 +80,11 @@ export const trainerProfiles = pgTable(
     avatarPath: varchar("avatar_path", { length: 300 }).notNull().default(""),
     /** Up to 9 profile photos. The first one is `avatarPath`. */
     photos: jsonb("photos").$type<string[]>().notNull().default([]),
-    /** Certificates and diplomas shown on the public profile. */
-    certificates: jsonb("certificates").$type<string[]>().notNull().default([]),
+    /** Up to five certificates or diplomas. Each item is `{ path, caption }`. Older rows may still store a path string. */
+    certificates: jsonb("certificates").$type<Array<{ path: string; caption: string } | string>>().notNull().default([]),
     phone: varchar("phone", { length: 32 }).notNull().default(""),
+    /** Contact email copied from a public profile. Not confirmed and not a login. */
+    email: varchar("email", { length: 320 }).notNull().default(""),
     website: varchar("website", { length: 300 }).notNull().default(""),
     instagramUrl: varchar("instagram_url", { length: 300 }).notNull().default(""),
     telegram: varchar("telegram", { length: 300 }).notNull().default(""),
@@ -90,6 +94,10 @@ export const trainerProfiles = pgTable(
     /** Unique path, `/trainers/claim/{claimToken}`. Full URL is `APP_URL` plus this path. */
     claimPath: varchar("claim_path", { length: 96 }).notNull(),
     claimedAt: timestamp("claimed_at", { withTimezone: true }),
+    /** Set when the trainer accepts the public offer while claiming the profile. */
+    offerAcceptedAt: timestamp("offer_accepted_at", { withTimezone: true }),
+    privacyAcceptedAt: timestamp("privacy_accepted_at", { withTimezone: true }),
+    offerVersion: varchar("offer_version", { length: 32 }).notNull().default(""),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },

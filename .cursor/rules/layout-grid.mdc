@@ -15,6 +15,7 @@ Tokens and classes live in `src/styles.css`. Do not invent a second width, gutte
 - Use `.layout-container`. A page shell may repeat those two declarations. It may not add a third width.
 - Horizontal padding goes on the content box only. An outer full-bleed block and an inner `max-width` box do not both get gutter padding.
 - Blog and privacy use `.layout-container--prose` (`--layout-prose-max: 760px`). Chrome around them still uses `--layout-max`.
+- The staff cabinet (`/admin`, admin and superadmin only) wraps the page in `.layout-staff`. That class sets `--layout-max` to `--layout-staff-max` (`1680px`), so the header, the cabinet, and the footer on those pages share one wider edge. Trainer cabinet, account, and the public catalog stay on `1240px`. Do not put `.layout-staff` on `/trainer-admin` or `/account`.
 - Gap between columns and cards is `--layout-gap` (24px). Sidebar is `--layout-sidebar-w` (280px) via `.layout-with-sidebar`.
 - A horizontal scroller (icon rail, card rail) uses `.layout-rail`. The track scrolls inside that box. It does not use `100vw` or sit flush with the screen edge.
 - `--layout-gutter` already includes `env(safe-area-inset-*)`. The viewport meta keeps `viewport-fit=cover` so a standalone PWA does not draw content under the notch.
@@ -31,7 +32,7 @@ Shared classes in `src/styles.css`. Do not set `grid-template-columns` on them i
 
 ## Do not
 
-- `max-width: 1120px`, `820px`, `1100px`, or any other content width
+- `max-width: 1120px`, `820px`, `1100px`, `1680px`, or any other content width. The only widths are `--layout-max`, `--layout-staff-max`, and `--layout-prose-max`.
 - `repeat(auto-fill, minmax(...))` for catalog cards
 - A flex-wrap row where the card grid should sit
 - Page CSS that resets `.trainer-grid`, `.cat-grid`, or the other shared grids

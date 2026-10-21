@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
+import { BELARUS_OBLAST_CENTERS } from "@/lib/catalog/city-taxonomy";
 import { pluralRu } from "@/lib/ru-plural";
 
 export const Route = createFileRoute("/clubs/")({
@@ -32,7 +33,7 @@ type ClubItem = {
 
 const CLUBS_LIST: ClubItem[] = [];
 
-const CITIES = ["Все города", "Минск", "Гомель", "Брест", "Гродно", "Витебск", "Могилёв"];
+const CITIES = ["Все города", ...BELARUS_OBLAST_CENTERS];
 const DIRECTIONS = ["Все направления", "Бокс", "Единоборства", "Фитнес", "Йога", "Плавание", "Теннис", "Бег"];
 
 const CSS = `
@@ -124,7 +125,7 @@ function ClubsListPage() {
 
       <section className="clubs-hero">
         <div className="clubs-hero__crumbs">
-          <Link to="/">Главная</Link> · Клубы
+          <Link to="/">Главная</Link> · <span className="is-current" aria-current="page">Клубы</span>
         </div>
         <h1>Спортивные клубы и залы Беларуси</h1>
         <p>Каталог проверенных клубов, студий и залов. Адреса, цены, направления и тренеры — в одном месте.</p>

@@ -2,18 +2,19 @@
   "source": "instagram",
   "sourceUrl": "https://www.instagram.com/farkhad_akhmejanau/",
   "handle": "farkhad_akhmejanau",
-  "slug": "akhmejanau",
+  "slug": "farkhad_akhmejanau",
   "status": "published",
   "claimStatus": "unclaimed",
   "createdSource": "import",
   "firstName": "Farkhad",
   "lastName": "Akhmejanau",
   "fullName": "Farkhad Akhmejanau",
+  "gender": "male",
   "nameQuotes": [
     "Farkhad Akhmejanau"
   ],
   "headline": "Тренер по кикбоксингу",
-  "bio": "Тренер по кикбоксингу / Минск - Групповые/персональные занятия",
+  "bio": "Тренер по кикбоксингу / Минск - Групповые/персональные занятия Prospekt Pushkina 68A, Minsk, Belarus 220002",
   "about": [],
   "pinned": [],
   "sports": [
@@ -24,6 +25,7 @@
       "evidence": "Кикбоксинг"
     }
   ],
+  "practicedSports": [],
   "primarySport": {
     "slug": "kikboksing",
     "parentSlug": "edinoborstva",
@@ -34,16 +36,25 @@
     "Минск"
   ],
   "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
   "languages": [],
   "avatarPath": "/trainers/instagram/farkhad_akhmejanau.jpg",
   "contacts": {
     "instagram": "https://www.instagram.com/farkhad_akhmejanau/",
     "phone": "",
+    "email": "",
+    "telegram": "",
     "website": ""
   },
   "missing": [
     "price",
     "phone",
+    "email",
+    "telegram",
     "pinnedPosts"
   ]
 }

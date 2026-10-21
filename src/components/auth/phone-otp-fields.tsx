@@ -73,6 +73,7 @@ export function PhoneOtpFields({
         <input
           id={`${idPrefix}-phone`}
           type="tel"
+          required
           inputMode="tel"
           autoComplete="tel"
           value={phone || BY_PHONE_COUNTRY_PREFIX}
@@ -83,7 +84,7 @@ export function PhoneOtpFields({
 
       {sent ? (
         <div className="auth-field">
-          <span className="auth-field__label" id={`${idPrefix}-otp-label`}>
+          <span className="auth-field__label is-required" id={`${idPrefix}-otp-label`}>
             Код из SMS
           </span>
           <InputOTP

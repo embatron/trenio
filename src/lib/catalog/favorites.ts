@@ -10,7 +10,7 @@ import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
 
 const favoriteSchema = z.object({
   type: z.enum(["trainer", "club"]),
-  slug: z.string().trim().regex(/^[a-z0-9-]{1,80}$/),
+  slug: z.string().trim().regex(/^[a-z0-9._-]{1,80}$/),
 });
 
 export type FavoriteTarget = z.infer<typeof favoriteSchema>;

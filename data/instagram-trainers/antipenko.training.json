@@ -2,32 +2,33 @@
   "source": "instagram",
   "sourceUrl": "https://www.instagram.com/antipenko.training/",
   "handle": "antipenko.training",
-  "slug": "vladimir-antipenko",
+  "slug": "antipenko.training",
   "status": "published",
   "claimStatus": "unclaimed",
   "createdSource": "import",
   "firstName": "Владимир",
-  "lastName": "Антипенко",
-  "fullName": "Владимир Антипенко",
+  "lastName": "",
+  "fullName": "Владимир",
+  "gender": "male",
   "nameQuotes": [
     "Владимир"
   ],
   "headline": "Тренер по кикбоксингу",
-  "bio": "🙋🏻‍♂️Владимир 📍Минск 🥊Кикбоксинг и бокс 🏋🏻ОФП для любого уровня подготовки ☎️+375(33)637-62-68 📩Вопросы в ЛС @bronxgym.by",
+  "bio": "🙋🏻‍♂️Владимир 📍Минск 🥊Кикбоксинг и бокс 🏋🏻ОФП для любого уровня подготовки 📩Вопросы в ЛС @bronxgym.by",
   "about": [],
   "pinned": [],
   "sports": [
-    {
-      "slug": "boks",
-      "parentSlug": "edinoborstva",
-      "label": "Бокс",
-      "evidence": "Бокс"
-    },
     {
       "slug": "kikboksing",
       "parentSlug": "edinoborstva",
       "label": "Кикбоксинг",
       "evidence": "Кикбоксинг"
+    },
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
     },
     {
       "slug": "ofp",
@@ -36,24 +37,32 @@
       "evidence": "ОФП"
     }
   ],
+  "practicedSports": [],
   "primarySport": {
     "slug": "kikboksing",
     "parentSlug": "edinoborstva",
     "label": "Кикбоксинг"
   },
-  "audiences": ["adult", "teen"],
   "city": "Минск",
-  "cityCandidates": ["Минск"],
+  "cityCandidates": [
+    "Минск"
+  ],
   "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
   "languages": [],
   "avatarPath": "/trainers/instagram/antipenko.training.jpg",
   "contacts": {
     "instagram": "https://www.instagram.com/antipenko.training/",
     "phone": "+375 33 637-62-68",
+    "email": "",
+    "telegram": "https://t.me/antipenko_training",
     "website": ""
   },
   "missing": [
+    "lastName",
     "price",
+    "email",
     "pinnedPosts"
   ]
 }

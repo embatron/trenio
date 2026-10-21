@@ -116,9 +116,9 @@ IP берётся из `CF-Connecting-IP` или `X-Real-IP`. Если в зап
 | `password_reset_tokens`     | Сброс пароля (30 мин)                                   |
 | `email_verification_tokens` | Подтверждение e-mail                                    |
 | `auth_otp_challenges`       | SMS-коды: login, verify_phone, register, reset_password |
-| `trainer_reviews`           | Отзыв авторизованного пользователя о тренере (один на пару user + slug). Статус: на модерации, опубликовано, отклонено. `moderation_note` виден автору |
+| `trainer_reviews`           | Отзыв авторизованного пользователя о тренере (один на пару user + slug). Статус: на модерации, опубликовано, отклонено. `moderation_note` виден автору. Переписка тренера и автора отзыва — `messages`; кнопка «Ответить» только у того, чей сейчас ход |
 | `user_favorites`            | Избранные тренеры и клубы авторизованного пользователя (один на пару user + тип + slug) |
-| `trainer_profiles`          | Черновик карточки тренера: имя, текст, до четырёх видов спорта, один город Беларуси, цена и стаж от 1, Instagram, Telegram, до девяти фото и сертификаты. В каталог попадает только после публикации |
+| `trainer_profiles`          | Черновик карточки тренера: имя, текст, до четырёх видов спорта, один город Беларуси, цена и стаж от 1, Instagram, Telegram, почта контакта без подтверждения, до девяти фото и до пяти сертификатов или дипломов с подписью (PNG, JPG, PDF и другие файлы; на профиле ссылка в новое окно). Импорт кладёт в виды спорта только то, чему человек учит; увлечение остаётся отдельно. Текст актуального «Обо мне» копируется в описание, номер телефона из этого текста убирается. Поле телефона любой карточки — `+375 33 637-62-68`. Импорт без согласия остаётся черновиком («на модерации»). Род определяется при импорте по имени и виден только сотруднику. Привязка здоровается этим именем и выбирает «был» или «была». Адрес и ник равны Instagram (`/trainers/{handle}`), старые именные адреса перенаправляются. Ссылка `/trainers/claim/{token}` видна сотруднику на странице редактирования, пока карточка не опубликована и не привязана: иконка копирует полный адрес, проверка сверяет, что она ещё открывает непривязанную карточку. В таблице тренеров этой проверки нет. После публикации или привязки адрес из кабинета пропадает и открывает публичный профиль. Привязка — после оферты, ника, почты и пароля: аккаунт сразу активен, тренер попадает на редактирование карточки. Ник уникален и не редактируется, смена только через поддержку. Сложность пароля показывается при вводе. Карточка профиля выезжает при первом открытии. В каталог карточка попадает только после публикации |
 
 ### 4.3 Server functions
 
@@ -131,12 +131,12 @@ IP берётся из `CF-Connecting-IP` или `X-Real-IP`. Если в зап
 - `resetPasswordFn`, `verifyEmailFn`, `updateProfileFn` — имя и фамилия текущего аккаунта одним полем; `setAccountAvatarFn` — фото в `public/avatars/`
 - `changePasswordFn` — смена пароля из кабинета по текущему паролю, текущая сессия сохраняется
 - `requestAccountEmailCodeFn`, `confirmAccountEmailCodeFn` — смена почты кодом из письма
-- `requestAccountPhoneCodeFn`, `confirmAccountPhoneCodeFn` — привязка телефона SMS-кодом
+- `requestAccountPhoneCodeFn`, `confirmAccountPhoneCodeFn` — привязка телефона SMS-кодом. Подтверждённый номер записывается и в карточку тренера, если она есть
 - `listTrainerReviewsFn`, `createTrainerReviewFn` — отзывы профиля тренера; создание только с сессией (`requireAuthMiddleware`). Новый отзыв уходит на модерацию
 - `setTrainerReviewStatusFn` — публикация или отклонение отзыва, только `admin` и `superadmin`. Отклонение требует комментарий клиенту и шлёт ему письмо
 - `listTrainerRatingSummariesFn` — средняя оценка и число опубликованных отзывов по тренерам для карточек каталога
 - `listFavoritesFn`, `toggleFavoriteFn` — избранное только с сессией, без срока хранения. Список и переключение вызываются с клиента после отрисовки, без перезагрузки страницы. Гость уходит на вход. Счётчик в шапке виден вошедшему пользователю и ведёт на `/account/favorites`
-- `getAdminShellFn`, `getAdminOverviewFn`, `getAdminTrainersFn`, `saveAdminTrainerFn`, `getAdminTrainerDetailFn`, `saveAdminTrainerPhotoFn`, `getAdminReviewsFn`, `getAdminAccountsFn`, `getAdminFinanceFn`, `getAdminSettingsFn` — отдельные серверные функции разделов `/admin/*` для `admin` и `superadmin`. Виды спорта — не больше четырёх категорий второго уровня. Город выбирается из населённых пунктов Беларуси. Цена и стаж — целые числа. Карточка `/admin/trainers/$slug` редактирует поля, до девяти фото, и показывает входы, события и данные профиля. Фото пишутся в `public/trainers/admin/{slug}/`. Оболочка кабинета одна, у пользователя и тренера свои маршруты: `/account/*`, `/trainer-admin`
+- `getAdminShellFn`, `getAdminOverviewFn`, `getAdminTrainersFn`, `saveAdminTrainerFn`, `getAdminTrainerDetailFn`, `saveAdminTrainerPhotoFn`, `getAdminReviewsFn`, `getAdminAccountsFn`, `getAdminFinanceFn`, `getAdminSettingsFn` — отдельные серверные функции разделов `/admin/*` для `admin` и `superadmin`. Виды спорта — не больше четырёх категорий второго уровня. Город выбирается из населённых пунктов Беларуси. Цена и стаж — целые числа. Карточка `/admin/trainers/$slug` редактирует поля в том же порядке, что и кабинет тренера: имя и заголовок в одной строке, город и район в одной строке, стаж выше контактов, Instagram и Telegram внизу, формат работы и аудитория из таксономии, до девяти фото. Телефон карточки равен телефону привязанного аккаунта и подтверждается SMS. Входы, логи и прочие данные видит только сотрудник. «О себе» и «О занятиях» — тот же короткий редактор, что у отзыва: жирный, курсив, списки. Фото можно перетащить: первое становится главным. При сохранении фото сервер пишет оригинал до 1600 px и производные `s128`, `c320`, `c640`, `w960` рядом с ним, без увеличения и без метаданных. Карточки, поиск, профиль и аватары запрашивают производный файл и возвращаются к оригиналу, если его ещё нет. Файлы лежат в `public/trainers/` и `public/avatars/`. Dev-сервер отдаёт их с диска, не дожидаясь перезапуска. Оболочка кабинета одна, у пользователя и тренера свои маршруты: `/account/*`, `/trainer-admin`
 - `getUserCabinetFn` — свои отзывы, телефон и статус телефона. Кабинет: `/account/reviews`, `/account/bookings`, `/account/favorites`, `/account/settings`
 - `getHomeStatsFn` — блок «в цифрах» на главной: число профилей тренеров, виды спорта и города из `trainer_profiles`, средняя оценка опубликованных отзывов
 - `getOwnTrainerProfileFn`, `saveOwnTrainerProfileFn` — черновик карточки тренера для ролей trainer и club
@@ -278,7 +278,8 @@ src/routes/offline.tsx
 
 | Token / class | Значение |
 | --- | --- |
-| `--layout-max` | `1240px` — ширина контента (header, footer, каталог) |
+| `--layout-max` | `1240px` — ширина контента (header, footer, каталог, кабинет тренера и пользователя) |
+| `--layout-staff-max` | `1680px` — кабинет `/admin` (роли admin и superadmin). Класс `.layout-staff` подменяет `--layout-max`, шапка и подвал на этих страницах стоят на той же кромке |
 | `--layout-prose-max` | `760px` — узкий текст (blog, privacy) |
 | `--layout-gutter` | `clamp(20px, 4vw, 36px)` — горизонтальные отступы |
 | `--layout-section-y` | вертикальные отступы секций |
@@ -289,7 +290,7 @@ src/routes/offline.tsx
 | `.trainer-grid`, `.cat-grid`, `.city-grid`, `.sr-grid` | каталог тренеров: 4 колонки, с 960px — 2, с 640px — 1 |
 | `.section-head`, `.section-title` | заголовки секций, размер `--fs-section`, вес `--fw-heading` |
 
-Контейнер один: фон на всю ширину, содержимое `max-width: var(--layout-max)` и `padding-inline: var(--layout-gutter)`. Горизонтальный padding не ставится и на внешний блок, и на внутренний сразу. Горизонтальные ленты (иконки, карточки) используют `.layout-rail` и не доходят до края экрана. `--layout-gutter` включает `safe-area-inset`, viewport — `viewport-fit=cover`. Карточки тренеров описаны в `styles.css` и одинаковы на главной, в категориях и в городах.
+Контейнер один: фон на всю ширину, содержимое `max-width: var(--layout-max)` и `padding-inline: var(--layout-gutter)`. Кабинет администратора и суперадминистратора шире: оболочка `/admin` носит класс `.layout-staff` и читает `--layout-staff-max`. Каталог, `/account` и `/trainer-admin` остаются на `--layout-max`. Горизонтальный padding не ставится и на внешний блок, и на внутренний сразу. Горизонтальные ленты (иконки, карточки) используют `.layout-rail` и не доходят до края экрана. `--layout-gutter` включает `safe-area-inset`, viewport — `viewport-fit=cover`. Карточки тренеров описаны в `styles.css` и одинаковы на главной, в категориях и в городах.
 
 Типографика тоже в `src/styles.css`. Новые заголовки берут токены, а не `font-weight: 800–900`.
 
@@ -402,10 +403,11 @@ npm run format
 
 | Артефакт                    | Назначение                                                            |
 | --------------------------- | --------------------------------------------------------------------- |
-| `.cursor/rules/layout-grid.mdc` | Главное правило вёрстки: одна сетка на всех экранах (`alwaysApply`) |
+| `.cursor/rules/layout-grid.mdc` | Главное правило вёрстки: одна сетка. Каталог — `--layout-max`, кабинет `/admin` — `--layout-staff-max` (`alwaysApply`) |
 | `.cursor/rules/icons.mdc` | Линейные иконки, один глиф на смысл, спорт через `SportIcon` |
 | `.cursor/rules/process-language.mdc` | Rules, skills, commands, hooks и `AGENTS.md` — английский; UI и `docs/` — русский |
 | `.cursor/rules/visitor-place.mdc` | Город посетителя только через локальную GeoLite2; в поиске — этот город или «Минск»; виды спорта из таксономии |
+| `.cursor/rules/breadcrumbs.mdc` | Последний пункт хлебных крошек — `var(--primary)`; класс `is-current` и `aria-current="page"` |
 | `.cursor/rules/`            | Persistent rules (layout grid, icons, PWA, mobile, stack)             |
 | `.cursor/skills/`           | Workflows: feature dev, PWA audit, mobile audit, docs sync, импорт тренеров из Instagram |
 | `.cursor/commands/hooks.md` | Slash-команда `/hooks` — сетка, иконки, PWA, mobile, docs             |

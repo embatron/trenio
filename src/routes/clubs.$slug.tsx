@@ -280,7 +280,7 @@ function ClubPage() {
           <ol className="breadcrumbs">
             <li><Link to="/">Главная</Link></li>
             <li><a href={`/clubs/${c.city.slug}`}>Клубы в {c.city.label === "Минск" ? "Минске" : c.city.label}</a></li>
-            <li aria-current="page">{c.name}</li>
+            <li className="is-current" aria-current="page">{c.name}</li>
           </ol>
         </nav>
 

@@ -14,7 +14,7 @@ Run this command at the end of a task when layout, PWA, mobile-first, or documen
 
 ## Do this now
 
-1. **Layout grid** — changed screens use `.layout-container` / `.layout-with-sidebar` and the shared card-grid classes from `src/styles.css`. Rule: `.cursor/rules/layout-grid.mdc`.
+1. **Layout grid** — changed screens use `.layout-container` / `.layout-with-sidebar` and the shared card-grid classes from `src/styles.css`. Rule: `.cursor/rules/layout-grid.mdc`. The current breadcrumb uses `is-current`, `aria-current="page"`, and `var(--primary)`. Rule: `.cursor/rules/breadcrumbs.mdc`.
 2. **Icons** — new icons match `.cursor/rules/icons.mdc` (24px line icons, one glyph per idea, sport marks from `SportIcon`).
 3. **PWA audit** — read and apply `.cursor/skills/trenio-pwa-audit/SKILL.md`: manifest, service worker, offline, standalone mode, `public/` assets.
 4. **Mobile audit** — read and apply `.cursor/skills/trenio-mobile-audit/SKILL.md`: 320px layout, touch targets, responsive nav and forms, no hover-only actions.

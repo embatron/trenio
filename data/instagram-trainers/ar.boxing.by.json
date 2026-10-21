@@ -2,18 +2,19 @@
   "source": "instagram",
   "sourceUrl": "https://www.instagram.com/ar.boxing.by/",
   "handle": "ar.boxing.by",
-  "slug": "artem-romanovich",
+  "slug": "ar.boxing.by",
   "status": "published",
   "claimStatus": "unclaimed",
   "createdSource": "import",
   "firstName": "Артём",
   "lastName": "Романович",
   "fullName": "Артём Романович",
+  "gender": "male",
   "nameQuotes": [
     "Романович Артём"
   ],
   "headline": "Тренер по боксу",
-  "bio": "ТРЕНЕР ПО БОКСУ МИНСК проспект Пушкина 68а ▫️групповые и индивидуальные тренировки ▫️зал @bronxgym.by 📲 +375297041326",
+  "bio": "ТРЕНЕР ПО БОКСУ МИНСК проспект Пушкина 68а ▫️групповые и индивидуальные тренировки ▫️зал @bronxgym.by",
   "about": [],
   "pinned": [],
   "sports": [
@@ -24,23 +25,35 @@
       "evidence": "Бокс"
     }
   ],
+  "practicedSports": [],
   "primarySport": {
     "slug": "boks",
     "parentSlug": "edinoborstva",
     "label": "Бокс"
   },
   "city": "Минск",
-  "cityCandidates": ["Минск"],
+  "cityCandidates": [
+    "Минск"
+  ],
   "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
   "languages": [],
   "avatarPath": "/trainers/instagram/ar.boxing.by.jpg",
   "contacts": {
     "instagram": "https://www.instagram.com/ar.boxing.by/",
     "phone": "+375 29 704-13-26",
+    "email": "",
+    "telegram": "",
     "website": ""
   },
   "missing": [
     "price",
+    "email",
+    "telegram",
     "pinnedPosts"
   ]
 }

@@ -87,7 +87,7 @@ function ArticlePage() {
             <span>/</span>
             <span>Статьи</span>
             <span>/</span>
-            <span className="is-current">{article.title}</span>
+            <span className="is-current" aria-current="page">{article.title}</span>
           </nav>
 
           <header className="article-header">
@@ -180,7 +180,6 @@ const ARTICLE_CSS = `
 }
 .article-breadcrumbs a { color: var(--muted); text-decoration: none; }
 .article-breadcrumbs a:hover { color: var(--primary-dark); }
-.article-breadcrumbs .is-current { color: var(--text); }
 
 .article-header { margin-bottom: 28px; }
 .article-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }

@@ -117,7 +117,7 @@ export const loginFn = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     try {
       if (data.honeypot?.trim()) {
-        throw new AuthError("Неверный e-mail или пароль.", "INVALID_CREDENTIALS");
+        throw new AuthError("Неверный логин или пароль.", "INVALID_CREDENTIALS");
       }
       const meta = getRequestMeta();
       consumePasswordLoginLimit(data.email, meta.clientKey);

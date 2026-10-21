@@ -1,12 +1,14 @@
 import { randomBytes } from "node:crypto";
-import { mkdir, unlink, writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { and, avg, count, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 import { requireAuthMiddleware } from "@/auth/middleware";
+import { confirmAccountPhoneCode, requestAccountPhoneCode } from "@/auth/service";
 import { getDb } from "@/db";
 import {
   authOtpChallenges,
@@ -21,10 +23,15 @@ import {
 } from "@/db/schema";
 import { assertStaff, hiddenStaffIds } from "@/lib/admin/access";
 import { AuthError } from "@/lib/auth/errors";
+import { formatBelarusPhone, validateBelarusMobile } from "@/lib/auth/phone";
 import { isStaff } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
 import { assertBelarusCity } from "@/lib/catalog/belarus-city.server";
-import { getPublishedTrainer, PUBLISHED_TRAINERS } from "@/lib/catalog/published-trainers";
+import { CERTIFICATE_CAPTION_MAX, MAX_TRAINER_CERTIFICATES, readCertificates, type TrainerCertificate } from "@/lib/catalog/certificate-file";
+import { genderLabel } from "@/lib/catalog/trainer-gender";
+import { editorHtml, reviewPlainText, sanitizeReviewHtml } from "@/lib/catalog/review-html";
+import { removeImageSet, writeImageSet } from "@/lib/images/store";
+import { getPublishedTrainer, PUBLISHED_TRAINERS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { popularityScore } from "@/lib/catalog/trainer-popularity";
 import { getSportTaxonomyChild, listSecondLevelSports, MAX_TRAINER_SPORTS, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 
@@ -38,11 +45,20 @@ export const TRAINER_PUBLISH_LABEL: Record<TrainerPublishStatus, string> = {
   archived: "В архиве",
 };
 
+function trainerCardPhone(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return "";
+  const formatted = formatBelarusPhone(trimmed);
+  if (!formatted) throw new AuthError(validateBelarusMobile(trimmed) || "Укажите мобильный номер РБ: +375 25/29/33/44 …", "VALIDATION");
+  return formatted;
+}
+
 export type AdminTrainerAccount = {
   id: string;
   name: string;
   email: string;
   phone: string;
+  phoneVerified: boolean;
   status: string;
   roles: UserRole[];
 };
@@ -64,7 +80,10 @@ export type AdminTrainer = {
   phone: string;
   instagram: string;
   telegram: string;
+  email: string;
   experienceYears: number;
+  formats: TrainerFormat[];
+  audiences: TrainerAudience[];
   avatarPath: string;
   createdAt: string;
   reviews: number;
@@ -72,7 +91,36 @@ export type AdminTrainer = {
   popularity: number;
   catalog: boolean;
   account: AdminTrainerAccount | null;
+  claimPath: string;
+  /** The claim link still opens an unclaimed card. */
+  claimOpen: boolean;
+  offerAccepted: boolean;
 };
+
+export type ClaimLinkVerdict = "current" | "used" | "replaced" | "missing";
+
+export function claimLinkOpen(row: { claimPath: string; claimStatus: string; status: string; ownerUserId: string | null }) {
+  return row.status !== "published" && row.claimPath.length > 0 && row.claimStatus === "unclaimed" && !row.ownerUserId;
+}
+
+export function claimLinkVerdict(
+  row: { claimPath: string; claimStatus: string; ownerUserId: string | null } | null,
+  shownPath: string,
+): ClaimLinkVerdict {
+  if (!row?.claimPath) return "missing";
+  if (row.claimPath !== shownPath) return "replaced";
+  if (row.claimStatus !== "unclaimed" || row.ownerUserId) return "used";
+  return "current";
+}
+
+function requestOrigin() {
+  const fallback = (process.env.APP_URL ?? "http://trenio.local").replace(/\/$/, "");
+  try {
+    return new URL(getRequest().url).origin;
+  } catch {
+    return fallback;
+  }
+}
 
 const CYR: Record<string, string> = {
   а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e", ж: "zh", з: "z", и: "i", й: "j",
@@ -107,7 +155,31 @@ function decodeJpeg(image: string) {
   return buffer;
 }
 
-export const MAX_TRAINER_CERTIFICATES = 12;
+export { MAX_TRAINER_CERTIFICATES };
+
+const CERTIFICATE_TYPES: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+  "application/pdf": "pdf",
+  "application/msword": "doc",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+  "text/plain": "txt",
+};
+
+function decodeCertificate(dataUrl: string, fileName: string) {
+  const match = /^data:([^;,]+);base64,([A-Za-z0-9+/=\s]+)$/.exec(dataUrl);
+  if (!match) throw new AuthError("Файл не прочитан.", "VALIDATION");
+  const mime = match[1].toLowerCase() === "image/jpg" ? "image/jpeg" : match[1].toLowerCase();
+  const fromName = fileName.toLowerCase().match(/\.([a-z0-9]{1,8})$/)?.[1];
+  const named = fromName === "jpeg" ? "jpg" : fromName;
+  const ext = CERTIFICATE_TYPES[mime] ?? (named && Object.values(CERTIFICATE_TYPES).includes(named) ? named : "");
+  if (!ext) throw new AuthError("Можно загрузить PNG, JPG, PDF и другие документы.", "VALIDATION");
+  const buffer = Buffer.from(match[2].replace(/\s/g, ""), "base64");
+  if (buffer.length === 0 || buffer.length > 8_000_000) throw new AuthError("Файл больше 8 МБ.", "VALIDATION");
+  return { buffer, ext };
+}
 
 async function editableTrainer(slug: string, user: { id: string; roles: UserRole[] }) {
   const [row] = await getDb().select().from(trainerProfiles).where(eq(trainerProfiles.slug, slug)).limit(1);
@@ -118,24 +190,42 @@ async function editableTrainer(slug: string, user: { id: string; roles: UserRole
   return row;
 }
 
+async function writeTrainerFile(slug: string, folder: string, fileName: string, dataUrl: string) {
+  const { buffer, ext } = decodeCertificate(dataUrl, fileName);
+  const dir = path.join(process.cwd(), "public", "trainers", "admin", slug, folder);
+  await mkdir(dir, { recursive: true });
+  const name = `${Date.now()}-${randomBytes(3).toString("hex")}.${ext}`;
+  await writeFile(path.join(dir, name), buffer);
+  return `/trainers/admin/${slug}/${folder}/${name}`;
+}
+
 async function writeTrainerImage(slug: string, folder: string, image: string) {
   const buffer = decodeJpeg(image);
   const dir = path.join(process.cwd(), "public", "trainers", "admin", slug, folder);
   await mkdir(dir, { recursive: true });
   const name = `${Date.now()}-${randomBytes(3).toString("hex")}.jpg`;
-  await writeFile(path.join(dir, name), buffer);
+  await writeImageSet(buffer, path.join(dir, name));
   return `/trainers/admin/${slug}/${folder}/${name}`;
 }
 
-async function removeTrainerFile(slug: string, stored: string) {
-  const prefix = `/trainers/admin/${slug}/`;
-  if (!stored.startsWith(prefix)) return;
-  await unlink(path.join(process.cwd(), "public", stored)).catch(() => undefined);
+async function removeTrainerFile(_slug: string, stored: string) {
+  if (!stored.startsWith("/trainers/admin/") || stored.includes("..")) return;
+  await removeImageSet(path.join(process.cwd(), "public", stored));
+}
+
+function storedAbout(value: string) {
+  const html = sanitizeReviewHtml(value);
+  return reviewPlainText(html) ? [html] : [];
 }
 
 function versioned(items: string[]) {
   const version = Date.now();
   return items.map((item) => `${item.split("?")[0]}?v=${version}`);
+}
+
+function versionedCertificates(items: TrainerCertificate[]) {
+  const version = Date.now();
+  return items.map((item) => ({ ...item, path: `${item.path.split("?")[0]}?v=${version}` }));
 }
 
 function handleFrom(raw: string, fallback: string) {
@@ -148,7 +238,7 @@ export const MAX_TRAINER_PHOTOS = 9;
 
 const saveSchema = z.object({
   id: z.string().uuid().nullable(),
-  slug: z.string().trim().min(1).max(18),
+  slug: z.string().trim().min(1).max(30),
   status: z.enum(TRAINER_PUBLISH_STATUSES),
   fullName: z.string().trim().max(200),
   headline: z.string().trim().max(200),
@@ -161,7 +251,10 @@ const saveSchema = z.object({
   phone: z.string().trim().max(32),
   instagram: z.string().trim().max(300),
   telegram: z.string().trim().max(300),
+  email: z.string().trim().max(320),
   experienceYears: z.number().int().min(1).max(80),
+  formats: z.array(z.enum(["individual", "group"])).max(2),
+  audiences: z.array(z.enum(["adult", "teen", "kid"])).max(3),
 });
 
 function trainerStats(slug: string, ratings: Map<string, { reviews: number; average: number }>) {
@@ -178,7 +271,7 @@ function isCatalog(slug: string) {
 
 export const getAdminTrainersFn = createServerFn({ method: "GET" })
   .middleware([requireAuthMiddleware])
-  .handler(async ({ context }): Promise<AdminTrainer[]> => {
+  .handler(async ({ context }): Promise<{ origin: string; trainers: AdminTrainer[] }> => {
     assertStaff(context.user.roles);
     const db = getDb();
     const [profileRows, ratingRows] = await Promise.all([
@@ -197,16 +290,23 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         priceFrom: trainerProfiles.priceFrom,
         languages: trainerProfiles.languages,
         phone: trainerProfiles.phone,
+        contactEmail: trainerProfiles.email,
         instagramUrl: trainerProfiles.instagramUrl,
         telegram: trainerProfiles.telegram,
         experienceYears: trainerProfiles.experienceYears,
+        formats: trainerProfiles.formats,
+        audiences: trainerProfiles.audiences,
         avatarPath: trainerProfiles.avatarPath,
         createdAt: trainerProfiles.createdAt,
+        claimPath: trainerProfiles.claimPath,
+        claimStatus: trainerProfiles.claimStatus,
+        offerAcceptedAt: trainerProfiles.offerAcceptedAt,
         ownerId: users.id,
         email: users.email,
         firstName: users.firstName,
         lastName: users.lastName,
         accountPhone: users.phone,
+        accountPhoneVerifiedAt: users.phoneVerifiedAt,
         accountStatus: users.status,
       })
       .from(trainerProfiles)
@@ -248,20 +348,32 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       district: row.district,
       priceFrom: Math.max(1, row.priceFrom ?? 1),
       languages: row.languages.join(", "),
-      phone: row.phone,
+      phone: formatBelarusPhone(row.phone) || row.phone,
       instagram: row.instagramUrl,
       telegram: row.telegram,
+      email: row.contactEmail,
       experienceYears: row.experienceYears,
+      formats: row.formats,
+      audiences: row.audiences,
       avatarPath: row.avatarPath,
       createdAt: row.createdAt.toISOString(),
       ...trainerStats(row.slug, ratings),
       catalog: isCatalog(row.slug),
+      claimPath: row.claimPath,
+      claimOpen: claimLinkOpen({
+        claimPath: row.claimPath,
+        claimStatus: row.claimStatus,
+        status: row.status,
+        ownerUserId: row.ownerId,
+      }),
+      offerAccepted: row.offerAcceptedAt != null,
       account: row.ownerId && !hidden.has(row.ownerId)
         ? {
             id: row.ownerId,
             name: [row.firstName, row.lastName].filter(Boolean).join(" "),
             email: row.email ?? "",
             phone: row.accountPhone ?? "",
+            phoneVerified: row.accountPhoneVerifiedAt != null,
             status: row.accountStatus ?? "",
             roles: rolesByUser.get(row.ownerId) ?? [],
           }
@@ -285,15 +397,24 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       phone: trainer.phone,
       instagram: trainer.instagram,
       telegram: "",
+      email: "",
       experienceYears: trainer.experience ?? 0,
+      formats: trainer.formats,
+      audiences: trainer.audiences,
       avatarPath: trainer.photo,
       createdAt: "",
       ...trainerStats(trainer.slug, ratings),
       catalog: true,
       account: null,
+      claimPath: "",
+      claimOpen: false,
+      offerAccepted: false,
     }));
 
-    return [...fromDb, ...fromCatalog].sort((a, b) => a.fullName.localeCompare(b.fullName, "ru"));
+    return {
+      origin: requestOrigin(),
+      trainers: [...fromDb, ...fromCatalog].sort((a, b) => a.fullName.localeCompare(b.fullName, "ru")),
+    };
   });
 
 export const saveAdminTrainerFn = createServerFn({ method: "POST" })
@@ -325,23 +446,31 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
     }
     const sports: TrainerSportRecord[] = picked.sports;
     const city = await assertBelarusCity(data.city);
+    let phone = trainerCardPhone(data.phone);
+    if (existing?.ownerUserId) {
+      const [owner] = await db.select({ phone: users.phone }).from(users).where(eq(users.id, existing.ownerUserId)).limit(1);
+      if (owner?.phone) phone = formatBelarusPhone(owner.phone);
+    }
     const values = {
       firstName: (parts[0] ?? "").slice(0, 100),
       lastName: parts.slice(1).join(" ").slice(0, 100),
       fullName: data.fullName.slice(0, 200),
       headline: data.headline,
-      bio: data.bio,
-      about: data.about.split(/\n\s*\n/).map((item) => item.trim()).filter(Boolean),
+      bio: sanitizeReviewHtml(data.bio),
+      about: storedAbout(data.about),
       sports,
       primarySport: sports[0] ?? null,
       city,
       citySlug: city ? slugify(city) : "",
       district: data.district,
       priceFrom: data.priceFrom,
-      phone: data.phone,
+      phone,
+      email: data.email,
       instagramUrl: data.instagram,
       telegram: data.telegram,
       experienceYears: data.experienceYears,
+      formats: [...new Set(data.formats)],
+      audiences: [...new Set(data.audiences)],
       status: data.status,
       updatedAt: new Date(),
     };
@@ -362,8 +491,8 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
           sourceUrl: data.instagram || `https://trenio.by/trainers/${data.slug}`,
           claimStatus: "unclaimed",
           createdSource: "admin_created",
-          audiences: published?.audiences ?? [],
-          formats: published?.formats ?? [],
+          audiences: [...new Set(data.audiences)],
+          formats: [...new Set(data.formats)],
           avatarPath: published?.photo ?? "",
           claimToken,
           claimPath: `/trainers/claim/${claimToken}`,
@@ -383,7 +512,27 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
     return { ok: true as const, message: "Профиль тренера сохранён." };
   });
 
-const slugSchema = z.string().trim().min(1).max(18).regex(/^[a-z0-9-]+$/);
+const slugSchema = z.string().trim().min(1).max(30).regex(/^[a-z0-9._-]+$/);
+
+export const checkTrainerClaimLinkFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(z.object({
+    slug: slugSchema,
+    claimPath: z.string().trim().min(1).max(96),
+  }))
+  .handler(async ({ data, context }): Promise<ClaimLinkVerdict> => {
+    assertStaff(context.user.roles);
+    const [row] = await getDb()
+      .select({
+        claimPath: trainerProfiles.claimPath,
+        claimStatus: trainerProfiles.claimStatus,
+        ownerUserId: trainerProfiles.ownerUserId,
+      })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.slug, data.slug))
+      .limit(1);
+    return claimLinkVerdict(row ?? null, data.claimPath);
+  });
 
 const CLAIM_LABEL = { unclaimed: "Не забран", claimed: "Привязан к аккаунту", disputed: "Спор" } as const;
 const SOURCE_LABEL = { self: "Сам тренер", branch_created: "Филиал", admin_created: "Администратор", import: "Импорт" } as const;
@@ -420,9 +569,11 @@ export type AdminTrainerLog = {
 
 export type AdminTrainerFacts = {
   claimStatus: string;
+  gender: string;
   createdSource: string;
   instagramHandle: string;
   telegram: string;
+  email: string;
   sourceBio: string;
   audiences: string;
   formats: string;
@@ -430,6 +581,9 @@ export type AdminTrainerFacts = {
   createdAt: string;
   updatedAt: string;
   claimedAt: string;
+  offerAcceptedAt: string;
+  privacyAcceptedAt: string;
+  offerVersion: string;
   linked: boolean;
   accountName: string;
   accountEmail: string;
@@ -440,9 +594,10 @@ export type AdminTrainerFacts = {
 };
 
 export type AdminTrainerDetail = {
+  origin: string;
   trainer: AdminTrainer;
   photos: string[];
-  certificates: string[];
+  certificates: TrainerCertificate[];
   logins: AdminTrainerLogin[];
   logs: AdminTrainerLog[];
   facts: AdminTrainerFacts;
@@ -484,6 +639,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
               firstName: users.firstName,
               lastName: users.lastName,
               phone: users.phone,
+              phoneVerifiedAt: users.phoneVerifiedAt,
               status: users.status,
               lastLoginAt: users.lastLoginAt,
             })
@@ -569,6 +725,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
     logs.sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
 
     return {
+      origin: requestOrigin(),
       trainer: {
         id: row.id,
         slug: row.slug,
@@ -576,35 +733,47 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         fullName: row.fullName,
         headline: row.headline,
         bio: row.bio,
-        about: row.about.join("\n\n"),
+        about: editorHtml(row.about),
         ...sportSelection(row.sports),
         city: row.city,
         district: row.district,
         priceFrom: Math.max(1, row.priceFrom ?? 1),
         languages: row.languages.join(", "),
-        phone: row.phone,
+        phone: formatBelarusPhone(row.phone) || row.phone,
         instagram: row.instagramUrl,
         telegram: row.telegram,
+        email: row.email,
         experienceYears: row.experienceYears,
+        formats: row.formats,
+        audiences: row.audiences,
         avatarPath: row.avatarPath ? `${row.avatarPath}?v=${version}` : "",
         createdAt: row.createdAt.toISOString(),
         reviews,
         rating: reviews > 0 && Number.isFinite(average) ? average.toFixed(1) : "0",
         popularity: popularityScore({ rating: reviews > 0 ? average.toFixed(1) : "0", reviews }),
         catalog: isCatalog(row.slug),
+        claimPath: row.claimPath,
+        claimOpen: claimLinkOpen({
+          claimPath: row.claimPath,
+          claimStatus: row.claimStatus,
+          status: row.status,
+          ownerUserId: row.ownerUserId,
+        }),
+        offerAccepted: row.offerAcceptedAt != null,
         account: owner
           ? {
               id: owner.id,
               name: [owner.firstName, owner.lastName].filter(Boolean).join(" "),
               email: owner.email,
               phone: owner.phone ?? "",
+              phoneVerified: owner.phoneVerifiedAt != null,
               status: owner.status,
               roles,
             }
           : null,
       },
       photos: (row.photos.length > 0 ? row.photos : row.avatarPath ? [row.avatarPath] : []).map((item) => `${item}?v=${version}`),
-      certificates: row.certificates.map((item) => `${item}?v=${version}`),
+      certificates: versionedCertificates(readCertificates(row.certificates)),
       logins: loginRows.map((login) => ({
         id: login.id,
         createdAt: login.createdAt.toISOString(),
@@ -616,9 +785,11 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
       logs: logs.slice(0, 60),
       facts: {
         claimStatus: CLAIM_LABEL[row.claimStatus],
+        gender: genderLabel(row.gender),
         createdSource: SOURCE_LABEL[row.createdSource],
         instagramHandle: row.instagramHandle,
         telegram: row.telegram,
+        email: row.email,
         sourceBio: row.sourceBio,
         audiences: row.audiences.map((item) => AUDIENCE_LABEL[item]).join(", "),
         formats: row.formats.map((item) => FORMAT_LABEL[item]).join(", "),
@@ -626,6 +797,9 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         createdAt: row.createdAt.toISOString(),
         updatedAt: row.updatedAt.toISOString(),
         claimedAt: row.claimedAt ? row.claimedAt.toISOString() : "",
+        offerAcceptedAt: row.offerAcceptedAt ? row.offerAcceptedAt.toISOString() : "",
+        privacyAcceptedAt: row.privacyAcceptedAt ? row.privacyAcceptedAt.toISOString() : "",
+        offerVersion: row.offerVersion,
         linked: Boolean(owner),
         accountName: owner ? [owner.firstName, owner.lastName].filter(Boolean).join(" ") : "",
         accountEmail: owner?.email ?? "",
@@ -651,18 +825,23 @@ export const addAdminTrainerPhotoFn = createServerFn({ method: "POST" })
   .validator(imageSchema)
   .handler(async ({ data, context }) => {
     const row = await editableTrainer(data.slug, context.user);
-    const base = row.photos.length > 0 ? row.photos : row.avatarPath ? [row.avatarPath.split("?")[0]] : [];
-    if (base.length >= MAX_TRAINER_PHOTOS) {
-      throw new AuthError("Можно загрузить не больше девяти фото.", "VALIDATION");
-    }
-    const stored = await writeTrainerImage(data.slug, "photos", data.image);
-    const photos = [...base, stored];
-    await getDb().update(trainerProfiles).set({
-      photos,
-      avatarPath: photos[0] ?? "",
-      updatedAt: new Date(),
-    }).where(eq(trainerProfiles.id, row.id));
-    return { ok: true as const, photo: versioned([stored])[0], photos: versioned(photos) };
+    const saved = await getDb().transaction(async (tx) => {
+      const [fresh] = await tx.select().from(trainerProfiles).where(eq(trainerProfiles.id, row.id)).for("update").limit(1);
+      if (!fresh) throw new AuthError("Профиль тренера не найден.", "VALIDATION");
+      const base = fresh.photos.length > 0 ? fresh.photos : fresh.avatarPath ? [fresh.avatarPath.split("?")[0]] : [];
+      if (base.length >= MAX_TRAINER_PHOTOS) {
+        throw new AuthError("Можно загрузить не больше девяти фото.", "VALIDATION");
+      }
+      const stored = await writeTrainerImage(data.slug, "photos", data.image);
+      const photos = [...base, stored];
+      await tx.update(trainerProfiles).set({
+        photos,
+        avatarPath: photos[0] ?? "",
+        updatedAt: new Date(),
+      }).where(eq(trainerProfiles.id, fresh.id));
+      return { stored, photos };
+    });
+    return { ok: true as const, photo: versioned([saved.stored])[0], photos: versioned(saved.photos) };
   });
 
 export const removeAdminTrainerPhotoFn = createServerFn({ method: "POST" })
@@ -685,18 +864,70 @@ export const removeAdminTrainerPhotoFn = createServerFn({ method: "POST" })
     return { ok: true as const, photos: versioned(next) };
   });
 
-export const addAdminTrainerCertificateFn = createServerFn({ method: "POST" })
+const orderSchema = z.object({
+  slug: slugSchema,
+  paths: z.array(z.string().trim().min(1).max(300)).max(MAX_TRAINER_PHOTOS),
+});
+
+export const reorderAdminTrainerPhotosFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
-  .validator(imageSchema)
+  .validator(orderSchema)
   .handler(async ({ data, context }) => {
     const row = await editableTrainer(data.slug, context.user);
-    if (row.certificates.length >= MAX_TRAINER_CERTIFICATES) {
-      throw new AuthError("Можно загрузить не больше двенадцати документов.", "VALIDATION");
+    const current = (row.photos.length > 0 ? row.photos : row.avatarPath ? [row.avatarPath] : []).map((item) => item.split("?")[0]).sort();
+    const next = data.paths.map((item) => item.split("?")[0]);
+    const same = next.length === current.length && [...next].sort().every((item, index) => item === current[index]);
+    if (!same) throw new AuthError("Порядок фото не совпадает с сохранёнными файлами.", "VALIDATION");
+    await getDb().update(trainerProfiles).set({
+      photos: next,
+      avatarPath: next[0] ?? "",
+      updatedAt: new Date(),
+    }).where(eq(trainerProfiles.id, row.id));
+    return { ok: true as const, photos: versioned(next) };
+  });
+
+const certificateSchema = z.object({
+  slug: slugSchema,
+  fileName: z.string().trim().min(1).max(180),
+  caption: z.string().trim().min(1).max(CERTIFICATE_CAPTION_MAX),
+  dataUrl: z.string().max(11_000_000),
+});
+
+const captionSchema = z.object({
+  slug: slugSchema,
+  path: z.string().trim().min(1).max(300),
+  caption: z.string().trim().min(1).max(CERTIFICATE_CAPTION_MAX),
+});
+
+export const addAdminTrainerCertificateFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(certificateSchema)
+  .handler(async ({ data, context }) => {
+    const row = await editableTrainer(data.slug, context.user);
+    const current = readCertificates(row.certificates);
+    if (current.length >= MAX_TRAINER_CERTIFICATES) {
+      throw new AuthError("Можно загрузить не больше пяти документов.", "VALIDATION");
     }
-    const stored = await writeTrainerImage(data.slug, "certificates", data.image);
-    const certificates = [...row.certificates, stored];
+    const stored = await writeTrainerFile(data.slug, "certificates", data.fileName, data.dataUrl);
+    const certificates = [...current, { path: stored, caption: data.caption.trim() }];
     await getDb().update(trainerProfiles).set({ certificates, updatedAt: new Date() }).where(eq(trainerProfiles.id, row.id));
-    return { ok: true as const, certificate: versioned([stored])[0], certificates: versioned(certificates) };
+    const shown = versionedCertificates(certificates);
+    return { ok: true as const, certificate: shown[shown.length - 1], certificates: shown };
+  });
+
+export const updateAdminTrainerCertificateFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(captionSchema)
+  .handler(async ({ data, context }) => {
+    const row = await editableTrainer(data.slug, context.user);
+    const target = data.path.split("?")[0];
+    const current = readCertificates(row.certificates);
+    if (!current.some((item) => item.path === target)) {
+      throw new AuthError("Этот документ уже удалён.", "VALIDATION");
+    }
+    const certificates = current.map((item) => item.path === target ? { ...item, caption: data.caption.trim() } : item);
+    await getDb().update(trainerProfiles).set({ certificates, updatedAt: new Date() }).where(eq(trainerProfiles.id, row.id));
+    return { ok: true as const, certificates: versionedCertificates(certificates) };
   });
 
 export const removeAdminTrainerCertificateFn = createServerFn({ method: "POST" })
@@ -705,8 +936,42 @@ export const removeAdminTrainerCertificateFn = createServerFn({ method: "POST" }
   .handler(async ({ data, context }) => {
     const row = await editableTrainer(data.slug, context.user);
     const target = data.path.split("?")[0];
-    const certificates = row.certificates.filter((item) => item !== target);
+    const current = readCertificates(row.certificates);
+    const certificates = current.filter((item) => item.path !== target);
+    if (certificates.length === current.length) {
+      throw new AuthError("Этот документ уже удалён.", "VALIDATION");
+    }
     await removeTrainerFile(data.slug, target);
     await getDb().update(trainerProfiles).set({ certificates, updatedAt: new Date() }).where(eq(trainerProfiles.id, row.id));
-    return { ok: true as const, certificates: versioned(certificates) };
+    return { ok: true as const, certificates: versionedCertificates(certificates) };
+  });
+
+const trainerPhoneSchema = z.object({
+  slug: slugSchema,
+  phone: z.string().trim().min(1).max(32),
+});
+
+async function linkedOwnerId(slug: string, roles: UserRole[]) {
+  assertStaff(roles);
+  const row = await editableTrainer(slug, { id: "", roles });
+  if (!row.ownerUserId) {
+    throw new AuthError("Подтверждение по SMS доступно, когда к карточке привязан аккаунт.", "VALIDATION");
+  }
+  return row.ownerUserId;
+}
+
+export const requestAdminTrainerPhoneCodeFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(trainerPhoneSchema)
+  .handler(async ({ data, context }) => {
+    const ownerId = await linkedOwnerId(data.slug, context.user.roles);
+    return requestAccountPhoneCode(ownerId, data.phone);
+  });
+
+export const confirmAdminTrainerPhoneCodeFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(trainerPhoneSchema.extend({ code: z.string().trim().min(4).max(8) }))
+  .handler(async ({ data, context }) => {
+    const ownerId = await linkedOwnerId(data.slug, context.user.roles);
+    return confirmAccountPhoneCode(ownerId, data.phone, data.code);
   });

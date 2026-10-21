@@ -1,17 +1,18 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
-import { CityEntityInput } from "@/components/city-entity-input";
-import { SportEntityInput } from "@/components/sport-entity-input";
-import { TrainerMediaField } from "@/components/trainer-media-field";
+import { AdminClaimLink } from "@/components/admin-trainers-table";
+import { TablePager, useTablePage } from "@/components/table-pager";
+import { TrainerCardFields, type TrainerCardValues } from "@/components/trainer-card-fields";
 import {
   addAdminTrainerCertificateFn,
+  updateAdminTrainerCertificateFn,
   addAdminTrainerPhotoFn,
-  MAX_TRAINER_CERTIFICATES,
-  MAX_TRAINER_PHOTOS,
+  confirmAdminTrainerPhoneCodeFn,
   removeAdminTrainerCertificateFn,
   removeAdminTrainerPhotoFn,
+  reorderAdminTrainerPhotosFn,
+  requestAdminTrainerPhoneCodeFn,
   saveAdminTrainerFn,
   TRAINER_PUBLISH_LABEL,
   TRAINER_PUBLISH_STATUSES,
@@ -20,6 +21,7 @@ import {
   type TrainerPublishStatus,
 } from "@/lib/admin/trainers";
 import { authErrorMessage } from "@/lib/auth/errors";
+import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import type { UserRole } from "@/lib/auth/types";
@@ -46,12 +48,6 @@ function formatWhen(value: string) {
   return value ? when.format(new Date(value)) : "—";
 }
 
-function atLeastOne(raw: string, max: number) {
-  const value = Number(raw);
-  if (!Number.isInteger(value) || value < 1) return 1;
-  return Math.min(value, max);
-}
-
 function draftFrom(trainer: AdminTrainer): Draft {
   const { catalog: _catalog, account: _account, ...fields } = trainer;
   return {
@@ -67,14 +63,20 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
   const save = useAuthServerFn(saveAdminTrainerFn);
   const addPhoto = useAuthServerFn(addAdminTrainerPhotoFn);
   const removePhoto = useAuthServerFn(removeAdminTrainerPhotoFn);
+  const reorderPhotos = useAuthServerFn(reorderAdminTrainerPhotosFn);
   const addCertificate = useAuthServerFn(addAdminTrainerCertificateFn);
+  const updateCertificate = useAuthServerFn(updateAdminTrainerCertificateFn);
   const removeCertificate = useAuthServerFn(removeAdminTrainerCertificateFn);
+  const requestPhone = useAuthServerFn(requestAdminTrainerPhoneCodeFn);
+  const confirmPhone = useAuthServerFn(confirmAdminTrainerPhoneCodeFn);
   const [tab, setTab] = useState<TabId>("profile");
   const [draft, setDraft] = useState<Draft>(() => draftFrom(detail.trainer));
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
   const { facts } = detail;
+  const logins = useTablePage(detail.logins);
+  const logs = useTablePage(detail.logs);
 
   function setField<K extends keyof Draft>(key: K, value: Draft[K]) {
     setDraft((current) => ({ ...current, [key]: value }));
@@ -83,6 +85,12 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
   return (
     <article className="cabinet-card">
       <h2>{detail.trainer.fullName || detail.trainer.slug}</h2>
+      <p className="cabinet-gender">Род: {facts.gender}</p>
+      {detail.trainer.claimOpen ? (
+        <div className="cabinet-claim-bar">
+          <AdminClaimLink origin={detail.origin} trainer={detail.trainer} />
+        </div>
+      ) : null}
       <div className="cabinet-tabs" role="tablist" aria-label="Карточка тренера">
         {TABS.map((item) => (
           <button
@@ -120,7 +128,10 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
                 phone: draft.phone,
                 instagram: draft.instagram,
                 telegram: draft.telegram,
+                email: draft.email,
                 experienceYears: draft.experienceYears,
+                formats: draft.formats,
+                audiences: draft.audiences,
               },
             })
               .then(() => {
@@ -131,99 +142,61 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
               .finally(() => setPending(false));
           }}
         >
-          <TrainerMediaField
-            initial={detail.photos}
-            max={MAX_TRAINER_PHOTOS}
-            addLabel="Загрузить фото"
-            doneLabel="Фото загружено"
-            onUpload={async (image) => {
-              const result = await addPhoto({ data: { slug: draft.slug, image } }) as { photo: string };
-              return result.photo;
+          <TrainerCardFields
+            nick={draft.slug}
+            values={draft}
+            onChange={(values: TrainerCardValues) => setDraft((current) => ({ ...current, ...values }))}
+            photos={{
+              initial: detail.photos,
+              onUpload: async (image) => {
+                const result = await addPhoto({ data: { slug: draft.slug, image } }) as { photo: string };
+                return result.photo;
+              },
+              onRemove: async (path) => {
+                await removePhoto({ data: { slug: draft.slug, path } });
+              },
+              onReorder: async (paths) => {
+                await reorderPhotos({ data: { slug: draft.slug, paths } });
+              },
             }}
-            onRemove={async (path) => {
-              await removePhoto({ data: { slug: draft.slug, path } });
-            }}
-          />
-          <p className="cabinet-note">До девяти фото. Первое показывается в списке тренеров.</p>
-          <label>
-            <span>Статус публикации</span>
-            <select value={draft.status} onChange={(event) => setField("status", event.target.value as TrainerPublishStatus)}>
-              {TRAINER_PUBLISH_STATUSES.map((status) => (
-                <option key={status} value={status}>{TRAINER_PUBLISH_LABEL[status]}</option>
-              ))}
-            </select>
-          </label>
-          <label><span>Имя и фамилия</span><input value={draft.fullName} maxLength={200} onChange={(event) => setField("fullName", event.target.value)} /></label>
-          <label><span>Заголовок</span><input value={draft.headline} maxLength={200} onChange={(event) => setField("headline", event.target.value)} /></label>
-          <label><span>О себе</span><textarea value={draft.bio} maxLength={4000} onChange={(event) => setField("bio", event.target.value)} /></label>
-          <div className="cabinet-media-block">
-            <span className="cabinet-media__label">Сертификаты и дипломы</span>
-            <TrainerMediaField
-              initial={detail.certificates}
-              max={MAX_TRAINER_CERTIFICATES}
-              addLabel="Загрузить документ"
-              doneLabel="Документ загружен"
-              onUpload={async (image) => {
-                const result = await addCertificate({ data: { slug: draft.slug, image } }) as { certificate: string };
+            certificates={{
+              initial: detail.certificates,
+              onUpload: async (file, caption) => {
+                const result = await addCertificate({ data: { slug: draft.slug, fileName: file.name, caption, dataUrl: file.dataUrl } }) as { certificate: TrainerCertificate };
                 return result.certificate;
-              }}
-              onRemove={async (path) => {
+              },
+              onCaption: async (path, caption) => {
+                await updateCertificate({ data: { slug: draft.slug, path, caption } });
+              },
+              onRemove: async (path) => {
                 await removeCertificate({ data: { slug: draft.slug, path } });
-              }}
-            />
-          </div>
-          <label><span>О занятиях</span><textarea value={draft.about} maxLength={8000} onChange={(event) => setField("about", event.target.value)} /></label>
-          <p className="cabinet-note">Более подробное описание позволит лучше раскрыть вас и собрать отклики.</p>
-          <label>
-            <span>Виды спорта</span>
-            <SportEntityInput value={draft.sportSlugs} onChange={(sportSlugs) => setField("sportSlugs", sportSlugs)} />
-          </label>
-          <p className="cabinet-note">Не больше четырёх, из категорий второго уровня.</p>
-          <label>
-            <span>Город</span>
-            <CityEntityInput value={draft.city} onChange={(city) => setField("city", city)} />
-          </label>
-          <p className="cabinet-note">Только населённый пункт Беларуси.</p>
-          <label><span>Район</span><input value={draft.district} maxLength={120} onChange={(event) => setField("district", event.target.value)} /></label>
-          <label>
-            <span>Цена от, BYN</span>
-            <input
-              type="number"
-              inputMode="numeric"
-              min={1}
-              max={1000000}
-              step={1}
-              value={draft.priceFrom}
-              onChange={(event) => setField("priceFrom", atLeastOne(event.target.value, 1_000_000))}
-            />
-          </label>
-          <label><span>Телефон на карточке</span><input value={draft.phone} maxLength={32} onChange={(event) => setField("phone", event.target.value)} /></label>
-          <label>
-            <span>Instagram</span>
-            <div className="cabinet-brand-field">
-              <InstagramIcon />
-              <input value={draft.instagram} maxLength={300} placeholder="https://instagram.com/…" onChange={(event) => setField("instagram", event.target.value)} />
-            </div>
-          </label>
-          <label>
-            <span>Telegram</span>
-            <div className="cabinet-brand-field">
-              <TelegramIcon />
-              <input value={draft.telegram} maxLength={300} placeholder="https://t.me/…" onChange={(event) => setField("telegram", event.target.value)} />
-            </div>
-          </label>
-          <label>
-            <span>Общий тренерский стаж, лет</span>
-            <input
-              type="number"
-              inputMode="numeric"
-              min={1}
-              max={80}
-              step={1}
-              value={draft.experienceYears}
-              onChange={(event) => setField("experienceYears", atLeastOne(event.target.value, 80))}
-            />
-          </label>
+              },
+            }}
+            phone={detail.trainer.account ? {
+              linked: true,
+              value: detail.trainer.account.phone || draft.phone,
+              verified: detail.trainer.account.phoneVerified,
+              onRequest: async (phone) => (await requestPhone({ data: { slug: draft.slug, phone } })) as { message: string; already?: boolean; devCode?: string },
+              onConfirm: async (phone, code) => (await confirmPhone({ data: { slug: draft.slug, phone, code } })) as { message: string },
+              onVerified: () => {
+                void router.invalidate();
+              },
+            } : {
+              linked: false,
+              value: draft.phone,
+              onChange: (phone) => setField("phone", phone),
+            }}
+            leading={(
+              <label>
+                <span>Статус публикации</span>
+                <select value={draft.status} onChange={(event) => setField("status", event.target.value as TrainerPublishStatus)}>
+                  {TRAINER_PUBLISH_STATUSES.map((status) => (
+                    <option key={status} value={status}>{TRAINER_PUBLISH_LABEL[status]}</option>
+                  ))}
+                </select>
+              </label>
+            )}
+          />
           <p className="cabinet-note">
             <a href={`/trainers/${draft.slug}`} target="_blank" rel="noopener noreferrer">Открыть карточку в каталоге</a>
           </p>
@@ -241,6 +214,7 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
             {facts.linked ? "Входов пока нет." : "Аккаунт не привязан, поэтому входов нет. Карточка создана отдельно от регистрации."}
           </p>
         ) : (
+          <>
           <div className="cabinet-table-wrap">
             <table className="cabinet-table">
               <thead>
@@ -252,7 +226,7 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
                 </tr>
               </thead>
               <tbody>
-                {detail.logins.map((login) => (
+                {logins.rows.map((login) => (
                   <tr key={login.id}>
                     <td>{formatWhen(login.createdAt)}</td>
                     <td>{login.active ? "Сессия открыта" : "Сессия закрыта"}</td>
@@ -263,12 +237,15 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
               </tbody>
             </table>
           </div>
+          <TablePager page={logins.page} pages={logins.pages} total={logins.total} from={logins.from} to={logins.to} onPage={logins.setPage} />
+          </>
         )
       ) : null}
       {tab === "logs" ? (
         detail.logs.length === 0 ? (
           <p className="cabinet-empty">Событий пока нет.</p>
         ) : (
+          <>
           <div className="cabinet-table-wrap">
             <table className="cabinet-table">
               <thead>
@@ -279,7 +256,7 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
                 </tr>
               </thead>
               <tbody>
-                {detail.logs.map((entry, index) => (
+                {logs.rows.map((entry, index) => (
                   <tr key={`${entry.at}-${entry.title}-${index}`}>
                     <td>{formatWhen(entry.at)}</td>
                     <td>{entry.title}</td>
@@ -289,17 +266,23 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
               </tbody>
             </table>
           </div>
+          <TablePager page={logs.page} pages={logs.pages} total={logs.total} from={logs.from} to={logs.to} onPage={logs.setPage} />
+          </>
         )
       ) : null}
       {tab === "facts" ? (
         <dl className="cabinet-facts">
+          <div><dt>Род</dt><dd>{facts.gender}</dd></div>
           <div><dt>Привязка</dt><dd>{facts.linked ? facts.claimStatus : "Аккаунт не привязан"}</dd></div>
           <div><dt>Откуда карточка</dt><dd>{facts.createdSource}</dd></div>
           <div><dt>Instagram</dt><dd>{facts.instagramHandle || "—"}</dd></div>
           <div><dt>Telegram</dt><dd>{facts.telegram || "—"}</dd></div>
+          <div><dt>Почта в карточке</dt><dd>{facts.email || "—"}</dd></div>
           <div><dt>Создана</dt><dd>{formatWhen(facts.createdAt)}</dd></div>
           <div><dt>Изменена</dt><dd>{formatWhen(facts.updatedAt)}</dd></div>
           <div><dt>Забрана</dt><dd>{formatWhen(facts.claimedAt)}</dd></div>
+          <div><dt>Оферта</dt><dd>{facts.offerAcceptedAt ? `принята ${formatWhen(facts.offerAcceptedAt)}, редакция ${facts.offerVersion || "—"}` : "не принята"}</dd></div>
+          <div><dt>Обработка данных</dt><dd>{facts.privacyAcceptedAt ? `согласие ${formatWhen(facts.privacyAcceptedAt)}` : "нет согласия"}</dd></div>
           <div><dt>Аудитория</dt><dd>{facts.audiences || "—"}</dd></div>
           <div><dt>Формат</dt><dd>{facts.formats || "—"}</dd></div>
           <div><dt>Текст из источника</dt><dd>{facts.sourceBio || "—"}</dd></div>

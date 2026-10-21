@@ -94,7 +94,8 @@ AGENTS.md             # Entry point для агентов
 | `/categories/$parentSlug/$childSlug` | `categories.$parentSlug.$childSlug.tsx` | Конкретный вид спорта внутри категории                        |
 | `/category/*`                       | `category.*.tsx`                     | Редирект на `/categories/*` (legacy)                          |
 | `/city/$slug`           | `city.$slug.tsx`           | Спорт в городе                                                |
-| `/trainers/$slug`       | `trainers.$slug.tsx`       | Профиль тренера                                               |
+| `/trainers/$slug`       | `trainers.$slug.tsx`       | Профиль тренера. Фото листаются, миниатюры едут вместе. Карандаш редактирования — в правом верхнем углу текста. У отзыва аватар аккаунта, без фото — картинка по имени. Тренер не пишет отзыв себе. «Ответить» видит только он, затем автор отзыва, по очереди |
+| `/trainers/claim/$token` | `trainers.claim.$token.tsx` | Привязка импортированной карточки: оферта, логин и пароль. После публикации или привязки тот же адрес открывает публичный профиль |
 | `/favorites`            | `favorites.tsx`            | Редирект на `/account/favorites`                              |
 | `/account`              | `account.tsx`              | Оболочка кабинета. `/account` открывает отзывы                |
 | `/account/reviews`      | `account.reviews.tsx`      | Свои отзывы и статус                                          |
@@ -110,14 +111,16 @@ AGENTS.md             # Entry point для агентов
 | `/auth/reset-password`  | `auth.reset-password.tsx`  | Новый пароль по токену                                        |
 | `/auth/verify-email`    | `auth.verify-email.tsx`    | Подтверждение e-mail                                          |
 | `/admin`                | `admin.tsx`, `admin.index.tsx` | Оболочка кабинета администратора и обзор |
-| `/admin/trainers`       | `admin.trainers.index.tsx` | Таблица тренеров: аватар, имя ведёт в карточку, фильтр и сортировка. «Не привязан» — у карточки нет пользователя |
+| `/admin/trainers`       | `admin.trainers.index.tsx` | Таблица тренеров: имя целиком, телефон, категория, «С кем», рейтинг звездой, значение и число отзывов в скобках, аккаунт, Instagram и Telegram если указаны. Поиск по всем полям. Иконка открывает публичный профиль, иконка карандаша — редактирование |
 | `/admin/trainers/$slug` | `admin.trainers.$slug.tsx` | Карточка тренера: поля, до 9 фото, город Беларуси, входы, логи и данные |
-| `/admin/reviews`        | `admin.reviews.tsx`        | Модерация отзывов |
-| `/admin/accounts`       | `admin.accounts.tsx`       | Аккаунты |
+| `/admin/reviews`        | `admin.reviews.tsx`        | Модерация отзывов: фильтр по статусу, категории и виду спорта, сортировка. Имя отправителя открывает клиента. Списки кабинетов — по 50 записей |
+| `/admin/accounts`       | `admin.accounts.index.tsx` | Аккаунты |
+| `/admin/accounts/$id`   | `admin.accounts.$id.tsx`   | Профиль клиента: почта, телефон, роли. Обычный администратор не открывает суперадмина |
 | `/admin/finance`        | `admin.finance.tsx`        | Бухгалтерия, раздел в разработке |
 | `/admin/settings`       | `admin.settings.tsx`       | Параметры аккаунта администратора |
-| `/trainer-admin`        | `trainer-admin.tsx`        | Кабинет тренера. Также открыт клубу и сотрудникам             |
+| `/trainer-admin`        | `trainer-admin.tsx`        | Кабинет тренера: профиль как у админа и вкладка отзывов. Также открыт клубу и сотрудникам |
 | `/privacy`              | `privacy.tsx`              | Политика конфиденциальности                                   |
+| `/offer`                | `offer.tsx`                | Договор оферты для размещения профиля тренера                 |
 
 Полная целевая карта URL (включая backend и SEO-страницы каталога) — в [PRODUCT.md §3](./PRODUCT.md#3-маршруты-и-страницы).
 

@@ -33,6 +33,7 @@
 7. **No `src/server/auth/`** — canonical auth path is `src/auth/`; server fns in `src/lib/auth/functions.ts`.
 8. **Docs sync** — after structural changes, update relevant `docs/` files (see TECH_SPEC §12). Product docs stay Russian; this file and `.cursor/` stay English (`.cursor/rules/process-language.mdc`).
 9. **Visitor city** — resolve the city with local GeoLite2 (`ip-location-api`). Do not call a hosted geo API. The `trenio_place` cookie stores the city name, not the IP. Catalog search shows that city, or `Минск` when none is known. See `.cursor/rules/visitor-place.mdc`.
+10. **Breadcrumbs** — the current page crumb uses `is-current` and `aria-current="page"`. Its color is `var(--primary)`. See `.cursor/rules/breadcrumbs.mdc`.
 
 ## Stack quick reference
 
