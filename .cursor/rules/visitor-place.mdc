@@ -11,6 +11,8 @@ The catalog suggests a Belarus city from the visitor IP. The lookup stays on our
 
 Use `ip-location-api` with the free GeoLite2 City database (`language: ru`, `smallMemory: true`, `licenseKey: redist`). Database files live in `data/geoip/` and are not committed. Refresh them with `npm run geoip:update`.
 
+Keep `ILA_FIELDS` as `country,city,area,latitude,longitude` in both the lookup and `scripts/update-geoip.mjs`. The map sorts trainers by those coordinates. The place cookie still stores only the settlement name.
+
 Do not call ip-api, ipinfo, ipstack, or any other hosted geolocation API to resolve a city. A public IP echo (such as ipify) is allowed only when the request itself has no public address, so the server can look that IP up locally.
 
 ## What to store

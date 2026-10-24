@@ -24,7 +24,7 @@ Rule: `.cursor/rules/layout-grid.mdc`. Tokens: `src/styles.css`.
 
 - [ ] Header logo, page title, and footer brand share one left edge
 - [ ] Content box is `--layout-max` with `--layout-gutter` once (no double padding)
-- [ ] Cards use the shared grid classes: trainer catalogs (`.trainer-grid`, `.cat-grid`, `.city-grid`, `.sr-grid`) are 4 columns; other card grids are 3. Both become 2 at 960px and 1 at 640px
+- [ ] Cards use the shared grid classes: trainer catalogs (`.trainer-grid`, `.cat-grid`) and favorites (`.favorites-grid`) are 3 columns. Search (`.sr-grid`), `.city-grid`, and `.card-grid--4` stay 4. All of them become 2 at 960px and 1 at 640px
 - [ ] Route CSS does not override `grid-template-columns` on those classes
 - [ ] Sidebar layout uses `.layout-with-sidebar` and stacks at 960px
 - [ ] Horizontal rails (`.layout-rail`) keep the same inline inset as the header; the track does not touch the screen edge

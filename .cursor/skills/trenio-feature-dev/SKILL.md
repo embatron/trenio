@@ -11,7 +11,7 @@ description: >-
 
 ## Before coding
 
-1. Read `docs/TECH_SPEC.md` and relevant product/account docs
+1. Read `docs/TECH_SPEC.md` and relevant product/account docs. For direct messages, also read `.cursor/skills/trenio-messages/SKILL.md`
 2. Confirm scope: route-only UI vs server fn + DB
 3. Plan mobile layout first (320px), then desktop
 

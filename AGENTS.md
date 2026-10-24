@@ -51,6 +51,7 @@
 | `.cursor/skills/trenio-mobile-audit/` | UI/layout/responsive changes. Command: `/mobile-adapt` |
 | `.cursor/skills/trenio-docs-sync/` | After tasks — sync documentation |
 | `.cursor/skills/trenio-instagram-trainers/` | Import public Instagram trainer profiles into drafts. Command: `/import-instagram-trainers` |
+| `.cursor/skills/trenio-messages/` | Direct messages: who can write, composer, receipts, polling. Rule: `.cursor/rules/messages.mdc` |
 
 ## Hooks
 

@@ -27,7 +27,8 @@ Shared classes in `src/styles.css`. Do not set `grid-template-columns` on them i
 | Classes | Columns |
 | --- | --- |
 | `.card-grid`, `.clubs-grid`, `.categories-grid` | 3, then 2 at `960px`, then 1 at `640px` |
-| `.card-grid--4`, `.cat-clubs-row`, `.city-districts`, `.trainer-grid`, `.cat-grid`, `.city-grid`, `.sr-grid` | 4, then 2 at `960px`, then 1 at `640px` |
+| `.trainer-grid`, `.cat-grid`, `.favorites-grid` | 3, then 2 at `960px`, then 1 at `640px` |
+| `.card-grid--4`, `.cat-clubs-row`, `.city-districts`, `.city-grid`, `.sr-grid` | 4, then 2 at `960px`, then 1 at `640px` |
 | `.layout-with-sidebar` | `280px + 1fr`, then 1 column at `960px` |
 
 ## Do not

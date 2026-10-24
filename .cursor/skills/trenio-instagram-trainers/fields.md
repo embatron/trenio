@@ -26,6 +26,8 @@ The name and the description are decided in sequential thinking, then checked by
 
 ## Name
 
+`firstName` and `lastName` stay separate in the draft, the database, and the cabinet form. `fullName` is only those two joined. Public cards, the profile title, similar trainers, and the admin table show the given name on one line and the surname on the next.
+
 The given name is whatever the profile or a pinned caption actually writes. A header that shows only a surname is not a reason to leave `firstName` empty when a pin writes the given name beside that surname. A handle is the file id, not a name. Role words (`тренер`, `coach`, `trainer`, `training`) are not given names.
 
 ## Description
