@@ -7,6 +7,7 @@ import { formatBelarusPhone } from "../lib/auth/phone";
 import { closeDb } from "./index";
 import { upsertImportedTrainer, type ImportedTrainerDraft } from "./trainer-profiles";
 import { PUBLISHED_TRAINERS } from "../lib/catalog/published-trainers";
+import { joinTrainerName } from "../lib/catalog/trainer-name";
 
 type DraftFile = {
   handle: string;
@@ -55,7 +56,7 @@ async function sync() {
       createdSource: draft.createdSource ?? "import",
       firstName: draft.firstName,
       lastName: draft.lastName,
-      fullName: draft.fullName,
+      fullName: joinTrainerName(draft.firstName, draft.lastName) || draft.fullName,
       gender: draft.gender,
       headline: draft.headline,
       bio: draft.bio || published?.bio || "",
@@ -64,12 +65,12 @@ async function sync() {
       pinned: draft.pinned ?? [],
       sports: draft.sports ?? [],
       primarySport: draft.primarySport ?? null,
-      audiences: published?.audiences ?? [],
+      audiences: published?.audiences?.length ? published.audiences : ["adult"],
       formats: draft.formats?.length ? draft.formats : published?.formats ?? [],
       city: draft.city,
       citySlug: published?.city.slug,
       district: published?.district ?? "",
-      priceFrom: draft.priceFrom ?? null,
+      priceFrom: draft.priceFrom ?? published?.priceFrom ?? null,
       languages: draft.languages ?? [],
       avatarPath: draft.avatarPath || published?.photo || "",
       phone: formatBelarusPhone(draft.contacts?.phone || published?.phone || ""),

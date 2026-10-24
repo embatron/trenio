@@ -13,7 +13,11 @@ import type { PublicUser } from "@/lib/auth/schemas";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CatalogMiss } from "@/components/catalog-miss";
 import { FavoritesProvider } from "@/components/favorites-store";
+import { MessagesLive } from "@/components/messages/messages-live";
+import { Toaster } from "@/components/ui/sonner";
 import { getSessionFn } from "@/lib/auth/functions";
+import { unreadCountFn } from "@/lib/messages/functions";
+import { EMPTY_MESSAGING, type MessagingSummary } from "@/lib/messages/schemas";
 
 function httpStatus(error: unknown): number | undefined {
   if (!error || typeof error !== "object") return undefined;
@@ -84,10 +88,18 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
   user: PublicUser | null;
+  messaging: MessagingSummary;
 }>()({
   beforeLoad: async () => {
     const user = await getSessionFn();
-    return { user };
+    if (!user) return { user, messaging: EMPTY_MESSAGING };
+    try {
+      const messaging = await unreadCountFn({ data: {} });
+      return { user, messaging };
+    } catch (error) {
+      console.error("[messages] unread", error instanceof Error ? error.message : "unknown");
+      return { user, messaging: EMPTY_MESSAGING };
+    }
   },
   head: () => ({
     meta: [
@@ -131,13 +143,16 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function RootComponent() {
-  const { queryClient, user } = Route.useRouteContext();
+  const { queryClient, user, messaging } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
       <FavoritesProvider userId={user?.id ?? null}>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
+        <MessagesLive userId={user?.id ?? null} initial={messaging}>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+          <Toaster />
+        </MessagesLive>
       </FavoritesProvider>
     </QueryClientProvider>
   );

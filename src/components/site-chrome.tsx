@@ -1,10 +1,16 @@
 import { Link, useRouteContext } from "@tanstack/react-router";
 import { useFavorites } from "@/components/favorites-store";
-import { getCabinetPath } from "@/lib/auth/roles";
+import { useMessaging } from "@/components/messages/messages-live";
+import { logoutFn } from "@/lib/auth/functions";
+import { getCabinetPath, hasAnyRole, isStaff } from "@/lib/auth/roles";
+import type { UserRole } from "@/lib/auth/types";
+import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { pluralRu } from "@/lib/ru-plural";
 import { CategoryLink } from "@/lib/catalog/category-routes";
 import { BELARUS_OBLAST_CENTERS } from "@/lib/catalog/city-taxonomy";
+import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
+import { TrainerName } from "@/components/trainer-name";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const CHROME_CSS = `
@@ -116,6 +122,30 @@ body.is-search-docked .site-header__search {
 .favorite-count.has-items { color: var(--primary); }
 .favorite-count.has-items svg { fill: currentColor; }
 .icon-btn--help { font-size: 15px; font-weight: var(--fw-title); letter-spacing: 0; }
+.account-menu { position: relative; }
+.account-menu__panel {
+  display: none; position: absolute; z-index: 40; top: 100%; right: 0; padding-top: 8px;
+}
+.account-menu.is-open .account-menu__panel { display: block; }
+.account-menu__card {
+  min-width: 220px; padding: 6px; border: 1px solid rgba(var(--primary-rgb), 0.14);
+  border-radius: var(--card-radius); background: var(--light-bg);
+  box-shadow: 0 18px 46px rgba(var(--primary-rgb), 0.16); display: grid;
+}
+.account-menu__item {
+  min-height: 44px; padding: 0 12px; border: 0; border-radius: var(--radius-control);
+  background: transparent; color: var(--text); display: flex; align-items: center; gap: 10px;
+  font: inherit; font-size: 14px; font-weight: var(--fw-title); text-align: left;
+  text-decoration: none; cursor: pointer; white-space: nowrap;
+}
+.account-menu__item svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+.account-menu__item:hover { background: var(--white); color: var(--primary-dark); }
+.account-menu__count { margin-left: auto; min-width: 1.5em; color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); font-variant-numeric: tabular-nums; line-height: 1; text-align: right; }
+.account-menu__count.is-hot { color: var(--primary); }
+.account-menu__rule { height: 1px; margin: 4px 8px; background: rgba(var(--primary-rgb), 0.16); }
+.account-menu__logout { color: var(--muted); }
+.account-menu__logout:hover { color: var(--primary-dark); }
+.account-menu__logout:disabled { cursor: default; opacity: 0.7; }
 .burger-btn { width: 44px; padding: 0; min-width: 0; }
 .burger-btn__bars { display: inline-flex; flex-direction: column; gap: 5px; }
 .burger-btn__bars span { width: 20px; height: 2px; background: currentColor; border-radius: 2px; transition: transform 0.2s ease, opacity 0.2s ease; }
@@ -266,8 +296,111 @@ export function Logo({ className }: { className?: string }) {
   );
 }
 
+type AccountMenuTo = "/account/messages" | "/account/reviews" | "/account/bookings" | "/account/favorites" | "/account/settings";
+type AdminMenuTo = "/admin" | "/admin/trainers" | "/admin/reviews" | "/admin/messages" | "/admin/accounts" | "/admin/finance" | "/admin/settings";
+type TrainerTab = "settings" | "card" | "reviews";
+
+type HeaderMenuItem =
+  | { id: string; label: string; kind: "account"; to: AccountMenuTo }
+  | { id: string; label: string; kind: "admin"; to: AdminMenuTo }
+  | { id: string; label: string; kind: "trainer"; search?: { tab: TrainerTab } }
+  | { id: string; label: string; kind: "trainer-messages" };
+
+const ACCOUNT_MENU: HeaderMenuItem[] = [
+  { id: "messages", label: "Сообщения", kind: "account", to: "/account/messages" },
+  { id: "reviews", label: "Мои отзывы", kind: "account", to: "/account/reviews" },
+  { id: "bookings", label: "Мои записи", kind: "account", to: "/account/bookings" },
+  { id: "favorites", label: "Избранное", kind: "account", to: "/account/favorites" },
+  { id: "settings", label: "Настройки", kind: "account", to: "/account/settings" },
+];
+
+const TRAINER_MENU: HeaderMenuItem[] = [
+  { id: "overview", label: "Обзор", kind: "trainer" },
+  { id: "settings", label: "Настройки", kind: "trainer", search: { tab: "settings" } },
+  { id: "card", label: "Профиль тренера", kind: "trainer", search: { tab: "card" } },
+  { id: "reviews", label: "Отзывы", kind: "trainer", search: { tab: "reviews" } },
+  { id: "favorites", label: "Избранное", kind: "account", to: "/account/favorites" },
+  { id: "messages", label: "Сообщения", kind: "trainer-messages" },
+];
+
+const ADMIN_MENU: HeaderMenuItem[] = [
+  { id: "overview", label: "Обзор", kind: "admin", to: "/admin" },
+  { id: "trainers", label: "Тренеры", kind: "admin", to: "/admin/trainers" },
+  { id: "reviews", label: "Отзывы", kind: "admin", to: "/admin/reviews" },
+  { id: "messages", label: "Сообщения", kind: "admin", to: "/admin/messages" },
+  { id: "accounts", label: "Аккаунты", kind: "admin", to: "/admin/accounts" },
+  { id: "finance", label: "Бухгалтерия", kind: "admin", to: "/admin/finance" },
+  { id: "settings", label: "Настройки", kind: "admin", to: "/admin/settings" },
+];
+
+function headerMenuFor(roles: UserRole[]): HeaderMenuItem[] {
+  if (isStaff(roles)) return ADMIN_MENU;
+  if (hasAnyRole(roles, ["trainer", "club"])) return TRAINER_MENU;
+  return ACCOUNT_MENU;
+}
+
+function MenuCount({ count }: { count?: number }) {
+  if (typeof count !== "number") return null;
+  return <span className={`account-menu__count${count > 0 ? " is-hot" : ""}`}>{count > 99 ? "99+" : count}</span>;
+}
+
+function menuCounts(roles: UserRole[], own: number, inbox: number, favorites: number | undefined): Record<string, number | undefined> {
+  if (isStaff(roles)) return {};
+  if (hasAnyRole(roles, ["trainer", "club"])) return { messages: inbox, favorites };
+  return { messages: own, bookings: 0, favorites };
+}
+
+function HeaderMenuLink({ item, count, onNavigate }: { item: HeaderMenuItem; count?: number; onNavigate: () => void }) {
+  const props = { className: "account-menu__item", onClick: onNavigate };
+  const body = <><span>{item.label}</span><MenuCount count={count} /></>;
+  if (item.kind === "trainer") {
+    return <Link to="/trainer-admin" search={item.search ?? {}} {...props}>{body}</Link>;
+  }
+  if (item.kind === "trainer-messages") {
+    return <Link to="/trainer-admin/messages" {...props}>{body}</Link>;
+  }
+  if (item.kind === "admin") {
+    return <Link to={item.to} {...props}>{body}</Link>;
+  }
+  return <Link to={item.to} {...props}>{body}</Link>;
+}
+
 function AccountButton() {
   const { user } = useRouteContext({ from: "__root__" });
+  const [open, setOpen] = useState(false);
+  const [pending, setPending] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const closeTimer = useRef(0);
+  const pointerType = useRef("mouse");
+  const holdClosed = useRef(false);
+  const logout = useAuthServerFn(logoutFn);
+  const messaging = useMessaging();
+  const { keys, ready } = useFavorites();
+
+  useEffect(() => () => window.clearTimeout(closeTimer.current), []);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      holdClosed.current = true;
+      setOpen(false);
+      rootRef.current?.querySelector("a")?.focus();
+      window.setTimeout(() => {
+        holdClosed.current = false;
+      }, 0);
+    };
+    const onPointer = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointer);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointer);
+    };
+  }, [open]);
+
   if (!user) {
     return (
       <Link to="/auth/login" className="icon-btn" aria-label="Войти" title="Войти">
@@ -275,11 +408,85 @@ function AccountButton() {
       </Link>
     );
   }
+
   const name = [user.firstName, user.lastName].filter(Boolean).join(" ");
+  const items = headerMenuFor(user.roles);
+  const counts = menuCounts(user.roles, messaging.own, messaging.inbox, ready ? keys.length : undefined);
+  const show = () => {
+    if (holdClosed.current) return;
+    window.clearTimeout(closeTimer.current);
+    setOpen(true);
+  };
+  const hideSoon = () => {
+    window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(() => setOpen(false), 140);
+  };
+
   return (
-    <Link to={getCabinetPath(user.roles)} className="icon-btn" aria-label={`${name}, вы вошли`} title={name}>
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 19.2c1.2-2.6 3.5-3.8 6.5-3.8s5.3 1.2 6.5 3.8"/></svg>
-    </Link>
+    <div
+      className={`account-menu${open ? " is-open" : ""}`}
+      ref={rootRef}
+      onPointerEnter={(event) => {
+        if (event.pointerType === "mouse") show();
+      }}
+      onPointerLeave={(event) => {
+        if (event.pointerType !== "mouse") return;
+        const active = document.activeElement;
+        if (active && rootRef.current?.contains(active)) return;
+        hideSoon();
+      }}
+      onFocus={() => {
+        if (window.matchMedia("(hover: hover)").matches) show();
+      }}
+      onBlur={(event) => {
+        if (!window.matchMedia("(hover: hover)").matches) return;
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) hideSoon();
+      }}
+    >
+      <Link
+        to={getCabinetPath(user.roles)}
+        className="icon-btn"
+        aria-label={`${name}, вы вошли`}
+        aria-haspopup="true"
+        aria-expanded={open}
+        aria-controls="account-menu"
+        title={name}
+        onPointerDown={(event) => {
+          if (pointerType.current === "touch" && event.pointerType === "mouse") return;
+          pointerType.current = event.pointerType;
+        }}
+        onClick={(event) => {
+          const touch = pointerType.current !== "mouse" || window.matchMedia("(hover: none)").matches;
+          if (!touch) return;
+          event.preventDefault();
+          setOpen((value) => !value);
+        }}
+      >
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 19.2c1.2-2.6 3.5-3.8 6.5-3.8s5.3 1.2 6.5 3.8"/></svg>
+      </Link>
+      <nav className="account-menu__panel" id="account-menu" aria-label="Кабинет">
+        <div className="account-menu__card">
+          {items.map((item) => <HeaderMenuLink key={item.id} item={item} count={counts[item.id]} onNavigate={() => setOpen(false)} />)}
+          <div className="account-menu__rule" />
+          <button
+            type="button"
+            className="account-menu__item account-menu__logout"
+            disabled={pending}
+            onClick={() => {
+              setPending(true);
+              void logout()
+                .then(() => {
+                  window.location.href = "/auth/login";
+                })
+                .finally(() => setPending(false));
+            }}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M14 6l-6 6 6 6"/><path d="M8 12h7"/></svg>
+            {pending ? "Выход…" : "Выйти"}
+          </button>
+        </div>
+      </nav>
+    </div>
   );
 }
 
@@ -322,20 +529,34 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           <div className="mega-col">
             <h5>Города</h5>
             <ul>
-              {BELARUS_OBLAST_CENTERS.map((city) => (
-                <li key={city}><Link to="/" onClick={onClose}>{city}</Link></li>
-              ))}
+              {BELARUS_OBLAST_CENTERS.map((city) => {
+                const slug = cityCatalogSlug(city);
+                return (
+                  <li key={city}>
+                    {slug ? (
+                      <Link to="/city/$slug" params={{ slug }} onClick={onClose}>{city}</Link>
+                    ) : (
+                      <Link to="/" onClick={onClose}>{city}</Link>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
           <div className="mega-col">
             <h5>Клиентам</h5>
             <ul>
               <li><Link to="/" onClick={onClose}>Найти тренера</Link></li>
+              <li><Link to="/map" search={{ sports: undefined }} onClick={onClose}>На карте</Link></li>
               <li><Link to="/clubs" onClick={onClose}>Клубы и залы</Link></li>
               <li><Link to="/blog/$slug" params={{ slug: "kak-vybrat-trenera" }} onClick={onClose}>Как выбрать тренера</Link></li>
               <li><Link to="/auth/signup" onClick={onClose}>Создать аккаунт</Link></li>
               {user ? (
-                <li><Link to={getCabinetPath(user.roles)} onClick={onClose}>{user.firstName}</Link></li>
+                <li>
+                  <Link to={getCabinetPath(user.roles)} onClick={onClose}>
+                    <TrainerName firstName={user.firstName} lastName={user.lastName} empty="Кабинет" />
+                  </Link>
+                </li>
               ) : (
                 <li><Link to="/auth/login" onClick={onClose}>Войти</Link></li>
               )}
@@ -363,6 +584,25 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
       </div>
     </>
   );
+}
+
+function MessageCount() {
+  const { user } = useRouteContext({ from: "__root__" });
+  const messaging = useMessaging();
+  if (!user) return null;
+  const staff = hasAnyRole(user.roles, ["admin", "superadmin"]);
+  const trainerInbox = hasAnyRole(user.roles, ["trainer", "club"]) && messaging.inbox > 0 && messaging.own === 0;
+  const label = `Сообщения, ${messaging.total}`;
+  const className = `icon-btn favorite-count message-count${messaging.total > 0 ? " has-items" : ""}`;
+  const icon = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 6l8 6 8-6" /></svg>;
+  const count = <span className="favorite-count__n">{messaging.total > 99 ? "99+" : messaging.total}</span>;
+  if (trainerInbox) {
+    return <Link to="/trainer-admin/messages" className={className} aria-label={label} title="Сообщения">{icon}{count}</Link>;
+  }
+  if (staff && messaging.total === 0) {
+    return <Link to="/admin/messages" className={className} aria-label={label} title="Сообщения">{icon}{count}</Link>;
+  }
+  return <Link to="/account/messages" className={className} aria-label={label} title="Сообщения">{icon}{count}</Link>;
 }
 
 function FavoriteCount() {
@@ -435,6 +675,7 @@ export function SiteHeader({ middleSlot }: { middleSlot?: ReactNode }) {
           <div className="site-header__search">{middleSlot ?? <CatalogSearchForm variant="header" />}</div>
           <nav className="site-header__nav" aria-label="Основное меню">
             <Link to="/" className="icon-btn icon-btn--help" aria-label="Помощь" title="Помощь">?</Link>
+            <MessageCount />
             <FavoriteCount />
             <AccountButton />
             <button
@@ -472,6 +713,7 @@ export function SiteFooter() {
               <h4>Поиск</h4>
               <div className="site-footer__links">
                 <Link to="/">Тренеры</Link>
+                <Link to="/map" search={{ sports: undefined }}>На карте</Link>
                 <Link to="/clubs">Клубы</Link>
                 <Link to="/categories/">Категории</Link>
               </div>

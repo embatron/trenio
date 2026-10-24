@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 
 import { and, eq, ne } from "drizzle-orm";
 
+import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { inferTrainerGender, type TrainerGender } from "@/lib/catalog/trainer-gender";
 import { instagramProfileSlug } from "@/lib/catalog/trainer-slugs";
 import { getDb } from "./index";
@@ -41,14 +42,6 @@ export type ImportedTrainerDraft = {
   experienceYears?: number;
 };
 
-const CITY_SLUGS: Record<string, string> = {
-  Минск: "minsk",
-  Гомель: "gomel",
-  Брест: "brest",
-  Гродно: "grodno",
-  Витебск: "vitebsk",
-  Могилёв: "mogilev",
-};
 
 export function claimPathFor(token: string) {
   return `/trainers/claim/${token}`;
@@ -98,10 +91,10 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
     pinnedPosts: draft.pinned ?? [],
     sports: draft.sports ?? [],
     primarySport: draft.primarySport ?? null,
-    audiences: draft.audiences ?? [],
+    audiences: draft.audiences?.length ? draft.audiences : ["adult"],
     formats: draft.formats ?? [],
     city: draft.city,
-    citySlug: draft.citySlug || CITY_SLUGS[draft.city] || "",
+    citySlug: draft.citySlug || cityCatalogSlug(draft.city) || "",
     district: draft.district ?? "",
     priceFrom: draft.priceFrom ?? null,
     languages: draft.languages ?? [],

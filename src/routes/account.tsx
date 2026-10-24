@@ -2,17 +2,20 @@ import { createFileRoute, Outlet, redirect, useRouterState } from "@tanstack/rea
 import { useState } from "react";
 
 import { CabinetShell, type AccountSectionPath } from "@/components/cabinet";
+import { useFavorites } from "@/components/favorites-store";
+import { useMessaging } from "@/components/messages/messages-live";
 import { logoutFn } from "@/lib/auth/functions";
 import { ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { getUserCabinetFn } from "@/lib/cabinet";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 
-const SECTIONS: Array<{ id: string; label: string; icon: "reviews" | "bookings" | "favorites" | "profile"; to: AccountSectionPath }> = [
+const SECTIONS: Array<{ id: string; label: string; icon: "reviews" | "bookings" | "favorites" | "profile" | "messages"; to: AccountSectionPath }> = [
+  { id: "messages", label: "Сообщения", icon: "messages", to: "/account/messages" },
   { id: "reviews", label: "Мои отзывы", icon: "reviews", to: "/account/reviews" },
   { id: "bookings", label: "Мои записи", icon: "bookings", to: "/account/bookings" },
   { id: "favorites", label: "Избранное", icon: "favorites", to: "/account/favorites" },
-  { id: "settings", label: "Параметры", icon: "profile", to: "/account/settings" },
+  { id: "settings", label: "Настройки", icon: "profile", to: "/account/settings" },
 ];
 
 export const Route = createFileRoute("/account")({
@@ -31,23 +34,35 @@ export const Route = createFileRoute("/account")({
 
 function AccountLayout() {
   const { user } = Route.useRouteContext();
+  const { cabinet } = Route.useLoaderData();
+  const messaging = useMessaging();
+  const { keys, ready } = useFavorites();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [pending, setPending] = useState(false);
   const logout = useAuthServerFn(logoutFn);
   if (!user) return null;
 
-  const name = [user.firstName, user.lastName].filter(Boolean).join(" ");
   const role = user.roles.map((item) => ROLE_LABELS[item]).join(", ");
-  const active = SECTIONS.find((item) => pathname === item.to)?.id ?? "reviews";
+  const active = pathname.startsWith("/account/messages")
+    ? "messages"
+    : SECTIONS.find((item) => pathname === item.to)?.id ?? "reviews";
+  const items = SECTIONS.map((item) => {
+    if (item.id === "messages") return { ...item, badge: messaging.own };
+    if (item.id === "reviews") return { ...item, badge: cabinet.reviews.length };
+    if (item.id === "bookings") return { ...item, badge: 0 };
+    if (item.id === "favorites") return { ...item, badge: ready ? keys.length : undefined };
+    return item;
+  });
 
   return (
     <CabinetShell
       title="Личный кабинет"
-      lede="Ваши отзывы, записи и сохранённые карточки."
-      name={name}
+      lede="Ваши сообщения, отзывы и сохранённые карточки."
+      firstName={user.firstName}
+      lastName={user.lastName}
       role={role}
       avatarUrl={user.avatarPath || null}
-      items={SECTIONS}
+      items={items}
       active={active}
       logoutPending={pending}
       onLogout={() => {

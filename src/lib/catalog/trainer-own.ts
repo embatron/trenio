@@ -14,10 +14,13 @@ import { hasAnyRole } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
 import { assertBelarusCity } from "@/lib/catalog/belarus-city.server";
 import { readCertificates, type TrainerCertificate } from "@/lib/catalog/certificate-file";
-import type { TrainerAudience, TrainerFormat } from "@/lib/catalog/published-trainers";
+import { effectiveAudiences, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
+import { joinTrainerName, trainerNameParts } from "@/lib/catalog/trainer-name";
 import { editorHtml, reviewPlainText, sanitizeReviewHtml } from "@/lib/catalog/review-html";
 import { writeImageSet } from "@/lib/images/store";
 import { MAX_TRAINER_SPORTS, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
+import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
+import { placesFromProfile, placesShape, type TrainerPlace } from "@/lib/geo/schemas";
 
 const CYR: Record<string, string> = {
   а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e", ж: "zh", з: "z", и: "i", й: "j",
@@ -31,13 +34,15 @@ function slugify(value: string, max = 18) {
 }
 
 export type OwnTrainerProfile = {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   headline: string;
   bio: string;
   about: string;
   sportSlugs: string[];
   city: string;
   district: string;
+  places: TrainerPlace[];
   priceFrom: number;
   phone: string;
   instagram: string;
@@ -56,13 +61,15 @@ export type OwnTrainerProfile = {
 };
 
 const emptyProfile: OwnTrainerProfile = {
-  fullName: "",
+  firstName: "",
+  lastName: "",
   headline: "",
   bio: "",
   about: "",
   sportSlugs: [],
   city: "",
   district: "",
+  places: [],
   priceFrom: 1,
   phone: "",
   instagram: "",
@@ -70,7 +77,7 @@ const emptyProfile: OwnTrainerProfile = {
   email: "",
   experienceYears: 1,
   formats: [],
-  audiences: [],
+  audiences: ["adult"],
   avatarPath: "",
   slug: "",
   photos: [],
@@ -81,13 +88,15 @@ const emptyProfile: OwnTrainerProfile = {
 };
 
 const saveSchema = z.object({
-  fullName: z.string().trim().max(200),
+  firstName: z.string().trim().max(100),
+  lastName: z.string().trim().max(100),
   headline: z.string().trim().max(200),
   bio: z.string().trim().max(4000),
   about: z.string().trim().max(8000),
   sportSlugs: z.array(z.string().trim().min(1).max(40)).max(MAX_TRAINER_SPORTS),
   city: z.string().trim().max(120),
   district: z.string().trim().max(120),
+  ...placesShape,
   priceFrom: z.number().int().min(1).max(1_000_000),
   instagram: z.string().trim().max(300),
   telegram: z.string().trim().max(300),
@@ -129,14 +138,17 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
     const phoneVerified = account?.phoneVerifiedAt != null;
     if (!row) return { ...emptyProfile, phone, phoneVerified };
     const version = row.updatedAt.getTime();
+    const name = trainerNameParts(row.firstName, row.lastName, row.fullName);
     return {
-      fullName: row.fullName,
+      firstName: name.firstName,
+      lastName: name.lastName,
       headline: row.headline,
       bio: row.bio,
       about: editorHtml(row.about),
       sportSlugs: trainerSportsFromSlugs(row.sports.map((sport) => sport.slug)).slugs,
       city: row.city,
       district: row.district,
+      places: placesFromProfile(row),
       priceFrom: Math.max(1, row.priceFrom ?? 1),
       phone,
       instagram: row.instagramUrl,
@@ -144,7 +156,7 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
       email: row.email,
       experienceYears: Math.max(1, row.experienceYears || 1),
       formats: row.formats,
-      audiences: row.audiences,
+      audiences: effectiveAudiences(row.audiences),
       avatarPath: row.avatarPath,
       slug: row.slug,
       photos: (row.photos.length > 0 ? row.photos : row.avatarPath ? [row.avatarPath] : []).map((item) => `${item}?v=${version}`),
@@ -167,9 +179,8 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       .where(eq(trainerProfiles.ownerUserId, context.user.id))
       .limit(1);
 
-    const parts = data.fullName.split(/\s+/).filter(Boolean);
-    const firstName = (parts[0] ?? "").slice(0, 100);
-    const lastName = parts.slice(1).join(" ").slice(0, 100);
+    const firstName = data.firstName.trim().slice(0, 100);
+    const lastName = data.lastName.trim().slice(0, 100);
     const picked = trainerSportsFromSlugs(data.sportSlugs);
     if (picked.slugs.length > MAX_TRAINER_SPORTS) {
       throw new AuthError("Можно выбрать не больше четырёх видов спорта.", "VALIDATION");
@@ -197,6 +208,8 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       avatarPath = `${relative}?v=${Date.now()}`;
     }
 
+    const places = await resolveTrainingPlaces(data.places, existing ? placesFromProfile(existing) : []);
+    const mirror = mirrorTrainingPlace(places);
     const storedAvatar = avatarPath.split("?")[0];
     const photos = data.image
       ? [storedAvatar, ...(existing?.photos ?? []).filter((item) => item !== storedAvatar)].slice(0, 9)
@@ -204,7 +217,7 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
     const values = {
       firstName,
       lastName,
-      fullName: data.fullName.slice(0, 200),
+      fullName: joinTrainerName(firstName, lastName),
       headline: data.headline,
       bio: sanitizeReviewHtml(data.bio),
       about: (() => {
@@ -216,6 +229,11 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       city,
       citySlug: city ? slugify(city) : "",
       district: data.district,
+      trainingPlaces: places,
+      address: mirror.address,
+      addressLat: mirror.addressLat,
+      addressLng: mirror.addressLng,
+      geocodeStatus: mirror.geocodeStatus,
       priceFrom: data.priceFrom,
       phone,
       instagramUrl: data.instagram,
@@ -224,7 +242,7 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       instagramHandle: instagramHandle(data.instagram, context.user.id),
       experienceYears: data.experienceYears,
       formats: [...new Set(data.formats)],
-      audiences: [...new Set(data.audiences)],
+      audiences: effectiveAudiences(data.audiences),
       avatarPath: storedAvatar,
       ...(photos ? { photos } : {}),
       updatedAt: new Date(),
@@ -237,7 +255,7 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       }
       await db.update(trainerProfiles).set(values).where(eq(trainerProfiles.id, existing.id));
     } else {
-      const slugBase = slugify(data.fullName || context.user.firstName);
+      const slugBase = slugify(joinTrainerName(firstName, lastName) || context.user.firstName);
       let slug = slugBase;
       const [clash] = await db.select({ id: trainerProfiles.id }).from(trainerProfiles).where(eq(trainerProfiles.slug, slug)).limit(1);
       if (clash) slug = `${slugBase.slice(0, 14)}-${context.user.id.slice(0, 3)}`.slice(0, 18);

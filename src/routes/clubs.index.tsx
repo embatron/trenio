@@ -50,8 +50,8 @@ const CSS = `
 
 .clubs-toolbar { position: sticky; top: 72px; z-index: 80; background: rgba(255,245,245,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(var(--dark-rgb), 0.06); padding-block: 14px; }
 .clubs-toolbar__inner { max-width: var(--layout-max); margin: 0 auto; padding-inline: var(--layout-gutter); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
-.chip-select { position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px; border: 1.5px solid rgba(var(--dark-rgb), 0.12); background: #fff; font-size: 14px; font-weight: var(--fw-heading); color: var(--dark); cursor: pointer; }
-.chip-select select { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.chip-select { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px solid rgba(var(--dark-rgb), 0.12); background: #fff; font-size: 14px; font-weight: var(--fw-heading); color: var(--dark); cursor: pointer; }
+.chip-select select { position: absolute; inset: 0; opacity: 0; cursor: pointer; font-size: 14px; }
 .chip-select svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .toolbar-spacer { flex: 1; }
 .toolbar-count { font-size: 14px; color: var(--muted); font-weight: var(--fw-title); }

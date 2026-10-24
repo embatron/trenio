@@ -31,10 +31,6 @@ function showPhone(phone: string | null) {
   return constrainBelarusPhoneInput(phone);
 }
 
-function joinName(user: PublicUser) {
-  return [user.firstName, user.lastName].filter(Boolean).join(" ");
-}
-
 async function fileToJpeg(file: File): Promise<string> {
   const url = URL.createObjectURL(file);
   try {
@@ -75,7 +71,8 @@ export function AccountProfileForm({
   const requestPhone = useAuthServerFn(requestAccountPhoneCodeFn);
   const confirmPhone = useAuthServerFn(confirmAccountPhoneCodeFn);
   const uploadAvatar = useAuthServerFn(setAccountAvatarFn);
-  const [name, setName] = useState(joinName(user));
+  const [firstName, setFirstName] = useState(user.firstName);
+  const [lastName, setLastName] = useState(user.lastName ?? "");
   const [email, setEmail] = useState(user.email);
   const [emailEditing, setEmailEditing] = useState(false);
   const [emailCode, setEmailCode] = useState("");
@@ -105,13 +102,14 @@ export function AccountProfileForm({
         className="cabinet-form"
         onSubmit={(event) => {
           event.preventDefault();
-          const next = name.trim();
-          if (!next) {
+          const nextFirst = firstName.trim();
+          const nextLast = lastName.trim();
+          if (!nextFirst) {
             fail(new Error("Укажите имя."));
             return;
           }
           setPending(true);
-          void updateProfile({ data: { name: next } })
+          void updateProfile({ data: { firstName: nextFirst, lastName: nextLast } })
             .then(async () => {
               ok("Имя сохранено.");
               await router.invalidate();
@@ -121,7 +119,7 @@ export function AccountProfileForm({
         }}
       >
         <div className="cabinet-avatar">
-          {avatarUrl ? <PhotoImage className="cabinet-avatar__photo" src={avatarUrl} alt="" preset="avatar" width={72} height={72} /> : <UserAvatar name={name} size={72} />}
+          {avatarUrl ? <PhotoImage className="cabinet-avatar__photo" src={avatarUrl} alt="" preset="avatar" width={72} height={72} /> : <UserAvatar name={[firstName, lastName].filter(Boolean).join(" ")} size={72} />}
           <label className="cabinet-edit">
             Изменить фото
             <input
@@ -146,10 +144,16 @@ export function AccountProfileForm({
             />
           </label>
         </div>
-        <label>
-          <span>Имя и фамилия</span>
-          <input required value={name} maxLength={200} autoComplete="name" onChange={(event) => setName(event.target.value)} />
-        </label>
+        <div className="cabinet-form__row">
+          <label>
+            <span>Имя</span>
+            <input required value={firstName} maxLength={100} autoComplete="given-name" onChange={(event) => setFirstName(event.target.value)} />
+          </label>
+          <label>
+            <span>Фамилия</span>
+            <input value={lastName} maxLength={100} autoComplete="family-name" onChange={(event) => setLastName(event.target.value)} />
+          </label>
+        </div>
         <label>
           <span className="cabinet-form__label-row">
             <span>

@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { FavoriteButton } from "@/components/favorite-button";
+import { TrainerContactIcons } from "@/components/messages/trainer-contact-icons";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { pluralRu } from "@/lib/ru-plural";
 
@@ -164,7 +165,7 @@ const CSS = `
 .direction-card__meta { font-size: 13px; font-weight: var(--fw-body); color: var(--muted); line-height: 1.4; }
 
 .club-trainer-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
-.club-trainer-card { display: flex; flex-direction: column; min-width: 0; border: 1px solid rgba(var(--dark-rgb),0.06); border-radius: var(--card-radius); background: var(--white); color: inherit; text-decoration: none; overflow: hidden; box-shadow: 0 8px 28px rgba(var(--dark-rgb),0.04); transition: border-color 0.16s, transform 0.16s; }
+.club-trainer-card { position: relative; display: flex; flex-direction: column; min-width: 0; border: 1px solid rgba(var(--dark-rgb),0.06); border-radius: var(--card-radius); background: var(--white); color: inherit; text-decoration: none; overflow: hidden; box-shadow: 0 8px 28px rgba(var(--dark-rgb),0.04); transition: border-color 0.16s, transform 0.16s; }
 .club-trainer-card:hover { border-color: rgba(var(--primary-rgb),0.22); transform: translateY(-1px); }
 .club-trainer-card__photo-wrap { aspect-ratio: 4/3; overflow: hidden; background: linear-gradient(160deg, var(--neutral-bg), var(--line)); }
 .club-trainer-card__photo { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
@@ -434,7 +435,8 @@ function ClubPage() {
                       <h2 className="club-section__title">Тренеры клуба · {c.trainers.length}</h2>
                       <div className="club-trainer-grid">
                         {c.trainers.map((t) => (
-                          <Link key={t.slug} className="club-trainer-card" to="/trainers/$slug" params={{ slug: t.slug }}>
+                          <article key={t.slug} className="club-trainer-card">
+                            <Link className="club-trainer-card__hit" to="/trainers/$slug" params={{ slug: t.slug }} aria-label={t.name} />
                             <div className="club-trainer-card__photo-wrap">
                               <img className="club-trainer-card__photo" src={placeholder(t.name, 420, 315)} alt={t.name} loading="lazy" />
                             </div>
@@ -445,8 +447,9 @@ function ClubPage() {
                                 <span>{t.meta}</span>
                                 <span className="club-trainer-card__price">{t.price}</span>
                               </div>
+                              <TrainerContactIcons slug={t.slug} />
                             </div>
-                          </Link>
+                          </article>
                         ))}
                       </div>
                       <p className="club-note">Цены — от разового занятия у тренера. Актуальные тарифы смотрите в профиле.</p>
@@ -496,10 +499,7 @@ function ClubPage() {
                     <svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.5 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.5c.9.2 1.8.4 2.7.5A2 2 0 0 1 22 16.9z" /></svg>
                     {phoneVisible ? c.phone : "Показать телефон"}
                   </button>
-                  <a className="btn btn--secondary" href={c.telegram} target="_blank" rel="noopener noreferrer">
-                    <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" /></svg>
-                    Telegram
-                  </a>
+                  <TrainerContactIcons slug={c.slug} telegram={c.telegram} instagram="" email="" />
                 </div>
                 <div className={`contact-reveal${phoneVisible ? " is-visible" : ""}`}>
                   <a className="contact-reveal__phone" href={`tel:${c.phone.replace(/\s|\(|\)|-/g, "")}`}>{c.phone}</a>
@@ -513,10 +513,7 @@ function ClubPage() {
 
       <div className="mobile-contact-bar" aria-label="Быстрая связь">
         <div className="mobile-contact-bar__inner">
-          <a className="btn btn--secondary" href={c.telegram} target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" /></svg>
-            Telegram
-          </a>
+          <TrainerContactIcons slug={c.slug} telegram={c.telegram} instagram="" email="" />
           <button className="btn btn--primary" type="button" onClick={() => setPhoneVisible(true)}>
             {phoneVisible ? c.phone : "Показать телефон"}
           </button>

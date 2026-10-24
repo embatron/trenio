@@ -31,9 +31,12 @@ import { CERTIFICATE_CAPTION_MAX, MAX_TRAINER_CERTIFICATES, readCertificates, ty
 import { genderLabel } from "@/lib/catalog/trainer-gender";
 import { editorHtml, reviewPlainText, sanitizeReviewHtml } from "@/lib/catalog/review-html";
 import { removeImageSet, writeImageSet } from "@/lib/images/store";
-import { getPublishedTrainer, PUBLISHED_TRAINERS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
+import { effectiveAudiences, getPublishedTrainer, PUBLISHED_TRAINERS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
+import { joinTrainerName, trainerNameParts } from "@/lib/catalog/trainer-name";
 import { popularityScore } from "@/lib/catalog/trainer-popularity";
 import { getSportTaxonomyChild, listSecondLevelSports, MAX_TRAINER_SPORTS, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
+import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
+import { placesFromProfile, placesShape, type TrainerPlace } from "@/lib/geo/schemas";
 
 export const TRAINER_PUBLISH_STATUSES = ["draft", "published", "hidden", "archived"] as const;
 export type TrainerPublishStatus = (typeof TRAINER_PUBLISH_STATUSES)[number];
@@ -55,6 +58,8 @@ function trainerCardPhone(raw: string): string {
 
 export type AdminTrainerAccount = {
   id: string;
+  firstName: string;
+  lastName: string;
   name: string;
   email: string;
   phone: string;
@@ -67,6 +72,8 @@ export type AdminTrainer = {
   id: string | null;
   slug: string;
   status: TrainerPublishStatus;
+  firstName: string;
+  lastName: string;
   fullName: string;
   headline: string;
   bio: string;
@@ -75,6 +82,7 @@ export type AdminTrainer = {
   sportSlugs: string[];
   city: string;
   district: string;
+  places: TrainerPlace[];
   priceFrom: number;
   languages: string;
   phone: string;
@@ -240,13 +248,15 @@ const saveSchema = z.object({
   id: z.string().uuid().nullable(),
   slug: z.string().trim().min(1).max(30),
   status: z.enum(TRAINER_PUBLISH_STATUSES),
-  fullName: z.string().trim().max(200),
+  firstName: z.string().trim().max(100),
+  lastName: z.string().trim().max(100),
   headline: z.string().trim().max(200),
   bio: z.string().trim().max(4000),
   about: z.string().trim().max(8000),
   sportSlugs: z.array(z.string().trim().min(1).max(40)).max(MAX_TRAINER_SPORTS),
   city: z.string().trim().max(120),
   district: z.string().trim().max(120),
+  ...placesShape,
   priceFrom: z.number().int().min(1).max(1_000_000),
   phone: z.string().trim().max(32),
   instagram: z.string().trim().max(300),
@@ -280,6 +290,8 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         id: trainerProfiles.id,
         slug: trainerProfiles.slug,
         status: trainerProfiles.status,
+        firstName: trainerProfiles.firstName,
+        lastName: trainerProfiles.lastName,
         fullName: trainerProfiles.fullName,
         headline: trainerProfiles.headline,
         bio: trainerProfiles.bio,
@@ -287,6 +299,11 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         sports: trainerProfiles.sports,
         city: trainerProfiles.city,
         district: trainerProfiles.district,
+        trainingPlaces: trainerProfiles.trainingPlaces,
+        address: trainerProfiles.address,
+        addressLat: trainerProfiles.addressLat,
+        addressLng: trainerProfiles.addressLng,
+        geocodeStatus: trainerProfiles.geocodeStatus,
         priceFrom: trainerProfiles.priceFrom,
         languages: trainerProfiles.languages,
         phone: trainerProfiles.phone,
@@ -303,8 +320,8 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         offerAcceptedAt: trainerProfiles.offerAcceptedAt,
         ownerId: users.id,
         email: users.email,
-        firstName: users.firstName,
-        lastName: users.lastName,
+        ownerFirstName: users.firstName,
+        ownerLastName: users.lastName,
         accountPhone: users.phone,
         accountPhoneVerifiedAt: users.phoneVerifiedAt,
         accountStatus: users.status,
@@ -339,13 +356,14 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       id: row.id,
       slug: row.slug,
       status: row.status,
-      fullName: row.fullName,
+      ...trainerNameParts(row.firstName, row.lastName, row.fullName),
       headline: row.headline,
       bio: row.bio,
       about: row.about.join("\n\n"),
       ...sportSelection(row.sports),
       city: row.city,
       district: row.district,
+      places: placesFromProfile(row),
       priceFrom: Math.max(1, row.priceFrom ?? 1),
       languages: row.languages.join(", "),
       phone: formatBelarusPhone(row.phone) || row.phone,
@@ -354,7 +372,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       email: row.contactEmail,
       experienceYears: row.experienceYears,
       formats: row.formats,
-      audiences: row.audiences,
+      audiences: effectiveAudiences(row.audiences),
       avatarPath: row.avatarPath,
       createdAt: row.createdAt.toISOString(),
       ...trainerStats(row.slug, ratings),
@@ -370,7 +388,9 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       account: row.ownerId && !hidden.has(row.ownerId)
         ? {
             id: row.ownerId,
-            name: [row.firstName, row.lastName].filter(Boolean).join(" "),
+            firstName: row.ownerFirstName ?? "",
+            lastName: row.ownerLastName ?? "",
+            name: [row.ownerFirstName, row.ownerLastName].filter(Boolean).join(" "),
             email: row.email ?? "",
             phone: row.accountPhone ?? "",
             phoneVerified: row.accountPhoneVerifiedAt != null,
@@ -385,6 +405,8 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       id: null,
       slug: trainer.slug,
       status: "published",
+      firstName: trainer.firstName,
+      lastName: trainer.lastName,
       fullName: trainer.name,
       headline: "",
       bio: trainer.bio,
@@ -392,7 +414,8 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       ...sportSelection(trainer.sports),
       city: trainer.city.label,
       district: trainer.district,
-      priceFrom: 1,
+      places: [],
+      priceFrom: trainer.priceFrom,
       languages: "",
       phone: trainer.phone,
       instagram: trainer.instagram,
@@ -435,7 +458,8 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       throw new AuthError("Такой карточки нет в каталоге.", "VALIDATION");
     }
 
-    const parts = data.fullName.split(/\s+/).filter(Boolean);
+    const firstName = data.firstName.trim().slice(0, 100);
+    const lastName = data.lastName.trim().slice(0, 100);
     const published = getPublishedTrainer(data.slug);
     const picked = trainerSportsFromSlugs(data.sportSlugs);
     if (picked.slugs.length > MAX_TRAINER_SPORTS) {
@@ -446,15 +470,17 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
     }
     const sports: TrainerSportRecord[] = picked.sports;
     const city = await assertBelarusCity(data.city);
+    const places = await resolveTrainingPlaces(data.places, existing ? placesFromProfile(existing) : []);
+    const mirror = mirrorTrainingPlace(places);
     let phone = trainerCardPhone(data.phone);
     if (existing?.ownerUserId) {
       const [owner] = await db.select({ phone: users.phone }).from(users).where(eq(users.id, existing.ownerUserId)).limit(1);
       if (owner?.phone) phone = formatBelarusPhone(owner.phone);
     }
     const values = {
-      firstName: (parts[0] ?? "").slice(0, 100),
-      lastName: parts.slice(1).join(" ").slice(0, 100),
-      fullName: data.fullName.slice(0, 200),
+      firstName,
+      lastName,
+      fullName: joinTrainerName(firstName, lastName),
       headline: data.headline,
       bio: sanitizeReviewHtml(data.bio),
       about: storedAbout(data.about),
@@ -463,6 +489,11 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       city,
       citySlug: city ? slugify(city) : "",
       district: data.district,
+      trainingPlaces: places,
+      address: mirror.address,
+      addressLat: mirror.addressLat,
+      addressLng: mirror.addressLng,
+      geocodeStatus: mirror.geocodeStatus,
       priceFrom: data.priceFrom,
       phone,
       email: data.email,
@@ -470,7 +501,7 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       telegram: data.telegram,
       experienceYears: data.experienceYears,
       formats: [...new Set(data.formats)],
-      audiences: [...new Set(data.audiences)],
+      audiences: effectiveAudiences(data.audiences),
       status: data.status,
       updatedAt: new Date(),
     };
@@ -491,7 +522,7 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
           sourceUrl: data.instagram || `https://trenio.by/trainers/${data.slug}`,
           claimStatus: "unclaimed",
           createdSource: "admin_created",
-          audiences: [...new Set(data.audiences)],
+          audiences: effectiveAudiences(data.audiences),
           formats: [...new Set(data.formats)],
           avatarPath: published?.photo ?? "",
           claimToken,
@@ -509,7 +540,11 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       throw new AuthError("Не удалось сохранить профиль.", "VALIDATION");
     }
 
-    return { ok: true as const, message: "Профиль тренера сохранён." };
+    return {
+      ok: true as const,
+      message: "Профиль тренера сохранён.",
+      places,
+    };
   });
 
 const slugSchema = z.string().trim().min(1).max(30).regex(/^[a-z0-9._-]+$/);
@@ -537,7 +572,7 @@ export const checkTrainerClaimLinkFn = createServerFn({ method: "POST" })
 const CLAIM_LABEL = { unclaimed: "Не забран", claimed: "Привязан к аккаунту", disputed: "Спор" } as const;
 const SOURCE_LABEL = { self: "Сам тренер", branch_created: "Филиал", admin_created: "Администратор", import: "Импорт" } as const;
 const AUDIENCE_LABEL = { adult: "Взрослые", teen: "Подростки", kid: "Дети" } as const;
-const FORMAT_LABEL = { individual: "Индивидуально", group: "Группа" } as const;
+const FORMAT_LABEL = { individual: "Индивидуально", group: "В группе" } as const;
 const OTP_LABEL = {
   login: "Код для входа",
   verify_phone: "Код подтверждения телефона",
@@ -586,6 +621,8 @@ export type AdminTrainerFacts = {
   offerVersion: string;
   linked: boolean;
   accountName: string;
+  accountFirstName: string;
+  accountLastName: string;
   accountEmail: string;
   accountPhone: string;
   accountRoles: string;
@@ -730,13 +767,14 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         id: row.id,
         slug: row.slug,
         status: row.status,
-        fullName: row.fullName,
+        ...trainerNameParts(row.firstName, row.lastName, row.fullName),
         headline: row.headline,
         bio: row.bio,
         about: editorHtml(row.about),
         ...sportSelection(row.sports),
         city: row.city,
         district: row.district,
+        places: placesFromProfile(row),
         priceFrom: Math.max(1, row.priceFrom ?? 1),
         languages: row.languages.join(", "),
         phone: formatBelarusPhone(row.phone) || row.phone,
@@ -745,7 +783,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         email: row.email,
         experienceYears: row.experienceYears,
         formats: row.formats,
-        audiences: row.audiences,
+        audiences: effectiveAudiences(row.audiences),
         avatarPath: row.avatarPath ? `${row.avatarPath}?v=${version}` : "",
         createdAt: row.createdAt.toISOString(),
         reviews,
@@ -763,6 +801,8 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         account: owner
           ? {
               id: owner.id,
+              firstName: owner.firstName,
+              lastName: owner.lastName ?? "",
               name: [owner.firstName, owner.lastName].filter(Boolean).join(" "),
               email: owner.email,
               phone: owner.phone ?? "",
@@ -791,7 +831,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         telegram: row.telegram,
         email: row.email,
         sourceBio: row.sourceBio,
-        audiences: row.audiences.map((item) => AUDIENCE_LABEL[item]).join(", "),
+        audiences: effectiveAudiences(row.audiences).map((item) => AUDIENCE_LABEL[item]).join(", "),
         formats: row.formats.map((item) => FORMAT_LABEL[item]).join(", "),
         pinnedPosts: row.pinnedPosts.map((post) => ({ url: post.url, caption: post.caption })),
         createdAt: row.createdAt.toISOString(),
@@ -802,6 +842,8 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         offerVersion: row.offerVersion,
         linked: Boolean(owner),
         accountName: owner ? [owner.firstName, owner.lastName].filter(Boolean).join(" ") : "",
+        accountFirstName: owner?.firstName ?? "",
+        accountLastName: owner?.lastName ?? "",
         accountEmail: owner?.email ?? "",
         accountPhone: owner?.phone ?? "",
         accountRoles: roles.join(", "),

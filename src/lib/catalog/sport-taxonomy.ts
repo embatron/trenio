@@ -114,7 +114,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
   defineCategory({
     slug: "ofp",
     label: "ОФП",
-    titleGenitive: "ОФП",
+    titleGenitive: "общефизической подготовке",
     iconKey: "athleticPrep",
     description: "Общая физическая подготовка и нормативы.",
     aliases: [
@@ -397,7 +397,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
       {
         slug: "lfk",
         label: "ЛФК",
-        titleGenitive: "ЛФК",
+        titleGenitive: "лечебной физической культуре",
         aliases: ["лечебная физкультура", "кинезитерапия", "адаптивная физкультура"],
       },
       {
@@ -409,7 +409,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
       {
         slug: "ofk",
         label: "ОФК",
-        titleGenitive: "ОФК",
+        titleGenitive: "оздоровительной физической культуре",
         aliases: ["оздоровительная физическая культура", "оздоровительная физкультура"],
       },
     ],
@@ -506,6 +506,17 @@ export function listSecondLevelSports() {
 
 /** A trainer card lists at most four second-level sports. */
 export const MAX_TRAINER_SPORTS = 4;
+
+/** Dative after «по»: «тренер по боксу». Abbreviations and indeclinable names stay as written. */
+export function sportDative(sport: { slug: string; label: string }): string {
+  return getSportTaxonomyChild(sport.slug)?.titleGenitive
+    ?? getTopLevelSportCategory(sport.slug)?.titleGenitive
+    ?? sport.label.toLowerCase();
+}
+
+export function trainerSportDatives(sports: Array<{ slug: string; label: string }>): string[] {
+  return sports.slice(0, MAX_TRAINER_SPORTS).map(sportDative);
+}
 
 export function trainerSportsFromSlugs(slugs: string[]) {
   const unique = [...new Set(slugs.map((slug) => slug.trim()).filter(Boolean))];

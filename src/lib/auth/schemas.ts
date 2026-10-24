@@ -65,7 +65,8 @@ export const verifyEmailSchema = z.object({
 });
 
 export const profileNameSchema = z.object({
-  name: z.string().trim().min(1, "Укажите имя").max(200),
+  firstName: z.string().trim().min(1, "Укажите имя").max(100),
+  lastName: z.string().trim().max(100),
 });
 
 export const accountAvatarSchema = z.object({

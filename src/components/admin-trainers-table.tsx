@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { PhotoImage } from "@/components/photo-image";
+import { TrainerName } from "@/components/trainer-name";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { checkTrainerClaimLinkFn, TRAINER_PUBLISH_LABEL, type AdminTrainer, type ClaimLinkVerdict } from "@/lib/admin/trainers";
 import { authErrorMessage } from "@/lib/auth/errors";
@@ -10,6 +11,7 @@ import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { BELARUS_CITIES } from "@/lib/catalog/city-taxonomy";
 import { TRAINER_AUDIENCE_OPTIONS, TRAINER_FORMAT_OPTIONS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { getSportTaxonomyChild, getTopLevelSportCategory, listSecondLevelSports, TOP_LEVEL_SPORT_CATEGORIES } from "@/lib/catalog/sport-taxonomy";
+import { placeLine } from "@/lib/geo/schemas";
 
 const dateFormat = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short", year: "numeric" });
 const STAR_PATH = "M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z";
@@ -175,6 +177,8 @@ function searchHaystack(trainer: AdminTrainer) {
   const account = trainer.account;
   return [
     trainer.fullName,
+    trainer.firstName,
+    trainer.lastName,
     trainer.slug,
     trainer.headline,
     trainer.bio,
@@ -184,6 +188,7 @@ function searchHaystack(trainer: AdminTrainer) {
     categoryLabels(trainer.sportSlugs),
     trainer.city,
     trainer.district,
+    trainer.places.map((place) => placeLine(place)).join(" "),
     trainer.phone,
     trainer.phone.replace(/\D/g, ""),
     trainer.instagram,
@@ -201,7 +206,7 @@ function searchHaystack(trainer: AdminTrainer) {
     String(trainer.popularity),
     account?.name ?? "",
     account?.email ?? "",
-    account ? displayAccountLogin(account.email) : "не привязан",
+    account ? displayAccountLogin(account.email) : "аккаунт не создан",
     account?.phone ?? "",
     account?.phone.replace(/\D/g, "") ?? "",
   ].join(" ").toLocaleLowerCase("ru").replaceAll("ё", "е");
@@ -356,10 +361,16 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                       {trainer.avatarPath ? (
                         <PhotoImage src={trainer.avatarPath} alt="" preset="avatar" />
                       ) : (
-                        <span className="cabinet-person__mark" aria-hidden="true">{(trainer.fullName || "?").slice(0, 1)}</span>
+                        <span className="cabinet-person__mark" aria-hidden="true">{(trainer.firstName || trainer.fullName || "?").slice(0, 1)}</span>
                       )}
                       <div className="cabinet-person__text">
-                        <strong title={trainer.fullName || trainer.slug}>{trainer.fullName || trainer.slug}</strong>
+                        <strong title={trainer.fullName || trainer.slug}>
+                          {trainer.firstName || trainer.lastName ? (
+                            <TrainerName firstName={trainer.firstName} lastName={trainer.lastName} />
+                          ) : (
+                            trainer.slug
+                          )}
+                        </strong>
                         <span className="cabinet-person__meta">{trainer.sports || "вид спорта не указан"}</span>
                       </div>
                       <div className="cabinet-row-actions">
@@ -387,8 +398,8 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                   <td>{Number.isInteger(trainer.popularity) ? trainer.popularity : trainer.popularity.toFixed(1)}</td>
                   <td><span className={`cabinet-status cabinet-status--${trainer.status}`}>{TRAINER_PUBLISH_LABEL[trainer.status]}</span></td>
                   <td><TrainerSocial instagram={trainer.instagram} telegram={trainer.telegram} /></td>
-                  <td title={trainer.account ? "Аккаунт привязан, оферта принята" : "Карточка есть в каталоге, но к ней ещё не привязан пользователь"}>
-                    {trainer.account ? displayAccountLogin(trainer.account.email) : "не привязан"}
+                  <td title={trainer.account ? "Аккаунт создан и привязан к карточке" : "В каталоге есть карточка, но пользователь ещё не зарегистрировался и не забрал профиль"}>
+                    {trainer.account ? displayAccountLogin(trainer.account.email) : "Аккаунт не создан"}
                   </td>
                 </tr>
               ))}

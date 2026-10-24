@@ -3,6 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { ReviewEditor } from "@/components/review-editor";
 import { CityEntityInput } from "@/components/city-entity-input";
+import { TrainerPlacesField } from "@/components/trainer-address-field";
 import { SportEntityInput } from "@/components/sport-entity-input";
 import { TrainerCertificatesField } from "@/components/trainer-certificates-field";
 import { TrainerMediaField } from "@/components/trainer-media-field";
@@ -10,6 +11,7 @@ import { MAX_TRAINER_PHOTOS } from "@/lib/admin/trainers";
 import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { BY_PHONE_COUNTRY_PREFIX, constrainBelarusPhoneInput, formatBelarusPhone } from "@/lib/auth/phone";
+import type { TrainerPlace } from "@/lib/geo/schemas";
 import {
   TRAINER_AUDIENCE_OPTIONS,
   TRAINER_FORMAT_OPTIONS,
@@ -18,13 +20,15 @@ import {
 } from "@/lib/catalog/published-trainers";
 
 export type TrainerCardValues = {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   headline: string;
   bio: string;
   about: string;
   sportSlugs: string[];
   city: string;
   district: string;
+  places: TrainerPlace[];
   priceFrom: number;
   experienceYears: number;
   instagram: string;
@@ -211,6 +215,8 @@ export function TrainerCardFields({
   phone,
   leading,
   nick,
+  afterAddress,
+  priceLabel = "Цена от, BYN",
 }: {
   values: TrainerCardValues;
   onChange: (values: TrainerCardValues) => void;
@@ -219,6 +225,8 @@ export function TrainerCardFields({
   phone: TrainerPhoneControl;
   leading?: ReactNode;
   nick?: string;
+  afterAddress?: ReactNode;
+  priceLabel?: string;
 }) {
   function patch(partial: Partial<TrainerCardValues>) {
     onChange({ ...values, ...partial });
@@ -250,14 +258,18 @@ export function TrainerCardFields({
       ) : null}
       <div className="cabinet-form__row">
         <label>
-          <span>Имя и фамилия</span>
-          <input value={values.fullName} maxLength={200} onChange={(event) => patch({ fullName: event.target.value })} />
+          <span>Имя</span>
+          <input required value={values.firstName} maxLength={100} autoComplete="given-name" onChange={(event) => patch({ firstName: event.target.value })} />
         </label>
         <label>
-          <span>Заголовок</span>
-          <input value={values.headline} maxLength={200} placeholder="Тренер по боксу" onChange={(event) => patch({ headline: event.target.value })} />
+          <span>Фамилия</span>
+          <input value={values.lastName} maxLength={100} autoComplete="family-name" onChange={(event) => patch({ lastName: event.target.value })} />
         </label>
       </div>
+      <label>
+        <span>Заголовок</span>
+        <input value={values.headline} maxLength={200} placeholder="Тренер по боксу" onChange={(event) => patch({ headline: event.target.value })} />
+      </label>
       <div>
         <span className="cabinet-media__label">О себе</span>
         <ReviewEditor value={values.bio} onChange={(bio) => patch({ bio })} placeholder="Коротко о себе" />
@@ -298,19 +310,15 @@ export function TrainerCardFields({
           onChange={(event) => patch({ experienceYears: atLeastOne(event.target.value, 80) })}
         />
       </label>
-      <div className="cabinet-form__row">
-        <label>
-          <span>Город</span>
-          <CityEntityInput value={values.city} onChange={(city) => patch({ city })} />
-        </label>
-        <label>
-          <span>Район</span>
-          <input value={values.district} maxLength={120} onChange={(event) => patch({ district: event.target.value })} />
-        </label>
-      </div>
-      <p className="cabinet-note">Только населённый пункт Беларуси.</p>
       <label>
-        <span>Цена от, BYN</span>
+        <span>Город</span>
+        <CityEntityInput value={values.city} onChange={(city) => patch({ city })} />
+      </label>
+      <p className="cabinet-note">Только населённый пункт Беларуси.</p>
+      <TrainerPlacesField places={values.places} onChange={(places) => patch({ places })} />
+      {afterAddress}
+      <label>
+        <span>{priceLabel}</span>
         <input
           type="number"
           required
@@ -323,8 +331,8 @@ export function TrainerCardFields({
         />
       </label>
       <div>
-        <span className="cabinet-media__label">Формат работы</span>
-        <div className="cabinet-choices" role="group" aria-label="Формат работы">
+        <span className="cabinet-media__label">Формат занятий</span>
+        <div className="cabinet-choices" role="group" aria-label="Формат занятий">
           {TRAINER_FORMAT_OPTIONS.map((option) => (
             <button
               key={option.id}

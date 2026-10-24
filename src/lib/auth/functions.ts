@@ -374,8 +374,7 @@ export const updateProfileFn = createServerFn({ method: "POST" })
   .validator(profileNameSchema)
   .handler(async ({ data, context }) => {
     try {
-      const parts = data.name.trim().split(/\s+/);
-      await updateAccountName(context.user.id, parts[0] ?? "", parts.slice(1).join(" "));
+      await updateAccountName(context.user.id, data.firstName, data.lastName);
       return { ok: true as const };
     } catch (error) {
       rethrowAuth(error);

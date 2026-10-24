@@ -11,6 +11,7 @@ import {
   serializeVisitorPlace,
   type CatalogPlace,
   type VisitorPlace,
+  type VisitorPoint,
 } from "@/lib/catalog/visitor-place";
 
 const MAX_ACCURACY_KM = 100;
@@ -67,6 +68,8 @@ type GeoHit = {
   country?: string;
   city?: string;
   area?: string | number;
+  latitude?: number;
+  longitude?: number;
 };
 
 let geoModulePromise: Promise<GeoModule> | null = null;
@@ -130,7 +133,7 @@ function clientPublicIp(): string | null {
 }
 
 function configureGeoEnv() {
-  process.env.ILA_FIELDS = "country,city,area";
+  process.env.ILA_FIELDS = "country,city,area,latitude,longitude";
   process.env.ILA_LANGUAGE = "ru";
   process.env.ILA_SMALL_MEMORY = "true";
   process.env.ILA_SILENT = "true";
@@ -157,14 +160,32 @@ function remember(place: VisitorPlace) {
   });
 }
 
-async function detectBelarusCity(ip: string): Promise<string | null> {
+async function lookupHit(ip: string): Promise<GeoHit | null> {
   if (!isPublicIp(ip)) return null;
   const geo = await geoModule();
   const hit = await geo.lookup(ip);
+  return hit ?? null;
+}
+
+function pointFromHit(hit: GeoHit | null): { lat: number; lng: number } | null {
+  if (!hit) return null;
+  const lat = Number(hit.latitude);
+  const lng = Number(hit.longitude);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return null;
+  return { lat, lng };
+}
+
+async function detectBelarusCity(ip: string): Promise<string | null> {
+  const hit = await lookupHit(ip);
   if (!hit || hit.country !== "BY" || typeof hit.city !== "string") return null;
   const accuracy = accuracyKm(hit.area);
   if (accuracy != null && accuracy > MAX_ACCURACY_KM) return null;
   return canonicalCity(hit.city);
+}
+
+async function detectPoint(ip: string): Promise<{ lat: number; lng: number } | null> {
+  return pointFromHit(await lookupHit(ip));
 }
 
 function placeFromCity(city: string): CatalogPlace {
@@ -207,4 +228,25 @@ export async function detectVisitorPlace(clientIp: string): Promise<CatalogPlace
   const city = await detectBelarusCity(ip);
   if (!city) return { cities: [], query: "", source: "none", lookupOnClient: false };
   return placeFromCity(city);
+}
+
+function pointResult(point: { lat: number; lng: number } | null, lookupOnClient: boolean): VisitorPoint {
+  return {
+    lat: point?.lat ?? null,
+    lng: point?.lng ?? null,
+    lookupOnClient,
+  };
+}
+
+/** IP coordinates for distance sorting. The place cookie still stores only the settlement name. */
+export async function resolveVisitorPoint(): Promise<VisitorPoint> {
+  const ip = clientPublicIp();
+  if (!ip) return pointResult(null, true);
+  return pointResult(await detectPoint(ip), false);
+}
+
+export async function detectVisitorPoint(clientIp: string): Promise<VisitorPoint> {
+  const ip = clientPublicIp() ?? clientIp;
+  if (!isPublicIp(ip)) return pointResult(null, false);
+  return pointResult(await detectPoint(ip), false);
 }

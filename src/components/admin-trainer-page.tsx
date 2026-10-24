@@ -4,6 +4,8 @@ import { useState } from "react";
 import { AdminClaimLink } from "@/components/admin-trainers-table";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { TrainerCardFields, type TrainerCardValues } from "@/components/trainer-card-fields";
+import { TrainerName } from "@/components/trainer-name";
+import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import {
   addAdminTrainerCertificateFn,
   updateAdminTrainerCertificateFn,
@@ -21,10 +23,16 @@ import {
   type TrainerPublishStatus,
 } from "@/lib/admin/trainers";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { adminGeocodeTrainer } from "@/lib/geo/functions";
+import { placeHasText, placeLine, type TrainerPlace } from "@/lib/geo/schemas";
 import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import type { UserRole } from "@/lib/auth/types";
+
+function placesSignature(places: TrainerPlace[]) {
+  return places.filter(placeHasText).map((place) => placeLine(place)).join("\n");
+}
 
 const TABS = [
   { id: "profile", label: "Профиль" },
@@ -69,9 +77,11 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
   const removeCertificate = useAuthServerFn(removeAdminTrainerCertificateFn);
   const requestPhone = useAuthServerFn(requestAdminTrainerPhoneCodeFn);
   const confirmPhone = useAuthServerFn(confirmAdminTrainerPhoneCodeFn);
+  const regeocode = useAuthServerFn(adminGeocodeTrainer);
   const [tab, setTab] = useState<TabId>("profile");
   const [draft, setDraft] = useState<Draft>(() => draftFrom(detail.trainer));
   const [pending, setPending] = useState(false);
+  const [geoPending, setGeoPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
   const { facts } = detail;
@@ -84,7 +94,13 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
 
   return (
     <article className="cabinet-card">
-      <h2>{detail.trainer.fullName || detail.trainer.slug}</h2>
+      <h2>
+        {draft.firstName || draft.lastName ? (
+          <TrainerName firstName={draft.firstName} lastName={draft.lastName} />
+        ) : (
+          draft.slug
+        )}
+      </h2>
       <p className="cabinet-gender">Род: {facts.gender}</p>
       {detail.trainer.claimOpen ? (
         <div className="cabinet-claim-bar">
@@ -117,13 +133,15 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
                 id: draft.id,
                 slug: draft.slug,
                 status: draft.status,
-                fullName: draft.fullName,
+                firstName: draft.firstName,
+                lastName: draft.lastName,
                 headline: draft.headline,
                 bio: draft.bio,
                 about: draft.about,
                 sportSlugs: draft.sportSlugs,
                 city: draft.city,
                 district: draft.district,
+                places: draft.places,
                 priceFrom: draft.priceFrom,
                 phone: draft.phone,
                 instagram: draft.instagram,
@@ -134,7 +152,9 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
                 audiences: draft.audiences,
               },
             })
-              .then(() => {
+              .then((result) => {
+                const payload = result as { places: TrainerPlace[] };
+                setDraft((current) => ({ ...current, places: payload.places }));
                 setSaved("Профиль сохранён.");
                 return router.invalidate();
               })
@@ -145,7 +165,11 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
           <TrainerCardFields
             nick={draft.slug}
             values={draft}
-            onChange={(values: TrainerCardValues) => setDraft((current) => ({ ...current, ...values }))}
+            onChange={(values: TrainerCardValues) => setDraft((current) => ({
+              ...current,
+              ...values,
+              fullName: joinTrainerName(values.firstName, values.lastName),
+            }))}
             photos={{
               initial: detail.photos,
               onUpload: async (image) => {
@@ -195,6 +219,37 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
                   ))}
                 </select>
               </label>
+            )}
+            afterAddress={(
+              <div className="geo-status">
+                <button
+                  className="cabinet-form__ghost"
+                  type="button"
+                  disabled={geoPending || !draft.id || !draft.places.some(placeHasText)}
+                  onClick={() => {
+                    if (!draft.id) return;
+                    if (placesSignature(draft.places) !== placesSignature(detail.trainer.places)) {
+                      setError("Сначала сохраните адреса, затем повторите геокодирование.");
+                      setSaved(null);
+                      return;
+                    }
+                    setGeoPending(true);
+                    setError(null);
+                    setSaved(null);
+                    void regeocode({ data: { id: draft.id } })
+                      .then((result) => {
+                        const payload = result as { places: TrainerPlace[]; message: string };
+                        setDraft((current) => ({ ...current, places: payload.places }));
+                        setSaved(payload.message);
+                        return router.invalidate();
+                      })
+                      .catch((err: unknown) => setError(authErrorMessage(err)))
+                      .finally(() => setGeoPending(false));
+                  }}
+                >
+                  {geoPending ? "Геокодирование…" : "Перегеокодировать"}
+                </button>
+              </div>
             )}
           />
           <p className="cabinet-note">
@@ -284,7 +339,7 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
           <div><dt>Оферта</dt><dd>{facts.offerAcceptedAt ? `принята ${formatWhen(facts.offerAcceptedAt)}, редакция ${facts.offerVersion || "—"}` : "не принята"}</dd></div>
           <div><dt>Обработка данных</dt><dd>{facts.privacyAcceptedAt ? `согласие ${formatWhen(facts.privacyAcceptedAt)}` : "нет согласия"}</dd></div>
           <div><dt>Аудитория</dt><dd>{facts.audiences || "—"}</dd></div>
-          <div><dt>Формат</dt><dd>{facts.formats || "—"}</dd></div>
+          <div><dt>Формат занятий</dt><dd>{facts.formats || "—"}</dd></div>
           <div><dt>Текст из источника</dt><dd>{facts.sourceBio || "—"}</dd></div>
           <div>
             <dt>Закреплённые посты</dt>
@@ -296,7 +351,14 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
           </div>
           {facts.linked ? (
             <>
-              <div><dt>Имя аккаунта</dt><dd>{facts.accountName || "—"}</dd></div>
+              <div>
+                <dt>Имя аккаунта</dt>
+                <dd>
+                  {facts.accountFirstName || facts.accountLastName ? (
+                    <TrainerName firstName={facts.accountFirstName} lastName={facts.accountLastName} empty="—" />
+                  ) : "—"}
+                </dd>
+              </div>
               <div><dt>Почта</dt><dd>{facts.accountEmail}</dd></div>
               <div><dt>Телефон аккаунта</dt><dd>{facts.accountPhone || "—"}</dd></div>
               <div><dt>Роли</dt><dd>{facts.accountRoles.split(", ").filter(Boolean).map((role) => ROLE_LABELS[role as UserRole] ?? role).join(", ") || "—"}</dd></div>

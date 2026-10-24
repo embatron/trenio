@@ -3,7 +3,7 @@
  * First catalog visit does this too; run the script before a deploy so the
  * first request does not wait on the download.
  */
-process.env.ILA_FIELDS = "country,city,area";
+process.env.ILA_FIELDS = "country,city,area,latitude,longitude";
 process.env.ILA_LANGUAGE = "ru";
 process.env.ILA_SMALL_MEMORY = "true";
 process.env.ILA_SILENT = "false";

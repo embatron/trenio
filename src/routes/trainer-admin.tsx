@@ -1,18 +1,6 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useLayoutEffect, useState } from "react";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
-import { AccountProfileForm } from "@/components/account-profile-form";
-import { CabinetShell } from "@/components/cabinet";
-import { TrainerProfileForm } from "@/components/trainer-profile-form";
-import { TrainerReviewsPanel } from "@/components/trainer-reviews-panel";
-import { logoutFn } from "@/lib/auth/functions";
-import { displayAccountLogin } from "@/lib/auth/login-name";
-import { hasAnyRole, ROLE_LABELS } from "@/lib/auth/roles";
-import { useAuthServerFn } from "@/lib/auth/use-auth-form";
-import { getUserCabinetFn } from "@/lib/cabinet";
-import { getOwnTrainerProfileFn } from "@/lib/catalog/trainer-own";
-import { listOwnTrainerReviewsFn } from "@/lib/catalog/trainer-reviews";
-import { pluralRu } from "@/lib/ru-plural";
+import { hasAnyRole } from "@/lib/auth/roles";
 
 const TRAINER_TABS = ["overview", "settings", "card", "reviews"] as const;
 type TrainerTab = (typeof TRAINER_TABS)[number];
@@ -22,124 +10,17 @@ export const Route = createFileRoute("/trainer-admin")({
     const tab = search.tab;
     return TRAINER_TABS.includes(tab as TrainerTab) ? { tab: tab as TrainerTab } : {};
   },
-  beforeLoad: ({ context, search }) => {
+  beforeLoad: ({ context, location }) => {
     if (!context.user) {
-      const next = search.tab ? `/trainer-admin?tab=${search.tab}` : "/trainer-admin";
-      throw redirect({ to: "/auth/login", search: { redirect: next } });
+      const next = `${location.pathname}${location.searchStr ?? ""}`;
+      throw redirect({
+        to: "/auth/login",
+        search: { redirect: next.startsWith("/") && !next.startsWith("//") ? next.slice(0, 200) : "/trainer-admin" },
+      });
     }
     if (!hasAnyRole(context.user.roles, ["trainer", "club", "admin", "superadmin"])) {
       throw redirect({ to: "/" });
     }
   },
-  head: () => ({
-    meta: [
-      { title: "Кабинет тренера · trenio.by" },
-      { name: "description", content: "Личный кабинет тренера: профиль и отзывы." },
-      { name: "robots", content: "noindex,follow" },
-    ],
-  }),
-  loader: async ({ context }) => {
-    const cabinet = await getUserCabinetFn();
-    const isTrainer = Boolean(context.user && hasAnyRole(context.user.roles, ["trainer", "club"]));
-    const trainer = isTrainer ? await getOwnTrainerProfileFn() : null;
-    const reviews = isTrainer ? await listOwnTrainerReviewsFn() : [];
-    return { cabinet, trainer, reviews };
-  },
-  component: TrainerCabinetPage,
+  component: () => <Outlet />,
 });
-
-const TABS = [
-  { id: "overview", label: "Обзор", icon: "overview" as const },
-  { id: "settings", label: "Параметры", icon: "profile" as const },
-  { id: "card", label: "Профиль тренера", icon: "trainers" as const },
-  { id: "reviews", label: "Отзывы", icon: "reviews" as const },
-];
-
-function TrainerCabinetPage() {
-  const { cabinet, trainer, reviews } = Route.useLoaderData();
-  const { tab: requestedTab } = Route.useSearch();
-  const { user } = Route.useRouteContext();
-  const [tab, setTab] = useState<TrainerTab>(requestedTab === "card" && !trainer ? "overview" : requestedTab ?? "overview");
-  const [enterCard, setEnterCard] = useState(false);
-  const [pending, setPending] = useState(false);
-  useLayoutEffect(() => {
-    const key = "trenio-trainer-profile-card";
-    let seen = false;
-    try { seen = localStorage.getItem(key) === "1"; } catch { seen = true; }
-    if (seen) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      try { localStorage.setItem(key, "1"); } catch { /* ignore */ }
-      return;
-    }
-    setEnterCard(true);
-  }, []);
-  const logout = useAuthServerFn(logoutFn);
-  if (!user) return null;
-
-  const name = [user.firstName, user.lastName].filter(Boolean).join(" ");
-  const role = user.roles.map((item) => ROLE_LABELS[item]).join(", ");
-
-  return (
-    <CabinetShell
-      title="Кабинет тренера"
-      lede="Параметры — данные аккаунта. Профиль тренера — карточка для каталога."
-      name={name}
-      role={role}
-      avatarUrl={user.avatarPath || null}
-      items={trainer ? TABS : TABS.filter((item) => item.id !== "card")}
-      active={tab}
-      onSelect={(id) => {
-        if (TRAINER_TABS.includes(id as TrainerTab)) setTab(id as TrainerTab);
-      }}
-      logoutPending={pending}
-      onLogout={() => {
-        setPending(true);
-        void logout()
-          .then(() => {
-            window.location.href = "/auth/login";
-          })
-          .finally(() => setPending(false));
-      }}
-    >
-      {tab === "overview" ? (
-        <>
-          <div className="cabinet-stats">
-            <div className="cabinet-stat"><strong>—</strong><span>Публичный профиль</span></div>
-            <div className="cabinet-stat"><strong>{reviews.filter((review) => review.status === "published").length}</strong><span>{pluralRu(reviews.filter((review) => review.status === "published").length, "отзыв на профиле", "отзыва на профиле", "отзывов на профиле")}</span></div>
-          </div>
-          <article className="cabinet-card">
-            <h2>Что уже есть</h2>
-            <p className="cabinet-empty">
-              {trainer
-                ? `Аккаунт ${displayAccountLogin(user.email)} активен. Карточка редактируется в разделе «Профиль тренера» и попадает в каталог после публикации. Заявки и расписание здесь пока не показываются.`
-                : `Аккаунт ${displayAccountLogin(user.email)} активен. Карточка в каталоге к нему пока не привязана, поэтому заявки и расписание здесь не показываются.`}
-            </p>
-          </article>
-        </>
-      ) : null}
-      {tab === "settings" ? (
-        <article className="cabinet-card">
-          <h2>Параметры</h2>
-          <AccountProfileForm user={user} phone={cabinet.phone} phoneVerified={cabinet.phoneVerified} />
-        </article>
-      ) : null}
-      {tab === "card" && trainer ? (
-        <article
-          className={enterCard ? "cabinet-card profile-card-enter" : "cabinet-card"}
-          onAnimationEnd={() => {
-            try { localStorage.setItem("trenio-trainer-profile-card", "1"); } catch { /* ignore */ }
-          }}
-        >
-          <h2>Профиль тренера</h2>
-          <TrainerProfileForm profile={trainer} />
-        </article>
-      ) : null}
-      {tab === "reviews" ? (
-        <article className="cabinet-card">
-          <h2>Отзывы</h2>
-          {trainer ? <TrainerReviewsPanel reviews={reviews} /> : <p className="cabinet-empty">Карточка ещё не привязана, поэтому отзывов нет.</p>}
-        </article>
-      ) : null}
-    </CabinetShell>
-  );
-}

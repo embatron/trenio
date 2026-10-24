@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, type ReactNode } from "react";
 
-import { PhotoImage } from "@/components/photo-image";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { TrainerName } from "@/components/trainer-name";
+import { UserAvatar } from "@/components/user-avatar";
+import { joinTrainerName } from "@/lib/catalog/trainer-name";
 
 const ICONS = {
   overview: "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z",
@@ -13,6 +15,7 @@ const ICONS = {
   favorites: "M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z",
   bookings: "M7 3v3M17 3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z",
   finance: "M4 5h16v14H4zM4 9h16M8 13h5",
+  messages: "M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 6l8 6 8-6",
 } as const;
 
 export type CabinetIcon = keyof typeof ICONS;
@@ -67,27 +70,33 @@ export function CabinetNotice({
   );
 }
 
-export type AccountSectionPath = "/account/reviews" | "/account/bookings" | "/account/favorites" | "/account/settings";
+export type AccountSectionPath = "/account/reviews" | "/account/bookings" | "/account/favorites" | "/account/settings" | "/account/messages";
 
 export type AdminSectionPath =
   | "/admin"
   | "/admin/trainers"
   | "/admin/reviews"
+  | "/admin/messages"
   | "/admin/accounts"
   | "/admin/finance"
   | "/admin/settings";
+
+export type TrainerSectionPath = "/trainer-admin" | "/trainer-admin/messages";
 
 export type CabinetNavItem = {
   id: string;
   label: string;
   icon: CabinetIcon;
-  to?: AccountSectionPath | AdminSectionPath;
+  badge?: number;
+  to?: AccountSectionPath | AdminSectionPath | TrainerSectionPath;
+  search?: { tab: "overview" | "settings" | "card" | "reviews" };
 };
 
 export function CabinetShell({
   title,
   lede,
-  name,
+  firstName,
+  lastName,
   role,
   items,
   active,
@@ -99,7 +108,8 @@ export function CabinetShell({
 }: {
   title: string;
   lede?: string;
-  name: string;
+  firstName: string;
+  lastName?: string | null;
   role: string;
   avatarUrl?: string | null;
   items: CabinetNavItem[];
@@ -109,6 +119,7 @@ export function CabinetShell({
   logoutPending: boolean;
   children: ReactNode;
 }) {
+  const name = joinTrainerName(firstName, lastName) || "Без имени";
   const navRef = useRef<HTMLElement>(null);
   useEffect(() => {
     navRef.current?.querySelector(".is-active")?.scrollIntoView({ inline: "nearest", block: "nearest" });
@@ -125,13 +136,11 @@ export function CabinetShell({
           </header>
           <aside className="cabinet-side">
             <div className="cabinet-id">
-              {avatarUrl ? (
-                <PhotoImage className="cabinet-id__mark" src={avatarUrl} alt="" preset="avatar" width={44} height={44} />
-              ) : (
-                <span className="cabinet-id__mark" aria-hidden="true">{name.slice(0, 1)}</span>
-              )}
+              <UserAvatar name={name} src={avatarUrl} size={44} />
               <div>
-                <strong>{name}</strong>
+                <strong>
+                  <TrainerName firstName={firstName} lastName={lastName} empty="Без имени" />
+                </strong>
                 <span>{role}</span>
               </div>
             </div>
@@ -139,11 +148,24 @@ export function CabinetShell({
               {items.map((item) => {
                 const className = item.id === active ? "is-active" : undefined;
                 const icon = <svg viewBox="0 0 24 24" aria-hidden="true"><path d={ICONS[item.icon]} /></svg>;
+                const badge = typeof item.badge === "number" ? (
+                  <span className={`cabinet-nav__badge${item.badge > 0 ? " is-hot" : ""}`}>{item.badge > 99 ? "99+" : item.badge}</span>
+                ) : null;
+                if (item.to === "/trainer-admin") {
+                  return (
+                    <Link key={item.id} to="/trainer-admin" search={item.search ?? {}} className={className} aria-current={item.id === active ? "page" : undefined}>
+                      {icon}
+                      <span className="cabinet-nav__label">{item.label}</span>
+                      {badge}
+                    </Link>
+                  );
+                }
                 if (item.to) {
                   return (
                     <Link key={item.id} to={item.to} className={className} aria-current={item.id === active ? "page" : undefined}>
                       {icon}
-                      {item.label}
+                      <span className="cabinet-nav__label">{item.label}</span>
+                      {badge}
                     </Link>
                   );
                 }
@@ -156,7 +178,8 @@ export function CabinetShell({
                     onClick={() => onSelect?.(item.id)}
                   >
                     {icon}
-                    {item.label}
+                    <span className="cabinet-nav__label">{item.label}</span>
+                    {badge}
                   </button>
                 );
               })}
@@ -182,6 +205,7 @@ const CABINET_CSS = `
 .cabinet-id { display: flex; align-items: center; gap: 12px; }
 .cabinet-id__mark { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgba(var(--primary-rgb), 0.12); color: var(--primary); font-weight: var(--fw-title); object-fit: cover; }
 .cabinet-id strong { display: block; color: var(--dark); }
+.cabinet-id strong .trainer-name__line { color: var(--dark); font-size: inherit; margin: 0; }
 .cabinet-id span { color: var(--muted); font-size: 13px; }
 .cabinet-nav { display: flex; flex-direction: column; gap: 4px; }
 .cabinet-nav button, .cabinet-nav a, .cabinet-logout {
@@ -190,6 +214,9 @@ const CABINET_CSS = `
   font: inherit; font-weight: var(--fw-title); text-align: left; text-decoration: none; cursor: pointer;
 }
 .cabinet-nav button svg, .cabinet-nav a svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+.cabinet-nav__label { min-width: 0; }
+.cabinet-nav__badge { margin-left: auto; min-width: 1.5em; color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); font-variant-numeric: tabular-nums; line-height: 1; text-align: right; }
+.cabinet-nav__badge.is-hot { color: var(--primary); }
 .cabinet-nav button.is-active, .cabinet-nav a.is-active { background: rgba(var(--primary-rgb), 0.1); color: var(--primary-dark); }
 .cabinet-nav button:hover, .cabinet-nav a:hover, .cabinet-logout:hover { background: rgba(var(--dark-rgb), 0.04); }
 .cabinet-logout { color: var(--muted); justify-content: center; }
@@ -248,12 +275,21 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-table .cabinet-inline-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 0; }
 .cabinet-inline-link:hover { text-decoration: underline; }
 .cabinet-card { min-width: 0; }
-.cabinet-pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
-.cabinet-pager p { margin: 0; color: var(--muted); font-size: 14px; }
-.cabinet-pager__nav { display: flex; align-items: center; gap: 8px; }
-.cabinet-pager__nav span { color: var(--text); font-size: 14px; font-weight: var(--fw-title); }
-.cabinet-pager button { min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-weight: var(--fw-title); cursor: pointer; }
+.cabinet-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin: 0;
+  padding: 14px 18px 16px;
+  border-top: 1px solid var(--line);
+}
+.cabinet-pager__summary { margin: 0; flex: 1 1 12rem; min-width: 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
+.cabinet-pager__nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; margin-left: auto; }
+.cabinet-pager__nav span { color: var(--text); font-size: 13px; font-weight: var(--fw-title); white-space: nowrap; }
+.cabinet-pager button { min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-size: 14px; font-weight: var(--fw-title); cursor: pointer; }
 .cabinet-pager button:disabled { opacity: 0.45; cursor: default; }
+.cabinet-card > .cabinet-pager { margin-top: 0; }
 .cabinet-name-link { display: inline-flex; align-items: center; min-height: 44px; color: var(--primary); font-weight: var(--fw-title); text-decoration: none; }
 .cabinet-name-link:hover { text-decoration: underline; }
 .cabinet-table-wrap { min-width: 0; max-width: 100%; overflow-x: auto; }
@@ -269,7 +305,7 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-reject { display: grid; gap: 8px; margin-top: 8px; }
 .cabinet-reject textarea { width: 100%; min-height: 88px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-control); font: inherit; font-size: 15px; resize: vertical; }
 .cabinet-table strong { display: block; color: var(--dark); }
-.cabinet-table:not(.cabinet-table--trainers) span:not(.cabinet-status):not(.cabinet-person__mark):not(.cabinet-sr):not(.user-avatar) { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+.cabinet-table:not(.cabinet-table--trainers) span:not(.cabinet-status):not(.cabinet-person__mark):not(.cabinet-sr):not(.user-avatar):not(.trainer-name):not(.trainer-name__line) { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
 .cabinet-table--trainers { width: 100%; }
 .cabinet-table--trainers th, .cabinet-table--trainers td { padding: 6px 4px; line-height: 1.25; white-space: nowrap; }
 .cabinet-table--trainers th { font-size: 11px; }
@@ -289,7 +325,7 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-table--trainers .cabinet-rating__count { color: var(--muted); font-weight: var(--fw-ui); }
 .cabinet-table--trainers .cabinet-social { display: inline-flex; align-items: center; justify-content: center; }
 .cabinet-table--trainers .cabinet-social__link { width: 44px; height: 44px; display: grid; place-items: center; color: inherit; }
-.cabinet-table--trainers .cabinet-social__link svg { width: 22px; height: 22px; }
+.cabinet-table--trainers .cabinet-social__link svg { width: 22px; height: 22px; overflow: visible; }
 .cabinet-filters { display: flex; flex-wrap: wrap; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
 .cabinet-filters label { display: grid; gap: 6px; flex: 1 1 180px; min-width: min(100%, 180px); }
 .cabinet-filters label span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
@@ -309,7 +345,8 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-facts div { display: grid; gap: 2px; }
 .cabinet-facts dt { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
 .cabinet-facts dd { margin: 0; overflow-wrap: anywhere; }
-.cabinet-facts dd span { display: block; margin-top: 4px; }
+.cabinet-facts dd span:not(.trainer-name):not(.trainer-name__line) { display: block; margin-top: 4px; }
+.cabinet-facts .trainer-name__line { color: inherit; font-size: inherit; margin: 0; }
 .cabinet-table .cabinet-status { display: inline-grid; place-items: center; height: 28px; margin: 0; }
 .cabinet-table--trainers .cabinet-status { height: 22px; padding: 0 8px; font-size: 11px; }
 .cabinet-table .cabinet-status-stack { width: auto; margin-inline: auto; align-items: center; }
@@ -319,6 +356,10 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-actions .cabinet-icon-btn, .cabinet-form .cabinet-icon-btn, .cabinet-modal__card .cabinet-icon-btn { width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--dark); }
 .cabinet-icon-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .cabinet-icon-btn:hover { background: rgba(var(--dark-rgb), 0.04); }
+.cabinet-icon-btn--approve { color: #16a34a; }
+.cabinet-icon-btn--approve:hover { background: rgba(22, 163, 74, 0.12); }
+.cabinet-icon-btn--reject { color: #dc2626; }
+.cabinet-icon-btn--reject:hover { background: rgba(220, 38, 38, 0.1); }
 .cabinet-icon-btn:disabled { opacity: 0.6; cursor: default; }
 .cabinet-modal__card label { display: grid; gap: 6px; }
 .cabinet-modal__card label span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
@@ -327,12 +368,16 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-save { position: static; width: 44px; height: 44px; flex: 0 0 auto; }
 .cabinet-empty { margin: 0; padding: 16px 18px; }
 .cabinet-note { margin: 0; color: var(--muted); max-width: 62ch; }
+.cabinet-card > .cabinet-note--lede { padding: 12px 18px 0; }
+.cabinet-card > .cabinet-note--lede a { color: var(--primary); font-weight: var(--fw-title); text-decoration: none; }
+.cabinet-card > .cabinet-note--lede a:hover { text-decoration: underline; }
 .cabinet-form { display: grid; gap: 12px; padding: 16px 18px; }
 .cabinet-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .cabinet-form__row > label { min-width: 0; }
 .cabinet-choices { display: flex; flex-wrap: wrap; gap: 8px; }
 .cabinet-choices button { min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-size: 14px; font-weight: var(--fw-title); cursor: pointer; }
 .cabinet-choices button.is-on { border-color: transparent; background: rgba(var(--primary-rgb), 0.12); color: var(--primary); }
+.cabinet-review-list { padding-inline: 18px; }
 .cabinet-review { display: grid; gap: 8px; padding: 16px 0; border-bottom: 1px solid var(--line); }
 .cabinet-review:first-child { padding-top: 0; }
 .cabinet-review:last-child { border-bottom: 0; padding-bottom: 0; }
@@ -362,7 +407,8 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-expand { background: rgba(var(--dark-rgb), 0.02); }
 .cabinet-account { display: grid; gap: 4px; padding: 16px 18px 0; }
 .cabinet-account strong { color: var(--dark); }
-.cabinet-account span { color: var(--muted); font-size: 13px; }
+.cabinet-account span:not(.trainer-name):not(.trainer-name__line) { color: var(--muted); font-size: 13px; }
+.cabinet-account .trainer-name__line { color: var(--dark); font-size: inherit; }
 .cabinet-form input[readonly],
 .cabinet-form input.is-locked { background: #eceff3; color: var(--muted); cursor: default; }
 .cabinet-gender { margin: 0; padding: 12px 18px 0; color: var(--text); font-size: 14px; }
@@ -393,9 +439,27 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .entity-menu button, .cabinet-modal__card--form .entity-menu button { width: 100%; min-height: 44px; padding: 0 10px; border: 0; border-radius: var(--radius-control); background: transparent; color: var(--dark); font: inherit; font-weight: var(--fw-ui); text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 8px; cursor: pointer; }
 .entity-menu button span { color: var(--muted); font-size: 13px; }
 .entity-menu button:hover, .cabinet-modal__card--form .entity-menu button:hover { background: rgba(var(--dark-rgb), 0.04); }
+.places-field { display: grid; gap: 12px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.places-field legend { font-weight: var(--fw-title); }
+.places-field__row { display: grid; gap: 8px; }
+.places-field__parts { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+.places-field__add, .places-field__remove { min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-weight: var(--fw-title); cursor: pointer; justify-self: start; }
+.address-field { position: relative; }
+.cabinet-form .address-field input[type="text"], .cabinet-form .address-field input:not([type="hidden"]) { padding-right: 48px; }
+.address-field__clear { position: absolute; top: 0; right: 0; width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+.address-field__clear svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.address-field__status { min-height: 44px; display: flex; align-items: center; padding: 0 10px; color: var(--muted); font-size: 14px; }
+.geo-status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.geo-badge { display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border-radius: 999px; font-size: 13px; font-weight: var(--fw-title); }
+.geo-badge--ok { background: var(--neutral-bg); color: var(--dark); }
+.geo-badge--not-found { background: rgba(var(--primary-rgb), 0.12); color: var(--primary-dark); }
+.geo-badge--pending { background: var(--neutral-bg); color: var(--muted); }
+@media (max-width: 767px) {
+  .address-field .address-field__menu { position: fixed; z-index: 40; left: max(12px, env(safe-area-inset-left)); right: max(12px, env(safe-area-inset-right)); bottom: max(12px, env(safe-area-inset-bottom)); top: auto; max-height: min(70vh, 420px); box-shadow: 0 14px 42px rgba(var(--dark-rgb), 0.16); }
+}
 .entity-input__error { flex: 1 1 100%; color: var(--primary-dark); font-size: 13px; }
 .cabinet-brand-field { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); }
-.cabinet-brand-field svg { width: 20px; height: 20px; flex: 0 0 auto; }
+.cabinet-brand-field svg { width: 20px; height: 20px; flex: 0 0 auto; overflow: visible; }
 .cabinet-form .cabinet-brand-field input { flex: 1; width: auto; min-width: 0; border: 0; min-height: 42px; padding: 0; background: transparent; }
 .cabinet-certs { display: grid; gap: 12px; width: min(100%, 720px); margin: 0; padding: 0; list-style: none; }
 .cabinet-cert { display: grid; grid-template-columns: minmax(0, 1fr) 44px; gap: 8px; align-items: end; }

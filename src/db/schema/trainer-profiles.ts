@@ -1,4 +1,5 @@
 import {
+  doublePrecision,
   integer,
   jsonb,
   pgEnum,
@@ -75,6 +76,21 @@ export const trainerProfiles = pgTable(
     city: varchar("city", { length: 120 }).notNull().default(""),
     citySlug: varchar("city_slug", { length: 18 }).notNull().default(""),
     district: varchar("district", { length: 120 }).notNull().default(""),
+    /** Up to three Belarus places: city, district, street, coordinates. */
+    trainingPlaces: jsonb("training_places").$type<Array<{
+      city: string;
+      district: string;
+      address: string;
+      lat: number | null;
+      lng: number | null;
+      geocodeStatus: "ok" | "not_found" | "pending" | null;
+    }>>().notNull().default([]),
+    /** First training place, kept for the coordinate index. */
+    address: text("address"),
+    addressLat: doublePrecision("address_lat"),
+    addressLng: doublePrecision("address_lng"),
+    /** `ok` | `not_found` | `pending`. Null when the address itself is empty. */
+    geocodeStatus: text("geocode_status"),
     priceFrom: integer("price_from"),
     languages: jsonb("languages").$type<string[]>().notNull().default([]),
     avatarPath: varchar("avatar_path", { length: 300 }).notNull().default(""),
@@ -110,6 +126,7 @@ export const trainerProfiles = pgTable(
     index("trainer_profiles_claim_status_idx").on(table.claimStatus),
     index("trainer_profiles_city_slug_idx").on(table.citySlug),
     index("trainer_profiles_owner_user_id_idx").on(table.ownerUserId),
+    index("trainer_profiles_address_coords_idx").on(table.addressLat, table.addressLng),
   ],
 );
 

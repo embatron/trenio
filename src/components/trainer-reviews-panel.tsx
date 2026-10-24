@@ -20,7 +20,7 @@ export function TrainerReviewsPanel({ reviews }: { reviews: OwnTrainerReview[] }
   }
 
   return (
-    <div>
+    <div className="cabinet-review-list">
       {pager.rows.map((review) => (
         <article key={review.id} className="cabinet-review">
           <div className="cabinet-review__head">

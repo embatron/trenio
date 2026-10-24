@@ -36,6 +36,13 @@ export function editorHtml(parts: string[]) {
   }).join("");
 }
 
+const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+
+/** Visible characters, after markup is removed. One emoji is one character. */
+export function reviewTextLength(html: string): number {
+  return [...graphemes.segment(reviewPlainText(html))].length;
+}
+
 export function reviewPlainText(html: string): string {
   return sanitizeReviewHtml(html)
     .replace(/<br\s*\/?>/gi, "\n")

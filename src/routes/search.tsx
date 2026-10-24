@@ -2,11 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
-import { PUBLISHED_TRAINERS } from "@/lib/catalog/published-trainers";
+import { matchesCatalogAudience, PUBLISHED_TRAINERS } from "@/lib/catalog/published-trainers";
 import { compareByPopularity, compareByRating, compareByReviews, ratingFor } from "@/lib/catalog/trainer-popularity";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
-import { PhotoImage } from "@/components/photo-image";
-import { TrainerRating } from "@/components/trainer-rating";
+import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
 import { pluralRu } from "@/lib/ru-plural";
 
 type SearchParams = {
@@ -40,9 +39,9 @@ export const Route = createFileRoute("/search")({
 });
 
 type Result = {
-  slug: string; name: string; photo: string; sport: string; sportSlugs: string[]; city: string;
+  slug: string; name: string; firstName: string; lastName: string; photo: string; sport: string; sportSlugs: string[]; city: string;
   district: string; formats: Array<"individual" | "group">; audiences: Array<"adult" | "teen" | "kid">;
-  rating: number; reviews: number; price: number; desc: string; tags: string[]; badge?: string;
+  rating: string; reviews: number; price: number; experience: number; desc: string; tags: string[]; badge?: string;
 };
 
 function buildResults(ratings: Record<string, { rating: string; reviews: number }>): Result[] {
@@ -51,6 +50,8 @@ function buildResults(ratings: Record<string, { rating: string; reviews: number 
     return {
       slug: trainer.slug,
       name: trainer.name,
+      firstName: trainer.firstName,
+      lastName: trainer.lastName,
       photo: trainer.photo,
       sport: trainer.sports.map((sport) => sport.label).join(", "),
       sportSlugs: trainer.sports.flatMap((sport) => [sport.slug, sport.label.toLowerCase()]),
@@ -58,9 +59,10 @@ function buildResults(ratings: Record<string, { rating: string; reviews: number 
       district: trainer.district,
       formats: trainer.formats,
       audiences: trainer.audiences,
-      rating: Number(rating.rating) || 0,
+      rating: rating.rating,
       reviews: rating.reviews,
-      price: 0,
+      price: trainer.priceFrom,
+      experience: trainer.experience,
       desc: trainer.bio,
       tags: trainer.sports.map((sport) => sport.label),
     };
@@ -85,25 +87,6 @@ const CSS = `
 .sr-sort select { min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-control); font: inherit; font-size: 14px; background: #fff; font-weight: var(--fw-heading); color: var(--dark); cursor: pointer; }
 
 .sr-grid { grid-column: 1 / -1; margin-top: 4px; }
-.sr-card {
-  background: #fff; border-radius: var(--card-radius); padding: 18px; border: 1px solid rgba(var(--dark-rgb), 0.05);
-  display: grid; gap: 10px; text-decoration: none; color: inherit; transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-.sr-card:hover { transform: translateY(-3px); border-color: rgba(var(--primary-rgb), 0.3); box-shadow: 0 14px 36px -18px rgba(var(--dark-rgb), 0.18); }
-.sr-card__head { display: flex; gap: 12px; align-items: flex-start; }
-.sr-card__avatar { width: 52px; height: 52px; border-radius: var(--radius-tile); object-fit: cover; background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.18), rgba(var(--primary-rgb), 0.06)); display: block; flex: 0 0 auto; }
-.sr-card__title { flex: 1; min-width: 0; }
-.sr-card__name { margin: 0 0 2px; font-size: 17px; font-weight: var(--fw-heading); letter-spacing: -0.02em; color: var(--dark); }
-.sr-card__sport { margin: 0; font-size: 13px; color: var(--muted); font-weight: var(--fw-heading); }
-.sr-card__rating { font-size: 14px; font-weight: var(--fw-title); color: var(--dark); display: inline-flex; gap: 4px; align-items: center; }
-.sr-card__rating .star { color: #f5a524; }
-.sr-card__rating small { color: var(--muted); font-weight: var(--fw-ui); font-size: 12px; }
-.sr-card__desc { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--text); }
-.sr-card__tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.sr-card__tags span { font-size: 12px; font-weight: var(--fw-heading); padding: 4px 10px; border-radius: 999px; background: rgba(var(--primary-rgb), 0.08); color: var(--primary); }
-.sr-card__foot { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(var(--dark-rgb), 0.06); padding-top: 10px; margin-top: 2px; font-size: 13px; color: var(--muted); font-weight: var(--fw-title); }
-.sr-card__price strong { color: var(--dark); font-size: 16px; font-weight: var(--fw-heading); margin-left: 2px; }
-.sr-card__badge { font-size: 11px; font-weight: var(--fw-title); padding: 3px 8px; border-radius: 999px; background: var(--primary); color: #fff; margin-left: 8px; vertical-align: middle; }
 
 .sr-empty {
   grid-column: 1 / -1;
@@ -135,11 +118,10 @@ function SearchPage() {
       if (q && !r.sportSlugs.some(matchesSport) && !r.name.toLowerCase().includes(q)) return false;
       if (loc && !r.city.toLowerCase().includes(loc.replace(/^в\s+/i, "")) && !loc.includes(r.city.toLowerCase())) return false;
       if (search.format && r.formats.length > 0 && !r.formats.includes(search.format)) return false;
-      if (search.audience === "child" && r.audiences.length > 0 && !r.audiences.includes("kid")) return false;
-      if (search.audience === "adult" && r.audiences.length > 0 && !r.audiences.includes("adult")) return false;
+      if (!matchesCatalogAudience(r.audiences, search.audience === "child" ? "child" : "adult")) return false;
       return true;
     });
-    const rated = (item: Result) => ({ name: item.name, rating: String(item.rating), reviews: item.reviews });
+    const rated = (item: Result) => ({ name: item.name, rating: item.rating, reviews: item.reviews });
     if (sort === "rating") list = [...list].sort((a, b) => compareByRating(rated(a), rated(b)));
     else if (sort === "reviews") list = [...list].sort((a, b) => compareByReviews(rated(a), rated(b)));
     else if (sort === "price-asc") list = [...list].sort((a, b) => a.price - b.price);
@@ -209,25 +191,7 @@ function SearchPage() {
         ) : (
           <div className="sr-grid">
             {filtered.map((r) => (
-              <Link key={r.slug} to="/trainers/$slug" params={{ slug: r.slug }} className="sr-card">
-                <div className="sr-card__head">
-                  <PhotoImage className="sr-card__avatar" src={r.photo} alt="" preset="avatar" width={52} height={52} />
-                  <div className="sr-card__title">
-                    <h3 className="sr-card__name">
-                      {r.name}
-                      {r.badge && <span className="sr-card__badge">{r.badge}</span>}
-                    </h3>
-                    <p className="sr-card__sport">{r.sport} · {r.district ? `${r.city}, ${r.district}` : r.city}</p>
-                  </div>
-                  <TrainerRating rating={r.reviews > 0 ? r.rating.toFixed(1) : "0"} reviews={r.reviews} />
-                </div>
-                <p className="sr-card__desc">{r.desc}</p>
-                <div className="sr-card__tags">{r.tags.map((t) => <span key={t}>{t}</span>)}</div>
-                <div className="sr-card__foot">
-                  <span>{r.city}</span>
-                  {r.price > 0 ? <span className="sr-card__price">от <strong>{r.price} BYN</strong></span> : null}
-                </div>
-              </Link>
+              <CatalogTrainerCard key={r.slug} trainer={r} />
             ))}
           </div>
         )}

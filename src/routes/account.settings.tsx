@@ -7,7 +7,7 @@ const accountRoute = getRouteApi("/account");
 export const Route = createFileRoute("/account/settings")({
   head: () => ({
     meta: [
-      { title: "Параметры · trenio.by" },
+      { title: "Настройки · trenio.by" },
       { name: "description", content: "Имя и фамилия аккаунта." },
       { name: "robots", content: "noindex,follow" },
     ],
@@ -22,7 +22,7 @@ function AccountSettingsPage() {
 
   return (
     <article className="cabinet-card">
-      <h2>Параметры</h2>
+      <h2>Настройки</h2>
       <AccountProfileForm user={user} phone={cabinet.phone} phoneVerified={cabinet.phoneVerified} />
     </article>
   );

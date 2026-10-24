@@ -8,6 +8,7 @@ export const RATE_LIMITS = {
   otpPhone: { windowMs: 60_000, max: 1 },
   otpIp: { windowMs: 15 * 60_000, max: 6 },
   forgotIp: { windowMs: 15 * 60_000, max: 5 },
+  geocodeUser: { windowMs: 1_000, max: 1 },
 } as const;
 
 export const RATE_LIMITED_MESSAGE = "Слишком много попыток. Подождите и попробуйте снова.";

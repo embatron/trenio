@@ -8,9 +8,7 @@ import { PUBLISHED_TRAINERS } from "@/lib/catalog/published-trainers";
 import { compareByPopularity, ratingFor } from "@/lib/catalog/trainer-popularity";
 import { getHomeStatsFn } from "@/lib/catalog/home-stats";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
-import { FavoriteButton } from "@/components/favorite-button";
-import { PhotoImage } from "@/components/photo-image";
-import { TrainerRating } from "@/components/trainer-rating";
+import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
 
 const HOMEPAGE_CATEGORIES = TOP_LEVEL_SPORT_CATEGORIES;
 
@@ -626,14 +624,17 @@ function Index() {
     return {
       slug: trainer.slug,
       name: trainer.name,
+      firstName: trainer.firstName,
+      lastName: trainer.lastName,
       photo: trainer.photo,
-      sport: trainer.sports.map((sport) => sport.label).join(", "),
       desc: trainer.bio,
       tags: trainer.sports.map((sport) => sport.label),
       rating: rating.rating,
       reviews: rating.reviews,
-      price: 0,
-      badge: undefined as string | undefined,
+      price: trainer.priceFrom,
+      city: trainer.city.label,
+      district: trainer.district,
+      experience: trainer.experience,
     };
   }).sort(compareByPopularity);
   useEffect(() => {
@@ -713,51 +714,7 @@ function Index() {
               {trainers.length === 0 ? (
                 <p className="section-sub">Тренеров пока нет. Раздел заполнится, когда появятся опубликованные профили.</p>
               ) : trainers.map((t) => (
-                <Link
-                  key={t.slug}
-                  className="trainer-card"
-                  to="/trainers/$slug"
-                  params={{ slug: t.slug }}
-                >
-                  <div className="trainer-card__media">
-                    <PhotoImage className="trainer-card__photo" src={t.photo} alt={t.name} preset="card" width={480} height={600} loading="lazy" />
-                    {t.badge && <span className="trainer-card__badge">{t.badge}</span>}
-                    <FavoriteButton target={{ type: "trainer", slug: t.slug }} className="trainer-card__save" />
-                  </div>
-                  <div className="trainer-card__body">
-                    <div className="trainer-card__head">
-                      <h3 className="trainer-card__name">{t.name}</h3>
-                      <TrainerRating rating={t.rating} reviews={t.reviews} />
-                    </div>
-                    <p className="trainer-card__sport">{t.sport}</p>
-                    <p className="trainer-card__desc">{t.desc}</p>
-                    <div className="trainer-card__tags">
-                      {t.tags.map((tag, i) => (
-                        <span
-                          key={tag}
-                          className={`trainer-card__tag${i === 0 ? " trainer-card__tag--accent" : ""}`}
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="trainer-card__footer">
-                      <span className="trainer-card__location">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" />
-                          <circle cx="12" cy="9" r="2.4" />
-                        </svg>
-                        <span>Минск</span>
-                      </span>
-                      {t.price > 0 ? (
-                        <span className="trainer-card__price">
-                          <small>от </small>
-                          {t.price} BYN
-                        </span>
-                      ) : null}
-                    </div>
-                  </div>
-                </Link>
+                <CatalogTrainerCard key={t.slug} trainer={t} />
               ))}
             </div>
           </section>

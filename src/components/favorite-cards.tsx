@@ -1,20 +1,24 @@
 import { Link } from "@tanstack/react-router";
 
+import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
 import { FavoriteButton } from "@/components/favorite-button";
 import { TablePager, useTablePage } from "@/components/table-pager";
-import { PhotoImage } from "@/components/photo-image";
-import { TrainerRating } from "@/components/trainer-rating";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
 import { ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
-import { countRu } from "@/lib/ru-plural";
-
 type FavoriteCard = {
   type: "trainer" | "club";
   slug: string;
   name: string;
+  firstName: string;
+  lastName: string;
   photo: string;
   line: string;
+  desc: string;
   city: string;
+  district?: string;
+  tags?: string[];
+  experience?: number;
+  price?: number;
   rating: string;
   reviews: number;
   missing: boolean;
@@ -28,21 +32,28 @@ function toCard(key: string, ratings: Record<string, TrainerRatingSnapshot>): Fa
     const trainer = getPublishedTrainer(slug);
     const rating = ratingFor(slug, ratings);
     if (!trainer) {
-      return { type, slug, name: slug, photo: "", line: "Тренер снят с каталога", city: "", rating: "0", reviews: 0, missing: true };
+      return { type, slug, name: slug, firstName: slug, lastName: "", photo: "", line: "Тренер снят с каталога", desc: "", city: "", rating: "0", reviews: 0, missing: true };
     }
     return {
       type,
       slug,
       name: trainer.name,
+      firstName: trainer.firstName,
+      lastName: trainer.lastName,
       photo: trainer.photo,
       line: trainer.sports.map((sport) => sport.label).join(", "),
-      city: trainer.district ? `${trainer.city.label}, ${trainer.district}` : trainer.city.label,
+      desc: trainer.bio,
+      city: trainer.city.label,
+      district: trainer.district,
+      tags: trainer.sports.map((sport) => sport.label),
+      experience: trainer.experience,
+      price: trainer.priceFrom,
       rating: rating.rating,
       reviews: rating.reviews,
       missing: false,
     };
   }
-  return { type, slug, name: slug, photo: "", line: "Клуб", city: "", rating: "0", reviews: 0, missing: true };
+  return { type, slug, name: slug, firstName: slug, lastName: "", photo: "", line: "Клуб", desc: "", city: "", rating: "0", reviews: 0, missing: true };
 }
 
 export function FavoriteCards({
@@ -71,25 +82,29 @@ export function FavoriteCards({
   }
 
   return (
-    <>
-      <p className="cabinet-note">{countRu(cards.length, "сохранённая карточка", "сохранённые карточки", "сохранённых карточек")}</p>
+    <article className="cabinet-card">
+      <h2>Избранное</h2>
       {trainers.length > 0 ? (
-        <div className="trainer-grid">
+        <div className="favorites-grid">
           {trainers.map((card) => (
-            <Link key={`${card.type}:${card.slug}`} className="trainer-card" to="/trainers/$slug" params={{ slug: card.slug }}>
-              <div className="trainer-card__media">
-                <PhotoImage className="trainer-card__photo" src={card.photo} alt={card.name} preset="card" width={480} height={600} />
-                <FavoriteButton target={{ type: card.type, slug: card.slug }} className="trainer-card__save" />
-              </div>
-              <div className="trainer-card__body">
-                <div className="trainer-card__head">
-                  <h2 className="trainer-card__name">{card.name}</h2>
-                  <TrainerRating rating={card.rating} reviews={card.reviews} />
-                </div>
-                <p className="trainer-card__sport">{card.line}</p>
-                <p className="trainer-card__location">{card.city}</p>
-              </div>
-            </Link>
+            <CatalogTrainerCard
+              key={`${card.type}:${card.slug}`}
+              trainer={{
+                slug: card.slug,
+                name: card.name,
+                firstName: card.firstName,
+                lastName: card.lastName,
+                photo: card.photo,
+                tags: card.tags ?? [],
+                desc: card.desc,
+                rating: card.rating,
+                reviews: card.reviews,
+                city: card.city,
+                district: card.district,
+                experience: card.experience,
+                price: card.price,
+              }}
+            />
           ))}
         </div>
       ) : null}
@@ -108,12 +123,13 @@ export function FavoriteCards({
       ) : null}
       <TablePager page={pager.page} pages={pager.pages} total={pager.total} from={pager.from} to={pager.to} onPage={pager.setPage} />
       <style>{`
+        .cabinet-card .favorites-missing { margin: 0 18px 16px; }
         .favorites-missing { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
         .favorites-missing li { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--card-radius); background: var(--white); }
         .favorites-missing strong { display: block; color: var(--dark); }
         .favorites-missing span { color: var(--muted); font-size: 13px; }
         .favorites-missing__save { position: static; width: 44px; height: 44px; }
       `}</style>
-    </>
+    </article>
   );
 }

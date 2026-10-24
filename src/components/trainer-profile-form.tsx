@@ -84,12 +84,13 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
         }}
       >
         {profile.offerAccepted ? (
-          <p className="cabinet-note">Оферта и обработка данных приняты. Телефон подтверждается SMS в параметрах. Подтверждение почты и Telegram-бот появятся позже.</p>
+          <p className="cabinet-note">Оферта и обработка данных приняты. Телефон подтверждается SMS в настройках. Подтверждение почты и Telegram-бот появятся позже.</p>
         ) : (
           <p className="cabinet-note">Согласие с офертой ещё не отмечено.</p>
         )}
         <TrainerCardFields
           nick={profile.slug}
+          priceLabel="Сколько у меня стоит разовое занятие (персональная тренировка)?"
           values={form}
           onChange={(values: TrainerCardValues) => setForm((current) => ({ ...current, ...values }))}
           photos={media?.photos ?? null}

@@ -80,5 +80,13 @@ function ChildCategoryPage() {
     ? { slug: parent.slug, label: parent.label }
     : { slug: parentSlug, label: parentSlug };
 
-  return <CategoryCatalogPage category={category} parentCategory={parentCategory} ratings={ratings} place={place} />;
+  return (
+    <CategoryCatalogPage
+      key={`${parentSlug}/${childSlug}`}
+      category={category}
+      parentCategory={parentCategory}
+      ratings={ratings}
+      place={place}
+    />
+  );
 }

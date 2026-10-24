@@ -1,5 +1,5 @@
 import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import { CategoryLink } from "@/lib/catalog/category-routes";
 import { canonicalCategoryPath } from "@/lib/catalog/slug-policy";
 import {
@@ -12,16 +12,22 @@ import {
   type CategoryRouteRef,
 } from "@/lib/catalog/sport-taxonomy";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
-import { PhotoImage } from "@/components/photo-image";
+import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
-import { trainersForCategory, type PublishedTrainer } from "@/lib/catalog/published-trainers";
+import { matchesCatalogAudience, PUBLISHED_TRAINERS, TRAINER_FORMAT_OPTIONS, trainersForCategory, type PublishedTrainer } from "@/lib/catalog/published-trainers";
 import { compareByPopularity, compareByRating, compareByReviews, ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
-import { FavoriteButton } from "@/components/favorite-button";
-import { TrainerRating } from "@/components/trainer-rating";
 import { pluralRu } from "@/lib/ru-plural";
 import { toggleFilterValue } from "@/lib/catalog/belarus-settlements";
-import { BELARUS_QUICK_CITIES, filterBelarusCities } from "@/lib/catalog/city-taxonomy";
+import { filterBelarusCities } from "@/lib/catalog/city-taxonomy";
+import { cityCatalogSlug, listCityCatalogPages } from "@/lib/catalog/city-pages";
+import {
+  catalogSportById,
+  catalogSportLocation,
+  filterCatalogSports,
+  trainerMatchesSportSelection,
+  type CatalogSport,
+} from "@/lib/catalog/catalog-sports";
 import {
   emptyCatalogPlace,
   resolveVisitorPlaceFn,
@@ -30,6 +36,13 @@ import {
   type VisitorPlace,
 } from "@/lib/catalog/visitor-place";
 import { catalogFilterCities, resolveSearchCity, readVisitorPlaceCookie } from "@/lib/catalog/search-city";
+import {
+  clearCatalogFilters,
+  emptyCatalogFilters,
+  readCatalogFilters,
+  writeCatalogFilters,
+  type CatalogFilterMemory,
+} from "@/lib/catalog/catalog-filters";
 
 export const Route = createFileRoute("/categories/$slug")({
   beforeLoad: ({ params }) => {
@@ -109,7 +122,7 @@ const CATEGORIES: Record<string, Category> = {
   boks: {
     slug: "boks",
     title: "Бокс",
-    titleGenitive: "бокса",
+    titleGenitive: "боксу",
     lead: "Найдите тренера по боксу — от первого занятия до подготовки к соревнованиям.",
     subSports: [
       "Классический бокс",
@@ -164,7 +177,7 @@ const CATEGORIES: Record<string, Category> = {
   edinoborstva: {
     slug: "edinoborstva",
     title: "Единоборства",
-    titleGenitive: "единоборств",
+    titleGenitive: "единоборствам",
     lead: "Тренеры по боксу, кикбоксингу, MMA, тайскому боксу и борьбе — для взрослых и детей.",
     subSports: [
       "Бокс",
@@ -202,7 +215,7 @@ const CATEGORIES: Record<string, Category> = {
   yoga: {
     slug: "yoga",
     title: "Йога",
-    titleGenitive: "йоги",
+    titleGenitive: "йоге, пилатесу и растяжке",
     lead: "Тренеры по йоге, пилатесу и стретчингу — для разных уровней подготовки.",
     subSports: [
       "Хатха-йога",
@@ -236,7 +249,7 @@ const CATEGORIES: Record<string, Category> = {
   fitnes: {
     slug: "fitnes",
     title: "Фитнес",
-    titleGenitive: "фитнеса",
+    titleGenitive: "фитнесу",
     lead: "Персональные тренеры по фитнесу, силовому и функциональному тренингу.",
     subSports: [
       "Похудение",
@@ -397,7 +410,7 @@ function fallbackChildCategory(parentSlug: string, childSlug: string): Category 
     faq: [
       {
         q: "Как связаться с тренером?",
-        a: "На странице тренера есть кнопка «Написать» — сообщение придёт ему в Telegram. Можно также показать телефон.",
+        a: "На карточке тренера есть иконки Telegram, почты и сообщения. Сообщение на сайте открывается в новой вкладке. Можно также показать телефон.",
       },
     ],
     stats: { trainers: 0, clubs: 0, avgPrice: 0, avgRating: 0 },
@@ -477,7 +490,7 @@ function fallbackCategory(slug: string): Category {
     faq: [
       {
         q: "Как связаться с тренером?",
-        a: "На странице тренера есть кнопка «Написать» — сообщение придёт ему в Telegram. Можно также показать телефон.",
+        a: "На карточке тренера есть иконки Telegram, почты и сообщения. Сообщение на сайте открывается в новой вкладке. Можно также показать телефон.",
       },
     ],
     stats,
@@ -500,6 +513,8 @@ type TrainerCard = {
   experience: number;
   audiences: Array<"adult" | "kid" | "teen">;
   formats: Array<"individual" | "group">;
+  sportSlugs: string[];
+  sportParents: string[];
 };
 
 function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, TrainerRatingSnapshot>): TrainerCard {
@@ -507,18 +522,22 @@ function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, Train
   return {
     slug: trainer.slug,
     name: trainer.name,
+    firstName: trainer.firstName,
+    lastName: trainer.lastName,
     photo: trainer.photo,
     sub: trainer.primarySport.label,
     desc: trainer.bio,
     tags: trainer.sports.map((sport) => sport.label),
     rating: rating.rating,
     reviews: rating.reviews,
-    price: 0,
+    price: trainer.priceFrom,
     city: trainer.city.label,
     district: trainer.district,
     experience: trainer.experience,
     audiences: trainer.audiences,
     formats: trainer.formats,
+    sportSlugs: trainer.sports.map((sport) => sport.slug),
+    sportParents: trainer.sports.map((sport) => sport.parentSlug),
   };
 }
 
@@ -529,11 +548,11 @@ function generateTrainers(category: Category, ratings: Record<string, TrainerRat
 const PAGE_CSS = `
 
 .cat-page { background: var(--white); }
-.cat-hero { padding-top: 16px; background: var(--white); }
-.cat-hero .layout-container { display: grid; gap: var(--layout-gap); align-items: center; }
-.cat-hero .layout-container:has(.cat-hero__photo) { grid-template-columns: minmax(0, 1fr) 320px; }
-.cat-hero__copy { display: grid; gap: var(--layout-gap); min-width: 0; }
-.cat-hero__head { display: grid; gap: 10px; }
+.cat-hero { padding-top: 12px; background: var(--white); }
+.cat-hero .layout-container { display: grid; gap: calc(var(--layout-gap) * 0.8); align-items: center; }
+.cat-hero .layout-container:has(.cat-hero__photo) { grid-template-columns: minmax(0, 1fr) 256px; }
+.cat-hero__copy { display: grid; gap: calc(var(--layout-gap) * 0.8); min-width: 0; }
+.cat-hero__head { display: grid; gap: 8px; }
 .cat-hero__crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; font-size: 13px; line-height: 1.3; font-weight: var(--fw-title); color: var(--muted); }
 .cat-hero__crumbs a { color: var(--muted); text-decoration: none; }
 .cat-hero__crumbs a:hover { color: var(--primary); }
@@ -546,7 +565,7 @@ const PAGE_CSS = `
 .cat-hero__stat b { color: var(--dark); font-weight: var(--fw-title); }
 .cat-hero__stat svg { width: 16px; height: 16px; flex: 0 0 auto; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; color: var(--dark); }
 .cat-hero__stat svg.is-star { fill: #ffb400; stroke: none; }
-.cat-child-nav { padding-top: 16px; }
+.cat-child-nav { padding-top: 12px; }
 .cat-child-nav__inner {
   display: flex;
   flex-wrap: wrap;
@@ -557,11 +576,11 @@ const PAGE_CSS = `
   width: auto;
   min-height: 44px;
   padding: 6px 12px;
-  border-radius: var(--radius-control);
+  border-radius: 999px;
   background: var(--white);
   border: 1.5px solid var(--line);
   color: var(--dark);
-  font-size: var(--fs-ui);
+  font-size: 13px;
   font-weight: var(--fw-ui);
   letter-spacing: -0.01em;
   text-decoration: none;
@@ -596,7 +615,7 @@ const PAGE_CSS = `
 .cat-filters { position: sticky; top: calc(var(--header-clearance, 80px) + 16px); align-self: start; background: var(--white); border: 1px solid var(--line); border-radius: var(--card-radius); padding: 22px; }
 .cat-filter { border-top: 1px solid var(--line); padding: 16px 0; }
 .cat-filter:first-of-type { border-top: 0; padding-top: 0; }
-.cat-filter__title { font-size: 12px; font-weight: var(--fw-title); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.cat-filter__title { margin: 0 0 8px; font-size: 14px; font-weight: var(--fw-title); letter-spacing: 0.01em; line-height: 1.2; text-transform: none; color: var(--muted); }
 .cat-place-note { margin: 8px 0 0; font-size: 12px; line-height: 1.4; color: var(--muted); }
 .cat-city-field { position: relative; }
 .cat-city-input {
@@ -658,7 +677,9 @@ const PAGE_CSS = `
 .cat-city-suggest button:hover { background: rgba(var(--primary-rgb), 0.08); color: var(--primary-dark); }
 .cat-city-quick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .cat-filter__opts { display: flex; flex-wrap: wrap; gap: 6px; }
-.cat-pill { padding: 7px 12px; border-radius: 999px; background: var(--light-bg); border: 1px solid transparent; color: var(--dark); font-size: var(--fs-caption); font-weight: var(--fw-ui); cursor: pointer; transition: all 0.16s ease; }
+.cat-pill { min-height: 44px; padding: 7px 12px; border-radius: 999px; background: var(--light-bg); border: 1px solid transparent; color: var(--dark); font: inherit; font-size: var(--fs-caption); font-weight: var(--fw-ui); cursor: pointer; transition: all 0.16s ease; display: inline-flex; align-items: center; }
+a.cat-pill { text-decoration: none; }
+.cat-sport-hint { display: block; margin-top: 2px; font-size: 11px; font-weight: var(--fw-ui); color: var(--muted); }
 .cat-pill:hover { background: rgba(var(--primary-rgb), 0.08); }
 .cat-pill.is-active { background: var(--primary); color: #fff; }
 .cat-filter__check { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 14px; cursor: pointer; color: var(--dark); }
@@ -706,7 +727,7 @@ const PAGE_CSS = `
 .cat-map-banner { margin-top: var(--layout-gap); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--layout-gap); align-items: center; padding: 22px 26px; border: 1px solid var(--line); border-radius: var(--card-radius); background: linear-gradient(135deg, #1a1a1f 0%, #2a1a1a 100%); color: #fff; }
 .cat-map-banner h3 { margin: 0 0 4px; font-size: 19px; font-weight: var(--fw-title); letter-spacing: -0.02em; }
 .cat-map-banner p { margin: 0; color: rgba(255,255,255,0.7); font-size: 14px; }
-.cat-map-banner button { min-height: 44px; padding: 12px 22px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
+.cat-map-banner a { min-height: 44px; padding: 12px 22px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
 
 .cat-extra { display: grid; gap: var(--layout-section-y); padding-bottom: clamp(40px, 6vw, 60px); }
 .cat-block { display: grid; gap: var(--layout-gap); }
@@ -744,7 +765,7 @@ const PAGE_CSS = `
 .cat-cta a { display: inline-flex; align-items: center; min-height: 44px; padding: 12px 22px; border-radius: 999px; background: #fff; color: var(--primary-dark); font-weight: var(--fw-title); text-decoration: none; white-space: nowrap; }
 
 @media (max-width: 960px) {
-  .cat-hero .layout-container:has(.cat-hero__photo) { grid-template-columns: minmax(0, 1fr) 220px; }
+  .cat-hero .layout-container:has(.cat-hero__photo) { grid-template-columns: minmax(0, 1fr) 176px; }
   .cat-article { grid-template-columns: 1fr; }
   .cat-filters { position: static; }
   .cat-cta { grid-template-columns: 1fr; padding: var(--layout-block-gap) var(--layout-gap); }
@@ -760,14 +781,19 @@ function CategoryPage() {
   const { slug } = Route.useParams();
   const { ratings, place } = Route.useLoaderData();
   const category = resolveParentCategory(slug);
-  return <CategoryCatalogPage category={category} ratings={ratings} place={place} />;
+  return <CategoryCatalogPage key={slug} category={category} ratings={ratings} place={place} />;
 }
 
+type CityCatalog = { slug: string; name: string; locative: string };
+
 type CategoryCatalogPageProps = {
-  category: Category;
+  category?: Category;
   parentCategory?: { slug: string; label: string };
   ratings?: Record<string, TrainerRatingSnapshot>;
   place?: CatalogPlace;
+  cityCatalog?: CityCatalog;
+  pageSport?: CatalogSport | null;
+  sportSelection?: CatalogSport[];
 };
 
 export function CategoryCatalogPage({
@@ -775,31 +801,64 @@ export function CategoryCatalogPage({
   parentCategory,
   ratings = {},
   place = emptyCatalogPlace,
+  cityCatalog,
+  pageSport = null,
+  sportSelection = [],
 }: CategoryCatalogPageProps) {
   const navigate = useNavigate();
-  const allTrainers = useMemo(() => generateTrainers(category, ratings), [category, ratings]);
-  const parentSlug = parentCategory?.slug ?? category.slug;
-  const keyword = categoryKeyword(category, parentCategory?.slug);
-  const heroAliases = parentCategory
+  const allTrainers = useMemo(
+    () => cityCatalog
+      ? PUBLISHED_TRAINERS.map((trainer) => toCategoryCard(trainer, ratings))
+      : category
+        ? generateTrainers(category, ratings)
+        : [],
+    [category, cityCatalog, ratings],
+  );
+  const parentSlug = parentCategory?.slug ?? category?.slug ?? "";
+  const keyword = category ? categoryKeyword(category, parentCategory?.slug) : "";
+  const heroAliases = parentCategory && category
     ? (getSportTaxonomyChildInCategory(parentCategory.slug, category.slug)?.aliases ?? [])
     : [];
-  const heroLead = categoryHeroLead(
-    keyword,
-    parentCategory ? [] : categoryTopicLabels(category),
-    heroAliases,
-  );
-  const topLevelCategory = getTopLevelSportCategory(parentSlug);
-  const heroImage = getParentCategoryFeaturedImage(parentSlug);
+  const heroLead = category
+    ? categoryHeroLead(keyword, parentCategory ? [] : categoryTopicLabels(category), heroAliases)
+    : "";
+  const topLevelCategory = parentSlug ? getTopLevelSportCategory(parentSlug) : undefined;
+  const heroImage = pageSport
+    ? getParentCategoryFeaturedImage(pageSport.parentSlug)
+    : cityCatalog
+      ? undefined
+      : getParentCategoryFeaturedImage(parentSlug);
   const navChildren = topLevelCategory?.children ?? [];
-  const activeChildSlug = parentCategory ? category.slug : null;
+  const activeChildSlug = parentCategory && category ? category.slug : null;
+  const categorySport = !cityCatalog && category
+    ? parentCategory
+      ? catalogSportById(`${parentCategory.slug}/${category.slug}`) ?? catalogSportById(category.slug)
+      : catalogSportById(category.slug)
+    : null;
 
-  const [selectedCities, setSelectedCities] = useState<string[]>(() => catalogFilterCities(place));
-  const [cityQuery, setCityQuery] = useState(place.query);
+  const [selectedSports, setSelectedSports] = useState<CatalogSport[]>(() =>
+    pageSport ? [pageSport] : sportSelection.length > 0 ? sportSelection : categorySport ? [categorySport] : [],
+  );
+  const [sportQuery, setSportQuery] = useState("");
+  const [sportFocused, setSportFocused] = useState(false);
+  const skipSportBlur = useRef(false);
+  const sportSuggestions = useMemo(
+    () => filterCatalogSports(sportQuery, sportQuery.trim() ? 8 : 5),
+    [sportQuery],
+  );
+  const [selectedCities, setSelectedCities] = useState<string[]>(() =>
+    cityCatalog ? [cityCatalog.name] : catalogFilterCities(place),
+  );
+  const [cityQuery, setCityQuery] = useState(cityCatalog ? "" : place.query);
   const [cityFocused, setCityFocused] = useState(false);
   const [placeNote, setPlaceNote] = useState<"detected" | "saved" | null>(
     place.source === "none" ? null : place.source,
   );
-  const citySuggestions = useMemo(() => filterBelarusCities(cityQuery), [cityQuery]);
+  const citySuggestions = useMemo(() => {
+    const found = filterBelarusCities(cityQuery);
+    if (!cityQuery.trim()) return found.slice(0, 5);
+    return found;
+  }, [cityQuery]);
 
   useEffect(() => {
     const siteHeader = document.querySelector<HTMLElement>("#site-header");
@@ -820,6 +879,22 @@ export function CategoryCatalogPage({
 
   const [audience, setAudience] = useState<"self" | "child" | null>(null);
   const [formats, setFormats] = useState<Array<"individual" | "group">>([]);
+  const [minExperience, setMinExperience] = useState<number | null>(null);
+  const [sort, setSort] = useState<CatalogFilterMemory["sort"]>("popular");
+  const filtersRef = useRef<CatalogFilterMemory>(emptyCatalogFilters);
+  const rememberFilters = (patch: Partial<CatalogFilterMemory>) => {
+    const next = { ...filtersRef.current, ...patch };
+    filtersRef.current = next;
+    writeCatalogFilters(next);
+  };
+  useEffect(() => {
+    const saved = readCatalogFilters();
+    filtersRef.current = saved;
+    setAudience(saved.audience);
+    setFormats(saved.formats);
+    setMinExperience(saved.experience);
+    setSort(saved.sort);
+  }, []);
   const priceBounds = useMemo(() => {
     if (!allTrainers.length) return { min: 0, max: 100 };
     const prices = allTrainers.map((t) => t.price);
@@ -828,11 +903,23 @@ export function CategoryCatalogPage({
   const [priceMin, setPriceMin] = useState<number>(priceBounds.min);
   const [priceMax, setPriceMax] = useState<number>(priceBounds.max);
   useEffect(() => {
-    setPriceMin(priceBounds.min);
-    setPriceMax(priceBounds.max);
+    const saved = filtersRef.current.price;
+    if (!saved) {
+      setPriceMin(priceBounds.min);
+      setPriceMax(priceBounds.max);
+      return;
+    }
+    const min = Math.min(Math.max(saved.min, priceBounds.min), Math.max(priceBounds.min, priceBounds.max - 1));
+    const max = Math.max(Math.min(saved.max, priceBounds.max), min + 1);
+    setPriceMin(min);
+    setPriceMax(Math.min(max, priceBounds.max));
   }, [priceBounds.min, priceBounds.max]);
-  const [minExperience, setMinExperience] = useState<number | null>(null);
-  const [sort, setSort] = useState("popular");
+  const commitPrice = (min: number, max: number) => {
+    setPriceMin(min);
+    setPriceMax(max);
+    const full = min <= priceBounds.min && max >= priceBounds.max;
+    rememberFilters({ price: full ? null : { min, max } });
+  };
 
   const locationSummary = useMemo(() => {
     const parts = [...selectedCities];
@@ -851,18 +938,13 @@ export function CategoryCatalogPage({
         const matchesQuery = q && cityLower.includes(q);
         if (!matchesQuick && !matchesQuery) return false;
       }
-      if (audience === "self" && t.audiences.length > 0 && !t.audiences.includes("adult")) return false;
-      if (
-        audience === "child" &&
-        t.audiences.length > 0 &&
-        !t.audiences.some((item) => item === "kid" || item === "teen")
-      ) {
-        return false;
-      }
+      if (audience === "self" && !matchesCatalogAudience(t.audiences, "self")) return false;
+      if (audience === "child" && !matchesCatalogAudience(t.audiences, "child")) return false;
       if (formats.length > 0 && t.formats.length > 0 && !t.formats.some((item) => formats.includes(item))) return false;
       if (priceMin && t.price < Number(priceMin)) return false;
       if (priceMax && t.price > Number(priceMax)) return false;
       if (minExperience != null && t.experience < minExperience) return false;
+      if (!trainerMatchesSportSelection(t, selectedSports, sportQuery)) return false;
       return true;
     });
     if (sort === "price-asc") list = [...list].sort((a, b) => a.price - b.price);
@@ -871,12 +953,18 @@ export function CategoryCatalogPage({
     else if (sort === "reviews") list = [...list].sort(compareByReviews);
     else list = [...list].sort(compareByPopularity);
     return list;
-  }, [allTrainers, selectedCities, cityQuery, audience, formats, priceMin, priceMax, minExperience, sort]);
+  }, [allTrainers, selectedCities, cityQuery, audience, formats, priceMin, priceMax, minExperience, sort, selectedSports, sportQuery]);
 
   const cityPills = useMemo(() => {
-    const quick = new Set<string>(BELARUS_QUICK_CITIES);
-    return [...selectedCities.filter((city) => !quick.has(city)), ...BELARUS_QUICK_CITIES];
+    const hints = listCityCatalogPages().slice(0, 5).map((city) => city.name);
+    const known = new Set(hints);
+    return [...selectedCities.filter((city) => !known.has(city)), ...hints];
   }, [selectedCities]);
+  const sportPills = useMemo(() => {
+    const hints = filterCatalogSports("", 5);
+    const known = new Set(hints.map((sport) => sport.id));
+    return [...selectedSports.filter((sport) => !known.has(sport.id)), ...hints];
+  }, [selectedSports]);
   const committedPlace = useRef({ cities: place.cities, query: place.query });
   const skipCityBlur = useRef(false);
   const userTouchedPlace = useRef(false);
@@ -893,7 +981,7 @@ export function CategoryCatalogPage({
   };
 
   useEffect(() => {
-    if (place.cities.length > 0 || place.query.trim()) return;
+    if (cityCatalog || place.cities.length > 0 || place.query.trim()) return;
     let cancel = false;
     void resolveSearchCity().then((city) => {
       if (cancel || userTouchedPlace.current) return;
@@ -905,20 +993,104 @@ export function CategoryCatalogPage({
     return () => {
       cancel = true;
     };
-  }, [place.cities, place.query]);
+  }, [cityCatalog, place.cities, place.query]);
+
+  const openCity = (slug: string) => {
+    if (pageSport) {
+      void navigate(catalogSportLocation(slug, pageSport));
+      return;
+    }
+    if (selectedSports.length > 1) {
+      void navigate({
+        to: "/city/$slug",
+        params: { slug },
+        search: { sports: selectedSports.map((sport) => sport.id).join(",") },
+      });
+      return;
+    }
+    void navigate({ to: "/city/$slug", params: { slug } });
+  };
+
+  const openCategory = (sport: CatalogSport) => {
+    if (categorySport && sport.id === categorySport.id) return;
+    if (sport.level === 1) {
+      void navigate({ to: "/categories/$slug", params: { slug: sport.slug } });
+      return;
+    }
+    void navigate({
+      to: "/categories/$parentSlug/$childSlug",
+      params: { parentSlug: sport.parentSlug, childSlug: sport.slug },
+    });
+  };
+
+  const commitSports = (next: CatalogSport[]) => {
+    if (!cityCatalog) {
+      const added = next.find((sport) => sport.id !== categorySport?.id);
+      if (added) openCategory(added);
+      else setSelectedSports(categorySport ? [categorySport] : []);
+      setSportQuery("");
+      return;
+    }
+    const pageStillSelected = pageSport ? next.some((sport) => sport.id === pageSport.id) : false;
+    if (pageSport && pageStillSelected) {
+      setSelectedSports(next);
+      setSportQuery("");
+      return;
+    }
+    const rest = pageSport ? next.filter((sport) => sport.id !== pageSport.id) : next;
+    if (rest.length === 1) {
+      void navigate(catalogSportLocation(cityCatalog.slug, rest[0]));
+      return;
+    }
+    if (rest.length === 0) {
+      void navigate({ to: "/city/$slug", params: { slug: cityCatalog.slug } });
+      return;
+    }
+    void navigate({
+      to: "/city/$slug",
+      params: { slug: cityCatalog.slug },
+      search: { sports: rest.map((sport) => sport.id).join(",") },
+    });
+  };
+
+  const toggleSport = (sport: CatalogSport) => {
+    const exists = selectedSports.some((item) => item.id === sport.id);
+    const next = exists
+      ? selectedSports.filter((item) => item.id !== sport.id)
+      : [...selectedSports, sport];
+    commitSports(next);
+  };
 
   const reset = () => {
     userTouchedPlace.current = true;
-    setSelectedCities([]);
-    setCityQuery("");
+    filtersRef.current = emptyCatalogFilters;
+    clearCatalogFilters();
     setAudience(null);
     setFormats([]);
     setPriceMin(priceBounds.min);
     setPriceMax(priceBounds.max);
     setMinExperience(null);
+    setSort("popular");
+    setSportQuery("");
+    if (cityCatalog) {
+      setSelectedCities([cityCatalog.name]);
+      setCityQuery("");
+      setPlaceNote(null);
+      if (pageSport || selectedSports.length > 0) {
+        void navigate({ to: "/city/$slug", params: { slug: cityCatalog.slug } });
+      } else {
+        setSelectedSports([]);
+      }
+      return;
+    }
+    setSelectedSports(categorySport ? [categorySport] : []);
+    setSelectedCities([]);
+    setCityQuery("");
     writeVisitorPlace({ cities: [], query: "", dismissed: true, origin: "chosen" });
     setPlaceNote(null);
   };
+
+  const headerSport = pageSport?.label ?? (selectedSports.length === 1 ? selectedSports[0].label : "");
 
   return (
     <div className="page-shell cat-page">
@@ -926,9 +1098,9 @@ export function CategoryCatalogPage({
       <SiteHeader
         middleSlot={
           <CatalogSearchForm
-            key={`${category.slug}:${selectedCities.join("|")}`}
+            key={`${cityCatalog?.slug ?? category?.slug ?? "catalog"}:${selectedCities.join("|")}:${pageSport?.id ?? selectedSports.map((sport) => sport.id).join("|")}`}
             variant="header"
-            sport={parentCategory ? category.title : (topLevelCategory?.label ?? category.title)}
+            sport={headerSport || (parentCategory ? category?.title : (topLevelCategory?.label ?? category?.title ?? ""))}
             location={selectedCities[0]}
           />
         }
@@ -942,29 +1114,55 @@ export function CategoryCatalogPage({
                 <nav className="cat-hero__crumbs" aria-label="breadcrumbs">
                   <Link to="/" activeOptions={{ exact: true }}>Главная</Link>
                   <span aria-hidden="true">/</span>
-                  <Link to="/categories/" activeOptions={{ exact: true }}>Категории</Link>
-                  <span aria-hidden="true">/</span>
-                  {parentCategory ? (
+                  {cityCatalog ? (
+                    pageSport ? (
+                      <>
+                        <Link to="/city/$slug" params={{ slug: cityCatalog.slug }}>{cityCatalog.name}</Link>
+                        <span aria-hidden="true">/</span>
+                        <span className="is-current" aria-current="page">{pageSport.label}</span>
+                      </>
+                    ) : (
+                      <span className="is-current" aria-current="page">{cityCatalog.name}</span>
+                    )
+                  ) : (
                     <>
-                      <CategoryLink
-                        route={{ parentSlug: parentCategory.slug }}
-                        activeOptions={{ exact: true }}
-                      >
-                        {parentCategory.label}
-                      </CategoryLink>
+                      <Link to="/categories/" activeOptions={{ exact: true }}>Категории</Link>
                       <span aria-hidden="true">/</span>
+                      {parentCategory ? (
+                        <>
+                          <CategoryLink
+                            route={{ parentSlug: parentCategory.slug }}
+                            activeOptions={{ exact: true }}
+                          >
+                            {parentCategory.label}
+                          </CategoryLink>
+                          <span aria-hidden="true">/</span>
+                        </>
+                      ) : null}
+                      <span className="is-current" aria-current="page">
+                        {category?.title}
+                      </span>
                     </>
-                  ) : null}
-                  <span className="is-current" aria-current="page">
-                    {category.title}
-                  </span>
+                  )}
                 </nav>
                 <h1 className="cat-hero__title">
-                  Найти тренера по <em>{keyword}</em>
+                  {pageSport && cityCatalog ? (
+                    <>Найти тренера по <em>{pageSport.titleGenitive}</em> в {cityCatalog.locative}</>
+                  ) : cityCatalog ? (
+                    <>Найти тренера в <em>{cityCatalog.locative}</em></>
+                  ) : (
+                    <>Найти тренера по <em>{keyword}</em></>
+                  )}
                 </h1>
               </div>
-              <p className="cat-hero__lead">{heroLead}</p>
-              {category.stats.trainers || category.stats.clubs || category.stats.avgPrice || category.stats.avgRating ? (
+              <p className="cat-hero__lead">
+                {pageSport && cityCatalog
+                  ? `Тренеры по ${pageSport.titleGenitive} в ${cityCatalog.locative}. Подбор по цене и формату — индивидуально или в группе, для взрослых и детей.`
+                  : cityCatalog
+                    ? `Тренеры в ${cityCatalog.locative} по всем видам спорта. Подбор по направлению, цене и формату — индивидуально или в группе, для взрослых и детей.`
+                    : heroLead}
+              </p>
+              {!cityCatalog && category && (category.stats.trainers || category.stats.clubs || category.stats.avgPrice || category.stats.avgRating) ? (
               <div className="cat-hero__stats">
                 <span className="cat-hero__stat">
                   Тренеры:
@@ -1006,7 +1204,7 @@ export function CategoryCatalogPage({
               <img
                 className="cat-hero__photo"
                 src={heroImage}
-                alt={topLevelCategory?.label ?? category.title}
+                alt={pageSport?.label ?? topLevelCategory?.label ?? category?.title ?? ""}
                 width={1024}
                 height={1024}
               />
@@ -1014,7 +1212,7 @@ export function CategoryCatalogPage({
           </div>
         </section>
 
-        {navChildren.length > 0 ? (
+        {!cityCatalog && navChildren.length > 0 ? (
           <nav className="cat-child-nav" aria-label="Направления категории">
             <div className="layout-container cat-child-nav__inner">
               <CategoryLink
@@ -1041,7 +1239,7 @@ export function CategoryCatalogPage({
         <div className="layout-with-sidebar cat-body">
           <aside className="cat-filters">
             <div className="cat-filter">
-              <div className="cat-filter__title">Ищу тренера</div>
+              <h2 className="cat-filter__title">Ищу тренера</h2>
               <div className="cat-filter__opts">
                 {(
                   [
@@ -1054,15 +1252,162 @@ export function CategoryCatalogPage({
                     type="button"
                     className={`cat-pill${audience === option.v ? " is-active" : ""}`}
                     aria-pressed={audience === option.v}
-                    onClick={() => setAudience((prev) => (prev === option.v ? null : option.v))}
+                    onClick={() => {
+                      const next = audience === option.v ? null : option.v;
+                      setAudience(next);
+                      rememberFilters({ audience: next });
+                    }}
                   >
                     {option.l}
                   </button>
                 ))}
               </div>
             </div>
+            {cityCatalog || category ? (
             <div className="cat-filter">
-              <div className="cat-filter__title">Город или населённый пункт</div>
+              <h2 className="cat-filter__title">Вид спорта</h2>
+              <div className="cat-city-field">
+                <input
+                  type="text"
+                  className="cat-city-input"
+                  placeholder="Начните вводить название"
+                  value={sportQuery}
+                  onChange={(e) => setSportQuery(e.target.value)}
+                  onFocus={() => setSportFocused(true)}
+                  onBlur={() => {
+                    setSportFocused(false);
+                    if (skipSportBlur.current) {
+                      skipSportBlur.current = false;
+                      return;
+                    }
+                    const exact = filterCatalogSports(sportQuery, 20).find((sport) =>
+                      sport.label.toLowerCase() === sportQuery.trim().toLowerCase(),
+                    );
+                    if (exact && !selectedSports.some((sport) => sport.id === exact.id)) toggleSport(exact);
+                    else setSportQuery((current) => current.trim());
+                  }}
+                  autoComplete="off"
+                  aria-label="Вид спорта"
+                />
+                {sportQuery ? (
+                  <button
+                    type="button"
+                    className="cat-city-clear"
+                    aria-label="Очистить"
+                    onClick={() => setSportQuery("")}
+                  >
+                    ×
+                  </button>
+                ) : null}
+              </div>
+              {sportFocused && sportSuggestions.length > 0 ? (
+                <ul className="cat-city-suggest" aria-label="Подсказки видов спорта">
+                  {sportSuggestions.map((sport) => (
+                    <li key={sport.id}>
+                      <button
+                        type="button"
+                        onMouseDown={(event) => {
+                          event.preventDefault();
+                          skipSportBlur.current = true;
+                        }}
+                        onClick={() => {
+                          setSportQuery("");
+                          if (!cityCatalog) {
+                            openCategory(sport);
+                            return;
+                          }
+                          if (!selectedSports.some((item) => item.id === sport.id)) toggleSport(sport);
+                        }}
+                      >
+                        {sport.label}
+                        {sport.level === 2 ? <span className="cat-sport-hint">{sport.parentLabel}</span> : null}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+              <div className="cat-city-quick" role="group" aria-label="Виды спорта">
+                {sportPills.map((sport) => {
+                  const active = selectedSports.some((item) => item.id === sport.id);
+                  const className = `cat-pill${active ? " is-active" : ""}`;
+                  if (!cityCatalog) {
+                    const current = categorySport?.id === sport.id ? "page" as const : undefined;
+                    const onCategoryClick = (event: MouseEvent<HTMLAnchorElement>) => {
+                      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                      if (current) event.preventDefault();
+                    };
+                    if (sport.level === 2) {
+                      return (
+                        <Link
+                          key={sport.id}
+                          to="/categories/$parentSlug/$childSlug"
+                          params={{ parentSlug: sport.parentSlug, childSlug: sport.slug }}
+                          className={className}
+                          aria-pressed={active}
+                          aria-current={current}
+                          onClick={onCategoryClick}
+                        >
+                          {sport.label}
+                        </Link>
+                      );
+                    }
+                    return (
+                      <Link
+                        key={sport.id}
+                        to="/categories/$slug"
+                        params={{ slug: sport.slug }}
+                        className={className}
+                        aria-pressed={active}
+                        aria-current={current}
+                        onClick={onCategoryClick}
+                      >
+                        {sport.label}
+                      </Link>
+                    );
+                  }
+                  const location = catalogSportLocation(cityCatalog.slug, sport);
+                  const onClick = (event: MouseEvent<HTMLAnchorElement>) => {
+                    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                    const onlyThis = !active && selectedSports.length === 0 && !pageSport;
+                    if (onlyThis) return;
+                    event.preventDefault();
+                    toggleSport(sport);
+                  };
+                  const current = pageSport?.id === sport.id ? "page" as const : undefined;
+                  if (location.to === "/city/$slug/$sport/$child") {
+                    return (
+                      <Link
+                        key={sport.id}
+                        to={location.to}
+                        params={location.params}
+                        className={className}
+                        aria-pressed={active}
+                        aria-current={current}
+                        onClick={onClick}
+                      >
+                        {sport.label}
+                      </Link>
+                    );
+                  }
+                  return (
+                    <Link
+                      key={sport.id}
+                      to={location.to}
+                      params={location.params}
+                      className={className}
+                      aria-pressed={active}
+                      aria-current={current}
+                      onClick={onClick}
+                    >
+                      {sport.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+            ) : null}
+            <div className="cat-filter">
+              <h2 className="cat-filter__title">Город или населённый пункт</h2>
               <div className="cat-city-field">
                 <input
                   type="text"
@@ -1112,12 +1457,22 @@ export function CategoryCatalogPage({
                           event.preventDefault();
                           skipCityBlur.current = true;
                         }}
-                        onClick={() =>
+                        onClick={() => {
+                          const nextSlug = cityCatalogSlug(name);
+                          if (
+                            cityCatalog &&
+                            nextSlug &&
+                            nextSlug !== cityCatalog.slug &&
+                            !selectedCities.includes(name)
+                          ) {
+                            openCity(nextSlug);
+                            return;
+                          }
                           applyPlace(
                             selectedCities.includes(name) ? selectedCities : [...selectedCities, name],
                             "",
-                          )
-                        }
+                          );
+                        }}
                       >
                         {name}
                       </button>
@@ -1132,7 +1487,14 @@ export function CategoryCatalogPage({
                     type="button"
                     className={`cat-pill${selectedCities.includes(city) ? " is-active" : ""}`}
                     aria-pressed={selectedCities.includes(city)}
-                    onClick={() => applyPlace(toggleFilterValue(selectedCities, city), cityQuery)}
+                    onClick={() => {
+                      const nextSlug = cityCatalogSlug(city);
+                      if (cityCatalog && nextSlug && nextSlug !== cityCatalog.slug) {
+                        openCity(nextSlug);
+                        return;
+                      }
+                      applyPlace(toggleFilterValue(selectedCities, city), cityQuery);
+                    }}
                   >
                     {city}
                   </button>
@@ -1143,26 +1505,27 @@ export function CategoryCatalogPage({
               ) : null}
             </div>
             <div className="cat-filter">
-              <div className="cat-filter__title">Формат</div>
+              <h2 className="cat-filter__title">Формат</h2>
               <div className="cat-filter__opts">
-                {[
-                  { v: "individual" as const, l: "Индивидуально" },
-                  { v: "group" as const, l: "Группа" },
-                ].map((o) => (
+                {TRAINER_FORMAT_OPTIONS.map((option) => (
                   <button
-                    key={o.v}
+                    key={option.id}
                     type="button"
-                    className={`cat-pill${formats.includes(o.v) ? " is-active" : ""}`}
-                    aria-pressed={formats.includes(o.v)}
-                    onClick={() => setFormats((prev) => toggleFilterValue(prev, o.v))}
+                    className={`cat-pill${formats.includes(option.id) ? " is-active" : ""}`}
+                    aria-pressed={formats.includes(option.id)}
+                    onClick={() => {
+                      const next = toggleFilterValue(formats, option.id);
+                      setFormats(next);
+                      rememberFilters({ formats: next });
+                    }}
                   >
-                    {o.l}
+                    {option.label}
                   </button>
                 ))}
               </div>
             </div>
             <div className="cat-filter">
-              <div className="cat-filter__title">Цена, BYN</div>
+              <h2 className="cat-filter__title">Цена, BYN</h2>
               <div className="cat-price__values">
                 <div>
                   <span>от</span>
@@ -1187,7 +1550,7 @@ export function CategoryCatalogPage({
                   min={priceBounds.min}
                   max={priceBounds.max}
                   value={priceMin}
-                  onChange={(e) => setPriceMin(Math.min(Number(e.target.value), priceMax - 1))}
+                  onChange={(e) => commitPrice(Math.min(Number(e.target.value), priceMax - 1), priceMax)}
                   style={{ zIndex: priceMin > priceBounds.max - 10 ? 5 : 3 }}
                 />
                 <input
@@ -1195,7 +1558,7 @@ export function CategoryCatalogPage({
                   min={priceBounds.min}
                   max={priceBounds.max}
                   value={priceMax}
-                  onChange={(e) => setPriceMax(Math.max(Number(e.target.value), priceMin + 1))}
+                  onChange={(e) => commitPrice(priceMin, Math.max(Number(e.target.value), priceMin + 1))}
                   style={{ zIndex: 4 }}
                 />
               </div>
@@ -1205,7 +1568,7 @@ export function CategoryCatalogPage({
               </div>
             </div>
             <div className="cat-filter">
-              <div className="cat-filter__title">Опыт</div>
+              <h2 className="cat-filter__title">Опыт</h2>
               <div className="cat-filter__opts">
                 {[
                   { years: 1, label: "от 1 года" },
@@ -1218,7 +1581,11 @@ export function CategoryCatalogPage({
                     type="button"
                     className={`cat-pill${minExperience === option.years ? " is-active" : ""}`}
                     aria-pressed={minExperience === option.years}
-                    onClick={() => setMinExperience((prev) => (prev === option.years ? null : option.years))}
+                    onClick={() => {
+                      const next = minExperience === option.years ? null : option.years;
+                      setMinExperience(next);
+                      rememberFilters({ experience: next });
+                    }}
                   >
                     {option.label}
                   </button>
@@ -1237,7 +1604,11 @@ export function CategoryCatalogPage({
               </div>
               <label className="cat-results__sort">
                 Сортировка:
-                <select value={sort} onChange={(e) => setSort(e.target.value)}>
+                <select value={sort} onChange={(e) => {
+                  const next = e.target.value as CatalogFilterMemory["sort"];
+                  setSort(next);
+                  rememberFilters({ sort: next });
+                }}>
                   <option value="popular">По популярности</option>
                   <option value="rating">По рейтингу</option>
                   <option value="reviews">По отзывам</option>
@@ -1257,17 +1628,21 @@ export function CategoryCatalogPage({
                   </svg>
                 </div>
                 <h3>
-                  {allTrainers.length === 0 || category.isEmpty
-                    ? `Тренеров по ${category.titleGenitive} пока нет`
+                  {allTrainers.length === 0 || category?.isEmpty
+                    ? pageSport && cityCatalog
+                      ? `Тренеров по ${pageSport.titleGenitive} в ${cityCatalog.locative} пока нет`
+                      : cityCatalog
+                        ? `Тренеров в ${cityCatalog.locative} пока нет`
+                        : `Тренеров по ${keyword} пока нет`
                     : "По вашим фильтрам ничего не нашлось"}
                 </h3>
                 <p>
-                  {allTrainers.length === 0 || category.isEmpty
+                  {allTrainers.length === 0 || category?.isEmpty
                     ? "Направление только открылось на trenio.by. Будьте первым тренером или подпишитесь — мы напишем, когда кто-то добавится."
                     : "Попробуйте сбросить часть фильтров, расширить ценовой диапазон или посмотреть похожие направления."}
                 </p>
                 <div className="cat-empty__actions">
-                  {allTrainers.length === 0 || category.isEmpty ? (
+                  {allTrainers.length === 0 || category?.isEmpty ? (
                     <>
                       <Link to="/auth/signup" className="cat-empty__btn cat-empty__btn--primary">
                         Стать первым тренером
@@ -1295,7 +1670,7 @@ export function CategoryCatalogPage({
                     </>
                   )}
                 </div>
-                <div className="cat-empty__suggest">
+                {category ? <div className="cat-empty__suggest">
                   <h4>Похожие направления</h4>
                   <div className="cat-empty__chips">
                     {category.related.map((r) => (
@@ -1308,63 +1683,12 @@ export function CategoryCatalogPage({
                       </CategoryLink>
                     ))}
                   </div>
-                </div>
+                </div> : null}
               </div>
             ) : (
               <div className="cat-grid">
                 {filtered.map((t) => (
-                  <Link
-                    key={t.slug}
-                    className="trainer-card"
-                    to="/trainers/$slug"
-                    params={{ slug: t.slug }}
-                  >
-                    <div className="trainer-card__media">
-                      <PhotoImage className="trainer-card__photo" src={t.photo} alt={t.name} preset="card" width={480} height={600} loading="lazy" />
-                      {t.badge && <span className="trainer-card__badge">{t.badge}</span>}
-                      <FavoriteButton target={{ type: "trainer", slug: t.slug }} className="trainer-card__save" />
-                    </div>
-                    <div className="trainer-card__body">
-                      <div className="trainer-card__head">
-                        <h3 className="trainer-card__name">{t.name}</h3>
-                        <TrainerRating rating={t.rating} reviews={t.reviews} />
-                      </div>
-                      <p className="trainer-card__sport">
-                        {t.tags.join(", ")}
-                        {t.experience > 0
-                          ? ` · опыт ${t.experience} ${pluralRu(t.experience, "год", "года", "лет")}`
-                          : ""}
-                      </p>
-                      <p className="trainer-card__desc">{t.desc}</p>
-                      <div className="trainer-card__tags">
-                        {t.tags.map((tag, i) => (
-                          <span
-                            key={tag}
-                            className={`trainer-card__tag${i === 0 ? " trainer-card__tag--accent" : ""}`}
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="trainer-card__footer">
-                        <span className="trainer-card__location">
-                          <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" />
-                            <circle cx="12" cy="9" r="2.4" />
-                          </svg>
-                          <span>
-                            {t.district ? `${t.city}, ${t.district}` : t.city}
-                          </span>
-                        </span>
-                        {t.price > 0 ? (
-                          <span className="trainer-card__price">
-                            <small>от </small>
-                            {t.price} BYN
-                          </span>
-                        ) : null}
-                      </div>
-                    </div>
-                  </Link>
+                  <CatalogTrainerCard key={t.slug} trainer={t} />
                 ))}
               </div>
             )}
@@ -1374,12 +1698,18 @@ export function CategoryCatalogPage({
                 <h3>Посмотреть на карте</h3>
                 <p>Откройте карту, чтобы выбрать тренера рядом с домом или работой.</p>
               </div>
-              <button type="button">Открыть карту</button>
+              <Link
+                to="/map"
+                search={{ sports: selectedSports.length > 0 ? [...new Set(selectedSports.map((sport) => sport.level === 1 ? sport.slug : sport.parentSlug))].join(",") : undefined }}
+              >
+                Открыть карту
+              </Link>
             </div>
           </div>
         </div>
 
         <div className="layout-container cat-extra">
+          {category ? (
           <section className="cat-block">
             <h2>О направлении</h2>
             <div className="cat-article">
@@ -1403,7 +1733,9 @@ export function CategoryCatalogPage({
               </aside>
             </div>
           </section>
+          ) : null}
 
+          {category ? (
           <section className="cat-block">
             <h2>Частые вопросы</h2>
             <div className="cat-faq">
@@ -1415,10 +1747,11 @@ export function CategoryCatalogPage({
               ))}
             </div>
           </section>
+          ) : null}
 
           <section className="cat-cta">
             <div>
-              <h2>Вы тренер по {category.titleGenitive}?</h2>
+              <h2>{pageSport && cityCatalog ? `Вы тренер по ${pageSport.titleGenitive} в ${cityCatalog.locative}?` : cityCatalog ? `Вы тренер в ${cityCatalog.locative}?` : `Вы тренер по ${keyword}?`}</h2>
               <p>
                 Разместите анкету бесплатно — расскажите о себе, добавьте цены, расписание и начните
                 принимать заявки.

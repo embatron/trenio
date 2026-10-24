@@ -42,18 +42,21 @@ function formatDate(value: string) {
 function IconButton({
   label,
   path,
+  tone,
   disabled,
   type = "button",
   onClick,
 }: {
   label: string;
   path: string;
+  tone?: "approve" | "reject";
   disabled?: boolean;
   type?: "button" | "submit";
   onClick?: () => void;
 }) {
+  const className = tone ? `cabinet-icon-btn cabinet-icon-btn--${tone}` : "cabinet-icon-btn";
   return (
-    <button className="cabinet-icon-btn" type={type} disabled={disabled} aria-label={label} title={label} onClick={onClick}>
+    <button className={className} type={type} disabled={disabled} aria-label={label} title={label} onClick={onClick}>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d={path} /></svg>
     </button>
   );
@@ -202,12 +205,13 @@ function AdminReviewsPage() {
                   <td>
                     <div className="cabinet-actions">
                       {review.status !== "published" ? (
-                        <IconButton label="Опубликовать" path={CHECK} disabled={busyReview === review.id} onClick={() => changeReview(review.id, "published")} />
+                        <IconButton label="Опубликовать" path={CHECK} tone="approve" disabled={busyReview === review.id} onClick={() => changeReview(review.id, "published")} />
                       ) : null}
                       {review.status !== "rejected" ? (
                         <IconButton
                           label="Отклонить"
                           path={CROSS}
+                          tone="reject"
                           disabled={busyReview === review.id}
                           onClick={() => {
                             setRejectingId(review.id);
@@ -253,7 +257,7 @@ function AdminReviewsPage() {
             </label>
             {rejectError ? <p className="cabinet-form__error">{rejectError}</p> : null}
             <div className="cabinet-actions">
-              <IconButton label="Отклонить" path={CHECK} type="submit" disabled={busyReview === rejecting.id} />
+              <IconButton label="Отклонить" path={CROSS} tone="reject" type="submit" disabled={busyReview === rejecting.id} />
               <IconButton label="Закрыть" path={CROSS} onClick={() => setRejectingId(null)} />
             </div>
           </form>

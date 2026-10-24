@@ -42,15 +42,17 @@ export function TablePager({
   to: number;
   onPage: (page: number) => void;
 }) {
-  if (total <= TABLE_PAGE_SIZE) return null;
+  if (total === 0) return null;
   return (
     <nav className="cabinet-pager" aria-label="Страницы">
-      <p>Показаны {from}–{to} из {total}</p>
-      <div className="cabinet-pager__nav">
-        <button type="button" disabled={page <= 1} onClick={() => onPage(page - 1)}>Назад</button>
-        <span>{page} из {pages}</span>
-        <button type="button" disabled={page >= pages} onClick={() => onPage(page + 1)}>Дальше</button>
-      </div>
+      <p className="cabinet-pager__summary">Показаны {from}–{to} из {total}</p>
+      {pages > 1 ? (
+        <div className="cabinet-pager__nav">
+          <button type="button" disabled={page <= 1} onClick={() => onPage(page - 1)}>Назад</button>
+          <span>{page} из {pages}</span>
+          <button type="button" disabled={page >= pages} onClick={() => onPage(page + 1)}>Дальше</button>
+        </div>
+      ) : null}
     </nav>
   );
 }

@@ -26,6 +26,19 @@ export const emptyCatalogPlace: CatalogPlace = {
   lookupOnClient: false,
 };
 
+/** Coordinates from the local GeoLite2 lookup. Not written to the place cookie. */
+export type VisitorPoint = {
+  lat: number | null;
+  lng: number | null;
+  lookupOnClient: boolean;
+};
+
+export const emptyVisitorPoint: VisitorPoint = {
+  lat: null,
+  lng: null,
+  lookupOnClient: false,
+};
+
 export function serializeVisitorPlace(place: VisitorPlace): string {
   return JSON.stringify({
     c: place.cities
@@ -98,5 +111,27 @@ export const detectVisitorPlaceFn = createServerFn({ method: "POST" })
     } catch (error) {
       console.error(error);
       return emptyCatalogPlace;
+    }
+  });
+
+export const resolveVisitorPointFn = createServerFn({ method: "GET" }).handler(async (): Promise<VisitorPoint> => {
+  try {
+    const { resolveVisitorPoint } = await import("./visitor-place.server");
+    return await resolveVisitorPoint();
+  } catch (error) {
+    console.error(error);
+    return emptyVisitorPoint;
+  }
+});
+
+export const detectVisitorPointFn = createServerFn({ method: "POST" })
+  .validator(clientIpSchema)
+  .handler(async ({ data }): Promise<VisitorPoint> => {
+    try {
+      const { detectVisitorPoint } = await import("./visitor-place.server");
+      return await detectVisitorPoint(data.ip);
+    } catch (error) {
+      console.error(error);
+      return emptyVisitorPoint;
     }
   });
