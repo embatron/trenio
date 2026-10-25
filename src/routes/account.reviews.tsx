@@ -11,7 +11,7 @@ export const Route = createFileRoute("/account/reviews")({
   head: () => ({
     meta: [
       { title: "Мои отзывы · trenio.by" },
-      { name: "description", content: "Отзывы и их статус: на модерации, опубликовано или отклонено." },
+      { name: "description", content: "Отзывы и их статус: на модерации, опубликован или отклонён." },
       { name: "robots", content: "noindex,follow" },
     ],
   }),

@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, or, sql } from "drizzle-orm";
 
 import { consumeRateLimit } from "@/auth/rate-limit";
 import { getDb } from "@/db";
@@ -477,7 +477,7 @@ export async function listConversations(
   const filters = [
     input.view === "own"
       ? eq(conversations.userId, actor.id)
-      : eq(trainerProfiles.ownerUserId, actor.id),
+      : or(eq(conversations.userId, actor.id), eq(trainerProfiles.ownerUserId, actor.id)),
   ];
   if (input.cursor) {
     const at = new Date(input.cursor.at);

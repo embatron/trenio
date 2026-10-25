@@ -1,5 +1,7 @@
 import { and, eq, isNotNull } from "drizzle-orm";
 
+import { belarusPhoneEquals } from "@/lib/auth/phone-match";
+
 import { getDb } from "@/db";
 import { users, type User } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
@@ -7,7 +9,6 @@ import { validatePasswordStrength } from "@/lib/auth/password-policy";
 import {
   normalizeBelarusMobile,
   OTP_RESEND_SECONDS,
-  storedBelarusPhone,
   validateBelarusMobile,
 } from "@/lib/auth/phone";
 import { hashPassword } from "@/auth/password";
@@ -64,7 +65,7 @@ async function findUserByVerifiedPhone(phone375: string): Promise<User | null> {
   const [user] = await db
     .select()
     .from(users)
-    .where(and(eq(users.phone, storedBelarusPhone(phone375)), isNotNull(users.phoneVerifiedAt)))
+    .where(and(belarusPhoneEquals(users.phone, phone375), isNotNull(users.phoneVerifiedAt)))
     .limit(1);
   return user ?? null;
 }

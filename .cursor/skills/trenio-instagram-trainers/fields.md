@@ -18,7 +18,7 @@ The name and the description are decided in sequential thinking, then checked by
 | `languages` | A named language (`русский`, `беларуская`, `английский`, `польский`). The country name `Беларуси` is not the language | Not mentioned |
 | `experienceYears` | `стаж N лет` or `более N лет` | Not stated |
 | `formats` | `персональные` / `индивидуальные` and `групповые` when those words are in the text | Not stated |
-| `avatarPath` | Source file of the profile picture: same image id, no `stp`, from the signed-in import account in the skill. Both sides at least 400px | That URL is missing, or the file is still a thumbnail |
+| `avatarPath` | `public/trainers/instagram/{handle}.jpg`, the source profile picture (same image id, no `stp`, both sides at least 400px) plus the sized files beside it. A later import keeps this file when the new read has no source of at least 400px | That URL is missing and no saved file of at least 400px exists yet |
 | `contacts.phone` | A Belarus mobile in the text or on a `tel:` button. Stored only here, as `+375 33 637-62-68`. The same digits are removed from `bio` and `about`. No SMS confirmation | Not shown |
 | `contacts.email` | An email in the text or on a `mailto:` button. Stored on the card. No confirmation letter | Not shown |
 | `contacts.telegram` | A `t.me` link, or `@name` on a line that says Telegram. Stored on the card. No bot confirmation | Not shown |

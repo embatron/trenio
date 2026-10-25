@@ -10,7 +10,7 @@ import { displayAccountLogin } from "@/lib/auth/login-name";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { BELARUS_CITIES } from "@/lib/catalog/city-taxonomy";
 import { TRAINER_AUDIENCE_OPTIONS, TRAINER_FORMAT_OPTIONS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
-import { getSportTaxonomyChild, getTopLevelSportCategory, listSecondLevelSports, TOP_LEVEL_SPORT_CATEGORIES } from "@/lib/catalog/sport-taxonomy";
+import { getSportTaxonomyChild, getTopLevelSportCategory, listPublishedSportCategories, listSecondLevelSports } from "@/lib/catalog/sport-taxonomy";
 import { placeLine } from "@/lib/geo/schemas";
 
 const dateFormat = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short", year: "numeric" });
@@ -282,7 +282,7 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
             }}
           >
             <option value="">Все категории</option>
-            {TOP_LEVEL_SPORT_CATEGORIES.map((item) => (
+            {listPublishedSportCategories().map((item) => (
               <option key={item.slug} value={item.slug}>{item.label}</option>
             ))}
           </select>

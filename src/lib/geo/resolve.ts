@@ -1,4 +1,5 @@
 import { AuthError } from "@/lib/auth/errors";
+import { logCaught } from "@/lib/log/logger";
 import { readGeocodeCache, writeGeocodeCache, type CachedGeocode } from "@/lib/geo/cache";
 import { probeAddressCountry, searchNominatim, type GeocodeHit } from "@/lib/geo/nominatim";
 import { normalizeQuery, sanitizeQuery } from "@/lib/geo/normalize";
@@ -25,6 +26,10 @@ function blankAddress(raw: string | null | undefined): string | null {
   return text ? text.slice(0, 200) : null;
 }
 
+function inBelarus(lat: number, lng: number) {
+  return lat >= 51.15 && lat <= 56.2 && lng >= 23.1 && lng <= 32.8;
+}
+
 function samePoint(lat: number, lng: number, hit: GeocodeHit) {
   return Math.abs(lat - hit.lat) < COORD_EPSILON && Math.abs(lng - hit.lng) < COORD_EPSILON;
 }
@@ -34,7 +39,7 @@ async function readCache(queryNorm: string): Promise<CachedGeocode | "miss"> {
     const cached = await readGeocodeCache(queryNorm);
     return cached ?? "miss";
   } catch (error) {
-    console.error("geocode cache read failed", error);
+    logCaught("geo", "geo.cache.read", error);
     return "miss";
   }
 }
@@ -43,7 +48,7 @@ async function writeCache(queryNorm: string, hit: GeocodeHit | null, countryCode
   try {
     await writeGeocodeCache(queryNorm, hit, countryCode);
   } catch (error) {
-    console.error("geocode cache write failed", error);
+    logCaught("geo", "geo.cache.write", error);
   }
 }
 
@@ -154,7 +159,7 @@ export async function resolveProfileAddressSafe(
     return await resolveProfileAddress(input, existing);
   } catch (error) {
     if (error instanceof AuthError) throw error;
-    console.error(error);
+    logCaught("geo", "geo.profile", error);
     const address = input.address?.trim() ? input.address.trim().slice(0, 200) : null;
     return {
       address,
@@ -179,10 +184,7 @@ export async function suggestCachedOrRemote(
   if (!allowRemote()) return "limited";
 
   const remote = await searchNominatim(query, { limit: 5, countrycodes: "by", belarusOnly: true });
-  if (remote.kind !== "ok") {
-    if (remote.kind === "not_found") await writeCache(norm, null);
-    return [];
-  }
+  if (remote.kind !== "ok") return [];
   await writeCache(norm, remote.hits[0] ?? null);
   for (const hit of remote.hits) {
     const displayNorm = normalizeQuery(hit.displayName);
@@ -235,6 +237,17 @@ export async function resolveTrainingPlaces(
       if (cached !== "miss" && cached.foreign) throw new AuthError(FOREIGN_ADDRESS_MESSAGE, "VALIDATION");
       if (cached !== "miss" && cached.hit && samePoint(row.lat, row.lng, cached.hit)) {
         resolved.push(fromHit(row, cached.hit));
+        continue;
+      }
+      if (inBelarus(row.lat, row.lng)) {
+        resolved.push({
+          city: row.city.trim(),
+          district: row.district.trim(),
+          address: row.address.trim(),
+          lat: row.lat,
+          lng: row.lng,
+          geocodeStatus: "ok",
+        });
         continue;
       }
     }

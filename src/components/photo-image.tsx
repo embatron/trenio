@@ -1,6 +1,6 @@
 import { useState, type MouseEvent } from "react";
 
-import { masterImagePath, variantImagePath } from "@/lib/images/variants";
+import { variantImagePath } from "@/lib/images/variants";
 
 type Preset = "card" | "avatar" | "profile" | "tile";
 
@@ -44,8 +44,6 @@ export function PhotoImage({
     return <img className={className} src={src} alt={alt} width={width} height={height} loading={loading} onClick={onClick} />;
   }
   const presetInfo = PRESET[preset];
-  const master = masterImagePath(src);
-  const masterSrc = master.query ? `${master.path}?${master.query}` : master.path;
   const srcSet = presetInfo.srcSet
     .split(", ")
     .filter(Boolean)
@@ -53,7 +51,6 @@ export function PhotoImage({
       const [name, widthLabel] = item.split(" ");
       return `${variantImagePath(src, name as "c320" | "c640" | "w960")} ${widthLabel}`;
     })
-    .concat(preset === "profile" ? [`${masterSrc} 1600w`] : [])
     .join(", ");
   return (
     <img

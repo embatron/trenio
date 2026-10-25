@@ -1,12 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { CatalogSearchForm } from "@/components/catalog-search-form";
-import { SiteHeader, SiteFooter } from "@/components/site-chrome";
-import { matchesCatalogAudience, PUBLISHED_TRAINERS } from "@/lib/catalog/published-trainers";
-import { compareByPopularity, compareByRating, compareByReviews, ratingFor } from "@/lib/catalog/trainer-popularity";
-import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
-import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
-import { pluralRu } from "@/lib/ru-plural";
+import { createFileRoute } from "@tanstack/react-router";
+
+import { CatalogMapScreen } from "@/routes/map";
+import { resolveVisitorPointFn } from "@/lib/catalog/visitor-place";
 
 type SearchParams = {
   sport: string;
@@ -22,182 +17,33 @@ export const Route = createFileRoute("/search")({
     audience: s.audience === "child" ? "child" : "adult",
     format: s.format === "group" ? "group" : "individual",
   }),
-  head: ({ loaderData: _l, params: _p, match }) => {
-    const search = (match as { search?: SearchParams }).search ?? { sport: "", location: "" };
+  head: ({ match }) => {
+    const search = match.search;
     const q = [search.sport, search.location].filter(Boolean).join(" · ") || "Поиск тренера";
     const title = `${q} — trenio.by`;
     return {
       meta: [
         { title },
-        { name: "description", content: `Результаты поиска тренеров: ${q}.` },
+        { name: "description", content: `Результаты поиска тренеров: ${q}. Карта и карточки рядом.` },
         { name: "robots", content: "noindex,follow" },
       ],
     };
   },
-  loader: () => listTrainerRatingSummariesFn(),
+  loader: async () => ({ point: await resolveVisitorPointFn() }),
   component: SearchPage,
 });
 
-type Result = {
-  slug: string; name: string; firstName: string; lastName: string; photo: string; sport: string; sportSlugs: string[]; city: string;
-  district: string; formats: Array<"individual" | "group">; audiences: Array<"adult" | "teen" | "kid">;
-  rating: string; reviews: number; price: number; experience: number; desc: string; tags: string[]; badge?: string;
-};
-
-function buildResults(ratings: Record<string, { rating: string; reviews: number }>): Result[] {
-  return PUBLISHED_TRAINERS.map((trainer) => {
-    const rating = ratingFor(trainer.slug, ratings);
-    return {
-      slug: trainer.slug,
-      name: trainer.name,
-      firstName: trainer.firstName,
-      lastName: trainer.lastName,
-      photo: trainer.photo,
-      sport: trainer.sports.map((sport) => sport.label).join(", "),
-      sportSlugs: trainer.sports.flatMap((sport) => [sport.slug, sport.label.toLowerCase()]),
-      city: trainer.city.label,
-      district: trainer.district,
-      formats: trainer.formats,
-      audiences: trainer.audiences,
-      rating: rating.rating,
-      reviews: rating.reviews,
-      price: trainer.priceFrom,
-      experience: trainer.experience,
-      desc: trainer.bio,
-      tags: trainer.sports.map((sport) => sport.label),
-    };
-  });
-}
-
-const CSS = `
-.sr-page { min-height: 100vh; background: var(--bg); }
-.sr-hero { background: linear-gradient(180deg, rgba(var(--primary-rgb), 0.06), transparent); padding: var(--layout-section-y) 0 28px; border-bottom: 1px solid rgba(var(--dark-rgb), 0.06); }
-.sr-hero__inner { max-width: var(--layout-max); margin: 0 auto; padding-inline: var(--layout-gutter); }
-.sr-crumbs { font-size: 13px; color: var(--muted); margin-bottom: 14px; font-weight: var(--fw-title); }
-.sr-crumbs a { color: var(--muted); text-decoration: none; }
-.sr-crumbs a:hover { color: var(--primary); }
-.sr-title { margin: 0 0 6px; font-size: var(--fs-page); font-weight: var(--fw-heading); letter-spacing: -0.035em; color: var(--dark); }
-.sr-title em { font-style: normal; color: var(--primary); }
-.sr-sub { margin: 0 0 22px; color: var(--muted); font-size: 15px; font-weight: var(--fw-ui); }
-.sr-search { width: 100%; margin-top: 8px; }
-
-.sr-body { max-width: var(--layout-max); margin: 0 auto; padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 60px); display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; }
-.sr-count b { color: var(--dark); }
-.sr-sort { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); font-weight: var(--fw-title); }
-.sr-sort select { min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-control); font: inherit; font-size: 14px; background: #fff; font-weight: var(--fw-heading); color: var(--dark); cursor: pointer; }
-
-.sr-grid { grid-column: 1 / -1; margin-top: 4px; }
-
-.sr-empty {
-  grid-column: 1 / -1;
-  background: linear-gradient(180deg, rgba(var(--primary-rgb), 0.06), transparent);
-  border: 1px solid rgba(var(--primary-rgb), 0.16); border-radius: var(--card-radius); padding: 56px 32px; text-align: center;
-  display: grid; gap: 16px; justify-items: center; margin-top: 8px;
-}
-.sr-empty__icon { width: 88px; height: 88px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--primary); box-shadow: 0 12px 30px -12px rgba(var(--dark-rgb), 0.18); }
-.sr-empty__icon svg { width: 40px; height: 40px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.sr-empty h2 { margin: 0; font-size: 26px; font-weight: var(--fw-heading); letter-spacing: -0.03em; color: var(--dark); }
-.sr-empty p { margin: 0; max-width: 520px; color: var(--muted); font-size: 15px; line-height: 1.55; }
-.sr-empty .catalog-search { width: 100%; margin-top: 8px; }
-`;
-
 function SearchPage() {
   const search = Route.useSearch();
-  const ratings = Route.useLoaderData();
-  const results = useMemo(() => buildResults(ratings), [ratings]);
-  const [sort, setSort] = useState("popular");
-
-  const filtered = useMemo(() => {
-    const q = (search.sport || "").trim().toLowerCase();
-    const loc = (search.location || "").toLowerCase();
-    let list = results.filter((r) => {
-      const matchesSport = (sport: string) => {
-        if (q === "бокс") return sport === "бокс" || sport === "boks";
-        return sport === q || sport.split(/[\s,/]+/).some((word) => word.startsWith(q));
-      };
-      if (q && !r.sportSlugs.some(matchesSport) && !r.name.toLowerCase().includes(q)) return false;
-      if (loc && !r.city.toLowerCase().includes(loc.replace(/^в\s+/i, "")) && !loc.includes(r.city.toLowerCase())) return false;
-      if (search.format && r.formats.length > 0 && !r.formats.includes(search.format)) return false;
-      if (!matchesCatalogAudience(r.audiences, search.audience === "child" ? "child" : "adult")) return false;
-      return true;
-    });
-    const rated = (item: Result) => ({ name: item.name, rating: item.rating, reviews: item.reviews });
-    if (sort === "rating") list = [...list].sort((a, b) => compareByRating(rated(a), rated(b)));
-    else if (sort === "reviews") list = [...list].sort((a, b) => compareByReviews(rated(a), rated(b)));
-    else if (sort === "price-asc") list = [...list].sort((a, b) => a.price - b.price);
-    else if (sort === "price-desc") list = [...list].sort((a, b) => b.price - a.price);
-    else list = [...list].sort((a, b) => compareByPopularity(rated(a), rated(b)));
-    return list;
-  }, [results, search, sort]);
-
-  const queryLabel = [search.sport, search.location].filter(Boolean).join(" · ");
-  const searchForm = (
-    <CatalogSearchForm
-      key={`${search.sport}|${search.location}|${search.audience}|${search.format}`}
-      variant="hero"
-      sport={search.sport}
-      location={search.location || undefined}
+  const { point } = Route.useLoaderData();
+  return (
+    <CatalogMapScreen
+      mode="search"
+      sportText={search.sport}
+      locationText={search.location}
       audience={search.audience}
       format={search.format}
+      visitor={point}
     />
-  );
-
-  return (
-    <div className="sr-page">
-      <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <SiteHeader />
-
-      <section className="sr-hero">
-        <div className="sr-hero__inner">
-          <div className="sr-crumbs"><Link to="/">Главная</Link> · <span className="is-current" aria-current="page">Поиск</span></div>
-          <h1 className="sr-title">
-            {queryLabel ? <>Результаты по запросу <em>«{queryLabel}»</em></> : "Поиск тренера"}
-          </h1>
-          <p className="sr-sub">
-            {search.audience === "child" ? "для ребёнка" : "для себя"} · {search.format === "group" ? "в группе" : "индивидуально"}
-          </p>
-          {filtered.length > 0 ? <div className="sr-search">{searchForm}</div> : null}
-        </div>
-      </section>
-
-      <section className="sr-body">
-        <div className="sr-count">Найдено: <b>{filtered.length}</b> {pluralRu(filtered.length, "тренер", "тренера", "тренеров")}</div>
-        <label className="sr-sort">
-          Сортировка:
-          <select value={sort} onChange={(e) => setSort(e.target.value)}>
-            <option value="popular">По популярности</option>
-            <option value="rating">По рейтингу</option>
-            <option value="reviews">По отзывам</option>
-            <option value="price-asc">Сначала дешевле</option>
-            <option value="price-desc">Сначала дороже</option>
-          </select>
-        </label>
-
-        {filtered.length === 0 ? (
-          <div className="sr-empty">
-            <div className="sr-empty__icon">
-              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="M16 16l5 5" /><path d="M8 11h6" /></svg>
-            </div>
-            <h2>{results.length === 0 && !queryLabel ? "Тренеров пока нет" : "Ничего не нашлось"}</h2>
-            <p>
-              {results.length === 0 && !queryLabel
-                ? "Каталог ещё не заполнен. Профили появятся, когда тренеры их опубликуют."
-                : queryLabel
-                ? <>По запросу <b>«{queryLabel}»</b> сейчас нет подходящих тренеров. Попробуйте изменить вид спорта или город — или подпишитесь, и мы сообщим, когда появится подходящий тренер.</>
-                : "Уточните вид спорта или город — и мы покажем подходящих тренеров."}
-            </p>
-            <div className="sr-search">{searchForm}</div>
-          </div>
-        ) : (
-          <div className="sr-grid">
-            {filtered.map((r) => (
-              <CatalogTrainerCard key={r.slug} trainer={r} />
-            ))}
-          </div>
-        )}
-      </section>
-
-      <SiteFooter />
-    </div>
   );
 }

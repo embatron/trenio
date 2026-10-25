@@ -7,6 +7,7 @@ import { getDb } from "@/db";
 import { trainerProfiles, userRoles, users } from "@/db/schema";
 import { assertStaff, hiddenStaffIds } from "@/lib/admin/access";
 import { buildAdminUserLogs, loadAdminUserActivity, type AdminUserLogin, type AdminUserLog } from "@/lib/admin/user-activity";
+import { listActorJournal, mergeJournal } from "@/lib/log/journal";
 import type { UserRole } from "@/lib/auth/types";
 
 export type { AdminUserLogin as AdminAccountLogin, AdminUserLog as AdminAccountLog };
@@ -143,7 +144,8 @@ export const getAdminAccountFn = createServerFn({ method: "GET" })
         .where(eq(trainerProfiles.ownerUserId, data.id)),
     ]);
 
-    const logs = buildAdminUserLogs({
+    const journal = await listActorJournal({ actorUserId: row.id, subject: row.email });
+    const logs = mergeJournal(journal, buildAdminUserLogs({
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
       emailVerifiedAt: row.emailVerifiedAt,
@@ -155,7 +157,7 @@ export const getAdminAccountFn = createServerFn({ method: "GET" })
       resetRows: activity.resetRows,
       emailRows: activity.emailRows,
       otpRows: activity.otpRows,
-    });
+    }));
 
     return {
       id: row.id,

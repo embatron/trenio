@@ -1,3 +1,5 @@
+import { maskPhone, writeLog } from "@/lib/log/logger";
+
 import { isSmsByEnabled, smsByAlphanameId, smsByApiKey } from "./sms-by-config.server";
 
 const SMS_BY_BASE = "https://app.sms.by/api/v1";
@@ -36,11 +38,36 @@ export async function sendQuickSms(phone: string, message: string): Promise<SmsS
       status?: string;
     };
     if (data?.error) {
+      void writeLog({
+        level: "error",
+        domain: "sms",
+        action: "sms.send",
+        outcome: "failure",
+        message: "SMS.BY отклонил сообщение.",
+        subject: maskPhone(phone),
+        errorCode: "rejected",
+      });
       return { ok: false, error: String(data.error) };
     }
+    void writeLog({
+      level: "info",
+      domain: "sms",
+      action: "sms.send",
+      outcome: "success",
+      message: "SMS отправлено.",
+      subject: maskPhone(phone),
+    });
     return { ok: true, smsId: data?.sms_id != null ? String(data.sms_id) : undefined };
   } catch (error) {
-    console.error("[sms.by] sendQuickSMS failed");
+    void writeLog({
+      level: "error",
+      domain: "sms",
+      action: "sms.send",
+      outcome: "failure",
+      message: "Не удалось отправить SMS.",
+      subject: maskPhone(phone),
+      error,
+    });
     return { ok: false, error: error instanceof Error ? error.message : "send_failed" };
   }
 }

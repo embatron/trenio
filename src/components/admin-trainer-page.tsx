@@ -61,7 +61,7 @@ function draftFrom(trainer: AdminTrainer): Draft {
   return {
     ...fields,
     avatarPath: fields.avatarPath.split("?")[0],
-    priceFrom: Math.max(1, trainer.priceFrom ?? 1),
+    priceFrom: trainer.priceFrom != null && trainer.priceFrom >= 1 ? trainer.priceFrom : null,
     experienceYears: Math.max(1, trainer.experienceYears || 1),
   };
 }

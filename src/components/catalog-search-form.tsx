@@ -57,9 +57,10 @@ const FORM_CSS = `
 .catalog-search .search-submit svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .catalog-search.search-block--header .search-shell {
   min-height: 52px; padding: 4px 5px; box-shadow: 0 4px 18px rgba(var(--dark-rgb), 0.06);
-  grid-template-columns: minmax(0, 124fr) minmax(0, 168fr) minmax(0, 198fr) minmax(0, 156fr) 44px;
+  grid-template-columns: minmax(0, 118fr) minmax(0, 196fr) minmax(0, 190fr) minmax(0, 142fr) 44px;
 }
 .catalog-search.search-block--header .search-field { height: 44px; padding: 0 11px; gap: 7px; }
+.catalog-search.search-block--header .intent-dropdown__trigger { min-height: 44px; height: 100%; }
 .catalog-search.search-block--header .combo-input { font-size: 14px; }
 .catalog-search.search-block--header .search-icon svg, .catalog-search.search-block--header .intent-dropdown__trigger svg { width: 16px; height: 16px; }
 .catalog-search.search-block--header .search-submit { width: 44px; height: 44px; }

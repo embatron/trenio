@@ -9,7 +9,9 @@ import { requireAuthMiddleware } from "@/auth/middleware";
 import { getDb } from "@/db";
 import { trainerProfiles, users } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
+import { markLogged, writeLog } from "@/lib/log/logger";
 import { formatBelarusPhone } from "@/lib/auth/phone";
+import { normalizeEmail } from "@/auth/password";
 import { hasAnyRole } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
 import { assertBelarusCity } from "@/lib/catalog/belarus-city.server";
@@ -43,7 +45,7 @@ export type OwnTrainerProfile = {
   city: string;
   district: string;
   places: TrainerPlace[];
-  priceFrom: number;
+  priceFrom: number | null;
   phone: string;
   instagram: string;
   telegram: string;
@@ -56,6 +58,8 @@ export type OwnTrainerProfile = {
   photos: string[];
   certificates: TrainerCertificate[];
   phoneVerified: boolean;
+  emailVerified: boolean;
+  telegramVerified: boolean;
   offerAccepted: boolean;
   privacyAccepted: boolean;
 };
@@ -70,7 +74,7 @@ const emptyProfile: OwnTrainerProfile = {
   city: "",
   district: "",
   places: [],
-  priceFrom: 1,
+  priceFrom: null,
   phone: "",
   instagram: "",
   telegram: "",
@@ -83,13 +87,13 @@ const emptyProfile: OwnTrainerProfile = {
   photos: [],
   certificates: [],
   phoneVerified: false,
+  emailVerified: false,
+  telegramVerified: false,
   offerAccepted: false,
   privacyAccepted: false,
 };
 
 const saveSchema = z.object({
-  firstName: z.string().trim().max(100),
-  lastName: z.string().trim().max(100),
   headline: z.string().trim().max(200),
   bio: z.string().trim().max(4000),
   about: z.string().trim().max(8000),
@@ -97,7 +101,7 @@ const saveSchema = z.object({
   city: z.string().trim().max(120),
   district: z.string().trim().max(120),
   ...placesShape,
-  priceFrom: z.number().int().min(1).max(1_000_000),
+  priceFrom: z.number().int().min(1).max(1_000_000).nullable(),
   instagram: z.string().trim().max(300),
   telegram: z.string().trim().max(300),
   email: z.string().trim().max(320),
@@ -149,7 +153,7 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
       city: row.city,
       district: row.district,
       places: placesFromProfile(row),
-      priceFrom: Math.max(1, row.priceFrom ?? 1),
+      priceFrom: row.priceFrom != null && row.priceFrom >= 1 ? row.priceFrom : null,
       phone,
       instagram: row.instagramUrl,
       telegram: row.telegram,
@@ -162,6 +166,8 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
       photos: (row.photos.length > 0 ? row.photos : row.avatarPath ? [row.avatarPath] : []).map((item) => `${item}?v=${version}`),
       certificates: readCertificates(row.certificates).map((item) => ({ ...item, path: `${item.path}?v=${version}` })),
       phoneVerified,
+      emailVerified: row.emailVerifiedAt != null && normalizeEmail(row.email) !== "",
+      telegramVerified: row.telegramVerifiedAt != null,
       offerAccepted: row.offerAcceptedAt != null,
       privacyAccepted: row.privacyAcceptedAt != null,
     };
@@ -179,8 +185,16 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       .where(eq(trainerProfiles.ownerUserId, context.user.id))
       .limit(1);
 
-    const firstName = data.firstName.trim().slice(0, 100);
-    const lastName = data.lastName.trim().slice(0, 100);
+    const [account] = await db
+      .select({ phone: users.phone, firstName: users.firstName, lastName: users.lastName })
+      .from(users)
+      .where(eq(users.id, context.user.id))
+      .limit(1);
+    const firstName = (account?.firstName ?? "").trim().slice(0, 100);
+    const lastName = (account?.lastName ?? "").trim().slice(0, 100);
+    if (!firstName || !lastName) {
+      throw new AuthError("Укажите имя и фамилию в настройках.", "VALIDATION");
+    }
     const picked = trainerSportsFromSlugs(data.sportSlugs);
     if (picked.slugs.length > MAX_TRAINER_SPORTS) {
       throw new AuthError("Можно выбрать не больше четырёх видов спорта.", "VALIDATION");
@@ -190,11 +204,6 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
     }
     const sports = picked.sports;
     const city = await assertBelarusCity(data.city);
-    const [account] = await db
-      .select({ phone: users.phone })
-      .from(users)
-      .where(eq(users.id, context.user.id))
-      .limit(1);
     const phone = formatBelarusPhone(account?.phone || existing?.phone || "");
     let avatarPath = existing?.avatarPath ?? "";
 
@@ -238,7 +247,8 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       phone,
       instagramUrl: data.instagram,
       telegram: data.telegram,
-      email: data.email,
+      email: data.email.trim(),
+      ...(existing && normalizeEmail(existing.email) === normalizeEmail(data.email) ? {} : { emailVerifiedAt: null }),
       instagramHandle: instagramHandle(data.instagram, context.user.id),
       experienceYears: data.experienceYears,
       formats: [...new Set(data.formats)],
@@ -248,6 +258,7 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       updatedAt: new Date(),
     };
 
+    let profileSlug = existing?.slug ?? values.instagramHandle;
     try {
     if (existing) {
       if (existing.instagramHandle && !data.instagram) {
@@ -259,6 +270,7 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       let slug = slugBase;
       const [clash] = await db.select({ id: trainerProfiles.id }).from(trainerProfiles).where(eq(trainerProfiles.slug, slug)).limit(1);
       if (clash) slug = `${slugBase.slice(0, 14)}-${context.user.id.slice(0, 3)}`.slice(0, 18);
+      profileSlug = slug;
       const claimToken = randomBytes(32).toString("base64url");
       await db.insert(trainerProfiles).values({
         ...values,
@@ -274,15 +286,61 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       });
     }
 
+    void writeLog({
+      level: "info",
+      domain: "form",
+      action: "form.trainer_profile",
+      outcome: "success",
+      message: "Карточка тренера сохранена.",
+      actorUserId: context.user.id,
+      subject: context.user.email,
+      target: profileSlug,
+    });
     return { ok: true as const, message: "Профиль тренера сохранён.", avatarPath };
     } catch (error) {
-      if (error instanceof AuthError) throw error;
+      if (error instanceof AuthError) {
+        void writeLog({
+          level: "warn",
+          domain: "form",
+          action: "form.trainer_profile",
+          outcome: "denied",
+          message: error.message,
+          actorUserId: context.user.id,
+          subject: context.user.email,
+          target: profileSlug,
+          error,
+        });
+        throw error;
+      }
       const code = (error as { code?: string; cause?: { code?: string } }).code
         ?? (error as { cause?: { code?: string } }).cause?.code;
       if (code === "23505") {
-        throw new AuthError("Такой адрес Instagram или адрес карточки уже занят.", "VALIDATION");
+        const taken = new AuthError("Такой адрес Instagram или адрес карточки уже занят.", "VALIDATION");
+        void writeLog({
+          level: "warn",
+          domain: "form",
+          action: "form.trainer_profile",
+          outcome: "denied",
+          message: taken.message,
+          actorUserId: context.user.id,
+          subject: context.user.email,
+          target: profileSlug,
+          error: taken,
+        });
+        throw taken;
       }
-      console.error(error);
-      throw new AuthError("Не удалось сохранить профиль.", "VALIDATION");
+      void writeLog({
+        level: "error",
+        domain: "form",
+        action: "form.trainer_profile",
+        outcome: "failure",
+        message: "Карточка тренера не сохранилась.",
+        actorUserId: context.user.id,
+        subject: context.user.email,
+        error,
+      });
+      const failure = new AuthError("Не удалось сохранить профиль.", "VALIDATION");
+      markLogged(failure);
+      throw failure;
     }
   });

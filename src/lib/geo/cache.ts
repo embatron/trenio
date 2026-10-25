@@ -28,6 +28,8 @@ export async function readGeocodeCache(queryNorm: string): Promise<CachedGeocode
       city: row.city ?? "",
       district: row.district ?? "",
       street: row.street ?? "",
+      region: "",
+      country: "",
       countryCode: "by",
     },
   };

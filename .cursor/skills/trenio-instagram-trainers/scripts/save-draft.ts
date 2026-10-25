@@ -2,8 +2,9 @@
  * Turn a raw Instagram extract into a draft trainer profile.
  * Usage: npx tsx .cursor/skills/trenio-instagram-trainers/scripts/save-draft.ts <raw.json> [more.json]
  */
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import sharp from "sharp";
 import { formatBelarusPhone } from "../../../../src/lib/auth/phone.ts";
 import { inferTrainerGender } from "../../../../src/lib/catalog/trainer-gender.ts";
 import { TOP_LEVEL_SPORT_CATEGORIES } from "../../../../src/lib/catalog/sport-taxonomy.ts";
@@ -309,19 +310,68 @@ function matchFormats(text: string): Array<"individual" | "group"> {
   return formats;
 }
 
-function extensionFor(mime: string): string {
-  if (mime.includes("png")) return "png";
-  if (mime.includes("webp")) return "webp";
-  return "jpg";
+const AVATAR_MIN_SIDE = 400;
+
+async function imageSides(bytes: Buffer): Promise<{ w: number; h: number } | null> {
+  try {
+    const meta = await sharp(bytes, { failOn: "none", animated: false }).metadata();
+    return { w: meta.width ?? 0, h: meta.height ?? 0 };
+  } catch {
+    return null;
+  }
 }
 
-function writeAvatar(handle: string, raw: RawExtract): string {
-  if (!raw.avatarBase64) return "";
-  const ext = extensionFor(raw.avatarMime || "image/jpeg");
+function avatarFile(handle: string) {
+  return join(AVATAR_DIR, `${handle}.jpg`);
+}
+
+function avatarPublicPath(handle: string) {
+  return `/trainers/instagram/${handle}.jpg`;
+}
+
+/** Same sizes as `writeImageSet`: master up to 1600px, then the card derivatives. Nothing is upscaled. */
+async function storeAvatar(bytes: Buffer, absoluteMaster: string) {
   mkdirSync(AVATAR_DIR, { recursive: true });
-  const filename = `${handle}.${ext}`;
-  writeFileSync(join(AVATAR_DIR, filename), Buffer.from(raw.avatarBase64, "base64"));
-  return `/trainers/instagram/${filename}`;
+  const master = await sharp(bytes, { failOn: "none", animated: false })
+    .rotate()
+    .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
+    .jpeg({ quality: 82, mozjpeg: true })
+    .toBuffer();
+  writeFileSync(absoluteMaster, master);
+  const base = absoluteMaster.replace(/\.[a-z0-9]+$/i, "");
+  const variants = [
+    { name: "s128", width: 128, height: 128, fit: "cover" as const },
+    { name: "c320", width: 320, height: 400, fit: "cover" as const },
+    { name: "c640", width: 640, height: 800, fit: "cover" as const },
+    { name: "w960", width: 960, height: 1280, fit: "inside" as const },
+  ];
+  const source = sharp(master, { failOn: "none" });
+  for (const variant of variants) {
+    const file = await source
+      .clone()
+      .resize({ width: variant.width, height: variant.height, fit: variant.fit, position: "attention", withoutEnlargement: true })
+      .jpeg({ quality: 78, mozjpeg: true })
+      .toBuffer();
+    writeFileSync(`${base}-${variant.name}.jpg`, file);
+  }
+}
+
+async function savedAvatar(handle: string): Promise<string> {
+  const file = avatarFile(handle);
+  if (!existsSync(file)) return "";
+  const size = await imageSides(readFileSync(file));
+  if (!size || size.w < AVATAR_MIN_SIDE || size.h < AVATAR_MIN_SIDE) return "";
+  return avatarPublicPath(handle);
+}
+
+async function writeAvatar(handle: string, raw: RawExtract): Promise<string> {
+  const kept = await savedAvatar(handle);
+  if (!raw.avatarBase64) return kept;
+  const bytes = Buffer.from(raw.avatarBase64, "base64");
+  const size = await imageSides(bytes);
+  if (!size || size.w < AVATAR_MIN_SIDE || size.h < AVATAR_MIN_SIDE) return kept;
+  await storeAvatar(bytes, avatarFile(handle));
+  return avatarPublicPath(handle);
 }
 
 function fail(rawPath: string, message: string): never {
@@ -351,7 +401,7 @@ function assertUniqueNick(handle: string, slug: string, rawPath: string) {
   }
 }
 
-function saveOne(rawPath: string, settlements: string[]) {
+async function saveOne(rawPath: string, settlements: string[]) {
   const raw = JSON.parse(readFileSync(rawPath, "utf8")) as RawExtract;
   if (raw.blocked) fail(rawPath, `Instagram blocked the read (${raw.blocked}). Do not invent a profile.`);
   const resolved = raw.resolved;
@@ -491,7 +541,7 @@ function saveOne(rawPath: string, settlements: string[]) {
   const formats = resolved.formats || [];
   if (formats.join("|") !== formatsInText.join("|")) fail(rawPath, "Formats do not match the text.");
 
-  const avatarPath = writeAvatar(handle, raw);
+  const avatarPath = await writeAvatar(handle, raw);
   const fullName = [firstName, lastName].filter(Boolean).join(" ");
   const gender = inferTrainerGender(firstName, corpus);
   const slug = handle.trim().toLowerCase().replace(/[^a-z0-9._]/g, "").slice(0, 30);
@@ -575,7 +625,7 @@ function saveOne(rawPath: string, settlements: string[]) {
   return draft;
 }
 
-function updateIndex(drafts: ReturnType<typeof saveOne>[]) {
+function updateIndex(drafts: Array<Awaited<ReturnType<typeof saveOne>>>) {
   const indexPath = join(DRAFT_DIR, "index.json");
   type IndexProfile = {
     handle: string;
@@ -617,7 +667,7 @@ if (!inputs.length) {
 }
 
 const settlements = loadSettlements();
-const saved = inputs.map((file) => saveOne(file, settlements));
+const saved = await Promise.all(inputs.map((file) => saveOne(file, settlements)));
 updateIndex(saved);
 for (const draft of saved) {
   console.log(`${draft.handle}\t${draft.fullName || "—"}\t${draft.primarySport?.label || "—"}\t${draft.city || "—"}\tmissing:${draft.missing.join(",") || "none"}`);

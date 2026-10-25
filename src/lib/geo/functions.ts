@@ -40,6 +40,8 @@ export const suggestAddress = createServerFn({ method: "POST" })
         city: hit.city,
         district: hit.district,
         street: hit.street,
+        region: hit.region,
+        country: hit.country,
         lat: hit.lat,
         lng: hit.lng,
       }))),

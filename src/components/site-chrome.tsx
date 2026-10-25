@@ -1,4 +1,4 @@
-import { Link, useRouteContext } from "@tanstack/react-router";
+import { Link, useRouteContext, useRouterState } from "@tanstack/react-router";
 import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
 import { logoutFn } from "@/lib/auth/functions";
@@ -6,11 +6,12 @@ import { getCabinetPath, hasAnyRole, isStaff } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { pluralRu } from "@/lib/ru-plural";
-import { CategoryLink } from "@/lib/catalog/category-routes";
 import { BELARUS_OBLAST_CENTERS } from "@/lib/catalog/city-taxonomy";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
+import { UserAvatar } from "@/components/user-avatar";
 import { TrainerName } from "@/components/trainer-name";
+import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const CHROME_CSS = `
@@ -32,6 +33,14 @@ body.is-search-docked .site-header,
   box-shadow: 0 1px 0 rgba(var(--dark-rgb), 0.04), 0 8px 28px rgba(var(--dark-rgb), 0.05);
   border-bottom-color: rgba(var(--dark-rgb), 0.06);
 }
+.site-header.is-menu-open,
+body.is-search-docked .site-header.is-menu-open {
+  background: var(--white);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  box-shadow: none;
+  border-bottom-color: transparent;
+  overflow: visible;
+}
 
 .site-header__inner {
   width: 100%; max-width: var(--layout-max); margin: 0 auto; padding: 24px var(--layout-gutter);
@@ -52,7 +61,7 @@ body.is-search-docked .site-header__search {
   width: 100%; max-width: 100%; min-width: 0; min-height: 52px; padding: 4px 5px;
   background: var(--white); border: 1px solid rgba(var(--dark-rgb), 0.08); border-radius: 999px;
   box-shadow: 0 4px 18px rgba(var(--dark-rgb), 0.06);
-  display: grid; grid-template-columns: minmax(0, 131fr) minmax(0, 157fr) minmax(0, 211fr) minmax(0, 147fr) 44px;
+  display: grid; grid-template-columns: minmax(0, 118fr) minmax(0, 196fr) minmax(0, 190fr) minmax(0, 142fr) 44px;
   align-items: center; gap: 0; text-align: left;
 }
 .search-block--header .search-field { min-width: 0; height: 44px; display: flex; align-items: center; gap: 7px; padding: 0 11px; }
@@ -63,7 +72,7 @@ body.is-search-docked .site-header__search {
 .search-block--header .intent-dropdown__trigger svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .search-block--header .intent-dropdown__trigger {
   display: inline-flex; align-items: center; justify-content: space-between; gap: 7px;
-  width: 100%; min-width: 0; min-height: 37px; padding: 0; border: 0; background: transparent;
+  width: 100%; min-width: 0; min-height: 44px; height: 100%; padding: 0; border: 0; background: transparent;
   color: var(--text); font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; overflow: hidden;
 }
 .search-block--header .intent-dropdown__value { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
@@ -111,7 +120,7 @@ body.is-search-docked .site-header__search {
   transition: color 0.18s ease, transform 0.18s ease;
   text-decoration: none;
 }
-.icon-btn:hover { background: transparent; color: var(--primary); transform: none; }
+.icon-btn:hover, .icon-btn[aria-current="page"] { background: transparent; color: var(--primary); transform: none; }
 .icon-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .favorite-count { position: relative; width: 44px; height: 44px; }
 .favorite-count__n {
@@ -122,6 +131,16 @@ body.is-search-docked .site-header__search {
 .favorite-count.has-items { color: var(--primary); }
 .favorite-count.has-items svg { fill: currentColor; }
 .icon-btn--help { font-size: 15px; font-weight: var(--fw-title); letter-spacing: 0; }
+.account-face {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-width: 44px; min-height: 44px; max-width: 210px;
+  padding-right: 2px; border-radius: 999px; color: var(--dark); text-decoration: none;
+}
+.account-face__nick {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 13px; font-weight: var(--fw-title); letter-spacing: -0.01em;
+}
+.account-face:hover .account-face__nick { color: var(--primary); }
 .account-menu { position: relative; }
 .account-menu__panel {
   display: none; position: absolute; z-index: 40; top: 100%; right: 0; padding-top: 8px;
@@ -156,47 +175,156 @@ body.is-search-docked .site-header__search {
 
 
 .mega-overlay {
-  position: fixed; inset: 0; z-index: 290; background: rgba(15, 23, 42, 0.32);
-  backdrop-filter: blur(2px); opacity: 0; pointer-events: none;
+  position: fixed; inset: 0; z-index: 290; background: rgba(var(--dark-rgb), 0.46);
+  opacity: 0; pointer-events: none;
   transition: opacity 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .mega-overlay.is-open { opacity: 1; pointer-events: auto; }
 .mega-panel {
-  position: fixed; left: 50%; top: 84px; z-index: 295;
-  width: min(var(--layout-max), calc(100vw - 2 * var(--layout-gutter)));
-  transform: translate3d(-50%, -6px, 0);
-  transform-origin: top center;
-  background: #fff; border-radius: var(--card-radius);
-  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.18), 0 4px 12px rgba(15,23,42,0.06);
-  padding: 28px 32px 24px; opacity: 0; pointer-events: none;
-  border: 1px solid rgba(var(--dark-rgb), 0.06);
-  transition: opacity 0.28s cubic-bezier(0.4, 0, 0.2, 1), transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: opacity, transform;
+  position: absolute; left: 0; right: 0; top: 100%; z-index: 30;
+  width: 100%;
+  max-height: calc(100dvh - var(--header-h, var(--header-clearance)));
+  overflow: auto; overscroll-behavior: contain;
+  transform: translate3d(0, -10px, 0);
+  background: var(--white);
+  box-shadow: 0 28px 56px rgba(var(--primary-rgb), 0.16);
+  opacity: 0; pointer-events: none; visibility: hidden;
+  transition: opacity 0.28s cubic-bezier(0.4, 0, 0.2, 1), transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.28s;
 }
-body.is-search-docked .mega-panel { top: 64px; }
-.mega-panel.is-open { opacity: 1; transform: translate3d(-50%, 0, 0); pointer-events: auto; }
-.mega-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr; gap: 28px; }
-.mega-col h5 { margin: 0 0 12px; font-size: 11px; font-weight: var(--fw-title); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-.mega-col ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-.mega-col a {
-  color: var(--text); text-decoration: none; font-size: 14.5px; font-weight: var(--fw-title);
-  display: inline-flex; align-items: center; gap: 6px; transition: color 0.15s ease;
+.mega-panel.is-open {
+  opacity: 1; transform: translate3d(0, 0, 0); pointer-events: auto; visibility: visible;
+  transition: opacity 0.28s cubic-bezier(0.4, 0, 0.2, 1), transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
 }
-.mega-col a:hover { color: var(--primary); }
+.mega-panel::before {
+  content: ""; position: sticky; top: 0; z-index: 4; display: block; height: 3px;
+  background: var(--primary);
+}
+.mega-cats {
+  position: sticky; top: 3px; z-index: 3;
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+}
+.mega-cats .mega-sheet { padding-top: 16px; padding-bottom: 14px; }
+.mega-cats__row {
+  display: grid; grid-template-columns: repeat(8, minmax(112px, 1fr));
+  gap: 16px 12px; margin: 0; padding: 0; list-style: none;
+}
+.mega-cat {
+  display: grid; justify-items: center; align-content: start; gap: 8px;
+  box-sizing: border-box; width: 100%; max-width: 148px; justify-self: center;
+  min-width: 0; min-height: 44px; padding: 0 8px;
+  color: var(--text); text-decoration: none; text-align: center;
+  font-size: 11px; font-weight: var(--fw-title); letter-spacing: -0.01em; line-height: 1.25;
+}
+.mega-cat:hover { color: var(--primary-dark); }
+.mega-cat:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: var(--radius-control); }
+.mega-cat__icon {
+  width: 64px; height: 64px; flex: 0 0 auto;
+  display: grid; place-items: center;
+}
+.mega-cat__icon img { width: 64px; height: 64px; object-fit: contain; display: block; }
+.mega-cat__label { display: block; width: 100%; text-wrap: balance; }
+.mega-sheet {
+  width: 100%; max-width: var(--layout-max); margin-inline: auto;
+  padding: 32px var(--layout-gutter) 18px;
+}
+.mega-grid {
+  display: grid; grid-template-columns: minmax(220px, 1.2fr) repeat(3, minmax(0, 1fr));
+  gap: 32px; align-items: stretch;
+}
+.mega-col { min-width: 0; align-self: start; display: grid; gap: 14px; align-content: start; }
+.mega-col h5 {
+  margin: 0;
+  font-size: 14px; font-weight: var(--fw-title); letter-spacing: 0.01em;
+  text-transform: none; color: var(--muted);
+}
+.mega-col ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 2px; }
+.mega-link {
+  display: flex; align-items: center; gap: 8px;
+  min-height: 44px; margin: 0 -12px; padding: 8px 12px;
+  border-radius: var(--radius-control);
+  color: var(--dark); text-decoration: none;
+  font-size: 15px; font-weight: var(--fw-title); letter-spacing: -0.01em; line-height: 1.35;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.mega-link:hover { background: var(--light-bg); color: var(--primary-dark); }
+.mega-link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.mega-mark {
+  width: 16px; height: 16px; flex: 0 0 auto;
+  display: grid; place-items: center; color: var(--primary);
+}
+.mega-mark svg {
+  width: 16px; height: 16px; stroke: currentColor; fill: none;
+  stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round;
+}
 .mega-col__hero {
-  grid-row: span 1; background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.12), rgba(var(--primary-rgb), 0.04));
-  border-radius: var(--card-radius); padding: 20px; border: 1px solid rgba(var(--primary-rgb), 0.18);
+  align-self: stretch; position: relative; overflow: hidden;
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0;
+  padding: 20px 22px; border-radius: var(--card-radius);
+  background: linear-gradient(120deg, var(--primary) 0%, #ff7a5c 55%, var(--primary-dark) 100%);
+  box-shadow: var(--shadow);
+  color: #fff;
 }
-.mega-col__hero h4 { margin: 0 0 8px; font-size: 18px; font-weight: var(--fw-heading); letter-spacing: -0.02em; color: var(--dark); }
-.mega-col__hero p { margin: 0 0 14px; font-size: 13px; line-height: 1.5; color: var(--text); }
-.mega-col__hero a.cta { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: var(--fw-title); color: var(--primary); text-decoration: none; }
+.mega-col__hero::before,
+.mega-col__hero::after {
+  content: ""; position: absolute; border-radius: 50%; pointer-events: none;
+}
+.mega-col__hero::before {
+  right: -48px; top: -56px; width: 160px; height: 160px;
+  background: rgba(255, 255, 255, 0.12);
+}
+.mega-col__hero::after {
+  left: -46px; bottom: -78px; width: 140px; height: 140px;
+  background: rgba(0, 0, 0, 0.08);
+}
+.mega-kicker {
+  position: relative; z-index: 1; margin: 0 0 6px;
+  font-size: 15px; font-weight: var(--fw-title); letter-spacing: -0.01em;
+  text-transform: none; color: rgba(255, 255, 255, 0.86);
+}
+.mega-col__hero h4 {
+  position: relative; z-index: 1; margin: 0 0 12px;
+  font-size: 22px; line-height: 1.15; font-weight: var(--fw-heading);
+  letter-spacing: -0.035em; color: #fff;
+}
+.mega-col__hero p {
+  position: relative; z-index: 1; margin: 0 0 14px;
+  font-size: 15px; line-height: 1.65; font-weight: 500; color: rgba(255, 255, 255, 0.86);
+}
+.mega-col__hero a.cta {
+  position: relative; z-index: 1; margin-top: 4px;
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 44px; padding: 0 16px; border-radius: 999px;
+  background: #fff; color: var(--primary-dark);
+  font-size: 15px; font-weight: var(--fw-title); text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.mega-col__hero a.cta:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18); }
+.mega-col__hero a.cta:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.mega-col__hero a.cta svg {
+  width: 16px; height: 16px; stroke: currentColor; fill: none;
+  stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round;
+}
 .mega-footer {
-  margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(var(--dark-rgb), 0.07);
-  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-  font-size: 13px; color: var(--muted); font-weight: var(--fw-ui);
+  background: var(--light-bg);
+  border-top: 1px solid rgba(var(--primary-rgb), 0.14);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
-.mega-footer a { color: var(--text); text-decoration: none; font-weight: var(--fw-heading); margin-right: 16px; }
-.mega-footer a:hover { color: var(--primary); }
+.mega-footer__row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap;
+  padding-block: 8px 12px;
+  font-size: 15px; color: var(--muted); font-weight: var(--fw-ui);
+}
+.mega-footer__links { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.mega-footer a {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px;
+  border-radius: 999px; color: var(--dark); text-decoration: none; font-weight: var(--fw-title);
+}
+.mega-footer a:hover { background: var(--white); color: var(--primary); }
+.mega-footer a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .mega-overlay, .mega-panel { transition: none; }
+}
 
 .site-footer { background: var(--dark); color: #f2f2f2; padding: var(--layout-section-y) 0 28px; }
 .site-footer__inner { max-width: var(--layout-max); margin: 0 auto; padding-inline: var(--layout-gutter); }
@@ -225,16 +353,28 @@ body.is-search-docked .mega-panel { top: 64px; }
     max-height: 64px;
   }
   .search-block--header { width: min(100%, 700px); }
-  body.is-search-docked .mega-panel { top: 112px; }
+}
+@media (max-width: 1100px) {
+  .mega-cats__row { grid-template-columns: repeat(4, minmax(112px, 1fr)); }
 }
 @media (max-width: 960px) {
   .site-header__inner { padding: 20px var(--layout-gutter); column-gap: 10px; }
   body.is-search-docked .site-header__inner { padding: 10px var(--layout-gutter); column-gap: 8px; }
   .burger-btn__label { display: none; }
   .burger-btn { min-width: 0; width: 44px; padding: 0; }
-  .mega-panel { top: 72px; padding: 22px; }
-  .mega-grid { grid-template-columns: 1fr 1fr; gap: 22px; }
-  .mega-col__hero { grid-column: 1 / -1; }
+  .mega-panel > .mega-sheet { padding-top: 22px; }
+  .mega-cats { position: static; }
+  .mega-cats__row { grid-template-columns: repeat(4, minmax(112px, 1fr)); }
+  .mega-cat__icon, .mega-cat__icon img { width: 56px; height: 56px; }
+  .mega-grid { grid-template-columns: 1fr 1fr; gap: 22px 28px; }
+  .mega-col__hero {
+    grid-column: 1 / -1;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 24px; align-items: center;
+  }
+  .mega-kicker, .mega-col__hero h4, .mega-col__hero p { grid-column: 1; }
+  .mega-col__hero p { margin-bottom: 0; }
+  .mega-col__hero a.cta { grid-column: 2; grid-row: 1 / span 3; margin-top: 0; }
   .site-footer { padding-block: clamp(36px, 6vw, 44px) 24px; }
   .site-footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .site-footer__brand { grid-column: 1 / -1; }
@@ -253,7 +393,6 @@ body.is-search-docked .mega-panel { top: 64px; }
   .search-block--header .search-field[data-combo="sport"] { grid-column: 1; grid-row: 2; border-left: 0; border-top: 1px solid var(--line); }
   .search-block--header .search-field[data-combo="location"] { grid-column: 2; grid-row: 2; border-top: 1px solid var(--line); }
   .search-block--header .search-submit { grid-column: 3; grid-row: 1 / span 2; align-self: center; }
-  body.is-search-docked .mega-panel { top: 148px; }
 }
 @media (max-width: 767px) {
   .site-header__inner,
@@ -269,15 +408,39 @@ body.is-search-docked .mega-panel { top: 64px; }
   }
   .site-header__search,
   body.is-search-docked .site-header__search { display: none; }
-  body.is-search-docked .mega-panel { top: 72px; }
+  .account-face { max-width: 44px; padding-right: 0; }
+  .account-face__nick { display: none; }
+}
+@media (max-width: 560px) {
+  .mega-cats__row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .mega-cat { max-width: none; padding-inline: 6px; }
+}
+@media (max-width: 360px) {
+  .mega-cats__row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mega-cat { padding-inline: 8px; }
 }
 @media (max-width: 620px) {
   .search-block--header .search-field { padding-inline: 7px; }
   .logo__img, .site-header .logo__img { height: 22px; }
   .site-footer__brand .logo__img { height: 26px; }
   .mega-grid { grid-template-columns: 1fr; }
+  .mega-col__hero { display: flex; flex-direction: column; align-items: flex-start; }
+  .mega-kicker, .mega-col__hero h4, .mega-col__hero p, .mega-col__hero a.cta { grid-column: auto; grid-row: auto; }
+  .mega-col__hero p { margin-bottom: 16px; }
+  .mega-col__hero a.cta { margin-top: 0; }
+  .mega-footer__row { align-items: flex-start; }
+  .mega-footer__links { display: grid; width: 100%; gap: 0; }
   .site-footer__grid { grid-template-columns: 1fr; }
   .site-footer__bottom { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 480px) {
+  .site-header__nav,
+  body.is-search-docked .site-header__nav { gap: 0; }
+  .site-header .icon-btn--help { display: none; }
+}
+@media (max-width: 359px) {
+  .logo__img, .site-header .logo__img { height: 15px; }
+  .site-footer__brand .logo__img { height: 26px; }
 }
 `;
 
@@ -298,13 +461,12 @@ export function Logo({ className }: { className?: string }) {
 
 type AccountMenuTo = "/account/messages" | "/account/reviews" | "/account/bookings" | "/account/favorites" | "/account/settings";
 type AdminMenuTo = "/admin" | "/admin/trainers" | "/admin/reviews" | "/admin/messages" | "/admin/accounts" | "/admin/finance" | "/admin/settings";
-type TrainerTab = "settings" | "card" | "reviews";
+type MeMenuTo = "/me" | "/me/messages" | "/me/reviews" | "/me/favorites" | "/me/profile" | "/me/settings";
 
 type HeaderMenuItem =
   | { id: string; label: string; kind: "account"; to: AccountMenuTo }
   | { id: string; label: string; kind: "admin"; to: AdminMenuTo }
-  | { id: string; label: string; kind: "trainer"; search?: { tab: TrainerTab } }
-  | { id: string; label: string; kind: "trainer-messages" };
+  | { id: string; label: string; kind: "me"; to: MeMenuTo };
 
 const ACCOUNT_MENU: HeaderMenuItem[] = [
   { id: "messages", label: "Сообщения", kind: "account", to: "/account/messages" },
@@ -315,12 +477,12 @@ const ACCOUNT_MENU: HeaderMenuItem[] = [
 ];
 
 const TRAINER_MENU: HeaderMenuItem[] = [
-  { id: "overview", label: "Обзор", kind: "trainer" },
-  { id: "settings", label: "Настройки", kind: "trainer", search: { tab: "settings" } },
-  { id: "card", label: "Профиль тренера", kind: "trainer", search: { tab: "card" } },
-  { id: "reviews", label: "Отзывы", kind: "trainer", search: { tab: "reviews" } },
-  { id: "favorites", label: "Избранное", kind: "account", to: "/account/favorites" },
-  { id: "messages", label: "Сообщения", kind: "trainer-messages" },
+  { id: "overview", label: "Обзор", kind: "me", to: "/me" },
+  { id: "messages", label: "Сообщения", kind: "me", to: "/me/messages" },
+  { id: "profile", label: "Профиль", kind: "me", to: "/me/profile" },
+  { id: "reviews", label: "Отзывы", kind: "me", to: "/me/reviews" },
+  { id: "favorites", label: "Избранное", kind: "me", to: "/me/favorites" },
+  { id: "settings", label: "Настройки", kind: "me", to: "/me/settings" },
 ];
 
 const ADMIN_MENU: HeaderMenuItem[] = [
@@ -353,11 +515,8 @@ function menuCounts(roles: UserRole[], own: number, inbox: number, favorites: nu
 function HeaderMenuLink({ item, count, onNavigate }: { item: HeaderMenuItem; count?: number; onNavigate: () => void }) {
   const props = { className: "account-menu__item", onClick: onNavigate };
   const body = <><span>{item.label}</span><MenuCount count={count} /></>;
-  if (item.kind === "trainer") {
-    return <Link to="/trainer-admin" search={item.search ?? {}} {...props}>{body}</Link>;
-  }
-  if (item.kind === "trainer-messages") {
-    return <Link to="/trainer-admin/messages" {...props}>{body}</Link>;
+  if (item.kind === "me") {
+    return <Link to={item.to} activeOptions={item.to === "/me" ? { exact: true } : undefined} {...props}>{body}</Link>;
   }
   if (item.kind === "admin") {
     return <Link to={item.to} {...props}>{body}</Link>;
@@ -445,12 +604,13 @@ function AccountButton() {
     >
       <Link
         to={getCabinetPath(user.roles)}
-        className="icon-btn"
-        aria-label={`${name}, вы вошли`}
+        activeOptions={{ exact: true }}
+        className="account-face"
+        aria-label={user.nick ? `${name}, ${user.nick}, вы вошли` : `${name}, вы вошли`}
         aria-haspopup="true"
         aria-expanded={open}
         aria-controls="account-menu"
-        title={name}
+        title={user.nick || name}
         onPointerDown={(event) => {
           if (pointerType.current === "touch" && event.pointerType === "mouse") return;
           pointerType.current = event.pointerType;
@@ -462,7 +622,8 @@ function AccountButton() {
           setOpen((value) => !value);
         }}
       >
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 19.2c1.2-2.6 3.5-3.8 6.5-3.8s5.3 1.2 6.5 3.8"/></svg>
+        <UserAvatar name={name} src={user.avatarPath} size={32} />
+        {user.nick ? <span className="account-face__nick">{user.nick}</span> : null}
       </Link>
       <nav className="account-menu__panel" id="account-menu" aria-label="Кабинет">
         <div className="account-menu__card">
@@ -490,6 +651,17 @@ function AccountButton() {
   );
 }
 
+const MEGA_CATEGORIES = listPublishedSportCategories();
+
+function MegaPin() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" />
+      <circle cx="12" cy="9" r="2.4" />
+    </svg>
+  );
+}
+
 function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { user } = useRouteContext({ from: "__root__" });
   useEffect(() => {
@@ -505,26 +677,42 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   }, [open, onClose]);
 
   return (
-    <>
-      <div className={`mega-overlay${open ? " is-open" : ""}`} onClick={onClose} aria-hidden={!open} />
-      <div className={`mega-panel${open ? " is-open" : ""}`} role="dialog" aria-modal="true" aria-label="Меню">
+    <div
+      className={`mega-panel${open ? " is-open" : ""}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Меню"
+      aria-hidden={!open}
+      inert={!open}
+    >
+      <div className="mega-cats">
+        <div className="mega-sheet">
+          <ul className="mega-cats__row">
+            {MEGA_CATEGORIES.map((category) => (
+              <li key={category.slug}>
+                <Link className="mega-cat" to="/categories/$slug" params={{ slug: category.slug }} onClick={onClose}>
+                  <span className="mega-cat__icon" aria-hidden="true">
+                    {category.featuredImage ? (
+                      <img src={category.featuredImage} alt="" width={64} height={64} />
+                    ) : null}
+                  </span>
+                  <span className="mega-cat__label">{category.label}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <div className="mega-sheet">
         <div className="mega-grid">
           <div className="mega-col mega-col__hero">
+            <span className="mega-kicker">Для тренеров</span>
             <h4>Стать тренером на trenio.by</h4>
             <p>Бесплатный профиль, заявки от клиентов и расписание — всё в одном месте.</p>
-            <Link to="/auth/signup" className="cta" onClick={onClose}>Создать профиль →</Link>
-          </div>
-          <div className="mega-col">
-            <h5>Виды спорта</h5>
-            <ul>
-              <li><CategoryLink route={{ parentSlug: "edinoborstva", childSlug: "boks" }} onClick={onClose}>Бокс</CategoryLink></li>
-              <li><CategoryLink route={{ parentSlug: "edinoborstva" }} onClick={onClose}>Единоборства</CategoryLink></li>
-              <li><CategoryLink route={{ parentSlug: "yoga", childSlug: "yoga" }} onClick={onClose}>Йога</CategoryLink></li>
-              <li><CategoryLink route={{ parentSlug: "fitnes" }} onClick={onClose}>Фитнес</CategoryLink></li>
-              <li><CategoryLink route={{ parentSlug: "plavanie", childSlug: "plavanie" }} onClick={onClose}>Плавание</CategoryLink></li>
-              <li><CategoryLink route={{ parentSlug: "raketki", childSlug: "bolshoj-tennis" }} onClick={onClose}>Теннис</CategoryLink></li>
-              <li><CategoryLink route={{ parentSlug: "komandnye", childSlug: "futbol" }} onClick={onClose}>Футбол</CategoryLink></li>
-            </ul>
+            <Link to="/join/trainer" className="cta" onClick={onClose}>
+              Создать профиль
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6" /></svg>
+            </Link>
           </div>
           <div className="mega-col">
             <h5>Города</h5>
@@ -534,9 +722,15 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
                 return (
                   <li key={city}>
                     {slug ? (
-                      <Link to="/city/$slug" params={{ slug }} onClick={onClose}>{city}</Link>
+                      <Link className="mega-link" to="/city/$slug" params={{ slug }} onClick={onClose}>
+                        <span className="mega-mark"><MegaPin /></span>
+                        <span>{city}</span>
+                      </Link>
                     ) : (
-                      <Link to="/" onClick={onClose}>{city}</Link>
+                      <Link className="mega-link" to="/" onClick={onClose}>
+                        <span className="mega-mark"><MegaPin /></span>
+                        <span>{city}</span>
+                      </Link>
                     )}
                   </li>
                 );
@@ -546,34 +740,35 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           <div className="mega-col">
             <h5>Клиентам</h5>
             <ul>
-              <li><Link to="/" onClick={onClose}>Найти тренера</Link></li>
-              <li><Link to="/map" search={{ sports: undefined }} onClick={onClose}>На карте</Link></li>
-              <li><Link to="/clubs" onClick={onClose}>Клубы и залы</Link></li>
-              <li><Link to="/blog/$slug" params={{ slug: "kak-vybrat-trenera" }} onClick={onClose}>Как выбрать тренера</Link></li>
-              <li><Link to="/auth/signup" onClick={onClose}>Создать аккаунт</Link></li>
+              <li><Link className="mega-link mega-link--text" to="/" onClick={onClose}>Найти тренера</Link></li>
+              <li><Link className="mega-link mega-link--text" to="/map" search={{ sports: undefined, city: undefined }} onClick={onClose}>На карте</Link></li>
+              <li><Link className="mega-link mega-link--text" to="/blog/$slug" params={{ slug: "kak-vybrat-trenera" }} onClick={onClose}>Как выбрать тренера</Link></li>
+              <li><Link className="mega-link mega-link--text" to="/auth/signup" onClick={onClose}>Создать аккаунт</Link></li>
               {user ? (
                 <li>
-                  <Link to={getCabinetPath(user.roles)} onClick={onClose}>
+                  <Link className="mega-link mega-link--text" to={getCabinetPath(user.roles)} onClick={onClose}>
                     <TrainerName firstName={user.firstName} lastName={user.lastName} empty="Кабинет" />
                   </Link>
                 </li>
               ) : (
-                <li><Link to="/auth/login" onClick={onClose}>Войти</Link></li>
+                <li><Link className="mega-link mega-link--text" to="/auth/login" onClick={onClose}>Войти</Link></li>
               )}
             </ul>
           </div>
           <div className="mega-col">
-            <h5>Тренерам и клубам</h5>
+            <h5>Тренерам</h5>
             <ul>
-              <li><Link to="/trainer-admin" onClick={onClose}>Кабинет тренера</Link></li>
-              <li><Link to="/auth/signup" onClick={onClose}>Разместить профиль</Link></li>
-              <li><Link to="/" onClick={onClose}>Тарифы и продвижение</Link></li>
-              <li><Link to="/" onClick={onClose}>Помощь и FAQ</Link></li>
+              <li><Link className="mega-link mega-link--text" to="/me" activeOptions={{ exact: true }} onClick={onClose}>Кабинет тренера</Link></li>
+              <li><Link className="mega-link mega-link--text" to="/join/trainer" onClick={onClose}>Разместить профиль</Link></li>
+              <li><Link className="mega-link mega-link--text" to="/" onClick={onClose}>Тарифы и продвижение</Link></li>
+              <li><Link className="mega-link mega-link--text" to="/" onClick={onClose}>Помощь и FAQ</Link></li>
             </ul>
           </div>
         </div>
-        <div className="mega-footer">
-          <div>
+      </div>
+      <div className="mega-footer">
+        <div className="mega-sheet mega-footer__row">
+          <div className="mega-footer__links">
             <Link to="/" onClick={onClose}>О сервисе</Link>
             <Link to="/" onClick={onClose}>Контакты</Link>
             <Link to="/offer" onClick={onClose}>Договор оферты</Link>
@@ -582,7 +777,26 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           <span>© 2026 trenio.by</span>
         </div>
       </div>
-    </>
+    </div>
+  );
+}
+
+function MapLink() {
+  const onMap = useRouterState({ select: (state) => state.location.pathname === "/map" });
+  return (
+    <Link
+      to="/map"
+      search={{ sports: undefined, city: undefined }}
+      className="icon-btn"
+      aria-label="Карта тренеров"
+      title="Карта тренеров"
+      aria-current={onMap ? "page" : undefined}
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" />
+        <circle cx="12" cy="9" r="2.4" />
+      </svg>
+    </Link>
   );
 }
 
@@ -591,16 +805,16 @@ function MessageCount() {
   const messaging = useMessaging();
   if (!user) return null;
   const staff = hasAnyRole(user.roles, ["admin", "superadmin"]);
-  const trainerInbox = hasAnyRole(user.roles, ["trainer", "club"]) && messaging.inbox > 0 && messaging.own === 0;
+  const trainer = hasAnyRole(user.roles, ["trainer", "club"]);
   const label = `Сообщения, ${messaging.total}`;
   const className = `icon-btn favorite-count message-count${messaging.total > 0 ? " has-items" : ""}`;
   const icon = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 6l8 6 8-6" /></svg>;
   const count = <span className="favorite-count__n">{messaging.total > 99 ? "99+" : messaging.total}</span>;
-  if (trainerInbox) {
-    return <Link to="/trainer-admin/messages" className={className} aria-label={label} title="Сообщения">{icon}{count}</Link>;
-  }
   if (staff && messaging.total === 0) {
     return <Link to="/admin/messages" className={className} aria-label={label} title="Сообщения">{icon}{count}</Link>;
+  }
+  if (trainer) {
+    return <Link to="/me/messages" className={className} aria-label={label} title="Сообщения">{icon}{count}</Link>;
   }
   return <Link to="/account/messages" className={className} aria-label={label} title="Сообщения">{icon}{count}</Link>;
 }
@@ -613,6 +827,22 @@ function FavoriteCount() {
   const label = ready
     ? `Избранное, ${count} ${pluralRu(count, "карточка", "карточки", "карточек")}`
     : "Избранное";
+  const trainer = hasAnyRole(user.roles, ["trainer", "club"]) && !hasAnyRole(user.roles, ["admin", "superadmin"]);
+  if (trainer) {
+    return (
+      <Link
+        to="/me/favorites"
+        className={`icon-btn favorite-count${ready && count > 0 ? " has-items" : ""}`}
+        aria-label={label}
+        title="Избранное"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" />
+        </svg>
+        {ready ? <span className="favorite-count__n">{count}</span> : null}
+      </Link>
+    );
+  }
   return (
     <Link
       to="/account/favorites"
@@ -656,11 +886,19 @@ export function SiteHeader({ middleSlot }: { middleSlot?: ReactNode }) {
       observer.observe(sentinel);
     }
 
+    const syncHeaderHeight = () => {
+      el.style.setProperty("--header-h", `${el.getBoundingClientRect().height}px`);
+    };
+    syncHeaderHeight();
+    const headerObserver = new ResizeObserver(syncHeaderHeight);
+    headerObserver.observe(el);
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
       observer?.disconnect();
+      headerObserver.disconnect();
       if (!sentinel) document.body.classList.remove("is-search-docked");
     };
   }, []);
@@ -668,13 +906,15 @@ export function SiteHeader({ middleSlot }: { middleSlot?: ReactNode }) {
   return (
     <>
       <ChromeStyles />
-      <header className="site-header" id="site-header" ref={headerRef}>
+      <div className={`mega-overlay${menuOpen ? " is-open" : ""}`} onClick={close} aria-hidden={!menuOpen} />
+      <header className={`site-header${menuOpen ? " is-menu-open" : ""}`} id="site-header" ref={headerRef}>
 
         <div className="site-header__inner">
           <Logo />
           <div className="site-header__search">{middleSlot ?? <CatalogSearchForm variant="header" />}</div>
           <nav className="site-header__nav" aria-label="Основное меню">
             <Link to="/" className="icon-btn icon-btn--help" aria-label="Помощь" title="Помощь">?</Link>
+            <MapLink />
             <MessageCount />
             <FavoriteCount />
             <AccountButton />
@@ -692,8 +932,8 @@ export function SiteHeader({ middleSlot }: { middleSlot?: ReactNode }) {
 
           </nav>
         </div>
+        <MegaMenu open={menuOpen} onClose={close} />
       </header>
-      <MegaMenu open={menuOpen} onClose={close} />
     </>
   );
 }
@@ -713,7 +953,7 @@ export function SiteFooter() {
               <h4>Поиск</h4>
               <div className="site-footer__links">
                 <Link to="/">Тренеры</Link>
-                <Link to="/map" search={{ sports: undefined }}>На карте</Link>
+                <Link to="/map" search={{ sports: undefined, city: undefined }}>На карте</Link>
                 <Link to="/clubs">Клубы</Link>
                 <Link to="/categories/">Категории</Link>
               </div>
@@ -721,8 +961,8 @@ export function SiteFooter() {
             <div className="site-footer__col">
               <h4>Тренерам</h4>
               <div className="site-footer__links">
-                <Link to="/auth/signup">Добавить профиль</Link>
-                <Link to="/trainer-admin">Кабинет тренера</Link>
+                <Link to="/join/trainer">Добавить профиль</Link>
+                <Link to="/me" activeOptions={{ exact: true }}>Кабинет тренера</Link>
                 <a href="#">Помощь</a>
               </div>
             </div>

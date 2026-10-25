@@ -3,6 +3,7 @@ export type SportIconKey =
   | "gymFitness"
   | "athleticPrep"
   | "yogaStretch"
+  | "wellness"
   | "swimming"
   | "teamSports"
   | "racketSports"
@@ -13,6 +14,7 @@ export type SportIconKey =
   | "cycling"
   | "rehab"
   | "outdoor"
+  | "clubSports"
   | "mindSports";
 
 export type SportTaxonomyChild = {
@@ -37,6 +39,8 @@ export type TopLevelSportCategory = {
   image?: string;
   /** Hero featured image (960×640) for parent category pages */
   featuredImage?: string;
+  /** False keeps the section in the taxonomy and off the public site. */
+  published?: boolean;
   children: SportTaxonomyChild[];
   sports: string[];
 };
@@ -81,6 +85,9 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
       { slug: "thekvondo", label: "Тхэквондо", titleGenitive: "тхэквондо", aliases: ["тхеквондо", "таеквондо"] },
       { slug: "aikido", label: "Айкидо", titleGenitive: "айкидо" },
       { slug: "rukopashnyj", label: "Рукопашный бой", titleGenitive: "рукопашному бою", aliases: ["рукопашка", "армейский рукопашный бой"] },
+      { slug: "ushu", label: "Ушу", titleGenitive: "ушу", aliases: ["у-шу", "кунг-фу"] },
+      { slug: "fehtovanie", label: "Фехтование", titleGenitive: "фехтованию" },
+      { slug: "armrestling", label: "Армрестлинг", titleGenitive: "армрестлингу", aliases: ["армспорт"] },
       { slug: "samooborona", label: "Самооборона", titleGenitive: "самообороне", aliases: ["курсы самообороны", "женская самооборона"] },
     ],
   }),
@@ -89,7 +96,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Фитнес",
     titleGenitive: "фитнесу",
     iconKey: "gymFitness",
-    description: "Зал, функциональные тренировки и кроссфит.",
+    description: "Зал, функциональные тренировки, кроссфит и штанга.",
     aliases: ["фитнес", "тренажёрный зал", "персональный тренер", "тренировки 50+"],
     count: "",
     bg: "linear-gradient(135deg, #fff1d6 0%, #ffd08a 100%)",
@@ -109,6 +116,18 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         aliases: ["функциональный тренинг", "TRX", "зумба"],
       },
       { slug: "krossfit", label: "Кроссфит", titleGenitive: "кроссфиту", aliases: ["crossfit"] },
+      {
+        slug: "shtanga",
+        label: "Тяжёлая атлетика",
+        titleGenitive: "тяжёлой атлетике",
+        aliases: ["тяжелая атлетика", "штанга"],
+      },
+      {
+        slug: "pauerlifting",
+        label: "Пауэрлифтинг",
+        titleGenitive: "пауэрлифтингу",
+        aliases: ["силовое троеборье"],
+      },
     ],
   }),
   defineCategory({
@@ -156,12 +175,33 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     ],
   }),
   defineCategory({
+    slug: "velnes",
+    label: "Велнес",
+    titleGenitive: "велнесу",
+    iconKey: "wellness",
+    description: "Медитация, цигун и тайцзи.",
+    aliases: ["велнесс", "wellness"],
+    published: false,
+    count: "",
+    bg: "linear-gradient(135deg, #e7f7f2 0%, #b7e6d4 100%)",
+    children: [
+      {
+        slug: "meditaciya",
+        label: "Медитация",
+        titleGenitive: "медитации",
+        aliases: ["йога-нидра", "осознанность", "mindfulness"],
+      },
+      { slug: "cigun", label: "Цигун", titleGenitive: "цигун", aliases: ["ци-гун", "qigong"] },
+      { slug: "tajczi", label: "Тайцзи", titleGenitive: "тайцзи", aliases: ["тайцзицюань", "тай-чи", "тайчи"] },
+    ],
+  }),
+  defineCategory({
     slug: "plavanie",
-    label: "Плавание",
-    titleGenitive: "плаванию и водным тренировкам",
+    label: "Водные виды",
+    titleGenitive: "водным видам спорта",
     iconKey: "swimming",
-    description: "Плавание, аквааэробика, прыжки в воду и синхронное плавание.",
-    aliases: ["плавание", "бассейн"],
+    description: "Плавание, гребля, каноэ, байдарка, парус и другие занятия на воде.",
+    aliases: ["плавание", "бассейн", "водные виды", "лодки"],
     count: "",
     bg: "linear-gradient(135deg, #d8f3ff 0%, #8edcff 100%)",
     image: "/images/categories/plavanie-i-vodnye-trenirovki-card.webp",
@@ -181,6 +221,45 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         titleGenitive: "синхронному плаванию",
         aliases: ["артистическое плавание"],
       },
+      {
+        slug: "greblya",
+        label: "Гребля",
+        titleGenitive: "гребле",
+        aliases: ["академическая гребля", "лодки", "распашная гребля", "парная гребля"],
+      },
+      {
+        slug: "kanoe",
+        label: "Каноэ",
+        titleGenitive: "каноэ",
+        aliases: ["гребля на каноэ", "гребной слалом", "лодки"],
+      },
+      {
+        slug: "kayaking",
+        label: "Байдарка",
+        titleGenitive: "байдарке",
+        aliases: ["каякинг", "каяк", "гребля на байдарках", "сплав", "гребной слалом", "лодки"],
+      },
+      {
+        slug: "parus",
+        label: "Парус",
+        titleGenitive: "парусу",
+        aliases: ["парусный спорт", "яхты", "яхтинг", "парусные лодки", "лодки"],
+      },
+      {
+        slug: "vodnye-lyzhi",
+        label: "Водные лыжи",
+        titleGenitive: "водным лыжам",
+        aliases: ["воднолыжный спорт"],
+      },
+      { slug: "vejkbord", label: "Вейкборд", titleGenitive: "вейкборду", aliases: ["вейк", "вейксерф"] },
+      { slug: "vodnoe-polo", label: "Водное поло", titleGenitive: "водному поло", aliases: ["ватерполо"] },
+      {
+        slug: "podvodnyj",
+        label: "Подводный спорт",
+        titleGenitive: "подводному спорту",
+        aliases: ["дайвинг", "фридайвинг", "плавание в ластах", "апноэ", "подводное плавание"],
+      },
+      { slug: "sup", label: "Сап", titleGenitive: "сапу", aliases: ["SUP", "сапборд", "сапсерфинг"] },
     ],
   }),
   defineCategory({
@@ -188,7 +267,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Командные игры",
     titleGenitive: "командным играм",
     iconKey: "teamSports",
-    description: "Футбол, баскетбол, волейбол, гандбол и другие командные виды.",
+    description: "Футбол, баскетбол, волейбол, гандбол, хоккей на траве и другие командные виды.",
     count: "",
     bg: "linear-gradient(135deg, #ecebff 0%, #b6b1ff 100%)",
     image: "/images/categories/futbol-i-komandnye-igry-card.webp",
@@ -201,6 +280,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
       { slug: "gandbol", label: "Гандбол", titleGenitive: "гандболу" },
       { slug: "regbi", label: "Регби", titleGenitive: "регби" },
       { slug: "florbol", label: "Флорбол", titleGenitive: "флорболу" },
+      { slug: "hokkej-trava", label: "Хоккей на траве", titleGenitive: "хоккею на траве" },
     ],
   }),
   defineCategory({
@@ -231,7 +311,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Бег и атлетика",
     titleGenitive: "бегу и лёгкой атлетике",
     iconKey: "running",
-    description: "Бег, спринт и лёгкая атлетика.",
+    description: "Бег, спринт, лёгкая атлетика и триатлон.",
     count: "",
     bg: "linear-gradient(135deg, #f0fce6 0%, #c6f08d 100%)",
     image: "/images/categories/beg-i-legkaya-atletika-card.webp",
@@ -250,6 +330,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         titleGenitive: "лёгкой атлетике",
         aliases: ["легкая атлетика", "прыжки", "метания", "спортивная ходьба"],
       },
+      { slug: "triatlon", label: "Триатлон", titleGenitive: "триатлону" },
     ],
   }),
   defineCategory({
@@ -257,7 +338,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Танцы",
     titleGenitive: "танцам и хореографии",
     iconKey: "dance",
-    description: "Современные, бальные, хип-хоп, балет и детские танцы.",
+    description: "Современные, бальные, хип-хоп, балет, брейкинг и чирлидинг.",
     count: "",
     bg: "linear-gradient(135deg, #ffe6f4 0%, #ffa8d4 100%)",
     image: "/images/categories/tancy-i-horeografiya-card.webp",
@@ -294,6 +375,18 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         titleGenitive: "балету",
         aliases: ["классическая хореография", "классический танец"],
       },
+      {
+        slug: "brejking",
+        label: "Брейкинг",
+        titleGenitive: "брейкингу",
+        aliases: ["брейк-данс", "брейкданс", "breaking"],
+      },
+      {
+        slug: "chirliding",
+        label: "Чирлидинг",
+        titleGenitive: "чирлидингу",
+        aliases: ["чир", "группы поддержки"],
+      },
     ],
   }),
   defineCategory({
@@ -301,7 +394,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Гимнастика",
     titleGenitive: "гимнастике и акробатике",
     iconKey: "gymnastics",
-    description: "Спортивная, художественная, эстетическая, акробатика и батут.",
+    description: "Спортивная, художественная, эстетическая, акробатика, батут и аэробика.",
     count: "",
     bg: "linear-gradient(135deg, #ffe9d8 0%, #ffbd89 100%)",
     image: "/images/categories/gimnastika-i-akrobatika-card.webp",
@@ -331,6 +424,11 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         titleGenitive: "детской гимнастике",
         aliases: ["гимнастика для детей"],
       },
+      {
+        slug: "aerobika",
+        label: "Спортивная аэробика",
+        titleGenitive: "спортивной аэробике",
+      },
     ],
   }),
   defineCategory({
@@ -338,7 +436,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Зимние виды",
     titleGenitive: "зимним видам спорта",
     iconKey: "winterSports",
-    description: "Хоккей, фигурное катание, лыжи, сноуборд, биатлон и кёрлинг.",
+    description: "Хоккей, фигурное катание, лыжи, сноуборд, биатлон, шорт-трек и фристайл.",
     count: "",
     bg: "linear-gradient(135deg, #eaf4ff 0%, #b4d5ff 100%)",
     image: "/images/categories/zimnie-vidy-sporta-card.webp",
@@ -357,6 +455,13 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
       { slug: "lyzhnye-gonki", label: "Лыжные гонки", titleGenitive: "лыжным гонкам", aliases: ["беговые лыжи"] },
       { slug: "biatlon", label: "Биатлон", titleGenitive: "биатлону" },
       { slug: "kerling", label: "Кёрлинг", titleGenitive: "кёрлингу" },
+      { slug: "short-trek", label: "Шорт-трек", titleGenitive: "шорт-треку", aliases: ["шорттрек"] },
+      {
+        slug: "fristajl",
+        label: "Фристайл",
+        titleGenitive: "фристайлу",
+        aliases: ["лыжный фристайл", "могул"],
+      },
     ],
   }),
   defineCategory({
@@ -387,7 +492,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Реабилитация",
     titleGenitive: "реабилитации и восстановлению",
     iconKey: "rehab",
-    description: "ЛФК и восстановление после травмы.",
+    description: "ЛФК, массаж, осанка и восстановление после травмы.",
     aliases: ["реабилитация", "восстановление", "лечебная физкультура"],
     count: "",
     bg: "linear-gradient(135deg, #ebfff4 0%, #a5efc2 100%)",
@@ -407,6 +512,18 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         aliases: ["восстановление после травмы", "реабилитация после травмы"],
       },
       {
+        slug: "massazh",
+        label: "Массаж",
+        titleGenitive: "массажу",
+        aliases: ["спортивный массаж", "расслабляющий массаж", "классический массаж"],
+      },
+      {
+        slug: "osanka",
+        label: "Осанка",
+        titleGenitive: "осанке",
+        aliases: ["ровная осанка", "постуральная гимнастика"],
+      },
+      {
         slug: "ofk",
         label: "ОФК",
         titleGenitive: "оздоровительной физической культуре",
@@ -419,7 +536,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Экстрим",
     titleGenitive: "экстремальному спорту",
     iconKey: "outdoor",
-    description: "Скалолазание, паркур, сап и байдарка.",
+    description: "Скалолазание, альпинизм, паркур, походы и ориентирование.",
     aliases: ["экстрим", "экстремальный спорт", "походы и скалы", "активный отдых"],
     count: "",
     bg: "linear-gradient(135deg, #edfbe8 0%, #bfe9ac 100%)",
@@ -432,9 +549,8 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         titleGenitive: "скалолазанию",
         aliases: ["скалодром", "боулдеринг"],
       },
+      { slug: "alpinizm", label: "Альпинизм", titleGenitive: "альпинизму" },
       { slug: "parkur", label: "Паркур", titleGenitive: "паркуру" },
-      { slug: "sup", label: "Сап", titleGenitive: "сапу", aliases: ["SUP", "сапборд"] },
-      { slug: "kayaking", label: "Байдарка", titleGenitive: "байдарке", aliases: ["каякинг", "каяк", "сплав"] },
       {
         slug: "pohod",
         label: "Походы",
@@ -442,6 +558,32 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         aliases: ["туризм", "поход", "трекинг"],
       },
       { slug: "orientirovanie", label: "Ориентирование", titleGenitive: "ориентированию", aliases: ["спортивное ориентирование"] },
+    ],
+  }),
+  defineCategory({
+    slug: "klub",
+    label: "Клубные виды",
+    titleGenitive: "клубным видам спорта",
+    iconKey: "clubSports",
+    description: "Гольф, бильярд и конный спорт.",
+    aliases: ["гольф", "бильярд", "конный спорт"],
+    count: "",
+    bg: "linear-gradient(135deg, #f7f1e4 0%, #e4d2a8 100%)",
+    featuredImage: "/images/ideogram/rider.png",
+    children: [
+      { slug: "golf", label: "Гольф", titleGenitive: "гольфу", aliases: ["мини-гольф", "гольф-клуб"] },
+      {
+        slug: "bilyard",
+        label: "Бильярд",
+        titleGenitive: "бильярду",
+        aliases: ["снукер", "пул", "пирамида", "русский бильярд"],
+      },
+      {
+        slug: "konnyj",
+        label: "Конный спорт",
+        titleGenitive: "конному спорту",
+        aliases: ["верховая езда", "лошади", "конкур", "выездка"],
+      },
     ],
   }),
   defineCategory({
@@ -491,6 +633,14 @@ export function getTopLevelSportCategory(slug: string) {
   return TOP_LEVEL_SPORT_CATEGORY_BY_SLUG[slug];
 }
 
+export function isPublishedSportCategory(category: { published?: boolean } | undefined) {
+  return Boolean(category && category.published !== false);
+}
+
+export function listPublishedSportCategories() {
+  return TOP_LEVEL_SPORT_CATEGORIES.filter((category) => isPublishedSportCategory(category));
+}
+
 export function getParentCategoryFeaturedImage(parentSlug: string) {
   const category = getTopLevelSportCategory(parentSlug);
   return category?.featuredImage ?? category?.image;
@@ -501,7 +651,9 @@ export function getSportTaxonomyChild(slug: string) {
 }
 
 export function listSecondLevelSports() {
-  return Object.values(SPORT_TAXONOMY_CHILDREN_BY_SLUG).sort((a, b) => a.label.localeCompare(b.label, "ru"));
+  return Object.values(SPORT_TAXONOMY_CHILDREN_BY_SLUG)
+    .filter((sport) => isPublishedSportCategory(getTopLevelSportCategory(sport.parentSlug)))
+    .sort((a, b) => a.label.localeCompare(b.label, "ru"));
 }
 
 /** A trainer card lists at most four second-level sports. */

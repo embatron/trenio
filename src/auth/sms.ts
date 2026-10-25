@@ -1,3 +1,4 @@
+import { maskPhone, writeLog } from "@/lib/log/logger";
 import { SMS_BY_CANONICAL_ALPHANAME_ID } from "@/lib/sms/alphaname";
 
 export function isSmsByEnabled(): boolean {
@@ -35,12 +36,36 @@ export async function sendQuickSms(phone: string, message: string): Promise<bool
     const text = await response.text();
     const data = JSON.parse(text) as { error?: string };
     if (data?.error) {
-      console.error("[sms.by] sendQuickSMS rejected");
+      void writeLog({
+        level: "error",
+        domain: "sms",
+        action: "sms.send",
+        outcome: "failure",
+        message: "SMS.BY отклонил сообщение.",
+        subject: maskPhone(phone),
+        errorCode: "rejected",
+      });
       return false;
     }
+    void writeLog({
+      level: "info",
+      domain: "sms",
+      action: "sms.send",
+      outcome: "success",
+      message: "SMS отправлено.",
+      subject: maskPhone(phone),
+    });
     return true;
-  } catch {
-    console.error("[sms.by] sendQuickSMS failed");
+  } catch (error) {
+    void writeLog({
+      level: "error",
+      domain: "sms",
+      action: "sms.send",
+      outcome: "failure",
+      message: "Не удалось отправить SMS.",
+      subject: maskPhone(phone),
+      error,
+    });
     return false;
   }
 }

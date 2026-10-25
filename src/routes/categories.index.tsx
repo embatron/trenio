@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
-import { TOP_LEVEL_SPORT_CATEGORIES } from "@/lib/catalog/sport-taxonomy";
+import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 
 export const Route = createFileRoute("/categories/")({
   head: () => ({
@@ -161,7 +161,7 @@ function CategoriesIndexPage() {
 
         <div className="categories-grid-wrap">
           <div className="categories-grid">
-            {TOP_LEVEL_SPORT_CATEGORIES.map((category) => (
+            {listPublishedSportCategories().map((category) => (
               <Link
                 key={category.slug}
                 className="category-card"

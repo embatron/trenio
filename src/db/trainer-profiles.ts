@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 
 import { and, eq, ne } from "drizzle-orm";
 
+import { formatBelarusPhone } from "@/lib/auth/phone";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { inferTrainerGender, type TrainerGender } from "@/lib/catalog/trainer-gender";
 import { instagramProfileSlug } from "@/lib/catalog/trainer-slugs";
@@ -99,7 +100,7 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
     priceFrom: draft.priceFrom ?? null,
     languages: draft.languages ?? [],
     avatarPath: draft.avatarPath ?? "",
-    phone: draft.phone ?? "",
+    phone: formatBelarusPhone(draft.phone ?? ""),
     email: draft.email ?? "",
     website: draft.website ?? "",
     telegram: draft.telegram ?? "",

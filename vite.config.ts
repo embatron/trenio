@@ -21,14 +21,19 @@ export default defineConfig({
     },
     plugins: [serveUploadFiles()],
     server: {
-      // Public URL is http://trenio.local (Apache on :80 → this dev server).
+      // Public URL is http://trenio.local when Apache on :80 proxies to this server.
+      // Set VITE_DEV_ORIGIN when Apache is not in front (it listens on :8080 here).
       allowedHosts: ["trenio.local", "localhost", "127.0.0.1"],
-      origin: "http://trenio.local",
-      ws: {
-        host: "trenio.local",
-        protocol: "ws",
-        clientPort: 80,
-      },
+      ...(process.env.VITE_DEV_ORIGIN
+        ? { origin: process.env.VITE_DEV_ORIGIN }
+        : {
+            origin: "http://trenio.local",
+            ws: {
+              host: "trenio.local",
+              protocol: "ws" as const,
+              clientPort: 80,
+            },
+          }),
     },
   },
 });

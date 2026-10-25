@@ -1,0 +1,34 @@
+---
+description: Structured journal in app_logs for actions, errors, and exceptions. 30-day retention.
+alwaysApply: true
+---
+
+# Journal
+
+Every server failure and every auth, account, email, SMS, form, map, geo, admin, and message mutation is one row in `app_logs`. The row lives 30 days. Search it with `/diagnosis`. Check the wiring with `/logging`.
+
+## Write
+
+Use `writeLog` or `logCaught` from `@/lib/log/logger`. Do not import them from a client component. The browser reports failures through `reportClientEvent` in `@/lib/log/client-reporter`.
+
+```ts
+// wrong: the failure exists only in the terminal
+console.error(error);
+
+// right: the cabinet and /diagnosis can find it
+logCaught("auth", "auth.login", error, { subject: email });
+```
+
+## Do not store
+
+Passwords, session tokens, reset links, OTP and email codes, `initData`, cookies, message HTML, mail bodies. Emails are stored so a person can be found. Phones are masked. Put a slug or conversation id in `target`.
+
+## Levels and noise
+
+`LOG_LEVEL` defaults to `info`. Debug is dropped. Polls (`message.list`, `message.thread`, `message.read`, `message.unread`) log failures only. A client may report only `warn` and `error`, at most 20 events per 5 minutes per `X-Real-IP`.
+
+## Retention
+
+`expires_at` is 30 days. The process deletes expired rows at most once an hour. `npm run logs:purge` does the same. Install the table with `npm run logs:install`. Do not use `db:push` for this table.
+
+Skill: `.cursor/skills/trenio-logging/SKILL.md`. Product contract: `docs/TECH_SPEC.md` §4.8.

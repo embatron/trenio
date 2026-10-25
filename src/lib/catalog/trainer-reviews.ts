@@ -7,8 +7,10 @@ import type { SessionUser } from "@/auth/service";
 import { getDb } from "@/db";
 import { trainerProfiles, trainerReviews, users, type TrainerReviewMessage } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
+import { writeLog } from "@/lib/log/logger";
 import { isStaff } from "@/lib/auth/roles";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
+import { loadTrainerInterest } from "@/lib/catalog/trainer-interest";
 import { notifyAuthorAboutReview, notifyStaffAboutReview } from "@/lib/catalog/review-mail.server";
 import { reviewPlainText, sanitizeReviewHtml } from "@/lib/catalog/review-html";
 import type { TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
@@ -118,23 +120,31 @@ function summarize(rows: Array<{ rating: number }>): TrainerReviewSummary {
 }
 
 export const listTrainerRatingSummariesFn = createServerFn({ method: "GET" }).handler(async () => {
-  const rows = await getDb()
-    .select({
-      slug: trainerReviews.trainerSlug,
-      reviews: count(),
-      average: avg(trainerReviews.rating),
-    })
-    .from(trainerReviews)
-    .where(eq(trainerReviews.status, "published"))
-    .groupBy(trainerReviews.trainerSlug);
+  const [rows, interest] = await Promise.all([
+    getDb()
+      .select({
+        slug: trainerReviews.trainerSlug,
+        reviews: count(),
+        average: avg(trainerReviews.rating),
+      })
+      .from(trainerReviews)
+      .where(eq(trainerReviews.status, "published"))
+      .groupBy(trainerReviews.trainerSlug),
+    loadTrainerInterest(),
+  ]);
 
   const summaries: Record<string, TrainerRatingSnapshot> = {};
+  const blank = (slug: string): TrainerRatingSnapshot => {
+    const signal = interest[slug] ?? { views: 0, saves: 0 };
+    return { rating: "0", reviews: 0, views: signal.views, saves: signal.saves };
+  };
+  for (const slug of Object.keys(interest)) summaries[slug] = blank(slug);
   for (const row of rows) {
     if (!getPublishedTrainer(row.slug)) continue;
     const reviews = Number(row.reviews);
     const average = Number(row.average);
     if (!Number.isFinite(reviews) || reviews <= 0 || !Number.isFinite(average)) continue;
-    summaries[row.slug] = { rating: average.toFixed(1), reviews };
+    summaries[row.slug] = { ...blank(row.slug), rating: average.toFixed(1), reviews };
   }
   return summaries;
 });
@@ -247,9 +257,29 @@ export const createTrainerReviewFn = createServerFn({ method: "POST" })
         body: data.text,
       });
     } catch (error) {
-      console.error("[mail] review notice failed", error instanceof Error ? error.message : "unknown");
+      void writeLog({
+        level: "error",
+        domain: "email",
+        action: "email.review",
+        outcome: "failure",
+        message: "Не удалось отправить письмо о новом отзыве.",
+        actorUserId: context.user.id,
+        target: data.slug,
+        error,
+      });
     }
 
+    void writeLog({
+      level: "info",
+      domain: "form",
+      action: "form.review",
+      outcome: "success",
+      message: "Отзыв отправлен на модерацию.",
+      actorUserId: context.user.id,
+      subject: context.user.email,
+      target: data.slug,
+      context: { rating: data.rating },
+    });
     return { ok: true as const };
   });
 
@@ -302,10 +332,29 @@ export const setTrainerReviewStatusFn = createServerFn({ method: "POST" })
           note,
         });
       } catch (error) {
-        console.error("[mail] review decision failed", error instanceof Error ? error.message : "unknown");
+        void writeLog({
+          level: "error",
+          domain: "email",
+          action: "email.review",
+          outcome: "failure",
+          message: "Не удалось отправить письмо о решении по отзыву.",
+          actorUserId: context.user.id,
+          target: existing.trainerSlug,
+          error,
+        });
       }
     }
 
+    void writeLog({
+      level: "info",
+      domain: "admin",
+      action: "admin.review",
+      outcome: "success",
+      message: data.status === "published" ? "Отзыв опубликован." : "Отзыв отклонён.",
+      actorUserId: context.user.id,
+      target: existing.trainerSlug,
+      context: { status: data.status },
+    });
     return { ok: true as const };
   });
 

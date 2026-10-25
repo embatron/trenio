@@ -14,7 +14,7 @@
 
 **Разделение:** TECH_SPEC — _как устроен код_; PRODUCT — _что видит пользователь_; ACCOUNT_MODEL — _сущности и onboarding_.
 
-Cursor automation: `.cursor/rules/`, `.cursor/skills/`, slash-команды `/hooks` и `/import-instagram-trainers` (см. TECH_SPEC §13).
+Cursor automation: `.cursor/rules/`, `.cursor/skills/`, slash-команды `/hooks`, `/logging`, `/diagnosis`, `/tests` и `/import-instagram-trainers` (см. TECH_SPEC §13). Журнал действий — [TECH_SPEC §4.8](./TECH_SPEC.md#48-журнал-действий).
 
 ## Стек и команды
 
@@ -37,6 +37,8 @@ npm run geoip:update # база GeoLite2 для города в фильтре �
 npm run build
 npm run preview
 npm run lint
+npm run test
+npm run logs:install
 ```
 
 Локальный адрес — `http://trenio.local`. В `/etc/hosts` строка `127.0.0.9 trenio.local`. Apache (`trenio.local.conf`) проксирует этот хост на Vite `127.0.0.1:8080`, включая WebSocket для HMR.
@@ -89,8 +91,8 @@ AGENTS.md             # Entry point для агентов
 | URL                     | Файл                       | Назначение                                                    |
 | ----------------------- | -------------------------- | ------------------------------------------------------------- |
 | `/`                     | `index.tsx`                | Главная, поиск, категории первого уровня, витрина направлений |
-| `/search`               | `search.tsx`               | Результаты поиска с фильтрами                                 |
-| `/map`                  | `map.tsx`                  | Карта мест тренировок. Сверху направления первого уровня. Слева карта, справа карточки. Без точки IP кадр — Минск. `?sports=` не индексируется |
+| `/search`               | `search.tsx`               | Результаты поиска: карта и карточки, как `/map`               |
+| `/map`                  | `map.tsx`                  | Карта мест тренировок. Метки текущего кадра: при большом числе точек — группы, список рядом подгружается страницами. Без точки IP кадр — Минск. `?sports=` и `?city=` не индексируются. `?city=` приходит со страницы города и оставляет только его места |
 | `/categories`                     | `categories.index.tsx`               | Каталог всех спортивных категорий                             |
 | `/categories/$slug`                 | `categories.$slug.tsx`               | Родительская спортивная категория                             |
 | `/categories/$parentSlug/$childSlug` | `categories.$parentSlug.$childSlug.tsx` | Конкретный вид спорта внутри категории                        |
@@ -100,16 +102,18 @@ AGENTS.md             # Entry point для агентов
 | `/city/$slug/$sport/$child` | `city.$slug.$sport.$child.tsx` | Тот же каталог, если slug вида спорта совпадает с категорией: `/city/minsk/yoga/yoga`. Остальные вложенные адреса переходят на короткий |
 | `/sitemap.xml`          | `sitemap[.]xml.ts`         | Карта страниц каталога, городов и связок спорт + город |
 | `/robots.txt`           | `robots[.]txt.ts`          | Разрешает обход и указывает sitemap |
+| `/404`                  | `404.tsx`                  | Фирменная страница «страница не найдена». Тот же экран у любого неизвестного адреса. Не индексируется |
+| `/403`                  | `403.tsx`                  | Фирменная страница «нет доступа». Тот же экран, если сервер закрыл страницу. Не индексируется |
 | `/trainers/$slug`       | `trainers.$slug.tsx`       | Профиль тренера. Фото листаются, миниатюры едут вместе. Карандаш редактирования — в правом верхнем углу текста. У отзыва аватар аккаунта, без фото — картинка по имени. Тренер не пишет отзыв себе. «Ответить» видит только он, затем автор отзыва, по очереди. До трёх мест в Беларуси списком. Строка с координатами переключает карту OpenStreetMap в профиле |
 | `/trainers/claim/$token` | `trainers.claim.$token.tsx` | Привязка импортированной карточки: оферта, логин и пароль. После публикации или привязки тот же адрес открывает публичный профиль |
 | `/favorites`            | `favorites.tsx`            | Редирект на `/account/favorites`                              |
 | `/account`              | `account.tsx`              | Оболочка кабинета. `/account` открывает отзывы                |
 | `/account/reviews`      | `account.reviews.tsx`      | Свои отзывы и статус                                          |
-| `/account/messages`     | `account.messages.tsx`     | Сообщения тренерам. Иконка на карточке открывает диалог в новой вкладке; гость сначала входит |
+| `/account/messages`     | `account.messages.tsx`     | Сообщения клиента тренерам. Роли trainer и club переходят в `/me/messages` |
 | `/account/messages/$conversationId` | `account.messages.$conversationId.tsx` | Тред. На широком экране список слева, на узком — сверху |
 | `/account/bookings`     | `account.bookings.tsx`     | Записи на тренировки, раздел в разработке                     |
 | `/account/favorites`    | `account.favorites.tsx`    | Избранные тренеры карточками. Сердечко в шапке ведёт сюда     |
-| `/account/settings`     | `account.settings.tsx`     | Имя и фамилия двумя полями, аватар, пароль. Почта и телефон закрыты, пока не нажато «Редактировать»; подтверждение кодом. Сообщения в окне |
+| `/account/settings`     | `account.settings.tsx`     | Имя и фамилия — оба обязательны, аватар, пароль. Почта и телефон закрыты, пока не нажато «Редактировать»; подтверждение кодом. Сообщения в окне |
 | `/clubs`                | `clubs.index.tsx`          | Каталог клубов                                                |
 | `/clubs/$slug`          | `clubs.$slug.tsx`          | Профиль клуба / филиала                                       |
 | `/blog/$slug`           | `blog.$slug.tsx`           | Статья блога                                                  |
@@ -127,10 +131,16 @@ AGENTS.md             # Entry point для агентов
 | `/admin/accounts/$id`   | `admin.accounts.$id.tsx`   | Профиль аккаунта, вкладки «Входы» и «Логи». Обычный администратор не открывает суперадмина |
 | `/admin/finance`        | `admin.finance.tsx`        | Бухгалтерия, раздел в разработке |
 | `/admin/settings`       | `admin.settings.tsx`       | Настройки аккаунта администратора |
-| `/trainer-admin`        | `trainer-admin.tsx`, `trainer-admin.index.tsx` | Кабинет тренера: профиль как у админа и вкладка отзывов. Также открыт клубу и сотрудникам |
-| `/trainer-admin/messages` | `trainer-admin.messages.tsx` | Входящие сообщения клиентов |
-| `/trainer-admin/messages/$conversationId` | `trainer-admin.messages.$conversationId.tsx` | Тред кабинета тренера |
+| `/me`                   | `me.tsx`, `me.index.tsx`   | Личный кабинет тренера и клуба: обзор. Та же сетка, что у `/account` |
+| `/me/messages`          | `me.messages.tsx`          | Диалоги профиля и диалоги, которые тренер сам начал |
+| `/me/messages/$conversationId` | `me.messages.$conversationId.tsx` | Тред кабинета тренера |
+| `/me/reviews`           | `me.reviews.tsx`           | Отзывы о профиле тренера |
+| `/me/favorites`         | `me.favorites.tsx`         | Избранные карточки |
+| `/me/profile`           | `me.profile.tsx`           | Публичная карточка. Имя и фамилия здесь не редактируются |
+| `/me/settings`          | `me.settings.tsx`          | Имя, фамилия и телефон аккаунта |
+| `/trainer-admin`        | `trainer-admin.tsx`        | Старый адрес кабинета: перенаправляет на `/me`, `?tab=settings` на `/me/settings`, `?tab=card` на `/me/profile`, `?tab=reviews` на `/me/reviews` |
 | `/privacy`              | `privacy.tsx`              | Политика конфиденциальности                                   |
+| `/join/trainer`         | `join.trainer.tsx`         | «Привет!». Instagram, Telegram и телефон РБ. Ссылка «У меня нет Instagram» открывает Telegram и телефон. Сюда ведут «Стать тренером», «Добавить профиль» и пустой каталог |
 | `/offer`                | `offer.tsx`                | Договор оферты для размещения профиля тренера                 |
 
 Полная целевая карта URL (включая backend и SEO-страницы каталога) — в [PRODUCT.md §3](./PRODUCT.md#3-маршруты-и-страницы).

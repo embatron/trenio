@@ -34,6 +34,7 @@ function buildCatalog(): SportSuggestion[] {
   };
 
   for (const category of TOP_LEVEL_SPORT_CATEGORIES) {
+    if (category.published === false) continue;
     add(category.label, [category.label, ...(category.aliases ?? [])]);
     for (const child of category.children) {
       add(child.label, [child.label, category.label, ...(child.aliases ?? []), ...(category.aliases ?? [])]);

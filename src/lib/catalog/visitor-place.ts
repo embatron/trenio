@@ -1,4 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
+
+import { logCaught } from "@/lib/log/logger";
 import { z } from "zod";
 
 export const VISITOR_PLACE_COOKIE = "trenio_place";
@@ -92,7 +94,7 @@ export const resolveVisitorPlaceFn = createServerFn({ method: "GET" }).handler(
       const { resolveVisitorPlace } = await import("./visitor-place.server");
       return await resolveVisitorPlace();
     } catch (error) {
-      console.error(error);
+      logCaught("geo", "geo.visitor", error);
       return emptyCatalogPlace;
     }
   },
@@ -109,7 +111,7 @@ export const detectVisitorPlaceFn = createServerFn({ method: "POST" })
       const { detectVisitorPlace } = await import("./visitor-place.server");
       return await detectVisitorPlace(data.ip);
     } catch (error) {
-      console.error(error);
+      logCaught("geo", "geo.visitor", error);
       return emptyCatalogPlace;
     }
   });
@@ -119,7 +121,7 @@ export const resolveVisitorPointFn = createServerFn({ method: "GET" }).handler(a
     const { resolveVisitorPoint } = await import("./visitor-place.server");
     return await resolveVisitorPoint();
   } catch (error) {
-    console.error(error);
+    logCaught("geo", "geo.visitor", error);
     return emptyVisitorPoint;
   }
 });
@@ -131,7 +133,7 @@ export const detectVisitorPointFn = createServerFn({ method: "POST" })
       const { detectVisitorPoint } = await import("./visitor-place.server");
       return await detectVisitorPoint(data.ip);
     } catch (error) {
-      console.error(error);
+      logCaught("geo", "geo.visitor", error);
       return emptyVisitorPoint;
     }
   });

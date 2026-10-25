@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import type { PublicUser } from "@/lib/auth/schemas";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { installClientLogReporter, reportClientEvent } from "@/lib/log/client-reporter";
 import { CatalogMiss } from "@/components/catalog-miss";
 import { FavoritesProvider } from "@/components/favorites-store";
 import { MessagesLive } from "@/components/messages/messages-live";
@@ -31,8 +32,8 @@ function NotFoundComponent() {
   return (
     <CatalogMiss
       code="404"
-      title="Страница не найдена"
-      text="Такого адреса нет. Найдите занятие по виду спорта и городу."
+      title="Мяч ушёл за линию"
+      text="Такой страницы нет. Выберите вид спорта и город — найдём тренера."
     />
   );
 }
@@ -42,14 +43,21 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    reportClientEvent({
+      domain: "client",
+      level: "error",
+      action: "client.boundary",
+      message: error.message.slice(0, 500) || "route error",
+      route: window.location.pathname,
+    });
   }, [error]);
 
   if (httpStatus(error) === 403) {
     return (
       <CatalogMiss
         code="403"
-        title="Нет доступа"
-        text="Эта страница закрыта. Можно найти занятие по виду спорта и городу."
+        title="Сюда без пропуска"
+        text="Эта страница закрыта. Каталог, карта и поиск остаются открытыми."
       />
     );
   }
@@ -97,7 +105,8 @@ export const Route = createRootRouteWithContext<{
       const messaging = await unreadCountFn({ data: {} });
       return { user, messaging };
     } catch (error) {
-      console.error("[messages] unread", error instanceof Error ? error.message : "unknown");
+      const { logCaught } = await import("@/lib/log/logger");
+      logCaught("message", "message.unread", error);
       return { user, messaging: EMPTY_MESSAGING };
     }
   },
@@ -118,6 +127,7 @@ export const Route = createRootRouteWithContext<{
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", sizes: "any" },
       { rel: "icon", href: "/favicon-32.png", type: "image/png", sizes: "32x32" },
+      { rel: "icon", href: "/favicon-16.png", type: "image/png", sizes: "16x16" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },
     ],
@@ -144,6 +154,9 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient, user, messaging } = Route.useRouteContext();
+  useEffect(() => {
+    installClientLogReporter();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -25,6 +25,7 @@ function buildCatalogSports(): CatalogSport[] {
   const sports: CatalogSport[] = [];
 
   for (const category of TOP_LEVEL_SPORT_CATEGORIES) {
+    if (category.published === false) continue;
     used.add(category.slug);
     sports.push({
       id: category.slug,
@@ -68,7 +69,7 @@ export function catalogSportById(id: string): CatalogSport | null {
   return SPORTS.find((sport) => sport.level === 2 && `${sport.parentSlug}/${sport.slug}` === id) ?? null;
 }
 
-export function catalogSportsFromQuery(value: string | undefined): CatalogSport[] {
+export function catalogSportsFromQuery(value: string | undefined, limit = 8): CatalogSport[] {
   if (!value) return [];
   const seen = new Set<string>();
   const sports: CatalogSport[] = [];
@@ -77,13 +78,20 @@ export function catalogSportsFromQuery(value: string | undefined): CatalogSport[
     if (!sport || seen.has(sport.id)) continue;
     seen.add(sport.id);
     sports.push(sport);
-    if (sports.length === 8) break;
+    if (sports.length === limit) break;
   }
   return sports;
 }
 
 function fold(value: string) {
   return value.trim().toLowerCase().replaceAll("ё", "е");
+}
+
+/** Exact label or alias. A partial query stays a suggestion, not a selected sport. */
+export function catalogSportByName(query: string): CatalogSport | null {
+  const q = fold(query);
+  if (!q) return null;
+  return SPORTS.find((sport) => fold(sport.label) === q || sport.aliases.some((alias) => fold(alias) === q)) ?? null;
 }
 
 export function filterCatalogSports(query: string, limit = 8): CatalogSport[] {
@@ -180,6 +188,7 @@ export function catalogPageHead(city: CityCatalogPage, sport: CatalogSport | nul
 export function listCatalogSitemapPaths() {
   const paths = new Set<string>(["/", "/categories", "/map"]);
   for (const category of TOP_LEVEL_SPORT_CATEGORIES) {
+    if (category.published === false) continue;
     paths.add(`/categories/${category.slug}`);
     for (const child of category.children) paths.add(`/categories/${category.slug}/${child.slug}`);
   }

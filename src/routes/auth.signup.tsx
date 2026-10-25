@@ -79,7 +79,7 @@ function SignupPage() {
               <div className="auth-card__head">
                 <h1 className="auth-title">Создать аккаунт</h1>
                 <p className="auth-sub">
-                  Укажите имя и e-mail. Пароль зададите по ссылке из письма — так мы подтверждаем адрес.
+                  Укажите имя, фамилию и e-mail. Пароль зададите по ссылке из письма — так мы подтверждаем адрес.
                 </p>
               </div>
 
@@ -112,7 +112,7 @@ function SignupPage() {
                         data: {
                           email,
                           firstName,
-                          lastName: lastName || undefined,
+                          lastName,
                           signupRole,
                           company_url,
                         },
@@ -140,7 +140,8 @@ function SignupPage() {
                   <span className="auth-field__label">Фамилия</span>
                   <input
                     type="text"
-                    placeholder="Необязательно"
+                    required
+                    placeholder="Фамилия"
                     autoComplete="family-name"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}

@@ -16,6 +16,7 @@ import {
   type PublishedTrainer,
 } from "@/lib/catalog/published-trainers";
 import { ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
+import { NEGOTIABLE_PRICE_LABEL, listTrainerPricesFn, priceForCard, type TrainerPriceMap } from "@/lib/catalog/trainer-price";
 import {
   createTrainerReviewFn,
   listTrainerRatingSummariesFn,
@@ -28,6 +29,8 @@ import { CabinetNotice } from "@/components/cabinet";
 import { FavoriteButton } from "@/components/favorite-button";
 import { TrainerAddressMap } from "@/components/trainer-address-map";
 import { TrainerContactIcons } from "@/components/messages/trainer-contact-icons";
+import { getPublicTrainerContactsFn, type PublicTrainerContacts } from "@/lib/catalog/trainer-contacts";
+import { recordTrainerProfileViewFn } from "@/lib/catalog/trainer-views";
 import { ReviewEditor } from "@/components/review-editor";
 import { ReviewHtml } from "@/components/review-html";
 import { reviewPlainText } from "@/lib/catalog/review-html";
@@ -79,12 +82,14 @@ function toTrainer(
   summary: TrainerReviewSummary,
   reviews: PublicTrainerReview[],
   ratings: Record<string, TrainerRatingSnapshot>,
+  prices: TrainerPriceMap,
   ownStatus: Trainer["ownStatus"],
   ownComment: string | null,
   certificates: TrainerCertificate[],
 ): Trainer {
   const formatLabel = (format: PublishedTrainer["formats"][number]) =>
     TRAINER_FORMAT_OPTIONS.find((option) => option.id === format)?.label ?? format;
+  const sessionPrice = priceForCard(trainer.slug, trainer.priceFrom, prices);
   return {
     slug: trainer.slug,
     name: trainer.name,
@@ -104,7 +109,11 @@ function toTrainer(
       groups: [
         { label: "С кем я работаю", brand: true, items: audienceLabels(trainer) },
         ...(trainer.formats.length ? [{ label: "Формат занятий", brand: true, items: trainer.formats.map(formatLabel) }] : []),
-        ...(trainer.priceFrom > 0 ? [{ label: "Стоимость одного персонального занятия", brand: true, items: [`${trainer.priceFrom} BYN`] }] : []),
+        {
+          label: "Стоимость одного персонального занятия",
+          brand: true,
+          items: [sessionPrice != null ? `${sessionPrice} BYN` : NEGOTIABLE_PRICE_LABEL],
+        },
         ...(trainer.experience ? [{ label: "Мой тренерский стаж", brand: true, items: [`${trainer.experience} ${pluralRu(trainer.experience, "год", "года", "лет")}`] }] : []),
       ],
     },
@@ -129,7 +138,10 @@ function toTrainer(
         lastName: item.lastName,
         sport: sportLine(item),
         city: item.city.label,
-        price: `от ${item.priceFrom} BYN`,
+        price: (() => {
+          const price = priceForCard(item.slug, item.priceFrom, prices);
+          return price != null ? `От ${price} BYN` : NEGOTIABLE_PRICE_LABEL;
+        })(),
         photo: item.photo,
         rating: rating.rating,
         reviews: rating.reviews,
@@ -144,21 +156,26 @@ export const Route = createFileRoute("/trainers/$slug")({
     if (legacy) throw redirect({ to: "/trainers/$slug", params: { slug: legacy } });
     const published = params.slug ? getPublishedTrainer(params.slug) : undefined;
     if (!published) throw notFound();
-    const [{ reviews, summary, ownStatus, ownComment, isOwner }, ratings, media, place] = await Promise.all([
+    const [{ reviews, summary, ownStatus, ownComment, isOwner }, ratings, prices, media, place, contacts] = await Promise.all([
       listTrainerReviewsFn({ data: { slug: published.slug } }),
       listTrainerRatingSummariesFn(),
+      listTrainerPricesFn(),
       getTrainerCertificatesFn({ data: { slug: published.slug } }),
       getTrainerAddressFn({ data: { slug: published.slug } }),
+      getPublicTrainerContactsFn({ data: { slug: published.slug } }),
     ]);
-    const trainer = toTrainer(published, summary, reviews, ratings, ownStatus ?? null, ownComment ?? null, media.certificates);
+    const trainer = toTrainer(published, summary, reviews, ratings, prices, ownStatus ?? null, ownComment ?? null, media.certificates);
     return {
       trainer: {
         ...trainer,
+        phone: contacts.phone,
+        instagram: contacts.instagram,
         places: place.places,
         sessions: place.about,
       },
       isOwner,
       photos: media.photos,
+      contacts,
     };
   },
   head: ({ loaderData }) => {
@@ -209,7 +226,7 @@ const CSS = `
 .photo-slider__slide { flex: 0 0 100%; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; }
 .photo-slider__slide img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; user-select: none; }
 .photo-slider__badge { position: absolute; top: 12px; left: 12px; z-index: 2; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,0.94); color: var(--primary-dark); font-size: 11px; font-weight: var(--fw-title); letter-spacing: 0.02em; text-transform: uppercase; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
-.profile-save { position: absolute; top: 10px; right: 10px; z-index: 2; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(255,255,255,0.92); color: var(--muted); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
+.profile-save { position: absolute; top: 10px; right: 10px; z-index: 2; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255,255,255,0.92); color: var(--muted); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
 .profile-save.is-saved { color: var(--primary); }
 .profile-save svg { width: 20px; height: 20px; fill: currentColor; }
 .photo-slider__nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.92); color: var(--dark); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); z-index: 2; }
@@ -248,9 +265,10 @@ const CSS = `
 .profile-intro { min-width: 0; }
 .profile-identity__sport { margin: 0 0 6px; font-size: 15px; font-weight: var(--fw-title); letter-spacing: -0.01em; text-transform: none; color: var(--primary-dark); }
 .profile-identity__sport-name { color: var(--primary); }
-.profile-identity__title { display: flex; align-items: center; flex-wrap: wrap; gap: 0 2px; margin: 0 0 12px; }
-.profile-identity__name { margin: 0; font-size: var(--fs-page); font-weight: var(--fw-heading); letter-spacing: -0.035em; color: var(--dark); line-height: 1.05; }
-.profile-identity__name .trainer-name__line { white-space: normal; overflow: visible; text-overflow: clip; }
+.profile-identity__title { display: flex; align-items: center; flex-wrap: nowrap; gap: 0 2px; margin: 0 0 12px; }
+.profile-identity__name { min-width: 0; margin: 0; font-size: var(--fs-page); font-weight: var(--fw-heading); letter-spacing: -0.035em; color: var(--dark); line-height: 1.05; }
+.profile-identity__name .trainer-name { flex-wrap: nowrap; }
+.profile-identity__name .trainer-name__line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .profile-edit { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; color: var(--dark); text-decoration: none; }
 .profile-edit:hover { background: rgba(var(--dark-rgb), 0.04); color: var(--primary); }
 .profile-edit svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
@@ -382,6 +400,9 @@ const CSS = `
   .profile-aside { position: static; }
   .mobile-contact-bar { display: block; }
   .trainer-page__inner { padding-block: clamp(16px, 3vw, 20px) clamp(72px, 12vw, 110px); }
+}
+@media (max-width: 640px) {
+  .profile-identity__name { font-size: 24px; }
 }
 
 `;
@@ -632,14 +653,22 @@ function ReviewReply({ id }: { id: string }) {
 }
 
 function TrainerPage() {
-  const { trainer: t, isOwner, photos: storedPhotos } = Route.useLoaderData() as { trainer: Trainer; isOwner: boolean; photos: string[] };
+  const { trainer: t, isOwner, photos: storedPhotos, contacts } = Route.useLoaderData() as {
+    trainer: Trainer;
+    isOwner: boolean;
+    photos: string[];
+    contacts: PublicTrainerContacts;
+  };
+  useEffect(() => {
+    void recordTrainerProfileViewFn({ data: { slug: t.slug } });
+  }, [t.slug]);
   const { user } = useRouteContext({ from: "__root__" });
   const [photoIdx, setPhotoIdx] = useState(0);
   const viewportRef = useRef<HTMLDivElement>(null);
   const thumbsRef = useRef<HTMLUListElement>(null);
   const [reviewsShown, setReviewsShown] = useState(5);
   const [phoneVisible, setPhoneVisible] = useState(false);
-  const shownPhone = formatBelarusPhone(t.phone) || t.phone;
+  const shownPhone = formatBelarusPhone(contacts.phone) || contacts.phone;
   const [reviewFormOpen, setReviewFormOpen] = useState(false);
   const [reviewSent, setReviewSent] = useState(false);
   const ownNote = t.ownStatus === "rejected"
@@ -779,7 +808,7 @@ function TrainerPage() {
                   </Link>
                 ) : null}
                 {isOwner ? (
-                  <Link className="profile-edit" to="/trainer-admin" search={{ tab: "card" }} aria-label="Редактировать свой профиль" title="Редактировать свой профиль">
+                  <Link className="profile-edit" to="/me/profile" aria-label="Редактировать свой профиль" title="Редактировать свой профиль">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
                   </Link>
                 ) : null}
@@ -974,7 +1003,14 @@ function TrainerPage() {
                 )}
               </section>
 
-              <TrainerContactIcons slug={t.slug} heading="Как со мной связаться" />
+              <TrainerContactIcons
+                slug={t.slug}
+                phone={contacts.phone}
+                telegram={contacts.telegram}
+                instagram={contacts.instagram}
+                email={contacts.email}
+                heading="Как со мной связаться"
+              />
             </div>
 
 
@@ -1012,7 +1048,7 @@ function TrainerPage() {
         </div>
       </main>
 
-      {t.phone ? <div className="mobile-contact-bar" aria-label="Телефон">
+      {contacts.phone ? <div className="mobile-contact-bar" aria-label="Телефон">
         <div className="mobile-contact-bar__inner" style={{ gridTemplateColumns: "1fr" }}>
           {phoneVisible ? (
             <a className="btn btn--primary" href={phoneHref(shownPhone)}>{shownPhone}</a>

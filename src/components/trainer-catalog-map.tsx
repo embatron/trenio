@@ -1,33 +1,44 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 
-import type { CatalogMapBounds, CatalogMapPin, CatalogMapUser } from "@/components/trainer-catalog-map-view";
+import type { CatalogMapBounds, CatalogMapUser } from "@/components/trainer-catalog-map-view";
+import type { MapAreaFeature } from "@/lib/catalog/map-trainers";
 
 type ViewProps = {
-  pins: CatalogMapPin[];
+  features: MapAreaFeature[];
   user: CatalogMapUser | null;
   focus?: CatalogMapUser | null;
+  highlightKeys?: readonly string[];
+  onPinHover?: (key: string | null) => void;
   onBounds?: (bounds: CatalogMapBounds) => void;
 };
 
 export function TrainerCatalogMap({
-  pins,
+  features,
   user,
   located,
   locating,
   onLocate,
   onBounds,
   focus,
+  highlightKeys,
+  onPinHover,
   empty,
+  showEmpty = false,
+  loading = false,
 }: {
-  pins: CatalogMapPin[];
+  features: MapAreaFeature[];
   user: CatalogMapUser | null;
   located: boolean;
   locating: boolean;
   onLocate: () => void;
   onBounds?: (bounds: CatalogMapBounds) => void;
   focus?: CatalogMapUser | null;
+  highlightKeys?: readonly string[];
+  onPinHover?: (key: string | null) => void;
   empty: ReactNode;
+  showEmpty?: boolean;
+  loading?: boolean;
 }) {
   const [View, setView] = useState<ComponentType<ViewProps> | null>(null);
   const [failed, setFailed] = useState(false);
@@ -51,23 +62,24 @@ export function TrainerCatalogMap({
       {failed ? (
         <div className="catalog-map__fallback" role="status">
           <p>Карта откроется, когда появится сеть.</p>
-          {pins.length > 0 ? (
+          {features.some((feature) => feature.kind === "pin") ? (
             <ul>
-              {pins.flatMap((pin) => pin.trainers.map((trainer) => (
-                <li key={`${pin.key}-${trainer.slug}`}>
+              {features.flatMap((feature) => feature.kind === "pin" ? feature.trainers.map((trainer) => (
+                <li key={`${feature.key}-${trainer.slug}`}>
                   <Link to="/trainers/$slug" params={{ slug: trainer.slug }}>{trainer.name}</Link>
-                  <span>{pin.label}</span>
+                  <span>{feature.label}</span>
                 </li>
-              )))}
+              )) : [])}
             </ul>
           ) : empty}
         </div>
       ) : View ? (
-        <View pins={pins} user={user} focus={focus} onBounds={onBounds} />
+        <View features={features} user={user} focus={focus} highlightKeys={highlightKeys} onPinHover={onPinHover} onBounds={onBounds} />
       ) : (
         <div className="catalog-map__skeleton" role="status">Загрузка карты</div>
       )}
-      {!failed && pins.length === 0 ? <div className="catalog-map__empty">{empty}</div> : null}
+      {!failed && showEmpty ? <div className="catalog-map__empty">{empty}</div> : null}
+      {!failed && loading && features.length > 0 ? <p className="catalog-map__status">Обновляем метки</p> : null}
       <button
         type="button"
         className={`catalog-map__locate${located ? " is-on" : ""}`}
@@ -94,6 +106,7 @@ const MAP_SHELL_CSS = `
   height: min(52dvh, 420px);
   min-height: 280px;
   overflow: hidden;
+  overflow-anchor: none;
   border-radius: var(--card-radius);
   border: 1px solid rgba(var(--dark-rgb), 0.06);
   box-shadow: 0 14px 42px rgba(var(--dark-rgb), 0.07);
@@ -121,6 +134,19 @@ const MAP_SHELL_CSS = `
 .catalog-map__fallback a { color: var(--dark); font-weight: var(--fw-title); text-decoration: none; }
 .catalog-map__fallback a:hover { color: var(--primary); }
 .catalog-map__fallback span { display: block; color: var(--muted); font-size: 13px; }
+.catalog-map__status {
+  position: absolute;
+  z-index: 4;
+  left: 12px;
+  bottom: 12px;
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--muted);
+  font-size: 13px;
+  box-shadow: 0 8px 20px rgba(var(--dark-rgb), 0.12);
+}
 .catalog-map__locate {
   position: absolute;
   z-index: 4;

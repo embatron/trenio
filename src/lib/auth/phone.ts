@@ -25,14 +25,18 @@ export function normalizeBelarusMobile(raw: string): string | null {
   return digits;
 }
 
-/** Stored on `users.phone` for login lookup: `+375291234567`. */
-export function storedBelarusPhone(normalized: string): string {
-  return `+${normalized}`;
+/**
+ * One value for every stored Belarus mobile: users, trainer cards, and welcomes.
+ * `+375 29 123-45-67`. Null when the text is not a mobile from 25, 29, 33, or 44.
+ * SMS and OTP keep the digits from `normalizeBelarusMobile` (`375291234567`).
+ */
+export function storedBelarusPhone(raw: string | null | undefined): string | null {
+  const formatted = formatBelarusPhone(raw);
+  return formatted || null;
 }
 
 /**
- * One value for every trainer card phone, shown and stored the same way:
- * `+375 29 123-45-67`. Empty when the text is not a Belarus mobile.
+ * Same stored string as `storedBelarusPhone`, or `""` when the text is not a Belarus mobile.
  */
 export function formatBelarusPhone(raw: string | null | undefined): string {
   const digits = normalizeBelarusMobile(raw ?? "");

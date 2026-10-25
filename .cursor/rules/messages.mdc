@@ -12,7 +12,7 @@ The full file map and edit checklist are in `.cursor/skills/trenio-messages/SKIL
 ## Who may talk
 
 - One open conversation per account and one published trainer or club profile. No user-to-user chat and no support inbox.
-- The initiator uses `/account/messages`. The profile owner uses `/trainer-admin/messages`. Staff read other people's threads at `/admin/messages` and do not write there unless they are a participant.
+- A client starts a thread at `/account/messages`. A trainer or club stays in `/me/messages` for both client threads and threads they start with another profile. `/account/messages` redirects those roles to `/me/messages` and keeps the conversation id. Staff read other people's threads at `/admin/messages` and do not write there unless they are a participant.
 - Trainer cards and the profile block after reviews («Как со мной связаться») use icon links: a phone handset, Instagram, Telegram, email, and a direct message. Instagram, Telegram, email, and the direct message open in a new tab. The handset is a `tel:` link and stays on this page. On the profile the formatted number sits beside the handset. Hide the direct icon when the slug is in `messaging.ownedSlugs`. A guest’s direct icon goes to login and returns to the same thread.
 - The owner or staff may close a thread. A participant cannot hide or delete it. The row stays for both sides. It is removed for everyone only when an account is deleted.
 - A blocked pair cannot send. A profile must be published.

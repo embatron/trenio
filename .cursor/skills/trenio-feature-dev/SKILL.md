@@ -47,6 +47,8 @@ Before marking done, run mental checklist from:
 
 Run `.cursor/skills/trenio-docs-sync/SKILL.md` if routes, auth, or architecture changed.
 
+New server catches, auth, mail, forms, map, and message mutations call `writeLog` from `@/lib/log/logger`. See `.cursor/rules/logging.mdc`.
+
 ## Anti-patterns
 
 - `src/pages/` or Next.js patterns
@@ -55,3 +57,4 @@ Run `.cursor/skills/trenio-docs-sync/SKILL.md` if routes, auth, or architecture 
 - Desktop-only hover menus without mobile fallback
 - A content width other than `--layout-max`, `--layout-staff-max` (admin and superadmin cabinet only), or `--layout-prose-max`; a double gutter; or `repeat(auto-fill, minmax(...))` for catalog cards
 - A filled sport pictogram next to a line icon, or a one-off stroke width
+- `console.error` on a server path that does not call `writeLog` / `logCaught`

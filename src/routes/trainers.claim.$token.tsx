@@ -127,7 +127,7 @@ function ClaimPage() {
                 setError(null);
                 void claim({ data: { token, nick, email, password, passwordConfirm, offer: true, privacy: true } })
                   .then(() => {
-                    window.location.href = "/trainer-admin?tab=card";
+                    window.location.href = "/me/profile";
                   })
                   .catch((err: unknown) => {
                     setError(authErrorMessage(err));

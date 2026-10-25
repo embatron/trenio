@@ -69,6 +69,19 @@ function YogaStretchIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+function WellnessIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <LineIcon {...props}>
+      <circle cx="12" cy="5.2" r="1.7" />
+      <path d="M12 7.2v4.4" />
+      <path d="M8.4 16.8c.8-2.4 2.1-3.6 3.6-3.6s2.8 1.2 3.6 3.6" />
+      <path d="M6.2 18.6c1.8-1 3.6-1.4 5.8-1.4s4 .4 5.8 1.4" />
+      <path d="M4.8 8.2c.8-1.2 1.6-1.2 2.2 0" />
+      <path d="M17 8.2c.6-1.2 1.4-1.2 2.2 0" />
+    </LineIcon>
+  );
+}
+
 function SwimmingIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <LineIcon {...props}>
@@ -191,6 +204,15 @@ function OutdoorIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+function ClubSportsIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <LineIcon {...props}>
+      <path d="M6 21V3" />
+      <path d="M6 4h10l-2.2 3.2L16 10.4H6" />
+    </LineIcon>
+  );
+}
+
 function MindSportsIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <LineIcon {...props}>
@@ -206,6 +228,7 @@ const iconMap: Record<SportIconKey, (props: SVGProps<SVGSVGElement>) => ReactNod
   gymFitness: GymFitnessIcon,
   athleticPrep: AthleticPrepIcon,
   yogaStretch: YogaStretchIcon,
+  wellness: WellnessIcon,
   swimming: SwimmingIcon,
   teamSports: TeamSportsIcon,
   racketSports: RacketSportIcon,
@@ -216,6 +239,7 @@ const iconMap: Record<SportIconKey, (props: SVGProps<SVGSVGElement>) => ReactNod
   cycling: CyclingIcon,
   rehab: RehabIcon,
   outdoor: OutdoorIcon,
+  clubSports: ClubSportsIcon,
   mindSports: MindSportsIcon,
 };
 

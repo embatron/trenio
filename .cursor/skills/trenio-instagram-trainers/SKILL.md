@@ -88,13 +88,9 @@ Use only this browser and this account:
 
 Do not use the everyday Chrome profile and do not copy its cookies. Do not type or store the password. If that window shows a login wall, stop and ask the user to sign in once there.
 
-The face photo is the profile-picture image whose alt is `{handle}'s profile picture`.
+The face photo is the profile-picture image whose alt is `{handle}'s profile picture`. `extract-profile.fn.js` reads that image id from the `src` filename, then keeps URLs the page itself already loaded whose path contains that id and which have no `stp` parameter. It downloads the largest of those files. Both sides must be at least 400px. A thumbnail URL is not rewritten.
 
-1. Read the image id from that `src` filename, such as `613680184_18558822421030230_3263310295088186577_n.jpg`.
-2. While the signed-in profile page loads, read the responses the page itself makes, including `/api/graphql`. Do not call `web_profile_info`, the Graph API, or any request you build yourself.
-3. From those responses, keep URLs whose path contains that same image id. Download the URL that has no `stp` parameter. That is the source file.
-4. Keep the file only when both sides are at least 400px.
-5. If that URL is missing, leave the photo empty.
+`save-draft.ts` stores that file as `public/trainers/instagram/{handle}.jpg` and writes the sized files beside it (`s128`, `c320`, `c640`, `w960`). The catalog keeps using `{handle}.jpg`. A later import that has no source of at least 400px leaves the saved file in place.
 
 Do not save `s100`, `s150`, or `s206`. Do not delete `stp` from a thumbnail URL and do not replace `s150` with `s1080`. The CDN answers `URL signature mismatch` or returns the thumbnail.
 

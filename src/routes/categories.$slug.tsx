@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import { CategoryLink } from "@/lib/catalog/category-routes";
 import { canonicalCategoryPath } from "@/lib/catalog/slug-policy";
@@ -8,6 +8,7 @@ import {
   getSportTaxonomyParent,
   getParentCategoryFeaturedImage,
   getTopLevelSportCategory,
+  isPublishedSportCategory,
   categorySearchDescription,
   type CategoryRouteRef,
 } from "@/lib/catalog/sport-taxonomy";
@@ -16,6 +17,7 @@ import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { matchesCatalogAudience, PUBLISHED_TRAINERS, TRAINER_FORMAT_OPTIONS, trainersForCategory, type PublishedTrainer } from "@/lib/catalog/published-trainers";
 import { compareByPopularity, compareByRating, compareByReviews, ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
+import { compareTrainerPrice, listTrainerPricesFn, priceForCard, type TrainerPriceMap } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { pluralRu } from "@/lib/ru-plural";
 import { toggleFilterValue } from "@/lib/catalog/belarus-settlements";
@@ -60,8 +62,13 @@ export const Route = createFileRoute("/categories/$slug")({
       });
     }
 
+    const category = getTopLevelSportCategory(params.slug);
+    if (category && !isPublishedSportCategory(category)) throw notFound();
+
     const child = getSportTaxonomyChild(params.slug);
-    if (child && !getTopLevelSportCategory(params.slug)) {
+    if (child && !category) {
+      const parent = getTopLevelSportCategory(child.parentSlug);
+      if (parent && !isPublishedSportCategory(parent)) throw notFound();
       throw redirect({
         to: "/categories/$parentSlug/$childSlug",
         params: { parentSlug: child.parentSlug, childSlug: child.slug },
@@ -87,11 +94,12 @@ export const Route = createFileRoute("/categories/$slug")({
     };
   },
   loader: async () => {
-    const [ratings, place] = await Promise.all([
+    const [ratings, prices, place] = await Promise.all([
       listTrainerRatingSummariesFn(),
+      listTrainerPricesFn(),
       resolveVisitorPlaceFn(),
     ]);
-    return { ratings, place };
+    return { ratings, prices, place };
   },
   component: CategoryPage,
 });
@@ -506,7 +514,9 @@ type TrainerCard = {
   tags: string[];
   rating: string;
   reviews: number;
-  price: number;
+  views: number;
+  saves: number;
+  price: number | null;
   city: string;
   district: string;
   badge?: string;
@@ -517,7 +527,7 @@ type TrainerCard = {
   sportParents: string[];
 };
 
-function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, TrainerRatingSnapshot>): TrainerCard {
+function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, TrainerRatingSnapshot>, prices: TrainerPriceMap): TrainerCard {
   const rating = ratingFor(trainer.slug, ratings);
   return {
     slug: trainer.slug,
@@ -530,7 +540,9 @@ function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, Train
     tags: trainer.sports.map((sport) => sport.label),
     rating: rating.rating,
     reviews: rating.reviews,
-    price: trainer.priceFrom,
+    views: rating.views,
+    saves: rating.saves,
+    price: priceForCard(trainer.slug, trainer.priceFrom, prices),
     city: trainer.city.label,
     district: trainer.district,
     experience: trainer.experience,
@@ -541,8 +553,8 @@ function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, Train
   };
 }
 
-function generateTrainers(category: Category, ratings: Record<string, TrainerRatingSnapshot>): TrainerCard[] {
-  return trainersForCategory(category.slug).map((trainer) => toCategoryCard(trainer, ratings));
+function generateTrainers(category: Category, ratings: Record<string, TrainerRatingSnapshot>, prices: TrainerPriceMap): TrainerCard[] {
+  return trainersForCategory(category.slug).map((trainer) => toCategoryCard(trainer, ratings, prices));
 }
 
 const PAGE_CSS = `
@@ -779,9 +791,9 @@ a.cat-pill { text-decoration: none; }
 
 function CategoryPage() {
   const { slug } = Route.useParams();
-  const { ratings, place } = Route.useLoaderData();
+  const { ratings, prices, place } = Route.useLoaderData();
   const category = resolveParentCategory(slug);
-  return <CategoryCatalogPage key={slug} category={category} ratings={ratings} place={place} />;
+  return <CategoryCatalogPage key={slug} category={category} ratings={ratings} prices={prices} place={place} />;
 }
 
 type CityCatalog = { slug: string; name: string; locative: string };
@@ -790,6 +802,7 @@ type CategoryCatalogPageProps = {
   category?: Category;
   parentCategory?: { slug: string; label: string };
   ratings?: Record<string, TrainerRatingSnapshot>;
+  prices?: TrainerPriceMap;
   place?: CatalogPlace;
   cityCatalog?: CityCatalog;
   pageSport?: CatalogSport | null;
@@ -800,6 +813,7 @@ export function CategoryCatalogPage({
   category,
   parentCategory,
   ratings = {},
+  prices = {},
   place = emptyCatalogPlace,
   cityCatalog,
   pageSport = null,
@@ -808,11 +822,11 @@ export function CategoryCatalogPage({
   const navigate = useNavigate();
   const allTrainers = useMemo(
     () => cityCatalog
-      ? PUBLISHED_TRAINERS.map((trainer) => toCategoryCard(trainer, ratings))
+      ? PUBLISHED_TRAINERS.map((trainer) => toCategoryCard(trainer, ratings, prices))
       : category
-        ? generateTrainers(category, ratings)
+        ? generateTrainers(category, ratings, prices)
         : [],
-    [category, cityCatalog, ratings],
+    [category, cityCatalog, ratings, prices],
   );
   const parentSlug = parentCategory?.slug ?? category?.slug ?? "";
   const keyword = category ? categoryKeyword(category, parentCategory?.slug) : "";
@@ -897,7 +911,8 @@ export function CategoryCatalogPage({
   }, []);
   const priceBounds = useMemo(() => {
     if (!allTrainers.length) return { min: 0, max: 100 };
-    const prices = allTrainers.map((t) => t.price);
+    const prices = allTrainers.flatMap((trainer) => (trainer.price == null ? [] : [trainer.price]));
+    if (prices.length === 0) return { min: 0, max: 100 };
     return { min: Math.floor(Math.min(...prices)), max: Math.ceil(Math.max(...prices)) };
   }, [allTrainers]);
   const [priceMin, setPriceMin] = useState<number>(priceBounds.min);
@@ -941,14 +956,14 @@ export function CategoryCatalogPage({
       if (audience === "self" && !matchesCatalogAudience(t.audiences, "self")) return false;
       if (audience === "child" && !matchesCatalogAudience(t.audiences, "child")) return false;
       if (formats.length > 0 && t.formats.length > 0 && !t.formats.some((item) => formats.includes(item))) return false;
-      if (priceMin && t.price < Number(priceMin)) return false;
-      if (priceMax && t.price > Number(priceMax)) return false;
+      const priceNarrowed = priceMin > priceBounds.min || priceMax < priceBounds.max;
+      if (priceNarrowed && (t.price == null || t.price < priceMin || t.price > priceMax)) return false;
       if (minExperience != null && t.experience < minExperience) return false;
       if (!trainerMatchesSportSelection(t, selectedSports, sportQuery)) return false;
       return true;
     });
-    if (sort === "price-asc") list = [...list].sort((a, b) => a.price - b.price);
-    else if (sort === "price-desc") list = [...list].sort((a, b) => b.price - a.price);
+    if (sort === "price-asc") list = [...list].sort((a, b) => compareTrainerPrice(a.price, b.price, "asc"));
+    else if (sort === "price-desc") list = [...list].sort((a, b) => compareTrainerPrice(a.price, b.price, "desc"));
     else if (sort === "rating") list = [...list].sort(compareByRating);
     else if (sort === "reviews") list = [...list].sort(compareByReviews);
     else list = [...list].sort(compareByPopularity);
@@ -1091,6 +1106,12 @@ export function CategoryCatalogPage({
   };
 
   const headerSport = pageSport?.label ?? (selectedSports.length === 1 ? selectedSports[0].label : "");
+  const mapDirection = parentCategory?.slug
+    ?? (!cityCatalog && category ? category.slug : undefined)
+    ?? (pageSport ? (pageSport.level === 1 ? pageSport.slug : pageSport.parentSlug) : undefined)
+    ?? (selectedSports.length > 0
+      ? [...new Set(selectedSports.map((sport) => sport.level === 1 ? sport.slug : sport.parentSlug))].join(",")
+      : undefined);
 
   return (
     <div className="page-shell cat-page">
@@ -1644,7 +1665,7 @@ export function CategoryCatalogPage({
                 <div className="cat-empty__actions">
                   {allTrainers.length === 0 || category?.isEmpty ? (
                     <>
-                      <Link to="/auth/signup" className="cat-empty__btn cat-empty__btn--primary">
+                      <Link to="/join/trainer" className="cat-empty__btn cat-empty__btn--primary">
                         Стать первым тренером
                       </Link>
                       <button
@@ -1700,7 +1721,7 @@ export function CategoryCatalogPage({
               </div>
               <Link
                 to="/map"
-                search={{ sports: selectedSports.length > 0 ? [...new Set(selectedSports.map((sport) => sport.level === 1 ? sport.slug : sport.parentSlug))].join(",") : undefined }}
+                search={{ sports: mapDirection, city: cityCatalog?.slug }}
               >
                 Открыть карту
               </Link>
@@ -1757,15 +1778,7 @@ export function CategoryCatalogPage({
                 принимать заявки.
               </p>
             </div>
-            <a
-              href="/auth/signup"
-              onClick={(e) => {
-                e.preventDefault();
-                navigate({ to: "/auth/signup" });
-              }}
-            >
-              Стать тренером
-            </a>
+            <Link to="/join/trainer">Стать тренером</Link>
           </section>
         </div>
       </main>

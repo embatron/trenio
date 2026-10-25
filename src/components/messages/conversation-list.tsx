@@ -76,7 +76,7 @@ export function ConversationList({
                 ) : (
                   <Link
                     className={className}
-                    to="/trainer-admin/messages/$conversationId"
+                    to="/me/messages/$conversationId"
                     params={{ conversationId: item.id }}
                     aria-current={item.id === activeId ? "page" : undefined}
                   >

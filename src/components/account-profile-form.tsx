@@ -58,10 +58,12 @@ export function AccountProfileForm({
   user,
   phone,
   phoneVerified,
+  profilePhoto = null,
 }: {
   user: PublicUser;
   phone: string | null;
   phoneVerified: boolean;
+  profilePhoto?: string | null;
 }) {
   const router = useRouter();
   const updateProfile = useAuthServerFn(updateProfileFn);
@@ -84,7 +86,7 @@ export function AccountProfileForm({
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState(user.avatarPath);
+  const [avatarUrl, setAvatarUrl] = useState(profilePhoto || user.avatarPath);
   const [pending, setPending] = useState(false);
   const [popup, setPopup] = useState<{ title: string; message: string } | null>(null);
   const role = user.roles.map((item) => ROLE_LABELS[item]).join(", ");
@@ -104,8 +106,8 @@ export function AccountProfileForm({
           event.preventDefault();
           const nextFirst = firstName.trim();
           const nextLast = lastName.trim();
-          if (!nextFirst) {
-            fail(new Error("Укажите имя."));
+          if (!nextFirst || !nextLast) {
+            fail(new Error(nextFirst ? "Укажите фамилию." : "Укажите имя."));
             return;
           }
           setPending(true);
@@ -120,29 +122,33 @@ export function AccountProfileForm({
       >
         <div className="cabinet-avatar">
           {avatarUrl ? <PhotoImage className="cabinet-avatar__photo" src={avatarUrl} alt="" preset="avatar" width={72} height={72} /> : <UserAvatar name={[firstName, lastName].filter(Boolean).join(" ")} size={72} />}
-          <label className="cabinet-edit">
-            Изменить фото
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                event.target.value = "";
-                if (!file) return;
-                setPending(true);
-                void fileToJpeg(file)
-                  .then((image) => uploadAvatar({ data: { image } }))
-                  .then(async (result) => {
-                    const payload = result as { avatarPath: string; message: string };
-                    setAvatarUrl(payload.avatarPath);
-                    ok(payload.message);
-                    await router.invalidate();
-                  })
-                  .catch(fail)
-                  .finally(() => setPending(false));
-              }}
-            />
-          </label>
+          {profilePhoto ? (
+            <p className="cabinet-note">Аватар — моё главное фото из профиля.</p>
+          ) : (
+            <label className="cabinet-edit">
+              Изменить фото
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  event.target.value = "";
+                  if (!file) return;
+                  setPending(true);
+                  void fileToJpeg(file)
+                    .then((image) => uploadAvatar({ data: { image } }))
+                    .then(async (result) => {
+                      const payload = result as { avatarPath: string; message: string };
+                      setAvatarUrl(payload.avatarPath);
+                      ok(payload.message);
+                      await router.invalidate();
+                    })
+                    .catch(fail)
+                    .finally(() => setPending(false));
+                }}
+              />
+            </label>
+          )}
         </div>
         <div className="cabinet-form__row">
           <label>
@@ -151,7 +157,7 @@ export function AccountProfileForm({
           </label>
           <label>
             <span>Фамилия</span>
-            <input value={lastName} maxLength={100} autoComplete="family-name" onChange={(event) => setLastName(event.target.value)} />
+            <input required value={lastName} maxLength={100} autoComplete="family-name" onChange={(event) => setLastName(event.target.value)} />
           </label>
         </div>
         <label>

@@ -26,7 +26,7 @@ export const Route = createFileRoute("/admin")({
       throw redirect({ to: "/auth/login", search: { redirect: next } });
     }
     if (!isStaff(context.user.roles)) {
-      throw redirect({ to: context.user.roles.some((role) => role === "trainer" || role === "club") ? "/trainer-admin" : "/" });
+      throw redirect({ to: context.user.roles.some((role) => role === "trainer" || role === "club") ? "/me" : "/" });
     }
   },
   loader: () => getAdminShellFn(),

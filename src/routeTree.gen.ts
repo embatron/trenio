@@ -9,29 +9,34 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as _rootSyncConflict20261019125234WG2BFJERouteImport } from './routes/__root.sync-conflict-20261019-125234-WG2BFJE'
 import { Route as TrainerAdminRouteImport } from './routes/trainer-admin'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as OfferRouteImport } from './routes/offer'
+import { Route as MeRouteImport } from './routes/me'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AccountRouteImport } from './routes/account'
+import { Route as R404RouteImport } from './routes/404'
+import { Route as R403RouteImport } from './routes/403'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TrainerAdminIndexRouteImport } from './routes/trainer-admin.index'
+import { Route as MeIndexRouteImport } from './routes/me.index'
 import { Route as ClubsIndexRouteImport } from './routes/clubs.index'
 import { Route as CategoriesIndexRouteImport } from './routes/categories.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AccountIndexRouteImport } from './routes/account.index'
 import { Route as TrainersSlugRouteImport } from './routes/trainers.$slug'
-import { Route as TrainerAdminSyncConflict20261019125235WG2BFJERouteImport } from './routes/trainer-admin.sync-conflict-20261019-125235-WG2BFJE'
 import { Route as TrainerAdminMessagesRouteImport } from './routes/trainer-admin.messages'
-import { Route as SearchSyncConflict20261019125235WG2BFJERouteImport } from './routes/search.sync-conflict-20261019-125235-WG2BFJE'
-import { Route as PrivacySyncConflict20261019125235WG2BFJERouteImport } from './routes/privacy.sync-conflict-20261019-125235-WG2BFJE'
-import { Route as IndexSyncConflict20261019125224WG2BFJERouteImport } from './routes/index.sync-conflict-20261019-125224-WG2BFJE'
+import { Route as MeSettingsRouteImport } from './routes/me.settings'
+import { Route as MeReviewsRouteImport } from './routes/me.reviews'
+import { Route as MeProfileRouteImport } from './routes/me.profile'
+import { Route as MeMessagesRouteImport } from './routes/me.messages'
+import { Route as MeFavoritesRouteImport } from './routes/me.favorites'
+import { Route as JoinTrainerRouteImport } from './routes/join.trainer'
 import { Route as ClubsSlugRouteImport } from './routes/clubs.$slug'
 import { Route as CitySlugRouteImport } from './routes/city.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
@@ -55,41 +60,21 @@ import { Route as AccountReviewsRouteImport } from './routes/account.reviews'
 import { Route as AccountMessagesRouteImport } from './routes/account.messages'
 import { Route as AccountFavoritesRouteImport } from './routes/account.favorites'
 import { Route as AccountBookingsRouteImport } from './routes/account.bookings'
-import { Route as ClubsIndexSyncConflict20261019125220WG2BFJERouteImport } from './routes/clubs.index.sync-conflict-20261019-125220-WG2BFJE'
-import { Route as CategoriesIndexSyncConflict20261019125235WG2BFJERouteImport } from './routes/categories.index.sync-conflict-20261019-125235-WG2BFJE'
 import { Route as CitySlugIndexRouteImport } from './routes/city.$slug.index'
 import { Route as AdminTrainersIndexRouteImport } from './routes/admin.trainers.index'
 import { Route as AdminAccountsIndexRouteImport } from './routes/admin.accounts.index'
 import { Route as TrainersClaimTokenRouteImport } from './routes/trainers.claim.$token'
-import { Route as TrainersSlugSyncConflict20261019125222WG2BFJERouteImport } from './routes/trainers.$slug.sync-conflict-20261019-125222-WG2BFJE'
 import { Route as TrainerAdminMessagesConversationIdRouteImport } from './routes/trainer-admin.messages.$conversationId'
-import { Route as ClubsSlugSyncConflict20261019125235WG2BFJERouteImport } from './routes/clubs.$slug.sync-conflict-20261019-125235-WG2BFJE'
-import { Route as CitySlugSyncConflict20261019125235WG2BFJERouteImport } from './routes/city.$slug.sync-conflict-20261019-125235-WG2BFJE'
+import { Route as MeMessagesConversationIdRouteImport } from './routes/me.messages.$conversationId'
 import { Route as CitySlugSportRouteImport } from './routes/city.$slug.$sport'
-import { Route as CategorySlugSyncConflict20261019125235WG2BFJERouteImport } from './routes/category.$slug.sync-conflict-20261019-125235-WG2BFJE'
 import { Route as CategoryParentSlugChildSlugRouteImport } from './routes/category.$parentSlug.$childSlug'
-import { Route as CategoriesSlugSyncConflict20261019125224WG2BFJERouteImport } from './routes/categories.$slug.sync-conflict-20261019-125224-WG2BFJE'
 import { Route as CategoriesParentSlugChildSlugRouteImport } from './routes/categories.$parentSlug.$childSlug'
-import { Route as BlogSlugSyncConflict20261019125235WG2BFJERouteImport } from './routes/blog.$slug.sync-conflict-20261019-125235-WG2BFJE'
-import { Route as AuthVerifyEmailSyncConflict202610191251573SRRWYTRouteImport } from './routes/auth.verify-email.sync-conflict-20261019-125157-3SRRWYT'
-import { Route as AuthSignupSyncConflict202610191252033SRRWYTRouteImport } from './routes/auth.signup.sync-conflict-20261019-125203-3SRRWYT'
-import { Route as AuthResetPasswordSyncConflict202610191252003SRRWYTRouteImport } from './routes/auth.reset-password.sync-conflict-20261019-125200-3SRRWYT'
-import { Route as AuthLoginSyncConflict20261019125234WG2BFJERouteImport } from './routes/auth.login.sync-conflict-20261019-125234-WG2BFJE'
-import { Route as AuthForgotPasswordSyncConflict20261019125218WG2BFJERouteImport } from './routes/auth.forgot-password.sync-conflict-20261019-125218-WG2BFJE'
 import { Route as AdminTrainersSlugRouteImport } from './routes/admin.trainers.$slug'
 import { Route as AdminAccountsIdRouteImport } from './routes/admin.accounts.$id'
 import { Route as AccountMessagesConversationIdRouteImport } from './routes/account.messages.$conversationId'
 import { Route as CitySlugSportIndexRouteImport } from './routes/city.$slug.$sport.index'
 import { Route as CitySlugSportChildRouteImport } from './routes/city.$slug.$sport.$child'
-import { Route as CategoryParentSlugChildSlugSyncConflict20261019125220WG2BFJERouteImport } from './routes/category.$parentSlug.$childSlug.sync-conflict-20261019-125220-WG2BFJE'
-import { Route as CategoriesParentSlugChildSlugSyncConflict20261019125214WG2BFJERouteImport } from './routes/categories.$parentSlug.$childSlug.sync-conflict-20261019-125214-WG2BFJE'
 
-const _rootSyncConflict20261019125234WG2BFJERoute =
-  _rootSyncConflict20261019125234WG2BFJERouteImport.update({
-    id: '/__root/sync-conflict-20261019-125234-WG2BFJE',
-    path: '/sync-conflict-20261019-125234-WG2BFJE',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const TrainerAdminRoute = TrainerAdminRouteImport.update({
   id: '/trainer-admin',
   path: '/trainer-admin',
@@ -120,6 +105,11 @@ const OfferRoute = OfferRouteImport.update({
   path: '/offer',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MeRoute = MeRouteImport.update({
+  id: '/me',
+  path: '/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MapRoute = MapRouteImport.update({
   id: '/map',
   path: '/map',
@@ -140,6 +130,16 @@ const AccountRoute = AccountRouteImport.update({
   path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
+const R404Route = R404RouteImport.update({
+  id: '/404',
+  path: '/404',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const R403Route = R403RouteImport.update({
+  id: '/403',
+  path: '/403',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -149,6 +149,11 @@ const TrainerAdminIndexRoute = TrainerAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => TrainerAdminRoute,
+} as any)
+const MeIndexRoute = MeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MeRoute,
 } as any)
 const ClubsIndexRoute = ClubsIndexRouteImport.update({
   id: '/clubs/',
@@ -175,35 +180,41 @@ const TrainersSlugRoute = TrainersSlugRouteImport.update({
   path: '/trainers/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TrainerAdminSyncConflict20261019125235WG2BFJERoute =
-  TrainerAdminSyncConflict20261019125235WG2BFJERouteImport.update({
-    id: '/sync-conflict-20261019-125235-WG2BFJE',
-    path: '/sync-conflict-20261019-125235-WG2BFJE',
-    getParentRoute: () => TrainerAdminRoute,
-  } as any)
 const TrainerAdminMessagesRoute = TrainerAdminMessagesRouteImport.update({
   id: '/messages',
   path: '/messages',
   getParentRoute: () => TrainerAdminRoute,
 } as any)
-const SearchSyncConflict20261019125235WG2BFJERoute =
-  SearchSyncConflict20261019125235WG2BFJERouteImport.update({
-    id: '/sync-conflict-20261019-125235-WG2BFJE',
-    path: '/sync-conflict-20261019-125235-WG2BFJE',
-    getParentRoute: () => SearchRoute,
-  } as any)
-const PrivacySyncConflict20261019125235WG2BFJERoute =
-  PrivacySyncConflict20261019125235WG2BFJERouteImport.update({
-    id: '/sync-conflict-20261019-125235-WG2BFJE',
-    path: '/sync-conflict-20261019-125235-WG2BFJE',
-    getParentRoute: () => PrivacyRoute,
-  } as any)
-const IndexSyncConflict20261019125224WG2BFJERoute =
-  IndexSyncConflict20261019125224WG2BFJERouteImport.update({
-    id: '/index/sync-conflict-20261019-125224-WG2BFJE',
-    path: '/index/sync-conflict-20261019-125224-WG2BFJE',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+const MeSettingsRoute = MeSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => MeRoute,
+} as any)
+const MeReviewsRoute = MeReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => MeRoute,
+} as any)
+const MeProfileRoute = MeProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => MeRoute,
+} as any)
+const MeMessagesRoute = MeMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => MeRoute,
+} as any)
+const MeFavoritesRoute = MeFavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => MeRoute,
+} as any)
+const JoinTrainerRoute = JoinTrainerRouteImport.update({
+  id: '/join/trainer',
+  path: '/join/trainer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClubsSlugRoute = ClubsSlugRouteImport.update({
   id: '/clubs/$slug',
   path: '/clubs/$slug',
@@ -319,18 +330,6 @@ const AccountBookingsRoute = AccountBookingsRouteImport.update({
   path: '/bookings',
   getParentRoute: () => AccountRoute,
 } as any)
-const ClubsIndexSyncConflict20261019125220WG2BFJERoute =
-  ClubsIndexSyncConflict20261019125220WG2BFJERouteImport.update({
-    id: '/clubs/index/sync-conflict-20261019-125220-WG2BFJE',
-    path: '/clubs/index/sync-conflict-20261019-125220-WG2BFJE',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const CategoriesIndexSyncConflict20261019125235WG2BFJERoute =
-  CategoriesIndexSyncConflict20261019125235WG2BFJERouteImport.update({
-    id: '/categories/index/sync-conflict-20261019-125235-WG2BFJE',
-    path: '/categories/index/sync-conflict-20261019-125235-WG2BFJE',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const CitySlugIndexRoute = CitySlugIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -351,94 +350,34 @@ const TrainersClaimTokenRoute = TrainersClaimTokenRouteImport.update({
   path: '/trainers/claim/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TrainersSlugSyncConflict20261019125222WG2BFJERoute =
-  TrainersSlugSyncConflict20261019125222WG2BFJERouteImport.update({
-    id: '/sync-conflict-20261019-125222-WG2BFJE',
-    path: '/sync-conflict-20261019-125222-WG2BFJE',
-    getParentRoute: () => TrainersSlugRoute,
-  } as any)
 const TrainerAdminMessagesConversationIdRoute =
   TrainerAdminMessagesConversationIdRouteImport.update({
     id: '/$conversationId',
     path: '/$conversationId',
     getParentRoute: () => TrainerAdminMessagesRoute,
   } as any)
-const ClubsSlugSyncConflict20261019125235WG2BFJERoute =
-  ClubsSlugSyncConflict20261019125235WG2BFJERouteImport.update({
-    id: '/sync-conflict-20261019-125235-WG2BFJE',
-    path: '/sync-conflict-20261019-125235-WG2BFJE',
-    getParentRoute: () => ClubsSlugRoute,
-  } as any)
-const CitySlugSyncConflict20261019125235WG2BFJERoute =
-  CitySlugSyncConflict20261019125235WG2BFJERouteImport.update({
-    id: '/sync-conflict-20261019-125235-WG2BFJE',
-    path: '/sync-conflict-20261019-125235-WG2BFJE',
-    getParentRoute: () => CitySlugRoute,
+const MeMessagesConversationIdRoute =
+  MeMessagesConversationIdRouteImport.update({
+    id: '/$conversationId',
+    path: '/$conversationId',
+    getParentRoute: () => MeMessagesRoute,
   } as any)
 const CitySlugSportRoute = CitySlugSportRouteImport.update({
   id: '/$sport',
   path: '/$sport',
   getParentRoute: () => CitySlugRoute,
 } as any)
-const CategorySlugSyncConflict20261019125235WG2BFJERoute =
-  CategorySlugSyncConflict20261019125235WG2BFJERouteImport.update({
-    id: '/sync-conflict-20261019-125235-WG2BFJE',
-    path: '/sync-conflict-20261019-125235-WG2BFJE',
-    getParentRoute: () => CategorySlugRoute,
-  } as any)
 const CategoryParentSlugChildSlugRoute =
   CategoryParentSlugChildSlugRouteImport.update({
     id: '/category/$parentSlug/$childSlug',
     path: '/category/$parentSlug/$childSlug',
     getParentRoute: () => rootRouteImport,
   } as any)
-const CategoriesSlugSyncConflict20261019125224WG2BFJERoute =
-  CategoriesSlugSyncConflict20261019125224WG2BFJERouteImport.update({
-    id: '/sync-conflict-20261019-125224-WG2BFJE',
-    path: '/sync-conflict-20261019-125224-WG2BFJE',
-    getParentRoute: () => CategoriesSlugRoute,
-  } as any)
 const CategoriesParentSlugChildSlugRoute =
   CategoriesParentSlugChildSlugRouteImport.update({
     id: '/categories/$parentSlug/$childSlug',
     path: '/categories/$parentSlug/$childSlug',
     getParentRoute: () => rootRouteImport,
-  } as any)
-const BlogSlugSyncConflict20261019125235WG2BFJERoute =
-  BlogSlugSyncConflict20261019125235WG2BFJERouteImport.update({
-    id: '/sync-conflict-20261019-125235-WG2BFJE',
-    path: '/sync-conflict-20261019-125235-WG2BFJE',
-    getParentRoute: () => BlogSlugRoute,
-  } as any)
-const AuthVerifyEmailSyncConflict202610191251573SRRWYTRoute =
-  AuthVerifyEmailSyncConflict202610191251573SRRWYTRouteImport.update({
-    id: '/sync-conflict-20261019-125157-3SRRWYT',
-    path: '/sync-conflict-20261019-125157-3SRRWYT',
-    getParentRoute: () => AuthVerifyEmailRoute,
-  } as any)
-const AuthSignupSyncConflict202610191252033SRRWYTRoute =
-  AuthSignupSyncConflict202610191252033SRRWYTRouteImport.update({
-    id: '/sync-conflict-20261019-125203-3SRRWYT',
-    path: '/sync-conflict-20261019-125203-3SRRWYT',
-    getParentRoute: () => AuthSignupRoute,
-  } as any)
-const AuthResetPasswordSyncConflict202610191252003SRRWYTRoute =
-  AuthResetPasswordSyncConflict202610191252003SRRWYTRouteImport.update({
-    id: '/sync-conflict-20261019-125200-3SRRWYT',
-    path: '/sync-conflict-20261019-125200-3SRRWYT',
-    getParentRoute: () => AuthResetPasswordRoute,
-  } as any)
-const AuthLoginSyncConflict20261019125234WG2BFJERoute =
-  AuthLoginSyncConflict20261019125234WG2BFJERouteImport.update({
-    id: '/sync-conflict-20261019-125234-WG2BFJE',
-    path: '/sync-conflict-20261019-125234-WG2BFJE',
-    getParentRoute: () => AuthLoginRoute,
-  } as any)
-const AuthForgotPasswordSyncConflict20261019125218WG2BFJERoute =
-  AuthForgotPasswordSyncConflict20261019125218WG2BFJERouteImport.update({
-    id: '/sync-conflict-20261019-125218-WG2BFJE',
-    path: '/sync-conflict-20261019-125218-WG2BFJE',
-    getParentRoute: () => AuthForgotPasswordRoute,
   } as any)
 const AdminTrainersSlugRoute = AdminTrainersSlugRouteImport.update({
   id: '/$slug',
@@ -466,36 +405,22 @@ const CitySlugSportChildRoute = CitySlugSportChildRouteImport.update({
   path: '/$child',
   getParentRoute: () => CitySlugSportRoute,
 } as any)
-const CategoryParentSlugChildSlugSyncConflict20261019125220WG2BFJERoute =
-  CategoryParentSlugChildSlugSyncConflict20261019125220WG2BFJERouteImport.update(
-    {
-      id: '/sync-conflict-20261019-125220-WG2BFJE',
-      path: '/sync-conflict-20261019-125220-WG2BFJE',
-      getParentRoute: () => CategoryParentSlugChildSlugRoute,
-    } as any,
-  )
-const CategoriesParentSlugChildSlugSyncConflict20261019125214WG2BFJERoute =
-  CategoriesParentSlugChildSlugSyncConflict20261019125214WG2BFJERouteImport.update(
-    {
-      id: '/sync-conflict-20261019-125214-WG2BFJE',
-      path: '/sync-conflict-20261019-125214-WG2BFJE',
-      getParentRoute: () => CategoriesParentSlugChildSlugRoute,
-    } as any,
-  )
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/403': typeof R403Route
+  '/404': typeof R404Route
   '/account': typeof AccountRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/favorites': typeof FavoritesRoute
   '/map': typeof MapRoute
+  '/me': typeof MeRouteWithChildren
   '/offer': typeof OfferRoute
-  '/privacy': typeof PrivacyRouteWithChildren
+  '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
-  '/search': typeof SearchRouteWithChildren
+  '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trainer-admin': typeof TrainerAdminRouteWithChildren
-  '/sync-conflict-20261019-125234-WG2BFJE': typeof _rootSyncConflict20261019125234WG2BFJERoute
   '/account/bookings': typeof AccountBookingsRoute
   '/account/favorites': typeof AccountFavoritesRoute
   '/account/messages': typeof AccountMessagesRouteWithChildren
@@ -508,67 +433,57 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/trainers': typeof AdminTrainersRouteWithChildren
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
-  '/auth/forgot-password': typeof AuthForgotPasswordRouteWithChildren
-  '/auth/login': typeof AuthLoginRouteWithChildren
-  '/auth/reset-password': typeof AuthResetPasswordRouteWithChildren
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
-  '/auth/signup': typeof AuthSignupRouteWithChildren
-  '/auth/verify-email': typeof AuthVerifyEmailRouteWithChildren
-  '/blog/$slug': typeof BlogSlugRouteWithChildren
-  '/categories/$slug': typeof CategoriesSlugRouteWithChildren
-  '/category/$slug': typeof CategorySlugRouteWithChildren
+  '/auth/signup': typeof AuthSignupRoute
+  '/auth/verify-email': typeof AuthVerifyEmailRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/categories/$slug': typeof CategoriesSlugRoute
+  '/category/$slug': typeof CategorySlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
-  '/clubs/$slug': typeof ClubsSlugRouteWithChildren
-  '/index/sync-conflict-20261019-125224-WG2BFJE': typeof IndexSyncConflict20261019125224WG2BFJERoute
-  '/privacy/sync-conflict-20261019-125235-WG2BFJE': typeof PrivacySyncConflict20261019125235WG2BFJERoute
-  '/search/sync-conflict-20261019-125235-WG2BFJE': typeof SearchSyncConflict20261019125235WG2BFJERoute
+  '/clubs/$slug': typeof ClubsSlugRoute
+  '/join/trainer': typeof JoinTrainerRoute
+  '/me/favorites': typeof MeFavoritesRoute
+  '/me/messages': typeof MeMessagesRouteWithChildren
+  '/me/profile': typeof MeProfileRoute
+  '/me/reviews': typeof MeReviewsRoute
+  '/me/settings': typeof MeSettingsRoute
   '/trainer-admin/messages': typeof TrainerAdminMessagesRouteWithChildren
-  '/trainer-admin/sync-conflict-20261019-125235-WG2BFJE': typeof TrainerAdminSyncConflict20261019125235WG2BFJERoute
-  '/trainers/$slug': typeof TrainersSlugRouteWithChildren
+  '/trainers/$slug': typeof TrainersSlugRoute
   '/account/': typeof AccountIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/clubs/': typeof ClubsIndexRoute
+  '/me/': typeof MeIndexRoute
   '/trainer-admin/': typeof TrainerAdminIndexRoute
   '/account/messages/$conversationId': typeof AccountMessagesConversationIdRoute
   '/admin/accounts/$id': typeof AdminAccountsIdRoute
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
-  '/auth/forgot-password/sync-conflict-20261019-125218-WG2BFJE': typeof AuthForgotPasswordSyncConflict20261019125218WG2BFJERoute
-  '/auth/login/sync-conflict-20261019-125234-WG2BFJE': typeof AuthLoginSyncConflict20261019125234WG2BFJERoute
-  '/auth/reset-password/sync-conflict-20261019-125200-3SRRWYT': typeof AuthResetPasswordSyncConflict202610191252003SRRWYTRoute
-  '/auth/signup/sync-conflict-20261019-125203-3SRRWYT': typeof AuthSignupSyncConflict202610191252033SRRWYTRoute
-  '/auth/verify-email/sync-conflict-20261019-125157-3SRRWYT': typeof AuthVerifyEmailSyncConflict202610191251573SRRWYTRoute
-  '/blog/$slug/sync-conflict-20261019-125235-WG2BFJE': typeof BlogSlugSyncConflict20261019125235WG2BFJERoute
-  '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRouteWithChildren
-  '/categories/$slug/sync-conflict-20261019-125224-WG2BFJE': typeof CategoriesSlugSyncConflict20261019125224WG2BFJERoute
-  '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRouteWithChildren
-  '/category/$slug/sync-conflict-20261019-125235-WG2BFJE': typeof CategorySlugSyncConflict20261019125235WG2BFJERoute
+  '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
+  '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
   '/city/$slug/$sport': typeof CitySlugSportRouteWithChildren
-  '/city/$slug/sync-conflict-20261019-125235-WG2BFJE': typeof CitySlugSyncConflict20261019125235WG2BFJERoute
-  '/clubs/$slug/sync-conflict-20261019-125235-WG2BFJE': typeof ClubsSlugSyncConflict20261019125235WG2BFJERoute
+  '/me/messages/$conversationId': typeof MeMessagesConversationIdRoute
   '/trainer-admin/messages/$conversationId': typeof TrainerAdminMessagesConversationIdRoute
-  '/trainers/$slug/sync-conflict-20261019-125222-WG2BFJE': typeof TrainersSlugSyncConflict20261019125222WG2BFJERoute
   '/trainers/claim/$token': typeof TrainersClaimTokenRoute
   '/admin/accounts/': typeof AdminAccountsIndexRoute
   '/admin/trainers/': typeof AdminTrainersIndexRoute
   '/city/$slug/': typeof CitySlugIndexRoute
-  '/categories/index/sync-conflict-20261019-125235-WG2BFJE': typeof CategoriesIndexSyncConflict20261019125235WG2BFJERoute
-  '/clubs/index/sync-conflict-20261019-125220-WG2BFJE': typeof ClubsIndexSyncConflict20261019125220WG2BFJERoute
-  '/categories/$parentSlug/$childSlug/sync-conflict-20261019-125214-WG2BFJE': typeof CategoriesParentSlugChildSlugSyncConflict20261019125214WG2BFJERoute
-  '/category/$parentSlug/$childSlug/sync-conflict-20261019-125220-WG2BFJE': typeof CategoryParentSlugChildSlugSyncConflict20261019125220WG2BFJERoute
   '/city/$slug/$sport/$child': typeof CitySlugSportChildRoute
   '/city/$slug/$sport/': typeof CitySlugSportIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/403': typeof R403Route
+  '/404': typeof R404Route
   '/favorites': typeof FavoritesRoute
   '/map': typeof MapRoute
   '/offer': typeof OfferRoute
-  '/privacy': typeof PrivacyRouteWithChildren
+  '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
-  '/search': typeof SearchRouteWithChildren
+  '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/sync-conflict-20261019-125234-WG2BFJE': typeof _rootSyncConflict20261019125234WG2BFJERoute
   '/account/bookings': typeof AccountBookingsRoute
   '/account/favorites': typeof AccountFavoritesRoute
   '/account/messages': typeof AccountMessagesRouteWithChildren
@@ -579,69 +494,60 @@ export interface FileRoutesByTo {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
-  '/auth/forgot-password': typeof AuthForgotPasswordRouteWithChildren
-  '/auth/login': typeof AuthLoginRouteWithChildren
-  '/auth/reset-password': typeof AuthResetPasswordRouteWithChildren
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
-  '/auth/signup': typeof AuthSignupRouteWithChildren
-  '/auth/verify-email': typeof AuthVerifyEmailRouteWithChildren
-  '/blog/$slug': typeof BlogSlugRouteWithChildren
-  '/categories/$slug': typeof CategoriesSlugRouteWithChildren
-  '/category/$slug': typeof CategorySlugRouteWithChildren
-  '/clubs/$slug': typeof ClubsSlugRouteWithChildren
-  '/index/sync-conflict-20261019-125224-WG2BFJE': typeof IndexSyncConflict20261019125224WG2BFJERoute
-  '/privacy/sync-conflict-20261019-125235-WG2BFJE': typeof PrivacySyncConflict20261019125235WG2BFJERoute
-  '/search/sync-conflict-20261019-125235-WG2BFJE': typeof SearchSyncConflict20261019125235WG2BFJERoute
+  '/auth/signup': typeof AuthSignupRoute
+  '/auth/verify-email': typeof AuthVerifyEmailRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/categories/$slug': typeof CategoriesSlugRoute
+  '/category/$slug': typeof CategorySlugRoute
+  '/clubs/$slug': typeof ClubsSlugRoute
+  '/join/trainer': typeof JoinTrainerRoute
+  '/me/favorites': typeof MeFavoritesRoute
+  '/me/messages': typeof MeMessagesRouteWithChildren
+  '/me/profile': typeof MeProfileRoute
+  '/me/reviews': typeof MeReviewsRoute
+  '/me/settings': typeof MeSettingsRoute
   '/trainer-admin/messages': typeof TrainerAdminMessagesRouteWithChildren
-  '/trainer-admin/sync-conflict-20261019-125235-WG2BFJE': typeof TrainerAdminSyncConflict20261019125235WG2BFJERoute
-  '/trainers/$slug': typeof TrainersSlugRouteWithChildren
+  '/trainers/$slug': typeof TrainersSlugRoute
   '/account': typeof AccountIndexRoute
   '/admin': typeof AdminIndexRoute
   '/categories': typeof CategoriesIndexRoute
   '/clubs': typeof ClubsIndexRoute
+  '/me': typeof MeIndexRoute
   '/trainer-admin': typeof TrainerAdminIndexRoute
   '/account/messages/$conversationId': typeof AccountMessagesConversationIdRoute
   '/admin/accounts/$id': typeof AdminAccountsIdRoute
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
-  '/auth/forgot-password/sync-conflict-20261019-125218-WG2BFJE': typeof AuthForgotPasswordSyncConflict20261019125218WG2BFJERoute
-  '/auth/login/sync-conflict-20261019-125234-WG2BFJE': typeof AuthLoginSyncConflict20261019125234WG2BFJERoute
-  '/auth/reset-password/sync-conflict-20261019-125200-3SRRWYT': typeof AuthResetPasswordSyncConflict202610191252003SRRWYTRoute
-  '/auth/signup/sync-conflict-20261019-125203-3SRRWYT': typeof AuthSignupSyncConflict202610191252033SRRWYTRoute
-  '/auth/verify-email/sync-conflict-20261019-125157-3SRRWYT': typeof AuthVerifyEmailSyncConflict202610191251573SRRWYTRoute
-  '/blog/$slug/sync-conflict-20261019-125235-WG2BFJE': typeof BlogSlugSyncConflict20261019125235WG2BFJERoute
-  '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRouteWithChildren
-  '/categories/$slug/sync-conflict-20261019-125224-WG2BFJE': typeof CategoriesSlugSyncConflict20261019125224WG2BFJERoute
-  '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRouteWithChildren
-  '/category/$slug/sync-conflict-20261019-125235-WG2BFJE': typeof CategorySlugSyncConflict20261019125235WG2BFJERoute
-  '/city/$slug/sync-conflict-20261019-125235-WG2BFJE': typeof CitySlugSyncConflict20261019125235WG2BFJERoute
-  '/clubs/$slug/sync-conflict-20261019-125235-WG2BFJE': typeof ClubsSlugSyncConflict20261019125235WG2BFJERoute
+  '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
+  '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
+  '/me/messages/$conversationId': typeof MeMessagesConversationIdRoute
   '/trainer-admin/messages/$conversationId': typeof TrainerAdminMessagesConversationIdRoute
-  '/trainers/$slug/sync-conflict-20261019-125222-WG2BFJE': typeof TrainersSlugSyncConflict20261019125222WG2BFJERoute
   '/trainers/claim/$token': typeof TrainersClaimTokenRoute
   '/admin/accounts': typeof AdminAccountsIndexRoute
   '/admin/trainers': typeof AdminTrainersIndexRoute
   '/city/$slug': typeof CitySlugIndexRoute
-  '/categories/index/sync-conflict-20261019-125235-WG2BFJE': typeof CategoriesIndexSyncConflict20261019125235WG2BFJERoute
-  '/clubs/index/sync-conflict-20261019-125220-WG2BFJE': typeof ClubsIndexSyncConflict20261019125220WG2BFJERoute
-  '/categories/$parentSlug/$childSlug/sync-conflict-20261019-125214-WG2BFJE': typeof CategoriesParentSlugChildSlugSyncConflict20261019125214WG2BFJERoute
-  '/category/$parentSlug/$childSlug/sync-conflict-20261019-125220-WG2BFJE': typeof CategoryParentSlugChildSlugSyncConflict20261019125220WG2BFJERoute
   '/city/$slug/$sport/$child': typeof CitySlugSportChildRoute
   '/city/$slug/$sport': typeof CitySlugSportIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/403': typeof R403Route
+  '/404': typeof R404Route
   '/account': typeof AccountRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/favorites': typeof FavoritesRoute
   '/map': typeof MapRoute
+  '/me': typeof MeRouteWithChildren
   '/offer': typeof OfferRoute
-  '/privacy': typeof PrivacyRouteWithChildren
+  '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
-  '/search': typeof SearchRouteWithChildren
+  '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trainer-admin': typeof TrainerAdminRouteWithChildren
-  '/__root/sync-conflict-20261019-125234-WG2BFJE': typeof _rootSyncConflict20261019125234WG2BFJERoute
   '/account/bookings': typeof AccountBookingsRoute
   '/account/favorites': typeof AccountFavoritesRoute
   '/account/messages': typeof AccountMessagesRouteWithChildren
@@ -654,54 +560,43 @@ export interface FileRoutesById {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/trainers': typeof AdminTrainersRouteWithChildren
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
-  '/auth/forgot-password': typeof AuthForgotPasswordRouteWithChildren
-  '/auth/login': typeof AuthLoginRouteWithChildren
-  '/auth/reset-password': typeof AuthResetPasswordRouteWithChildren
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
-  '/auth/signup': typeof AuthSignupRouteWithChildren
-  '/auth/verify-email': typeof AuthVerifyEmailRouteWithChildren
-  '/blog/$slug': typeof BlogSlugRouteWithChildren
-  '/categories/$slug': typeof CategoriesSlugRouteWithChildren
-  '/category/$slug': typeof CategorySlugRouteWithChildren
+  '/auth/signup': typeof AuthSignupRoute
+  '/auth/verify-email': typeof AuthVerifyEmailRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/categories/$slug': typeof CategoriesSlugRoute
+  '/category/$slug': typeof CategorySlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
-  '/clubs/$slug': typeof ClubsSlugRouteWithChildren
-  '/index/sync-conflict-20261019-125224-WG2BFJE': typeof IndexSyncConflict20261019125224WG2BFJERoute
-  '/privacy/sync-conflict-20261019-125235-WG2BFJE': typeof PrivacySyncConflict20261019125235WG2BFJERoute
-  '/search/sync-conflict-20261019-125235-WG2BFJE': typeof SearchSyncConflict20261019125235WG2BFJERoute
+  '/clubs/$slug': typeof ClubsSlugRoute
+  '/join/trainer': typeof JoinTrainerRoute
+  '/me/favorites': typeof MeFavoritesRoute
+  '/me/messages': typeof MeMessagesRouteWithChildren
+  '/me/profile': typeof MeProfileRoute
+  '/me/reviews': typeof MeReviewsRoute
+  '/me/settings': typeof MeSettingsRoute
   '/trainer-admin/messages': typeof TrainerAdminMessagesRouteWithChildren
-  '/trainer-admin/sync-conflict-20261019-125235-WG2BFJE': typeof TrainerAdminSyncConflict20261019125235WG2BFJERoute
-  '/trainers/$slug': typeof TrainersSlugRouteWithChildren
+  '/trainers/$slug': typeof TrainersSlugRoute
   '/account/': typeof AccountIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/clubs/': typeof ClubsIndexRoute
+  '/me/': typeof MeIndexRoute
   '/trainer-admin/': typeof TrainerAdminIndexRoute
   '/account/messages/$conversationId': typeof AccountMessagesConversationIdRoute
   '/admin/accounts/$id': typeof AdminAccountsIdRoute
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
-  '/auth/forgot-password/sync-conflict-20261019-125218-WG2BFJE': typeof AuthForgotPasswordSyncConflict20261019125218WG2BFJERoute
-  '/auth/login/sync-conflict-20261019-125234-WG2BFJE': typeof AuthLoginSyncConflict20261019125234WG2BFJERoute
-  '/auth/reset-password/sync-conflict-20261019-125200-3SRRWYT': typeof AuthResetPasswordSyncConflict202610191252003SRRWYTRoute
-  '/auth/signup/sync-conflict-20261019-125203-3SRRWYT': typeof AuthSignupSyncConflict202610191252033SRRWYTRoute
-  '/auth/verify-email/sync-conflict-20261019-125157-3SRRWYT': typeof AuthVerifyEmailSyncConflict202610191251573SRRWYTRoute
-  '/blog/$slug/sync-conflict-20261019-125235-WG2BFJE': typeof BlogSlugSyncConflict20261019125235WG2BFJERoute
-  '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRouteWithChildren
-  '/categories/$slug/sync-conflict-20261019-125224-WG2BFJE': typeof CategoriesSlugSyncConflict20261019125224WG2BFJERoute
-  '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRouteWithChildren
-  '/category/$slug/sync-conflict-20261019-125235-WG2BFJE': typeof CategorySlugSyncConflict20261019125235WG2BFJERoute
+  '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
+  '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
   '/city/$slug/$sport': typeof CitySlugSportRouteWithChildren
-  '/city/$slug/sync-conflict-20261019-125235-WG2BFJE': typeof CitySlugSyncConflict20261019125235WG2BFJERoute
-  '/clubs/$slug/sync-conflict-20261019-125235-WG2BFJE': typeof ClubsSlugSyncConflict20261019125235WG2BFJERoute
+  '/me/messages/$conversationId': typeof MeMessagesConversationIdRoute
   '/trainer-admin/messages/$conversationId': typeof TrainerAdminMessagesConversationIdRoute
-  '/trainers/$slug/sync-conflict-20261019-125222-WG2BFJE': typeof TrainersSlugSyncConflict20261019125222WG2BFJERoute
   '/trainers/claim/$token': typeof TrainersClaimTokenRoute
   '/admin/accounts/': typeof AdminAccountsIndexRoute
   '/admin/trainers/': typeof AdminTrainersIndexRoute
   '/city/$slug/': typeof CitySlugIndexRoute
-  '/categories/index/sync-conflict-20261019-125235-WG2BFJE': typeof CategoriesIndexSyncConflict20261019125235WG2BFJERoute
-  '/clubs/index/sync-conflict-20261019-125220-WG2BFJE': typeof ClubsIndexSyncConflict20261019125220WG2BFJERoute
-  '/categories/$parentSlug/$childSlug/sync-conflict-20261019-125214-WG2BFJE': typeof CategoriesParentSlugChildSlugSyncConflict20261019125214WG2BFJERoute
-  '/category/$parentSlug/$childSlug/sync-conflict-20261019-125220-WG2BFJE': typeof CategoryParentSlugChildSlugSyncConflict20261019125220WG2BFJERoute
   '/city/$slug/$sport/$child': typeof CitySlugSportChildRoute
   '/city/$slug/$sport/': typeof CitySlugSportIndexRoute
 }
@@ -709,17 +604,19 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/403'
+    | '/404'
     | '/account'
     | '/admin'
     | '/favorites'
     | '/map'
+    | '/me'
     | '/offer'
     | '/privacy'
     | '/robots.txt'
     | '/search'
     | '/sitemap.xml'
     | '/trainer-admin'
-    | '/sync-conflict-20261019-125234-WG2BFJE'
     | '/account/bookings'
     | '/account/favorites'
     | '/account/messages'
@@ -743,48 +640,39 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/city/$slug'
     | '/clubs/$slug'
-    | '/index/sync-conflict-20261019-125224-WG2BFJE'
-    | '/privacy/sync-conflict-20261019-125235-WG2BFJE'
-    | '/search/sync-conflict-20261019-125235-WG2BFJE'
+    | '/join/trainer'
+    | '/me/favorites'
+    | '/me/messages'
+    | '/me/profile'
+    | '/me/reviews'
+    | '/me/settings'
     | '/trainer-admin/messages'
-    | '/trainer-admin/sync-conflict-20261019-125235-WG2BFJE'
     | '/trainers/$slug'
     | '/account/'
     | '/admin/'
     | '/categories/'
     | '/clubs/'
+    | '/me/'
     | '/trainer-admin/'
     | '/account/messages/$conversationId'
     | '/admin/accounts/$id'
     | '/admin/trainers/$slug'
-    | '/auth/forgot-password/sync-conflict-20261019-125218-WG2BFJE'
-    | '/auth/login/sync-conflict-20261019-125234-WG2BFJE'
-    | '/auth/reset-password/sync-conflict-20261019-125200-3SRRWYT'
-    | '/auth/signup/sync-conflict-20261019-125203-3SRRWYT'
-    | '/auth/verify-email/sync-conflict-20261019-125157-3SRRWYT'
-    | '/blog/$slug/sync-conflict-20261019-125235-WG2BFJE'
     | '/categories/$parentSlug/$childSlug'
-    | '/categories/$slug/sync-conflict-20261019-125224-WG2BFJE'
     | '/category/$parentSlug/$childSlug'
-    | '/category/$slug/sync-conflict-20261019-125235-WG2BFJE'
     | '/city/$slug/$sport'
-    | '/city/$slug/sync-conflict-20261019-125235-WG2BFJE'
-    | '/clubs/$slug/sync-conflict-20261019-125235-WG2BFJE'
+    | '/me/messages/$conversationId'
     | '/trainer-admin/messages/$conversationId'
-    | '/trainers/$slug/sync-conflict-20261019-125222-WG2BFJE'
     | '/trainers/claim/$token'
     | '/admin/accounts/'
     | '/admin/trainers/'
     | '/city/$slug/'
-    | '/categories/index/sync-conflict-20261019-125235-WG2BFJE'
-    | '/clubs/index/sync-conflict-20261019-125220-WG2BFJE'
-    | '/categories/$parentSlug/$childSlug/sync-conflict-20261019-125214-WG2BFJE'
-    | '/category/$parentSlug/$childSlug/sync-conflict-20261019-125220-WG2BFJE'
     | '/city/$slug/$sport/$child'
     | '/city/$slug/$sport/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/403'
+    | '/404'
     | '/favorites'
     | '/map'
     | '/offer'
@@ -792,7 +680,6 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/search'
     | '/sitemap.xml'
-    | '/sync-conflict-20261019-125234-WG2BFJE'
     | '/account/bookings'
     | '/account/favorites'
     | '/account/messages'
@@ -813,58 +700,49 @@ export interface FileRouteTypes {
     | '/categories/$slug'
     | '/category/$slug'
     | '/clubs/$slug'
-    | '/index/sync-conflict-20261019-125224-WG2BFJE'
-    | '/privacy/sync-conflict-20261019-125235-WG2BFJE'
-    | '/search/sync-conflict-20261019-125235-WG2BFJE'
+    | '/join/trainer'
+    | '/me/favorites'
+    | '/me/messages'
+    | '/me/profile'
+    | '/me/reviews'
+    | '/me/settings'
     | '/trainer-admin/messages'
-    | '/trainer-admin/sync-conflict-20261019-125235-WG2BFJE'
     | '/trainers/$slug'
     | '/account'
     | '/admin'
     | '/categories'
     | '/clubs'
+    | '/me'
     | '/trainer-admin'
     | '/account/messages/$conversationId'
     | '/admin/accounts/$id'
     | '/admin/trainers/$slug'
-    | '/auth/forgot-password/sync-conflict-20261019-125218-WG2BFJE'
-    | '/auth/login/sync-conflict-20261019-125234-WG2BFJE'
-    | '/auth/reset-password/sync-conflict-20261019-125200-3SRRWYT'
-    | '/auth/signup/sync-conflict-20261019-125203-3SRRWYT'
-    | '/auth/verify-email/sync-conflict-20261019-125157-3SRRWYT'
-    | '/blog/$slug/sync-conflict-20261019-125235-WG2BFJE'
     | '/categories/$parentSlug/$childSlug'
-    | '/categories/$slug/sync-conflict-20261019-125224-WG2BFJE'
     | '/category/$parentSlug/$childSlug'
-    | '/category/$slug/sync-conflict-20261019-125235-WG2BFJE'
-    | '/city/$slug/sync-conflict-20261019-125235-WG2BFJE'
-    | '/clubs/$slug/sync-conflict-20261019-125235-WG2BFJE'
+    | '/me/messages/$conversationId'
     | '/trainer-admin/messages/$conversationId'
-    | '/trainers/$slug/sync-conflict-20261019-125222-WG2BFJE'
     | '/trainers/claim/$token'
     | '/admin/accounts'
     | '/admin/trainers'
     | '/city/$slug'
-    | '/categories/index/sync-conflict-20261019-125235-WG2BFJE'
-    | '/clubs/index/sync-conflict-20261019-125220-WG2BFJE'
-    | '/categories/$parentSlug/$childSlug/sync-conflict-20261019-125214-WG2BFJE'
-    | '/category/$parentSlug/$childSlug/sync-conflict-20261019-125220-WG2BFJE'
     | '/city/$slug/$sport/$child'
     | '/city/$slug/$sport'
   id:
     | '__root__'
     | '/'
+    | '/403'
+    | '/404'
     | '/account'
     | '/admin'
     | '/favorites'
     | '/map'
+    | '/me'
     | '/offer'
     | '/privacy'
     | '/robots.txt'
     | '/search'
     | '/sitemap.xml'
     | '/trainer-admin'
-    | '/__root/sync-conflict-20261019-125234-WG2BFJE'
     | '/account/bookings'
     | '/account/favorites'
     | '/account/messages'
@@ -888,92 +766,74 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/city/$slug'
     | '/clubs/$slug'
-    | '/index/sync-conflict-20261019-125224-WG2BFJE'
-    | '/privacy/sync-conflict-20261019-125235-WG2BFJE'
-    | '/search/sync-conflict-20261019-125235-WG2BFJE'
+    | '/join/trainer'
+    | '/me/favorites'
+    | '/me/messages'
+    | '/me/profile'
+    | '/me/reviews'
+    | '/me/settings'
     | '/trainer-admin/messages'
-    | '/trainer-admin/sync-conflict-20261019-125235-WG2BFJE'
     | '/trainers/$slug'
     | '/account/'
     | '/admin/'
     | '/categories/'
     | '/clubs/'
+    | '/me/'
     | '/trainer-admin/'
     | '/account/messages/$conversationId'
     | '/admin/accounts/$id'
     | '/admin/trainers/$slug'
-    | '/auth/forgot-password/sync-conflict-20261019-125218-WG2BFJE'
-    | '/auth/login/sync-conflict-20261019-125234-WG2BFJE'
-    | '/auth/reset-password/sync-conflict-20261019-125200-3SRRWYT'
-    | '/auth/signup/sync-conflict-20261019-125203-3SRRWYT'
-    | '/auth/verify-email/sync-conflict-20261019-125157-3SRRWYT'
-    | '/blog/$slug/sync-conflict-20261019-125235-WG2BFJE'
     | '/categories/$parentSlug/$childSlug'
-    | '/categories/$slug/sync-conflict-20261019-125224-WG2BFJE'
     | '/category/$parentSlug/$childSlug'
-    | '/category/$slug/sync-conflict-20261019-125235-WG2BFJE'
     | '/city/$slug/$sport'
-    | '/city/$slug/sync-conflict-20261019-125235-WG2BFJE'
-    | '/clubs/$slug/sync-conflict-20261019-125235-WG2BFJE'
+    | '/me/messages/$conversationId'
     | '/trainer-admin/messages/$conversationId'
-    | '/trainers/$slug/sync-conflict-20261019-125222-WG2BFJE'
     | '/trainers/claim/$token'
     | '/admin/accounts/'
     | '/admin/trainers/'
     | '/city/$slug/'
-    | '/categories/index/sync-conflict-20261019-125235-WG2BFJE'
-    | '/clubs/index/sync-conflict-20261019-125220-WG2BFJE'
-    | '/categories/$parentSlug/$childSlug/sync-conflict-20261019-125214-WG2BFJE'
-    | '/category/$parentSlug/$childSlug/sync-conflict-20261019-125220-WG2BFJE'
     | '/city/$slug/$sport/$child'
     | '/city/$slug/$sport/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  R403Route: typeof R403Route
+  R404Route: typeof R404Route
   AccountRoute: typeof AccountRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
   FavoritesRoute: typeof FavoritesRoute
   MapRoute: typeof MapRoute
+  MeRoute: typeof MeRouteWithChildren
   OfferRoute: typeof OfferRoute
-  PrivacyRoute: typeof PrivacyRouteWithChildren
+  PrivacyRoute: typeof PrivacyRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
-  SearchRoute: typeof SearchRouteWithChildren
+  SearchRoute: typeof SearchRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TrainerAdminRoute: typeof TrainerAdminRouteWithChildren
-  _rootSyncConflict20261019125234WG2BFJERoute: typeof _rootSyncConflict20261019125234WG2BFJERoute
   AuthConfirmEmailRoute: typeof AuthConfirmEmailRoute
-  AuthForgotPasswordRoute: typeof AuthForgotPasswordRouteWithChildren
-  AuthLoginRoute: typeof AuthLoginRouteWithChildren
-  AuthResetPasswordRoute: typeof AuthResetPasswordRouteWithChildren
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   AuthSetPasswordRoute: typeof AuthSetPasswordRoute
-  AuthSignupRoute: typeof AuthSignupRouteWithChildren
-  AuthVerifyEmailRoute: typeof AuthVerifyEmailRouteWithChildren
-  BlogSlugRoute: typeof BlogSlugRouteWithChildren
-  CategoriesSlugRoute: typeof CategoriesSlugRouteWithChildren
-  CategorySlugRoute: typeof CategorySlugRouteWithChildren
+  AuthSignupRoute: typeof AuthSignupRoute
+  AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
+  BlogSlugRoute: typeof BlogSlugRoute
+  CategoriesSlugRoute: typeof CategoriesSlugRoute
+  CategorySlugRoute: typeof CategorySlugRoute
   CitySlugRoute: typeof CitySlugRouteWithChildren
-  ClubsSlugRoute: typeof ClubsSlugRouteWithChildren
-  IndexSyncConflict20261019125224WG2BFJERoute: typeof IndexSyncConflict20261019125224WG2BFJERoute
-  TrainersSlugRoute: typeof TrainersSlugRouteWithChildren
+  ClubsSlugRoute: typeof ClubsSlugRoute
+  JoinTrainerRoute: typeof JoinTrainerRoute
+  TrainersSlugRoute: typeof TrainersSlugRoute
   CategoriesIndexRoute: typeof CategoriesIndexRoute
   ClubsIndexRoute: typeof ClubsIndexRoute
-  CategoriesParentSlugChildSlugRoute: typeof CategoriesParentSlugChildSlugRouteWithChildren
-  CategoryParentSlugChildSlugRoute: typeof CategoryParentSlugChildSlugRouteWithChildren
+  CategoriesParentSlugChildSlugRoute: typeof CategoriesParentSlugChildSlugRoute
+  CategoryParentSlugChildSlugRoute: typeof CategoryParentSlugChildSlugRoute
   TrainersClaimTokenRoute: typeof TrainersClaimTokenRoute
-  CategoriesIndexSyncConflict20261019125235WG2BFJERoute: typeof CategoriesIndexSyncConflict20261019125235WG2BFJERoute
-  ClubsIndexSyncConflict20261019125220WG2BFJERoute: typeof ClubsIndexSyncConflict20261019125220WG2BFJERoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/__root/sync-conflict-20261019-125234-WG2BFJE': {
-      id: '/__root/sync-conflict-20261019-125234-WG2BFJE'
-      path: '/sync-conflict-20261019-125234-WG2BFJE'
-      fullPath: '/sync-conflict-20261019-125234-WG2BFJE'
-      preLoaderRoute: typeof _rootSyncConflict20261019125234WG2BFJERouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/trainer-admin': {
       id: '/trainer-admin'
       path: '/trainer-admin'
@@ -1016,6 +876,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OfferRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/me': {
+      id: '/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof MeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/map': {
       id: '/map'
       path: '/map'
@@ -1044,6 +911,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/404': {
+      id: '/404'
+      path: '/404'
+      fullPath: '/404'
+      preLoaderRoute: typeof R404RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/403': {
+      id: '/403'
+      path: '/403'
+      fullPath: '/403'
+      preLoaderRoute: typeof R403RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -1057,6 +938,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/trainer-admin/'
       preLoaderRoute: typeof TrainerAdminIndexRouteImport
       parentRoute: typeof TrainerAdminRoute
+    }
+    '/me/': {
+      id: '/me/'
+      path: '/'
+      fullPath: '/me/'
+      preLoaderRoute: typeof MeIndexRouteImport
+      parentRoute: typeof MeRoute
     }
     '/clubs/': {
       id: '/clubs/'
@@ -1093,13 +981,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrainersSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/trainer-admin/sync-conflict-20261019-125235-WG2BFJE': {
-      id: '/trainer-admin/sync-conflict-20261019-125235-WG2BFJE'
-      path: '/sync-conflict-20261019-125235-WG2BFJE'
-      fullPath: '/trainer-admin/sync-conflict-20261019-125235-WG2BFJE'
-      preLoaderRoute: typeof TrainerAdminSyncConflict20261019125235WG2BFJERouteImport
-      parentRoute: typeof TrainerAdminRoute
-    }
     '/trainer-admin/messages': {
       id: '/trainer-admin/messages'
       path: '/messages'
@@ -1107,25 +988,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrainerAdminMessagesRouteImport
       parentRoute: typeof TrainerAdminRoute
     }
-    '/search/sync-conflict-20261019-125235-WG2BFJE': {
-      id: '/search/sync-conflict-20261019-125235-WG2BFJE'
-      path: '/sync-conflict-20261019-125235-WG2BFJE'
-      fullPath: '/search/sync-conflict-20261019-125235-WG2BFJE'
-      preLoaderRoute: typeof SearchSyncConflict20261019125235WG2BFJERouteImport
-      parentRoute: typeof SearchRoute
+    '/me/settings': {
+      id: '/me/settings'
+      path: '/settings'
+      fullPath: '/me/settings'
+      preLoaderRoute: typeof MeSettingsRouteImport
+      parentRoute: typeof MeRoute
     }
-    '/privacy/sync-conflict-20261019-125235-WG2BFJE': {
-      id: '/privacy/sync-conflict-20261019-125235-WG2BFJE'
-      path: '/sync-conflict-20261019-125235-WG2BFJE'
-      fullPath: '/privacy/sync-conflict-20261019-125235-WG2BFJE'
-      preLoaderRoute: typeof PrivacySyncConflict20261019125235WG2BFJERouteImport
-      parentRoute: typeof PrivacyRoute
+    '/me/reviews': {
+      id: '/me/reviews'
+      path: '/reviews'
+      fullPath: '/me/reviews'
+      preLoaderRoute: typeof MeReviewsRouteImport
+      parentRoute: typeof MeRoute
     }
-    '/index/sync-conflict-20261019-125224-WG2BFJE': {
-      id: '/index/sync-conflict-20261019-125224-WG2BFJE'
-      path: '/index/sync-conflict-20261019-125224-WG2BFJE'
-      fullPath: '/index/sync-conflict-20261019-125224-WG2BFJE'
-      preLoaderRoute: typeof IndexSyncConflict20261019125224WG2BFJERouteImport
+    '/me/profile': {
+      id: '/me/profile'
+      path: '/profile'
+      fullPath: '/me/profile'
+      preLoaderRoute: typeof MeProfileRouteImport
+      parentRoute: typeof MeRoute
+    }
+    '/me/messages': {
+      id: '/me/messages'
+      path: '/messages'
+      fullPath: '/me/messages'
+      preLoaderRoute: typeof MeMessagesRouteImport
+      parentRoute: typeof MeRoute
+    }
+    '/me/favorites': {
+      id: '/me/favorites'
+      path: '/favorites'
+      fullPath: '/me/favorites'
+      preLoaderRoute: typeof MeFavoritesRouteImport
+      parentRoute: typeof MeRoute
+    }
+    '/join/trainer': {
+      id: '/join/trainer'
+      path: '/join/trainer'
+      fullPath: '/join/trainer'
+      preLoaderRoute: typeof JoinTrainerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/clubs/$slug': {
@@ -1289,20 +1191,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountBookingsRouteImport
       parentRoute: typeof AccountRoute
     }
-    '/clubs/index/sync-conflict-20261019-125220-WG2BFJE': {
-      id: '/clubs/index/sync-conflict-20261019-125220-WG2BFJE'
-      path: '/clubs/index/sync-conflict-20261019-125220-WG2BFJE'
-      fullPath: '/clubs/index/sync-conflict-20261019-125220-WG2BFJE'
-      preLoaderRoute: typeof ClubsIndexSyncConflict20261019125220WG2BFJERouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/categories/index/sync-conflict-20261019-125235-WG2BFJE': {
-      id: '/categories/index/sync-conflict-20261019-125235-WG2BFJE'
-      path: '/categories/index/sync-conflict-20261019-125235-WG2BFJE'
-      fullPath: '/categories/index/sync-conflict-20261019-125235-WG2BFJE'
-      preLoaderRoute: typeof CategoriesIndexSyncConflict20261019125235WG2BFJERouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/city/$slug/': {
       id: '/city/$slug/'
       path: '/'
@@ -1331,13 +1219,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrainersClaimTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/trainers/$slug/sync-conflict-20261019-125222-WG2BFJE': {
-      id: '/trainers/$slug/sync-conflict-20261019-125222-WG2BFJE'
-      path: '/sync-conflict-20261019-125222-WG2BFJE'
-      fullPath: '/trainers/$slug/sync-conflict-20261019-125222-WG2BFJE'
-      preLoaderRoute: typeof TrainersSlugSyncConflict20261019125222WG2BFJERouteImport
-      parentRoute: typeof TrainersSlugRoute
-    }
     '/trainer-admin/messages/$conversationId': {
       id: '/trainer-admin/messages/$conversationId'
       path: '/$conversationId'
@@ -1345,19 +1226,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrainerAdminMessagesConversationIdRouteImport
       parentRoute: typeof TrainerAdminMessagesRoute
     }
-    '/clubs/$slug/sync-conflict-20261019-125235-WG2BFJE': {
-      id: '/clubs/$slug/sync-conflict-20261019-125235-WG2BFJE'
-      path: '/sync-conflict-20261019-125235-WG2BFJE'
-      fullPath: '/clubs/$slug/sync-conflict-20261019-125235-WG2BFJE'
-      preLoaderRoute: typeof ClubsSlugSyncConflict20261019125235WG2BFJERouteImport
-      parentRoute: typeof ClubsSlugRoute
-    }
-    '/city/$slug/sync-conflict-20261019-125235-WG2BFJE': {
-      id: '/city/$slug/sync-conflict-20261019-125235-WG2BFJE'
-      path: '/sync-conflict-20261019-125235-WG2BFJE'
-      fullPath: '/city/$slug/sync-conflict-20261019-125235-WG2BFJE'
-      preLoaderRoute: typeof CitySlugSyncConflict20261019125235WG2BFJERouteImport
-      parentRoute: typeof CitySlugRoute
+    '/me/messages/$conversationId': {
+      id: '/me/messages/$conversationId'
+      path: '/$conversationId'
+      fullPath: '/me/messages/$conversationId'
+      preLoaderRoute: typeof MeMessagesConversationIdRouteImport
+      parentRoute: typeof MeMessagesRoute
     }
     '/city/$slug/$sport': {
       id: '/city/$slug/$sport'
@@ -1366,13 +1240,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CitySlugSportRouteImport
       parentRoute: typeof CitySlugRoute
     }
-    '/category/$slug/sync-conflict-20261019-125235-WG2BFJE': {
-      id: '/category/$slug/sync-conflict-20261019-125235-WG2BFJE'
-      path: '/sync-conflict-20261019-125235-WG2BFJE'
-      fullPath: '/category/$slug/sync-conflict-20261019-125235-WG2BFJE'
-      preLoaderRoute: typeof CategorySlugSyncConflict20261019125235WG2BFJERouteImport
-      parentRoute: typeof CategorySlugRoute
-    }
     '/category/$parentSlug/$childSlug': {
       id: '/category/$parentSlug/$childSlug'
       path: '/category/$parentSlug/$childSlug'
@@ -1380,61 +1247,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoryParentSlugChildSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/categories/$slug/sync-conflict-20261019-125224-WG2BFJE': {
-      id: '/categories/$slug/sync-conflict-20261019-125224-WG2BFJE'
-      path: '/sync-conflict-20261019-125224-WG2BFJE'
-      fullPath: '/categories/$slug/sync-conflict-20261019-125224-WG2BFJE'
-      preLoaderRoute: typeof CategoriesSlugSyncConflict20261019125224WG2BFJERouteImport
-      parentRoute: typeof CategoriesSlugRoute
-    }
     '/categories/$parentSlug/$childSlug': {
       id: '/categories/$parentSlug/$childSlug'
       path: '/categories/$parentSlug/$childSlug'
       fullPath: '/categories/$parentSlug/$childSlug'
       preLoaderRoute: typeof CategoriesParentSlugChildSlugRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/blog/$slug/sync-conflict-20261019-125235-WG2BFJE': {
-      id: '/blog/$slug/sync-conflict-20261019-125235-WG2BFJE'
-      path: '/sync-conflict-20261019-125235-WG2BFJE'
-      fullPath: '/blog/$slug/sync-conflict-20261019-125235-WG2BFJE'
-      preLoaderRoute: typeof BlogSlugSyncConflict20261019125235WG2BFJERouteImport
-      parentRoute: typeof BlogSlugRoute
-    }
-    '/auth/verify-email/sync-conflict-20261019-125157-3SRRWYT': {
-      id: '/auth/verify-email/sync-conflict-20261019-125157-3SRRWYT'
-      path: '/sync-conflict-20261019-125157-3SRRWYT'
-      fullPath: '/auth/verify-email/sync-conflict-20261019-125157-3SRRWYT'
-      preLoaderRoute: typeof AuthVerifyEmailSyncConflict202610191251573SRRWYTRouteImport
-      parentRoute: typeof AuthVerifyEmailRoute
-    }
-    '/auth/signup/sync-conflict-20261019-125203-3SRRWYT': {
-      id: '/auth/signup/sync-conflict-20261019-125203-3SRRWYT'
-      path: '/sync-conflict-20261019-125203-3SRRWYT'
-      fullPath: '/auth/signup/sync-conflict-20261019-125203-3SRRWYT'
-      preLoaderRoute: typeof AuthSignupSyncConflict202610191252033SRRWYTRouteImport
-      parentRoute: typeof AuthSignupRoute
-    }
-    '/auth/reset-password/sync-conflict-20261019-125200-3SRRWYT': {
-      id: '/auth/reset-password/sync-conflict-20261019-125200-3SRRWYT'
-      path: '/sync-conflict-20261019-125200-3SRRWYT'
-      fullPath: '/auth/reset-password/sync-conflict-20261019-125200-3SRRWYT'
-      preLoaderRoute: typeof AuthResetPasswordSyncConflict202610191252003SRRWYTRouteImport
-      parentRoute: typeof AuthResetPasswordRoute
-    }
-    '/auth/login/sync-conflict-20261019-125234-WG2BFJE': {
-      id: '/auth/login/sync-conflict-20261019-125234-WG2BFJE'
-      path: '/sync-conflict-20261019-125234-WG2BFJE'
-      fullPath: '/auth/login/sync-conflict-20261019-125234-WG2BFJE'
-      preLoaderRoute: typeof AuthLoginSyncConflict20261019125234WG2BFJERouteImport
-      parentRoute: typeof AuthLoginRoute
-    }
-    '/auth/forgot-password/sync-conflict-20261019-125218-WG2BFJE': {
-      id: '/auth/forgot-password/sync-conflict-20261019-125218-WG2BFJE'
-      path: '/sync-conflict-20261019-125218-WG2BFJE'
-      fullPath: '/auth/forgot-password/sync-conflict-20261019-125218-WG2BFJE'
-      preLoaderRoute: typeof AuthForgotPasswordSyncConflict20261019125218WG2BFJERouteImport
-      parentRoute: typeof AuthForgotPasswordRoute
     }
     '/admin/trainers/$slug': {
       id: '/admin/trainers/$slug'
@@ -1470,20 +1288,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/city/$slug/$sport/$child'
       preLoaderRoute: typeof CitySlugSportChildRouteImport
       parentRoute: typeof CitySlugSportRoute
-    }
-    '/category/$parentSlug/$childSlug/sync-conflict-20261019-125220-WG2BFJE': {
-      id: '/category/$parentSlug/$childSlug/sync-conflict-20261019-125220-WG2BFJE'
-      path: '/sync-conflict-20261019-125220-WG2BFJE'
-      fullPath: '/category/$parentSlug/$childSlug/sync-conflict-20261019-125220-WG2BFJE'
-      preLoaderRoute: typeof CategoryParentSlugChildSlugSyncConflict20261019125220WG2BFJERouteImport
-      parentRoute: typeof CategoryParentSlugChildSlugRoute
-    }
-    '/categories/$parentSlug/$childSlug/sync-conflict-20261019-125214-WG2BFJE': {
-      id: '/categories/$parentSlug/$childSlug/sync-conflict-20261019-125214-WG2BFJE'
-      path: '/sync-conflict-20261019-125214-WG2BFJE'
-      fullPath: '/categories/$parentSlug/$childSlug/sync-conflict-20261019-125214-WG2BFJE'
-      preLoaderRoute: typeof CategoriesParentSlugChildSlugSyncConflict20261019125214WG2BFJERouteImport
-      parentRoute: typeof CategoriesParentSlugChildSlugRoute
     }
   }
 }
@@ -1571,29 +1375,37 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
-interface PrivacyRouteChildren {
-  PrivacySyncConflict20261019125235WG2BFJERoute: typeof PrivacySyncConflict20261019125235WG2BFJERoute
+interface MeMessagesRouteChildren {
+  MeMessagesConversationIdRoute: typeof MeMessagesConversationIdRoute
 }
 
-const PrivacyRouteChildren: PrivacyRouteChildren = {
-  PrivacySyncConflict20261019125235WG2BFJERoute:
-    PrivacySyncConflict20261019125235WG2BFJERoute,
+const MeMessagesRouteChildren: MeMessagesRouteChildren = {
+  MeMessagesConversationIdRoute: MeMessagesConversationIdRoute,
 }
 
-const PrivacyRouteWithChildren =
-  PrivacyRoute._addFileChildren(PrivacyRouteChildren)
+const MeMessagesRouteWithChildren = MeMessagesRoute._addFileChildren(
+  MeMessagesRouteChildren,
+)
 
-interface SearchRouteChildren {
-  SearchSyncConflict20261019125235WG2BFJERoute: typeof SearchSyncConflict20261019125235WG2BFJERoute
+interface MeRouteChildren {
+  MeFavoritesRoute: typeof MeFavoritesRoute
+  MeMessagesRoute: typeof MeMessagesRouteWithChildren
+  MeProfileRoute: typeof MeProfileRoute
+  MeReviewsRoute: typeof MeReviewsRoute
+  MeSettingsRoute: typeof MeSettingsRoute
+  MeIndexRoute: typeof MeIndexRoute
 }
 
-const SearchRouteChildren: SearchRouteChildren = {
-  SearchSyncConflict20261019125235WG2BFJERoute:
-    SearchSyncConflict20261019125235WG2BFJERoute,
+const MeRouteChildren: MeRouteChildren = {
+  MeFavoritesRoute: MeFavoritesRoute,
+  MeMessagesRoute: MeMessagesRouteWithChildren,
+  MeProfileRoute: MeProfileRoute,
+  MeReviewsRoute: MeReviewsRoute,
+  MeSettingsRoute: MeSettingsRoute,
+  MeIndexRoute: MeIndexRoute,
 }
 
-const SearchRouteWithChildren =
-  SearchRoute._addFileChildren(SearchRouteChildren)
+const MeRouteWithChildren = MeRoute._addFileChildren(MeRouteChildren)
 
 interface TrainerAdminMessagesRouteChildren {
   TrainerAdminMessagesConversationIdRoute: typeof TrainerAdminMessagesConversationIdRoute
@@ -1609,121 +1421,16 @@ const TrainerAdminMessagesRouteWithChildren =
 
 interface TrainerAdminRouteChildren {
   TrainerAdminMessagesRoute: typeof TrainerAdminMessagesRouteWithChildren
-  TrainerAdminSyncConflict20261019125235WG2BFJERoute: typeof TrainerAdminSyncConflict20261019125235WG2BFJERoute
   TrainerAdminIndexRoute: typeof TrainerAdminIndexRoute
 }
 
 const TrainerAdminRouteChildren: TrainerAdminRouteChildren = {
   TrainerAdminMessagesRoute: TrainerAdminMessagesRouteWithChildren,
-  TrainerAdminSyncConflict20261019125235WG2BFJERoute:
-    TrainerAdminSyncConflict20261019125235WG2BFJERoute,
   TrainerAdminIndexRoute: TrainerAdminIndexRoute,
 }
 
 const TrainerAdminRouteWithChildren = TrainerAdminRoute._addFileChildren(
   TrainerAdminRouteChildren,
-)
-
-interface AuthForgotPasswordRouteChildren {
-  AuthForgotPasswordSyncConflict20261019125218WG2BFJERoute: typeof AuthForgotPasswordSyncConflict20261019125218WG2BFJERoute
-}
-
-const AuthForgotPasswordRouteChildren: AuthForgotPasswordRouteChildren = {
-  AuthForgotPasswordSyncConflict20261019125218WG2BFJERoute:
-    AuthForgotPasswordSyncConflict20261019125218WG2BFJERoute,
-}
-
-const AuthForgotPasswordRouteWithChildren =
-  AuthForgotPasswordRoute._addFileChildren(AuthForgotPasswordRouteChildren)
-
-interface AuthLoginRouteChildren {
-  AuthLoginSyncConflict20261019125234WG2BFJERoute: typeof AuthLoginSyncConflict20261019125234WG2BFJERoute
-}
-
-const AuthLoginRouteChildren: AuthLoginRouteChildren = {
-  AuthLoginSyncConflict20261019125234WG2BFJERoute:
-    AuthLoginSyncConflict20261019125234WG2BFJERoute,
-}
-
-const AuthLoginRouteWithChildren = AuthLoginRoute._addFileChildren(
-  AuthLoginRouteChildren,
-)
-
-interface AuthResetPasswordRouteChildren {
-  AuthResetPasswordSyncConflict202610191252003SRRWYTRoute: typeof AuthResetPasswordSyncConflict202610191252003SRRWYTRoute
-}
-
-const AuthResetPasswordRouteChildren: AuthResetPasswordRouteChildren = {
-  AuthResetPasswordSyncConflict202610191252003SRRWYTRoute:
-    AuthResetPasswordSyncConflict202610191252003SRRWYTRoute,
-}
-
-const AuthResetPasswordRouteWithChildren =
-  AuthResetPasswordRoute._addFileChildren(AuthResetPasswordRouteChildren)
-
-interface AuthSignupRouteChildren {
-  AuthSignupSyncConflict202610191252033SRRWYTRoute: typeof AuthSignupSyncConflict202610191252033SRRWYTRoute
-}
-
-const AuthSignupRouteChildren: AuthSignupRouteChildren = {
-  AuthSignupSyncConflict202610191252033SRRWYTRoute:
-    AuthSignupSyncConflict202610191252033SRRWYTRoute,
-}
-
-const AuthSignupRouteWithChildren = AuthSignupRoute._addFileChildren(
-  AuthSignupRouteChildren,
-)
-
-interface AuthVerifyEmailRouteChildren {
-  AuthVerifyEmailSyncConflict202610191251573SRRWYTRoute: typeof AuthVerifyEmailSyncConflict202610191251573SRRWYTRoute
-}
-
-const AuthVerifyEmailRouteChildren: AuthVerifyEmailRouteChildren = {
-  AuthVerifyEmailSyncConflict202610191251573SRRWYTRoute:
-    AuthVerifyEmailSyncConflict202610191251573SRRWYTRoute,
-}
-
-const AuthVerifyEmailRouteWithChildren = AuthVerifyEmailRoute._addFileChildren(
-  AuthVerifyEmailRouteChildren,
-)
-
-interface BlogSlugRouteChildren {
-  BlogSlugSyncConflict20261019125235WG2BFJERoute: typeof BlogSlugSyncConflict20261019125235WG2BFJERoute
-}
-
-const BlogSlugRouteChildren: BlogSlugRouteChildren = {
-  BlogSlugSyncConflict20261019125235WG2BFJERoute:
-    BlogSlugSyncConflict20261019125235WG2BFJERoute,
-}
-
-const BlogSlugRouteWithChildren = BlogSlugRoute._addFileChildren(
-  BlogSlugRouteChildren,
-)
-
-interface CategoriesSlugRouteChildren {
-  CategoriesSlugSyncConflict20261019125224WG2BFJERoute: typeof CategoriesSlugSyncConflict20261019125224WG2BFJERoute
-}
-
-const CategoriesSlugRouteChildren: CategoriesSlugRouteChildren = {
-  CategoriesSlugSyncConflict20261019125224WG2BFJERoute:
-    CategoriesSlugSyncConflict20261019125224WG2BFJERoute,
-}
-
-const CategoriesSlugRouteWithChildren = CategoriesSlugRoute._addFileChildren(
-  CategoriesSlugRouteChildren,
-)
-
-interface CategorySlugRouteChildren {
-  CategorySlugSyncConflict20261019125235WG2BFJERoute: typeof CategorySlugSyncConflict20261019125235WG2BFJERoute
-}
-
-const CategorySlugRouteChildren: CategorySlugRouteChildren = {
-  CategorySlugSyncConflict20261019125235WG2BFJERoute:
-    CategorySlugSyncConflict20261019125235WG2BFJERoute,
-}
-
-const CategorySlugRouteWithChildren = CategorySlugRoute._addFileChildren(
-  CategorySlugRouteChildren,
 )
 
 interface CitySlugSportRouteChildren {
@@ -1742,14 +1449,11 @@ const CitySlugSportRouteWithChildren = CitySlugSportRoute._addFileChildren(
 
 interface CitySlugRouteChildren {
   CitySlugSportRoute: typeof CitySlugSportRouteWithChildren
-  CitySlugSyncConflict20261019125235WG2BFJERoute: typeof CitySlugSyncConflict20261019125235WG2BFJERoute
   CitySlugIndexRoute: typeof CitySlugIndexRoute
 }
 
 const CitySlugRouteChildren: CitySlugRouteChildren = {
   CitySlugSportRoute: CitySlugSportRouteWithChildren,
-  CitySlugSyncConflict20261019125235WG2BFJERoute:
-    CitySlugSyncConflict20261019125235WG2BFJERoute,
   CitySlugIndexRoute: CitySlugIndexRoute,
 }
 
@@ -1757,102 +1461,40 @@ const CitySlugRouteWithChildren = CitySlugRoute._addFileChildren(
   CitySlugRouteChildren,
 )
 
-interface ClubsSlugRouteChildren {
-  ClubsSlugSyncConflict20261019125235WG2BFJERoute: typeof ClubsSlugSyncConflict20261019125235WG2BFJERoute
-}
-
-const ClubsSlugRouteChildren: ClubsSlugRouteChildren = {
-  ClubsSlugSyncConflict20261019125235WG2BFJERoute:
-    ClubsSlugSyncConflict20261019125235WG2BFJERoute,
-}
-
-const ClubsSlugRouteWithChildren = ClubsSlugRoute._addFileChildren(
-  ClubsSlugRouteChildren,
-)
-
-interface TrainersSlugRouteChildren {
-  TrainersSlugSyncConflict20261019125222WG2BFJERoute: typeof TrainersSlugSyncConflict20261019125222WG2BFJERoute
-}
-
-const TrainersSlugRouteChildren: TrainersSlugRouteChildren = {
-  TrainersSlugSyncConflict20261019125222WG2BFJERoute:
-    TrainersSlugSyncConflict20261019125222WG2BFJERoute,
-}
-
-const TrainersSlugRouteWithChildren = TrainersSlugRoute._addFileChildren(
-  TrainersSlugRouteChildren,
-)
-
-interface CategoriesParentSlugChildSlugRouteChildren {
-  CategoriesParentSlugChildSlugSyncConflict20261019125214WG2BFJERoute: typeof CategoriesParentSlugChildSlugSyncConflict20261019125214WG2BFJERoute
-}
-
-const CategoriesParentSlugChildSlugRouteChildren: CategoriesParentSlugChildSlugRouteChildren =
-  {
-    CategoriesParentSlugChildSlugSyncConflict20261019125214WG2BFJERoute:
-      CategoriesParentSlugChildSlugSyncConflict20261019125214WG2BFJERoute,
-  }
-
-const CategoriesParentSlugChildSlugRouteWithChildren =
-  CategoriesParentSlugChildSlugRoute._addFileChildren(
-    CategoriesParentSlugChildSlugRouteChildren,
-  )
-
-interface CategoryParentSlugChildSlugRouteChildren {
-  CategoryParentSlugChildSlugSyncConflict20261019125220WG2BFJERoute: typeof CategoryParentSlugChildSlugSyncConflict20261019125220WG2BFJERoute
-}
-
-const CategoryParentSlugChildSlugRouteChildren: CategoryParentSlugChildSlugRouteChildren =
-  {
-    CategoryParentSlugChildSlugSyncConflict20261019125220WG2BFJERoute:
-      CategoryParentSlugChildSlugSyncConflict20261019125220WG2BFJERoute,
-  }
-
-const CategoryParentSlugChildSlugRouteWithChildren =
-  CategoryParentSlugChildSlugRoute._addFileChildren(
-    CategoryParentSlugChildSlugRouteChildren,
-  )
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  R403Route: R403Route,
+  R404Route: R404Route,
   AccountRoute: AccountRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
   FavoritesRoute: FavoritesRoute,
   MapRoute: MapRoute,
+  MeRoute: MeRouteWithChildren,
   OfferRoute: OfferRoute,
-  PrivacyRoute: PrivacyRouteWithChildren,
+  PrivacyRoute: PrivacyRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
-  SearchRoute: SearchRouteWithChildren,
+  SearchRoute: SearchRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TrainerAdminRoute: TrainerAdminRouteWithChildren,
-  _rootSyncConflict20261019125234WG2BFJERoute:
-    _rootSyncConflict20261019125234WG2BFJERoute,
   AuthConfirmEmailRoute: AuthConfirmEmailRoute,
-  AuthForgotPasswordRoute: AuthForgotPasswordRouteWithChildren,
-  AuthLoginRoute: AuthLoginRouteWithChildren,
-  AuthResetPasswordRoute: AuthResetPasswordRouteWithChildren,
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthSetPasswordRoute: AuthSetPasswordRoute,
-  AuthSignupRoute: AuthSignupRouteWithChildren,
-  AuthVerifyEmailRoute: AuthVerifyEmailRouteWithChildren,
-  BlogSlugRoute: BlogSlugRouteWithChildren,
-  CategoriesSlugRoute: CategoriesSlugRouteWithChildren,
-  CategorySlugRoute: CategorySlugRouteWithChildren,
+  AuthSignupRoute: AuthSignupRoute,
+  AuthVerifyEmailRoute: AuthVerifyEmailRoute,
+  BlogSlugRoute: BlogSlugRoute,
+  CategoriesSlugRoute: CategoriesSlugRoute,
+  CategorySlugRoute: CategorySlugRoute,
   CitySlugRoute: CitySlugRouteWithChildren,
-  ClubsSlugRoute: ClubsSlugRouteWithChildren,
-  IndexSyncConflict20261019125224WG2BFJERoute:
-    IndexSyncConflict20261019125224WG2BFJERoute,
-  TrainersSlugRoute: TrainersSlugRouteWithChildren,
+  ClubsSlugRoute: ClubsSlugRoute,
+  JoinTrainerRoute: JoinTrainerRoute,
+  TrainersSlugRoute: TrainersSlugRoute,
   CategoriesIndexRoute: CategoriesIndexRoute,
   ClubsIndexRoute: ClubsIndexRoute,
-  CategoriesParentSlugChildSlugRoute:
-    CategoriesParentSlugChildSlugRouteWithChildren,
-  CategoryParentSlugChildSlugRoute:
-    CategoryParentSlugChildSlugRouteWithChildren,
+  CategoriesParentSlugChildSlugRoute: CategoriesParentSlugChildSlugRoute,
+  CategoryParentSlugChildSlugRoute: CategoryParentSlugChildSlugRoute,
   TrainersClaimTokenRoute: TrainersClaimTokenRoute,
-  CategoriesIndexSyncConflict20261019125235WG2BFJERoute:
-    CategoriesIndexSyncConflict20261019125235WG2BFJERoute,
-  ClubsIndexSyncConflict20261019125220WG2BFJERoute:
-    ClubsIndexSyncConflict20261019125220WG2BFJERoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

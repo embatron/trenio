@@ -37,7 +37,7 @@ function AdminOverviewPage() {
           <span>{pluralRu(data.accountsTotal, "аккаунт", "аккаунта", "аккаунтов")}</span>
         </div>
       </div>
-      <p className="cabinet-note">Интерфейс тренера открывается отдельно: <Link to="/trainer-admin">кабинет тренера</Link>.</p>
+      <p className="cabinet-note">Интерфейс тренера открывается отдельно: <Link to="/me">кабинет тренера</Link>.</p>
     </>
   );
 }

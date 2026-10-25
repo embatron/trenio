@@ -78,7 +78,7 @@ export function ConversationThread({
     if (firstOpen || stick.current || lastMine) el.scrollTop = el.scrollHeight;
   }, [thread?.conversationId, messages.length, lastId, lastClient, lastMine]);
 
-  const listPath = view === "own" ? "/account/messages" : "/trainer-admin/messages";
+  const listPath = view === "own" ? "/account/messages" : "/me/messages";
   const hint = thread && !thread.canWrite
       ? thread.status === "closed"
         ? "Переписка закрыта. Новые сообщения не отправляются."

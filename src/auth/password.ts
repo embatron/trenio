@@ -1,5 +1,7 @@
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 
+import { storedBelarusPhone } from "@/lib/auth/phone";
+
 export { validatePasswordStrength } from "@/lib/auth/password-policy";
 
 const SCRYPT_OPTIONS = {
@@ -45,9 +47,7 @@ export function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
 }
 
+/** Account phone ready for `users.phone`. Same string as `storedBelarusPhone`. */
 export function normalizePhone(phone: string | undefined | null): string | null {
-  if (!phone) return null;
-  const digits = phone.replace(/\D/g, "");
-  if (digits.length < 9) return null;
-  return digits.startsWith("375") ? `+${digits}` : `+${digits}`;
+  return storedBelarusPhone(phone);
 }

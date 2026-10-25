@@ -9,6 +9,7 @@ import {
   MAX_TRAINING_PLACES,
   placeHasText,
   placeLine,
+  suggestionLines,
   type AddressSuggestion,
   type GeocodeStatus,
   type TrainerPlace,
@@ -34,11 +35,13 @@ function PlaceInput({
   suggestRef.current = suggest;
   const listId = useId();
   const boxRef = useRef<HTMLDivElement>(null);
+  const [draft, setDraft] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [active, setActive] = useState(0);
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
-  const text = placeLine(place);
-  const query = text.trim();
+  const text = draft ?? placeLine(place);
+  const query = text.trim().replace(/\s+/g, " ");
   const showMenu = open && query.length >= 3;
 
   useEffect(() => {
@@ -50,6 +53,7 @@ function PlaceInput({
         .then((result) => {
           if (cancelled) return;
           setSuggestions((result as { suggestions: AddressSuggestion[] }).suggestions);
+          setActive(0);
         })
         .catch((error: unknown) => {
           if (cancelled) return;
@@ -67,16 +71,62 @@ function PlaceInput({
     };
   }, [query, showMenu]);
 
+  function finishEditing() {
+    setOpen(false);
+    if (draft == null) return;
+    const cleaned = draft.replace(/[ \t]+/g, " ").trim();
+    setDraft(null);
+    if (cleaned === placeLine(place)) return;
+    onChange({
+      city: "",
+      district: "",
+      address: cleaned,
+      lat: null,
+      lng: null,
+      geocodeStatus: null,
+    });
+  }
+
+  const finishRef = useRef(finishEditing);
+  finishRef.current = finishEditing;
   useEffect(() => {
-    if (!showMenu) return;
     const onPointer = (event: PointerEvent) => {
-      if (!boxRef.current?.contains(event.target as Node)) setOpen(false);
+      if (!boxRef.current?.contains(event.target as Node)) finishRef.current();
     };
     window.addEventListener("pointerdown", onPointer);
     return () => window.removeEventListener("pointerdown", onPointer);
-  }, [showMenu]);
+  }, []);
+
+  useEffect(() => {
+    if (!showMenu) return;
+    const previous = document.body.style.paddingBottom;
+    const lift = () => {
+      const box = boxRef.current;
+      const input = box?.querySelector("input");
+      const menu = box?.querySelector(".address-field__menu");
+      if (!input || !menu) return;
+      const narrow = window.innerWidth < 768;
+      const header = document.querySelector(".site-header");
+      const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
+      const field = input.getBoundingClientRect();
+      const sheet = menu.getBoundingClientRect();
+      const limit = narrow ? sheet.top - 8 : window.innerHeight - 8;
+      const covered = narrow ? field.bottom - limit : sheet.bottom - limit;
+      const maxShift = Math.max(0, field.top - (headerBottom + 8));
+      const shift = Math.min(Math.max(0, covered), maxShift);
+      if (shift <= 1) return;
+      document.body.style.paddingBottom = `${Math.ceil(shift + 16)}px`;
+      window.scrollBy(0, shift);
+    };
+    const frame = window.requestAnimationFrame(lift);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      document.body.style.paddingBottom = previous;
+    };
+  }, [showMenu, suggestions.length, loading]);
 
   function choose(hit: AddressSuggestion) {
+    setDraft(null);
     onChange({
       city: hit.city,
       district: hit.district,
@@ -90,21 +140,40 @@ function PlaceInput({
   }
 
   function keepText() {
+    const cleaned = query;
+    setDraft(null);
     onChange({
       city: "",
       district: "",
-      address: query,
+      address: cleaned,
       lat: null,
       lng: null,
-      geocodeStatus: "pending",
+      geocodeStatus: cleaned ? "pending" : null,
     });
     setOpen(false);
   }
 
   function clear() {
+    setDraft(null);
     onChange(EMPTY_TRAINER_PLACE);
     setSuggestions([]);
     setOpen(false);
+  }
+
+  function write(next: string) {
+    setDraft(next);
+    setOpen(true);
+    setActive(0);
+    const cleaned = next.replace(/[ \t]+/g, " ").trim();
+    if (cleaned === placeLine(place)) return;
+    onChange({
+      city: "",
+      district: "",
+      address: next,
+      lat: null,
+      lng: null,
+      geocodeStatus: null,
+    });
   }
 
   return (
@@ -121,46 +190,64 @@ function PlaceInput({
         aria-autocomplete="list"
         placeholder="Улица, дом, город"
         onFocus={() => setOpen(true)}
-        onChange={(event) => {
-          onChange({
-            city: "",
-            district: "",
-            address: event.target.value,
-            lat: null,
-            lng: null,
-            geocodeStatus: null,
-          });
-          setOpen(true);
-        }}
+        onChange={(event) => write(event.target.value)}
         onKeyDown={(event) => {
-          if (event.key === "Escape") setOpen(false);
-          if (event.key === "Enter") event.preventDefault();
+          if (event.key === "Escape") {
+            setOpen(false);
+            return;
+          }
+          if (!showMenu) {
+            if (event.key === "Enter") event.preventDefault();
+            return;
+          }
+          if (event.key === "ArrowDown") {
+            event.preventDefault();
+            setActive((index) => Math.min(index + 1, Math.max(suggestions.length - 1, 0)));
+          } else if (event.key === "ArrowUp") {
+            event.preventDefault();
+            setActive((index) => Math.max(index - 1, 0));
+          } else if (event.key === "Enter") {
+            event.preventDefault();
+            const hit = suggestions[active] ?? suggestions[0];
+            if (hit) choose(hit);
+          }
         }}
       />
       {text ? (
-        <button className="address-field__clear" type="button" aria-label="Очистить адрес" onClick={clear}>
+        <button className="address-field__clear" type="button" aria-label="Очистить адрес" onMouseDown={(event) => event.preventDefault()} onClick={clear}>
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M6 6l12 12M18 6L6 18" />
           </svg>
         </button>
       ) : null}
-      {place.city || place.address ? (
-        <p className="places-field__parts">{[place.city, place.address].filter(Boolean).join(" · ")}</p>
-      ) : null}
-      {place.geocodeStatus ? <span className={`geo-badge geo-badge--${place.geocodeStatus}`}>{STATUS_LABEL[place.geocodeStatus]}</span> : null}
+      {place.geocodeStatus && draft == null ? <span className={`geo-badge geo-badge--${place.geocodeStatus}`}>{STATUS_LABEL[place.geocodeStatus]}</span> : null}
       {showMenu ? (
         <ul className="entity-menu address-field__menu" id={listId} role="listbox">
           {loading && suggestions.length === 0 ? <li className="address-field__status">Ищем адрес…</li> : null}
-          {suggestions.map((hit) => (
-            <li key={`${hit.lat},${hit.lng},${hit.displayName}`}>
-              <button type="button" role="option" aria-selected={hit.lat === place.lat && hit.lng === place.lng} onClick={() => choose(hit)}>
-                {hit.displayName}
-              </button>
+          {suggestions.map((hit, index) => {
+            const lines = suggestionLines(hit);
+            return (
+              <li key={`${hit.lat},${hit.lng},${hit.displayName}`}>
+                <button
+                  className={index === active ? "address-hit is-active" : "address-hit"}
+                  type="button"
+                  role="option"
+                  aria-selected={index === active}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onMouseEnter={() => setActive(index)}
+                  onClick={() => choose(hit)}
+                >
+                  <span className="address-hit__main">{lines.main}</span>
+                  {lines.meta ? <span className="address-hit__meta">{lines.meta}</span> : null}
+                </button>
+              </li>
+            );
+          })}
+          {!loading && suggestions.length === 0 ? (
+            <li>
+              <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={keepText}>Не нашли адрес? Просто сохраните текст</button>
             </li>
-          ))}
-          <li>
-            <button type="button" onClick={keepText}>Не нашли адрес? Просто сохраните текст</button>
-          </li>
+          ) : null}
         </ul>
       ) : null}
     </div>
@@ -193,7 +280,6 @@ export function TrainerPlacesField({
 
   return (
     <fieldset className="places-field">
-      <legend>Места, где я тренирую</legend>
       <label>
         <span>Страна</span>
         <input value={BELARUS_COUNTRY} readOnly tabIndex={-1} aria-readonly="true" />

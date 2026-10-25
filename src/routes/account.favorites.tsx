@@ -17,7 +17,7 @@ export const Route = createFileRoute("/account/favorites")({
 });
 
 function AccountFavoritesPage() {
-  const { ratings } = accountRoute.useLoaderData();
+  const { ratings, prices } = accountRoute.useLoaderData();
   const { keys, ready } = useFavorites();
   if (!ready) {
     return (
@@ -27,5 +27,5 @@ function AccountFavoritesPage() {
       </article>
     );
   }
-  return <FavoriteCards keys={keys} ratings={ratings} />;
+  return <FavoriteCards keys={keys} ratings={ratings} prices={prices} />;
 }

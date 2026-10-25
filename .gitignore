@@ -8,6 +8,9 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+test-results
+playwright-report
+blob-report
 dist
 dist-ssr
 .output
@@ -17,6 +20,7 @@ dist-ssr
 .nitro
 *.local
 .env
+*sync-conflict*
 
 # GeoLite2 city database (downloaded by ip-location-api, not committed)
 data/geoip/

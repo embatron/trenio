@@ -19,6 +19,7 @@ Run this command at the end of a task when layout, PWA, mobile-first, or documen
 3. **PWA audit** — read and apply `.cursor/skills/trenio-pwa-audit/SKILL.md`: manifest, service worker, offline, standalone mode, `public/` assets.
 4. **Mobile audit** — read and apply `.cursor/skills/trenio-mobile-audit/SKILL.md`: 320px layout, touch targets, responsive nav and forms, no hover-only actions.
 5. **Docs sync** — read and apply `.cursor/skills/trenio-docs-sync/SKILL.md`. Update docs when routes, auth, DB schema, env, or architecture changed.
+6. **Journal** — a new server catch or mutation calls `writeLog` (`npm run logs:check`). Rule: `.cursor/rules/logging.mdc`.
 
 Documents to check:
 

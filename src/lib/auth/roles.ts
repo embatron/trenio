@@ -55,13 +55,13 @@ export function canAccessFinance(userRoles: UserRole[]): boolean {
 
 export function getPostLoginPath(roles: UserRole[]): string {
   if (isStaff(roles)) return "/admin";
-  if (hasAnyRole(roles, ["trainer", "club"])) return "/trainer-admin";
+  if (hasAnyRole(roles, ["trainer", "club"])) return "/me";
   return "/account/reviews";
 }
 
-export function getCabinetPath(roles: UserRole[]): "/admin" | "/trainer-admin" | "/account/reviews" {
+export function getCabinetPath(roles: UserRole[]): "/admin" | "/me" | "/account/reviews" {
   if (isStaff(roles)) return "/admin";
-  if (hasAnyRole(roles, ["trainer", "club"])) return "/trainer-admin";
+  if (hasAnyRole(roles, ["trainer", "club"])) return "/me";
   return "/account/reviews";
 }
 

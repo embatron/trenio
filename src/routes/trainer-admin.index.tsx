@@ -5,6 +5,7 @@ import { AccountProfileForm } from "@/components/account-profile-form";
 import { CabinetShell } from "@/components/cabinet";
 import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
+import { TRAINER_PROFILE_SECTIONS } from "@/components/trainer-card-fields";
 import { TrainerProfileForm } from "@/components/trainer-profile-form";
 import { TrainerReviewsPanel } from "@/components/trainer-reviews-panel";
 import { logoutFn } from "@/lib/auth/functions";
@@ -44,7 +45,7 @@ export const Route = createFileRoute("/trainer-admin/")({
 const TABS = [
   { id: "overview", label: "Обзор", icon: "overview" as const },
   { id: "settings", label: "Настройки", icon: "profile" as const },
-  { id: "card", label: "Профиль тренера", icon: "trainers" as const },
+  { id: "card", label: "Профиль тренера", icon: "trainers" as const, sections: TRAINER_PROFILE_SECTIONS },
   { id: "reviews", label: "Отзывы", icon: "reviews" as const },
 ];
 
@@ -72,6 +73,7 @@ function TrainerCabinetPage() {
   if (!user) return null;
 
   const role = user.roles.map((item) => ROLE_LABELS[item]).join(", ");
+  const profileFace = trainer?.photos[0] || trainer?.avatarPath || null;
 
   return (
     <CabinetShell
@@ -80,7 +82,7 @@ function TrainerCabinetPage() {
       firstName={user.firstName}
       lastName={user.lastName}
       role={role}
-      avatarUrl={user.avatarPath || null}
+      avatarUrl={profileFace || user.avatarPath || null}
       items={[
         ...(trainer ? TABS : TABS.filter((item) => item.id !== "card")).map((item) => (
           item.id === "reviews" ? { ...item, badge: reviews.length } : item
@@ -121,7 +123,7 @@ function TrainerCabinetPage() {
       {tab === "settings" ? (
         <article className="cabinet-card">
           <h2>Настройки</h2>
-          <AccountProfileForm user={user} phone={cabinet.phone} phoneVerified={cabinet.phoneVerified} />
+          <AccountProfileForm user={user} phone={cabinet.phone} phoneVerified={cabinet.phoneVerified} profilePhoto={profileFace} />
         </article>
       ) : null}
       {tab === "card" && trainer ? (

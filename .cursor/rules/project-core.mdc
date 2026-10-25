@@ -35,6 +35,7 @@ Every implementation must consider:
 5. **Mobile-first** — see `.cursor/rules/mobile-first.mdc`
 6. **Docs sync** — update `docs/` when routes, auth, schema, or architecture change
 7. **Direct messages** — user to one published profile only. See `.cursor/rules/messages.mdc` and `.cursor/skills/trenio-messages/`
+8. **Journal** — write actions and failures to `app_logs` with `writeLog`. See `.cursor/rules/logging.mdc`
 
 ## Auth
 

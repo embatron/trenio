@@ -8,6 +8,7 @@ import { logoutFn } from "@/lib/auth/functions";
 import { ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { getUserCabinetFn } from "@/lib/cabinet";
+import { listTrainerPricesFn } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 
 const SECTIONS: Array<{ id: string; label: string; icon: "reviews" | "bookings" | "favorites" | "profile" | "messages"; to: AccountSectionPath }> = [
@@ -26,8 +27,8 @@ export const Route = createFileRoute("/account")({
     }
   },
   loader: async () => {
-    const [cabinet, ratings] = await Promise.all([getUserCabinetFn(), listTrainerRatingSummariesFn()]);
-    return { cabinet, ratings };
+    const [cabinet, ratings, prices] = await Promise.all([getUserCabinetFn(), listTrainerRatingSummariesFn(), listTrainerPricesFn()]);
+    return { cabinet, ratings, prices };
   },
   component: AccountLayout,
 });

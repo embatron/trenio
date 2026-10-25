@@ -8,6 +8,9 @@ import { and, avg, count, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 import { requireAuthMiddleware } from "@/auth/middleware";
+import { markLogged, writeLog } from "@/lib/log/logger";
+import { listActorJournal, mergeJournal } from "@/lib/log/journal";
+import { normalizeEmail } from "@/auth/password";
 import { confirmAccountPhoneCode, requestAccountPhoneCode } from "@/auth/service";
 import { getDb } from "@/db";
 import {
@@ -34,6 +37,7 @@ import { removeImageSet, writeImageSet } from "@/lib/images/store";
 import { effectiveAudiences, getPublishedTrainer, PUBLISHED_TRAINERS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { joinTrainerName, trainerNameParts } from "@/lib/catalog/trainer-name";
 import { popularityScore } from "@/lib/catalog/trainer-popularity";
+import { loadTrainerInterest, type TrainerInterest } from "@/lib/catalog/trainer-interest";
 import { getSportTaxonomyChild, listSecondLevelSports, MAX_TRAINER_SPORTS, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
 import { placesFromProfile, placesShape, type TrainerPlace } from "@/lib/geo/schemas";
@@ -83,7 +87,7 @@ export type AdminTrainer = {
   city: string;
   district: string;
   places: TrainerPlace[];
-  priceFrom: number;
+  priceFrom: number | null;
   languages: string;
   phone: string;
   instagram: string;
@@ -226,6 +230,14 @@ function storedAbout(value: string) {
   return reviewPlainText(html) ? [html] : [];
 }
 
+async function syncOwnerAvatar(ownerUserId: string | null, photo: string) {
+  if (!ownerUserId) return;
+  await getDb().update(users).set({
+    avatarPath: photo.split("?")[0],
+    updatedAt: new Date(),
+  }).where(eq(users.id, ownerUserId));
+}
+
 function versioned(items: string[]) {
   const version = Date.now();
   return items.map((item) => `${item.split("?")[0]}?v=${version}`);
@@ -248,8 +260,8 @@ const saveSchema = z.object({
   id: z.string().uuid().nullable(),
   slug: z.string().trim().min(1).max(30),
   status: z.enum(TRAINER_PUBLISH_STATUSES),
-  firstName: z.string().trim().max(100),
-  lastName: z.string().trim().max(100),
+  firstName: z.string().trim().min(1, "Укажите имя").max(100),
+  lastName: z.string().trim().min(1, "Укажите фамилию").max(100),
   headline: z.string().trim().max(200),
   bio: z.string().trim().max(4000),
   about: z.string().trim().max(8000),
@@ -257,7 +269,7 @@ const saveSchema = z.object({
   city: z.string().trim().max(120),
   district: z.string().trim().max(120),
   ...placesShape,
-  priceFrom: z.number().int().min(1).max(1_000_000),
+  priceFrom: z.number().int().min(1).max(1_000_000).nullable(),
   phone: z.string().trim().max(32),
   instagram: z.string().trim().max(300),
   telegram: z.string().trim().max(300),
@@ -267,12 +279,17 @@ const saveSchema = z.object({
   audiences: z.array(z.enum(["adult", "teen", "kid"])).max(3),
 });
 
-function trainerStats(slug: string, ratings: Map<string, { reviews: number; average: number }>) {
+function trainerStats(
+  slug: string,
+  ratings: Map<string, { reviews: number; average: number }>,
+  interest: Record<string, TrainerInterest>,
+) {
   const row = ratings.get(slug);
   const reviews = row?.reviews ?? 0;
   const average = row?.average ?? 0;
   const rating = reviews > 0 && Number.isFinite(average) ? average.toFixed(1) : "0";
-  return { reviews, rating, popularity: popularityScore({ rating, reviews }) };
+  const signal = interest[slug] ?? { views: 0, saves: 0 };
+  return { reviews, rating, popularity: popularityScore({ rating, reviews, ...signal }) };
 }
 
 function isCatalog(slug: string) {
@@ -284,7 +301,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
   .handler(async ({ context }): Promise<{ origin: string; trainers: AdminTrainer[] }> => {
     assertStaff(context.user.roles);
     const db = getDb();
-    const [profileRows, ratingRows] = await Promise.all([
+    const [profileRows, ratingRows, interest] = await Promise.all([
       db
       .select({
         id: trainerProfiles.id,
@@ -337,6 +354,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         .from(trainerReviews)
         .where(eq(trainerReviews.status, "published"))
         .groupBy(trainerReviews.trainerSlug),
+      loadTrainerInterest(),
     ]);
     const ratings = new Map(ratingRows.map((row) => [row.slug, { reviews: Number(row.reviews), average: Number(row.average) }]));
 
@@ -364,7 +382,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       city: row.city,
       district: row.district,
       places: placesFromProfile(row),
-      priceFrom: Math.max(1, row.priceFrom ?? 1),
+      priceFrom: row.priceFrom != null && row.priceFrom >= 1 ? row.priceFrom : null,
       languages: row.languages.join(", "),
       phone: formatBelarusPhone(row.phone) || row.phone,
       instagram: row.instagramUrl,
@@ -375,7 +393,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       audiences: effectiveAudiences(row.audiences),
       avatarPath: row.avatarPath,
       createdAt: row.createdAt.toISOString(),
-      ...trainerStats(row.slug, ratings),
+      ...trainerStats(row.slug, ratings, interest),
       catalog: isCatalog(row.slug),
       claimPath: row.claimPath,
       claimOpen: claimLinkOpen({
@@ -426,7 +444,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       audiences: trainer.audiences,
       avatarPath: trainer.photo,
       createdAt: "",
-      ...trainerStats(trainer.slug, ratings),
+      ...trainerStats(trainer.slug, ratings, interest),
       catalog: true,
       account: null,
       claimPath: "",
@@ -460,6 +478,8 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
 
     const firstName = data.firstName.trim().slice(0, 100);
     const lastName = data.lastName.trim().slice(0, 100);
+    if (!firstName) throw new AuthError("Укажите имя.", "VALIDATION");
+    if (!lastName) throw new AuthError("Укажите фамилию.", "VALIDATION");
     const published = getPublishedTrainer(data.slug);
     const picked = trainerSportsFromSlugs(data.sportSlugs);
     if (picked.slugs.length > MAX_TRAINER_SPORTS) {
@@ -496,7 +516,8 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       geocodeStatus: mirror.geocodeStatus,
       priceFrom: data.priceFrom,
       phone,
-      email: data.email,
+      email: data.email.trim(),
+      ...(existing && normalizeEmail(existing.email) === normalizeEmail(data.email) ? {} : { emailVerifiedAt: null }),
       instagramUrl: data.instagram,
       telegram: data.telegram,
       experienceYears: data.experienceYears,
@@ -513,6 +534,13 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
           ...values,
           instagramHandle: handle || existing.instagramHandle,
         }).where(eq(trainerProfiles.id, existing.id));
+        if (existing.ownerUserId) {
+          await db.update(users).set({
+            firstName,
+            lastName,
+            updatedAt: new Date(),
+          }).where(eq(users.id, existing.ownerUserId));
+        }
       } else {
         const claimToken = randomBytes(32).toString("base64url");
         await db.insert(trainerProfiles).values({
@@ -530,16 +558,59 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
         });
       }
     } catch (error) {
-      if (error instanceof AuthError) throw error;
+      if (error instanceof AuthError) {
+        void writeLog({
+          level: "warn",
+          domain: "form",
+          action: "form.trainer_admin",
+          outcome: "denied",
+          message: error.message,
+          actorUserId: context.user.id,
+          target: data.slug,
+          error,
+        });
+        throw error;
+      }
       const code = (error as { code?: string; cause?: { code?: string } }).code
         ?? (error as { cause?: { code?: string } }).cause?.code;
       if (code === "23505") {
-        throw new AuthError("Такой адрес Instagram или адрес карточки уже занят.", "VALIDATION");
+        const taken = new AuthError("Такой адрес Instagram или адрес карточки уже занят.", "VALIDATION");
+        void writeLog({
+          level: "warn",
+          domain: "form",
+          action: "form.trainer_admin",
+          outcome: "denied",
+          message: taken.message,
+          actorUserId: context.user.id,
+          target: data.slug,
+          error: taken,
+        });
+        throw taken;
       }
-      console.error(error);
-      throw new AuthError("Не удалось сохранить профиль.", "VALIDATION");
+      void writeLog({
+        level: "error",
+        domain: "form",
+        action: "form.trainer_admin",
+        outcome: "failure",
+        message: "Карточка тренера не сохранилась.",
+        actorUserId: context.user.id,
+        target: data.slug,
+        error,
+      });
+      const failure = new AuthError("Не удалось сохранить профиль.", "VALIDATION");
+      markLogged(failure);
+      throw failure;
     }
 
+    void writeLog({
+      level: "info",
+      domain: "form",
+      action: "form.trainer_admin",
+      outcome: "success",
+      message: "Карточка тренера сохранена.",
+      actorUserId: context.user.id,
+      target: data.slug,
+    });
     return {
       ok: true as const,
       message: "Профиль тренера сохранён.",
@@ -651,7 +722,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
 
     const hidden = await hiddenStaffIds(context.user.roles);
     const ownerVisible = Boolean(row.ownerUserId) && !hidden.has(row.ownerUserId ?? "");
-    const [ratingRows, reviewRows, owner, roleRows] = await Promise.all([
+    const [ratingRows, reviewRows, owner, roleRows, interest] = await Promise.all([
       db
         .select({ reviews: count(), average: avg(trainerReviews.rating) })
         .from(trainerReviews)
@@ -688,6 +759,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
       ownerVisible && row.ownerUserId
         ? db.select({ role: userRoles.role }).from(userRoles).where(eq(userRoles.userId, row.ownerUserId))
         : Promise.resolve([]),
+      loadTrainerInterest(),
     ]);
 
     const ownerId = owner?.id ?? null;
@@ -760,6 +832,12 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
       });
     }
     logs.sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
+    const journal = await listActorJournal({
+      actorUserId: ownerId,
+      subject: owner?.email,
+      target: row.slug,
+    });
+    const mergedLogs = mergeJournal(logs, journal);
 
     return {
       origin: requestOrigin(),
@@ -775,7 +853,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         city: row.city,
         district: row.district,
         places: placesFromProfile(row),
-        priceFrom: Math.max(1, row.priceFrom ?? 1),
+        priceFrom: row.priceFrom != null && row.priceFrom >= 1 ? row.priceFrom : null,
         languages: row.languages.join(", "),
         phone: formatBelarusPhone(row.phone) || row.phone,
         instagram: row.instagramUrl,
@@ -788,7 +866,11 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         createdAt: row.createdAt.toISOString(),
         reviews,
         rating: reviews > 0 && Number.isFinite(average) ? average.toFixed(1) : "0",
-        popularity: popularityScore({ rating: reviews > 0 ? average.toFixed(1) : "0", reviews }),
+        popularity: popularityScore({
+          rating: reviews > 0 ? average.toFixed(1) : "0",
+          reviews,
+          ...(interest[row.slug] ?? { views: 0, saves: 0 }),
+        }),
         catalog: isCatalog(row.slug),
         claimPath: row.claimPath,
         claimOpen: claimLinkOpen({
@@ -822,7 +904,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         userAgent: login.userAgent || "—",
         active: login.expiresAt.getTime() > now,
       })),
-      logs: logs.slice(0, 60),
+      logs: mergedLogs,
       facts: {
         claimStatus: CLAIM_LABEL[row.claimStatus],
         gender: genderLabel(row.gender),
@@ -883,6 +965,7 @@ export const addAdminTrainerPhotoFn = createServerFn({ method: "POST" })
       }).where(eq(trainerProfiles.id, fresh.id));
       return { stored, photos };
     });
+    await syncOwnerAvatar(row.ownerUserId, saved.photos[0] ?? "");
     return { ok: true as const, photo: versioned([saved.stored])[0], photos: versioned(saved.photos) };
   });
 
@@ -903,6 +986,7 @@ export const removeAdminTrainerPhotoFn = createServerFn({ method: "POST" })
       avatarPath: next[0] ?? "",
       updatedAt: new Date(),
     }).where(eq(trainerProfiles.id, row.id));
+    await syncOwnerAvatar(row.ownerUserId, next[0] ?? "");
     return { ok: true as const, photos: versioned(next) };
   });
 
@@ -925,6 +1009,7 @@ export const reorderAdminTrainerPhotosFn = createServerFn({ method: "POST" })
       avatarPath: next[0] ?? "",
       updatedAt: new Date(),
     }).where(eq(trainerProfiles.id, row.id));
+    await syncOwnerAvatar(row.ownerUserId, next[0] ?? "");
     return { ok: true as const, photos: versioned(next) };
   });
 

@@ -3,14 +3,17 @@ import { useEffect, useRef, useState } from "react";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { SportIcon } from "@/components/sport-icon";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
-import { TOP_LEVEL_SPORT_CATEGORIES } from "@/lib/catalog/sport-taxonomy";
+import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 import { PUBLISHED_TRAINERS } from "@/lib/catalog/published-trainers";
 import { compareByPopularity, ratingFor } from "@/lib/catalog/trainer-popularity";
 import { getHomeStatsFn } from "@/lib/catalog/home-stats";
+import { listTrainerPricesFn, priceForCard } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
+import { SiteFaq } from "@/components/site-faq";
+import { HOME_FAQ } from "@/lib/catalog/site-faq";
 
-const HOMEPAGE_CATEGORIES = TOP_LEVEL_SPORT_CATEGORIES;
+const HOMEPAGE_CATEGORIES = listPublishedSportCategories();
 
 function CategoryStrip() {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -92,49 +95,123 @@ function CategoryStrip() {
   );
 }
 
+function perView(el: HTMLElement) {
+  const n = Number(getComputedStyle(el).getPropertyValue("--popular-per"));
+  return n === 2 || n === 3 || n === 4 ? n : 2;
+}
+
+function pageStarts(count: number, per: number) {
+  const maxStart = Math.max(0, count - per);
+  const starts: number[] = [];
+  for (let i = 0; i <= maxStart; i += per) starts.push(i);
+  if (starts[starts.length - 1] !== maxStart) starts.push(maxStart);
+  return starts;
+}
+
+function cardScrollLeft(track: HTMLElement, card: HTMLElement) {
+  return card.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft;
+}
+
 function PopularSlider() {
   const trackRef = useRef<HTMLDivElement>(null);
+  const pageRef = useRef(0);
+  const animRef = useRef<number | null>(null);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(true);
 
   const update = () => {
     const el = trackRef.current;
     if (!el) return;
-    setCanPrev(el.scrollLeft > 4);
-    setCanNext(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+    setCanPrev(el.scrollLeft > 8);
+    setCanNext(el.scrollLeft < el.scrollWidth - el.clientWidth - 8);
+  };
+
+  const animateTo = (el: HTMLElement, to: number) => {
+    if (animRef.current != null) cancelAnimationFrame(animRef.current);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const from = el.scrollLeft;
+    const delta = to - from;
+    if (reduce || Math.abs(delta) < 1) {
+      el.style.scrollSnapType = "";
+      el.scrollLeft = to;
+      animRef.current = null;
+      return;
+    }
+    const duration = Math.min(760, Math.max(520, Math.abs(delta) * 0.55));
+    const start = performance.now();
+    el.style.scrollSnapType = "none";
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = t < 0.5 ? 4 * t * t * t : 1 - ((-2 * t + 2) ** 3) / 2;
+      el.scrollLeft = from + delta * eased;
+      if (t < 1) {
+        animRef.current = requestAnimationFrame(tick);
+        return;
+      }
+      el.scrollLeft = to;
+      el.style.scrollSnapType = "";
+      animRef.current = null;
+    };
+    animRef.current = requestAnimationFrame(tick);
   };
 
   useEffect(() => {
-    update();
     const el = trackRef.current;
     if (!el) return;
-    el.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
+    update();
+
+    const cardsOf = () => [...el.querySelectorAll<HTMLElement>(".popular-card")];
+
+    const syncSnaps = () => {
+      const cards = cardsOf();
+      const starts = new Set(pageStarts(cards.length, perView(el)));
+      cards.forEach((card, index) => card.classList.toggle("is-page-start", starts.has(index)));
+    };
+
+    let lastPer = perView(el);
+    syncSnaps();
+
+    const onResize = () => {
+      const per = perView(el);
+      syncSnaps();
+      if (per !== lastPer) {
+        lastPer = per;
+        if (animRef.current != null) cancelAnimationFrame(animRef.current);
+        animRef.current = null;
+        el.style.scrollSnapType = "";
+        const cards = cardsOf();
+        const starts = pageStarts(cards.length, per);
+        const current = starts.reduce((best, start) => {
+          const card = cards[start];
+          if (!card) return best;
+          const dist = Math.abs(cardScrollLeft(el, card) - el.scrollLeft);
+          return dist < best.dist ? { start, dist } : best;
+        }, { start: 0, dist: Infinity });
+        pageRef.current = current.start;
+        const card = cards[current.start];
+        if (card) el.scrollLeft = cardScrollLeft(el, card);
+      }
+      update();
+    };
+
+    const resizeObserver = new ResizeObserver(onResize);
+    resizeObserver.observe(el);
 
     let startX = 0;
-    let startScrollLeft = 0;
-    let dragging = false;
     let suppressClick = false;
 
     const onTouchStart = (e: TouchEvent) => {
       if (e.touches.length !== 1) return;
+      if (animRef.current != null) cancelAnimationFrame(animRef.current);
+      animRef.current = null;
+      el.style.scrollSnapType = "";
       startX = e.touches[0].clientX;
-      startScrollLeft = el.scrollLeft;
-      dragging = true;
       suppressClick = false;
     };
 
     const onTouchMove = (e: TouchEvent) => {
-      if (!dragging || e.touches.length !== 1) return;
-      const dx = startX - e.touches[0].clientX;
-      if (Math.abs(dx) > 8) {
-        suppressClick = true;
-        el.scrollLeft = startScrollLeft + dx;
-      }
-    };
-
-    const onTouchEnd = () => {
-      dragging = false;
+      if (e.touches.length !== 1) return;
+      if (Math.abs(startX - e.touches[0].clientX) > 8) suppressClick = true;
     };
 
     const onClickCapture = (e: Event) => {
@@ -144,19 +221,17 @@ function PopularSlider() {
       suppressClick = false;
     };
 
+    el.addEventListener("scroll", update, { passive: true });
     el.addEventListener("touchstart", onTouchStart, { passive: true });
     el.addEventListener("touchmove", onTouchMove, { passive: true });
-    el.addEventListener("touchend", onTouchEnd, { passive: true });
-    el.addEventListener("touchcancel", onTouchEnd, { passive: true });
     el.addEventListener("click", onClickCapture, true);
 
     return () => {
+      if (animRef.current != null) cancelAnimationFrame(animRef.current);
+      resizeObserver.disconnect();
       el.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
       el.removeEventListener("touchstart", onTouchStart);
       el.removeEventListener("touchmove", onTouchMove);
-      el.removeEventListener("touchend", onTouchEnd);
-      el.removeEventListener("touchcancel", onTouchEnd);
       el.removeEventListener("click", onClickCapture, true);
     };
   }, []);
@@ -164,8 +239,23 @@ function PopularSlider() {
   const scrollBy = (dir: number) => {
     const el = trackRef.current;
     if (!el) return;
-    const amount = Math.min(el.clientWidth * 0.85, 600);
-    el.scrollBy({ left: dir * amount, behavior: "smooth" });
+    const cards = [...el.querySelectorAll<HTMLElement>(".popular-card")];
+    if (!cards.length) return;
+    const starts = pageStarts(cards.length, perView(el));
+    const current = animRef.current != null
+      ? pageRef.current
+      : starts.reduce((best, start) => {
+          const card = cards[start];
+          if (!card) return best;
+          const dist = Math.abs(cardScrollLeft(el, card) - el.scrollLeft);
+          return dist < best.dist ? { start, dist } : best;
+        }, { start: starts[0] ?? 0, dist: Infinity }).start;
+    const pos = Math.max(0, starts.indexOf(current));
+    const next = starts[Math.max(0, Math.min(starts.length - 1, pos + dir))] ?? current;
+    pageRef.current = next;
+    const card = cards[next];
+    if (!card) return;
+    animateTo(el, cardScrollLeft(el, card));
   };
 
   return (
@@ -248,8 +338,8 @@ export const Route = createFileRoute("/")({
     ],
   }),
   loader: async () => {
-    const [ratings, stats] = await Promise.all([listTrainerRatingSummariesFn(), getHomeStatsFn()]);
-    return { ratings, stats };
+    const [ratings, prices, stats] = await Promise.all([listTrainerRatingSummariesFn(), listTrainerPricesFn(), getHomeStatsFn()]);
+    return { ratings, prices, stats };
   },
   component: Index,
 });
@@ -342,7 +432,7 @@ body.is-search-docked .site-header__search {
 .search-block--header .search-shell {
   width: 100%; max-width: 100%; min-width: 0; min-height: 52px; padding: 4px 5px;
   box-shadow: 0 4px 18px rgba(var(--dark-rgb), 0.06);
-  grid-template-columns: minmax(0, 131fr) minmax(0, 157fr) minmax(0, 211fr) minmax(0, 147fr) 44px;
+  grid-template-columns: minmax(0, 118fr) minmax(0, 196fr) minmax(0, 190fr) minmax(0, 142fr) 44px;
 }
 .search-block--header .search-field.intent-select { position: relative; display: flex; align-items: center; }
 .search-block--header .search-field { height: 44px; padding: 0 11px; gap: 7px; }
@@ -417,12 +507,14 @@ body.is-search-docked .site-header__search {
 .category-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
 .category-card__meta { margin-top: 14px; color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
 
-/* Popular destinations slider */
-.popular { display: flex; align-items: center; gap: 8px; width: 100%; }
-.popular__viewport { flex: 1; min-width: 0; overflow: hidden; }
+/* Popular destinations slider. One page is a full row: 2, then 3, then 4. */
+.popular { position: relative; width: 100%; container: popular / inline-size; }
+.popular__viewport { min-width: 0; overflow: hidden; }
 .popular__track {
-  display: flex; gap: 18px; padding: 8px 0 12px; overflow-x: auto;
-  scroll-behavior: smooth;
+  --popular-per: 2;
+  --popular-gap: var(--layout-gap);
+  display: flex; gap: var(--popular-gap); padding: 8px 0 12px; overflow-x: auto;
+  scroll-snap-type: x mandatory;
   scrollbar-width: none; -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
@@ -430,16 +522,31 @@ body.is-search-docked .site-header__search {
 }
 .popular__track::-webkit-scrollbar { display: none; }
 .popular-card {
-  flex: 0 0 280px;
+  flex: 0 0 calc((100% - (var(--popular-per) - 1) * var(--popular-gap)) / var(--popular-per));
+  min-width: 0;
   position: relative; overflow: hidden;
   border-radius: var(--card-radius); padding: 0;
   text-decoration: none; color: var(--text);
   background: var(--white);
   border: 1px solid rgba(var(--dark-rgb), 0.08);
   display: flex; flex-direction: column;
+  scroll-snap-align: none;
   transition: transform 0.28s ease, border-color 0.28s ease;
   -webkit-user-drag: none;
   user-select: none;
+}
+.popular-card.is-page-start { scroll-snap-align: start; scroll-snap-stop: always; }
+@media (min-width: 800px) {
+  .popular__track { --popular-per: 3; }
+}
+@media (min-width: 1100px) {
+  .popular__track { --popular-per: 4; }
+}
+@container popular (min-width: 740px) {
+  .popular__track { --popular-per: 3; }
+}
+@container popular (min-width: 1000px) {
+  .popular__track { --popular-per: 4; }
 }
 .popular-card__media {
   position: relative;
@@ -481,15 +588,19 @@ body.is-search-docked .site-header__search {
 .popular-card:hover .popular-card__meta svg { transform: translateX(3px); }
 
 .popular__edge {
+  position: absolute; top: 50%; z-index: 2;
   width: 44px; height: 44px; border-radius: 999px;
   border: 1px solid rgba(var(--dark-rgb), 0.08);
   background: var(--white); color: var(--dark); cursor: pointer;
-  display: none; place-items: center; flex-shrink: 0;
+  display: none; place-items: center;
   box-shadow: 0 10px 28px rgba(var(--dark-rgb), 0.14);
   transition: border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
 }
+.popular__edge--prev { left: 0; transform: translate(-50%, -50%); }
+.popular__edge--next { right: 0; transform: translate(50%, -50%); }
 .popular__edge.is-visible { display: grid; }
-.popular__edge:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
+.popular__edge--prev:hover { border-color: var(--primary); color: var(--primary); transform: translate(-50%, calc(-50% - 1px)); }
+.popular__edge--next:hover { border-color: var(--primary); color: var(--primary); transform: translate(50%, calc(-50% - 1px)); }
 .popular__edge svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 
 .content-section + .content-section { margin-top: 48px; }
@@ -537,7 +648,6 @@ body.is-search-docked .site-header__search {
   .category-chip { flex-basis: 88px; min-width: 88px; max-width: 88px; min-height: 80px; }
   .category-chip-icon { width: 56px; height: 56px; }
   .category-chip-label { font-size: 10px; }
-  .popular-card { flex-basis: min(280px, 84%); }
   .popular__edge { display: none !important; }
 }
 
@@ -565,7 +675,7 @@ body.is-search-docked .site-header__search {
 .stat-item__label { display: block; margin-top: 8px; color: rgba(255, 255, 255, 0.66); font-size: 13px; font-weight: var(--fw-title); letter-spacing: 0.02em; }
 
 /* Reviews */
-.reviews-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--layout-gap); }
+.reviews-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--layout-gap); }
 .review-card { padding: 24px 22px; border-radius: var(--card-radius); background: var(--white); border: 1px solid rgba(var(--dark-rgb), 0.06); display: flex; flex-direction: column; gap: 14px; }
 .review-card__stars { display: inline-flex; gap: 2px; color: #ffb400; }
 .review-card__stars svg { width: 16px; height: 16px; fill: currentColor; stroke: none; }
@@ -592,16 +702,6 @@ body.is-search-docked .site-header__search {
 .cta-btn--ghost { background: rgba(255, 255, 255, 0.14); color: #fff; border: 1px solid rgba(255, 255, 255, 0.35); }
 .cta-btn:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18); }
 
-/* FAQ */
-.faq-grid { display: grid; gap: 12px; max-width: 880px; }
-.faq-item { border: 1px solid rgba(var(--dark-rgb), 0.08); border-radius: var(--card-radius); background: var(--white); overflow: hidden; transition: box-shadow 0.2s ease, border-color 0.2s ease; }
-.faq-item[open] { box-shadow: 0 14px 32px rgba(var(--dark-rgb), 0.06); border-color: rgba(var(--primary-rgb), 0.3); }
-.faq-item summary { list-style: none; cursor: pointer; padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; gap: 14px; font-size: 16px; font-weight: var(--fw-ui); color: var(--dark); letter-spacing: -0.02em; }
-.faq-item summary::-webkit-details-marker { display: none; }
-.faq-item__icon { width: 28px; height: 28px; flex: 0 0 auto; border-radius: 50%; background: var(--light-bg); color: var(--primary); display: grid; place-items: center; transition: transform 0.25s ease, background 0.2s ease; font-size: 18px; font-weight: var(--fw-heading); line-height: 1; }
-.faq-item[open] .faq-item__icon { transform: rotate(45deg); background: var(--primary); color: #fff; }
-.faq-item__body { padding: 0 22px 20px; color: var(--muted); font-size: 14.5px; line-height: 1.6; font-weight: 500; }
-
 @media (max-width: 960px) {
   .steps-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stats-band { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 10px; padding: 28px 18px; }
@@ -613,12 +713,19 @@ body.is-search-docked .site-header__search {
   .steps-grid { grid-template-columns: 1fr; }
   .stats-band { grid-template-columns: 1fr; }
   .stat-item + .stat-item { border-left: 0; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 18px; }
-  .faq-item summary { font-size: 15px; padding: 16px 18px; }
 }
 `;
 
+function experienceLabel(years: number | null): string {
+  if (years == null) return "средний стаж";
+  const mod10 = years % 10;
+  const mod100 = years % 100;
+  const word = mod10 === 1 && mod100 !== 11 ? "год" : mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14) ? "года" : "лет";
+  return `средний стаж, ${word}`;
+}
+
 function Index() {
-  const { ratings, stats } = Route.useLoaderData();
+  const { ratings, prices, stats } = Route.useLoaderData();
   const trainers = PUBLISHED_TRAINERS.map((trainer) => {
     const rating = ratingFor(trainer.slug, ratings);
     return {
@@ -631,7 +738,9 @@ function Index() {
       tags: trainer.sports.map((sport) => sport.label),
       rating: rating.rating,
       reviews: rating.reviews,
-      price: trainer.priceFrom,
+      views: rating.views,
+      saves: rating.saves,
+      price: priceForCard(trainer.slug, trainer.priceFrom, prices),
       city: trainer.city.label,
       district: trainer.district,
       experience: trainer.experience,
@@ -812,7 +921,7 @@ function Index() {
                 { n: String(stats.trainers), l: "тренеров на платформе" },
                 { n: String(stats.sports), l: "видов спорта" },
                 { n: String(stats.cities), l: "городов Беларуси" },
-                { n: stats.rating ?? "—", l: "средняя оценка тренеров" },
+                { n: stats.experience == null ? "—" : String(stats.experience), l: experienceLabel(stats.experience) },
               ].map((s) => (
                 <div key={s.l} className="stat-item">
                   <span className="stat-item__num">{s.n}</span>
@@ -843,7 +952,7 @@ function Index() {
                   без комиссии за первый месяц.
                 </p>
                 <div className="cta-banner__actions">
-                  <a className="cta-btn cta-btn--primary" href="#">
+                  <Link className="cta-btn cta-btn--primary" to="/join/trainer">
                     Стать тренером
                     <svg
                       viewBox="0 0 24 24"
@@ -858,7 +967,7 @@ function Index() {
                     >
                       <path d="M5 12h14M13 6l6 6-6 6" />
                     </svg>
-                  </a>
+                  </Link>
                   <a className="cta-btn cta-btn--ghost" href="#">
                     Узнать о тарифах
                   </a>
@@ -893,40 +1002,7 @@ function Index() {
                 </p>
               </div>
             </div>
-            <div className="faq-grid">
-              {[
-                {
-                  q: "Сколько стоит занятие с тренером?",
-                  a: "Цены зависят от вида спорта, опыта тренера и формата (индивидуально или в группе). В среднем — от 30 до 70 BYN за занятие в Минске.",
-                },
-                {
-                  q: "Как оплачивать тренировки?",
-                  a: "Оплата проходит напрямую тренеру — наличными, переводом или по реквизитам. Условия каждый специалист указывает в своём профиле.",
-                },
-                {
-                  q: "Что, если тренер не подошёл?",
-                  a: "Вы можете в любой момент сменить тренера — обязательств нет. После занятия можно оставить отзыв, чтобы помочь другим.",
-                },
-                {
-                  q: "Безопасно ли заниматься с тренерами с платформы?",
-                  a: "Мы проверяем профили перед публикацией, а рейтинги и отзывы реальных учеников помогают выбрать проверенного специалиста.",
-                },
-                {
-                  q: "Можно ли найти тренера для ребёнка?",
-                  a: "Да — в поиске есть фильтр «для ребёнка», а в карточках тренеров указано, с какими возрастами они работают.",
-                },
-              ].map((f) => (
-                <details key={f.q} className="faq-item">
-                  <summary>
-                    {f.q}
-                    <span className="faq-item__icon" aria-hidden="true">
-                      +
-                    </span>
-                  </summary>
-                  <div className="faq-item__body">{f.a}</div>
-                </details>
-              ))}
-            </div>
+            <SiteFaq narrow items={HOME_FAQ} />
           </section>
         </div>
       </section>

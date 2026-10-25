@@ -136,7 +136,7 @@ export function MessagesWorkspace({
   useEffect(() => {
     if (conversationId || openError || trainerHold || listQuery.isPending || !latestId) return;
     void navigate({
-      to: view === "own" ? "/account/messages/$conversationId" : "/trainer-admin/messages/$conversationId",
+      to: view === "own" ? "/account/messages/$conversationId" : "/me/messages/$conversationId",
       params: { conversationId: latestId },
       replace: true,
     });

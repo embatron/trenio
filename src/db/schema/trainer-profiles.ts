@@ -99,11 +99,14 @@ export const trainerProfiles = pgTable(
     /** Up to five certificates or diplomas. Each item is `{ path, caption }`. Older rows may still store a path string. */
     certificates: jsonb("certificates").$type<Array<{ path: string; caption: string } | string>>().notNull().default([]),
     phone: varchar("phone", { length: 32 }).notNull().default(""),
-    /** Contact email copied from a public profile. Not confirmed and not a login. */
+    /** Contact email on the public profile. Shown only after `emailVerifiedAt`. Not a login. */
     email: varchar("email", { length: 320 }).notNull().default(""),
+    emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
     website: varchar("website", { length: 300 }).notNull().default(""),
     instagramUrl: varchar("instagram_url", { length: 300 }).notNull().default(""),
     telegram: varchar("telegram", { length: 300 }).notNull().default(""),
+    /** Set when the trainer confirms this Telegram through the bot. Until then the public profile hides it. */
+    telegramVerifiedAt: timestamp("telegram_verified_at", { withTimezone: true }),
     experienceYears: integer("experience_years").notNull().default(0),
     /** Secret segment of the invite link. Kept so the same link can be sent later. */
     claimToken: varchar("claim_token", { length: 64 }).notNull(),

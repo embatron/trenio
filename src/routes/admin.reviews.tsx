@@ -7,7 +7,7 @@ import { ReviewHtml } from "@/components/review-html";
 import { UserAvatar } from "@/components/user-avatar";
 import { getAdminReviewsFn, type AdminReview } from "@/lib/admin/reviews";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
-import { getSportTaxonomyChild, listSecondLevelSports, TOP_LEVEL_SPORT_CATEGORIES } from "@/lib/catalog/sport-taxonomy";
+import { getSportTaxonomyChild, listPublishedSportCategories, listSecondLevelSports } from "@/lib/catalog/sport-taxonomy";
 import { REVIEW_STATUSES, setTrainerReviewStatusFn, type ReviewStatus as ReviewStatusValue } from "@/lib/catalog/trainer-reviews";
 
 type ReviewSort = "date-desc" | "date-asc" | "rating-desc" | "rating-asc";
@@ -140,7 +140,7 @@ function AdminReviewsPage() {
                 }}
               >
                 <option value="">Все категории</option>
-                {TOP_LEVEL_SPORT_CATEGORIES.map((item) => (
+                {listPublishedSportCategories().map((item) => (
                   <option key={item.slug} value={item.slug}>{item.label}</option>
                 ))}
               </select>

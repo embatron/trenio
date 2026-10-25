@@ -144,6 +144,16 @@ export async function issueOtp(input: {
     };
   } else if (input.send) {
     console.info(`[auth:sms] ${input.purpose} +${input.phone} → ${code}`);
+    const { writeLog, maskPhone } = await import("@/lib/log/logger");
+    void writeLog({
+      level: "info",
+      domain: "sms",
+      action: "sms.dev",
+      outcome: "skipped",
+      message: "Код SMS оставлен в консоли разработки.",
+      subject: maskPhone(input.phone),
+      context: { purpose: input.purpose },
+    });
   }
 
   return {

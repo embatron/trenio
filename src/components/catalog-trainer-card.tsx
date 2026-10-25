@@ -5,7 +5,7 @@ import { TrainerContactIcons } from "@/components/messages/trainer-contact-icons
 import { PhotoImage } from "@/components/photo-image";
 import { TrainerName } from "@/components/trainer-name";
 import { TrainerRating } from "@/components/trainer-rating";
-import { pluralRu } from "@/lib/ru-plural";
+import { NEGOTIABLE_PRICE_LABEL, statedTrainerPrice } from "@/lib/catalog/trainer-price";
 
 export type CatalogTrainerCardData = {
   slug: string;
@@ -20,15 +20,27 @@ export type CatalogTrainerCardData = {
   city: string;
   district?: string;
   experience?: number;
-  price?: number;
+  price?: number | null;
   badge?: string;
 };
 
-export function CatalogTrainerCard({ trainer }: { trainer: CatalogTrainerCardData }) {
-  const experience = trainer.experience ?? 0;
-  const price = trainer.price ?? 0;
+export function CatalogTrainerCard({
+  trainer,
+  marked = false,
+  onHover,
+}: {
+  trainer: CatalogTrainerCardData;
+  marked?: boolean;
+  onHover?: (slug: string | null) => void;
+}) {
+  const price = statedTrainerPrice(trainer.price);
   return (
-    <article className="trainer-card">
+    <article
+      className={`trainer-card${marked ? " is-marked" : ""}`}
+      data-map-trainer={trainer.slug}
+      onMouseEnter={onHover ? () => onHover(trainer.slug) : undefined}
+      onMouseLeave={onHover ? () => onHover(null) : undefined}
+    >
       <Link className="trainer-card__hit" to="/trainers/$slug" params={{ slug: trainer.slug }} aria-label={trainer.name} />
       <div className="trainer-card__media">
         <PhotoImage className="trainer-card__photo" src={trainer.photo} alt={trainer.name} preset="card" width={480} height={600} loading="lazy" />
@@ -42,16 +54,15 @@ export function CatalogTrainerCard({ trainer }: { trainer: CatalogTrainerCardDat
           </h3>
           <TrainerRating rating={trainer.rating} reviews={trainer.reviews} />
         </div>
-        <p className="trainer-card__sport">
-          {trainer.tags.join(", ")}
-          {experience > 0 ? ` · опыт ${experience} ${pluralRu(experience, "год", "года", "лет")}` : ""}
+        <p className="trainer-card__sport">{trainer.tags.join(", ")}</p>
+        <p className="trainer-card__price">
+          {price != null ? (
+            <>
+              <small>От </small>
+              {price} BYN
+            </>
+          ) : NEGOTIABLE_PRICE_LABEL}
         </p>
-        {price > 0 ? (
-          <p className="trainer-card__price">
-            <small>от </small>
-            {price} BYN
-          </p>
-        ) : null}
         <div className="trainer-card__footer">
           <span className="trainer-card__location">
             <svg viewBox="0 0 24 24" aria-hidden="true">

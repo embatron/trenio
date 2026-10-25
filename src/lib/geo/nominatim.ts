@@ -20,6 +20,8 @@ export type GeocodeHit = {
   city: string;
   district: string;
   street: string;
+  region: string;
+  country: string;
   countryCode: string;
 };
 
@@ -64,6 +66,7 @@ function parseHit(value: unknown): GeocodeHit | null {
   const street = [textPart(address.road) || textPart(address.pedestrian), textPart(address.house_number)].filter(Boolean).join(", ")
     || displayName.split(",")[0]?.trim()
     || displayName;
+  const country = textPart(address.country) || (countryCode === "by" ? "Беларусь" : "");
   return {
     lat,
     lng,
@@ -71,6 +74,8 @@ function parseHit(value: unknown): GeocodeHit | null {
     city: city.slice(0, 120),
     district: district.slice(0, 120),
     street: street.slice(0, 200),
+    region: textPart(address.state).slice(0, 120),
+    country: country.slice(0, 80),
     countryCode,
   };
 }

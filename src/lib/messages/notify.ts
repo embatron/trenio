@@ -1,7 +1,7 @@
 import { and, eq, gt, isNull } from "drizzle-orm";
 
 import { getDb } from "@/db";
-import { conversationReads, conversations, messages, trainerProfiles, users } from "@/db/schema";
+import { conversationReads, conversations, messages, trainerProfiles, userRoles, users } from "@/db/schema";
 import { mailAppUrl, sendMail } from "@/lib/mail/send.server";
 
 const DEBOUNCE_MS = 2 * 60_000;
@@ -64,9 +64,14 @@ async function deliver(input: { conversationId: string; messageId: number; recip
     .limit(1);
   if (!row) return;
 
+  const roles = await db
+    .select({ role: userRoles.role })
+    .from(userRoles)
+    .where(eq(userRoles.userId, input.recipientId));
   const trainerSide = row.ownerUserId === input.recipientId;
-  const path = trainerSide
-    ? `/trainer-admin/messages/${input.conversationId}`
+  const trainerCabinet = trainerSide || roles.some((item) => item.role === "trainer" || item.role === "club");
+  const path = trainerCabinet
+    ? `/me/messages/${input.conversationId}`
     : `/account/messages/${input.conversationId}`;
   const url = `${mailAppUrl()}${path}`;
   const greetingName = trainerSide
@@ -103,9 +108,27 @@ async function deliver(input: { conversationId: string; messageId: number; recip
         disable_web_page_preview: true,
       }),
     });
-    if (!response.ok) console.error(`[telegram] sendMessage ${response.status}`);
+    const { writeLog } = await import("@/lib/log/logger");
+    void writeLog({
+      level: response.ok ? "info" : "error",
+      domain: "message",
+      action: "message.notify",
+      outcome: response.ok ? "success" : "failure",
+      message: response.ok ? "Уведомление ушло в Telegram." : "Telegram не принял уведомление.",
+      target: input.conversationId,
+      statusCode: response.status,
+    });
   } catch (error) {
-    console.error("[telegram] send failed", error instanceof Error ? error.message : "unknown");
+    const { writeLog } = await import("@/lib/log/logger");
+    void writeLog({
+      level: "error",
+      domain: "message",
+      action: "message.notify",
+      outcome: "failure",
+      message: "Не удалось отправить уведомление в Telegram.",
+      target: input.conversationId,
+      error,
+    });
   }
 }
 
@@ -120,8 +143,17 @@ export function scheduleMessageNotification(input: {
   if (previous) clearTimeout(previous);
   const timer = setTimeout(() => {
     timers.delete(key);
-    void deliver(input).catch((error) => {
-      console.error("[messages] notify failed", error instanceof Error ? error.message : "unknown");
+    void deliver(input).catch(async (error) => {
+      const { writeLog } = await import("@/lib/log/logger");
+      void writeLog({
+        level: "error",
+        domain: "message",
+        action: "message.notify",
+        outcome: "failure",
+        message: "Не удалось подготовить уведомление.",
+        target: input.conversationId,
+        error,
+      });
     });
   }, DEBOUNCE_MS);
   timer.unref?.();

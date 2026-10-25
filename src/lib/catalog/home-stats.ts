@@ -1,14 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
-import { avg, count, eq, ne } from "drizzle-orm";
+import { ne } from "drizzle-orm";
 
 import { getDb } from "@/db";
-import { trainerProfiles, trainerReviews } from "@/db/schema";
+import { trainerProfiles } from "@/db/schema";
 
 export type HomeStats = {
   trainers: number;
   sports: number;
   cities: number;
-  rating: string | null;
+  /** Mean years of experience. Empty profiles (0) are not in the average. */
+  experience: number | null;
 };
 
 export const getHomeStatsFn = createServerFn({ method: "GET" }).handler(async (): Promise<HomeStats> => {
@@ -17,12 +18,14 @@ export const getHomeStatsFn = createServerFn({ method: "GET" }).handler(async ()
     .select({
       city: trainerProfiles.city,
       sports: trainerProfiles.sports,
+      experienceYears: trainerProfiles.experienceYears,
     })
     .from(trainerProfiles)
     .where(ne(trainerProfiles.status, "archived"));
 
   const sports = new Set<string>();
   const cities = new Set<string>();
+  const years: number[] = [];
   for (const profile of profiles) {
     const city = profile.city.trim().toLowerCase();
     if (city) cities.add(city);
@@ -30,22 +33,17 @@ export const getHomeStatsFn = createServerFn({ method: "GET" }).handler(async ()
       const key = (sport.slug || sport.label).trim().toLowerCase();
       if (key) sports.add(key);
     }
+    if (profile.experienceYears >= 1) years.push(profile.experienceYears);
   }
 
-  const [ratingRow] = await db
-    .select({
-      reviews: count(),
-      average: avg(trainerReviews.rating),
-    })
-    .from(trainerReviews)
-    .where(eq(trainerReviews.status, "published"));
+  const experience = years.length
+    ? Math.round(years.reduce((sum, year) => sum + year, 0) / years.length)
+    : null;
 
-  const reviews = Number(ratingRow?.reviews ?? 0);
-  const average = Number(ratingRow?.average);
   return {
     trainers: profiles.length,
     sports: sports.size,
     cities: cities.size,
-    rating: reviews > 0 && Number.isFinite(average) ? average.toFixed(1) : null,
+    experience,
   };
 });

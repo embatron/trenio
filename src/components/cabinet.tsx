@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { TrainerName } from "@/components/trainer-name";
@@ -22,8 +22,8 @@ export type CabinetIcon = keyof typeof ICONS;
 
 export const REVIEW_STATUS_LABEL = {
   pending: "На модерации",
-  published: "Опубликовано",
-  rejected: "Отклонено",
+  published: "Опубликован",
+  rejected: "Отклонён",
 } as const;
 
 export function ReviewStatus({
@@ -83,13 +83,27 @@ export type AdminSectionPath =
 
 export type TrainerSectionPath = "/trainer-admin" | "/trainer-admin/messages";
 
+export type MeSectionPath =
+  | "/me"
+  | "/me/messages"
+  | "/me/reviews"
+  | "/me/favorites"
+  | "/me/profile"
+  | "/me/settings";
+
+export type CabinetSectionLink = {
+  id: string;
+  label: string;
+};
+
 export type CabinetNavItem = {
   id: string;
   label: string;
   icon: CabinetIcon;
   badge?: number;
-  to?: AccountSectionPath | AdminSectionPath | TrainerSectionPath;
+  to?: AccountSectionPath | AdminSectionPath | TrainerSectionPath | MeSectionPath;
   search?: { tab: "overview" | "settings" | "card" | "reviews" };
+  sections?: readonly CabinetSectionLink[];
 };
 
 export function CabinetShell({
@@ -121,9 +135,99 @@ export function CabinetShell({
 }) {
   const name = joinTrainerName(firstName, lastName) || "Без имени";
   const navRef = useRef<HTMLElement>(null);
+  const sideRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const header = document.getElementById("site-header");
+    const side = sideRef.current;
+    if (!header || !side) return;
+    const root = document.documentElement;
+    const apply = () => {
+      const headerH = Math.ceil(header.getBoundingClientRect().height);
+      root.style.setProperty("--cabinet-sticky-top", `${headerH}px`);
+      root.style.setProperty("--cabinet-side-h", `${Math.ceil(side.getBoundingClientRect().height)}px`);
+    };
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(header);
+    observer.observe(side);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty("--cabinet-sticky-top");
+      root.style.removeProperty("--cabinet-side-h");
+    };
+  }, []);
+  const sectionKey = items.find((item) => item.id === active)?.sections?.map((section) => section.id).join("|") ?? "";
+  const [currentSection, setCurrentSection] = useState<string | null>(null);
+  const subRef = useRef<HTMLDivElement>(null);
+  const spyPause = useRef(0);
   useEffect(() => {
     navRef.current?.querySelector(".is-active")?.scrollIntoView({ inline: "nearest", block: "nearest" });
   }, [active]);
+  useEffect(() => {
+    const ids = sectionKey ? sectionKey.split("|") : [];
+    setCurrentSection(ids[0] ?? null);
+    const nodes = ids
+      .map((id) => document.getElementById(id))
+      .filter((node): node is HTMLElement => node != null);
+    if (nodes.length === 0) return;
+    const seen = new Set<string>();
+    const observer = new IntersectionObserver((entries) => {
+      if (spyPause.current) return;
+      for (const entry of entries) {
+        if (entry.isIntersecting) seen.add(entry.target.id);
+        else seen.delete(entry.target.id);
+      }
+      const next = ids.find((id) => seen.has(id));
+      if (next) setCurrentSection(next);
+    }, { rootMargin: "-18% 0px -55% 0px", threshold: [0, 0.25] });
+    for (const node of nodes) observer.observe(node);
+    return () => observer.disconnect();
+  }, [sectionKey]);
+  useLayoutEffect(() => {
+    const root = subRef.current;
+    const mark = root?.querySelector<HTMLElement>(".cabinet-nav__mark");
+    const link = root?.querySelector<HTMLElement>(".is-current");
+    if (!root || !mark || !link) return;
+    mark.style.width = `${link.offsetWidth}px`;
+    mark.style.height = `${link.offsetHeight}px`;
+    mark.style.transform = `translate(${link.offsetLeft}px, ${link.offsetTop}px)`;
+  }, [currentSection, sectionKey]);
+  function moveToSection(id: string) {
+    const target = document.getElementById(id);
+    if (!target) return;
+    setCurrentSection(id);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const narrow = window.matchMedia("(max-width: 960px)").matches;
+    const header = document.getElementById("site-header");
+    const headerH = header ? Math.ceil(header.getBoundingClientRect().height) : 96;
+    const sideH = narrow && sideRef.current ? Math.ceil(sideRef.current.getBoundingClientRect().height) : 0;
+    const top = Math.max(0, window.scrollY + target.getBoundingClientRect().top - headerH - sideH - 16);
+    const token = ++spyPause.current;
+    const release = () => {
+      window.setTimeout(() => {
+        if (spyPause.current === token) spyPause.current = 0;
+      }, 80);
+    };
+    if (header && top > 8) {
+      header.classList.add("is-scrolled");
+      if (!document.getElementById("search-dock-sentinel")) document.body.classList.add("is-search-docked");
+    }
+    if (reduce || Math.abs(top - window.scrollY) < 2) {
+      window.scrollTo(0, top);
+      release();
+      return;
+    }
+    window.scrollTo({ top, behavior: "smooth" });
+    let timer = 0;
+    const onScroll = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        window.removeEventListener("scroll", onScroll);
+        release();
+      }, 120);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
 
   return (
     <>
@@ -134,7 +238,7 @@ export function CabinetShell({
             <h1>{title}</h1>
             {lede ? <p>{lede}</p> : null}
           </header>
-          <aside className="cabinet-side">
+          <aside className="cabinet-side" ref={sideRef}>
             <div className="cabinet-id">
               <UserAvatar name={name} src={avatarUrl} size={44} />
               <div>
@@ -144,45 +248,72 @@ export function CabinetShell({
                 <span>{role}</span>
               </div>
             </div>
-            <nav className="cabinet-nav" aria-label="Разделы кабинета" ref={navRef}>
-              {items.map((item) => {
-                const className = item.id === active ? "is-active" : undefined;
-                const icon = <svg viewBox="0 0 24 24" aria-hidden="true"><path d={ICONS[item.icon]} /></svg>;
-                const badge = typeof item.badge === "number" ? (
-                  <span className={`cabinet-nav__badge${item.badge > 0 ? " is-hot" : ""}`}>{item.badge > 99 ? "99+" : item.badge}</span>
-                ) : null;
-                if (item.to === "/trainer-admin") {
+            <nav
+              className="cabinet-nav"
+              aria-label="Разделы кабинета"
+              style={sectionKey ? { ["--nav-sub-row" as string]: String(items.findIndex((item) => item.id === active) + 2) } : undefined}
+            >
+              <div className="cabinet-nav__items" ref={navRef}>
+                {items.map((item) => {
+                  const className = item.id === active ? "is-active" : undefined;
+                  const icon = <svg viewBox="0 0 24 24" aria-hidden="true"><path d={ICONS[item.icon]} /></svg>;
+                  const badge = typeof item.badge === "number" ? (
+                    <span className={`cabinet-nav__badge${item.badge > 0 ? " is-hot" : ""}`}>{item.badge > 99 ? "99+" : item.badge}</span>
+                  ) : null;
+                  if (item.to === "/trainer-admin") {
+                    return (
+                      <Link key={item.id} to="/trainer-admin" search={item.search ?? {}} className={className} aria-current={item.id === active ? "page" : undefined}>
+                        {icon}
+                        <span className="cabinet-nav__label">{item.label}</span>
+                        {badge}
+                      </Link>
+                    );
+                  }
+                  if (item.to) {
+                    return (
+                      <Link key={item.id} to={item.to} activeOptions={item.to === "/me" || item.to === "/admin" ? { exact: true } : undefined} className={className} aria-current={item.id === active ? "page" : undefined}>
+                        {icon}
+                        <span className="cabinet-nav__label">{item.label}</span>
+                        {badge}
+                      </Link>
+                    );
+                  }
                   return (
-                    <Link key={item.id} to="/trainer-admin" search={item.search ?? {}} className={className} aria-current={item.id === active ? "page" : undefined}>
+                    <button
+                      key={item.id}
+                      type="button"
+                      className={className}
+                      aria-current={item.id === active ? "page" : undefined}
+                      onClick={() => onSelect?.(item.id)}
+                    >
                       {icon}
                       <span className="cabinet-nav__label">{item.label}</span>
                       {badge}
-                    </Link>
+                    </button>
                   );
-                }
-                if (item.to) {
-                  return (
-                    <Link key={item.id} to={item.to} className={className} aria-current={item.id === active ? "page" : undefined}>
-                      {icon}
-                      <span className="cabinet-nav__label">{item.label}</span>
-                      {badge}
-                    </Link>
-                  );
-                }
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    className={className}
-                    aria-current={item.id === active ? "page" : undefined}
-                    onClick={() => onSelect?.(item.id)}
-                  >
-                    {icon}
-                    <span className="cabinet-nav__label">{item.label}</span>
-                    {badge}
-                  </button>
-                );
-              })}
+                })}
+              </div>
+              {sectionKey ? (
+                <div className="cabinet-nav__sub" aria-label="Разделы профиля" ref={subRef}>
+                  <span className="cabinet-nav__mark" aria-hidden="true" />
+                  {items.find((item) => item.id === active)?.sections?.map((section) => (
+                    <a
+                      key={section.id}
+                      href={`#${section.id}`}
+                      className={section.id === currentSection ? "is-current" : undefined}
+                      aria-current={section.id === currentSection ? "location" : undefined}
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.currentTarget.focus({ preventScroll: true });
+                        moveToSection(section.id);
+                      }}
+                    >
+                      {section.label}
+                    </a>
+                  ))}
+                </div>
+              ) : null}
             </nav>
             <button type="button" className="cabinet-logout" onClick={onLogout} disabled={logoutPending}>
               {logoutPending ? "Выход…" : "Выйти"}
@@ -201,13 +332,33 @@ const CABINET_CSS = `
 .cabinet-head { grid-column: 1 / -1; }
 .cabinet-head h1 { margin: 0 0 6px; font-size: var(--fs-page); letter-spacing: var(--tracking-heading); font-weight: var(--fw-heading); color: var(--dark); }
 .cabinet-head p { margin: 0; color: var(--muted); font-size: 15px; }
-.cabinet-side { display: grid; gap: 14px; align-content: start; padding: 16px; border: 1px solid var(--line); border-radius: var(--card-radius); background: var(--white); }
+.cabinet-side {
+  display: grid; gap: 14px; align-content: start; align-self: start;
+  position: sticky; top: var(--cabinet-sticky-top, 96px); z-index: 20;
+  max-height: calc(100dvh - var(--cabinet-sticky-top, 96px) - 16px); overflow: auto;
+  padding: 16px; border: 1px solid var(--line); border-radius: var(--card-radius); background: var(--white);
+}
 .cabinet-id { display: flex; align-items: center; gap: 12px; }
+.cabinet-id > div { min-width: 0; }
 .cabinet-id__mark { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgba(var(--primary-rgb), 0.12); color: var(--primary); font-weight: var(--fw-title); object-fit: cover; }
-.cabinet-id strong { display: block; color: var(--dark); }
+.cabinet-id strong { display: block; min-width: 0; color: var(--dark); }
+.cabinet-id strong .trainer-name { flex-wrap: nowrap; }
 .cabinet-id strong .trainer-name__line { color: var(--dark); font-size: inherit; margin: 0; }
 .cabinet-id span { color: var(--muted); font-size: 13px; }
 .cabinet-nav { display: flex; flex-direction: column; gap: 4px; }
+.cabinet-nav__items { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.cabinet-nav__sub { position: relative; display: grid; gap: 2px; margin: 0 0 4px 18px; padding-left: 10px; border-left: 2px solid rgba(var(--primary-rgb), 0.35); }
+.cabinet-nav__mark { position: absolute; left: 0; top: 0; border-radius: var(--radius-control); background: rgba(var(--primary-rgb), 0.1); pointer-events: none; z-index: 0; transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), width 0.42s cubic-bezier(0.22, 1, 0.36, 1), height 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
+@media (prefers-reduced-motion: reduce) {
+  .cabinet-nav__mark { transition: none; }
+}
+@media (min-width: 961px) {
+  .cabinet-nav:has(.cabinet-nav__sub) { display: grid; }
+  .cabinet-nav:has(.cabinet-nav__sub) .cabinet-nav__items { display: contents; }
+  .cabinet-nav__sub { grid-row: var(--nav-sub-row); margin-left: 18px; }
+}
+.cabinet-nav__sub a { position: relative; z-index: 1; color: var(--muted); font-size: 14px; font-weight: var(--fw-ui); transition: color 0.28s ease; }
+.cabinet-nav__sub a.is-current { background: transparent; color: var(--primary); }
 .cabinet-nav button, .cabinet-nav a, .cabinet-logout {
   min-height: 44px; border: 0; border-radius: var(--radius-control); background: transparent;
   display: flex; align-items: center; gap: 10px; padding: 0 12px; color: var(--text);
@@ -219,6 +370,8 @@ const CABINET_CSS = `
 .cabinet-nav__badge.is-hot { color: var(--primary); }
 .cabinet-nav button.is-active, .cabinet-nav a.is-active { background: rgba(var(--primary-rgb), 0.1); color: var(--primary-dark); }
 .cabinet-nav button:hover, .cabinet-nav a:hover, .cabinet-logout:hover { background: rgba(var(--dark-rgb), 0.04); }
+.cabinet-nav__sub a { color: var(--muted); font-weight: var(--fw-ui); }
+.cabinet-nav__sub a.is-current { background: transparent; color: var(--primary); }
 .cabinet-logout { color: var(--muted); justify-content: center; }
 .cabinet-main { display: grid; gap: 16px; min-width: 0; overflow-x: clip; }
 @keyframes profile-card-in {
@@ -234,6 +387,27 @@ const CABINET_CSS = `
 .cabinet-stat { padding: 16px 18px; }
 .cabinet-stat strong { display: block; font-size: 28px; letter-spacing: var(--tracking-heading); color: var(--dark); }
 .cabinet-stat span { color: var(--muted); font-size: 13px; }
+.cabinet-stat__delta { display: block; margin-top: 6px; font-size: 13px; font-weight: var(--fw-title); }
+.cabinet-stat__delta.is-up { color: #15803d; }
+.cabinet-stat__delta.is-down { color: var(--primary); }
+.cabinet-stat__delta.is-flat { color: var(--muted); font-weight: var(--fw-ui); }
+.cabinet-contacts { display: grid; }
+.cabinet-contact { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; grid-template-areas: "icon name marks" "icon value marks"; column-gap: 12px; row-gap: 2px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+.cabinet-contact:last-child { border-bottom: 0; }
+.cabinet-contact__icon { grid-area: icon; display: grid; place-items: center; width: 28px; height: 28px; color: var(--dark); }
+.cabinet-contact__icon svg { width: 20px; height: 20px; }
+.cabinet-contact__icon .cabinet-line { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.cabinet-contact__name { grid-area: name; color: var(--dark); font-size: 15px; font-weight: var(--fw-title); }
+.cabinet-contact__value { grid-area: value; min-width: 0; color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cabinet-contact__value:empty { display: none; }
+.cabinet-contact__marks { grid-area: marks; display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.cabinet-mark { display: inline-grid; place-items: center; height: 28px; padding: 0 12px; border-radius: 999px; border: 1px solid transparent; font-size: 12px; font-weight: var(--fw-title); line-height: 1; white-space: nowrap; }
+.cabinet-mark--added { background: var(--white); border-color: var(--line); color: var(--dark); }
+.cabinet-mark--on { background: #16a34a; color: #fff; }
+.cabinet-mark--wait { background: #f59e0b; color: #fff; }
+.cabinet-mark--off { background: var(--light-bg); color: var(--muted); }
+.cabinet-faq { display: grid; gap: 12px; }
+.cabinet-faq > h2 { margin: 0; font-size: 16px; font-weight: var(--fw-heading); color: var(--dark); }
 .cabinet-card h2 { margin: 0; padding: 16px 18px; border-bottom: 1px solid var(--line); font-size: 16px; color: var(--dark); }
 .cabinet-row { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none; }
 .cabinet-row:last-child { border-bottom: 0; }
@@ -368,15 +542,24 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-save { position: static; width: 44px; height: 44px; flex: 0 0 auto; }
 .cabinet-empty { margin: 0; padding: 16px 18px; }
 .cabinet-note { margin: 0; color: var(--muted); max-width: 62ch; }
+.cabinet-section .cabinet-note { margin: -6px 0 10px; font-size: var(--fs-caption); line-height: 1.35; font-weight: var(--fw-body); }
 .cabinet-card > .cabinet-note--lede { padding: 12px 18px 0; }
 .cabinet-card > .cabinet-note--lede a { color: var(--primary); font-weight: var(--fw-title); text-decoration: none; }
 .cabinet-card > .cabinet-note--lede a:hover { text-decoration: underline; }
 .cabinet-form { display: grid; gap: 12px; padding: 16px 18px; }
+.cabinet-form:has(.cabinet-section) { gap: 18px; }
+.cabinet-section { display: grid; gap: 12px; margin: 0; padding: 16px; border: 1px solid var(--line); border-radius: var(--card-radius); background: rgba(var(--dark-rgb), 0.025); scroll-margin-top: calc(var(--cabinet-sticky-top, 96px) + 16px); }
+.cabinet-section h3 { margin: 0; padding-bottom: 10px; border-bottom: 1px solid var(--line); font-size: 16px; font-weight: var(--fw-title); letter-spacing: -0.02em; color: var(--dark); }
+.cabinet-section--place { background: rgba(var(--primary-rgb), 0.08); border-color: rgba(var(--primary-rgb), 0.35); }
+.cabinet-section--place h3 { border-bottom-color: rgba(var(--primary-rgb), 0.22); }
+.cabinet-section--contact { background: var(--white); border-color: var(--line); box-shadow: inset 3px 0 0 var(--primary); }
+.cabinet-section .places-field { padding: 12px; border-radius: var(--radius-control); background: var(--white); border: 1px solid rgba(var(--primary-rgb), 0.18); }
 .cabinet-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .cabinet-form__row > label { min-width: 0; }
 .cabinet-choices { display: flex; flex-wrap: wrap; gap: 8px; }
 .cabinet-choices button { min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-size: 14px; font-weight: var(--fw-title); cursor: pointer; }
-.cabinet-choices button.is-on { border-color: transparent; background: rgba(var(--primary-rgb), 0.12); color: var(--primary); }
+.cabinet-choices button.is-on { border-color: transparent; background: var(--primary); color: var(--white); }
+.cabinet-choices button.is-on:hover { background: var(--primary-dark); color: var(--white); }
 .cabinet-review-list { padding-inline: 18px; }
 .cabinet-review { display: grid; gap: 8px; padding: 16px 0; border-bottom: 1px solid var(--line); }
 .cabinet-review:first-child { padding-top: 0; }
@@ -449,6 +632,18 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .address-field__clear { position: absolute; top: 0; right: 0; width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
 .address-field__clear svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .address-field__status { min-height: 44px; display: flex; align-items: center; padding: 0 10px; color: var(--muted); font-size: 14px; }
+.address-field__menu button.address-hit {
+  display: flex; flex-direction: column; align-items: stretch; justify-content: center;
+  gap: 1px; min-height: 44px; height: auto; padding: 6px 12px; white-space: normal;
+}
+.address-field__menu button.address-hit.is-active,
+.address-field__menu button.address-hit:hover { background: rgba(var(--dark-rgb), 0.04); }
+.address-field__menu button .address-hit__main,
+.address-field__menu button .address-hit__meta {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.25;
+}
+.address-field__menu button .address-hit__main { color: var(--dark); font-size: 14px; font-weight: var(--fw-title); }
+.address-field__menu button .address-hit__meta { color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); }
 .geo-status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .geo-badge { display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border-radius: 999px; font-size: 13px; font-weight: var(--fw-title); }
 .geo-badge--ok { background: var(--neutral-bg); color: var(--dark); }
@@ -479,8 +674,8 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-media-block { display: grid; gap: 6px; }
 .cabinet-media { display: grid; gap: 8px; justify-items: start; }
 .cabinet-media__label { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
-.cabinet-photos { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.cabinet-photo { position: relative; width: 96px; height: 96px; border-radius: var(--radius-control); overflow: hidden; background: var(--neutral-bg, #f3f4f6); border: 1px solid var(--line); }
+.cabinet-photos { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.cabinet-photo { position: relative; width: 128px; height: 128px; border-radius: var(--radius-control); overflow: hidden; background: var(--neutral-bg, #f3f4f6); border: 1px solid var(--line); }
 .cabinet-photo.is-pending { opacity: 0.55; }
 .cabinet-photo.is-draggable { cursor: grab; touch-action: none; }
 .cabinet-photo.is-placeholder { background: rgba(var(--primary-rgb), 0.08); border-style: dashed; border-color: rgba(var(--primary-rgb), 0.45); pointer-events: none; }
@@ -505,12 +700,20 @@ html.is-photo-drag, html.is-photo-drag * { cursor: grabbing !important; }
 label.cabinet-form__ghost input { position: absolute; width: 1px; height: 1px; min-height: 0; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); }
 a.cabinet-icon-btn { text-decoration: none; }
 @media (max-width: 960px) {
-  .cabinet-nav { flex-direction: row; min-width: 0; overflow-x: auto; scroll-padding-inline: 8px; scrollbar-width: none; }
-  .cabinet-nav::-webkit-scrollbar { display: none; }
-  .cabinet-nav button, .cabinet-nav a { flex: 0 0 auto; }
+  .layout-with-sidebar:has(> .cabinet-side) { display: flex; flex-direction: column; align-items: stretch; }
+  .cabinet-side { width: 100%; }
+  .cabinet-section { scroll-margin-top: calc(var(--cabinet-sticky-top, 96px) + var(--cabinet-side-h, 0px) + 16px); }
+  .cabinet-nav__items { flex-direction: row; overflow-x: auto; scroll-padding-inline: 8px; scrollbar-width: none; }
+  .cabinet-nav__items::-webkit-scrollbar { display: none; }
+  .cabinet-nav__items > button, .cabinet-nav__items > a { flex: 0 0 auto; }
+  .cabinet-nav__sub { display: flex; margin: 4px 0 0; padding-left: 0; border-left: 0; overflow-x: auto; scrollbar-width: none; }
+  .cabinet-nav__sub::-webkit-scrollbar { display: none; }
+  .cabinet-nav__sub a { flex: 0 0 auto; }
 }
 @media (max-width: 640px) {
   .cabinet-stats { grid-template-columns: 1fr; }
+  .cabinet-contact { grid-template-columns: 28px minmax(0, 1fr); grid-template-areas: "icon name" "icon value" "marks marks"; }
+  .cabinet-contact__marks { justify-content: flex-start; }
   .cabinet-row { align-items: flex-start; flex-direction: column; }
   .cabinet-status-stack { align-items: center; align-self: flex-start; }
   .cabinet-form__row { grid-template-columns: 1fr; }

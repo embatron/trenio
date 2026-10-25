@@ -5,6 +5,7 @@ import { FavoriteButton } from "@/components/favorite-button";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
 import { ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
+import { priceForCard, type TrainerPriceMap } from "@/lib/catalog/trainer-price";
 type FavoriteCard = {
   type: "trainer" | "club";
   slug: string;
@@ -18,13 +19,13 @@ type FavoriteCard = {
   district?: string;
   tags?: string[];
   experience?: number;
-  price?: number;
+  price?: number | null;
   rating: string;
   reviews: number;
   missing: boolean;
 };
 
-function toCard(key: string, ratings: Record<string, TrainerRatingSnapshot>): FavoriteCard {
+function toCard(key: string, ratings: Record<string, TrainerRatingSnapshot>, prices: TrainerPriceMap): FavoriteCard {
   const splitAt = key.indexOf(":");
   const type = key.slice(0, splitAt) === "club" ? "club" : "trainer";
   const slug = key.slice(splitAt + 1);
@@ -47,7 +48,7 @@ function toCard(key: string, ratings: Record<string, TrainerRatingSnapshot>): Fa
       district: trainer.district,
       tags: trainer.sports.map((sport) => sport.label),
       experience: trainer.experience,
-      price: trainer.priceFrom,
+      price: priceForCard(trainer.slug, trainer.priceFrom, prices),
       rating: rating.rating,
       reviews: rating.reviews,
       missing: false,
@@ -59,11 +60,13 @@ function toCard(key: string, ratings: Record<string, TrainerRatingSnapshot>): Fa
 export function FavoriteCards({
   keys,
   ratings,
+  prices = {},
 }: {
   keys: string[];
   ratings: Record<string, TrainerRatingSnapshot>;
+  prices?: TrainerPriceMap;
 }) {
-  const cards = keys.map((key) => toCard(key, ratings));
+  const cards = keys.map((key) => toCard(key, ratings, prices));
   const pager = useTablePage(cards);
   const pageCards = pager.rows;
   const trainers = pageCards.filter((card) => card.type === "trainer" && !card.missing);

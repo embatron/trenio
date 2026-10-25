@@ -11,17 +11,56 @@ async () => {
   const checkpoint = /checkpoint|challenge|confirm it.?s you|подозрительн/i.test(bodyText);
   const loginWall = !hasProfile && /log in|sign up|войти|зарегистрир/i.test(bodyText);
 
-  const thumbnailStp = /(?:^|[._])s(?:100|150)x(?:100|150)(?:[._]|$)/;
-  const sourcePhotoUrl = (url) => {
-    if (!url) return "";
+  const thumbnailStp = /(?:^|[._])s(?:100|150|206)x(?:100|150|206)(?:[._]|$)/;
+  const isThumbnailUrl = (url) => {
     try {
       const next = new URL(url, location.href);
       const stp = next.searchParams.get("stp") || "";
-      if (thumbnailStp.test(stp)) next.searchParams.delete("stp");
-      return next.toString();
+      if (thumbnailStp.test(stp) || /[?&]stp=/.test(next.search)) return true;
+      return /\/s(?:100|150|206)x(?:100|150|206)\//.test(next.pathname);
+    } catch {
+      return true;
+    }
+  };
+  const sourcePhotoUrl = (url) => {
+    if (!url || isThumbnailUrl(url)) return "";
+    try {
+      return new URL(url, location.href).toString();
     } catch {
       return "";
     }
+  };
+  const fileStem = (url) => {
+    try {
+      const name = new URL(url, location.href).pathname.split("/").pop() || "";
+      return name.replace(/\.[a-z0-9]+$/i, "");
+    } catch {
+      return "";
+    }
+  };
+  const sourceCandidates = (pictureSrc) => {
+    const stem = fileStem(pictureSrc);
+    const urls = new Set();
+    const add = (url) => {
+      const next = sourcePhotoUrl(url);
+      if (next) urls.add(next);
+    };
+    if (stem) {
+      for (const entry of performance.getEntriesByType("resource")) {
+        if (String(entry.name).includes(stem)) add(entry.name);
+      }
+      const html = document.documentElement.innerHTML
+        .replace(/\\u0026/g, "&")
+        .replace(/\\\//g, "/")
+        .replace(/&amp;/g, "&");
+      const re = /https:\/\/[^"'\\\s<>]+/g;
+      let match;
+      while ((match = re.exec(html))) {
+        if (match[0].includes(stem)) add(match[0]);
+      }
+    }
+    add(pictureSrc);
+    return [...urls].slice(0, 6);
   };
   const imageSize = (bytes) => {
     for (let i = 0; i < bytes.length - 24; i += 1) {
@@ -100,30 +139,32 @@ async () => {
     profilePictures.find((image) => username && image.alt.toLowerCase().includes(username.toLowerCase())) ||
     profilePictures[0] ||
     [...headerImages].sort((a, b) => b.width - a.width)[0];
-  const avatarUrl = sourcePhotoUrl(avatar?.src || "") || sourcePhotoUrl(ogImage);
+  const avatarCandidates = [...sourceCandidates(avatar?.src || ""), sourcePhotoUrl(ogImage)].filter(Boolean);
 
   let avatarBase64 = "";
   let avatarMime = "";
   let avatarWidth = 0;
   let avatarHeight = 0;
-  if (avatarUrl && !unavailable && !loginWall && !checkpoint) {
-    try {
-      const response = await fetch(avatarUrl);
-      if (response.ok) {
+  let avatarUrl = "";
+  if (!unavailable && !loginWall && !checkpoint) {
+    for (const candidate of avatarCandidates) {
+      try {
+        const response = await fetch(candidate);
+        if (!response.ok) continue;
         const bytes = new Uint8Array(await response.arrayBuffer());
         const size = imageSize(bytes);
         const usable = size.w >= 400 && size.h >= 400 && bytes.byteLength > 0 && bytes.byteLength <= 2000000;
-        if (usable) {
-          let binary = "";
-          for (let i = 0; i < bytes.length; i += 1) binary += String.fromCharCode(bytes[i]);
-          avatarBase64 = btoa(binary);
-          avatarMime = (response.headers.get("content-type") || "image/jpeg").split(";")[0];
-          avatarWidth = size.w;
-          avatarHeight = size.h;
-        }
+        if (!usable || size.w * size.h <= avatarWidth * avatarHeight) continue;
+        let binary = "";
+        for (let i = 0; i < bytes.length; i += 1) binary += String.fromCharCode(bytes[i]);
+        avatarBase64 = btoa(binary);
+        avatarMime = (response.headers.get("content-type") || "image/jpeg").split(";")[0];
+        avatarWidth = size.w;
+        avatarHeight = size.h;
+        avatarUrl = candidate;
+      } catch {
+        // The next candidate from the same page may still be the source file.
       }
-    } catch {
-      avatarBase64 = "";
     }
   }
 

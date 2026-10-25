@@ -8,9 +8,11 @@ import { createSession } from "@/auth/service";
 import { getDb } from "@/db";
 import { trainerProfiles, userRoles, users } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
+import { logCaught, writeLog } from "@/lib/log/logger";
 import { OFFER_VERSION } from "@/lib/catalog/offer";
 import { genderAddress, inferTrainerGender } from "@/lib/catalog/trainer-gender";
 import { instagramProfileSlug } from "@/lib/catalog/trainer-slugs";
+import { markTrainerWelcomeLinkSent } from "@/lib/catalog/trainer-welcome-log";
 
 const tokenSchema = z.object({
   token: z.string().trim().min(20).max(80),
@@ -38,6 +40,8 @@ export const getTrainerClaimFn = createServerFn({ method: "GET" })
         avatarPath: trainerProfiles.avatarPath,
         slug: trainerProfiles.slug,
         handle: trainerProfiles.instagramHandle,
+        telegram: trainerProfiles.telegram,
+        phone: trainerProfiles.phone,
         claimStatus: trainerProfiles.claimStatus,
         ownerUserId: trainerProfiles.ownerUserId,
         status: trainerProfiles.status,
@@ -46,6 +50,18 @@ export const getTrainerClaimFn = createServerFn({ method: "GET" })
       .where(eq(trainerProfiles.claimToken, data.token))
       .limit(1);
     if (!row) throw new AuthError("Ссылка не найдена или уже не действует.", "VALIDATION");
+    const stillDraft = row.status !== "published" && row.claimStatus === "unclaimed" && row.ownerUserId == null;
+    if (stillDraft) {
+      try {
+        await markTrainerWelcomeLinkSent({
+          instagram: row.handle,
+          telegram: row.telegram,
+          phone: row.phone,
+        });
+      } catch (error) {
+        logCaught("catalog", "catalog.claim", error, { target: row.slug });
+      }
+    }
     const gender = row.gender === "male" || row.gender === "female"
       ? row.gender
       : inferTrainerGender(row.firstName, row.fullName);
@@ -66,6 +82,7 @@ export const getTrainerClaimFn = createServerFn({ method: "GET" })
 export const claimTrainerProfileFn = createServerFn({ method: "POST" })
   .validator(claimSchema)
   .handler(async ({ data }) => {
+    try {
     const passwordError = validatePasswordStrength(data.password);
     if (passwordError) throw new AuthError(passwordError, "WEAK_PASSWORD");
     const db = getDb();
@@ -135,5 +152,27 @@ export const claimTrainerProfileFn = createServerFn({ method: "POST" })
 
     const session = await createSession(user.id, { remember: true });
     setSessionCookie(session.token, true);
+    void writeLog({
+      level: "info",
+      domain: "account",
+      action: "account.claim",
+      outcome: "success",
+      message: "Карточка привязана к аккаунту.",
+      subject: email,
+      actorUserId: user.id,
+      target: handle,
+    });
     return { ok: true as const };
+    } catch (error) {
+      void writeLog({
+        level: "warn",
+        domain: "account",
+        action: "account.claim",
+        outcome: "failure",
+        message: error instanceof AuthError ? error.message : "Привязка карточки не выполнена.",
+        subject: data.email,
+        error,
+      });
+      throw error;
+    }
   });

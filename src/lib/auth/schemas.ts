@@ -45,7 +45,7 @@ export const signupSchema = z.object({
   email: z.string().email("Введите корректный e-mail"),
   password: z.string().min(8, "Минимум 8 символов"),
   firstName: z.string().trim().min(1, "Укажите имя").max(100),
-  lastName: z.string().trim().max(100).optional(),
+  lastName: z.string().trim().min(1, "Укажите фамилию").max(100),
   phone: z.string().trim().max(32).optional(),
   signupRole: z.enum(PUBLIC_SIGNUP_ROLES),
 });
@@ -66,7 +66,7 @@ export const verifyEmailSchema = z.object({
 
 export const profileNameSchema = z.object({
   firstName: z.string().trim().min(1, "Укажите имя").max(100),
-  lastName: z.string().trim().max(100),
+  lastName: z.string().trim().min(1, "Укажите фамилию").max(100),
 });
 
 export const accountAvatarSchema = z.object({
@@ -103,6 +103,8 @@ export type PublicUser = {
   firstName: string;
   lastName: string | null;
   avatarPath: string;
+  /** Instagram handle of a trainer or club. Empty for everyone else. */
+  nick: string;
   emailVerified: boolean;
   roles: UserRole[];
   status: string;

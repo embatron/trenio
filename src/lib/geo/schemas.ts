@@ -17,9 +17,29 @@ export type AddressSuggestion = {
   city: string;
   district: string;
   street: string;
+  region: string;
+  country: string;
   lat: number;
   lng: number;
 };
+
+function addressParts(displayName: string) {
+  return displayName.split(",").map((part) => part.trim()).filter(Boolean);
+}
+
+export function suggestionLines(hit: AddressSuggestion): { main: string; meta: string } {
+  const street = hit.street.trim();
+  const display = hit.displayName.trim();
+  const parts = addressParts(display);
+  const region = hit.region.trim() || parts.find((part) => /область/i.test(part)) || "";
+  const country = hit.country.trim() || parts.find((part) => /беларус/i.test(part)) || "Беларусь";
+  const city = hit.city.trim();
+  const main = street && street !== display
+    ? street
+    : parts.filter((part) => part !== region && part !== country && part.toLowerCase() !== city.toLowerCase() && !/район|^\d{5,6}$/i.test(part)).slice(0, 2).join(", ");
+  const meta = [region, city, country].filter((part, index, all) => part && all.findIndex((item) => item.toLowerCase() === part.toLowerCase()) === index).join(", ");
+  return { main: main || display, meta };
+}
 
 export type TrainerPlace = {
   city: string;

@@ -5,7 +5,7 @@ description: >-
   published trainer or club profile, composer, emoji, unread counts, delivery
   and read receipts, moderation. Use when editing conversations, the message
   composer, «Написать», inbox, unread badges, or files under src/lib/messages,
-  src/components/messages, or the account, trainer-admin, and admin message routes.
+  src/components/messages, or the account, me, and admin message routes.
 ---
 
 # Direct messages
@@ -26,9 +26,13 @@ Read `.cursor/rules/messages.mdc` first. Product copy and limits are in `docs/TE
 | Emoji groups, including vulgar and skin tones | `src/lib/emoji-catalog.ts` |
 | Composer, editor, bubbles, live unread | `src/components/messages/` |
 | Header count | `MessageCount` in `src/components/site-chrome.tsx` |
-| Routes | `src/routes/account.messages*.tsx`, `trainer-admin.messages*.tsx`, `admin.messages.tsx` |
+| Routes | `src/routes/account.messages*.tsx`, `me.messages*.tsx`, `admin.messages.tsx` |
 
 Do not import `src/db/` or `src/auth/` from those client components. Do not hand-edit `src/routeTree.gen.ts`.
+
+## Logging
+
+Message mutations log `domain: "message"` through `writeLog` in `src/lib/messages/functions.ts`. Store the conversation id in `target` and the visible length in `chars`. Do not write the HTML body, the preview, or the notification text into `app_logs`. List, thread, read, and unread polls log only failures. See `.cursor/rules/logging.mdc`.
 
 ## Access
 
@@ -56,12 +60,12 @@ Do not import `src/db/` or `src/auth/` from those client components. Do not hand
 ## UI
 
 - Account, trainer, and admin nav labels are «Сообщения». Badges are `.cabinet-nav__badge` numbers, including zero for those three counts on the account sidebar.
-- The conversation list is newest activity first. `/account/messages` and `/trainer-admin/messages` with no id replace the URL with the first row. Hover tints the row and turns the name brand-colored. Do not steal `?trainer=` while that conversation is still opening.
+- The conversation list is newest activity first. `/account/messages` and `/me/messages` with no id replace the URL with the first row. Hover tints the row and turns the name brand-colored. Do not steal `?trainer=` while that conversation is still opening. The trainer list includes threads the trainer started.
 - In the list and the thread header the given name and surname stay on one line. Do not show «Открыта» or «Закрыта» next to the name. A closed thread is explained in the composer. The composer text is 14px.
-- Header icon links to the trainer inbox when the user is a trainer or club and only the inbox is unread. Staff with a zero personal count go to `/admin/messages`. Everyone else goes to `/account/messages`.
+- The header envelope goes to `/me/messages` for a trainer or club. Staff with a zero personal count go to `/admin/messages`. Everyone else goes to `/account/messages`.
 - `MessageEditor` inserts emoji with a text node and an `input` event so the controlled editor keeps the character. Do not rely on `document.execCommand` alone.
 - The emoji panel is in the toolbar flow (`display: contents` on `.emoji-picker`), not a popup that the thread can clip.
-- `TrainerContactIcons` replaces the «Написать» label on trainer cards, search cards, and favorites. On a trainer profile the same icons sit after reviews under «Как со мной связаться». The phone is a handset and a `tel:` link; the profile row also shows the number. Telegram uses `TelegramIcon` from `src/components/brand-icons.tsx`. Direct opens `/account/messages?trainer={slug}` in a new tab.
+- `TrainerContactIcons` replaces the «Написать» label on trainer cards, search cards, and favorites. On a trainer profile the same icons sit after reviews under «Как со мной связаться». The phone is a handset and a `tel:` link; the profile row also shows the number. Telegram uses `TelegramIcon` from `src/components/brand-icons.tsx`. Direct opens `/me/messages?trainer={slug}` for a trainer or club and `/account/messages?trainer={slug}` for a client, in a new tab. A guest still lands on login and returns to the client thread; after login a trainer or club is redirected into `/me`.
 - `.layout-staff` wraps only `src/routes/admin.tsx`.
 
 ## Changing the schema

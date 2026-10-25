@@ -4,6 +4,8 @@ import path from "node:path";
 
 import { and, desc, eq, gt, isNotNull, isNull, ne } from "drizzle-orm";
 
+import { belarusPhoneEquals } from "@/lib/auth/phone-match";
+
 import { getDb } from "@/db";
 import {
   emailVerificationTokens,
@@ -25,7 +27,6 @@ import {
   getDummyPasswordHash,
   hashPassword,
   normalizeEmail,
-  normalizePhone,
   validatePasswordStrength,
   verifyPassword,
 } from "@/auth/password";
@@ -36,12 +37,12 @@ import { AuthError } from "@/lib/auth/errors";
 import { resolveAccountLogin } from "@/lib/auth/login-name";
 import { writeImageSet } from "@/lib/images/store";
 import {
-  formatBelarusPhone,
   normalizeBelarusMobile,
   OTP_CODE_LENGTH,
   storedBelarusPhone,
   validateBelarusMobile,
 } from "@/lib/auth/phone";
+import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import { sendMail } from "@/lib/mail/send.server";
 import {
   signupRoleToIntent,
@@ -59,6 +60,24 @@ export type SessionUser = {
   status: User["status"];
   lastSignupIntent: User["lastSignupIntent"];
 };
+
+/** Face and public nick for the header. The nick is the Instagram handle. */
+export async function trainerHeaderFace(userId: string): Promise<{ avatarPath: string; nick: string } | null> {
+  const [row] = await getDb()
+    .select({
+      handle: trainerProfiles.instagramHandle,
+      slug: trainerProfiles.slug,
+      avatarPath: trainerProfiles.avatarPath,
+      photos: trainerProfiles.photos,
+    })
+    .from(trainerProfiles)
+    .where(eq(trainerProfiles.ownerUserId, userId))
+    .limit(1);
+  if (!row) return null;
+  const photo = (row.photos[0] || row.avatarPath || "").split("?")[0];
+  const handle = row.handle.startsWith("self") ? "" : row.handle;
+  return { avatarPath: photo, nick: handle || row.slug };
+}
 
 function toSessionUser(user: User, roles: UserRole[]): SessionUser {
   return {
@@ -264,13 +283,17 @@ export async function registerUser(input: {
   email: string;
   password: string;
   firstName: string;
-  lastName?: string | null;
+  lastName: string;
   phone?: string | null;
   signupRole: PublicSignupRole;
 }) {
   const db = getDb();
   const email = normalizeEmail(input.email);
-  const phone = normalizePhone(input.phone);
+  const rawPhone = input.phone?.trim() ?? "";
+  const phone = rawPhone ? storedBelarusPhone(rawPhone) : null;
+  if (rawPhone && !phone) {
+    throw new AuthError(validateBelarusMobile(rawPhone) ?? "Укажите мобильный номер РБ.", "VALIDATION");
+  }
 
   const passwordError = validatePasswordStrength(input.password);
   if (passwordError) {
@@ -282,11 +305,19 @@ export async function registerUser(input: {
   }
 
   if (phone) {
-    const [existingPhone] = await db.select().from(users).where(eq(users.phone, phone)).limit(1);
+    const digits = normalizeBelarusMobile(phone);
+    const [existingPhone] = digits
+      ? await db.select().from(users).where(belarusPhoneEquals(users.phone, digits)).limit(1)
+      : [];
     if (existingPhone) {
       throw new AuthError("Этот телефон уже привязан к другому аккаунту.", "PHONE_TAKEN");
     }
   }
+
+  const firstName = input.firstName.trim();
+  const lastName = input.lastName.trim();
+  if (!firstName) throw new AuthError("Укажите имя.", "VALIDATION");
+  if (!lastName) throw new AuthError("Укажите фамилию.", "VALIDATION");
 
   const passwordHash = await hashPassword(input.password);
   const intent = signupRoleToIntent(input.signupRole);
@@ -297,8 +328,8 @@ export async function registerUser(input: {
       email,
       phone,
       passwordHash,
-      firstName: input.firstName.trim(),
-      lastName: input.lastName?.trim() || null,
+      firstName,
+      lastName,
       status: "pending_verification",
       lastSignupIntent: intent,
     })
@@ -501,7 +532,7 @@ export async function confirmAccountEmailCode(userId: string, emailRaw: string, 
 
   const db = getDb();
   const now = new Date();
-  const [tokenRow] = await db
+  const tokenRows = await db
     .select()
     .from(emailVerificationTokens)
     .where(
@@ -513,9 +544,10 @@ export async function confirmAccountEmailCode(userId: string, emailRaw: string, 
       ),
     )
     .orderBy(desc(emailVerificationTokens.createdAt))
-    .limit(1);
+    .limit(8);
+  const tokenRow = tokenRows.find((row) => row.tokenHash === hashToken(`${userId}:${code}`));
 
-  if (!tokenRow || tokenRow.tokenHash !== hashToken(`${userId}:${code}`)) {
+  if (!tokenRow) {
     throw new AuthError("Неверный или устаревший код.", "INVALID_TOKEN");
   }
 
@@ -540,14 +572,19 @@ export async function requestAccountPhoneCode(userId: string, phoneRaw: string) 
   if (!phone) throw new AuthError("Укажите мобильный номер РБ.", "VALIDATION");
 
   const stored = storedBelarusPhone(phone);
+  if (!stored) throw new AuthError("Укажите мобильный номер РБ.", "VALIDATION");
   const db = getDb();
   const user = await findUserById(userId);
   if (!user) throw new AuthError("Требуется авторизация.", "UNAUTHORIZED");
-  if (user.phone === stored && user.phoneVerifiedAt) {
+  if (normalizeBelarusMobile(user.phone ?? "") === phone && user.phoneVerifiedAt) {
     return { ok: true as const, already: true, message: "Телефон уже подтверждён." };
   }
 
-  const [owner] = await db.select({ id: users.id }).from(users).where(and(eq(users.phone, stored), ne(users.id, userId))).limit(1);
+  const [owner] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(and(belarusPhoneEquals(users.phone, phone), ne(users.id, userId)))
+    .limit(1);
   if (owner) throw new AuthError("Этот телефон уже привязан к другому аккаунту.", "PHONE_TAKEN");
 
   const ipLimit = consumeRateLimit(`otp:user:${userId}`, 60_000, 1);
@@ -579,8 +616,13 @@ export async function confirmAccountPhoneCode(userId: string, phoneRaw: string, 
   }
 
   const stored = storedBelarusPhone(phone);
+  if (!stored) throw new AuthError("Неверный или устаревший код.", "INVALID_TOKEN");
   const db = getDb();
-  const [owner] = await db.select({ id: users.id }).from(users).where(and(eq(users.phone, stored), ne(users.id, userId))).limit(1);
+  const [owner] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(and(belarusPhoneEquals(users.phone, phone), ne(users.id, userId)))
+    .limit(1);
   if (owner) throw new AuthError("Этот телефон уже привязан к другому аккаунту.", "PHONE_TAKEN");
 
   const now = new Date();
@@ -590,10 +632,98 @@ export async function confirmAccountPhoneCode(userId: string, phoneRaw: string, 
     .where(eq(users.id, userId));
   await db
     .update(trainerProfiles)
-    .set({ phone: formatBelarusPhone(stored), updatedAt: now })
+    .set({ phone: stored, updatedAt: now })
     .where(eq(trainerProfiles.ownerUserId, userId));
 
   return { ok: true as const, message: "Телефон подтверждён." };
+}
+
+export async function requestTrainerContactEmailCode(userId: string, emailRaw: string) {
+  const email = normalizeEmail(emailRaw);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw new AuthError("Введите корректный e-mail.", "VALIDATION");
+  }
+
+  const db = getDb();
+  const [profile] = await db
+    .select({ id: trainerProfiles.id, email: trainerProfiles.email, emailVerifiedAt: trainerProfiles.emailVerifiedAt })
+    .from(trainerProfiles)
+    .where(eq(trainerProfiles.ownerUserId, userId))
+    .limit(1);
+  if (!profile) throw new AuthError("Сначала сохраните профиль.", "VALIDATION");
+  if (normalizeEmail(profile.email) === email && profile.emailVerifiedAt) {
+    return { ok: true as const, already: true, message: "Почта уже подтверждена." };
+  }
+
+  const limit = consumeRateLimit(`contact-email:${userId}`, 60_000, 1);
+  if (!limit.ok) {
+    throw new AuthError(`Код можно отправить снова через ${limit.retryAfterSec} с.`, "RATE_LIMITED");
+  }
+
+  const now = new Date();
+  const code = emailCode();
+  await db.insert(emailVerificationTokens).values({
+    userId,
+    pendingEmail: email,
+    tokenHash: hashToken(`contact:${userId}:${code}`),
+    expiresAt: addMinutes(now, 10),
+  });
+
+  await sendMail({
+    to: [email],
+    subject: "Код подтверждения trenio.by",
+    text: `Код подтверждения почты для связи: ${code}\nОн действует 10 минут. Никому не сообщайте.`,
+  });
+
+  const delivered = Boolean(process.env.RESEND_API_KEY?.trim() && process.env.MAIL_FROM?.trim());
+  return {
+    ok: true as const,
+    already: false,
+    message: "Код отправлен на почту.",
+    devCode: !delivered && process.env.NODE_ENV !== "production" ? code : undefined,
+  };
+}
+
+export async function confirmTrainerContactEmailCode(userId: string, emailRaw: string, codeRaw: string) {
+  const email = normalizeEmail(emailRaw);
+  const code = codeRaw.replace(/\D/g, "");
+  const limit = consumeRateLimit(`contact-email-try:${userId}`, 15 * 60_000, 5);
+  if (!limit.ok) {
+    throw new AuthError("Слишком много попыток. Подождите и попробуйте снова.", "RATE_LIMITED");
+  }
+
+  const db = getDb();
+  const now = new Date();
+  const tokenRows = await db
+    .select()
+    .from(emailVerificationTokens)
+    .where(
+      and(
+        eq(emailVerificationTokens.userId, userId),
+        eq(emailVerificationTokens.pendingEmail, email),
+        isNull(emailVerificationTokens.usedAt),
+        gt(emailVerificationTokens.expiresAt, now),
+      ),
+    )
+    .orderBy(desc(emailVerificationTokens.createdAt))
+    .limit(8);
+  const tokenRow = tokenRows.find((row) => row.tokenHash === hashToken(`contact:${userId}:${code}`));
+  if (!tokenRow) throw new AuthError("Неверный или устаревший код.", "INVALID_TOKEN");
+
+  const [profile] = await db
+    .select({ id: trainerProfiles.id })
+    .from(trainerProfiles)
+    .where(eq(trainerProfiles.ownerUserId, userId))
+    .limit(1);
+  if (!profile) throw new AuthError("Сначала сохраните профиль.", "VALIDATION");
+
+  await db.update(emailVerificationTokens).set({ usedAt: now }).where(eq(emailVerificationTokens.id, tokenRow.id));
+  await db
+    .update(trainerProfiles)
+    .set({ email, emailVerifiedAt: now, updatedAt: now })
+    .where(eq(trainerProfiles.id, profile.id));
+
+  return { ok: true as const, message: "Почта подтверждена." };
 }
 
 export async function updateAccountName(userId: string, firstName: string, lastName: string) {
@@ -602,14 +732,21 @@ export async function updateAccountName(userId: string, firstName: string, lastN
   if (!trimmedFirst) {
     throw new AuthError("Укажите имя.", "VALIDATION");
   }
-  await getDb()
+  if (!trimmedLast) {
+    throw new AuthError("Укажите фамилию.", "VALIDATION");
+  }
+  const now = new Date();
+  const db = getDb();
+  const given = trimmedFirst.slice(0, 100);
+  const family = trimmedLast.slice(0, 100);
+  await db
     .update(users)
-    .set({
-      firstName: trimmedFirst.slice(0, 100),
-      lastName: trimmedLast ? trimmedLast.slice(0, 100) : null,
-      updatedAt: new Date(),
-    })
+    .set({ firstName: given, lastName: family, updatedAt: now })
     .where(eq(users.id, userId));
+  await db
+    .update(trainerProfiles)
+    .set({ firstName: given, lastName: family, fullName: joinTrainerName(given, family), updatedAt: now })
+    .where(eq(trainerProfiles.ownerUserId, userId));
 }
 
 export async function getSessionUserFromToken(rawToken: string | null): Promise<SessionUser | null> {
@@ -624,6 +761,15 @@ function getAppUrl() {
 async function logDevEmail(kind: "verification" | "password-reset", email: string, url: string) {
   if (process.env.AUTH_DEV_LOG_EMAILS === "true") {
     console.info(`[auth:${kind}] ${email} → ${url}`);
+    const { writeLog } = await import("@/lib/log/logger");
+    void writeLog({
+      level: "info",
+      domain: "email",
+      action: "email.dev",
+      outcome: "skipped",
+      message: kind === "verification" ? "Ссылка подтверждения в консоли разработки." : "Ссылка сброса в консоли разработки.",
+      subject: email,
+    });
   }
 }
 

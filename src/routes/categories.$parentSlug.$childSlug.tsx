@@ -1,6 +1,7 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { canonicalCategoryPath } from "@/lib/catalog/slug-policy";
-import { categorySearchDescription, getTopLevelSportCategory, getSportTaxonomyChildInCategory } from "@/lib/catalog/sport-taxonomy";
+import { categorySearchDescription, getTopLevelSportCategory, getSportTaxonomyChildInCategory, isPublishedSportCategory } from "@/lib/catalog/sport-taxonomy";
+import { listTrainerPricesFn } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { resolveVisitorPlaceFn } from "@/lib/catalog/visitor-place";
 import {
@@ -26,6 +27,9 @@ export const Route = createFileRoute("/categories/$parentSlug/$childSlug")({
         params: { slug: canonical.parentSlug },
       });
     }
+
+    const parent = getTopLevelSportCategory(params.parentSlug);
+    if (parent && !isPublishedSportCategory(parent)) throw notFound();
 
     const category = resolveChildCategory(params.parentSlug, params.childSlug);
     if (!category) {
@@ -59,18 +63,19 @@ export const Route = createFileRoute("/categories/$parentSlug/$childSlug")({
     };
   },
   loader: async () => {
-    const [ratings, place] = await Promise.all([
+    const [ratings, prices, place] = await Promise.all([
       listTrainerRatingSummariesFn(),
+      listTrainerPricesFn(),
       resolveVisitorPlaceFn(),
     ]);
-    return { ratings, place };
+    return { ratings, prices, place };
   },
   component: ChildCategoryPage,
 });
 
 function ChildCategoryPage() {
   const { parentSlug, childSlug } = Route.useParams();
-  const { ratings, place } = Route.useLoaderData();
+  const { ratings, prices, place } = Route.useLoaderData();
   const category = resolveChildCategory(parentSlug, childSlug);
 
   if (!category) return null;
@@ -86,6 +91,7 @@ function ChildCategoryPage() {
       category={category}
       parentCategory={parentCategory}
       ratings={ratings}
+      prices={prices}
       place={place}
     />
   );
