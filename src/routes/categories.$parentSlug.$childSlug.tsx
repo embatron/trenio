@@ -1,6 +1,7 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { canonicalCategoryPath } from "@/lib/catalog/slug-policy";
-import { categorySearchDescription, getTopLevelSportCategory, getSportTaxonomyChildInCategory, isPublishedSportCategory } from "@/lib/catalog/sport-taxonomy";
+import { categorySearchDescription, getParentCategoryFeaturedImage, getTopLevelSportCategory, getSportTaxonomyChildInCategory, isPublishedSportCategory } from "@/lib/catalog/sport-taxonomy";
+import { categoryRouteHead } from "@/lib/seo/catalog";
 import { listTrainerPricesFn } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { resolveVisitorPlaceFn } from "@/lib/catalog/visitor-place";
@@ -53,14 +54,21 @@ export const Route = createFileRoute("/categories/$parentSlug/$childSlug")({
       categoryHeroLead(keyword, [], aliases),
       aliases,
     );
-    return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { property: "og:title", content: title },
-        { property: "og:description", content: desc },
+    const path = `/categories/${params.parentSlug}/${params.childSlug}`;
+    const parent = getTopLevelSportCategory(params.parentSlug);
+    return categoryRouteHead({
+      title,
+      description: desc,
+      path,
+      image: getParentCategoryFeaturedImage(params.parentSlug),
+      faq: category.faq,
+      crumbs: [
+        { name: "Главная", path: "/" },
+        { name: "Категории", path: "/categories" },
+        { name: parent?.label ?? params.parentSlug, path: `/categories/${params.parentSlug}` },
+        { name: category.title, path },
       ],
-    };
+    });
   },
   loader: async () => {
     const [ratings, prices, place] = await Promise.all([

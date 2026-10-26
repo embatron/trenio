@@ -1,6 +1,8 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
-import { catalogPageHead, catalogSportById } from "@/lib/catalog/catalog-sports";
+import { catalogSportById } from "@/lib/catalog/catalog-sports";
+import { catalogPageHead } from "@/lib/seo/catalog";
 import { cityCatalogBySlug } from "@/lib/catalog/city-pages";
+import { canonicalCategoryPath } from "@/lib/catalog/slug-policy";
 import { listTrainerPricesFn } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { CategoryCatalogPage } from "@/routes/categories.$slug";
@@ -8,14 +10,28 @@ import { CategoryCatalogPage } from "@/routes/categories.$slug";
 export const Route = createFileRoute("/city/$slug/$sport/$child")({
   beforeLoad: ({ params }) => {
     const city = cityCatalogBySlug(params.slug);
+    if (!city) throw notFound();
     const sport = catalogSportById(`${params.sport}/${params.child}`);
-    if (!city || !sport || sport.parentSlug !== params.sport) throw notFound();
-    if (!sport.id.includes("/")) {
+    if (sport && sport.parentSlug === params.sport) {
+      if (!sport.id.includes("/")) {
+        throw redirect({
+          to: "/city/$slug/$sport",
+          params: { slug: city.slug, sport: sport.slug },
+        });
+      }
+      return;
+    }
+    const legacy = canonicalCategoryPath(params.sport, params.child);
+    const next = legacy ? catalogSportById(legacy.childSlug ?? legacy.parentSlug) : null;
+    if (next) {
       throw redirect({
-        to: "/city/$slug/$sport",
-        params: { slug: city.slug, sport: sport.slug },
+        to: next.id.includes("/") ? "/city/$slug/$sport/$child" : "/city/$slug/$sport",
+        params: next.id.includes("/")
+          ? { slug: city.slug, sport: next.parentSlug, child: next.slug }
+          : { slug: city.slug, sport: next.id },
       });
     }
+    throw notFound();
   },
   head: ({ params }) => {
     const city = cityCatalogBySlug(params.slug);

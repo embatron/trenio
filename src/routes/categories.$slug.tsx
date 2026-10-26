@@ -12,6 +12,8 @@ import {
   categorySearchDescription,
   type CategoryRouteRef,
 } from "@/lib/catalog/sport-taxonomy";
+import { categoryAbout } from "@/lib/catalog/category-copy";
+import { TRAINER_INVITE_LINE } from "@/lib/catalog/trainer-welcome";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
@@ -19,11 +21,13 @@ import { matchesCatalogAudience, PUBLISHED_TRAINERS, TRAINER_FORMAT_OPTIONS, tra
 import { compareByPopularity, compareByRating, compareByReviews, ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
 import { compareTrainerPrice, listTrainerPricesFn, priceForCard, type TrainerPriceMap } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
+import { categoryRouteHead } from "@/lib/seo/catalog";
 import { pluralRu } from "@/lib/ru-plural";
 import { toggleFilterValue } from "@/lib/catalog/belarus-settlements";
 import { filterBelarusCities } from "@/lib/catalog/city-taxonomy";
 import { cityCatalogSlug, listCityCatalogPages } from "@/lib/catalog/city-pages";
 import {
+  catalogCategorySports,
   catalogSportById,
   catalogSportLocation,
   filterCatalogSports,
@@ -79,19 +83,24 @@ export const Route = createFileRoute("/categories/$slug")({
     const c = resolveParentCategory(params.slug);
     const keyword = categoryKeyword(c);
     const title = categoryPageTitle(keyword);
+    const path = `/categories/${params.slug}`;
     const desc = categorySearchDescription(
       title.replace(" | trenio.by", ""),
       categoryHeroLead(keyword, categoryTopicLabels(c)),
       getTopLevelSportCategory(params.slug)?.aliases,
     );
-    return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { property: "og:title", content: title },
-        { property: "og:description", content: desc },
+    return categoryRouteHead({
+      title,
+      description: desc,
+      path,
+      image: getParentCategoryFeaturedImage(params.slug),
+      faq: c.faq,
+      crumbs: [
+        { name: "Главная", path: "/" },
+        { name: "Категории", path: "/categories" },
+        { name: c.title, path },
       ],
-    };
+    });
   },
   loader: async () => {
     const [ratings, prices, place] = await Promise.all([
@@ -111,7 +120,7 @@ type Category = {
   lead: string;
   subSports: string[];
   related: (CategoryRouteRef & { label: string })[];
-  about: { h: string; p: string }[];
+  about: string[];
   faq: { q: string; a: string }[];
   stats: { trainers: number; clubs: number; avgPrice: number; avgRating: number };
   isEmpty?: boolean;
@@ -144,24 +153,11 @@ const CATEGORIES: Record<string, Category> = {
       { parentSlug: "edinoborstva", childSlug: "kikboksing", label: "Кикбоксинг" },
       { parentSlug: "edinoborstva", childSlug: "mma", label: "MMA" },
       { parentSlug: "edinoborstva", label: "Единоборства" },
-      { parentSlug: "ofp", label: "ОФП" },
+      { parentSlug: "fitnes", childSlug: "ofp", label: "ОФП" },
       { parentSlug: "fitnes", label: "Фитнес" },
       { parentSlug: "edinoborstva", childSlug: "samooborona", label: "Самооборона" },
     ],
-    about: [
-      {
-        h: "Что даёт бокс",
-        p: "Бокс развивает координацию, скоростную выносливость и уверенность в себе. На начальном уровне тренер ставит стойку, дыхание и технику передвижения, потом подключается работа с лапами, грушей и парная техника. Спарринги — только тогда, когда вы готовы.",
-      },
-      {
-        h: "Как выбрать тренера",
-        p: "Смотрите на формат: индивидуально, в малой группе или общим потоком. Уточняйте опыт работы с новичками или с конкретной возрастной группой. Хороший тренер всегда расскажет про разминку, нагрузку и восстановление, а не только про удары.",
-      },
-      {
-        h: "Сколько занятий нужно",
-        p: "Для уверенной базы обычно нужно 8–12 занятий по 2–3 раза в неделю. Для подготовки к спаррингам — от 3 месяцев регулярной работы. Многие тренеры предлагают пакетные цены и пробное занятие со скидкой.",
-      },
-    ],
+    about: [],
     faq: [
       {
         q: "Можно ли заниматься без опыта?",
@@ -198,16 +194,7 @@ const CATEGORIES: Record<string, Category> = {
       "Каратэ",
     ],
     related: RELATED_DEFAULT,
-    about: [
-      {
-        h: "Что входит в направление",
-        p: "Единоборства объединяют ударные и борцовские дисциплины. Под единым фильтром мы собрали тренеров, которые работают с базовой техникой, спаррингами и подготовкой к соревнованиям.",
-      },
-      {
-        h: "С чего начать",
-        p: "Если не уверены, какое направление выбрать — берите пробное в боксе или кикбоксинге. Это даст базовое понимание стойки, дистанции и работы ног, на которую опираются все остальные виды.",
-      },
-    ],
+    about: [],
     faq: [
       {
         q: "Чем отличается бокс от кикбоксинга?",
@@ -240,12 +227,7 @@ const CATEGORIES: Record<string, Category> = {
       { parentSlug: "tancy", label: "Танцы" },
       { parentSlug: "plavanie", childSlug: "plavanie", label: "Плавание" },
     ],
-    about: [
-      {
-        h: "Кому подойдёт йога",
-        p: "Подойдёт тем, кто хочет работать с гибкостью, дыханием и снять напряжение. Начинают с мягких практик — хатхи или йоги для начинающих.",
-      },
-    ],
+    about: [],
     faq: [
       {
         q: "Нужна ли растяжка с детства?",
@@ -258,22 +240,17 @@ const CATEGORIES: Record<string, Category> = {
     slug: "fitnes",
     title: "Фитнес",
     titleGenitive: "фитнесу",
-    lead: "Персональные тренеры по фитнесу, силовому и функциональному тренингу.",
+    lead: "Персональные тренеры по фитнесу, силовому тренингу и кроссфиту.",
     subSports: [
       "Похудение",
       "Набор массы",
       "Силовой тренинг",
-      "Функциональный тренинг",
       "Кроссфит",
+      "ОФП",
       "Реабилитация",
     ],
     related: RELATED_DEFAULT,
-    about: [
-      {
-        h: "Что важно в фитнесе",
-        p: "Цель важнее программы. Сначала тренер уточняет, чего вы хотите — снизить вес, набрать массу, восстановиться после травмы — и строит план под это.",
-      },
-    ],
+    about: [],
     faq: [
       {
         q: "Сколько раз в неделю заниматься?",
@@ -286,7 +263,7 @@ const CATEGORIES: Record<string, Category> = {
     slug: "kerling",
     title: "Кёрлинг",
     titleGenitive: "кёрлингу",
-    lead: "Пока ни одного тренера на платформе. Будьте первым — или подпишитесь и мы напишем, когда появятся.",
+    lead: `Пока ни одного тренера на платформе. ${TRAINER_INVITE_LINE}`,
     subSports: ["Для начинающих", "Команды", "Дети", "Соревнования"],
     related: [
       { parentSlug: "zima", childSlug: "hokkej", label: "Хоккей" },
@@ -294,16 +271,11 @@ const CATEGORIES: Record<string, Category> = {
       { parentSlug: "zima", childSlug: "snoubord", label: "Сноуборд" },
       { parentSlug: "fitnes", label: "Фитнес" },
     ],
-    about: [
-      {
-        h: "Что такое кёрлинг",
-        p: "Командный вид спорта на льду: точность, тактика и техника скольжения. Подойдёт и взрослым, и подросткам — без серьёзной физической подготовки.",
-      },
-    ],
+    about: [],
     faq: [
       {
         q: "Когда появятся тренеры?",
-        a: "Мы открываем направление и ищем сертифицированных тренеров по кёрлингу. Подпишитесь — пришлём письмо, как только кто-то добавится.",
+        a: `Направление открыто. ${TRAINER_INVITE_LINE} В каталоге профиль появится после публикации.`,
       },
     ],
     stats: { trainers: 0, clubs: 0, avgPrice: 0, avgRating: 0 },
@@ -311,8 +283,13 @@ const CATEGORIES: Record<string, Category> = {
   },
 };
 
+function withAbout(category: Category, parentSlug?: string): Category {
+  const about = categoryAbout(parentSlug ?? category.slug, parentSlug ? category.slug : undefined);
+  return about.length ? { ...category, about } : category;
+}
+
 function resolveParentCategory(slug: string): Category {
-  return CATEGORIES[slug] ?? fallbackCategory(slug);
+  return withAbout(CATEGORIES[slug] ?? fallbackCategory(slug));
 }
 
 /** Dative phrase after «по»: «командным играм», «футболу». */
@@ -336,13 +313,15 @@ export function categoryTopicLabels(category: Pick<Category, "slug" | "subSports
 }
 
 function topicInSentence(item: string) {
+  const letters = [...item].filter((char) => /\p{L}/u.test(char)).join("");
+  if (letters.length > 0 && letters === letters.toUpperCase()) return item;
   const first = item.charAt(0);
   if (/[A-Za-z0-9]/.test(first)) return item;
   return first.toLowerCase() + item.slice(1);
 }
 
 export function categoryHeroLead(keyword: string, topics: string[], aliases: string[] = []) {
-  const list = topics.slice(0, 4).map(topicInSentence).join(", ");
+  const list = topics.map(topicInSentence).join(", ");
   const extra = aliases
     .filter((alias) => alias.toLowerCase() !== keyword.toLowerCase())
     .slice(0, 2)
@@ -359,13 +338,13 @@ export function resolveChildCategory(parentSlug: string, childSlug: string): Cat
 
   const mock = CATEGORIES[childSlug];
   if (mock) {
-    return {
+    return withAbout({
       ...mock,
       related: withParentSlug(mock.related, parentSlug),
-    };
+    }, parentSlug);
   }
 
-  return fallbackChildCategory(parentSlug, childSlug);
+  return withAbout(fallbackChildCategory(parentSlug, childSlug), parentSlug);
 }
 
 function withParentSlug(
@@ -409,12 +388,7 @@ function fallbackChildCategory(parentSlug: string, childSlug: string): Category 
           label: sport.label,
         })),
     ],
-    about: [
-      {
-        h: "О направлении",
-        p: `В разделе «${parentCategory.label}» собраны тренеры по направлению «${child.label}». Используйте фильтры, чтобы найти подходящего по городу, цене, формату и опыту.`,
-      },
-    ],
+    about: [],
     faq: [
       {
         q: "Как связаться с тренером?",
@@ -477,9 +451,6 @@ function fallbackCategory(slug: string): Category {
     : parentCategory
       ? { trainers: 0, clubs: 0, avgPrice: 0, avgRating: 0 }
       : { trainers: 0, clubs: 0, avgPrice: 0, avgRating: 0 };
-  const taxonomyItems = topLevelCategory?.sports.length
-    ? topLevelCategory.sports
-    : parentCategory?.sports;
   return {
     slug,
     title,
@@ -487,14 +458,7 @@ function fallbackCategory(slug: string): Category {
     lead,
     subSports,
     related,
-    about: [
-      {
-        h: topLevelCategory ? "Что входит в категорию" : "О направлении",
-        p: taxonomyItems?.length
-          ? `В этом разделе собраны направления: ${taxonomyItems.slice(0, 7).join(", ")}${taxonomyItems.length > 7 ? " и другие." : "."}`
-          : "Здесь собраны тренеры, которые работают по этому направлению. Используйте фильтры, чтобы найти подходящего по городу, цене, формату и опыту.",
-      },
-    ],
+    about: [],
     faq: [
       {
         q: "Как связаться с тренером?",
@@ -572,27 +536,29 @@ const PAGE_CSS = `
 .cat-hero__title { margin: 0; font-size: var(--fs-page); line-height: 1.15; letter-spacing: var(--tracking-heading); font-weight: var(--fw-heading); color: var(--dark); }
 .cat-hero__title em { font-style: normal; color: var(--primary); }
 .cat-hero__lead { margin: 0; font-size: var(--fs-meta); line-height: 1.45; color: var(--muted); max-width: 68ch; font-weight: var(--fw-body); }
+.cat-hero__lead a { color: var(--primary); font-weight: var(--fw-title); text-decoration: none; }
+.cat-hero__lead a:hover { color: var(--primary-dark); }
 .cat-hero__stats { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
 .cat-hero__stat { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; line-height: 1.2; font-weight: var(--fw-ui); color: var(--muted); }
 .cat-hero__stat b { color: var(--dark); font-weight: var(--fw-title); }
 .cat-hero__stat svg { width: 16px; height: 16px; flex: 0 0 auto; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; color: var(--dark); }
 .cat-hero__stat svg.is-star { fill: #ffb400; stroke: none; }
-.cat-child-nav { padding-top: 12px; }
+.cat-child-nav { padding-top: 0; }
 .cat-child-nav__inner {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: calc(8px * 0.9);
 }
 .cat-child-nav__tile {
   min-width: 0;
   width: auto;
-  min-height: 44px;
-  padding: 6px 12px;
+  min-height: calc(44px * 0.9);
+  padding: calc(6px * 0.9) calc(12px * 0.9);
   border-radius: 999px;
   background: var(--white);
   border: 1.5px solid var(--line);
   color: var(--dark);
-  font-size: 13px;
+  font-size: calc(13px * 0.9);
   font-weight: var(--fw-ui);
   letter-spacing: -0.01em;
   text-decoration: none;
@@ -687,9 +653,9 @@ const PAGE_CSS = `
   cursor: pointer;
 }
 .cat-city-suggest button:hover { background: rgba(var(--primary-rgb), 0.08); color: var(--primary-dark); }
-.cat-city-quick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-.cat-filter__opts { display: flex; flex-wrap: wrap; gap: 6px; }
-.cat-pill { min-height: 44px; padding: 7px 12px; border-radius: 999px; background: var(--light-bg); border: 1px solid transparent; color: var(--dark); font: inherit; font-size: var(--fs-caption); font-weight: var(--fw-ui); cursor: pointer; transition: all 0.16s ease; display: inline-flex; align-items: center; }
+.cat-city-quick { display: flex; flex-wrap: wrap; gap: calc(6px * 0.9); margin-top: 10px; }
+.cat-filter__opts { display: flex; flex-wrap: wrap; gap: calc(6px * 0.9); }
+.cat-pill { min-height: calc(44px * 0.9); padding: calc(7px * 0.9) calc(12px * 0.9); border-radius: 999px; background: var(--light-bg); border: 1px solid transparent; color: var(--dark); font: inherit; font-size: calc(var(--fs-caption) * 0.9); font-weight: var(--fw-ui); cursor: pointer; transition: all 0.16s ease; display: inline-flex; align-items: center; }
 a.cat-pill { text-decoration: none; }
 .cat-sport-hint { display: block; margin-top: 2px; font-size: 11px; font-weight: var(--fw-ui); color: var(--muted); }
 .cat-pill:hover { background: rgba(var(--primary-rgb), 0.08); }
@@ -755,8 +721,7 @@ a.cat-pill { text-decoration: none; }
 .cat-club__meta { margin-top: auto; padding-top: 12px; display: flex; gap: 12px; font-size: 12px; color: var(--muted); font-weight: var(--fw-heading); }
 
 .cat-article { display: grid; grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr); gap: var(--layout-gap); align-items: start; }
-.cat-article__body { display: grid; gap: var(--layout-gap); }
-.cat-article__body h3 { margin: 0 0 6px; font-size: 20px; letter-spacing: -0.02em; font-weight: var(--fw-title); }
+.cat-article__body { display: grid; gap: 16px; }
 .cat-article__body p { margin: 0; color: #4a4a4f; font-size: 15px; line-height: 1.65; }
 .cat-article__aside { background: var(--light-bg); border-radius: var(--card-radius); padding: 26px; }
 .cat-article__aside h4 { margin: 0 0 14px; font-size: 16px; font-weight: var(--fw-title); letter-spacing: -0.02em; }
@@ -856,10 +821,17 @@ export function CategoryCatalogPage({
   const [sportQuery, setSportQuery] = useState("");
   const [sportFocused, setSportFocused] = useState(false);
   const skipSportBlur = useRef(false);
-  const sportSuggestions = useMemo(
-    () => filterCatalogSports(sportQuery, sportQuery.trim() ? 8 : 5),
-    [sportQuery],
+  const hintParentSlug = topLevelCategory?.slug
+    ?? (pageSport ? (pageSport.level === 2 ? pageSport.parentSlug : pageSport.slug) : "");
+  const localSports = useMemo(
+    () => (hintParentSlug ? catalogCategorySports(hintParentSlug) : []),
+    [hintParentSlug],
   );
+  const sportSuggestions = useMemo(() => {
+    if (sportQuery.trim()) return filterCatalogSports(sportQuery, 8);
+    if (localSports.length > 0) return localSports;
+    return filterCatalogSports("", 5);
+  }, [sportQuery, localSports]);
   const [selectedCities, setSelectedCities] = useState<string[]>(() =>
     cityCatalog ? [cityCatalog.name] : catalogFilterCities(place),
   );
@@ -976,10 +948,10 @@ export function CategoryCatalogPage({
     return [...selectedCities.filter((city) => !known.has(city)), ...hints];
   }, [selectedCities]);
   const sportPills = useMemo(() => {
-    const hints = filterCatalogSports("", 5);
+    const hints = localSports.length > 0 ? localSports : filterCatalogSports("", 5);
     const known = new Set(hints.map((sport) => sport.id));
     return [...selectedSports.filter((sport) => !known.has(sport.id)), ...hints];
-  }, [selectedSports]);
+  }, [selectedSports, localSports]);
   const committedPlace = useRef({ cities: place.cities, query: place.query });
   const skipCityBlur = useRef(false);
   const userTouchedPlace = useRef(false);
@@ -1106,6 +1078,7 @@ export function CategoryCatalogPage({
   };
 
   const headerSport = pageSport?.label ?? (selectedSports.length === 1 ? selectedSports[0].label : "");
+  const mapSports = selectedSports.map((sport) => sport.id).join(",") || undefined;
   const mapDirection = parentCategory?.slug
     ?? (!cityCatalog && category ? category.slug : undefined)
     ?? (pageSport ? (pageSport.level === 1 ? pageSport.slug : pageSport.parentSlug) : undefined)
@@ -1182,6 +1155,15 @@ export function CategoryCatalogPage({
                   : cityCatalog
                     ? `Тренеры в ${cityCatalog.locative} по всем видам спорта. Подбор по направлению, цене и формату — индивидуально или в группе, для взрослых и детей.`
                     : heroLead}
+                {" "}
+                <Link
+                  to="/map"
+                  search={{ sports: mapSports ?? mapDirection, city: cityCatalog?.slug }}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Открыть на карте
+                </Link>
               </p>
               {!cityCatalog && category && (category.stats.trainers || category.stats.clubs || category.stats.avgPrice || category.stats.avgRating) ? (
               <div className="cat-hero__stats">
@@ -1220,6 +1202,29 @@ export function CategoryCatalogPage({
                 </span>
               </div>
               ) : null}
+              {!cityCatalog && navChildren.length > 0 ? (
+                <nav className="cat-child-nav" aria-label="Направления категории">
+                  <div className="cat-child-nav__inner">
+                    <CategoryLink
+                      route={{ parentSlug }}
+                      className={`cat-child-nav__tile${activeChildSlug === null ? " is-active" : ""}`}
+                      aria-current={activeChildSlug === null ? "page" : undefined}
+                    >
+                      Все направления
+                    </CategoryLink>
+                    {navChildren.map((child) => (
+                      <CategoryLink
+                        key={child.slug}
+                        route={{ parentSlug, childSlug: child.slug }}
+                        className={`cat-child-nav__tile${activeChildSlug === child.slug ? " is-active" : ""}`}
+                        aria-current={activeChildSlug === child.slug ? "page" : undefined}
+                      >
+                        {child.label}
+                      </CategoryLink>
+                    ))}
+                  </div>
+                </nav>
+              ) : null}
             </div>
             {heroImage ? (
               <img
@@ -1232,30 +1237,6 @@ export function CategoryCatalogPage({
             ) : null}
           </div>
         </section>
-
-        {!cityCatalog && navChildren.length > 0 ? (
-          <nav className="cat-child-nav" aria-label="Направления категории">
-            <div className="layout-container cat-child-nav__inner">
-              <CategoryLink
-                route={{ parentSlug }}
-                className={`cat-child-nav__tile${activeChildSlug === null ? " is-active" : ""}`}
-                aria-current={activeChildSlug === null ? "page" : undefined}
-              >
-                Все направления
-              </CategoryLink>
-              {navChildren.map((child) => (
-                <CategoryLink
-                  key={child.slug}
-                  route={{ parentSlug, childSlug: child.slug }}
-                  className={`cat-child-nav__tile${activeChildSlug === child.slug ? " is-active" : ""}`}
-                  aria-current={activeChildSlug === child.slug ? "page" : undefined}
-                >
-                  {child.label}
-                </CategoryLink>
-              ))}
-            </div>
-          </nav>
-        ) : null}
 
         <div className="layout-with-sidebar cat-body">
           <aside className="cat-filters">
@@ -1659,23 +1640,14 @@ export function CategoryCatalogPage({
                 </h3>
                 <p>
                   {allTrainers.length === 0 || category?.isEmpty
-                    ? "Направление только открылось на trenio.by. Будьте первым тренером или подпишитесь — мы напишем, когда кто-то добавится."
+                    ? TRAINER_INVITE_LINE
                     : "Попробуйте сбросить часть фильтров, расширить ценовой диапазон или посмотреть похожие направления."}
                 </p>
                 <div className="cat-empty__actions">
                   {allTrainers.length === 0 || category?.isEmpty ? (
-                    <>
-                      <Link to="/join/trainer" className="cat-empty__btn cat-empty__btn--primary">
-                        Стать первым тренером
-                      </Link>
-                      <button
-                        type="button"
-                        className="cat-empty__btn cat-empty__btn--ghost"
-                        onClick={() => alert("Подписка оформлена — мы напишем на e-mail.")}
-                      >
-                        Сообщить, когда появятся
-                      </button>
-                    </>
+                    <Link to="/join/trainer" className="cat-empty__btn cat-empty__btn--primary">
+                      Стать первым тренером
+                    </Link>
                   ) : (
                     <>
                       <button
@@ -1730,16 +1702,13 @@ export function CategoryCatalogPage({
         </div>
 
         <div className="layout-container cat-extra">
-          {category ? (
+          {category && category.about.length > 0 ? (
           <section className="cat-block">
             <h2>О направлении</h2>
             <div className="cat-article">
               <div className="cat-article__body">
-                {category.about.map((b) => (
-                  <div key={b.h}>
-                    <h3>{b.h}</h3>
-                    <p>{b.p}</p>
-                  </div>
+                {category.about.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
                 ))}
               </div>
               <aside className="cat-article__aside">
@@ -1773,10 +1742,7 @@ export function CategoryCatalogPage({
           <section className="cat-cta">
             <div>
               <h2>{pageSport && cityCatalog ? `Вы тренер по ${pageSport.titleGenitive} в ${cityCatalog.locative}?` : cityCatalog ? `Вы тренер в ${cityCatalog.locative}?` : `Вы тренер по ${keyword}?`}</h2>
-              <p>
-                Разместите анкету бесплатно — расскажите о себе, добавьте цены, расписание и начните
-                принимать заявки.
-              </p>
+              <p>{TRAINER_INVITE_LINE}</p>
             </div>
             <Link to="/join/trainer">Стать тренером</Link>
           </section>

@@ -53,7 +53,7 @@ export const PUBLISHED_TRAINERS: PublishedTrainer[] = [
     sports: [
       { slug: "boks", parentSlug: "edinoborstva", label: "Бокс" },
       { slug: "kikboksing", parentSlug: "edinoborstva", label: "Кикбоксинг" },
-      { slug: "ofp", parentSlug: "ofp", label: "ОФП" },
+      { slug: "ofp", parentSlug: "fitnes", label: "ОФП" },
     ],
     primarySport: { slug: "kikboksing", parentSlug: "edinoborstva", label: "Кикбоксинг" },
     bio: "🙋🏻‍♂️Владимир 📍Минск 🥊Кикбоксинг и бокс 🏋🏻ОФП для любого уровня подготовки 📩Вопросы в ЛС @bronxgym.by",

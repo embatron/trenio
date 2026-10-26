@@ -1,5 +1,8 @@
 import { storedBelarusPhone, validateBelarusMobile } from "@/lib/auth/phone";
 
+/** The same invitation everywhere a trainer is asked to join. */
+export const TRAINER_INVITE_LINE = "Скинь свой Instagram — профиль заполним мы.";
+
 /** Instagram name from `@name`, `name`, or an instagram.com link. Null when it is not a handle. */
 export function parseInstagramHandle(raw: string): string | null {
   let value = raw.trim();

@@ -1,9 +1,6 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
-import {
-  catalogPageHead,
-  catalogSportLocation,
-  catalogSportsFromQuery,
-} from "@/lib/catalog/catalog-sports";
+import { catalogSportLocation, catalogSportsFromQuery } from "@/lib/catalog/catalog-sports";
+import { catalogPageHead } from "@/lib/seo/catalog";
 import { cityCatalogBySlug } from "@/lib/catalog/city-pages";
 import { listTrainerPricesFn } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";

@@ -1,7 +1,7 @@
 import { and, avg, count, eq, inArray, sql, type SQL } from "drizzle-orm";
 
 import { getDb } from "@/db";
-import { catalogSportById } from "@/lib/catalog/catalog-sports";
+import { catalogCategorySports, catalogSportById } from "@/lib/catalog/catalog-sports";
 import type { MapAreaInput } from "@/lib/catalog/map-area-input";
 import { trainerProfiles, trainerReviews } from "@/db/schema";
 import type { TrainerAudience, TrainerFormat } from "@/lib/catalog/published-trainers";
@@ -137,9 +137,13 @@ function profileWhere(filters: AreaFilters, applyPrice: boolean): SQL {
       const sport = catalogSportById(id);
       if (!sport || sport.level === 1) {
         const slug = sport?.slug ?? id;
-        return sql`(sport->>'parentSlug' = ${slug} OR sport->>'slug' = ${slug})`;
+        const children = sport ? catalogCategorySports(sport.slug).map((child) => child.slug) : [];
+        if (children.length === 0) {
+          return sql`(sport->>'parentSlug' = ${slug} OR sport->>'slug' = ${slug})`;
+        }
+        return sql`(sport->>'parentSlug' = ${slug} OR sport->>'slug' = ${slug} OR sport->>'slug' IN (${inList(children)}))`;
       }
-      return sql`(sport->>'parentSlug' = ${sport.parentSlug} AND sport->>'slug' = ${sport.slug})`;
+      return sql`(sport->>'slug' = ${sport.slug})`;
     });
     parts.push(sql`EXISTS (
       SELECT 1 FROM jsonb_array_elements(

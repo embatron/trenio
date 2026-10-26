@@ -1,3 +1,5 @@
+import { clipMeta } from "@/lib/seo/text";
+
 export type SportIconKey =
   | "martialArts"
   | "gymFitness"
@@ -96,7 +98,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Фитнес",
     titleGenitive: "фитнесу",
     iconKey: "gymFitness",
-    description: "Зал, функциональные тренировки, кроссфит и штанга.",
+    description: "Тренажёрный зал, ОФП, кроссфит, тяжёлая атлетика и пауэрлифтинг.",
     aliases: ["фитнес", "тренажёрный зал", "персональный тренер", "тренировки 50+"],
     count: "",
     bg: "linear-gradient(135deg, #fff1d6 0%, #ffd08a 100%)",
@@ -110,12 +112,26 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         aliases: ["тренажерный зал", "тренажерка", "спортзал", "силовые тренировки", "персональный тренер", "кардио"],
       },
       {
-        slug: "funkcional",
-        label: "Функциональные тренировки",
-        titleGenitive: "функциональным тренировкам",
-        aliases: ["функциональный тренинг", "TRX", "зумба"],
+        slug: "ofp",
+        label: "ОФП",
+        titleGenitive: "общефизической подготовке",
+        aliases: [
+          "общая физическая подготовка",
+          "СФП",
+          "специальная физическая подготовка",
+          "атлетическая подготовка",
+          "подготовка спортсменов",
+          "подготовка к соревнованиям",
+          "скоростно-силовая подготовка",
+          "нормативы",
+        ],
       },
-      { slug: "krossfit", label: "Кроссфит", titleGenitive: "кроссфиту", aliases: ["crossfit"] },
+      {
+        slug: "krossfit",
+        label: "Кроссфит",
+        titleGenitive: "кроссфиту",
+        aliases: ["crossfit", "функциональные тренировки", "функциональный тренинг", "TRX"],
+      },
       {
         slug: "shtanga",
         label: "Тяжёлая атлетика",
@@ -129,28 +145,6 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         aliases: ["силовое троеборье"],
       },
     ],
-  }),
-  defineCategory({
-    slug: "ofp",
-    label: "ОФП",
-    titleGenitive: "общефизической подготовке",
-    iconKey: "athleticPrep",
-    description: "Общая физическая подготовка и нормативы.",
-    aliases: [
-      "общая физическая подготовка",
-      "СФП",
-      "специальная физическая подготовка",
-      "атлетическая подготовка",
-      "подготовка спортсменов",
-      "подготовка к соревнованиям",
-      "скоростно-силовая подготовка",
-      "нормативы",
-    ],
-    count: "",
-    bg: "linear-gradient(135deg, #fff2dd 0%, #ffc56f 100%)",
-    image: "/images/categories/ofp-i-sportivnaya-podgotovka-card.webp",
-    featuredImage: "/images/ideogram/ofp.png",
-    children: [],
   }),
   defineCategory({
     slug: "yoga",
@@ -348,7 +342,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         slug: "sovremennye",
         label: "Современные танцы",
         titleGenitive: "современным танцам",
-        aliases: ["контемп", "контемпорари"],
+        aliases: ["контемп", "контемпорари", "зумба"],
       },
       {
         slug: "balnye",
@@ -623,10 +617,33 @@ export const SPORT_TAXONOMY_CHILDREN_BY_SLUG = Object.fromEntries(
   ),
 ) as Record<string, SportTaxonomyChildWithParent>;
 
-export function categorySearchDescription(title: string, lead: string, aliases?: string[]) {
-  const also = aliases?.length ? ` ${aliases.join(", ")}.` : "";
-  const text = `${title}: ${lead}${also}`.replace(/\s+/g, " ").trim();
-  return text.length > 170 ? `${text.slice(0, 167).trim()}…` : text;
+function foldAlias(value: string) {
+  return value.trim().toLowerCase().replaceAll("ё", "е");
+}
+
+/** An alias that is a second query, not another spelling of the same sport name. */
+export function pickSearchAlias(keyword: string, aliases?: string[]) {
+  const key = foldAlias(keyword);
+  const stem = key.slice(0, Math.min(4, key.length));
+  const candidates = (aliases ?? []).filter((alias) => {
+    const value = foldAlias(alias);
+    if (value.length < 4 || value.length > 40) return false;
+    if (value === key) return false;
+    if (value.length <= stem.length + 3 && (value.startsWith(stem) || stem.startsWith(value.slice(0, 4)))) return false;
+    return true;
+  });
+  return candidates.find((alias) => /тренер|для детей|секци|инструктор/i.test(alias)) ?? candidates[0];
+}
+
+/** Snippet for a category document. One extra query, then the selection facts. */
+export function categorySearchDescription(title: string, _lead: string, aliases?: string[]) {
+  const phrase = title.replace(/\s*\|\s*trenio\.by\s*$/i, "").trim();
+  const keyword = phrase.replace(/^Найти тренера по\s+/i, "");
+  const extra = pickSearchAlias(keyword, aliases);
+  const middle = extra ? ` ${extra.charAt(0).toUpperCase()}${extra.slice(1)}.` : "";
+  return clipMeta(
+    `${phrase} в Беларуси.${middle} Город, цена и формат — индивидуально или в группе, для взрослых и детей.`,
+  );
 }
 
 export function getTopLevelSportCategory(slug: string) {
@@ -668,6 +685,15 @@ export function sportDative(sport: { slug: string; label: string }): string {
 
 export function trainerSportDatives(sports: Array<{ slug: string; label: string }>): string[] {
   return sports.slice(0, MAX_TRAINER_SPORTS).map(sportDative);
+}
+
+/** The profile line: one sport, «а и б», or «а, б и в». */
+export function trainerByPhrase(datives: string[]): string {
+  const sports = datives.map((item) => item.trim()).filter(Boolean).slice(0, MAX_TRAINER_SPORTS);
+  if (sports.length === 0) return "Тренер";
+  if (sports.length === 1) return `Тренер по ${sports[0]}`;
+  if (sports.length === 2) return `Тренер по ${sports[0]} и ${sports[1]}`;
+  return `Тренер по ${sports.slice(0, -1).join(", ")} и ${sports[sports.length - 1]}`;
 }
 
 export function trainerSportsFromSlugs(slugs: string[]) {

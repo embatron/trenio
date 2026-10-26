@@ -94,6 +94,11 @@ export function catalogSportByName(query: string): CatalogSport | null {
   return SPORTS.find((sport) => fold(sport.label) === q || sport.aliases.some((alias) => fold(alias) === q)) ?? null;
 }
 
+/** Second-level sports that belong to one top-level category. */
+export function catalogCategorySports(parentSlug: string): CatalogSport[] {
+  return SPORTS.filter((sport) => sport.level === 2 && sport.parentSlug === parentSlug);
+}
+
 export function filterCatalogSports(query: string, limit = 8): CatalogSport[] {
   const q = fold(query);
   if (!q) return SPORTS.filter((sport) => sport.level === 1).slice(0, limit);
@@ -164,25 +169,6 @@ export function catalogPagePhrase(city: CityCatalogPage, sport: CatalogSport | n
   return sport
     ? `Найти тренера по ${sport.titleGenitive} в ${city.locative}`
     : `Найти тренера в ${city.locative}`;
-}
-
-export function catalogPageHead(city: CityCatalogPage, sport: CatalogSport | null, noindex = false) {
-  const phrase = catalogPagePhrase(city, sport);
-  const title = `${phrase} | trenio.by`;
-  const description = sport
-    ? `${phrase}. Цена, формат и опыт. Индивидуально или в группе, для взрослых и детей.`
-    : `Тренеры в ${city.locative} по всем видам спорта. Подбор по направлению, цене и формату.`;
-  const path = sport ? catalogSportPath(city.slug, sport) : `/city/${city.slug}`;
-  return {
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      ...(noindex ? [{ name: "robots" as const, content: "noindex,follow" }] : []),
-    ],
-    links: [{ rel: "canonical", href: `${CATALOG_ORIGIN}${path}` }],
-  };
 }
 
 export function listCatalogSitemapPaths() {
