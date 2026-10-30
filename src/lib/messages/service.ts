@@ -471,7 +471,7 @@ export async function uploadMessageFile(
   if (Number(countRow?.count ?? 0) >= MESSAGE_ATTACHMENT_MAX_COUNT) throw new AuthError(ATTACHMENT_TOO_MANY, "VALIDATION");
   const minute = consumeRateLimit(`msg:file:${actor.id}`, 60_000, 30);
   if (!minute.ok) throw new AuthError(`Слишком много файлов. Подождите ${minute.retryAfterSec} с.`, "RATE_LIMITED");
-  await writeMessageFile(input.conversationId, input.id, sniffed.file.ext, decoded.bytes);
+  const byteSize = await writeMessageFile(input.conversationId, input.id, sniffed.file.ext, decoded.bytes);
   if (sniffed.file.kind === "image") {
     await writeMessagePreview(input.conversationId, input.id, decoded.bytes).catch((error) => {
       logCaught("message", "message.file", error, { target: input.conversationId });
@@ -485,7 +485,7 @@ export async function uploadMessageFile(
       clientId: input.clientId,
       originalName: sniffed.file.name,
       mime: sniffed.file.mime,
-      byteSize: decoded.bytes.length,
+      byteSize,
       ext: sniffed.file.ext,
     });
   } catch (error) {
@@ -493,7 +493,7 @@ export async function uploadMessageFile(
     if (isUniqueViolation(error)) return { id: input.id };
     throw error;
   }
-  return { id: input.id, bytes: decoded.bytes.length, ext: sniffed.file.ext };
+  return { id: input.id, bytes: byteSize, ext: sniffed.file.ext };
 }
 
 export async function sendMessage(

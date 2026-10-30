@@ -33,6 +33,7 @@ import { assertBelarusCity } from "@/lib/catalog/belarus-city.server";
 import { CERTIFICATE_CAPTION_MAX, MAX_TRAINER_CERTIFICATES, readCertificates, type TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { genderLabel } from "@/lib/catalog/trainer-gender";
 import { editorHtml, reviewPlainText, sanitizeReviewHtml } from "@/lib/catalog/review-html";
+import { shrinkImage } from "@/lib/images/tinify";
 import { removeImageSet, writeImageSet } from "@/lib/images/store";
 import { effectiveAudiences, getPublishedTrainer, PUBLISHED_TRAINERS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { joinTrainerName, trainerNameParts } from "@/lib/catalog/trainer-name";
@@ -203,10 +204,12 @@ async function editableTrainer(slug: string, user: { id: string; roles: UserRole
 }
 
 async function writeTrainerFile(slug: string, folder: string, fileName: string, dataUrl: string) {
-  const { buffer, ext } = decodeCertificate(dataUrl, fileName);
+  const decoded = decodeCertificate(dataUrl, fileName);
+  const image = decoded.ext === "jpg" || decoded.ext === "png" || decoded.ext === "webp" || decoded.ext === "gif";
+  const buffer = image ? await shrinkImage(decoded.buffer) : decoded.buffer;
   const dir = path.join(process.cwd(), "public", "trainers", "admin", slug, folder);
   await mkdir(dir, { recursive: true });
-  const name = `${Date.now()}-${randomBytes(3).toString("hex")}.${ext}`;
+  const name = `${Date.now()}-${randomBytes(3).toString("hex")}.${decoded.ext}`;
   await writeFile(path.join(dir, name), buffer);
   return `/trainers/admin/${slug}/${folder}/${name}`;
 }

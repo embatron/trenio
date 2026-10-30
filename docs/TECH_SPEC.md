@@ -319,6 +319,8 @@ src/routes/offline.tsx
 | `public/data/belarus-settlements.json`    | Населённые пункты Беларуси для фильтра локации (GeoNames, ~21k, CC-BY 4.0)                    |
 | `assets/images/*.jpg`                     | Исходники для оптимизации (не отдаются напрямую клиенту)                                      |
 
+Новый JPEG, PNG, WebP и AVIF проходит TinyPNG (`TINIFY_API_KEY`), затем сохраняется. Мастер аватара и фото карточки sharp уменьшает до 1600px и только этот JPEG отправляет в TinyPNG. Размеры `s128`, `c320`, `c640`, `w960` sharp собирает уже из сжатого мастера. Фото во вложении переписки сжимается так же. PDF, DOC и GIF в API не уходят. Пустой ключ или сбой API оставляет файл после sharp, а ошибка пишется в `app_logs` (`system.image`). Уже лежащие файлы, кроме `public/trainers/`, сжимает `npm run images:tinify`. Повтор пропускает записи из `data/tinify-manifest.json`.
+
 ---
 
 ## 7. Mobile-first — обязательное требование
@@ -411,6 +413,7 @@ Breakpoint для collapse sidebar/grid: **`960px`**. Новые страниц�
 | `TELEGRAM_LOGIN_BOT_TOKEN` | Токен бота входа в Telegram    |
 | `TELEGRAM_LOGIN_BOT_USERNAME` | Username бота без `@`          |
 | `VITE_TELEGRAM_LOGIN_BOT_USERNAME` | Тот же username для виджета на клиенте |
+| `TINIFY_API_KEY`      | Ключ TinyPNG. Пустое значение оставляет файл после sharp |
 
 См. `.env.example`. `.env` в `.gitignore`.
 
@@ -423,6 +426,7 @@ nvm use 22
 npm install
 npm run db:up && npm run db:push && npm run db:seed
 npm run geoip:update # база GeoLite2 City в data/geoip
+npm run images:tinify # сжать текущие JPEG/PNG/WebP/AVIF, кроме public/trainers
 npm run dev          # http://trenio.local (Apache → порт 8080)
 npm run build
 npm run lint

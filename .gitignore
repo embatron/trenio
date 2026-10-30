@@ -26,6 +26,7 @@ dist-ssr
 data/geoip/
 data/geoip-tmp/
 data/message-files/
+data/tinify-manifest.json
 
 # User-uploaded cabinet photos
 public/avatars/

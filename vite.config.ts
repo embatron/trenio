@@ -27,7 +27,7 @@ export default defineConfig({
   },
   vite: {
     ssr: {
-      external: ["ip-location-api", "sharp"],
+      external: ["ip-location-api", "sharp", "tinify"],
     },
     plugins: [serveUploadFiles()],
     server: {

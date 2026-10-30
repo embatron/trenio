@@ -3,6 +3,8 @@ import path from "node:path";
 
 import sharp from "sharp";
 
+import { shrinkImage } from "@/lib/images/tinify";
+
 const ROOT = path.join(process.cwd(), "data", "message-files");
 
 function safeId(value: string) {
@@ -19,11 +21,17 @@ export function messageFilePath(conversationId: string, id: string, ext: string)
   return file;
 }
 
-export async function writeMessageFile(conversationId: string, id: string, ext: string, bytes: Uint8Array) {
+export async function writeMessageFile(
+  conversationId: string,
+  id: string,
+  ext: string,
+  bytes: Uint8Array,
+) {
   const file = messageFilePath(conversationId, id, ext);
   await mkdir(path.dirname(file), { recursive: true });
-  await writeFile(file, bytes);
-  return file;
+  const payload = await shrinkImage(Buffer.from(bytes));
+  await writeFile(file, payload);
+  return payload.length;
 }
 
 export function messagePreviewPath(conversationId: string, id: string) {
@@ -36,11 +44,12 @@ export function messagePreviewPath(conversationId: string, id: string) {
 
 /** A small JPEG for the chat. The original file stays beside it. */
 export async function writeMessagePreview(conversationId: string, id: string, bytes: Uint8Array) {
-  const preview = await sharp(Buffer.from(bytes), { failOn: "none", animated: false })
+  const prepared = await sharp(Buffer.from(bytes), { failOn: "none", animated: false })
     .rotate()
     .resize({ width: 640, height: 640, fit: "inside", withoutEnlargement: true })
     .jpeg({ quality: 76, mozjpeg: true })
     .toBuffer();
+  const preview = await shrinkImage(prepared);
   const file = messagePreviewPath(conversationId, id);
   await mkdir(path.dirname(file), { recursive: true });
   await writeFile(file, preview);

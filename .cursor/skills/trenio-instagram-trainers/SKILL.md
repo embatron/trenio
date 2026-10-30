@@ -101,7 +101,7 @@ Do not use the everyday Chrome profile and do not copy its cookies. Do not type 
 
 The face photo is the profile-picture image whose alt is `{handle}'s profile picture`. `extract-profile.fn.js` reads that image id from the `src` filename, then keeps URLs the page itself already loaded whose path contains that id and which have no `stp` parameter. It downloads the largest of those files. Both sides must be at least 400px. A thumbnail URL is not rewritten.
 
-`save-draft.ts` stores that file as `public/trainers/instagram/{handle}.jpg` and writes the sized files beside it (`s128`, `c320`, `c640`, `w960`). The catalog keeps using `{handle}.jpg`. A later import that has no source of at least 400px leaves the saved file in place.
+`save-draft.ts` stores that file as `public/trainers/instagram/{handle}.jpg` and writes the sized files beside it (`s128`, `c320`, `c640`, `w960`). The master JPEG is sent through TinyPNG when `TINIFY_API_KEY` is set. The catalog keeps using `{handle}.jpg`. A later import that has no source of at least 400px leaves the saved file in place.
 
 Do not save `s100`, `s150`, or `s206`. Do not delete `stp` from a thumbnail URL and do not replace `s150` with `s1080`. The CDN answers `URL signature mismatch` or returns the thumbnail.
 

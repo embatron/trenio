@@ -3,6 +3,7 @@ import path from "node:path";
 
 import sharp from "sharp";
 
+import { shrinkImage } from "@/lib/images/tinify";
 import { IMAGE_VARIANTS } from "@/lib/images/variants";
 
 const VARIANTS: Array<{ name: (typeof IMAGE_VARIANTS)[number]; width: number; height: number; fit: "cover" | "inside" }> = [
@@ -33,11 +34,12 @@ async function writeDerivatives(source: ReturnType<typeof sharp>, absoluteMaster
 /** Master plus fixed derivatives. Orientation is applied, metadata is dropped, nothing is upscaled. */
 export async function writeImageSet(buffer: Buffer, absoluteMaster: string) {
   await mkdir(path.dirname(absoluteMaster), { recursive: true });
-  const master = await sharp(buffer, { failOn: "none", animated: false })
+  const prepared = await sharp(buffer, { failOn: "none", animated: false })
     .rotate()
     .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
     .jpeg({ quality: 82, mozjpeg: true })
     .toBuffer();
+  const master = await shrinkImage(prepared);
   await writeFile(absoluteMaster, master);
   await writeDerivatives(sharp(master, { failOn: "none" }), absoluteMaster);
 }

@@ -34,6 +34,7 @@ npm run db:seed     # admin@, super@, client@trenio.by — пароль Pa55word
 npm run settlements:import  # public/data/belarus-settlements.json (GeoNames BY)
 npm run dev          # http://trenio.local (Apache проксирует на порт 8080)
 npm run geoip:update # база GeoLite2 для города в фильтре категории
+npm run images:tinify # TinyPNG для уже лежащих картинок, кроме фото тренеров
 npm run build
 npm run preview
 npm run lint

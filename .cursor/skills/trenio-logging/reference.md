@@ -31,6 +31,7 @@
 | `admin.review` | Review publish or reject |
 | `catalog.claim` | Welcome-link side effect failed |
 | `system.ready` / `system.unhandled` / `system.ssr` / `system.purge` / `system.probe` | Process and unhandled errors |
+| `system.image` | TinyPNG failed while storing an upload. The original sharp file is kept. The API key is not stored |
 | `ajax.http` / `ajax.network` | Browser fetch failure |
 | `client.error` / `client.rejection` / `client.boundary` | Browser exception |
 

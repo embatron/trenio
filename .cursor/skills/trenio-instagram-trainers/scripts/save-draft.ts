@@ -4,7 +4,9 @@
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import "dotenv/config";
 import sharp from "sharp";
+import { tinifyImage } from "../../../../src/lib/images/tinify.ts";
 import { formatBelarusPhone } from "../../../../src/lib/auth/phone.ts";
 import { inferTrainerGender } from "../../../../src/lib/catalog/trainer-gender.ts";
 import { TOP_LEVEL_SPORT_CATEGORIES } from "../../../../src/lib/catalog/sport-taxonomy.ts";
@@ -423,11 +425,17 @@ function avatarPublicPath(handle: string) {
 /** Same sizes as `writeImageSet`: master up to 1600px, then the card derivatives. Nothing is upscaled. */
 async function storeAvatar(bytes: Buffer, absoluteMaster: string) {
   mkdirSync(AVATAR_DIR, { recursive: true });
-  const master = await sharp(bytes, { failOn: "none", animated: false })
+  const prepared = await sharp(bytes, { failOn: "none", animated: false })
     .rotate()
     .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
     .jpeg({ quality: 82, mozjpeg: true })
     .toBuffer();
+  let master = prepared;
+  try {
+    master = await tinifyImage(prepared);
+  } catch (error) {
+    console.warn(`TinyPNG skipped for ${absoluteMaster}: ${error instanceof Error ? error.message : "error"}`);
+  }
   writeFileSync(absoluteMaster, master);
   const base = absoluteMaster.replace(/\.[a-z0-9]+$/i, "");
   const variants = [
