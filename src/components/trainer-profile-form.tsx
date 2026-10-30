@@ -7,6 +7,7 @@ import { addAdminTrainerCertificateFn, addAdminTrainerPhotoFn, removeAdminTraine
 import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { confirmAccountPhoneCodeFn, confirmTrainerContactEmailCodeFn, requestAccountPhoneCodeFn, requestTrainerContactEmailCodeFn } from "@/lib/auth/functions";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { reviewPlainText } from "@/lib/catalog/review-html";
 import { saveOwnTrainerProfileFn, type OwnTrainerProfile } from "@/lib/catalog/trainer-own";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 
@@ -37,6 +38,7 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
       certificates: profile.certificates,
     }));
   }, [profile.phone, profile.phoneVerified, profile.email, profile.emailVerified, profile.slug, profile.photos, profile.certificates]);
+  const [bioInvalid, setBioInvalid] = useState(false);
   const [popup, setPopup] = useState<{ title: string; message: string } | null>(null);
   const media = form.slug
     ? {
@@ -78,6 +80,12 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
         className="cabinet-form"
         onSubmit={(event) => {
           event.preventDefault();
+          if (!reviewPlainText(form.bio)) {
+            setBioInvalid(true);
+            setPopup({ title: "Не получилось", message: "Напишите, как вас представить." });
+            return;
+          }
+          setBioInvalid(false);
           setPending(true);
           const { avatarPath: _avatarPath, slug: _slug, certificates: _certificates, photos: _photos, phoneVerified: _phoneVerified, emailVerified: _emailVerified, telegramVerified: _telegramVerified, phone: _phone, offerAccepted: _offerAccepted, privacyAccepted: _privacyAccepted, firstName: _firstName, lastName: _lastName, ...fields } = form;
           void save({ data: fields })
@@ -98,7 +106,11 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
           self
           priceLabel="Сколько у меня стоит разовое занятие (персональная тренировка), BYN?"
           values={form}
-          onChange={(values: TrainerCardValues) => setForm((current) => ({ ...current, ...values }))}
+          bioInvalid={bioInvalid}
+          onChange={(values: TrainerCardValues) => {
+            if (reviewPlainText(values.bio)) setBioInvalid(false);
+            setForm((current) => ({ ...current, ...values }));
+          }}
           photos={media?.photos ?? null}
           certificates={media?.certificates ?? null}
           phone={{

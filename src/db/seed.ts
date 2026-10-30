@@ -10,9 +10,9 @@ async function seed() {
   const db = getDb();
 
   const adminEmail = normalizeEmail(process.env.SEED_ADMIN_EMAIL ?? "admin@trenio.by");
-  const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? "Admin1234";
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? "Pa55word!";
   const superEmail = normalizeEmail(process.env.SEED_SUPERADMIN_EMAIL ?? "super@trenio.by");
-  const superPassword = process.env.SEED_SUPERADMIN_PASSWORD ?? "Super1234";
+  const superPassword = process.env.SEED_SUPERADMIN_PASSWORD ?? "Pa55word!";
 
   async function upsertStaff(
     email: string,

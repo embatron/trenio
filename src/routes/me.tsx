@@ -13,6 +13,7 @@ import { listTrainerPricesFn } from "@/lib/catalog/trainer-price";
 import { getOwnTrainerProfileFn } from "@/lib/catalog/trainer-own";
 import { listOwnTrainerReviewsFn, listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { getOwnTrainerViewStatsFn } from "@/lib/catalog/trainer-views";
+import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
 const SECTIONS: Array<{ id: string; label: string; icon: "overview" | "profile" | "trainers" | "reviews" | "favorites" | "messages"; to: MeSectionPath; sections?: typeof TRAINER_PROFILE_SECTIONS }> = [
   { id: "overview", label: "Обзор", icon: "overview", to: "/me" },
@@ -33,6 +34,7 @@ export const Route = createFileRoute("/me")({
       throw redirect({ to: "/" });
     }
   },
+  head: () => ({ meta: [{ title: "Кабинет тренера — trenio.by" }, NOINDEX_FOLLOW] }),
   loader: async ({ context }) => {
     const isTrainer = Boolean(context.user && hasAnyRole(context.user.roles, ["trainer", "club"]));
     const [cabinet, ratings, prices, trainer, reviews, views] = await Promise.all([
@@ -80,6 +82,7 @@ function MeLayout() {
       firstName={user.firstName}
       lastName={user.lastName}
       role={role}
+      profileSlug={trainer?.slug}
       avatarUrl={face}
       items={items}
       active={active}

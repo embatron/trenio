@@ -3,16 +3,10 @@ import { useMemo, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { BELARUS_OBLAST_CENTERS } from "@/lib/catalog/city-taxonomy";
 import { pluralRu } from "@/lib/ru-plural";
+import { CLUBS_CRUMB, clubsIndexHead } from "@/lib/seo/pages";
 
 export const Route = createFileRoute("/clubs/")({
-  head: () => ({
-    meta: [
-      { title: "Спортивные клубы и залы Беларуси — trenio.by" },
-      { name: "description", content: "Каталог спортивных клубов, залов и студий Беларуси: бокс, единоборства, фитнес, йога. Адреса, цены, расписание и тренеры." },
-      { property: "og:title", content: "Клубы и залы Беларуси — trenio.by" },
-      { property: "og:description", content: "Каталог спортивных клубов и студий: адреса, цены, тренеры и направления." },
-    ],
-  }),
+  head: () => clubsIndexHead(CLUBS_LIST),
   component: ClubsListPage,
 });
 
@@ -125,10 +119,10 @@ function ClubsListPage() {
 
       <section className="clubs-hero">
         <div className="clubs-hero__crumbs">
-          <Link to="/">Главная</Link> · <span className="is-current" aria-current="page">Клубы</span>
+          <Link to="/">Главная</Link> · <span className="is-current" aria-current="page">{CLUBS_CRUMB}</span>
         </div>
         <h1>Спортивные клубы и залы Беларуси</h1>
-        <p>Каталог проверенных клубов, студий и залов. Адреса, цены, направления и тренеры — в одном месте.</p>
+        <p>Клубы, студии и залы. Адреса и направления появятся в карточке, когда она будет опубликована.</p>
         <div className="clubs-hero__stats">
           <div className="clubs-hero__stat"><strong>—</strong><span>клубов и студий</span></div>
           <div className="clubs-hero__stat"><strong>—</strong><span>городов</span></div>

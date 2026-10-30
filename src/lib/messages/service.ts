@@ -6,6 +6,7 @@ import {
   blockedPairs,
   conversationReads,
   conversations,
+  messageAttachments,
   messageReports,
   messages,
   trainerProfiles,
@@ -16,7 +17,16 @@ import { AuthError } from "@/lib/auth/errors";
 import { reviewPlainText, reviewTextLength, sanitizeReviewHtml } from "@/lib/catalog/review-html";
 import { isStaff } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
-import { scheduleMessageNotification } from "@/lib/messages/notify";
+import {
+  ATTACHMENT_TOO_MANY,
+  ATTACHMENT_UNREADABLE,
+  MESSAGE_ATTACHMENT_MAX_COUNT,
+  decodeAttachmentDataUrl,
+  sniffAttachment,
+} from "@/lib/messages/attachments";
+import { removeMessageFile, writeMessageFile, writeMessagePreview } from "@/lib/messages/attachment-store";
+import { logCaught } from "@/lib/log/logger";
+import { notifyStaffAboutReport, scheduleMessageNotification } from "@/lib/messages/notify";
 import {
   CONVERSATION_PAGE_SIZE,
   DAILY_TRAINER_LIMIT_MESSAGE,
@@ -25,14 +35,18 @@ import {
   MESSAGE_HTML_MAX_LENGTH,
   MESSAGE_MAX_LENGTH,
   MESSAGE_PAGE_SIZE,
+  REPORT_COMMENT_MAX_LENGTH,
+  REPORT_REASONS,
   type ConversationCursor,
   type ConversationListResult,
   type CounterpartDto,
+  type MessageAttachmentDto,
   type MessageCursor,
   type MessageDto,
   type MessagingSummary,
   type ReportRow,
   type ThreadResult,
+  messageListPreview,
   messagePreview,
 } from "@/lib/messages/schemas";
 
@@ -268,7 +282,7 @@ async function loadConversation(conversationId: string) {
   return { conversation, profile, access: accessFrom(conversation, profile, blocked) };
 }
 
-async function requireConversation(actor: MessageActor, conversationId: string, mode: AccessMode) {
+export async function requireConversation(actor: MessageActor, conversationId: string, mode: AccessMode) {
   const loaded = await loadConversation(conversationId);
   if (!loaded) {
     throw new AuthError(isStaff(actor.roles) ? "Переписка не найдена." : "Нет доступа к этой переписке.", "FORBIDDEN");
@@ -333,6 +347,34 @@ export async function ensureConversation(actor: MessageActor, trainerProfileSlug
   return { conversationId: conversation.id };
 }
 
+async function attachmentDtos(messageIds: number[]) {
+  const grouped = new Map<number, MessageAttachmentDto[]>();
+  if (messageIds.length === 0) return grouped;
+  const rows = await getDb()
+    .select({
+      id: messageAttachments.id,
+      messageId: messageAttachments.messageId,
+      name: messageAttachments.originalName,
+      mime: messageAttachments.mime,
+      byteSize: messageAttachments.byteSize,
+    })
+    .from(messageAttachments)
+    .where(inArray(messageAttachments.messageId, messageIds));
+  for (const row of rows) {
+    if (row.messageId == null) continue;
+    const list = grouped.get(row.messageId) ?? [];
+    list.push({
+      id: row.id,
+      name: row.name,
+      mime: row.mime,
+      byteSize: row.byteSize,
+      kind: row.mime.startsWith("image/") ? "image" : "file",
+    });
+    grouped.set(row.messageId, list);
+  }
+  return grouped;
+}
+
 async function toMessageDto(row: {
   id: number | string;
   conversationId: string;
@@ -341,7 +383,7 @@ async function toMessageDto(row: {
   clientId: string;
   createdAt: Date | string;
   deletedAt: Date | string | null;
-}, actor: MessageActor, staffSeesBody: boolean, readUpTo: number | null): Promise<MessageDto> {
+}, actor: MessageActor, conversationUserId: string, staffSeesBody: boolean, readUpTo: number | null, files: MessageAttachmentDto[] = []): Promise<MessageDto> {
   const deleted = row.deletedAt != null;
   const id = asNumber(row.id);
   const mine = row.senderId === actor.id;
@@ -354,7 +396,9 @@ async function toMessageDto(row: {
     createdAt: iso(row.createdAt) ?? new Date(0).toISOString(),
     deleted,
     mine,
+    side: row.senderId === conversationUserId ? "user" : "trainer",
     receipt: !mine || deleted ? null : readUpTo != null && id <= readUpTo ? "read" : "delivered",
+    attachments: deleted && !staffSeesBody ? [] : files,
   };
 }
 
@@ -373,9 +417,88 @@ async function counterpartReadUpTo(actor: MessageActor, conversation: Conversati
   return read?.id == null ? null : asNumber(read.id);
 }
 
+async function readyAttachments(actorId: string, conversationId: string, clientId: string, attachmentIds: string[]) {
+  if (attachmentIds.length > MESSAGE_ATTACHMENT_MAX_COUNT) throw new AuthError(ATTACHMENT_TOO_MANY, "VALIDATION");
+  if (attachmentIds.length === 0) return [];
+  const rows = await getDb()
+    .select()
+    .from(messageAttachments)
+    .where(inArray(messageAttachments.id, attachmentIds));
+  if (rows.length !== attachmentIds.length) throw new AuthError("Файл не найден. Прикрепите его ещё раз.", "VALIDATION");
+  for (const row of rows) {
+    if (row.uploaderId !== actorId || row.conversationId !== conversationId || row.clientId !== clientId) {
+      throw new AuthError("Файл не найден. Прикрепите его ещё раз.", "VALIDATION");
+    }
+  }
+  return rows;
+}
+
+export async function uploadMessageFile(
+  actor: MessageActor,
+  input: { id: string; conversationId: string; clientId: string; fileName: string; dataUrl: string },
+) {
+  await requireConversation(actor, input.conversationId, "write");
+  const [existing] = await getDb()
+    .select({
+      id: messageAttachments.id,
+      uploaderId: messageAttachments.uploaderId,
+      clientId: messageAttachments.clientId,
+      messageId: messageAttachments.messageId,
+    })
+    .from(messageAttachments)
+    .where(eq(messageAttachments.id, input.id))
+    .limit(1);
+  if (existing) {
+    if (existing.uploaderId !== actor.id || existing.messageId != null) {
+      throw new AuthError(existing.messageId != null ? "Файл уже отправлен." : "Файл не найден. Прикрепите его ещё раз.", "VALIDATION");
+    }
+    if (existing.clientId !== input.clientId) {
+      await getDb()
+        .update(messageAttachments)
+        .set({ clientId: input.clientId })
+        .where(eq(messageAttachments.id, existing.id));
+    }
+    return { id: existing.id };
+  }
+  const decoded = decodeAttachmentDataUrl(input.dataUrl);
+  if (!decoded) throw new AuthError(ATTACHMENT_UNREADABLE, "VALIDATION");
+  const sniffed = sniffAttachment(decoded.bytes, input.fileName, decoded.mime);
+  if (!sniffed.ok) throw new AuthError(sniffed.message, "VALIDATION");
+  const [countRow] = await getDb()
+    .select({ count: sql<number>`count(*)::int` })
+    .from(messageAttachments)
+    .where(and(eq(messageAttachments.conversationId, input.conversationId), eq(messageAttachments.clientId, input.clientId)));
+  if (Number(countRow?.count ?? 0) >= MESSAGE_ATTACHMENT_MAX_COUNT) throw new AuthError(ATTACHMENT_TOO_MANY, "VALIDATION");
+  const minute = consumeRateLimit(`msg:file:${actor.id}`, 60_000, 30);
+  if (!minute.ok) throw new AuthError(`Слишком много файлов. Подождите ${minute.retryAfterSec} с.`, "RATE_LIMITED");
+  await writeMessageFile(input.conversationId, input.id, sniffed.file.ext, decoded.bytes);
+  if (sniffed.file.kind === "image") {
+    await writeMessagePreview(input.conversationId, input.id, decoded.bytes).catch((error) => {
+      logCaught("message", "message.file", error, { target: input.conversationId });
+    });
+  }
+  try {
+    await getDb().insert(messageAttachments).values({
+      id: input.id,
+      conversationId: input.conversationId,
+      uploaderId: actor.id,
+      clientId: input.clientId,
+      originalName: sniffed.file.name,
+      mime: sniffed.file.mime,
+      byteSize: decoded.bytes.length,
+      ext: sniffed.file.ext,
+    });
+  } catch (error) {
+    await removeMessageFile(input.conversationId, input.id, sniffed.file.ext);
+    if (isUniqueViolation(error)) return { id: input.id };
+    throw error;
+  }
+  return { id: input.id, bytes: decoded.bytes.length, ext: sniffed.file.ext };
+}
+
 export async function sendMessage(
   actor: MessageActor,
-  input: { conversationId?: string; trainerProfileSlug?: string; body: string; clientId: string },
+  input: { conversationId?: string; trainerProfileSlug?: string; body: string; clientId: string; attachmentIds?: string[] },
 ) {
   let conversationId = input.conversationId;
   if (!conversationId) {
@@ -383,10 +506,13 @@ export async function sendMessage(
     conversationId = (await ensureConversation(actor, input.trainerProfileSlug)).conversationId;
   }
   const loaded = await requireConversation(actor, conversationId, "write");
+  const attachmentIds = input.attachmentIds ?? [];
   const html = sanitizeReviewHtml(input.body);
   const plain = reviewPlainText(html);
-  if (!plain) throw new AuthError("Введите сообщение.", "VALIDATION");
+  const stored = plain ? html : "";
+  if (!plain && attachmentIds.length === 0) throw new AuthError("Введите сообщение.", "VALIDATION");
   if (html.length > MESSAGE_HTML_MAX_LENGTH) throw new AuthError("Сообщение слишком длинное.", "VALIDATION");
+  await readyAttachments(actor.id, conversationId, input.clientId, attachmentIds);
   let limit = MESSAGE_MAX_LENGTH;
   if (actor.id === loaded.conversation.userId) {
     const [prior] = await getDb()
@@ -402,7 +528,7 @@ export async function sendMessage(
       .limit(1);
     if (!prior) limit = FIRST_MESSAGE_MAX_LENGTH;
   }
-  if (reviewTextLength(html) > limit) {
+  if (plain && reviewTextLength(html) > limit) {
     throw new AuthError(
       limit === FIRST_MESSAGE_MAX_LENGTH
         ? `Первое сообщение тренеру — не длиннее ${FIRST_MESSAGE_MAX_LENGTH} символов.`
@@ -426,7 +552,7 @@ export async function sendMessage(
       .values({
         conversationId,
         senderId: actor.id,
-        body: html,
+        body: stored,
         clientId: input.clientId,
       })
       .onConflictDoNothing({ target: [messages.conversationId, messages.clientId] })
@@ -445,6 +571,26 @@ export async function sendMessage(
       .update(conversations)
       .set({ lastMessageAt: created.createdAt, userHiddenAt: null })
       .where(eq(conversations.id, conversationId));
+    if (attachmentIds.length > 0) {
+      const ready = await tx
+        .select({ id: messageAttachments.id, messageId: messageAttachments.messageId })
+        .from(messageAttachments)
+        .where(inArray(messageAttachments.id, attachmentIds));
+      if (ready.length !== attachmentIds.length) throw new AuthError("Файл не найден. Прикрепите его ещё раз.", "VALIDATION");
+      const messageId = asNumber(created.id);
+      if (ready.some((row) => row.messageId != null && row.messageId !== messageId)) {
+        throw new AuthError("Файл уже отправлен.", "VALIDATION");
+      }
+      await tx
+        .update(messageAttachments)
+        .set({ messageId })
+        .where(and(
+          inArray(messageAttachments.id, attachmentIds),
+          eq(messageAttachments.uploaderId, actor.id),
+          eq(messageAttachments.conversationId, conversationId),
+          eq(messageAttachments.clientId, input.clientId),
+        ));
+    }
     return { row: created, duplicate: false };
   });
 
@@ -459,8 +605,9 @@ export async function sendMessage(
     }
   }
 
+  const files = await attachmentDtos([asNumber(saved.row.id)]);
   return {
-    message: await toMessageDto(saved.row, actor, false, null),
+    message: await toMessageDto(saved.row, actor, loaded.conversation.userId, false, null, files.get(asNumber(saved.row.id)) ?? []),
     duplicate: saved.duplicate,
   };
 }
@@ -512,16 +659,17 @@ export async function listConversations(
   const previews = new Map<string, string>();
   const unread = new Map<string, number>();
   if (ids.length > 0) {
-    const previewRows = await getDb().execute<{ conversationId: string; body: string }>(sql`
-      SELECT DISTINCT ON (conversation_id)
-        conversation_id AS "conversationId",
-        body
-      FROM messages
-      WHERE conversation_id IN (${sql.join(ids.map((id) => sql`${id}::uuid`), sql`, `)})
-        AND deleted_at IS NULL
-      ORDER BY conversation_id, created_at DESC, id DESC
+    const previewRows = await getDb().execute<{ conversationId: string; body: string; files: number }>(sql`
+      SELECT DISTINCT ON (m.conversation_id)
+        m.conversation_id AS "conversationId",
+        m.body,
+        (SELECT count(*)::int FROM message_attachments a WHERE a.message_id = m.id) AS files
+      FROM messages m
+      WHERE m.conversation_id IN (${sql.join(ids.map((id) => sql`${id}::uuid`), sql`, `)})
+        AND m.deleted_at IS NULL
+      ORDER BY m.conversation_id, m.created_at DESC, m.id DESC
     `);
-    for (const row of previewRows) previews.set(row.conversationId, messagePreview(row.body));
+    for (const row of previewRows) previews.set(row.conversationId, messageListPreview(row.body, asNumber(row.files)));
 
     const unreadRows = await getDb().execute<{ conversationId: string; count: number }>(sql`
       SELECT m.conversation_id AS "conversationId", count(*)::int AS count
@@ -611,6 +759,7 @@ export async function listMessages(
     .limit(1);
   const oldest = page[page.length - 1];
   const readUpTo = await counterpartReadUpTo(actor, loaded.conversation, loaded.profile.ownerUserId);
+  const files = await attachmentDtos(page.map((row) => asNumber(row.id)));
   return {
     conversationId: loaded.conversation.id,
     status: loaded.conversation.status,
@@ -634,9 +783,9 @@ export async function listMessages(
     canReopen: allows(actor, loaded.access, "reopen"),
     canBlock: allows(actor, loaded.access, "block"),
     canHide: false,
-    canReport: isParticipant(actor.id, loaded.access) || staff,
+    canReport: isParticipant(actor.id, loaded.access),
     composeLimit,
-    messages: await Promise.all(page.map((row) => toMessageDto(row, actor, staff, readUpTo))),
+    messages: await Promise.all(page.map((row) => toMessageDto(row, actor, loaded.conversation.userId, staff, readUpTo, files.get(asNumber(row.id)) ?? []))),
     nextCursor: hasMore && oldest
       ? { createdAt: iso(oldest.createdAt) ?? new Date(0).toISOString(), id: asNumber(oldest.id) }
       : null,
@@ -699,30 +848,50 @@ export async function hideConversation(_actor: MessageActor, _conversationId: st
   throw new AuthError("Переписку нельзя скрыть или удалить.", "VALIDATION");
 }
 
-export async function reportMessage(actor: MessageActor, input: { messageId: number; reason: string }) {
-  const [message] = await getDb()
-    .select({ id: messages.id, conversationId: messages.conversationId, senderId: messages.senderId })
-    .from(messages)
-    .where(eq(messages.id, input.messageId))
-    .limit(1);
-  if (!message) throw new AuthError("Сообщение не найдено.", "VALIDATION");
-  if (message.senderId === actor.id) throw new AuthError("Нельзя жаловаться на своё сообщение.", "VALIDATION");
-  await requireConversation(actor, message.conversationId, "read");
-  if (!isParticipant(actor.id, (await loadConversation(message.conversationId))!.access) && !isStaff(actor.roles)) {
-    throw new AuthError("Нет доступа к этой переписке.", "FORBIDDEN");
+export async function reportMessage(actor: MessageActor, input: { conversationId: string; reason: string; comment: string }) {
+  const loaded = await requireConversation(actor, input.conversationId, "read");
+  if (!isParticipant(actor.id, loaded.access)) {
+    throw new AuthError("Пожаловаться может только участник переписки.", "FORBIDDEN");
   }
+  const reason = REPORT_REASONS.find((item) => item.id === input.reason);
+  if (!reason) throw new AuthError("Укажите причину.", "VALIDATION");
+  const comment = reviewPlainText(input.comment);
+  if (!comment) throw new AuthError("Напишите комментарий.", "VALIDATION");
+  if (reviewTextLength(comment) > REPORT_COMMENT_MAX_LENGTH) {
+    throw new AuthError("Комментарий — не длиннее 1000 символов.", "VALIDATION");
+  }
+  const reporterSide = actor.id === loaded.conversation.userId ? "client" : "trainer";
   try {
     await getDb().insert(messageReports).values({
-      messageId: message.id,
+      conversationId: loaded.conversation.id,
       reporterId: actor.id,
-      reason: input.reason,
+      reason: reason.label,
+      comment,
+      reporterSide,
       status: "new",
     });
-    return { ok: true as const, duplicate: false };
   } catch (error) {
     if (!isUniqueViolation(error)) throw error;
     return { ok: true as const, duplicate: true };
   }
+  const [reporter] = await getDb()
+    .select({ firstName: users.firstName, lastName: users.lastName })
+    .from(users)
+    .where(eq(users.id, actor.id))
+    .limit(1);
+  try {
+    await notifyStaffAboutReport({
+      conversationId: loaded.conversation.id,
+      reporterName: personName(reporter?.firstName, reporter?.lastName),
+      reporterSide,
+      trainerName: trainerLabel(loaded.profile.fullName, loaded.profile.firstName, loaded.profile.lastName),
+      reason: reason.label,
+      comment,
+    });
+  } catch (error) {
+    logCaught("message", "message.report.notify", error, { target: loaded.conversation.id, actorUserId: actor.id });
+  }
+  return { ok: true as const, duplicate: false };
 }
 
 export async function listReports(actor: MessageActor): Promise<ReportRow[]> {
@@ -732,10 +901,12 @@ export async function listReports(actor: MessageActor): Promise<ReportRow[]> {
       id: messageReports.id,
       status: messageReports.status,
       reason: messageReports.reason,
+      comment: messageReports.comment,
+      reporterSide: messageReports.reporterSide,
       createdAt: messageReports.createdAt,
       messageId: messageReports.messageId,
       body: messages.body,
-      conversationId: conversations.id,
+      conversationId: messageReports.conversationId,
       conversationStatus: conversations.status,
       reporterId: messageReports.reporterId,
       reporterFirstName: users.firstName,
@@ -746,8 +917,8 @@ export async function listReports(actor: MessageActor): Promise<ReportRow[]> {
       trainerSlug: trainerProfiles.slug,
     })
     .from(messageReports)
-    .innerJoin(messages, eq(messages.id, messageReports.messageId))
-    .innerJoin(conversations, eq(conversations.id, messages.conversationId))
+    .leftJoin(messages, eq(messages.id, messageReports.messageId))
+    .innerJoin(conversations, eq(conversations.id, messageReports.conversationId))
     .innerJoin(trainerProfiles, eq(trainerProfiles.id, conversations.trainerProfileId))
     .innerJoin(users, eq(users.id, messageReports.reporterId))
     .orderBy(desc(messageReports.createdAt));
@@ -755,9 +926,11 @@ export async function listReports(actor: MessageActor): Promise<ReportRow[]> {
     id: row.id,
     status: row.status,
     reason: row.reason,
+    comment: row.comment,
+    reporterSide: row.reporterSide === "trainer" ? "trainer" : "client",
     createdAt: iso(row.createdAt) ?? new Date(0).toISOString(),
-    messageId: asNumber(row.messageId),
-    preview: messagePreview(row.body),
+    messageId: row.messageId == null ? null : asNumber(row.messageId),
+    preview: row.body ? messagePreview(row.body) : "Вся переписка",
     conversationId: row.conversationId,
     conversationStatus: row.conversationStatus,
     reporterId: row.reporterId,
@@ -779,15 +952,10 @@ export async function dismissReport(actor: MessageActor, reportId: string) {
 }
 
 async function reviewOpenReports(conversationId: string) {
-  const ids = await getDb()
-    .select({ id: messages.id })
-    .from(messages)
-    .where(eq(messages.conversationId, conversationId));
-  if (ids.length === 0) return;
   await getDb()
     .update(messageReports)
     .set({ status: "reviewed" })
-    .where(and(eq(messageReports.status, "new"), inArray(messageReports.messageId, ids.map((row) => row.id))));
+    .where(and(eq(messageReports.status, "new"), eq(messageReports.conversationId, conversationId)));
 }
 
 export async function blockPair(actor: MessageActor, conversationId: string) {

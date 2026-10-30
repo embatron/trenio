@@ -27,10 +27,12 @@ export type CatalogTrainerCardData = {
 export function CatalogTrainerCard({
   trainer,
   marked = false,
+  showContacts = true,
   onHover,
 }: {
   trainer: CatalogTrainerCardData;
   marked?: boolean;
+  showContacts?: boolean;
   onHover?: (slug: string | null) => void;
 }) {
   const price = statedTrainerPrice(trainer.price);
@@ -71,7 +73,7 @@ export function CatalogTrainerCard({
             </svg>
             <span>{trainer.city}</span>
           </span>
-          <TrainerContactIcons slug={trainer.slug} />
+          {showContacts ? <TrainerContactIcons slug={trainer.slug} /> : null}
         </div>
       </div>
     </article>

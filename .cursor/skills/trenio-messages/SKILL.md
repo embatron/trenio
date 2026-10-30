@@ -16,7 +16,8 @@ Read `.cursor/rules/messages.mdc` first. Product copy and limits are in `docs/TE
 
 | Concern | Location |
 | --- | --- |
-| Tables | `src/db/schema/messages.ts` |
+| Tables | `src/db/schema/messages.ts`. Apply attachment SQL with `npm run messages:install`, not `db:push` |
+| File rules and storage | `src/lib/messages/attachments.ts`, `src/lib/messages/attachment-store.ts`, `src/lib/messages/file-download.ts` |
 | Access, send, read cursor, unread SQL | `src/lib/messages/service.ts` |
 | Zod and preview | `src/lib/messages/schemas.ts` |
 | Server functions | `src/lib/messages/functions.ts` |
@@ -45,9 +46,10 @@ Message mutations log `domain: "message"` through `writeLog` in `src/lib/message
 ## Send path
 
 1. `sanitizeReviewHtml` before the length check. The same tags as reviews: `b`, `strong`, `i`, `em`, `ul`, `ol`, `li`, `p`, `br`, and safe `a`.
-2. `reviewTextLength` counts graphemes. First message from the initiator: `FIRST_MESSAGE_MAX_LENGTH` (1000). Every later message: `MESSAGE_MAX_LENGTH` (4000). Stored HTML: `MESSAGE_HTML_MAX_LENGTH` (12000).
-3. Insert and set `last_message_at` in one transaction. Do not hide or delete the conversation. A participant has no such action. The thread is removed for both sides only when an account is deleted.
-4. Notify the other party through `scheduleMessageNotification` (2 minute debounce, no message body). Skip when `last_read_at` is under 30 seconds and `last_read_message_id` already covers this id.
+2. `reviewTextLength` counts graphemes. First message from the initiator: `FIRST_MESSAGE_MAX_LENGTH` (1000). Every later message: `MESSAGE_MAX_LENGTH` (4000). Stored HTML: `MESSAGE_HTML_MAX_LENGTH` (12000). Attachments do not count toward that limit. An empty body is stored only when at least one attachment is linked.
+3. On Ctrl+Enter or ⌘+Enter, send `composerBody(editor.innerHTML, state)`. The visible field wins when React state is still empty. Plain Enter stays a line break.
+4. Insert and set `last_message_at` in one transaction. Do not hide or delete the conversation. A participant has no such action. The thread is removed for both sides only when an account is deleted.
+5. Notify the other party through `scheduleMessageNotification` (2 minute debounce, no message body). Skip when `last_read_at` is under 30 seconds and `last_read_message_id` already covers this id.
 
 ## Receipts and unread
 
@@ -60,7 +62,10 @@ Message mutations log `domain: "message"` through `writeLog` in `src/lib/message
 ## UI
 
 - Account, trainer, and admin nav labels are «Сообщения». Badges are `.cabinet-nav__badge` numbers, including zero for those three counts on the account sidebar.
-- The conversation list is newest activity first. `/account/messages` and `/me/messages` with no id replace the URL with the first row. Hover tints the row and turns the name brand-colored. Do not steal `?trainer=` while that conversation is still opening. The trainer list includes threads the trainer started.
+- The conversation list is newest activity first. On a wide screen, `/account/messages` and `/me/messages` with no id replace the URL with the first row. On a phone, stay on the list until a row is opened; the thread then fills the screen under the header, and «К списку» returns to the list. Hover tints the row and turns the name brand-colored. Do not steal `?trainer=` while that conversation is still opening. The trainer list includes threads the trainer started.
+- Image bubbles use `/messages/files/{id}?preview=1` (a stored JPEG, at most 640px inside) as a 72px thumbnail. The tap target opens the original on the same page and can rotate it by 90 degrees. Documents stay named links. While a send is in flight, a local image uses its object URL in the same frame.
+- Client bubbles are turquoise (`is-user`). Trainer bubbles are coral (`is-trainer`). `mine` only places the bubble on the right.
+- A participant files one report for the whole conversation from the header flag. The dialog asks for a reason and a comment. `reportMessage` writes `conversation_id`, `reporter_side` (`client` or `trainer`), the Russian reason, and the plain comment, and leaves `message_id` empty. A second report from the same person is a duplicate, not a new row. `notifyStaffAboutReport` mails active admins. Do not put the comment in `app_logs`; log `commentLength` only.
 - In the list and the thread header the given name and surname stay on one line. Do not show «Открыта» or «Закрыта» next to the name. A closed thread is explained in the composer. The composer text is 14px.
 - The header envelope goes to `/me/messages` for a trainer or club. Staff with a zero personal count go to `/admin/messages`. Everyone else goes to `/account/messages`.
 - `MessageEditor` inserts emoji with a text node and an `input` event so the controlled editor keeps the character. Do not rely on `document.execCommand` alone.

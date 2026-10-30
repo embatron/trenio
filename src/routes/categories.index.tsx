@@ -1,23 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
+import { CATEGORIES_CRUMB, categoriesIndexHead } from "@/lib/seo/pages";
 
 export const Route = createFileRoute("/categories/")({
-  head: () => ({
-    meta: [
-      { title: "Категории спорта — trenio.by" },
-      {
-        name: "description",
-        content:
-          "Все категории спорта на trenio.by: единоборства, фитнес, йога, плавание, командные игры и другие направления. Найдите тренера в Беларуси.",
-      },
-      { property: "og:title", content: "Категории спорта — trenio.by" },
-      {
-        property: "og:description",
-        content: "Каталог спортивных категорий и направлений — подбор тренеров по городу, цене и формату.",
-      },
-    ],
-  }),
+  head: () => categoriesIndexHead(),
   component: CategoriesIndexPage,
 });
 
@@ -147,12 +134,12 @@ function CategoriesIndexPage() {
 
       <main>
         <section className="categories-hero">
-          <nav className="categories-hero__crumbs" aria-label="breadcrumbs">
+          <nav className="categories-hero__crumbs" aria-label="Хлебные крошки">
             <Link to="/">Главная</Link>
             <span>/</span>
-            <span className="is-current" aria-current="page">Категории спорта</span>
+            <span className="is-current" aria-current="page">{CATEGORIES_CRUMB}</span>
           </nav>
-          <h1>Категории спорта</h1>
+          <h1>{CATEGORIES_CRUMB}</h1>
           <p>
             Выберите категорию — от единоборств и фитнеса до плавания, танцев и зимних видов. В
             каждой собраны тренеры, клубы и направления по всей Беларуси.

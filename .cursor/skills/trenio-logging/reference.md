@@ -17,14 +17,16 @@
 | `auth.email.verify` | Email confirmation |
 | `account.email.request` / `account.email.confirm` | Account email change |
 | `account.phone.request` / `account.phone.confirm` | Account phone |
+| `trainer.email.confirm` / `trainer.telegram.confirm` | Overview confirms the login email (same address on the card) and Telegram |
 | `account.password.change` / `account.avatar` / `account.name` | Cabinet settings |
 | `account.claim` | Trainer claim |
 | `email.send` / `email.dev` / `email.review` | Resend, dev console, review mail |
 | `sms.send` / `sms.dev` | SMS.BY, or the dev console without the code |
 | `form.welcome` / `form.review` / `form.trainer_admin` / `form.trainer_profile` | Public and cabinet forms. `form.welcome` awaits the insert. `target` is the Instagram or Telegram handle. A phone is `subject` as a mask, and a phone-only welcome leaves `target` empty. The welcome row stores `+375 29 123-45-67`, not the raw field. A honeypot is `denied` with `reason: honeypot` and no handle. |
 | `map.area` | `listMapAreaFn` |
+| `map.locate` | Browser geolocation on `/map` and `/search`. Warn only. The visitor sees no note. The row has no coordinates. |
 | `geo.cache.read` / `geo.cache.write` / `geo.profile` / `geo.visitor` | Geocoder and visitor place |
-| `message.send` / `message.ensure` / `message.close` / `message.reopen` / `message.report` / `message.dismiss` / `message.block` / `message.notify` | Message mutations and notices |
+| `message.send` / `message.file` / `message.ensure` / `message.close` / `message.reopen` / `message.report` / `message.dismiss` / `message.block` / `message.notify` | Message mutations, attachment upload, and notices. Log the size and extension, not the file name or the file body. A download is logged only when it fails |
 | `message.list` / `message.thread` / `message.read` / `message.unread` / `message.hide` | Failures only |
 | `admin.review` | Review publish or reject |
 | `catalog.claim` | Welcome-link side effect failed |

@@ -33,7 +33,9 @@ import {
 import { issueOtp, verifyOtp } from "@/auth/otp";
 import { consumeRateLimit } from "@/auth/rate-limit";
 import { isSmsByEnabled } from "@/auth/sms";
+import { parseTelegramWidgetUser, verifyTelegramWidgetUser } from "@/auth/telegram";
 import { AuthError } from "@/lib/auth/errors";
+import { parseTelegramHandle } from "@/lib/catalog/trainer-welcome";
 import { resolveAccountLogin } from "@/lib/auth/login-name";
 import { writeImageSet } from "@/lib/images/store";
 import {
@@ -479,6 +481,11 @@ export async function requestAccountEmailCode(userId: string, emailRaw: string) 
   const user = await findUserById(userId);
   if (!user) throw new AuthError("Требуется авторизация.", "UNAUTHORIZED");
   if (email === user.email && user.emailVerifiedAt) {
+    const db = getDb();
+    await db
+      .update(trainerProfiles)
+      .set({ email, emailVerifiedAt: user.emailVerifiedAt, updatedAt: new Date() })
+      .where(eq(trainerProfiles.ownerUserId, userId));
     return { ok: true as const, already: true, message: "Почта уже подтверждена." };
   }
 
@@ -561,6 +568,10 @@ export async function confirmAccountEmailCode(userId: string, emailRaw: string, 
     .update(users)
     .set({ email, emailVerifiedAt: now, status: "active", updatedAt: now })
     .where(eq(users.id, userId));
+  await db
+    .update(trainerProfiles)
+    .set({ email, emailVerifiedAt: now, updatedAt: now })
+    .where(eq(trainerProfiles.ownerUserId, userId));
 
   return { ok: true as const, message: "Почта подтверждена." };
 }
@@ -639,91 +650,44 @@ export async function confirmAccountPhoneCode(userId: string, phoneRaw: string, 
 }
 
 export async function requestTrainerContactEmailCode(userId: string, emailRaw: string) {
-  const email = normalizeEmail(emailRaw);
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    throw new AuthError("Введите корректный e-mail.", "VALIDATION");
-  }
-
-  const db = getDb();
-  const [profile] = await db
-    .select({ id: trainerProfiles.id, email: trainerProfiles.email, emailVerifiedAt: trainerProfiles.emailVerifiedAt })
-    .from(trainerProfiles)
-    .where(eq(trainerProfiles.ownerUserId, userId))
-    .limit(1);
-  if (!profile) throw new AuthError("Сначала сохраните профиль.", "VALIDATION");
-  if (normalizeEmail(profile.email) === email && profile.emailVerifiedAt) {
-    return { ok: true as const, already: true, message: "Почта уже подтверждена." };
-  }
-
-  const limit = consumeRateLimit(`contact-email:${userId}`, 60_000, 1);
-  if (!limit.ok) {
-    throw new AuthError(`Код можно отправить снова через ${limit.retryAfterSec} с.`, "RATE_LIMITED");
-  }
-
-  const now = new Date();
-  const code = emailCode();
-  await db.insert(emailVerificationTokens).values({
-    userId,
-    pendingEmail: email,
-    tokenHash: hashToken(`contact:${userId}:${code}`),
-    expiresAt: addMinutes(now, 10),
-  });
-
-  await sendMail({
-    to: [email],
-    subject: "Код подтверждения trenio.by",
-    text: `Код подтверждения почты для связи: ${code}\nОн действует 10 минут. Никому не сообщайте.`,
-  });
-
-  const delivered = Boolean(process.env.RESEND_API_KEY?.trim() && process.env.MAIL_FROM?.trim());
-  return {
-    ok: true as const,
-    already: false,
-    message: "Код отправлен на почту.",
-    devCode: !delivered && process.env.NODE_ENV !== "production" ? code : undefined,
-  };
+  return requestAccountEmailCode(userId, emailRaw);
 }
 
 export async function confirmTrainerContactEmailCode(userId: string, emailRaw: string, codeRaw: string) {
-  const email = normalizeEmail(emailRaw);
-  const code = codeRaw.replace(/\D/g, "");
-  const limit = consumeRateLimit(`contact-email-try:${userId}`, 15 * 60_000, 5);
-  if (!limit.ok) {
-    throw new AuthError("Слишком много попыток. Подождите и попробуйте снова.", "RATE_LIMITED");
+  return confirmAccountEmailCode(userId, emailRaw, codeRaw);
+}
+
+export async function confirmTrainerTelegram(userId: string, raw: unknown) {
+  const widget = parseTelegramWidgetUser(raw);
+  if (!widget || !verifyTelegramWidgetUser(widget)) {
+    throw new AuthError("Не удалось подтвердить Telegram.", "VALIDATION");
   }
+  const handle = widget.username ? parseTelegramHandle(widget.username) : null;
+  if (!handle) throw new AuthError("В Telegram нет имени пользователя.", "VALIDATION");
 
   const db = getDb();
-  const now = new Date();
-  const tokenRows = await db
-    .select()
-    .from(emailVerificationTokens)
-    .where(
-      and(
-        eq(emailVerificationTokens.userId, userId),
-        eq(emailVerificationTokens.pendingEmail, email),
-        isNull(emailVerificationTokens.usedAt),
-        gt(emailVerificationTokens.expiresAt, now),
-      ),
-    )
-    .orderBy(desc(emailVerificationTokens.createdAt))
-    .limit(8);
-  const tokenRow = tokenRows.find((row) => row.tokenHash === hashToken(`contact:${userId}:${code}`));
-  if (!tokenRow) throw new AuthError("Неверный или устаревший код.", "INVALID_TOKEN");
-
   const [profile] = await db
-    .select({ id: trainerProfiles.id })
+    .select({
+      id: trainerProfiles.id,
+      telegram: trainerProfiles.telegram,
+      telegramVerifiedAt: trainerProfiles.telegramVerifiedAt,
+    })
     .from(trainerProfiles)
     .where(eq(trainerProfiles.ownerUserId, userId))
     .limit(1);
   if (!profile) throw new AuthError("Сначала сохраните профиль.", "VALIDATION");
+  const saved = parseTelegramHandle(profile.telegram);
+  if (!saved || saved.toLowerCase() !== handle.toLowerCase()) {
+    throw new AuthError("Имя в Telegram не совпадает с тем, что указано в профиле.", "VALIDATION");
+  }
+  if (profile.telegramVerifiedAt) return { ok: true as const, message: "Telegram уже подтверждён." };
 
-  await db.update(emailVerificationTokens).set({ usedAt: now }).where(eq(emailVerificationTokens.id, tokenRow.id));
+  const now = new Date();
   await db
     .update(trainerProfiles)
-    .set({ email, emailVerifiedAt: now, updatedAt: now })
+    .set({ telegramVerifiedAt: now, updatedAt: now })
     .where(eq(trainerProfiles.id, profile.id));
-
-  return { ok: true as const, message: "Почта подтверждена." };
+  return { ok: true as const, message: "Telegram подтверждён." };
 }
 
 export async function updateAccountName(userId: string, firstName: string, lastName: string) {

@@ -2,12 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { CatalogMapScreen } from "@/routes/map";
 import { resolveVisitorPointFn } from "@/lib/catalog/visitor-place";
+import { searchPageHead } from "@/lib/seo/pages";
 
 type SearchParams = {
   sport: string;
   location: string;
   audience: "adult" | "child";
-  format: "individual" | "group";
+  format?: "individual" | "group";
 };
 
 export const Route = createFileRoute("/search")({
@@ -15,19 +16,12 @@ export const Route = createFileRoute("/search")({
     sport: typeof s.sport === "string" ? s.sport : "",
     location: typeof s.location === "string" ? s.location : "",
     audience: s.audience === "child" ? "child" : "adult",
-    format: s.format === "group" ? "group" : "individual",
+    format: s.format === "group" || s.format === "individual" ? s.format : undefined,
   }),
   head: ({ match }) => {
     const search = match.search;
-    const q = [search.sport, search.location].filter(Boolean).join(" · ") || "Поиск тренера";
-    const title = `${q} — trenio.by`;
-    return {
-      meta: [
-        { title },
-        { name: "description", content: `Результаты поиска тренеров: ${q}. Карта и карточки рядом.` },
-        { name: "robots", content: "noindex,follow" },
-      ],
-    };
+    const q = [search.sport, search.location].filter(Boolean).join(" · ");
+    return searchPageHead(q);
   },
   loader: async () => ({ point: await resolveVisitorPointFn() }),
   component: SearchPage,

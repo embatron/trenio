@@ -31,7 +31,12 @@ type DraftFile = {
   experienceYears?: number | null;
   formats?: ImportedTrainerDraft["formats"];
   languages?: string[];
+  sourceBio?: string;
+  sourceAbout?: string[];
+  audiences?: ImportedTrainerDraft["audiences"];
   avatarPath?: string;
+  photos?: string[];
+  certificates?: ImportedTrainerDraft["certificates"];
   contacts?: { instagram?: string; phone?: string; email?: string; telegram?: string; website?: string };
 };
 
@@ -60,12 +65,12 @@ async function sync() {
       gender: draft.gender,
       headline: draft.headline,
       bio: draft.bio || published?.bio || "",
-      sourceBio: draft.bio,
+      sourceBio: [draft.sourceBio, ...(draft.sourceAbout ?? [])].map((part) => (part || "").trim()).filter(Boolean).join("\n\n") || draft.bio,
       about: draft.about ?? [],
       pinned: draft.pinned ?? [],
       sports: draft.sports ?? [],
       primarySport: draft.primarySport ?? null,
-      audiences: published?.audiences?.length ? published.audiences : ["adult"],
+      audiences: draft.audiences?.length ? draft.audiences : published?.audiences?.length ? published.audiences : ["adult"],
       formats: draft.formats?.length ? draft.formats : published?.formats ?? [],
       city: draft.city,
       citySlug: published?.city.slug,
@@ -73,6 +78,8 @@ async function sync() {
       priceFrom: draft.priceFrom ?? published?.priceFrom ?? null,
       languages: draft.languages ?? [],
       avatarPath: draft.avatarPath || published?.photo || "",
+      photos: Array.isArray(draft.photos) ? draft.photos : undefined,
+      certificates: Array.isArray(draft.certificates) ? draft.certificates : undefined,
       phone: formatBelarusPhone(draft.contacts?.phone || published?.phone || ""),
       email: draft.contacts?.email || "",
       telegram: draft.contacts?.telegram || "",

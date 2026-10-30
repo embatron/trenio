@@ -21,6 +21,7 @@ import {
 } from "@/lib/auth/functions";
 import { BY_PHONE_COUNTRY_PREFIX, OTP_CODE_LENGTH } from "@/lib/auth/phone";
 import { safeReturnPath } from "@/lib/auth/return-path";
+import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 import type { TelegramWidgetUser } from "@/lib/auth/telegram-widget";
 
 export const Route = createFileRoute("/auth/login")({
@@ -35,6 +36,7 @@ export const Route = createFileRoute("/auth/login")({
   head: () => ({
     meta: [
       { title: "Вход — trenio.by" },
+      NOINDEX_FOLLOW,
       {
         name: "description",
         content: "Войдите в trenio.by по e-mail, телефону или Telegram, чтобы искать тренировки и вести профиль.",
@@ -118,7 +120,7 @@ function LoginPage() {
           <div className="auth-roleswitch auth-roleswitch--3" role="tablist" aria-label="Способ входа">
             {(
               [
-                ["email", "Почта или ник"],
+                ["email", "Email"],
                 ["phone", "Телефон"],
                 ["telegram", "Telegram"],
               ] as const
@@ -167,11 +169,11 @@ function LoginPage() {
             >
               <HoneypotField />
               <label className="auth-field">
-                <span className="auth-field__label">Почта или ник</span>
+                <span className="auth-field__label">Email</span>
                 <input
                   type="text"
                   required
-                  placeholder="you@example.com или nick"
+                  placeholder="you@example.com"
                   autoComplete="username"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
@@ -202,7 +204,6 @@ function LoginPage() {
                   </button>
                 </div>
               </label>
-              <p className="auth-field__hint auth-field__hint--block">Сессия действует 3 недели.</p>
               <button type="submit" className="auth-submit" disabled={pending}>
                 {pending ? "Вход…" : "Войти"}
               </button>

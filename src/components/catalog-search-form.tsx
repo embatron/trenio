@@ -1,5 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
+import { catalogSportByName } from "@/lib/catalog/catalog-sports";
+import { resolveBelarusCity } from "@/lib/catalog/city-taxonomy";
 import { renderLocationSuggestions } from "@/lib/catalog/location-suggestions";
 import { DEFAULT_SEARCH_CITY, resolveSearchCity } from "@/lib/catalog/search-city";
 import { renderSportSuggestions } from "@/lib/catalog/sport-suggestions";
@@ -56,14 +58,16 @@ const FORM_CSS = `
 .catalog-search .search-submit { width: 48px; height: 48px; border: 0; border-radius: 50%; background: var(--primary); color: #fff; cursor: pointer; display: grid; place-items: center; }
 .catalog-search .search-submit svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .catalog-search.search-block--header .search-shell {
-  min-height: 52px; padding: 4px 5px; box-shadow: 0 4px 18px rgba(var(--dark-rgb), 0.06);
-  grid-template-columns: minmax(0, 118fr) minmax(0, 196fr) minmax(0, 190fr) minmax(0, 142fr) 44px;
+  min-height: 40px; padding: 2px 3px; box-shadow: 0 4px 18px rgba(var(--dark-rgb), 0.06);
+  grid-template-columns: minmax(0, 160fr) minmax(0, 240fr) minmax(0, 180fr) 36px;
 }
-.catalog-search.search-block--header .search-field { height: 44px; padding: 0 11px; gap: 7px; }
-.catalog-search.search-block--header .intent-dropdown__trigger { min-height: 44px; height: 100%; }
+.catalog-search.search-block--header .search-field { height: 36px; padding: 0 8px; gap: 5px; }
+.catalog-search.search-block--header .intent-dropdown__trigger { min-height: 36px; height: 100%; }
 .catalog-search.search-block--header .combo-input { font-size: 14px; }
+.catalog-search.search-block--header .combo-menu { top: calc(100% + 6px); padding: 4px; }
+.catalog-search.search-block--header .combo-option { min-height: 32px; padding: 0 8px; font-size: 14px; }
 .catalog-search.search-block--header .search-icon svg, .catalog-search.search-block--header .intent-dropdown__trigger svg { width: 16px; height: 16px; }
-.catalog-search.search-block--header .search-submit { width: 44px; height: 44px; }
+.catalog-search.search-block--header .search-submit { width: 36px; height: 36px; }
 .catalog-search.search-block--header .search-submit svg { width: 17px; height: 17px; }
 .catalog-search .intent-dropdown__trigger {
   display: inline-flex; align-items: center; justify-content: space-between; gap: 7px;
@@ -74,15 +78,6 @@ const FORM_CSS = `
 @media (max-width: 720px) {
   .catalog-search.search-block--header, .catalog-search.search-block--header .search-shell { width: 100%; }
   .catalog-search.search-block--header .search-field { padding-inline: 8px; gap: 5px; }
-  .catalog-search.search-block--header .search-shell {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.28fr) 37px;
-    grid-template-rows: 37px 37px; min-height: 0;
-  }
-  .catalog-search.search-block--header .search-field[data-intent-dropdown="audience"] { grid-column: 1; grid-row: 1; border-left: 0; }
-  .catalog-search.search-block--header .search-field[data-intent-dropdown="format"] { grid-column: 2; grid-row: 1; }
-  .catalog-search.search-block--header .search-field[data-combo="sport"] { grid-column: 1; grid-row: 2; border-left: 0; border-top: 1px solid var(--line); }
-  .catalog-search.search-block--header .search-field[data-combo="location"] { grid-column: 2; grid-row: 2; border-top: 1px solid var(--line); }
-  .catalog-search.search-block--header .search-submit { grid-column: 3; grid-row: 1 / span 2; align-self: center; }
   .catalog-search.search-block--hero .search-shell { grid-template-columns: minmax(0, 1fr) auto; }
   .catalog-search.search-block--hero .search-field[data-combo="sport"] { grid-column: 1; grid-row: 1; border-left: 0; }
   .catalog-search.search-block--hero .search-field[data-combo="location"] { grid-column: 1; grid-row: 2; border-left: 0; border-top: 1px solid var(--line); }
@@ -176,6 +171,7 @@ export function CatalogSearchForm({
       paintChoice("audience", activeAudience);
       if (broadcast) publish({ audience: activeAudience });
     };
+
     const setFormat = (value: string, broadcast: boolean) => {
       activeFormat = value === "group" ? "group" : "individual";
       paintChoice("format", activeFormat);
@@ -215,7 +211,7 @@ export function CatalogSearchForm({
     dropdowns.forEach((field) => {
       const trigger = field.querySelector<HTMLButtonElement>(".intent-dropdown__trigger");
       const kind = field.dataset.intentDropdown;
-      if (!trigger || (kind !== "audience" && kind !== "format")) return;
+      if (!trigger || kind !== "audience") return;
       listen(trigger, "click", (event) => {
         event.stopPropagation();
         const willOpen = !field.classList.contains("is-open");
@@ -225,8 +221,7 @@ export function CatalogSearchForm({
       });
       field.querySelectorAll<HTMLElement>(".combo-option").forEach((opt) => {
         listen(opt, "click", () => {
-          if (kind === "audience") setAudience(opt.dataset.value || "adult", true);
-          else setFormat(opt.dataset.value || "individual", true);
+          setAudience(opt.dataset.value || "adult", true);
           field.classList.remove("is-open");
           trigger.setAttribute("aria-expanded", "false");
         });
@@ -278,9 +273,12 @@ export function CatalogSearchForm({
     if (form) {
       listen(form, "submit", (event) => {
         event.preventDefault();
-        const nextSport = sportInput?.value.trim() || "";
-        const nextLocation = locationInput?.value.trim() || DEFAULT_SEARCH_CITY;
-        if (locationInput && !locationInput.value.trim()) locationInput.value = nextLocation;
+        const typedSport = sportInput?.value.trim() || "";
+        const typedLocation = locationInput?.value.trim() || "";
+        const nextSport = catalogSportByName(typedSport)?.label ?? typedSport;
+        const nextLocation = resolveBelarusCity(typedLocation) ?? (typedLocation || DEFAULT_SEARCH_CITY);
+        if (sportInput) sportInput.value = nextSport;
+        if (locationInput) locationInput.value = nextLocation;
         void navigate({
           to: "/search",
           search: {
@@ -343,16 +341,6 @@ export function CatalogSearchForm({
               <div className="combo-menu" role="listbox" aria-label="Для кого">
                 <button className={`combo-option${audience === "adult" ? " is-active" : ""}`} type="button" data-value="adult" data-label="для себя">для себя</button>
                 <button className={`combo-option${audience === "child" ? " is-active" : ""}`} type="button" data-value="child" data-label="для ребёнка">для ребёнка</button>
-              </div>
-            </div>
-            <div className="search-field intent-select combo-select" data-intent-dropdown="format">
-              <button className="intent-dropdown__trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
-                <span className="intent-dropdown__value">{format === "group" ? "в группе" : "индивидуально"}</span>
-                <Chevron />
-              </button>
-              <div className="combo-menu" role="listbox" aria-label="Формат">
-                <button className={`combo-option${format === "individual" ? " is-active" : ""}`} type="button" data-value="individual" data-label="индивидуально">индивидуально</button>
-                <button className={`combo-option${format === "group" ? " is-active" : ""}`} type="button" data-value="group" data-label="в группе">в группе</button>
               </div>
             </div>
           </>

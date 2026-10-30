@@ -28,7 +28,7 @@ export const Route = createFileRoute("/admin/messages")({
   head: () => ({
     meta: [
       { title: "Сообщения · кабинет администратора · trenio.by" },
-      { name: "description", content: "Жалобы на сообщения." },
+      { name: "description", content: "Жалобы на переписки." },
       { name: "robots", content: "noindex,follow" },
     ],
   }),
@@ -82,7 +82,7 @@ function AdminMessagesPage() {
 
   return (
     <article className="cabinet-card">
-      <h2>Жалобы на сообщения</h2>
+      <h2>Жалобы на переписки</h2>
       {reports.isPending ? <p className="cabinet-empty">Загрузка…</p> : reports.error ? (
         <p className="cabinet-empty">{authErrorMessage(reports.error)}</p>
       ) : (reports.data ?? []).length === 0 ? <p className="cabinet-empty">Жалоб пока нет.</p> : (
@@ -107,8 +107,9 @@ function AdminMessagesPage() {
                     <tr>
                       <th>Кто пожаловался</th>
                       <th>Тренер</th>
-                      <th>Сообщение</th>
+                      <th>Переписка</th>
                       <th>Причина</th>
+                      <th>Комментарий</th>
                       <th>Статус</th>
                       <th>Действия</th>
                     </tr>
@@ -118,12 +119,14 @@ function AdminMessagesPage() {
                       <tr key={row.id}>
                         <td>
                           <Link className="cabinet-inline-link" to="/admin/accounts/$id" params={{ id: row.reporterId }}>{row.reporterName}</Link>
+                          <span className="cabinet-report-side">{row.reporterSide === "trainer" ? "Тренер" : "Клиент"}</span>
                         </td>
                         <td>
                           <Link className="cabinet-inline-link" to="/trainers/$slug" params={{ slug: row.trainerSlug }}>{row.trainerName}</Link>
                         </td>
                         <td>{row.preview}</td>
                         <td>{row.reason}</td>
+                        <td className="cabinet-report-comment">{row.comment}</td>
                         <td><span className={`cabinet-status cabinet-status--${row.status === "new" ? "pending" : row.status === "reviewed" ? "published" : "rejected"}`}>{STATUS_LABEL[row.status]}</span></td>
                         <td>
                           <div className="cabinet-actions">
@@ -143,6 +146,9 @@ function AdminMessagesPage() {
           )}
           {opened ? (
             <div className="direct-admin-thread">
+              <p className="cabinet-report-note">
+                <strong>{opened.reporterSide === "trainer" ? "Тренер" : "Клиент"} · {opened.reason}.</strong> {opened.comment}
+              </p>
               <ConversationThread
                 view="inbox"
                 thread={thread.data ?? null}
@@ -164,7 +170,7 @@ function AdminMessagesPage() {
           ) : null}
         </>
       )}
-      <style>{`${DIRECT_CSS} .direct-admin-thread { margin: 16px; min-height: 480px; } .cabinet-actions button { min-height: 44px; }`}</style>
+      <style>{`${DIRECT_CSS} .direct-admin-thread { margin: 16px; min-height: 480px; } .cabinet-actions button { min-height: 44px; } .cabinet-report-side { display: block; color: var(--muted); font-size: 12px; } .cabinet-report-comment, .cabinet-report-note { white-space: pre-wrap; overflow-wrap: anywhere; } .cabinet-report-comment { max-width: 280px; } .cabinet-report-note { margin: 0 0 12px; }`}</style>
     </article>
   );
 }

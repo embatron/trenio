@@ -35,10 +35,10 @@ test("unknown URL shows the 404 screen", async ({ page }) => {
 
 test("login does not echo the password and hides the honeypot", async ({ page }) => {
   await page.goto("/auth/login");
-  const email = page.getByPlaceholder("you@example.com или nick");
+  const email = page.getByPlaceholder("you@example.com");
   await email.waitFor();
   await page.waitForFunction(() => {
-    const input = document.querySelector('input[placeholder="you@example.com или nick"]');
+    const input = document.querySelector('input[placeholder="you@example.com"]');
     return !!input && Object.keys(input).some((key) => key.startsWith("__reactFiber") || key.startsWith("__reactProps"));
   });
   const menu = page.getByRole("dialog", { name: "Меню" });

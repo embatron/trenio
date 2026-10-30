@@ -8,7 +8,6 @@ import { SportIcon } from "@/components/sport-icon";
 import { TrainerCatalogMap } from "@/components/trainer-catalog-map";
 import type { CatalogMapBounds, CatalogMapUser } from "@/components/trainer-catalog-map-view";
 import {
-  CATALOG_ORIGIN,
   catalogSportById,
   catalogSportByName,
   catalogSportsFromQuery,
@@ -16,11 +15,15 @@ import {
   type CatalogSport,
 } from "@/lib/catalog/catalog-sports";
 import { cityCatalogByName, cityCatalogBySlug } from "@/lib/catalog/city-pages";
+import { resolveBelarusCity } from "@/lib/catalog/city-taxonomy";
+import { MAP_CRUMB, mapPageHead } from "@/lib/seo/pages";
 import { TRAINER_FORMAT_OPTIONS } from "@/lib/catalog/published-trainers";
 import { listMapAreaFn, type MapAreaFeature, type MapTrainer } from "@/lib/catalog/map-trainers";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
+import { TRAINER_INVITE_LINE } from "@/lib/catalog/trainer-welcome";
 import { resolveVisitorPointFn, type VisitorPoint } from "@/lib/catalog/visitor-place";
-import { countRu, pluralRu } from "@/lib/ru-plural";
+import { reportClientEvent } from "@/lib/log/client-reporter";
+import { pluralRu } from "@/lib/ru-plural";
 
 const MINSK: CatalogMapUser = { lat: 53.9006, lng: 27.559 };
 
@@ -32,18 +35,7 @@ export const Route = createFileRoute("/map")({
   head: ({ match }) => {
     const sports = selectedMapSports(match.search.sports);
     const city = cityCatalogBySlug(match.search.city ?? "");
-    const title = "Тренеры на карте | trenio.by";
-    const description = "Карта мест тренировок в Беларуси. Направления сверху, тренеры рядом с картой.";
-    return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-        ...(sports.length > 0 || city ? [{ name: "robots" as const, content: "noindex,follow" }] : []),
-      ],
-      links: [{ rel: "canonical", href: `${CATALOG_ORIGIN}/map` }],
-    };
+    return mapPageHead(sports.length > 0 || Boolean(city));
   },
   loader: async () => ({ point: await resolveVisitorPointFn() }),
   component: MapRoute,
@@ -141,21 +133,20 @@ export function CatalogMapScreen({
   const [sportOverride, setSportOverride] = useState<{ key: string; sports: CatalogSport[] } | null>(null);
   const selectedSports = sportOverride?.key === searchKey ? sportOverride.sports : fromUrl.sports;
   const unmatchedSport = mode === "search" && sportOverride?.key !== searchKey && fromUrl.unmatched;
+  const resolvedCity = mode === "search" ? resolveBelarusCity(locationText) : null;
   const cityPage = mode === "map"
     ? (citySlug ? cityCatalogBySlug(citySlug) : null)
-    : cityCatalogByName(locationText);
-  const cityName = mode === "map" ? (cityPage?.name ?? "") : locationText.trim();
+    : cityCatalogByName(resolvedCity ?? locationText);
+  const cityName = mode === "map" ? (cityPage?.name ?? "") : (resolvedCity ?? locationText.trim());
   const point = visitor;
   const cityPoint: CatalogMapUser | null = cityPage ? { lat: cityPage.lat, lng: cityPage.lng } : null;
   const openingFocus = cityPoint ?? visitorFocus(point.lat, point.lng);
   const [userPoint, setUserPoint] = useState<CatalogMapUser | null>(null);
   const [locating, setLocating] = useState(false);
-  const [locateNote, setLocateNote] = useState<string | null>(null);
   const [frame, setFrame] = useState<CatalogMapBounds | null>(null);
   const [features, setFeatures] = useState<MapAreaFeature[]>([]);
   const [rows, setRows] = useState<MapTrainer[]>([]);
   const [total, setTotal] = useState(0);
-  const [addressCount, setAddressCount] = useState(0);
   const [matched, setMatched] = useState<number | null>(null);
   const [nextCursor, setNextCursor] = useState<number | null>(null);
   const [areaReady, setAreaReady] = useState(false);
@@ -236,6 +227,38 @@ export function CatalogMapScreen({
     + (minExperience != null ? 1 : 0)
     + (price != null ? 1 : 0);
   const filterCount = selectedSports.length + extraActive + (unmatchedSport ? 1 : 0);
+  const appliedFilters = [
+    ...selectedSports.map((sport) => ({ key: `sport:${sport.id}`, label: sport.label })),
+    ...(unmatchedSport && sportText.trim() ? [{ key: "sport:unmatched", label: sportText.trim() }] : []),
+    ...(audience === "self" ? [{ key: "audience", label: "для себя" }] : []),
+    ...(audience === "child" ? [{ key: "audience", label: "для ребёнка" }] : []),
+    ...formats.flatMap((id) => {
+      const label = TRAINER_FORMAT_OPTIONS.find((option) => option.id === id)?.label;
+      return label ? [{ key: `format:${id}`, label }] : [];
+    }),
+    ...(minExperience == null ? [] : EXPERIENCE_OPTIONS.flatMap((option) => (
+      option.years === minExperience ? [{ key: `exp:${option.years}`, label: option.label }] : []
+    ))),
+    ...(price != null ? [{ key: "price", label: `от ${priceMin} до ${priceMax} BYN` }] : []),
+  ];
+  const removeApplied = (key: string) => {
+    if (key === "sport:unmatched") {
+      applySports([]);
+      return;
+    }
+    if (key.startsWith("sport:")) {
+      const id = key.slice("sport:".length);
+      applySports(selectedSports.filter((sport) => sport.id !== id));
+      return;
+    }
+    if (key === "audience") setAudience(null);
+    if (key === "price") setPrice(null);
+    if (key.startsWith("exp:")) setMinExperience(null);
+    if (key.startsWith("format:")) {
+      const id = key.slice("format:".length);
+      setFormats((current) => current.filter((item) => item !== id));
+    }
+  };
   const sportKey = unmatchedSport ? "__none__" : selectedSports.map((sport) => sport.id).join(",");
   const filterKey = [
     sportKey,
@@ -299,6 +322,9 @@ export function CatalogMapScreen({
             ? "В этом направлении никого нет"
             : "На карте пока нет мест с координатами"
     : "В этой области карты никого нет";
+  const firstInSection = matched === 0 && (
+    mode === "search" || selectedSports.length > 0 || extraActive > 0
+  );
 
   useEffect(() => {
     if (!frame) return;
@@ -330,7 +356,6 @@ export function CatalogMapScreen({
           setFeatures(area.features);
           setRows(area.trainers);
           setTotal(area.total);
-          setAddressCount(area.addressCount);
           setMatched(area.matched);
           setNextCursor(area.nextCursor);
           setPriceSpan((current) => (
@@ -399,8 +424,17 @@ export function CatalogMapScreen({
   }, [cardSlug, rows, features]);
 
   const locate = () => {
+    const note = (message: string) => {
+      reportClientEvent({
+        domain: "map",
+        level: "warn",
+        action: "map.locate",
+        message,
+        route: window.location.pathname,
+      });
+    };
     if (!navigator.geolocation) {
-      setLocateNote("Браузер не сообщает местоположение. Карта остаётся на Минске.");
+      note("Браузер не сообщает местоположение.");
       return;
     }
     setLocating(true);
@@ -411,15 +445,14 @@ export function CatalogMapScreen({
         const lng = position.coords.longitude;
         if (!inBelarus(lat, lng)) {
           setUserPoint(null);
-          setLocateNote("Точка вне Беларуси. Карта остаётся на Минске.");
+          note("Точка вне Беларуси.");
           return;
         }
         setUserPoint({ lat, lng });
-        setLocateNote(null);
       },
-      () => {
+      (error) => {
         setLocating(false);
-        setLocateNote("Браузер не передал координаты. Карта остаётся на Минске.");
+        note(error.code === 1 ? "Браузер не разрешил местоположение." : "Браузер не передал координаты.");
       },
       { enableHighAccuracy: false, timeout: 8000, maximumAge: 60_000 },
     );
@@ -445,7 +478,6 @@ export function CatalogMapScreen({
             sport={headerSport}
             location={headerLocation || undefined}
             audience={mode === "search" ? (audience === "child" ? "child" : "adult") : undefined}
-            format={mode === "search" ? (formats.includes("group") && !formats.includes("individual") ? "group" : "individual") : undefined}
           />
         )}
       />
@@ -455,7 +487,7 @@ export function CatalogMapScreen({
             <nav className="map-crumbs" aria-label="Хлебные крошки">
               <Link to="/" activeOptions={{ exact: true }}>Главная</Link>
               <span aria-hidden="true">/</span>
-              <span className="is-current" aria-current="page">{mode === "search" ? "Поиск" : "Карта"}</span>
+              <span className="is-current" aria-current="page">{mode === "search" ? "Поиск" : MAP_CRUMB}</span>
             </nav>
             <h1>
               {mode === "search"
@@ -474,12 +506,12 @@ export function CatalogMapScreen({
             {mode === "search" ? (
               <div className="map-hero__search">
                 <CatalogSearchForm
-                  key={`hero:${headerLocation ?? ""}:${headerSport}:${audience ?? ""}:${formats.join(",")}`}
+                  key={`hero:${headerLocation ?? ""}:${headerSport}:${audience ?? ""}:${formatQuery ?? ""}`}
                   variant="hero"
                   sport={headerSport}
                   location={headerLocation || undefined}
                   audience={audience === "child" ? "child" : "adult"}
-                  format={formats.includes("group") && !formats.includes("individual") ? "group" : "individual"}
+                  format={formatQuery === "group" ? "group" : "individual"}
                 />
               </div>
             ) : null}
@@ -487,18 +519,34 @@ export function CatalogMapScreen({
         </section>
         <div className="layout-container map-tax">
           <div className="map-more" ref={moreRef}>
-            <button
-              type="button"
-              className={`map-more__toggle${moreOpen ? " is-open" : ""}`}
-              aria-expanded={moreOpen}
-              onClick={() => setMoreOpen((open) => !open)}
-            >
-              Фильтры
-              {filterCount > 0 ? <span className="map-more__count">{filterCount}</span> : null}
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </button>
+            <div className="map-more__bar">
+              <button
+                type="button"
+                className={`map-more__toggle${moreOpen ? " is-open" : ""}`}
+                aria-expanded={moreOpen}
+                onClick={() => setMoreOpen((open) => !open)}
+              >
+                Фильтры
+                {filterCount > 0 ? <span className="map-more__count">{filterCount}</span> : null}
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              {appliedFilters.length > 0 ? (
+                <ul className="map-more__applied" aria-label="Отмеченные фильтры">
+                  {appliedFilters.map((item) => (
+                    <li key={item.key}>
+                      <span>{item.label}</span>
+                      <button type="button" aria-label={`Убрать ${item.label}`} onClick={() => removeApplied(item.key)}>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M6 6l12 12M18 6L6 18" />
+                        </svg>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
             {moreOpen ? (
               <div className="map-more__panel">
                 <div className="map-more__group">
@@ -513,21 +561,6 @@ export function CatalogMapScreen({
                       onChange={(event) => setSportQuery(event.target.value)}
                     />
                   </div>
-                  {selectedSports.length > 0 ? (
-                    <div className="map-filter__picked" role="group" aria-label="Выбранные виды">
-                      {selectedSports.map((sport) => (
-                        <button
-                          key={sport.id}
-                          type="button"
-                          className="map-more__pill is-active"
-                          aria-pressed
-                          onClick={() => toggleSport(sport)}
-                        >
-                          {sport.label}
-                        </button>
-                      ))}
-                    </div>
-                  ) : null}
                   {sportQuery.trim() ? (
                     <ul className="map-filter__suggest" aria-label="Подсказки видов спорта">
                       {sportHints.map((sport) => (
@@ -540,62 +573,58 @@ export function CatalogMapScreen({
                       ))}
                       {sportHints.length === 0 ? <li className="map-filter__empty">Такого вида нет</li> : null}
                     </ul>
-                  ) : (
-                    <>
-                      <div className="map-filter__directions" role="group" aria-label="Направления">
-                        {listPublishedSportCategories().map((category) => {
-                          const parent = catalogSportById(category.slug);
-                          if (!parent) return null;
-                          const parentOn = selectedSports.some((sport) => sport.id === parent.id);
+                  ) : null}
+                  <div className="map-filter__directions" role="group" aria-label="Направления">
+                    {listPublishedSportCategories().map((category) => {
+                      const parent = catalogSportById(category.slug);
+                      if (!parent) return null;
+                      const parentOn = selectedSports.some((sport) => sport.id === parent.id);
+                      return (
+                        <button
+                          key={category.slug}
+                          type="button"
+                          className={`map-tax__btn${parentOn ? " is-active" : ""}`}
+                          aria-pressed={parentOn}
+                          onClick={() => toggleSport(parent)}
+                        >
+                          {category.featuredImage ? (
+                            <img src={category.featuredImage} alt="" width={20} height={20} />
+                          ) : (
+                            <SportIcon iconKey={category.iconKey} width={18} height={18} />
+                          )}
+                          {category.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {listPublishedSportCategories().flatMap((category) => {
+                    const opened = selectedSports.some((sport) => (
+                      sport.level === 1 ? sport.slug === category.slug : sport.parentSlug === category.slug
+                    ));
+                    return opened && category.children.length > 0 ? [category] : [];
+                  }).map((category, _index, openBranches) => (
+                    <div key={category.slug} className="map-filter__branch">
+                      {openBranches.length > 1 ? <h3>{category.label}</h3> : null}
+                      <div className="map-filter__children">
+                        {category.children.map((child) => {
+                          const sport = childCatalogSport(category.slug, child.slug);
+                          if (!sport) return null;
+                          const active = selectedSports.some((item) => item.id === sport.id);
                           return (
                             <button
-                              key={category.slug}
+                              key={sport.id}
                               type="button"
-                              className={`map-tax__btn${parentOn ? " is-active" : ""}`}
-                              aria-pressed={parentOn}
-                              onClick={() => toggleSport(parent)}
+                              className={`map-more__pill${active ? " is-active" : ""}`}
+                              aria-pressed={active}
+                              onClick={() => toggleSport(sport)}
                             >
-                              {category.featuredImage ? (
-                                <img src={category.featuredImage} alt="" width={32} height={32} />
-                              ) : (
-                                <SportIcon iconKey={category.iconKey} width={24} height={24} />
-                              )}
-                              {category.label}
+                              {child.label}
                             </button>
                           );
                         })}
                       </div>
-                      {listPublishedSportCategories().map((category) => {
-                        const opened = selectedSports.some((sport) => (
-                          sport.level === 1 ? sport.slug === category.slug : sport.parentSlug === category.slug
-                        ));
-                        if (!opened || category.children.length === 0) return null;
-                        return (
-                          <div key={category.slug} className="map-filter__branch">
-                            <h3>{category.label}</h3>
-                            <div className="map-filter__children">
-                              {category.children.map((child) => {
-                                const sport = childCatalogSport(category.slug, child.slug);
-                                if (!sport) return null;
-                                const active = selectedSports.some((item) => item.id === sport.id);
-                                return (
-                                  <button
-                                    key={sport.id}
-                                    type="button"
-                                    className={`map-more__pill${active ? " is-active" : ""}`}
-                                    aria-pressed={active}
-                                    onClick={() => toggleSport(sport)}
-                                  >
-                                    {child.label}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </>
-                  )}
+                    </div>
+                  ))}
                 </div>
                 <div className="map-more__group">
                   <h2>Ищу тренера</h2>
@@ -702,7 +731,6 @@ export function CatalogMapScreen({
         </div>
         <section className="map-board">
           <div className="layout-container">
-            {locateNote ? <p className="map-note">{locateNote}</p> : null}
             <div className="map-stage">
               <div className="map-stage__map">
                 <TrainerCatalogMap
@@ -727,16 +755,7 @@ export function CatalogMapScreen({
               <div className="map-stage__list">
                 <div className="map-count">
                   {areaReady ? (
-                    mode === "search" ? (
-                      <>Найдено: <b>{total}</b> {pluralRu(total, "тренер", "тренера", "тренеров")}</>
-                    ) : (
-                      <>
-                        <b>{total}</b> {pluralRu(total, "тренер", "тренера", "тренеров")} в этой области
-                        {" · "}
-                        {countRu(addressCount, "адрес", "адреса", "адресов")}
-                        {" · сначала ближайшие"}
-                      </>
-                    )
+                    <>Найдено <b>{total}</b> {pluralRu(total, "тренер", "тренера", "тренеров")}</>
                   ) : mode === "search" ? "Ищем тренеров" : "Загружаем тренеров в этом кадре"}
                 </div>
                 {!areaReady ? (
@@ -748,12 +767,12 @@ export function CatalogMapScreen({
                     <h3>{loadError ? "Не удалось загрузить тренеров" : emptyTitle}</h3>
                     {loadError ? (
                       <p>Проверьте сеть и подвиньте карту ещё раз.</p>
-                    ) : mode === "search" && matched === 0 ? (
-                      <p>Разместите анкету — и вы будете первым в этом разделе.</p>
+                    ) : firstInSection ? (
+                      <p>{TRAINER_INVITE_LINE}</p>
                     ) : matched != null && matched > 0 ? (
                       <p>Отдалите карту или сдвиньте её — тренеры за краем кадра появятся здесь.</p>
                     ) : null}
-                    {mode === "search" && matched === 0 && !loadError ? (
+                    {firstInSection && !loadError ? (
                       <Link to="/join/trainer" className="map-join">Стать первым тренером в этом разделе</Link>
                     ) : null}
                   </div>
@@ -764,6 +783,7 @@ export function CatalogMapScreen({
                         <div key={trainer.slug} className="map-person" style={{ animationDelay: `${Math.min(index, 11) * 40}ms` }}>
                           <CatalogTrainerCard
                             marked={pinSlugs.includes(trainer.slug)}
+                            showContacts={false}
                             onHover={setCardSlug}
                             trainer={{
                               slug: trainer.slug,
@@ -815,50 +835,55 @@ const PAGE_CSS = `
 }
 .map-tax { position: relative; z-index: 5; margin-top: 16px; display: grid; gap: 12px; }
 .map-more { position: relative; }
+.map-more__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.map-more__applied { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; min-width: 0; }
+.map-more__applied li { display: inline-flex; align-items: center; min-height: 44px; padding-left: 12px; border-radius: 999px; background: rgba(var(--primary-rgb), 0.1); color: var(--primary); }
+.map-more__applied li span { font-size: 13px; font-weight: var(--fw-title); line-height: 1.2; }
+.map-more__applied button { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: inherit; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.map-more__applied button svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; }
+.map-more__applied button:hover { color: var(--primary-dark); }
 .map-more__toggle { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-size: 14px; font-weight: var(--fw-ui); cursor: pointer; }
 .map-more__toggle:hover, .map-more__toggle.is-open { border-color: var(--primary); color: var(--primary); }
 .map-more__toggle svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.16s ease; }
 .map-more__toggle.is-open svg { transform: rotate(180deg); }
 .map-more__count { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--primary); color: #fff; font-size: 12px; font-weight: var(--fw-title); line-height: 22px; text-align: center; }
 .map-more__panel { position: relative; z-index: 5; display: grid; gap: 16px; margin-top: 8px; padding: 16px; max-height: min(70vh, 720px); overflow: auto; border: 1px solid rgba(var(--primary-rgb), 0.22); border-radius: 16px; background: var(--white); box-shadow: 0 16px 36px rgba(var(--primary-rgb), 0.16); }
-.map-filter__search input { width: 100%; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); color: var(--dark); font: inherit; font-size: 16px; }
-.map-filter__picked, .map-filter__directions, .map-filter__children { display: flex; flex-wrap: wrap; gap: 8px; }
+.map-filter__search input { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--dark); font: inherit; font-size: 14px; font-weight: var(--fw-ui); }
+.map-filter__directions, .map-filter__children, .map-more__opts { display: flex; flex-wrap: wrap; gap: calc(6px * 0.9); }
 .map-filter__branch { display: grid; gap: 8px; }
 .map-filter__branch h3 { margin: 0; font-size: 13px; font-weight: var(--fw-title); color: var(--muted); }
 .map-filter__suggest { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.map-filter__suggest button { width: 100%; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 12px; border: 0; border-radius: 12px; background: var(--light-bg); color: var(--dark); font: inherit; font-size: 14px; text-align: left; cursor: pointer; }
-.map-filter__suggest small { color: var(--muted); font-size: 13px; font-weight: var(--fw-ui); }
-.map-filter__empty { min-height: 44px; display: flex; align-items: center; padding: 0 12px; color: var(--muted); font-size: 14px; }
+.map-filter__suggest button { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border: 0; border-radius: var(--radius-control); background: var(--light-bg); color: var(--dark); font: inherit; font-size: 13px; font-weight: var(--fw-title); text-align: left; cursor: pointer; }
+.map-filter__suggest small { color: var(--muted); font-size: 11px; font-weight: var(--fw-ui); }
+.map-filter__empty { min-height: 36px; display: flex; align-items: center; padding: 0 10px; color: var(--muted); font-size: 13px; }
 .map-more__group { display: grid; gap: 8px; }
-.map-more__group h2 { margin: 0; font-size: 13px; font-weight: var(--fw-title); color: var(--dark); }
-.map-more__opts { display: flex; flex-wrap: wrap; gap: 8px; }
-.map-more__pill { min-height: 44px; padding: 8px 14px; border: 1px solid transparent; border-radius: 999px; background: var(--light-bg); color: var(--dark); font: inherit; font-size: 14px; font-weight: var(--fw-ui); cursor: pointer; }
+.map-more__group h2 { margin: 0; font-size: 14px; font-weight: var(--fw-title); letter-spacing: 0.01em; line-height: 1.2; color: var(--muted); }
+.map-more__pill { min-height: calc(44px * 0.9); padding: calc(7px * 0.9) calc(12px * 0.9); border: 1px solid transparent; border-radius: 999px; background: var(--light-bg); color: var(--dark); font: inherit; font-size: calc(var(--fs-caption) * 0.9); font-weight: var(--fw-ui); cursor: pointer; }
 .map-more__pill:hover { background: rgba(var(--primary-rgb), 0.08); }
 .map-more__pill.is-active { background: var(--primary); color: #fff; }
-.map-more__reset { justify-self: start; min-height: 44px; padding: 8px 16px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--dark); font: inherit; font-size: 14px; font-weight: var(--fw-title); cursor: pointer; }
+.map-more__reset { justify-self: start; width: 100%; min-height: 40px; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--dark); font: inherit; font-size: 13px; font-weight: var(--fw-heading); cursor: pointer; }
 .map-more__reset:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
 .map-more__reset:disabled { color: var(--muted); cursor: default; }
-.map-price__values { display: flex; justify-content: space-between; gap: 12px; }
+.map-price__values { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 13px; color: var(--dark); }
 .map-price__values div:last-child { text-align: right; }
-.map-price__values span { display: block; color: var(--muted); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; }
-.map-price__values b { font-size: 16px; font-weight: var(--fw-title); color: var(--dark); }
-.map-price__slider { position: relative; height: 44px; margin: 0 10px; }
+.map-price__values span { display: block; color: var(--muted); font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; }
+.map-price__values b { font-size: 14px; font-weight: var(--fw-title); color: var(--ink); }
+.map-price__slider { position: relative; height: 28px; margin: 0 10px; }
 .map-price__track { position: absolute; left: 0; right: 0; top: 50%; height: 4px; transform: translateY(-50%); background: var(--line); border-radius: 999px; }
 .map-price__fill { position: absolute; top: 50%; height: 4px; transform: translateY(-50%); background: var(--primary); border-radius: 999px; }
-.map-price__slider input[type="range"] { position: absolute; left: -10px; right: -10px; top: 0; width: calc(100% + 20px); height: 44px; appearance: none; background: transparent; pointer-events: none; margin: 0; }
-.map-price__slider input[type="range"]::-webkit-slider-thumb { appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--white); border: 2px solid var(--primary); box-shadow: 0 2px 8px rgba(var(--dark-rgb), 0.18); cursor: pointer; pointer-events: auto; }
-.map-price__slider input[type="range"]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--white); border: 2px solid var(--primary); box-shadow: 0 2px 8px rgba(var(--dark-rgb), 0.18); cursor: pointer; pointer-events: auto; }
+.map-price__slider input[type="range"] { position: absolute; left: -10px; right: -10px; top: 0; width: calc(100% + 20px); height: 28px; appearance: none; background: transparent; pointer-events: none; margin: 0; }
+.map-price__slider input[type="range"]::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--white); border: 2px solid var(--primary); box-shadow: 0 2px 8px rgba(var(--dark-rgb), 0.18); cursor: pointer; pointer-events: auto; }
+.map-price__slider input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--white); border: 2px solid var(--primary); box-shadow: 0 2px 8px rgba(var(--dark-rgb), 0.18); cursor: pointer; pointer-events: auto; }
 .map-price__slider input[type="range"]::-moz-range-track { background: transparent; }
-.map-price__bounds { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
-.map-tax__btn { flex: 0 0 auto; min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 8px; border: 1px solid transparent; border-radius: 999px; background: var(--light-bg); color: var(--dark); font: inherit; font-size: 14px; font-weight: var(--fw-ui); white-space: nowrap; cursor: pointer; }
-.map-tax__btn img { width: 32px; height: 32px; flex: 0 0 auto; object-fit: contain; display: block; }
-.map-tax__btn svg { width: 24px; height: 24px; flex: 0 0 auto; }
+.map-price__bounds { display: flex; justify-content: space-between; color: var(--muted); font-size: 11px; margin-top: 6px; }
+.map-tax__btn { flex: 0 0 auto; min-height: calc(44px * 0.9); display: inline-flex; align-items: center; gap: 6px; padding: calc(4px * 0.9) calc(12px * 0.9) calc(4px * 0.9) 6px; border: 1px solid transparent; border-radius: 999px; background: var(--light-bg); color: var(--dark); font: inherit; font-size: calc(var(--fs-caption) * 0.9); font-weight: var(--fw-ui); white-space: nowrap; cursor: pointer; }
+.map-tax__btn img { width: 20px; height: 20px; flex: 0 0 auto; object-fit: contain; display: block; }
+.map-tax__btn svg { width: 18px; height: 18px; flex: 0 0 auto; }
 .map-tax__btn:hover { background: rgba(var(--primary-rgb), 0.08); }
 .map-tax__btn.is-active { background: var(--primary); color: #fff; }
 .map-tax__btn.is-active img { filter: brightness(0) invert(1); }
 .map-board { padding-top: 16px; padding-bottom: 28px; }
 .map-board .layout-container { display: grid; gap: 12px; }
-.map-note { margin: 0; font-size: 13px; line-height: 1.4; color: var(--muted); }
 .map-stage { display: grid; gap: var(--layout-gap); align-items: start; }
 .map-stage__map, .map-stage__list { min-width: 0; }
 .map-count { margin: 0 0 12px; font-size: 15px; color: var(--muted); font-weight: var(--fw-ui); }
@@ -895,12 +920,9 @@ const PAGE_CSS = `
 .map-people .trainer-card.is-marked .trainer-card__price small,
 .map-people .trainer-card.is-marked .trainer-card__location,
 .map-people .trainer-card.is-marked .trainer-card__rating,
-.map-people .trainer-card.is-marked .trainer-card__rating span,
-.map-people .trainer-card.is-marked .trainer-contacts__link,
-.map-people .trainer-card.is-marked .trainer-contacts__link:hover { color: #fff; }
+.map-people .trainer-card.is-marked .trainer-card__rating span { color: #fff; }
 .map-people .trainer-card.is-marked .trainer-card__footer { border-top-color: rgba(255, 255, 255, 0.35); }
 .map-people .trainer-card.is-marked .trainer-card__rating svg { fill: #fff; stroke: #fff; }
-.map-people .trainer-card.is-marked .trainer-contacts__link:not(.trainer-contacts__link--line) svg { filter: brightness(0) invert(1); }
 .cat-empty { padding: 28px 16px; text-align: center; border-radius: var(--card-radius); border: 1px solid rgba(var(--primary-rgb), 0.16); background: rgba(var(--primary-rgb), 0.04); display: grid; gap: 8px; justify-items: center; }
 .cat-empty h3 { margin: 0; font-size: 20px; font-weight: var(--fw-heading); color: var(--dark); }
 .cat-empty p { margin: 0; color: var(--muted); font-size: 14px; }

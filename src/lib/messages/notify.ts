@@ -1,4 +1,4 @@
-import { and, eq, gt, isNull } from "drizzle-orm";
+import { and, eq, gt, inArray, isNull } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { conversationReads, conversations, messages, trainerProfiles, userRoles, users } from "@/db/schema";
@@ -130,6 +130,59 @@ async function deliver(input: { conversationId: string; messageId: number; recip
       error,
     });
   }
+}
+
+/** Mail every active admin and superadmin. The comment is the reporter's note, not the chat. */
+export async function notifyStaffAboutReport(input: {
+  conversationId: string;
+  reporterName: string;
+  reporterSide: "client" | "trainer";
+  trainerName: string;
+  reason: string;
+  comment: string;
+}) {
+  const rows = await getDb()
+    .select({ email: users.email })
+    .from(users)
+    .innerJoin(userRoles, eq(userRoles.userId, users.id))
+    .where(and(inArray(userRoles.role, ["admin", "superadmin"]), eq(users.status, "active")));
+  const to = [...new Set(rows.map((row) => row.email))];
+  const { writeLog } = await import("@/lib/log/logger");
+  if (to.length === 0) {
+    void writeLog({
+      level: "warn",
+      domain: "message",
+      action: "message.report.notify",
+      outcome: "failure",
+      message: "Нет администратора для письма о жалобе.",
+      target: input.conversationId,
+    });
+    return;
+  }
+  const side = input.reporterSide === "trainer" ? "Тренер" : "Клиент";
+  await sendMail({
+    to,
+    subject: `Жалоба на переписку: ${input.trainerName}`,
+    text: [
+      "Новая жалоба на переписку.",
+      `Кто пожаловался: ${input.reporterName} (${side})`,
+      `Тренер: ${input.trainerName}`,
+      `Причина: ${input.reason}`,
+      "",
+      input.comment,
+      "",
+      `Разобрать: ${mailAppUrl()}/admin/messages`,
+    ].join("\n"),
+  });
+  void writeLog({
+    level: "info",
+    domain: "message",
+    action: "message.report.notify",
+    outcome: "success",
+    message: "Письмо о жалобе ушло администраторам.",
+    target: input.conversationId,
+    context: { recipients: to.length, side: input.reporterSide },
+  });
 }
 
 /** One notice per recipient after two quiet minutes. Later messages replace the timer. */

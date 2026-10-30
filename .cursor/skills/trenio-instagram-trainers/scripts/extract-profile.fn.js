@@ -72,7 +72,50 @@ async () => {
         return { w: view.getUint32(i + 16), h: view.getUint32(i + 20) };
       }
     }
+    if (bytes.length > 30 && bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) {
+      let offset = 12;
+      while (offset + 16 < bytes.length) {
+        const tag = String.fromCharCode(bytes[offset], bytes[offset + 1], bytes[offset + 2], bytes[offset + 3]);
+        const size = bytes[offset + 4] + (bytes[offset + 5] << 8) + (bytes[offset + 6] << 16) + bytes[offset + 7] * 16777216;
+        if (tag === "VP8X") {
+          return {
+            w: 1 + bytes[offset + 12] + (bytes[offset + 13] << 8) + (bytes[offset + 14] << 16),
+            h: 1 + bytes[offset + 15] + (bytes[offset + 16] << 8) + (bytes[offset + 17] << 16),
+          };
+        }
+        if (tag === "VP8 ") {
+          const start = offset + 8;
+          for (let j = start; j < Math.min(bytes.length - 9, start + 64); j += 1) {
+            if (bytes[j] === 0x9d && bytes[j + 1] === 0x01 && bytes[j + 2] === 0x2a) {
+              return {
+                w: (bytes[j + 3] + (bytes[j + 4] << 8)) & 0x3fff,
+                h: (bytes[j + 5] + (bytes[j + 6] << 8)) & 0x3fff,
+              };
+            }
+          }
+        }
+        const step = 8 + size + (size % 2);
+        if (step <= 0) break;
+        offset += step;
+      }
+    }
     return { w: 0, h: 0 };
+  };
+  const measured = async (bytes, mime) => {
+    const parsed = imageSize(bytes);
+    if (parsed.w >= 400 && parsed.h >= 400) return parsed;
+    const blob = new Blob([bytes], { type: mime || "image/jpeg" });
+    const objectUrl = URL.createObjectURL(blob);
+    try {
+      const image = new Image();
+      image.src = objectUrl;
+      await image.decode();
+      return { w: image.naturalWidth || parsed.w, h: image.naturalHeight || parsed.h };
+    } catch {
+      return parsed;
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+    }
   };
   const headerImages = [...(header?.querySelectorAll("img") || [])].map((img) => ({
     alt: img.getAttribute("alt") || "",
@@ -152,7 +195,7 @@ async () => {
         const response = await fetch(candidate);
         if (!response.ok) continue;
         const bytes = new Uint8Array(await response.arrayBuffer());
-        const size = imageSize(bytes);
+        const size = await measured(bytes, (response.headers.get("content-type") || "").split(";")[0]);
         const usable = size.w >= 400 && size.h >= 400 && bytes.byteLength > 0 && bytes.byteLength <= 2000000;
         if (!usable || size.w * size.h <= avatarWidth * avatarHeight) continue;
         let binary = "";

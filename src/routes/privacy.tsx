@@ -1,197 +1,97 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteHeader, SiteFooter } from "@/components/site-chrome";
+
+import { InfoPage } from "@/components/info-page";
+import { infoPageCopy, infoPageHead } from "@/lib/seo/pages";
+
+const page = infoPageCopy("privacy");
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({
-    meta: [
-      { title: "Политика конфиденциальности · trenio.by" },
-      { name: "description", content: "Политика обработки персональных данных пользователей сервиса trenio.by." },
-      { property: "og:title", content: "Политика конфиденциальности · trenio.by" },
-      { property: "og:description", content: "Политика обработки персональных данных пользователей сервиса trenio.by." },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "/privacy" }],
-  }),
+  head: () => infoPageHead("privacy"),
   component: PrivacyPage,
 });
 
 function PrivacyPage() {
   return (
-    <div className="privacy-root">
-      <style>{PRIVACY_CSS}</style>
-      <SiteHeader />
-
-      <main className="privacy-main">
-        <div className="privacy-inner">
-          <nav className="privacy-breadcrumbs" aria-label="Breadcrumb">
-            <Link to="/">Главная</Link>
-            <span>/</span>
-            <span className="is-current" aria-current="page">Политика конфиденциальности</span>
-          </nav>
-
-          <header className="privacy-header">
-            <h1 className="privacy-title">Политика конфиденциальности</h1>
-            <p className="privacy-updated">Последнее обновление: 20 октября 2026</p>
-          </header>
-
-          <div className="privacy-body">
-            <section className="privacy-section">
-              <h2>1. Общие положения</h2>
-              <p>
-                Настоящая Политика конфиденциальности описывает, как trenio.by собирает, использует и защищает персональные данные пользователей сервиса.
-                Используя сайт, вы соглашаетесь с условиями данной политики.
-              </p>
-            </section>
-
-            <section className="privacy-section">
-              <h2>2. Какие данные мы собираем</h2>
-              <p>Мы можем собирать следующие категории данных:</p>
-              <ul>
-                <li>Имя, контактный телефон и адрес электронной почты — при регистрации или оформлении заявки.</li>
-                <li>Информация о предпочтениях по занятиям — вид спорта, город, формат занятий.</li>
-                <li>Технические данные — IP-адрес, тип устройства, браузер, файлы cookie.</li>
-                <li>
-                  Город для фильтра каталога. Если IP удаётся сопоставить с населённым пунктом Беларуси, город подставляется в фильтр.
-                  В cookie сохраняется только название населённого пункта, не сам IP-адрес. Для сопоставления используется база GeoLite2, созданная MaxMind и доступная на{" "}
-                  <a href="https://www.maxmind.com">maxmind.com</a>.
-                </li>
-              </ul>
-            </section>
-
-            <section className="privacy-section">
-              <h2>3. Цели обработки данных</h2>
-              <p>Мы используем собранные данные для:</p>
-              <ul>
-                <li>предоставления доступа к функциям сервиса (поиск, бронирование, сохранение избранного);</li>
-                <li>связи с пользователем по вопросам записи и уточнения деталей занятий;</li>
-                <li>улучшения работы сайта и персонализации рекомендаций;</li>
-                <li>отправки информационных сообщений (при наличии согласия).</li>
-              </ul>
-            </section>
-
-            <section className="privacy-section">
-              <h2>4. Хранение и защита</h2>
-              <p>
-                Персональные данные хранятся на защищённых серверах. Доступ к информации имеют только уполномоченные сотрудники.
-                Мы применяем технические и организационные меры для предотвращения несанкционированного доступа, изменения или удаления данных.
-              </p>
-            </section>
-
-            <section className="privacy-section">
-              <h2>5. Передача третьим лицам</h2>
-              <p>
-                Мы не продаём персональные данные. Данные могут быть переданы партнёрам (тренерам, клубам) только в рамках оформленной заявки пользователя
-                и только в объёме, необходимом для проведения занятия.
-              </p>
-            </section>
-
-            <section className="privacy-section">
-              <h2>6. Файлы cookie</h2>
-              <p>
-                Сайт использует cookie для корректной работы, аналитики и персонализации. Продолжая использовать сервис, вы соглашаетесь с использованием cookie.
-                Вы можете отключить cookie в настройках браузера, однако это может повлиять на функциональность сайта.
-              </p>
-            </section>
-
-            <section className="privacy-section">
-              <h2>7. Права пользователя</h2>
-              <p>Пользователь имеет право:</p>
-              <ul>
-                <li>получить информацию о своих персональных данных, обрабатываемых сервисом;</li>
-                <li>требовать исправления неточных или неактуальных данных;</li>
-                <li>требовать удаления данных в случаях, предусмотренных законодательством;</li>
-                <li>отозвать согласие на обработку данных для маркетинговых целей.</li>
-              </ul>
-            </section>
-
-            <section className="privacy-section">
-              <h2>8. Изменения политики</h2>
-              <p>
-                Мы можем обновлять настоящую Политику конфиденциальности. Актуальная версия всегда доступна на этой странице.
-                Значительные изменения мы будем доводить до сведения пользователей через сайт или по электронной почте.
-              </p>
-            </section>
-
-            <section className="privacy-section">
-              <h2>9. Контакты</h2>
-              <p>
-                По вопросам, связанным с обработкой персональных данных, обращайтесь:
-                <br />
-                Email: <a href="mailto:privacy@trenio.by">privacy@trenio.by</a>
-              </p>
-            </section>
-          </div>
-        </div>
-      </main>
-
-      <SiteFooter />
-    </div>
+    <InfoPage
+      title={page.crumb}
+      updated="Редакция 26 октября 2026"
+      lead="Как trenio.by обрабатывает данные посетителей, клиентов и тренеров. Сервис работает для каталога в Беларуси."
+    >
+      <section>
+        <h2>1. Кто обрабатывает</h2>
+        <p>
+          Оператор — сервис trenio.by. Вопросы по данным, исправлению и удалению отправляйте на{" "}
+          <a href="mailto:hello@trenio.by">hello@trenio.by</a> или через страницу <Link to="/contacts">контактов</Link>.
+          Отдельного адреса privacy@ нет.
+        </p>
+      </section>
+      <section>
+        <h2>2. Какие данные</h2>
+        <ul>
+          <li>Аккаунт: имя, фамилия, почта, пароль в виде необратимого хеша. Телефон Беларуси и Telegram — если человек их подтвердил кодом или ботом.</li>
+          <li>Заявка тренера с <Link to="/join/trainer">«Привет!»</Link>: Instagram, Telegram и мобильный номер. Достаточно одного канала.</li>
+          <li>Карточка: текст, фото, город, виды спорта, цена, стаж, места занятий, сертификаты. Черновик по открытому Instagram не публикуется, пока тренер его не примет.</li>
+          <li>Отзыв вошедшего пользователя: оценка и текст. Сначала он на модерации.</li>
+          <li>Сообщение между аккаунтом и одним опубликованным профилем. Текст переписки в журнал ошибок не пишется.</li>
+          <li>Избранное вошедшего пользователя, без срока хранения.</li>
+          <li>Факт согласия с <Link to="/offer">офертой</Link> и номер принятой редакции.</li>
+          <li>Журнал сбоев и входов на 30 дней: почта или маска телефона, маршрут, код ошибки. Пароль, код из SMS или письма, cookie и ссылка сброса туда не попадают.</li>
+        </ul>
+      </section>
+      <section>
+        <h2>3. Зачем</h2>
+        <ul>
+          <li>показать каталог, карту и карточку;</li>
+          <li>создать аккаунт, войти, восстановить пароль и подтвердить почту, телефон или Telegram;</li>
+          <li>дать написать тренеру, сохранить избранное и оставить отзыв;</li>
+          <li>подставить город в поиске, если IP относится к населённому пункту Беларуси;</li>
+          <li>скрыть чужую или незаконную карточку и разобрать жалобу на сообщение.</li>
+        </ul>
+        <p>Данные не продаются. Рекламных рассылок без отдельного согласия нет. Оплаты на сайте нет, платёжные реквизиты не собираются.</p>
+      </section>
+      <section>
+        <h2>4. Кому видно</h2>
+        <p>
+          Опубликованная карточка видна посетителям каталога. Телефон, Telegram и почта — только после подтверждения. Почта на карточке совпадает с почтой входа.
+          Сообщение видят двое участников. Сотрудник читает чужой тред, если на сообщение пожаловались, и не пишет в нём.
+          Письма уходят через почтовый сервис Resend, код на телефон — через SMS.BY, короткое уведомление без текста переписки может уйти в Telegram-бот входа.
+        </p>
+        <p>
+          Город по IP считается на нашем сервере по базе GeoLite2 (MaxMind, <a href="https://www.maxmind.com">maxmind.com</a>).
+          Сторонний сервис геолокации для этого не вызывается. Карта в браузере запрашивает тайлы OpenStreetMap.
+          Адрес места тренировки может геокодироваться через Nominatim, чтобы поставить метку.
+        </p>
+      </section>
+      <section>
+        <h2>5. Cookie</h2>
+        <ul>
+          <li><code>trenio_session</code> — вход. HttpOnly, около трёх недель. В ней нет пароля, только признак сессии.</li>
+          <li><code>trenio_place</code> — выбранный или определённый населённый пункт, на год. IP в cookie не пишется.</li>
+        </ul>
+        <p>
+          Отдельной рекламной или аналитической cookie нет. Если отключить cookie, вход и запомненный город работать не будут.
+          Каталог без них открывается.
+        </p>
+      </section>
+      <section>
+        <h2>6. Срок</h2>
+        <p>
+          Аккаунт, карточка, отзыв, избранное и переписка хранятся, пока нужны для каталога. Переписка удаляется вместе с аккаунтом, отдельно скрыть её нельзя.
+          Журнал сбоев живёт 30 дней. Черновик карточки хранится, пока тренер его не примет или не попросит удалить.
+        </p>
+      </section>
+      <section>
+        <h2>7. Права</h2>
+        <p>
+          Можно запросить, какие данные есть, попросить исправить неточное и потребовать удалить то, что закон разрешает удалить.
+          Согласие на обработку, данное при регистрации или привязке карточки, отзывается письмом на hello@trenio.by.
+          Для опубликованной карточки отзыв согласия означает, что её снимут с каталога.
+        </p>
+      </section>
+      <section>
+        <h2>8. Редакция</h2>
+        <p>Новая редакция заменяет текст на этой странице. Дата стоит под заголовком. Существенное изменение не прячется в старой формулировке.</p>
+      </section>
+    </InfoPage>
   );
 }
-
-const PRIVACY_CSS = `
-.privacy-root {
-  --primary: #f04b50;
-  --primary-dark: #c9343a;
-  --dark: #111827;
-  --light-bg: #fff5f5;
-  --neutral-bg: #f9fafb;
-  --text: #1f2937;
-  --muted: #6b7280;
-  --line: #e5e7eb;
-  --dark-rgb: 17,24,39;
-  --primary-rgb: 240,75,80;
-  font-family: Inter, Manrope, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: var(--text);
-  background: var(--neutral-bg);
-  min-height: 100vh;
-}
-
-.privacy-main { padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 72px); }
-.privacy-inner { max-width: var(--layout-prose-max); margin: 0 auto; }
-
-.privacy-breadcrumbs {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
-  margin: 0 0 28px; font-size: 13px; font-weight: var(--fw-title); color: var(--muted);
-}
-.privacy-breadcrumbs a { color: var(--muted); text-decoration: none; }
-.privacy-breadcrumbs a:hover { color: var(--primary-dark); }
-
-.privacy-header { margin-bottom: 36px; }
-.privacy-title {
-  margin: 0 0 10px;
-  font-size: var(--fs-page);
-  line-height: 1.08;
-  letter-spacing: -0.04em;
-  font-weight: var(--fw-heading);
-  color: var(--dark);
-}
-.privacy-updated {
-  margin: 0;
-  font-size: 14px;
-  font-weight: var(--fw-title);
-  color: var(--muted);
-}
-
-.privacy-body { font-size: 16px; line-height: 1.7; }
-.privacy-section + .privacy-section { margin-top: 32px; }
-.privacy-section h2 {
-  margin: 0 0 12px;
-  font-size: 18px;
-  letter-spacing: -0.02em;
-  font-weight: var(--fw-title);
-  color: var(--dark);
-}
-.privacy-section p { margin: 0 0 14px; }
-.privacy-section ul {
-  margin: 0 0 14px; padding-left: 22px;
-}
-.privacy-section ul li { margin-bottom: 8px; padding-left: 4px; }
-.privacy-section ul li::marker { color: var(--primary); }
-.privacy-section a { color: var(--primary-dark); font-weight: var(--fw-heading); text-decoration: none; }
-.privacy-section a:hover { text-decoration: underline; }
-
-@media (max-width: 960px) {
-  .privacy-body { font-size: 15px; line-height: 1.65; }
-}
-`;

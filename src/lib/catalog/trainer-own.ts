@@ -129,7 +129,12 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
     assertTrainer(context.user.roles);
     const db = getDb();
     const [account] = await db
-      .select({ phone: users.phone, phoneVerifiedAt: users.phoneVerifiedAt })
+      .select({
+        phone: users.phone,
+        phoneVerifiedAt: users.phoneVerifiedAt,
+        email: users.email,
+        emailVerifiedAt: users.emailVerifiedAt,
+      })
       .from(users)
       .where(eq(users.id, context.user.id))
       .limit(1);
@@ -140,7 +145,9 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
       .limit(1);
     const phone = formatBelarusPhone(account?.phone || row?.phone || "");
     const phoneVerified = account?.phoneVerifiedAt != null;
-    if (!row) return { ...emptyProfile, phone, phoneVerified };
+    const email = normalizeEmail(account?.email ?? "");
+    const emailVerified = account?.emailVerifiedAt != null && email !== "";
+    if (!row) return { ...emptyProfile, phone, phoneVerified, email, emailVerified };
     const version = row.updatedAt.getTime();
     const name = trainerNameParts(row.firstName, row.lastName, row.fullName);
     return {
@@ -157,7 +164,7 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
       phone,
       instagram: row.instagramUrl,
       telegram: row.telegram,
-      email: row.email,
+      email,
       experienceYears: Math.max(1, row.experienceYears || 1),
       formats: row.formats,
       audiences: effectiveAudiences(row.audiences),
@@ -166,7 +173,7 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
       photos: (row.photos.length > 0 ? row.photos : row.avatarPath ? [row.avatarPath] : []).map((item) => `${item}?v=${version}`),
       certificates: readCertificates(row.certificates).map((item) => ({ ...item, path: `${item.path}?v=${version}` })),
       phoneVerified,
-      emailVerified: row.emailVerifiedAt != null && normalizeEmail(row.email) !== "",
+      emailVerified,
       telegramVerified: row.telegramVerifiedAt != null,
       offerAccepted: row.offerAcceptedAt != null,
       privacyAccepted: row.privacyAcceptedAt != null,
@@ -186,7 +193,13 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       .limit(1);
 
     const [account] = await db
-      .select({ phone: users.phone, firstName: users.firstName, lastName: users.lastName })
+      .select({
+        phone: users.phone,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        email: users.email,
+        emailVerifiedAt: users.emailVerifiedAt,
+      })
       .from(users)
       .where(eq(users.id, context.user.id))
       .limit(1);
@@ -194,6 +207,10 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
     const lastName = (account?.lastName ?? "").trim().slice(0, 100);
     if (!firstName || !lastName) {
       throw new AuthError("Укажите имя и фамилию в настройках.", "VALIDATION");
+    }
+    const bio = sanitizeReviewHtml(data.bio);
+    if (!reviewPlainText(bio)) {
+      throw new AuthError("Напишите, как вас представить.", "VALIDATION");
     }
     const picked = trainerSportsFromSlugs(data.sportSlugs);
     if (picked.slugs.length > MAX_TRAINER_SPORTS) {
@@ -228,7 +245,7 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       lastName,
       fullName: joinTrainerName(firstName, lastName),
       headline: data.headline,
-      bio: sanitizeReviewHtml(data.bio),
+      bio,
       about: (() => {
         const html = sanitizeReviewHtml(data.about);
         return reviewPlainText(html) ? [html] : [];
@@ -247,8 +264,8 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       phone,
       instagramUrl: data.instagram,
       telegram: data.telegram,
-      email: data.email.trim(),
-      ...(existing && normalizeEmail(existing.email) === normalizeEmail(data.email) ? {} : { emailVerifiedAt: null }),
+      email: normalizeEmail(account?.email ?? ""),
+      emailVerifiedAt: account?.emailVerifiedAt ?? null,
       instagramHandle: instagramHandle(data.instagram, context.user.id),
       experienceYears: data.experienceYears,
       formats: [...new Set(data.formats)],

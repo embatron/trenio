@@ -12,6 +12,8 @@ import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
 import { SiteFaq } from "@/components/site-faq";
 import { HOME_FAQ } from "@/lib/catalog/site-faq";
+import { homePageHead } from "@/lib/seo/pages";
+import { TRAINER_INVITE_LINE } from "@/lib/catalog/trainer-welcome";
 
 const HOMEPAGE_CATEGORIES = listPublishedSportCategories();
 
@@ -322,21 +324,7 @@ function PopularSlider() {
 }
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "trenio.by — поиск тренеров в Беларуси" },
-      {
-        name: "description",
-        content:
-          "Trenio.by — поиск тренеров и спортивных занятий в Беларуси. Индивидуальные и групповые тренировки.",
-      },
-      { property: "og:title", content: "trenio.by — поиск тренеров в Беларуси" },
-      {
-        property: "og:description",
-        content: "Поиск тренеров и спортивных занятий в Беларуси — индивидуально и в группе.",
-      },
-    ],
-  }),
+  head: () => homePageHead(HOME_FAQ),
   loader: async () => {
     const [ratings, prices, stats] = await Promise.all([listTrainerRatingSummariesFn(), listTrainerPricesFn(), getHomeStatsFn()]);
     return { ratings, prices, stats };
@@ -430,15 +418,15 @@ body.is-search-docked .site-header__search {
 }
 .intent-dropdown__trigger svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; color: var(--muted); flex: 0 0 auto; }
 .search-block--header .search-shell {
-  width: 100%; max-width: 100%; min-width: 0; min-height: 52px; padding: 4px 5px;
+  width: 100%; max-width: 100%; min-width: 0; min-height: 40px; padding: 2px 3px;
   box-shadow: 0 4px 18px rgba(var(--dark-rgb), 0.06);
-  grid-template-columns: minmax(0, 118fr) minmax(0, 196fr) minmax(0, 190fr) minmax(0, 142fr) 44px;
+  grid-template-columns: minmax(0, 160fr) minmax(0, 240fr) minmax(0, 180fr) 36px;
 }
 .search-block--header .search-field.intent-select { position: relative; display: flex; align-items: center; }
-.search-block--header .search-field { height: 44px; padding: 0 11px; gap: 7px; }
+.search-block--header .search-field { height: 36px; padding: 0 8px; gap: 5px; }
 .search-block--header .combo-input { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .search-block--header .search-icon svg, .search-block--header .chevron-icon svg { width: 16px; height: 16px; }
-.search-block--header .search-submit { width: 44px; height: 44px; }
+.search-block--header .search-submit { width: 36px; height: 36px; }
 .search-block--header .search-submit svg { width: 17px; height: 17px; }
 .hero-title { margin: 0 0 36px; font-size: var(--fs-display); line-height: 1.12; letter-spacing: -0.04em; font-weight: var(--fw-heading); color: var(--dark); }
 .search-block--hero .search-intent { margin-bottom: 16px; }
@@ -447,13 +435,13 @@ body.is-search-docked .site-header__search {
 .search-intent { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 0 auto 18px; color: var(--muted); font-size: 16px; font-weight: var(--fw-title); }
 .intent-group { display: inline-flex; align-items: center; flex-wrap: wrap; justify-content: center; gap: 7px; }
 .intent-label { color: var(--muted); font-weight: var(--fw-heading); }
-.audience-tab, .format-tab {
+.audience-tab {
   border: 0; background: rgba(255, 255, 255, 0.7); border-radius: 999px; padding: 7px 12px;
   font-size: 15px; font-weight: var(--fw-title); color: var(--muted); opacity: 0.5; cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease, opacity 0.18s ease, transform 0.18s ease;
 }
-.audience-tab:hover, .format-tab:hover { transform: translateY(-1px); }
-.audience-tab.is-active, .format-tab.is-active { background: var(--primary); color: #fff; opacity: 1; box-shadow: 0 10px 24px rgba(var(--primary-rgb), 0.22); }
+.audience-tab:hover { transform: translateY(-1px); }
+.audience-tab.is-active { background: var(--primary); color: #fff; opacity: 1; box-shadow: 0 10px 24px rgba(var(--primary-rgb), 0.22); }
 .search-shell {
   min-height: 62px; padding: 7px 8px; background: var(--white);
   border: 1px solid rgba(var(--dark-rgb), 0.08); border-radius: 999px;
@@ -622,19 +610,8 @@ body.is-search-docked .site-header__search {
   .category-slider-nav { display: none !important; }
 }
 @media (max-width: 720px) {
-  body.is-search-docked .site-header__search { max-height: 108px; }
+  body.is-search-docked .site-header__search { max-height: 48px; }
   .search-block--header, .search-block--header .search-shell { width: 100%; }
-  .search-block--header .search-shell {
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr) 37px;
-    grid-template-rows: 37px 37px;
-    min-height: 0;
-    row-gap: 0;
-  }
-  .search-block--header .search-field[data-intent-dropdown="audience"] { grid-column: 1; grid-row: 1; border-left: 0; }
-  .search-block--header .search-field[data-intent-dropdown="format"] { grid-column: 2; grid-row: 1; }
-  .search-block--header .search-field[data-combo="sport"] { grid-column: 1; grid-row: 2; border-left: 0; border-top: 1px solid var(--line); }
-  .search-block--header .search-field[data-combo="location"] { grid-column: 2; grid-row: 2; border-top: 1px solid var(--line); }
-  .search-block--header .search-submit { grid-column: 3; grid-row: 1 / span 2; align-self: center; }
 }
 @media (max-width: 767px) {
   body.is-search-docked .site-header__search { display: none; }
@@ -947,10 +924,7 @@ function Index() {
             <div className="cta-banner">
               <div className="cta-banner__content">
                 <h2 id="cta-heading">Вы тренер? Принимайте клиентов через trenio</h2>
-                <p>
-                  Создайте профиль за 5 минут и получайте обращения от заинтересованных учеников —
-                  без комиссии за первый месяц.
-                </p>
+                <p>{TRAINER_INVITE_LINE}</p>
                 <div className="cta-banner__actions">
                   <Link className="cta-btn cta-btn--primary" to="/join/trainer">
                     Стать тренером
@@ -968,14 +942,14 @@ function Index() {
                       <path d="M5 12h14M13 6l6 6-6 6" />
                     </svg>
                   </Link>
-                  <a className="cta-btn cta-btn--ghost" href="#">
+                  <Link className="cta-btn cta-btn--ghost" to="/about" hash="razmeschenie">
                     Узнать о тарифах
-                  </a>
+                  </Link>
                 </div>
               </div>
               <div className="cta-banner__perks">
                 {[
-                  "Свой профиль с фото, ценами и расписанием",
+                  "Фото, цены и текст возьмём из Instagram",
                   "Заявки от учеников напрямую — без посредников",
                   "Отзывы и рейтинг повышают доверие клиентов",
                   "Поддержка платформы 7 дней в неделю",

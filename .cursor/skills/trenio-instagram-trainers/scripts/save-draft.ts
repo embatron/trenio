@@ -2,12 +2,21 @@
  * Turn a raw Instagram extract into a draft trainer profile.
  * Usage: npx tsx .cursor/skills/trenio-instagram-trainers/scripts/save-draft.ts <raw.json> [more.json]
  */
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import sharp from "sharp";
 import { formatBelarusPhone } from "../../../../src/lib/auth/phone.ts";
 import { inferTrainerGender } from "../../../../src/lib/catalog/trainer-gender.ts";
 import { TOP_LEVEL_SPORT_CATEGORIES } from "../../../../src/lib/catalog/sport-taxonomy.ts";
+
+type RawPhoto = {
+  url?: string;
+  alt?: string;
+  mime?: string;
+  base64?: string;
+  width?: number;
+  height?: number;
+};
 
 type PinnedPost = {
   url?: string;
@@ -15,6 +24,20 @@ type PinnedPost = {
   ogDescription?: string;
   heading?: string;
   visibleText?: string;
+  photos?: RawPhoto[];
+};
+
+type PhotoKeep = {
+  postUrl?: string;
+  index?: number;
+  role?: "gallery" | "certificate";
+  caption?: string;
+};
+
+type PhotoSkip = {
+  postUrl?: string;
+  index?: number;
+  reason?: string;
 };
 
 type SportRole = {
@@ -26,9 +49,14 @@ type ResolvedProfile = {
   firstName?: string;
   lastName?: string;
   nameQuotes?: string[];
-  bio?: string;
-  about?: string[];
+  /** Verbatim profile biography. The card text is `presentation`, not this field. */
+  sourceBio?: string;
   aboutProfile?: string[];
+  presentation?: string;
+  presentationQuotes?: string[];
+  /** Plain «Как проходят мои тренировки». Empty when the source never describes a session. */
+  training?: string;
+  trainingQuotes?: string[];
   sportQuotes?: string[];
   coachedSports?: SportRole[];
   practicedSports?: SportRole[];
@@ -42,6 +70,12 @@ type ResolvedProfile = {
   languages?: string[];
   experienceYears?: number | null;
   formats?: Array<"individual" | "group">;
+  audiences?: Array<"adult" | "kid" | "teen">;
+  photoKeeps?: PhotoKeep[];
+  photoSkips?: PhotoSkip[];
+  /** Old inputs. The script rejects them so a caption is not stored as the card text. */
+  bio?: string;
+  about?: string[];
 };
 
 type RawExtract = {
@@ -310,6 +344,63 @@ function matchFormats(text: string): Array<"individual" | "group"> {
   return formats;
 }
 
+function matchAudiences(text: string): Array<"adult" | "kid" | "teen"> {
+  if (/любого возраста|для всех возраст|всей семьи/iu.test(text)) return ["adult", "kid", "teen"];
+  const found: Array<"adult" | "kid" | "teen"> = [];
+  if (/взросл/iu.test(text)) found.push("adult");
+  if (/дет(?:и|ск|ей|ям|ями|ях)|ребён|ребен|малыш/iu.test(text)) found.push("kid");
+  if (/подрост|юниор/iu.test(text)) found.push("teen");
+  return found;
+}
+
+const SESSION_CUE = /тренировк|заняти|в зале|группов|индивидуальн|персональн|разминк|спарринг/iu;
+const CARD_NOISE = /[#\p{Extended_Pictographic}\uFE0F]|https?:\/\/|t\.me\/|@[\p{L}\d_]/iu;
+const CARD_CTA = /директ|в\s+лс\b|подпиши|пиши(?:те)?|ссылка в шапке|для записи/iu;
+const SKIP_REASONS = new Set(["text", "logo", "flyer", "duplicate", "not-trainer"]);
+const CERTIFICATE_WORD = /диплом|сертификат|удостоверен/iu;
+
+function fileStem(url: string): string {
+  try {
+    return new URL(url).pathname.split("/").pop()?.replace(/\.[a-z0-9]+$/i, "") || "";
+  } catch {
+    return "";
+  }
+}
+
+function sentenceCount(text: string): number {
+  return text.split(/[.!?]+/u).map((part) => part.trim()).filter((part) => /[\p{L}]/u.test(part)).length;
+}
+
+function paragraphsOf(value: string): string[] {
+  return value
+    .split(/\n\s*\n/)
+    .map((part) => part.replace(/[ \t]+/g, " ").replace(/\n/g, " ").trim())
+    .filter(Boolean);
+}
+
+function numbersIn(text: string): string[] {
+  return [...text.matchAll(/\d+/g)].map((match) => match[0]);
+}
+
+function assertCardText(rawPath: string, label: string, text: string, quotes: string[], corpus: string, limit: number, maxSentences: number) {
+  if (!text) return;
+  if (text.length > limit) fail(rawPath, `${label} is longer than ${limit} characters.`);
+  if (text.length < 20) fail(rawPath, `${label} is too short to read.`);
+  if (sentenceCount(text) > maxSentences) fail(rawPath, `${label} is at most ${maxSentences} sentences.`);
+  if (/[<>]/.test(text) || CARD_NOISE.test(text) || CARD_CTA.test(text)) {
+    fail(rawPath, `${label} must be plain sentences: no emoji, hashtags, links, @names, or a call to write in direct.`);
+  }
+  if (!quotes.length) fail(rawPath, `${label} needs verbatim quotes from the profile, the about highlight, or a pinned caption.`);
+  for (const quote of quotes) {
+    if (quote.trim().length < 4 || !includesNorm(corpus, quote)) {
+      fail(rawPath, `${label} quote is not in the source: ${quote}`);
+    }
+  }
+  for (const num of numbersIn(text)) {
+    if (!corpus.includes(num)) fail(rawPath, `${label} contains ${num}, which is not in the source.`);
+  }
+}
+
 const AVATAR_MIN_SIDE = 400;
 
 async function imageSides(bytes: Buffer): Promise<{ w: number; h: number } | null> {
@@ -362,6 +453,18 @@ async function savedAvatar(handle: string): Promise<string> {
   const size = await imageSides(readFileSync(file));
   if (!size || size.w < AVATAR_MIN_SIDE || size.h < AVATAR_MIN_SIDE) return "";
   return avatarPublicPath(handle);
+}
+
+function removeStaleExtras(handle: string, keepMasters: Set<string>) {
+  if (!existsSync(AVATAR_DIR)) return;
+  const escaped = handle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const pattern = new RegExp(`^${escaped}-[gd]\\d+(?:-(?:s128|c320|c640|w960))?\\.jpg$`);
+  for (const name of readdirSync(AVATAR_DIR)) {
+    if (!pattern.test(name)) continue;
+    const master = name.replace(/-(?:s128|c320|c640|w960)\.jpg$/, ".jpg");
+    if (keepMasters.has(master)) continue;
+    unlinkSync(join(AVATAR_DIR, name));
+  }
 }
 
 async function writeAvatar(handle: string, raw: RawExtract): Promise<string> {
@@ -428,24 +531,25 @@ async function saveOne(rawPath: string, settlements: string[]) {
     fail(rawPath, `Given name next to ${lastName} is ${beside[0]}. Do not leave it empty and do not substitute another name.`);
   }
 
-  const bio = cleanLine(resolved.bio || "");
-  const profileSurface = `${raw.ogDescription || ""}\n${raw.headerText || ""}`;
-  if (bio && !includesNorm(profileSurface, bio)) fail(rawPath, "bio is not a verbatim piece of the profile text.");
+  if (resolved.bio != null || resolved.about != null) {
+    fail(rawPath, "resolved.bio and resolved.about are no longer inputs. Set sourceBio, presentation, and training.");
+  }
 
-  const pinnedAbout = (resolved.about || []).map(cleanLine);
-  if (pinnedAbout.length !== pins.length) fail(rawPath, "about must contain one entry per pinned post, in the same order.");
+  const profileSurface = `${raw.ogDescription || ""}\n${raw.headerText || ""}`;
+  const sourceBio = cleanLine(resolved.sourceBio || "");
+  if (sourceBio && !includesNorm(profileSurface, sourceBio)) fail(rawPath, "sourceBio is not a verbatim piece of the profile text.");
+
   pins.forEach((post, index) => {
     const caption = cleanLine(post.caption || "");
-    if (pinnedAbout[index] !== caption) fail(rawPath, `about[${index}] must be the pinned caption, copied without changes.`);
     const postSource = `${post.ogDescription || ""}\n${post.heading || ""}\n${post.visibleText || ""}`;
     if (caption && !includesNorm(postSource, caption)) fail(rawPath, `Pinned caption ${index + 1} is not in that post.`);
+    if ((post.photos || []).length > 2) fail(rawPath, "A pinned post stores at most 2 photos.");
   });
   const aboutFrames = (raw.aboutFrames || []).map(cleanLine).filter(Boolean);
   const aboutProfile = (resolved.aboutProfile || []).map(cleanLine);
   if (aboutProfile.join("\n") !== aboutFrames.join("\n")) {
     fail(rawPath, "aboutProfile must copy aboutFrames, one verbatim frame at a time.");
   }
-  const about = [...aboutFrames, ...pinnedAbout];
 
   const sportQuotes = (resolved.sportQuotes || []).map(cleanLine).filter(Boolean);
   for (const quote of sportQuotes) {
@@ -503,7 +607,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
   const phonesInText = [...new Set([...matchPhones(contactSurface), ...(raw.contacts?.phones || []).map((item) => formatBelarusPhone(item)).filter(Boolean)])];
   const phone = formatBelarusPhone(resolved.phone || "");
   if (phonesInText.length === 0 && phone) fail(rawPath, "Phone is not in the profile.");
-  if (phonesInText.length === 1 && phone !== phonesInText[0]) fail(rawPath, `Phone in the profile is ${phonesInText[0]}. Save it without confirmation.`);
+  if (phonesInText.length === 1 && phone !== phonesInText[0]) fail(rawPath, `Phone in the profile is ${phonesInText[0]}. Copy it into the phone field and do not confirm it.`);
   if (phonesInText.length > 1 && !phonesInText.includes(phone)) fail(rawPath, `Phone must be one of: ${phonesInText.join(", ")}.`);
 
   const emailsInText = [...new Set([...matchEmails(contactSurface), ...(raw.contacts?.emails || []).map((item) => item.trim().toLowerCase()).filter(Boolean)])];
@@ -541,7 +645,143 @@ async function saveOne(rawPath: string, settlements: string[]) {
   const formats = resolved.formats || [];
   if (formats.join("|") !== formatsInText.join("|")) fail(rawPath, "Formats do not match the text.");
 
+  const audiencesInText = matchAudiences(evidence);
+  const audiences = resolved.audiences || [];
+  if (audiences.join("|") !== audiencesInText.join("|")) {
+    fail(rawPath, `Audiences must be ${audiencesInText.join(", ") || "empty"}, matching the text. Order is adult, kid, teen.`);
+  }
+
+  const presentation = cleanLine(resolved.presentation || "");
+  const presentationQuotes = (resolved.presentationQuotes || []).map(cleanLine).filter(Boolean);
+  const trainingParagraphs = paragraphsOf(resolved.training || "");
+  const training = trainingParagraphs.join("\n\n");
+  const trainingQuotes = (resolved.trainingQuotes || []).map(cleanLine).filter(Boolean);
+  const cardSurface = `${presentation}\n${training}`;
+  if (/[\p{L}]{4,}/u.test(evidence) && !presentation) {
+    fail(rawPath, "Write presentation («Как меня представить») from the source.");
+  }
+  assertCardText(rawPath, "presentation", presentation, presentationQuotes, corpus, 700, 4);
+  assertCardText(rawPath, "training", training, trainingQuotes, corpus, 1600, 8);
+  if (trainingParagraphs.length > 3) fail(rawPath, "training has at most 3 paragraphs.");
+  const sessionInSource = [profileSurface, ...aboutFrames, ...pins.map((post) => `${post.caption || ""}\n${post.visibleText || ""}`)].some((part) => SESSION_CUE.test(part));
+  if (sessionInSource && !training) fail(rawPath, "The source describes a session. Write training («Как проходят мои тренировки»).");
+  if (!sessionInSource && training) fail(rawPath, "training describes a session the source does not.");
+  if (training && !trainingQuotes.some((quote) => SESSION_CUE.test(quote))) {
+    fail(rawPath, "trainingQuotes must include the line that describes the session.");
+  }
+  const storedSourceBio = stripPhones(sourceBio);
+  if (storedSourceBio && norm(presentation) === norm(storedSourceBio) && CARD_NOISE.test(sourceBio)) {
+    fail(rawPath, "Rewrite the biography into plain sentences. Do not paste it into presentation.");
+  }
+  for (const post of pins) {
+    const caption = cleanLine(post.caption || "");
+    if (caption && (norm(caption) === norm(presentation) || norm(caption) === norm(training))) {
+      fail(rawPath, "Write the card text. Do not paste a pinned caption.");
+    }
+  }
+  const allowedSports = new Set([...coached, ...practiced].map((role) => role.slug));
+  for (const hit of matchSports(cardSurface)) {
+    if (!allowedSports.has(hit.slug)) {
+      fail(rawPath, `${hit.label} is not a coached or practiced sport. Leave it out of the card text.`);
+    }
+  }
+  if (primary && !catalogPhrases().some((phrase) => phrase.slug === primary.slug && aliasRegex(phrase.alias).test(foldYo(presentation)))) {
+    fail(rawPath, `presentation must name the coached sport (${primary.label}).`);
+  }
+  const namedCities = matchCities(cardSurface, settlements);
+  const extraCities = namedCities.filter((name) => name !== city);
+  if (extraCities.length) fail(rawPath, `Card text names ${extraCities.join(", ")}. The saved city is ${city || "empty"}.`);
+  if (city && !matchCities(presentation, settlements).includes(city)) fail(rawPath, `presentation must name ${city}.`);
+
   const avatarPath = await writeAvatar(handle, raw);
+  const avatarStem = fileStem(raw.avatarUrl || "");
+  const keeps = resolved.photoKeeps || [];
+  const skips = resolved.photoSkips || [];
+  const decisionKey = (item: { postUrl?: string; index?: number }) => `${(item.postUrl || "").split("?")[0]}#${item.index ?? ""}`;
+  const decisionKeys = [...keeps, ...skips].map(decisionKey);
+  if (new Set(decisionKeys).size !== decisionKeys.length) fail(rawPath, "A pinned photo is listed twice.");
+  for (const item of [...keeps, ...skips]) {
+    const postUrl = (item.postUrl || "").split("?")[0];
+    const post = pins.find((candidate) => (candidate.url || "").split("?")[0] === postUrl);
+    const count = post?.photos?.length ?? 0;
+    if (!post || item.index == null || item.index < 0 || item.index >= count) {
+      fail(rawPath, `Photo decision does not match a stored pinned image: ${postUrl || "missing url"} #${item.index ?? "?"}.`);
+    }
+  }
+  const decided = new Set<string>();
+  const gallery: Array<{ bytes: Buffer; stem: string }> = [];
+  const certificates: Array<{ bytes: Buffer; caption: string }> = [];
+  for (const post of pins) {
+    const postUrl = (post.url || "").split("?")[0];
+    const postSource = `${post.ogDescription || ""}\n${post.heading || ""}\n${post.visibleText || ""}\n${post.caption || ""}`;
+    (post.photos || []).forEach((photo, index) => {
+      const key = `${postUrl}#${index}`;
+      const keep = keeps.find((item) => (item.postUrl || "").split("?")[0] === postUrl && item.index === index);
+      const skip = skips.find((item) => (item.postUrl || "").split("?")[0] === postUrl && item.index === index);
+      if (keep && skip) fail(rawPath, `Photo ${index + 1} of ${postUrl} is both kept and skipped.`);
+      if (!keep && !skip) fail(rawPath, `Decide photo ${index + 1} of ${postUrl}: keep it or skip it.`);
+      if (decided.has(key)) fail(rawPath, `Photo ${index + 1} of ${postUrl} is listed twice.`);
+      decided.add(key);
+      if (skip) {
+        if (!SKIP_REASONS.has(skip.reason || "")) {
+          fail(rawPath, `Skip reason for photo ${index + 1} must be one of: ${[...SKIP_REASONS].join(", ")}.`);
+        }
+        return;
+      }
+      const role = keep?.role;
+      if (role !== "gallery" && role !== "certificate") fail(rawPath, `Photo ${index + 1} of ${postUrl} needs role gallery or certificate.`);
+      const stem = fileStem(photo.url || "");
+      if (stem && avatarStem && stem === avatarStem) {
+        fail(rawPath, `Photo ${index + 1} of ${postUrl} is the face photo. Skip it as duplicate.`);
+      }
+      if (!photo.base64) fail(rawPath, `Photo ${index + 1} of ${postUrl} has no image bytes.`);
+      const bytes = Buffer.from(photo.base64, "base64");
+      if (role === "certificate") {
+        const caption = cleanLine(keep?.caption || "");
+        if (!CERTIFICATE_WORD.test(postSource) || !CERTIFICATE_WORD.test(caption)) {
+          fail(rawPath, "A certificate needs the word диплом, сертификат, or удостоверение in the pinned caption and in the document caption.");
+        }
+        if (caption.length > 80 || !includesNorm(postSource, caption)) {
+          fail(rawPath, "Certificate caption must be a verbatim slice of that post, at most 80 characters.");
+        }
+        certificates.push({ bytes, caption: stripPhones(caption) });
+        return;
+      }
+      if (stem && gallery.some((item) => item.stem === stem)) {
+        fail(rawPath, `Photo ${index + 1} of ${postUrl} repeats an image already kept. Skip it as duplicate.`);
+      }
+      gallery.push({ bytes, stem });
+    });
+  }
+  if (gallery.length > 8) fail(rawPath, "At most 8 gallery photos besides the face.");
+  if (certificates.length > 5) fail(rawPath, "At most 5 certificates.");
+  if ((avatarPath ? 1 : 0) + gallery.length > 9) fail(rawPath, "A profile stores at most 9 photos.");
+
+  const keptMasters = new Set<string>();
+  const galleryPaths: string[] = [];
+  for (const [index, photo] of gallery.entries()) {
+    const size = await imageSides(photo.bytes);
+    if (!size || size.w < AVATAR_MIN_SIDE || size.h < AVATAR_MIN_SIDE) {
+      fail(rawPath, "A gallery photo must be at least 400px on both sides.");
+    }
+    const master = `${handle}-g${index + 2}.jpg`;
+    await storeAvatar(photo.bytes, join(AVATAR_DIR, master));
+    keptMasters.add(master);
+    galleryPaths.push(`/trainers/instagram/${master}`);
+  }
+  const certificateRecords: Array<{ path: string; caption: string }> = [];
+  for (const [index, photo] of certificates.entries()) {
+    const size = await imageSides(photo.bytes);
+    if (!size || size.w < AVATAR_MIN_SIDE || size.h < AVATAR_MIN_SIDE) {
+      fail(rawPath, "A certificate photo must be at least 400px on both sides.");
+    }
+    const master = `${handle}-d${index + 1}.jpg`;
+    await storeAvatar(photo.bytes, join(AVATAR_DIR, master));
+    keptMasters.add(master);
+    certificateRecords.push({ path: `/trainers/instagram/${master}`, caption: photo.caption });
+  }
+  removeStaleExtras(handle, keptMasters);
+  const photos = [...(avatarPath ? [avatarPath] : []), ...galleryPaths];
   const fullName = [firstName, lastName].filter(Boolean).join(" ");
   const gender = inferTrainerGender(firstName, corpus);
   const slug = handle.trim().toLowerCase().replace(/[^a-z0-9._]/g, "").slice(0, 30);
@@ -585,8 +825,10 @@ async function saveOne(rawPath: string, settlements: string[]) {
     gender,
     nameQuotes,
     headline: primary ? `Тренер по ${primary.titleGenitive}` : "",
-    bio: stripPhones(bio),
-    about: about.map(stripPhones).filter(Boolean),
+    sourceBio: storedSourceBio,
+    sourceAbout: aboutFrames.map(stripPhones),
+    bio: stripPhones(presentation),
+    about: trainingParagraphs.map(stripPhones).filter(Boolean),
     pinned: pins.map((post) => ({ url: post.url || "", caption: cleanLine(post.caption || "") })),
     sports: [primary, ...sports.filter((sport) => sport.slug !== primary?.slug)].filter((sport): sport is SportHit => Boolean(sport)).slice(0, 4).map((sport) => ({
       slug: sport.slug,
@@ -607,8 +849,19 @@ async function saveOne(rawPath: string, settlements: string[]) {
     priceFrom,
     experienceYears,
     formats,
+    audiences,
     languages,
     avatarPath,
+    photos,
+    certificates: certificateRecords,
+    photoSearch: {
+      face: Boolean(avatarPath),
+      pinned: pins.length,
+      candidates: pins.reduce((sum, post) => sum + (post.photos || []).length, 0),
+      gallery: galleryPaths.length,
+      certificates: certificateRecords.length,
+      skipped: skips.length,
+    },
     contacts: {
       instagram: `https://www.instagram.com/${handle}/`,
       phone: phoneValue,
@@ -670,5 +923,6 @@ const settlements = loadSettlements();
 const saved = await Promise.all(inputs.map((file) => saveOne(file, settlements)));
 updateIndex(saved);
 for (const draft of saved) {
-  console.log(`${draft.handle}\t${draft.fullName || "—"}\t${draft.primarySport?.label || "—"}\t${draft.city || "—"}\tmissing:${draft.missing.join(",") || "none"}`);
+  const trainingState = draft.about.length ? "yes" : "no";
+  console.log(`${draft.handle}\t${draft.fullName || "—"}\t${draft.primarySport?.label || "—"}\t${draft.city || "—"}\tgallery:${draft.photoSearch.gallery}\tcertificates:${draft.photoSearch.certificates}\ttraining:${trainingState}\tmissing:${draft.missing.join(",") || "none"}`);
 }

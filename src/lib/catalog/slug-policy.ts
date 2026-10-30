@@ -100,6 +100,9 @@ export const LEGACY_CATALOG_SLUGS: Record<string, CatalogSlugTarget> = {
   turizm: { parentSlug: "outdoor", childSlug: "pohod" },
   skalodrom: { parentSlug: "outdoor", childSlug: "skalolazanie" },
   "sportivnyj-bridzh": { parentSlug: "intellekt", childSlug: "bridzh" },
+  fehtovanie: { parentSlug: "klub", childSlug: "fehtovanie" },
+  armrestling: { parentSlug: "edinoborstva" },
+  armsport: { parentSlug: "edinoborstva" },
 };
 
 /** Returns the canonical path when `parentSlug` / `childSlug` still use a retired segment. */

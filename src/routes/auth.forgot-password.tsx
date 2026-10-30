@@ -16,12 +16,14 @@ import {
   requestPasswordResetSmsFn,
 } from "@/lib/auth/functions";
 import { BY_PHONE_COUNTRY_PREFIX } from "@/lib/auth/phone";
+import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 import { validatePasswordStrength } from "@/lib/auth/password-policy";
 
 export const Route = createFileRoute("/auth/forgot-password")({
   head: () => ({
     meta: [
       { title: "Восстановление пароля — trenio.by" },
+      NOINDEX_FOLLOW,
       {
         name: "description",
         content: "Сбросьте пароль trenio.by по ссылке на e-mail или коду из SMS на подтверждённый телефон.",

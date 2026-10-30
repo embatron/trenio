@@ -3,6 +3,7 @@ import {
   bigint,
   check,
   index,
+  integer,
   pgEnum,
   pgTable,
   primaryKey,
@@ -63,7 +64,33 @@ export const messages = pgTable(
   (table) => [
     uniqueIndex("messages_conversation_client_unique").on(table.conversationId, table.clientId),
     index("messages_conversation_created_idx").on(table.conversationId, table.createdAt.desc()),
-    check("messages_body_len", sql`char_length(btrim(${table.body})) between 1 and 12000`),
+    check("messages_body_len", sql`char_length(btrim(${table.body})) <= 12000`),
+  ],
+);
+
+export const messageAttachments = pgTable(
+  "message_attachments",
+  {
+    id: uuid("id").primaryKey(),
+    messageId: bigint("message_id", { mode: "number" }).references(() => messages.id, { onDelete: "cascade" }),
+    conversationId: uuid("conversation_id")
+      .notNull()
+      .references(() => conversations.id, { onDelete: "cascade" }),
+    uploaderId: uuid("uploader_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    clientId: uuid("client_id").notNull(),
+    originalName: text("original_name").notNull(),
+    mime: text("mime").notNull(),
+    byteSize: integer("byte_size").notNull(),
+    ext: text("ext").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("message_attachments_message_idx").on(table.messageId),
+    index("message_attachments_client_idx").on(table.conversationId, table.clientId),
+    check("message_attachments_size", sql`${table.byteSize} between 1 and 2097152`),
+    check("message_attachments_name_len", sql`char_length(${table.originalName}) between 1 and 180`),
   ],
 );
 
@@ -86,19 +113,29 @@ export const messageReports = pgTable(
   "message_reports",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    messageId: bigint("message_id", { mode: "number" })
+    conversationId: uuid("conversation_id")
       .notNull()
-      .references(() => messages.id, { onDelete: "cascade" }),
+      .references(() => conversations.id, { onDelete: "cascade" }),
+    /** Set only for an older complaint about one message. A chat complaint leaves this empty. */
+    messageId: bigint("message_id", { mode: "number" }).references(() => messages.id, { onDelete: "cascade" }),
     reporterId: uuid("reporter_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
+    /** Russian label: Спам, Оскорбление, Нежелательный контакт, Другое. */
     reason: text("reason").notNull(),
+    /** Plain words from the reporter. Not a chat message. */
+    comment: text("comment").notNull(),
+    /** `client` opened the chat. `trainer` owns the profile. */
+    reporterSide: text("reporter_side").notNull(),
     status: messageReportStatusEnum("status").notNull().default("new"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
+    uniqueIndex("message_reports_conversation_reporter_unique").on(table.conversationId, table.reporterId),
     uniqueIndex("message_reports_message_reporter_unique").on(table.messageId, table.reporterId),
     index("message_reports_status_created_idx").on(table.status, table.createdAt.desc()),
+    check("message_reports_comment_len", sql`char_length(btrim(${table.comment})) between 1 and 2000`),
+    check("message_reports_reporter_side", sql`${table.reporterSide} in ('client', 'trainer')`),
   ],
 );
 

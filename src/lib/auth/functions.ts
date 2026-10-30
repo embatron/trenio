@@ -48,6 +48,7 @@ import {
   confirmAccountEmailCode,
   confirmAccountPhoneCode,
   confirmTrainerContactEmailCode,
+  confirmTrainerTelegram,
   requestAccountEmailCode,
   requestAccountPhoneCode,
   requestTrainerContactEmailCode,
@@ -456,7 +457,7 @@ export const requestTrainerContactEmailCodeFn = createServerFn({ method: "POST" 
         domain: "account",
         action: "trainer.email.request",
         outcome: "success",
-        message: "Запрошен код почты для связи.",
+        message: "Запрошен код подтверждения почты.",
         subject: data.email,
         actorUserId: context.user.id,
       });
@@ -477,13 +478,34 @@ export const confirmTrainerContactEmailCodeFn = createServerFn({ method: "POST" 
         domain: "account",
         action: "trainer.email.confirm",
         outcome: "success",
-        message: "Почта для связи подтверждена.",
+        message: "Почта подтверждена.",
         subject: data.email,
         actorUserId: context.user.id,
       });
       return result;
     } catch (error) {
       rethrowAuth(error, "trainer.email.confirm", data.email, context.user.id);
+    }
+  });
+
+export const confirmTrainerTelegramFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(telegramWidgetSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      const result = await confirmTrainerTelegram(context.user.id, data);
+      void writeLog({
+        level: "info",
+        domain: "account",
+        action: "trainer.telegram.confirm",
+        outcome: "success",
+        message: "Telegram для связи подтверждён.",
+        actorUserId: context.user.id,
+        subject: context.user.email,
+      });
+      return result;
+    } catch (error) {
+      rethrowAuth(error, "trainer.telegram.confirm", context.user.email, context.user.id);
     }
   });
 

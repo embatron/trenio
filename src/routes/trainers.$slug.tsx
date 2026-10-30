@@ -6,7 +6,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { isStaff } from "@/lib/auth/roles";
 import { formatBelarusPhone } from "@/lib/auth/phone";
-import { getSportTaxonomyChild, getTopLevelSportCategory, trainerSportDatives } from "@/lib/catalog/sport-taxonomy";
+import { trainerSportDatives } from "@/lib/catalog/sport-taxonomy";
 import {
   audienceLabels,
   getPublishedTrainer,
@@ -38,6 +38,9 @@ import { TrainerName } from "@/components/trainer-name";
 import { TrainerRating } from "@/components/trainer-rating";
 import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { getTrainerCertificatesFn } from "@/lib/catalog/trainer-certificates";
+import { cityCatalogBySlug } from "@/lib/catalog/city-pages";
+import { trainerSeoHead } from "@/lib/seo/trainer";
+import { cityIn } from "@/lib/seo/text";
 import { getTrainerAddressFn } from "@/lib/geo/functions";
 import { pluralRu } from "@/lib/ru-plural";
 import { TRAINER_LEGACY_SLUGS } from "@/lib/catalog/trainer-slugs";
@@ -180,25 +183,22 @@ export const Route = createFileRoute("/trainers/$slug")({
   },
   head: ({ loaderData }) => {
     const t = loaderData?.trainer;
-    if (!t) return { meta: [{ title: "Тренер · trenio.by" }] };
-    const sportGenitive =
-      getSportTaxonomyChild(t.primarySport.slug)?.titleGenitive ??
-      getTopLevelSportCategory(t.primarySport.slug)?.titleGenitive ??
-      t.primarySport.label.toLowerCase();
-    const cityIn = t.city.slug === "minsk" ? "Минске" : t.city.label;
-    const title = `${t.name} — тренер по ${sportGenitive} в ${cityIn} · trenio`;
-    const desc = `${t.name}, тренер по ${sportGenitive} в ${cityIn}. ${t.about[0] ?? ""}`;
-    return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { property: "og:title", content: title },
-        { property: "og:description", content: desc },
-        { property: "og:type", content: "profile" },
-        { property: "og:url", content: `https://trenio.by/trainers/${t.slug}` },
-      ],
-      links: [{ rel: "canonical", href: `https://trenio.by/trainers/${t.slug}` }],
-    };
+    if (!t) return { meta: [{ title: "Тренер · trenio.by" }, { name: "robots", content: "noindex, follow" }] };
+    return trainerSeoHead({
+      slug: t.slug,
+      name: t.name,
+      sports: t.sports,
+      sportDatives: t.sportDatives,
+      primarySport: t.primarySport,
+      city: t.city,
+      about: t.about,
+      rating: t.rating,
+      photo: loaderData?.photos?.[0] || t.photo,
+      instagram: t.instagram,
+      telegram: loaderData?.contacts?.telegram,
+      places: t.places,
+      priceLines: t.taxonomy.groups.flatMap((group) => group.items),
+    });
   },
   component: TrainerPage,
 });
@@ -738,7 +738,13 @@ function TrainerPage() {
         <nav aria-label="Хлебные крошки">
           <ol className="breadcrumbs">
             <li><Link to="/">Главная</Link></li>
-            <li><Link to="/city/$slug" params={{ slug: t.city.slug }}>Тренеры в {t.city.label === "Минск" ? "Минске" : t.city.label}</Link></li>
+            <li>
+              {cityCatalogBySlug(t.city.slug) ? (
+                <Link to="/city/$slug" params={{ slug: t.city.slug }}>Тренеры в {cityIn(t.city.slug, t.city.label)}</Link>
+              ) : (
+                <span>Тренеры в {cityIn(t.city.slug, t.city.label)}</span>
+              )}
+            </li>
             <li>
               {t.primarySport.parentSlug === t.primarySport.slug ? (
                 <Link to="/categories/$slug" params={{ slug: t.primarySport.slug }}>{t.primarySport.label}</Link>

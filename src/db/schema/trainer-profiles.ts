@@ -99,7 +99,7 @@ export const trainerProfiles = pgTable(
     /** Up to five certificates or diplomas. Each item is `{ path, caption }`. Older rows may still store a path string. */
     certificates: jsonb("certificates").$type<Array<{ path: string; caption: string } | string>>().notNull().default([]),
     phone: varchar("phone", { length: 32 }).notNull().default(""),
-    /** Contact email on the public profile. Shown only after `emailVerifiedAt`. Not a login. */
+    /** Same address as the owner's login email. Shown publicly only after that email is verified. */
     email: varchar("email", { length: 320 }).notNull().default(""),
     emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
     website: varchar("website", { length: 300 }).notNull().default(""),

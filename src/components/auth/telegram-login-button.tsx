@@ -10,9 +10,10 @@ const PUBLIC_BOT_USERNAME =
 
 type TelegramLoginButtonProps = {
   onAuth: (user: TelegramWidgetUser) => void;
+  missing?: string;
 };
 
-export function TelegramLoginButton({ onAuth }: TelegramLoginButtonProps) {
+export function TelegramLoginButton({ onAuth, missing }: TelegramLoginButtonProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const onAuthRef = useRef(onAuth);
   const getConfig = useServerFn(getTelegramLoginConfigFn);
@@ -63,7 +64,7 @@ export function TelegramLoginButton({ onAuth }: TelegramLoginButtonProps) {
     if (!checked) return <p className="auth-muted">Проверяем вход через Telegram…</p>;
     return (
       <p className="auth-muted">
-        Вход через Telegram сейчас недоступен. Войдите по e-mail или телефону.
+        {missing ?? "Вход через Telegram сейчас недоступен. Войдите по e-mail или телефону."}
       </p>
     );
   }

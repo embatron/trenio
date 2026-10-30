@@ -21,7 +21,7 @@ const emptyContacts: PublicTrainerContacts = {
   email: "",
 };
 
-/** Phone needs SMS. Telegram needs the bot. Contact email needs the mailed code. Instagram stays visible. */
+/** Phone needs SMS. Telegram needs the bot. The public email is the verified login email. Instagram stays visible. */
 export const getPublicTrainerContactsFn = createServerFn({ method: "GET" })
   .validator(z.object({ slug: z.string().trim().min(1).max(40) }))
   .handler(async ({ data }): Promise<PublicTrainerContacts> => {
@@ -35,6 +35,9 @@ export const getPublicTrainerContactsFn = createServerFn({ method: "GET" })
         instagramUrl: trainerProfiles.instagramUrl,
         telegram: trainerProfiles.telegram,
         telegramVerifiedAt: trainerProfiles.telegramVerifiedAt,
+        ownerUserId: trainerProfiles.ownerUserId,
+        accountEmail: users.email,
+        accountEmailVerifiedAt: users.emailVerifiedAt,
         accountPhone: users.phone,
         phoneVerifiedAt: users.phoneVerifiedAt,
       })
@@ -44,7 +47,9 @@ export const getPublicTrainerContactsFn = createServerFn({ method: "GET" })
       .limit(1);
 
     const instagram = row?.instagramUrl || listed?.instagram || "";
-    const email = row?.emailVerifiedAt ? row.email : "";
+    const email = row?.ownerUserId
+      ? row.accountEmailVerifiedAt ? row.accountEmail ?? "" : ""
+      : row?.emailVerifiedAt ? row.email : "";
     const phone = row?.phoneVerifiedAt
       ? formatBelarusPhone(row.phone || row.accountPhone || "") || row.phone || ""
       : "";

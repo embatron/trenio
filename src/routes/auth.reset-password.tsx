@@ -7,6 +7,7 @@ import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { resetPasswordFn } from "@/lib/auth/functions";
 import { validatePasswordStrength } from "@/lib/auth/password-policy";
+import { NOINDEX_NOFOLLOW } from "@/lib/seo/head";
 
 const searchSchema = z.object({
   token: z.string().optional(),
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/auth/reset-password")({
   head: () => ({
     meta: [
       { title: "Новый пароль — trenio.by" },
+      NOINDEX_NOFOLLOW,
       { name: "description", content: "Задайте новый пароль для аккаунта trenio.by." },
     ],
   }),

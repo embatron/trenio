@@ -4,6 +4,7 @@ import { z } from "zod";
 import { AuthStyles } from "@/components/auth-styles";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { confirmEmailChangeFn } from "@/lib/auth/functions";
+import { NOINDEX_NOFOLLOW } from "@/lib/seo/head";
 
 const searchSchema = z.object({
   token: z.string().optional(),
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/auth/confirm-email")({
   head: () => ({
     meta: [
       { title: "Подтверждение e-mail — trenio.by" },
+      NOINDEX_NOFOLLOW,
       { name: "description", content: "Подтвердите новый e-mail для аккаунта trenio.by." },
     ],
   }),

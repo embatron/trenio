@@ -1,0 +1,65 @@
+---
+description: Public-page SEO for Belarus — titles, canonical, robots, JSON-LD. Use when editing a public route, sitemap, robots, or catalog copy.
+globs:
+  - src/lib/seo/**
+  - src/routes/**/*.tsx
+  - src/routes/**/*.ts
+  - src/routes/sitemap[.]xml.ts
+  - src/routes/robots[.]txt.ts
+  - src/lib/catalog/sport-taxonomy.ts
+  - src/lib/catalog/category-copy.ts
+alwaysApply: false
+---
+
+# SEO
+
+Public documents go through `seoHead` in `src/lib/seo/head.ts`. A route does not build a schema.org object and does not add a script tag. It calls the helper for its page kind. The helper passes the graph into `seoHead`, which emits `scripts` with `type: application/ld+json`.
+
+`seoHead` refuses an indexable head with an empty graph. It emits no JSON-LD when `index` is false, even if a graph was passed. The `@type` list is `SEO_PAGE_TYPES` in `src/lib/seo/pages.ts`. `src/lib/seo/head.test.ts` asserts it. The URL map is `.cursor/skills/trenio-seo/pages.md`. Markup detail is `.cursor/skills/trenio-seo/markup.md`.
+
+## Which helper
+
+| Kind | Index | Helper | `@type` |
+| --- | --- | --- | --- |
+| Home | yes | `homePageHead` | `Organization`, `WebSite`, `SearchAction`, `FAQPage` |
+| Categories index | yes | `categoriesIndexHead` | `BreadcrumbList`, `CollectionPage`, `ItemList` |
+| Category | yes | `categoryRouteHead` | `BreadcrumbList`, `CollectionPage`, `FAQPage` |
+| Sport | yes | `categoryRouteHead` | `BreadcrumbList`, `CollectionPage`, `FAQPage` |
+| City | yes | `catalogPageHead` | `BreadcrumbList`, `CollectionPage` |
+| City + sport | yes | `catalogPageHead` | `BreadcrumbList`, `CollectionPage` |
+| Trainer | yes | `trainerSeoHead` | `BreadcrumbList`, `ProfilePage`, `Person` |
+| Map | yes, without a query | `mapPageHead(false)` | `BreadcrumbList`, `WebPage` |
+| About | yes | `infoPageHead("about")` | `BreadcrumbList`, `AboutPage` |
+| Contacts | yes | `infoPageHead("contacts")` | `BreadcrumbList`, `ContactPage`, `Organization` |
+| Offer, privacy | yes | `infoPageHead("offer")`, `infoPageHead("privacy")` | `BreadcrumbList`, `WebPage` |
+| Join | yes | `infoPageHead("join")` | `BreadcrumbList`, `WebPage` |
+| Club | yes, when a record exists | `clubPageHead` | `BreadcrumbList`, `SportsActivityLocation`, `PostalAddress` |
+| Clubs index, empty | no | `clubsIndexHead([])` | none |
+| Search | no | `searchPageHead` | none |
+| Auth, account, `/me`, admin | no | `NOINDEX_FOLLOW` or `NOINDEX_NOFOLLOW` | none |
+
+`/map?sports=`, `/map?city=`, and a city with several sports (`?sports=`) call the same helper with noindex. The graph is dropped. Claim tokens, 403, 404, and the SSR crash page are noindex and have no graph.
+
+A new indexable info page uses `infoPageHead` (`AboutPage`, `ContactPage`, or `WebPage`). A new catalog URL uses `categoryRouteHead` or `catalogPageHead`. A new kind is a row in `SEO_PAGE_TYPES`, a helper that calls `seoHead`, and a case in `head.test.ts` before the route ships.
+
+## What the graph may contain
+
+- `BreadcrumbList` only when the names and paths match the visible crumbs. Home has no crumbs and no `BreadcrumbList`.
+- `FAQPage` only when those questions are visible. Home uses `HOME_FAQ`. Category and sport pass the FAQ block under the catalog. City pages do not show that block, so they have no `FAQPage`.
+- Home `Organization` says the catalog does not check qualifications. `WebSite` `SearchAction` targets `/search?sport={search_term_string}`.
+- Trainer `jobTitle` is `trainerByPhrase()` — the same phrase as the document title. `makesOffer` only for an `N BYN` price. `sameAs` only for a public `http://` or `https://` Instagram or Telegram URL. `aggregateRating` only when `reviewCount` is greater than 0.
+- `SportsActivityLocation` only when a club record exists. Address only.
+- `ItemList` on `/categories` is one item per published category. The clubs index emits `ItemList` only for clubs that page can render. City and category pages do not emit an `ItemList` of trainers until the loader already has the visible list.
+- Crumbs use the same names as the nav, including `Тренерам` on `/join/trainer`.
+
+## Never emit
+
+- JSON-LD on a noindex, private, token, empty-shell, or filtered URL.
+- A telephone, in any graph.
+- `AggregateRating` when `reviewCount` is 0.
+- A claim that the catalog checks qualifications, certificates, or safety.
+- A URL that exists only as a filter.
+- A hand-written node in a route, or a `script:ld+json` meta tag.
+- `/blog`. `/clubs` stays out of the sitemap while `CLUBS_LIST` is empty.
+
+Canonical is absolute and has no query string. Filtered and private URLs stay out of `sitemap.xml`.

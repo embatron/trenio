@@ -15,7 +15,9 @@ import {
   markConversationReadSchema,
   reportMessageSchema,
   sendMessageSchema,
+  uploadMessageFileSchema,
 } from "@/lib/messages/schemas";
+import { reviewTextLength } from "@/lib/catalog/review-html";
 import { writeLog } from "@/lib/log/logger";
 import {
   blockPair,
@@ -31,6 +33,7 @@ import {
   reportMessage,
   sendMessage,
   unreadSummary,
+  uploadMessageFile,
 } from "@/lib/messages/service";
 
 function rethrowMessage(
@@ -112,10 +115,32 @@ export const sendMessageFn = createServerFn({ method: "POST" })
     const target = data.conversationId ?? data.trainerProfileSlug ?? null;
     try {
       const result = await sendMessage(context.user, data);
-      logMessage("message.send", context.user.id, "Сообщение сохранено.", target, { chars: data.body.length });
+      logMessage("message.send", context.user.id, "Сообщение сохранено.", target, {
+        chars: data.body.length,
+        files: data.attachmentIds.length,
+      });
       return result;
     } catch (error) {
-      rethrowMessage(error, "message.send", context.user.id, target, { chars: data.body.length });
+      rethrowMessage(error, "message.send", context.user.id, target, {
+        chars: data.body.length,
+        files: data.attachmentIds.length,
+      });
+    }
+  });
+
+export const uploadMessageFileFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(uploadMessageFileSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      const result = await uploadMessageFile(context.user, data);
+      logMessage("message.file", context.user.id, "Файл сохранён.", data.conversationId, {
+        bytes: "bytes" in result ? result.bytes : undefined,
+        ext: "ext" in result ? result.ext : undefined,
+      });
+      return { id: result.id };
+    } catch (error) {
+      rethrowMessage(error, "message.file", context.user.id, data.conversationId);
     }
   });
 
@@ -174,13 +199,16 @@ export const reportMessageFn = createServerFn({ method: "POST" })
     const reason = /^[a-z_]{1,32}$/.test(data.reason) ? data.reason : null;
     try {
       const result = await reportMessage(context.user, data);
-      logMessage("message.report", context.user.id, "Жалоба записана.", String(data.messageId), {
+      logMessage("message.report", context.user.id, "Жалоба на переписку записана.", data.conversationId, {
         reason,
-        reasonLength: data.reason.length,
+        commentLength: reviewTextLength(data.comment),
       });
       return result;
     } catch (error) {
-      rethrowMessage(error, "message.report", context.user.id, String(data.messageId), { reasonLength: data.reason.length });
+      rethrowMessage(error, "message.report", context.user.id, data.conversationId, {
+        reasonLength: data.reason.length,
+        commentLength: reviewTextLength(data.comment),
+      });
     }
   });
 

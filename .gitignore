@@ -25,6 +25,7 @@ dist-ssr
 # GeoLite2 city database (downloaded by ip-location-api, not committed)
 data/geoip/
 data/geoip-tmp/
+data/message-files/
 
 # User-uploaded cabinet photos
 public/avatars/

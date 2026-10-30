@@ -14,7 +14,7 @@
 
 **Разделение:** TECH_SPEC — _как устроен код_; PRODUCT — _что видит пользователь_; ACCOUNT_MODEL — _сущности и onboarding_.
 
-Cursor automation: `.cursor/rules/`, `.cursor/skills/`, slash-команды `/hooks`, `/logging`, `/diagnosis`, `/tests` и `/import-instagram-trainers` (см. TECH_SPEC §13). Журнал действий — [TECH_SPEC §4.8](./TECH_SPEC.md#48-журнал-действий).
+Cursor automation: `.cursor/rules/`, `.cursor/skills/`, субагент `seo`, slash-команды `/hooks`, `/logging`, `/diagnosis`, `/tests` и `/import-instagram-trainers` (см. TECH_SPEC §13). Журнал действий — [TECH_SPEC §4.8](./TECH_SPEC.md#48-журнал-действий).
 
 ## Стек и команды
 
@@ -30,7 +30,7 @@ npm install
 npm run db:up       # PostgreSQL в Docker (порт 5433)
 cp .env.example .env
 npm run db:push     # применить схему
-npm run db:seed     # admin@trenio.by / super@trenio.by
+npm run db:seed     # admin@, super@, client@trenio.by — пароль Pa55word!
 npm run settlements:import  # public/data/belarus-settlements.json (GeoNames BY)
 npm run dev          # http://trenio.local (Apache проксирует на порт 8080)
 npm run geoip:update # база GeoLite2 для города в фильтре категории
@@ -92,7 +92,7 @@ AGENTS.md             # Entry point для агентов
 | ----------------------- | -------------------------- | ------------------------------------------------------------- |
 | `/`                     | `index.tsx`                | Главная, поиск, категории первого уровня, витрина направлений |
 | `/search`               | `search.tsx`               | Результаты поиска: карта и карточки, как `/map`               |
-| `/map`                  | `map.tsx`                  | Карта мест тренировок. Метки текущего кадра: при большом числе точек — группы, список рядом подгружается страницами. Без точки IP кадр — Минск. `?sports=` и `?city=` не индексируются. `?city=` приходит со страницы города и оставляет только его места |
+| `/map`                  | `map.tsx`                  | Карта мест тренировок. Метки текущего кадра: при большом числе точек — группы, список рядом подгружается страницами. Без точки IP кадр — Минск. Пустое направление ведёт на `/join/trainer`. `?sports=` и `?city=` не индексируются. `?city=` приходит со страницы города и оставляет только его места |
 | `/categories`                     | `categories.index.tsx`               | Каталог всех спортивных категорий                             |
 | `/categories/$slug`                 | `categories.$slug.tsx`               | Родительская спортивная категория                             |
 | `/categories/$parentSlug/$childSlug` | `categories.$parentSlug.$childSlug.tsx` | Конкретный вид спорта внутри категории                        |
@@ -110,13 +110,14 @@ AGENTS.md             # Entry point для агентов
 | `/account`              | `account.tsx`              | Оболочка кабинета. `/account` открывает отзывы                |
 | `/account/reviews`      | `account.reviews.tsx`      | Свои отзывы и статус                                          |
 | `/account/messages`     | `account.messages.tsx`     | Сообщения клиента тренерам. Роли trainer и club переходят в `/me/messages` |
+| `/messages/files/$id`   | `messages.files.$id.ts`    | Файл из переписки. Только участник, без страницы |
 | `/account/messages/$conversationId` | `account.messages.$conversationId.tsx` | Тред. На широком экране список слева, на узком — сверху |
 | `/account/bookings`     | `account.bookings.tsx`     | Записи на тренировки, раздел в разработке                     |
 | `/account/favorites`    | `account.favorites.tsx`    | Избранные тренеры карточками. Сердечко в шапке ведёт сюда     |
 | `/account/settings`     | `account.settings.tsx`     | Имя и фамилия — оба обязательны, аватар, пароль. Почта и телефон закрыты, пока не нажато «Редактировать»; подтверждение кодом. Сообщения в окне |
 | `/clubs`                | `clubs.index.tsx`          | Каталог клубов                                                |
 | `/clubs/$slug`          | `clubs.$slug.tsx`          | Профиль клуба / филиала                                       |
-| `/blog/$slug`           | `blog.$slug.tsx`           | Статья блога                                                  |
+| `/join/trainer`         | `join.trainer.tsx`         | «Привет!». Instagram, Telegram и телефон РБ. Ссылка «У меня нет Instagram» открывает Telegram и телефон. Сюда ведут «Стать тренером», «Оставить Instagram» и пустой каталог. Текст приглашения один: «Скинь свой Instagram — профиль заполним мы.» |
 | `/auth/login`           | `auth.login.tsx`           | Вход: e-mail, SMS, Telegram                                   |
 | `/auth/signup`          | `auth.signup.tsx`          | Регистрация                                                   |
 | `/auth/forgot-password` | `auth.forgot-password.tsx` | Сброс пароля по e-mail или SMS                                |
@@ -139,8 +140,10 @@ AGENTS.md             # Entry point для агентов
 | `/me/profile`           | `me.profile.tsx`           | Публичная карточка. Имя и фамилия здесь не редактируются |
 | `/me/settings`          | `me.settings.tsx`          | Имя, фамилия и телефон аккаунта |
 | `/trainer-admin`        | `trainer-admin.tsx`        | Старый адрес кабинета: перенаправляет на `/me`, `?tab=settings` на `/me/settings`, `?tab=card` на `/me/profile`, `?tab=reviews` на `/me/reviews` |
+| `/about`                | `about.tsx`                | О сервисе: каталог, что не обещаем, бесплатное размещение     |
+| `/contacts`             | `contacts.tsx`             | Контакты: hello@trenio.by                                     |
 | `/privacy`              | `privacy.tsx`              | Политика конфиденциальности                                   |
-| `/join/trainer`         | `join.trainer.tsx`         | «Привет!». Instagram, Telegram и телефон РБ. Ссылка «У меня нет Instagram» открывает Telegram и телефон. Сюда ведут «Стать тренером», «Добавить профиль» и пустой каталог |
+| `/join/trainer`         | `join.trainer.tsx`         | «Привет!». Instagram, Telegram и телефон РБ. Ссылка «У меня нет Instagram» открывает Telegram и телефон. Сюда ведут «Стать тренером», «Оставить Instagram» и пустой каталог. Текст приглашения один: «Скинь свой Instagram — профиль заполним мы.» |
 | `/offer`                | `offer.tsx`                | Договор оферты для размещения профиля тренера                 |
 
 Полная целевая карта URL (включая backend и SEO-страницы каталога) — в [PRODUCT.md §3](./PRODUCT.md#3-маршруты-и-страницы).

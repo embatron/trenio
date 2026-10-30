@@ -35,6 +35,8 @@ export type ImportedTrainerDraft = {
   priceFrom?: number | null;
   languages?: string[];
   avatarPath?: string;
+  photos?: string[];
+  certificates?: Array<{ path: string; caption: string }>;
   phone?: string;
   email?: string;
   telegram?: string;
@@ -100,6 +102,8 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
     priceFrom: draft.priceFrom ?? null,
     languages: draft.languages ?? [],
     avatarPath: draft.avatarPath ?? "",
+    photos: draft.photos ?? (existing?.photos?.length ? existing.photos : draft.avatarPath ? [draft.avatarPath] : []),
+    certificates: draft.certificates ?? existing?.certificates ?? [],
     phone: formatBelarusPhone(draft.phone ?? ""),
     email: draft.email ?? "",
     website: draft.website ?? "",

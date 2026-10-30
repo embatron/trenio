@@ -18,8 +18,10 @@ import { Route as OfferRouteImport } from './routes/offer'
 import { Route as MeRouteImport } from './routes/me'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as ContactsRouteImport } from './routes/contacts'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AccountRouteImport } from './routes/account'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as R403RouteImport } from './routes/403'
 import { Route as IndexRouteImport } from './routes/index'
@@ -41,7 +43,6 @@ import { Route as ClubsSlugRouteImport } from './routes/clubs.$slug'
 import { Route as CitySlugRouteImport } from './routes/city.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
-import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthVerifyEmailRouteImport } from './routes/auth.verify-email'
 import { Route as AuthSignupRouteImport } from './routes/auth.signup'
 import { Route as AuthSetPasswordRouteImport } from './routes/auth.set-password'
@@ -65,6 +66,7 @@ import { Route as AdminTrainersIndexRouteImport } from './routes/admin.trainers.
 import { Route as AdminAccountsIndexRouteImport } from './routes/admin.accounts.index'
 import { Route as TrainersClaimTokenRouteImport } from './routes/trainers.claim.$token'
 import { Route as TrainerAdminMessagesConversationIdRouteImport } from './routes/trainer-admin.messages.$conversationId'
+import { Route as MessagesFilesIdRouteImport } from './routes/messages.files.$id'
 import { Route as MeMessagesConversationIdRouteImport } from './routes/me.messages.$conversationId'
 import { Route as CitySlugSportRouteImport } from './routes/city.$slug.$sport'
 import { Route as CategoryParentSlugChildSlugRouteImport } from './routes/category.$parentSlug.$childSlug'
@@ -120,6 +122,11 @@ const FavoritesRoute = FavoritesRouteImport.update({
   path: '/favorites',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactsRoute = ContactsRouteImport.update({
+  id: '/contacts',
+  path: '/contacts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -128,6 +135,11 @@ const AdminRoute = AdminRouteImport.update({
 const AccountRoute = AccountRouteImport.update({
   id: '/account',
   path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const R404Route = R404RouteImport.update({
@@ -233,11 +245,6 @@ const CategorySlugRoute = CategorySlugRouteImport.update({
 const CategoriesSlugRoute = CategoriesSlugRouteImport.update({
   id: '/categories/$slug',
   path: '/categories/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BlogSlugRoute = BlogSlugRouteImport.update({
-  id: '/blog/$slug',
-  path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
@@ -356,6 +363,11 @@ const TrainerAdminMessagesConversationIdRoute =
     path: '/$conversationId',
     getParentRoute: () => TrainerAdminMessagesRoute,
   } as any)
+const MessagesFilesIdRoute = MessagesFilesIdRouteImport.update({
+  id: '/messages/files/$id',
+  path: '/messages/files/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MeMessagesConversationIdRoute =
   MeMessagesConversationIdRouteImport.update({
     id: '/$conversationId',
@@ -410,8 +422,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/403': typeof R403Route
   '/404': typeof R404Route
+  '/about': typeof AboutRoute
   '/account': typeof AccountRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
+  '/contacts': typeof ContactsRoute
   '/favorites': typeof FavoritesRoute
   '/map': typeof MapRoute
   '/me': typeof MeRouteWithChildren
@@ -439,7 +453,6 @@ export interface FileRoutesByFullPath {
   '/auth/set-password': typeof AuthSetPasswordRoute
   '/auth/signup': typeof AuthSignupRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
-  '/blog/$slug': typeof BlogSlugRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
@@ -465,6 +478,7 @@ export interface FileRoutesByFullPath {
   '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
   '/city/$slug/$sport': typeof CitySlugSportRouteWithChildren
   '/me/messages/$conversationId': typeof MeMessagesConversationIdRoute
+  '/messages/files/$id': typeof MessagesFilesIdRoute
   '/trainer-admin/messages/$conversationId': typeof TrainerAdminMessagesConversationIdRoute
   '/trainers/claim/$token': typeof TrainersClaimTokenRoute
   '/admin/accounts/': typeof AdminAccountsIndexRoute
@@ -477,6 +491,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/403': typeof R403Route
   '/404': typeof R404Route
+  '/about': typeof AboutRoute
+  '/contacts': typeof ContactsRoute
   '/favorites': typeof FavoritesRoute
   '/map': typeof MapRoute
   '/offer': typeof OfferRoute
@@ -500,7 +516,6 @@ export interface FileRoutesByTo {
   '/auth/set-password': typeof AuthSetPasswordRoute
   '/auth/signup': typeof AuthSignupRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
-  '/blog/$slug': typeof BlogSlugRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/clubs/$slug': typeof ClubsSlugRoute
@@ -524,6 +539,7 @@ export interface FileRoutesByTo {
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
   '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
   '/me/messages/$conversationId': typeof MeMessagesConversationIdRoute
+  '/messages/files/$id': typeof MessagesFilesIdRoute
   '/trainer-admin/messages/$conversationId': typeof TrainerAdminMessagesConversationIdRoute
   '/trainers/claim/$token': typeof TrainersClaimTokenRoute
   '/admin/accounts': typeof AdminAccountsIndexRoute
@@ -537,8 +553,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/403': typeof R403Route
   '/404': typeof R404Route
+  '/about': typeof AboutRoute
   '/account': typeof AccountRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
+  '/contacts': typeof ContactsRoute
   '/favorites': typeof FavoritesRoute
   '/map': typeof MapRoute
   '/me': typeof MeRouteWithChildren
@@ -566,7 +584,6 @@ export interface FileRoutesById {
   '/auth/set-password': typeof AuthSetPasswordRoute
   '/auth/signup': typeof AuthSignupRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
-  '/blog/$slug': typeof BlogSlugRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
@@ -592,6 +609,7 @@ export interface FileRoutesById {
   '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
   '/city/$slug/$sport': typeof CitySlugSportRouteWithChildren
   '/me/messages/$conversationId': typeof MeMessagesConversationIdRoute
+  '/messages/files/$id': typeof MessagesFilesIdRoute
   '/trainer-admin/messages/$conversationId': typeof TrainerAdminMessagesConversationIdRoute
   '/trainers/claim/$token': typeof TrainersClaimTokenRoute
   '/admin/accounts/': typeof AdminAccountsIndexRoute
@@ -606,8 +624,10 @@ export interface FileRouteTypes {
     | '/'
     | '/403'
     | '/404'
+    | '/about'
     | '/account'
     | '/admin'
+    | '/contacts'
     | '/favorites'
     | '/map'
     | '/me'
@@ -635,7 +655,6 @@ export interface FileRouteTypes {
     | '/auth/set-password'
     | '/auth/signup'
     | '/auth/verify-email'
-    | '/blog/$slug'
     | '/categories/$slug'
     | '/category/$slug'
     | '/city/$slug'
@@ -661,6 +680,7 @@ export interface FileRouteTypes {
     | '/category/$parentSlug/$childSlug'
     | '/city/$slug/$sport'
     | '/me/messages/$conversationId'
+    | '/messages/files/$id'
     | '/trainer-admin/messages/$conversationId'
     | '/trainers/claim/$token'
     | '/admin/accounts/'
@@ -673,6 +693,8 @@ export interface FileRouteTypes {
     | '/'
     | '/403'
     | '/404'
+    | '/about'
+    | '/contacts'
     | '/favorites'
     | '/map'
     | '/offer'
@@ -696,7 +718,6 @@ export interface FileRouteTypes {
     | '/auth/set-password'
     | '/auth/signup'
     | '/auth/verify-email'
-    | '/blog/$slug'
     | '/categories/$slug'
     | '/category/$slug'
     | '/clubs/$slug'
@@ -720,6 +741,7 @@ export interface FileRouteTypes {
     | '/categories/$parentSlug/$childSlug'
     | '/category/$parentSlug/$childSlug'
     | '/me/messages/$conversationId'
+    | '/messages/files/$id'
     | '/trainer-admin/messages/$conversationId'
     | '/trainers/claim/$token'
     | '/admin/accounts'
@@ -732,8 +754,10 @@ export interface FileRouteTypes {
     | '/'
     | '/403'
     | '/404'
+    | '/about'
     | '/account'
     | '/admin'
+    | '/contacts'
     | '/favorites'
     | '/map'
     | '/me'
@@ -761,7 +785,6 @@ export interface FileRouteTypes {
     | '/auth/set-password'
     | '/auth/signup'
     | '/auth/verify-email'
-    | '/blog/$slug'
     | '/categories/$slug'
     | '/category/$slug'
     | '/city/$slug'
@@ -787,6 +810,7 @@ export interface FileRouteTypes {
     | '/category/$parentSlug/$childSlug'
     | '/city/$slug/$sport'
     | '/me/messages/$conversationId'
+    | '/messages/files/$id'
     | '/trainer-admin/messages/$conversationId'
     | '/trainers/claim/$token'
     | '/admin/accounts/'
@@ -800,8 +824,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R403Route: typeof R403Route
   R404Route: typeof R404Route
+  AboutRoute: typeof AboutRoute
   AccountRoute: typeof AccountRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
+  ContactsRoute: typeof ContactsRoute
   FavoritesRoute: typeof FavoritesRoute
   MapRoute: typeof MapRoute
   MeRoute: typeof MeRouteWithChildren
@@ -818,7 +844,6 @@ export interface RootRouteChildren {
   AuthSetPasswordRoute: typeof AuthSetPasswordRoute
   AuthSignupRoute: typeof AuthSignupRoute
   AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
-  BlogSlugRoute: typeof BlogSlugRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
   CategorySlugRoute: typeof CategorySlugRoute
   CitySlugRoute: typeof CitySlugRouteWithChildren
@@ -829,6 +854,7 @@ export interface RootRouteChildren {
   ClubsIndexRoute: typeof ClubsIndexRoute
   CategoriesParentSlugChildSlugRoute: typeof CategoriesParentSlugChildSlugRoute
   CategoryParentSlugChildSlugRoute: typeof CategoryParentSlugChildSlugRoute
+  MessagesFilesIdRoute: typeof MessagesFilesIdRoute
   TrainersClaimTokenRoute: typeof TrainersClaimTokenRoute
 }
 
@@ -897,6 +923,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FavoritesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contacts': {
+      id: '/contacts'
+      path: '/contacts'
+      fullPath: '/contacts'
+      preLoaderRoute: typeof ContactsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -909,6 +942,13 @@ declare module '@tanstack/react-router' {
       path: '/account'
       fullPath: '/account'
       preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/404': {
@@ -1056,13 +1096,6 @@ declare module '@tanstack/react-router' {
       path: '/categories/$slug'
       fullPath: '/categories/$slug'
       preLoaderRoute: typeof CategoriesSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog/$slug': {
-      id: '/blog/$slug'
-      path: '/blog/$slug'
-      fullPath: '/blog/$slug'
-      preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/verify-email': {
@@ -1225,6 +1258,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/trainer-admin/messages/$conversationId'
       preLoaderRoute: typeof TrainerAdminMessagesConversationIdRouteImport
       parentRoute: typeof TrainerAdminMessagesRoute
+    }
+    '/messages/files/$id': {
+      id: '/messages/files/$id'
+      path: '/messages/files/$id'
+      fullPath: '/messages/files/$id'
+      preLoaderRoute: typeof MessagesFilesIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/me/messages/$conversationId': {
       id: '/me/messages/$conversationId'
@@ -1465,8 +1505,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R403Route: R403Route,
   R404Route: R404Route,
+  AboutRoute: AboutRoute,
   AccountRoute: AccountRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
+  ContactsRoute: ContactsRoute,
   FavoritesRoute: FavoritesRoute,
   MapRoute: MapRoute,
   MeRoute: MeRouteWithChildren,
@@ -1483,7 +1525,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSetPasswordRoute: AuthSetPasswordRoute,
   AuthSignupRoute: AuthSignupRoute,
   AuthVerifyEmailRoute: AuthVerifyEmailRoute,
-  BlogSlugRoute: BlogSlugRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
   CategorySlugRoute: CategorySlugRoute,
   CitySlugRoute: CitySlugRouteWithChildren,
@@ -1494,6 +1535,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClubsIndexRoute: ClubsIndexRoute,
   CategoriesParentSlugChildSlugRoute: CategoriesParentSlugChildSlugRoute,
   CategoryParentSlugChildSlugRoute: CategoryParentSlugChildSlugRoute,
+  MessagesFilesIdRoute: MessagesFilesIdRoute,
   TrainersClaimTokenRoute: TrainersClaimTokenRoute,
 }
 export const routeTree = rootRouteImport

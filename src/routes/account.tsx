@@ -10,6 +10,7 @@ import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { getUserCabinetFn } from "@/lib/cabinet";
 import { listTrainerPricesFn } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
+import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
 const SECTIONS: Array<{ id: string; label: string; icon: "reviews" | "bookings" | "favorites" | "profile" | "messages"; to: AccountSectionPath }> = [
   { id: "messages", label: "Сообщения", icon: "messages", to: "/account/messages" },
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/account")({
       throw redirect({ to: "/auth/login", search: { redirect: next } });
     }
   },
+  head: () => ({ meta: [{ title: "Кабинет — trenio.by" }, NOINDEX_FOLLOW] }),
   loader: async () => {
     const [cabinet, ratings, prices] = await Promise.all([getUserCabinetFn(), listTrainerRatingSummariesFn(), listTrainerPricesFn()]);
     return { cabinet, ratings, prices };

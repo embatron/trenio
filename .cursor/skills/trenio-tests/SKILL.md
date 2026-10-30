@@ -12,7 +12,7 @@ Unit tests use `node:test` via `npm test`. Browser checks use Playwright via `np
 
 ## Run
 
-1. `npm test` — journal redaction and retention, auth error text, Belarus phone storage, geo normalize, message access.
+1. `npm test` — journal redaction and retention, auth error text, Belarus phone storage, geo normalize, message access, message attachments.
 2. `npm run test:e2e` — home, categories, login, 404, map, `/join/trainer`, plus the anti-patterns in `e2e/`.
 3. If Playwright browsers are missing, run `npx playwright install chromium` once and repeat the e2e command.
 

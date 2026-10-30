@@ -1,4 +1,5 @@
 import { listCityCatalogPages, type CityCatalogPage } from "@/lib/catalog/city-pages";
+import { foldSearchText, leadingTarget, rankTargets, type FlexTarget } from "@/lib/catalog/query-flex";
 import {
   TOP_LEVEL_SPORT_CATEGORIES,
   getTopLevelSportCategory,
@@ -84,14 +85,29 @@ export function catalogSportsFromQuery(value: string | undefined, limit = 8): Ca
 }
 
 function fold(value: string) {
-  return value.trim().toLowerCase().replaceAll("ё", "е");
+  return foldSearchText(value);
 }
 
-/** Exact label or alias. A partial query stays a suggestion, not a selected sport. */
+function sportTarget(sport: CatalogSport): FlexTarget {
+  const parent = sport.level === 2 ? getTopLevelSportCategory(sport.parentSlug) : undefined;
+  const loose = parent
+    ? [parent.label, ...(parent.aliases ?? [])].filter((phrase) => fold(phrase) !== fold(sport.label))
+    : [];
+  return { label: sport.label, aliases: sport.aliases, loose };
+}
+
+const sportByNameCache = new Map<string, CatalogSport | null>();
+
+/** Label, alias, or a crooked spelling that points at one sport. A shared prefix stays unresolved. */
 export function catalogSportByName(query: string): CatalogSport | null {
   const q = fold(query);
   if (!q) return null;
-  return SPORTS.find((sport) => fold(sport.label) === q || sport.aliases.some((alias) => fold(alias) === q)) ?? null;
+  const cached = sportByNameCache.get(q);
+  if (cached !== undefined) return cached;
+  const sport = leadingTarget(rankTargets(q, SPORTS, sportTarget, (sport) => sport.level), q);
+  if (sportByNameCache.size > 80) sportByNameCache.clear();
+  sportByNameCache.set(q, sport);
+  return sport;
 }
 
 /** Second-level sports that belong to one top-level category. */
@@ -102,23 +118,9 @@ export function catalogCategorySports(parentSlug: string): CatalogSport[] {
 export function filterCatalogSports(query: string, limit = 8): CatalogSport[] {
   const q = fold(query);
   if (!q) return SPORTS.filter((sport) => sport.level === 1).slice(0, limit);
-
-  const rank = (sport: CatalogSport) => {
-    const label = fold(sport.label);
-    if (label.startsWith(q)) return 0;
-    if (sport.aliases.some((alias) => fold(alias).startsWith(q))) return 1;
-    if (label.includes(q)) return 2;
-    if (sport.aliases.some((alias) => fold(alias).includes(q))) return 3;
-    if (sport.level === 2 && fold(sport.parentLabel).includes(q)) return 4;
-    return 9;
-  };
-
-  return SPORTS
-    .map((sport) => ({ sport, rank: rank(sport) }))
-    .filter((item) => item.rank < 9)
-    .sort((a, b) => a.rank - b.rank || a.sport.level - b.sport.level || a.sport.label.localeCompare(b.sport.label, "ru"))
+  return rankTargets(q, SPORTS, sportTarget, (sport) => sport.level)
     .slice(0, limit)
-    .map((item) => item.sport);
+    .map((row) => row.item);
 }
 
 export function catalogSportPath(citySlug: string, sport: CatalogSport) {
@@ -156,6 +158,9 @@ export function trainerMatchesSportSelection(
 
   if (hasSelection && sports.some(matchesSport)) return true;
   if (!hasQuery) return false;
+
+  const resolved = catalogSportByName(query);
+  if (resolved) return matchesSport(resolved);
 
   if (card.tags.some((tag) => fold(tag).includes(q))) return true;
   return card.sportSlugs.some((slug) => {

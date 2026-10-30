@@ -115,13 +115,19 @@ export const Route = createRootRouteWithContext<{
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#f04b50" },
-      { title: "trenio.by — поиск тренеров в Беларуси" },
-      { name: "description", content: "Trenio.by — поиск тренеров и спортивных занятий в Беларуси." },
+      { title: "Найти тренера в Беларуси | trenio.by" },
+      { name: "description", content: "Тренеры в Беларуси по виду спорта и городу. Цена, формат и контакты." },
       { name: "author", content: "trenio.by" },
-      { property: "og:title", content: "trenio.by" },
-      { property: "og:description", content: "Поиск тренеров и спортивных занятий в Беларуси." },
+      { property: "og:title", content: "Найти тренера в Беларуси | trenio.by" },
+      { property: "og:description", content: "Тренеры в Беларуси по виду спорта и городу." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { property: "og:locale", content: "ru_BY" },
+      { property: "og:site_name", content: "trenio.by" },
+      { property: "og:image", content: "https://trenio.by/og.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "trenio.by" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -140,7 +146,7 @@ export const Route = createRootRouteWithContext<{
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="ru">
       <head>
         <HeadContent />
       </head>

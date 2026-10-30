@@ -1,53 +1,19 @@
+import { filterCatalogSports } from "@/lib/catalog/catalog-sports";
+import { foldSearchText } from "@/lib/catalog/query-flex";
 import {
   getSportTaxonomyChild,
   getTopLevelSportCategory,
-  TOP_LEVEL_SPORT_CATEGORIES,
 } from "@/lib/catalog/sport-taxonomy";
-
-type SportSuggestion = {
-  label: string;
-  keywords: string;
-};
 
 const QUICK_SPORT_SLUGS = ["boks", "fitnes", "yoga", "plavanie", "futbol", "bolshoj-tennis"];
 
 function fold(value: string) {
-  return value.trim().toLowerCase().replace(/ё/g, "е");
+  return foldSearchText(value);
 }
 
 function labelForSlug(slug: string) {
   return getSportTaxonomyChild(slug)?.label ?? getTopLevelSportCategory(slug)?.label;
 }
-
-function buildCatalog(): SportSuggestion[] {
-  const byLabel = new Map<string, Set<string>>();
-  const add = (label: string, words: Array<string | undefined>) => {
-    const name = label.trim();
-    if (!name) return;
-    const bag = byLabel.get(name) ?? new Set<string>();
-    bag.add(fold(name));
-    for (const word of words) {
-      const folded = word ? fold(word) : "";
-      if (folded) bag.add(folded);
-    }
-    byLabel.set(name, bag);
-  };
-
-  for (const category of TOP_LEVEL_SPORT_CATEGORIES) {
-    if (category.published === false) continue;
-    add(category.label, [category.label, ...(category.aliases ?? [])]);
-    for (const child of category.children) {
-      add(child.label, [child.label, category.label, ...(child.aliases ?? []), ...(category.aliases ?? [])]);
-    }
-  }
-
-  return [...byLabel.entries()].map(([label, words]) => ({
-    label,
-    keywords: [...words].join(" "),
-  }));
-}
-
-const SPORT_SUGGESTIONS = buildCatalog();
 
 /** Labels shown before the visitor types. Each one is resolved from the sport taxonomy. */
 export function quickSportLabels(): string[] {
@@ -60,17 +26,12 @@ export function quickSportLabels(): string[] {
 }
 
 export function filterSportSuggestions(query: string, limit = 8): string[] {
-  const q = fold(query);
-  if (!q) return quickSportLabels();
-
-  const starts: string[] = [];
-  const includes: string[] = [];
-  for (const item of SPORT_SUGGESTIONS) {
-    const label = fold(item.label);
-    if (label.startsWith(q)) starts.push(item.label);
-    else if (item.keywords.includes(q)) includes.push(item.label);
+  if (!fold(query)) return quickSportLabels();
+  const labels: string[] = [];
+  for (const sport of filterCatalogSports(query, limit)) {
+    if (!labels.includes(sport.label)) labels.push(sport.label);
   }
-  return [...starts, ...includes].slice(0, limit);
+  return labels;
 }
 
 /** Fills a search combo with sport suggestions from the taxonomy. */

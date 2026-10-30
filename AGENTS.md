@@ -50,11 +50,12 @@
 | `.cursor/skills/trenio-pwa-audit/` | PWA-related work or before finishing UI |
 | `.cursor/skills/trenio-mobile-audit/` | UI/layout/responsive changes. Command: `/mobile-adapt` |
 | `.cursor/skills/trenio-docs-sync/` | After tasks — sync documentation |
-| `.cursor/skills/trenio-instagram-trainers/` | Import public Instagram trainer profiles into drafts. Command: `/import-instagram-trainers` |
+| `.cursor/skills/trenio-instagram-trainers/` | Import public Instagram trainer profiles into drafts, including pinned photos and readable card text. Command: `/import-instagram-trainers` |
 | `.cursor/skills/trenio-messages/` | Direct messages: who can write, composer, receipts, polling. Rule: `.cursor/rules/messages.mdc` |
 | `.cursor/skills/trenio-logging/` | Operational journal in `app_logs` (30 days). Command: `/logging`. Rule: `.cursor/rules/logging.mdc` |
 | `.cursor/skills/trenio-diagnosis/` | Diagnose a failure from `app_logs`. Command: `/diagnosis` |
 | `.cursor/skills/trenio-tests/` | Unit tests plus Playwright, then recommendations. Command: `/tests` |
+| `.cursor/skills/trenio-seo/` | Public-page SEO for Belarus: titles, canonical, robots, sitemap, schema.org. Subagent: `seo` |
 
 ## Hooks
 

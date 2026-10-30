@@ -1,6 +1,9 @@
 import { z } from "zod";
 
 import { reviewPlainText } from "@/lib/catalog/review-html";
+import { MESSAGE_ATTACHMENT_MAX_COUNT } from "@/lib/messages/attachments";
+
+export { MESSAGE_ATTACHMENT_MAX_COUNT };
 
 export const MESSAGE_PAGE_SIZE = 50;
 export const CONVERSATION_PAGE_SIZE = 50;
@@ -20,6 +23,9 @@ export const REPORT_REASONS = [
   { id: "contact", label: "Нежелательный контакт" },
   { id: "other", label: "Другое" },
 ] as const;
+
+/** Visible characters in the reporter's comment. */
+export const REPORT_COMMENT_MAX_LENGTH = 1000;
 
 const slugSchema = z
   .string()
@@ -55,16 +61,24 @@ export const sendMessageSchema = z
   .object({
     conversationId: z.string().uuid().optional(),
     trainerProfileSlug: slugSchema.optional(),
-    body: z
-      .string()
-      .trim()
-      .min(1, "Введите сообщение.")
-      .max(MESSAGE_HTML_MAX_LENGTH, "Сообщение слишком длинное."),
+    body: z.string().trim().max(MESSAGE_HTML_MAX_LENGTH, "Сообщение слишком длинное.").default(""),
     clientId: z.string().uuid("Некорректный идентификатор сообщения."),
+    attachmentIds: z.array(z.string().uuid()).max(MESSAGE_ATTACHMENT_MAX_COUNT, "Можно прикрепить не больше 9 файлов.").default([]),
   })
   .refine((value) => Boolean(value.conversationId || value.trainerProfileSlug), {
     message: "Не указана переписка.",
+  })
+  .refine((value) => value.body.length > 0 || value.attachmentIds.length > 0, {
+    message: "Введите сообщение.",
   });
+
+export const uploadMessageFileSchema = z.object({
+  id: z.string().uuid(),
+  conversationId: z.string().uuid(),
+  clientId: z.string().uuid(),
+  fileName: z.string().trim().min(1, "Укажите имя файла.").max(180, "Имя файла слишком длинное."),
+  dataUrl: z.string().min(1, "Файл не прочитан.").max(2_900_000, "Файл больше 2 МБ."),
+});
 
 export const markConversationReadSchema = z.object({
   conversationId: z.string().uuid(),
@@ -75,10 +89,17 @@ export const conversationIdSchema = z.object({
   conversationId: z.string().uuid(),
 });
 
-export const reportMessageSchema = z.object({
-  messageId: z.number().int().positive(),
-  reason: z.string().trim().min(1, "Укажите причину.").max(500, "Причина слишком длинная."),
-});
+export const reportMessageSchema = z
+  .object({
+    conversationId: z.string().uuid(),
+    reason: z.enum(["spam", "abuse", "contact", "other"]),
+    comment: z.string().trim().min(1, "Напишите комментарий.").max(2000, "Комментарий слишком длинный."),
+  })
+  .superRefine((value, ctx) => {
+    if (reviewTextLength(value.comment) > REPORT_COMMENT_MAX_LENGTH) {
+      ctx.addIssue({ code: "custom", path: ["comment"], message: "Комментарий — не длиннее 1000 символов." });
+    }
+  });
 
 export const dismissReportSchema = z.object({
   reportId: z.string().uuid(),
@@ -115,6 +136,14 @@ export type ConversationListResult = {
   nextCursor: ConversationCursor | null;
 };
 
+export type MessageAttachmentDto = {
+  id: string;
+  name: string;
+  mime: string;
+  byteSize: number;
+  kind: "image" | "file";
+};
+
 export type MessageDto = {
   id: number;
   conversationId: string;
@@ -124,8 +153,11 @@ export type MessageDto = {
   createdAt: string;
   deleted: boolean;
   mine: boolean;
+  /** Client side of the thread is turquoise. The profile side is coral. */
+  side: "user" | "trainer";
   /** Set on the sender's own messages. Null for everyone else's. */
   receipt: "delivered" | "read" | null;
+  attachments: MessageAttachmentDto[];
 };
 
 export type ThreadResult = {
@@ -163,8 +195,10 @@ export type ReportRow = {
   id: string;
   status: "new" | "reviewed" | "dismissed";
   reason: string;
+  comment: string;
+  reporterSide: "client" | "trainer";
   createdAt: string;
-  messageId: number;
+  messageId: number | null;
   preview: string;
   conversationId: string;
   conversationStatus: "open" | "closed";
@@ -178,4 +212,10 @@ export function messagePreview(body: string, max = PREVIEW_LENGTH) {
   const text = reviewPlainText(body).replace(/\s+/g, " ").trim();
   if (text.length <= max) return text;
   return `${text.slice(0, max - 1)}…`;
+}
+
+export function messageListPreview(body: string, fileCount = 0) {
+  const text = messagePreview(body);
+  if (text) return text;
+  return fileCount > 0 ? "Вложение" : "";
 }

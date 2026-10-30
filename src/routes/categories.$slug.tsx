@@ -24,11 +24,12 @@ import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { categoryRouteHead } from "@/lib/seo/catalog";
 import { pluralRu } from "@/lib/ru-plural";
 import { toggleFilterValue } from "@/lib/catalog/belarus-settlements";
-import { filterBelarusCities } from "@/lib/catalog/city-taxonomy";
+import { filterBelarusCities, resolveBelarusCity } from "@/lib/catalog/city-taxonomy";
 import { cityCatalogSlug, listCityCatalogPages } from "@/lib/catalog/city-pages";
 import {
   catalogCategorySports,
   catalogSportById,
+  catalogSportByName,
   catalogSportLocation,
   filterCatalogSports,
   trainerMatchesSportSelection,
@@ -917,11 +918,12 @@ export function CategoryCatalogPage({
 
   const filtered = useMemo(() => {
     let list = allTrainers.filter((t) => {
-      const q = cityQuery.trim().toLowerCase();
+      const canonicalCity = resolveBelarusCity(cityQuery);
+      const q = (canonicalCity ?? cityQuery).trim().toLowerCase().replaceAll("ё", "е");
       const hasLocationFilter = selectedCities.length > 0 || q;
       if (hasLocationFilter) {
-        const cityLower = t.city.toLowerCase();
-        const matchesQuick = selectedCities.some((city) => cityLower.includes(city.toLowerCase()));
+        const cityLower = t.city.toLowerCase().replaceAll("ё", "е");
+        const matchesQuick = selectedCities.some((city) => cityLower.includes(city.toLowerCase().replaceAll("ё", "е")));
         const matchesQuery = q && cityLower.includes(q);
         if (!matchesQuick && !matchesQuery) return false;
       }
@@ -1282,9 +1284,7 @@ export function CategoryCatalogPage({
                       skipSportBlur.current = false;
                       return;
                     }
-                    const exact = filterCatalogSports(sportQuery, 20).find((sport) =>
-                      sport.label.toLowerCase() === sportQuery.trim().toLowerCase(),
-                    );
+                    const exact = catalogSportByName(sportQuery);
                     if (exact && !selectedSports.some((sport) => sport.id === exact.id)) toggleSport(exact);
                     else setSportQuery((current) => current.trim());
                   }}
@@ -1424,7 +1424,7 @@ export function CategoryCatalogPage({
                       skipCityBlur.current = false;
                       return;
                     }
-                    const trimmed = cityQuery.trim();
+                    const trimmed = resolveBelarusCity(cityQuery) ?? cityQuery.trim();
                     const committed = committedPlace.current;
                     const sameCities =
                       selectedCities.length === committed.cities.length &&

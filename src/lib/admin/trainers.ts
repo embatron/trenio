@@ -387,7 +387,9 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       phone: formatBelarusPhone(row.phone) || row.phone,
       instagram: row.instagramUrl,
       telegram: row.telegram,
-      email: row.contactEmail,
+      email: row.ownerId
+        ? hidden.has(row.ownerId) ? "" : (row.email ?? "")
+        : row.contactEmail,
       experienceYears: row.experienceYears,
       formats: row.formats,
       audiences: effectiveAudiences(row.audiences),
@@ -493,9 +495,17 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
     const places = await resolveTrainingPlaces(data.places, existing ? placesFromProfile(existing) : []);
     const mirror = mirrorTrainingPlace(places);
     let phone = trainerCardPhone(data.phone);
+    let email = data.email.trim();
+    let ownerEmailVerifiedAt: Date | null | undefined;
     if (existing?.ownerUserId) {
-      const [owner] = await db.select({ phone: users.phone }).from(users).where(eq(users.id, existing.ownerUserId)).limit(1);
+      const [owner] = await db
+        .select({ phone: users.phone, email: users.email, emailVerifiedAt: users.emailVerifiedAt })
+        .from(users)
+        .where(eq(users.id, existing.ownerUserId))
+        .limit(1);
       if (owner?.phone) phone = formatBelarusPhone(owner.phone);
+      email = owner?.email ?? "";
+      ownerEmailVerifiedAt = owner?.emailVerifiedAt ?? null;
     }
     const values = {
       firstName,
@@ -516,8 +526,12 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       geocodeStatus: mirror.geocodeStatus,
       priceFrom: data.priceFrom,
       phone,
-      email: data.email.trim(),
-      ...(existing && normalizeEmail(existing.email) === normalizeEmail(data.email) ? {} : { emailVerifiedAt: null }),
+      email,
+      ...(ownerEmailVerifiedAt !== undefined
+        ? { emailVerifiedAt: ownerEmailVerifiedAt }
+        : existing && normalizeEmail(existing.email) === normalizeEmail(data.email)
+          ? {}
+          : { emailVerifiedAt: null }),
       instagramUrl: data.instagram,
       telegram: data.telegram,
       experienceYears: data.experienceYears,
@@ -858,7 +872,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         phone: formatBelarusPhone(row.phone) || row.phone,
         instagram: row.instagramUrl,
         telegram: row.telegram,
-        email: row.email,
+        email: owner ? owner.email : row.email,
         experienceYears: row.experienceYears,
         formats: row.formats,
         audiences: effectiveAudiences(row.audiences),
@@ -911,7 +925,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         createdSource: SOURCE_LABEL[row.createdSource],
         instagramHandle: row.instagramHandle,
         telegram: row.telegram,
-        email: row.email,
+        email: owner ? owner.email : row.email,
         sourceBio: row.sourceBio,
         audiences: effectiveAudiences(row.audiences).map((item) => AUDIENCE_LABEL[item]).join(", "),
         formats: row.formats.map((item) => FORMAT_LABEL[item]).join(", "),

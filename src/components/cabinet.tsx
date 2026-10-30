@@ -116,6 +116,7 @@ export function CabinetShell({
   active,
   onSelect,
   avatarUrl,
+  profileSlug,
   onLogout,
   logoutPending,
   children,
@@ -126,6 +127,7 @@ export function CabinetShell({
   lastName?: string | null;
   role: string;
   avatarUrl?: string | null;
+  profileSlug?: string | null;
   items: CabinetNavItem[];
   active: string;
   onSelect?: (id: string) => void;
@@ -134,6 +136,8 @@ export function CabinetShell({
   children: ReactNode;
 }) {
   const name = joinTrainerName(firstName, lastName) || "Без имени";
+  const publicSlug = profileSlug?.trim() || "";
+  const identity = <TrainerName firstName={firstName} lastName={lastName} empty="Без имени" />;
   const navRef = useRef<HTMLElement>(null);
   const sideRef = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -243,7 +247,11 @@ export function CabinetShell({
               <UserAvatar name={name} src={avatarUrl} size={44} />
               <div>
                 <strong>
-                  <TrainerName firstName={firstName} lastName={lastName} empty="Без имени" />
+                  {publicSlug ? (
+                    <Link className="cabinet-id__name" to="/trainers/$slug" params={{ slug: publicSlug }}>
+                      {identity}
+                    </Link>
+                  ) : identity}
                 </strong>
                 <span>{role}</span>
               </div>
@@ -344,6 +352,8 @@ const CABINET_CSS = `
 .cabinet-id strong { display: block; min-width: 0; color: var(--dark); }
 .cabinet-id strong .trainer-name { flex-wrap: nowrap; }
 .cabinet-id strong .trainer-name__line { color: var(--dark); font-size: inherit; margin: 0; }
+.cabinet-id__name { display: block; margin: 0; padding: 0; color: inherit; line-height: 1.15; text-decoration: none; }
+.cabinet-id__name:hover .trainer-name__line { color: var(--primary); }
 .cabinet-id span { color: var(--muted); font-size: 13px; }
 .cabinet-nav { display: flex; flex-direction: column; gap: 4px; }
 .cabinet-nav__items { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
@@ -392,16 +402,28 @@ const CABINET_CSS = `
 .cabinet-stat__delta.is-down { color: var(--primary); }
 .cabinet-stat__delta.is-flat { color: var(--muted); font-weight: var(--fw-ui); }
 .cabinet-contacts { display: grid; }
-.cabinet-contact { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; grid-template-areas: "icon name marks" "icon value marks"; column-gap: 12px; row-gap: 2px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+.cabinet-contact { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; grid-template-areas: "icon body marks" "panel panel panel"; column-gap: 12px; row-gap: 8px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--line); }
 .cabinet-contact:last-child { border-bottom: 0; }
 .cabinet-contact__icon { grid-area: icon; display: grid; place-items: center; width: 28px; height: 28px; color: var(--dark); }
 .cabinet-contact__icon svg { width: 20px; height: 20px; }
 .cabinet-contact__icon .cabinet-line { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
-.cabinet-contact__name { grid-area: name; color: var(--dark); font-size: 15px; font-weight: var(--fw-title); }
-.cabinet-contact__value { grid-area: value; min-width: 0; color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cabinet-contact__body { grid-area: body; display: grid; gap: 2px; min-width: 0; }
+.cabinet-contact__name { color: var(--dark); font-size: 15px; font-weight: var(--fw-title); }
+.cabinet-contact__value { min-width: 0; color: var(--muted); font-size: 13px; line-height: 1.35; overflow-wrap: anywhere; }
 .cabinet-contact__value:empty { display: none; }
-.cabinet-contact__marks { grid-area: marks; display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.cabinet-contact__marks { grid-area: marks; display: flex; justify-content: flex-end; align-items: center; }
+.cabinet-contact__panel { grid-area: panel; display: grid; gap: 8px; }
+.cabinet-contact__panel label { display: grid; gap: 6px; }
+.cabinet-contact__panel label span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
+.cabinet-contact__panel:empty { display: none; }
+.cabinet-contact__field { display: grid; gap: 6px; min-width: 0; }
+.cabinet-contact__field span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
+.cabinet-contact__panel input, .cabinet-contact__field input { width: 100%; min-width: 0; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); color: var(--dark); font: inherit; font-size: 16px; }
+.cabinet-contact__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.cabinet-contact .cabinet-form__ghost { min-height: 44px; }
 .cabinet-mark { display: inline-grid; place-items: center; height: 28px; padding: 0 12px; border-radius: 999px; border: 1px solid transparent; font-size: 12px; font-weight: var(--fw-title); line-height: 1; white-space: nowrap; }
+.cabinet-mark--sign { width: 28px; padding: 0; border-radius: 50%; }
+.cabinet-mark--sign svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .cabinet-mark--added { background: var(--white); border-color: var(--line); color: var(--dark); }
 .cabinet-mark--on { background: #16a34a; color: #fff; }
 .cabinet-mark--wait { background: #f59e0b; color: #fff; }
@@ -712,8 +734,7 @@ a.cabinet-icon-btn { text-decoration: none; }
 }
 @media (max-width: 640px) {
   .cabinet-stats { grid-template-columns: 1fr; }
-  .cabinet-contact { grid-template-columns: 28px minmax(0, 1fr); grid-template-areas: "icon name" "icon value" "marks marks"; }
-  .cabinet-contact__marks { justify-content: flex-start; }
+  .cabinet-contact { grid-template-columns: 28px minmax(0, 1fr) auto; }
   .cabinet-row { align-items: flex-start; flex-direction: column; }
   .cabinet-status-stack { align-items: center; align-self: flex-start; }
   .cabinet-form__row { grid-template-columns: 1fr; }

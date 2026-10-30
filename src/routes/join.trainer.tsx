@@ -9,24 +9,12 @@ import { authErrorMessage } from "@/lib/auth/errors";
 import { BY_PHONE_COUNTRY_PREFIX, constrainBelarusPhoneInput } from "@/lib/auth/phone";
 import { submitTrainerWelcomeFn } from "@/lib/catalog/trainer-welcome.functions";
 import { optionalBelarusPhone, parseInstagramHandle, parseTelegramHandle } from "@/lib/catalog/trainer-welcome";
+import { infoPageCopy, infoPageHead } from "@/lib/seo/pages";
+
+const page = infoPageCopy("join");
 
 export const Route = createFileRoute("/join/trainer")({
-  head: () => ({
-    meta: [
-      { title: "Привет! — тренерам trenio.by" },
-      {
-        name: "description",
-        content:
-          "Оставь Instagram — соберём предварительный профиль и пришлём тебе. Сможешь дополнить данные. Не опубликуем, пока ты его не увидишь.",
-      },
-      { property: "og:title", content: "Привет! — тренерам trenio.by" },
-      {
-        property: "og:description",
-        content: "Оставь Instagram. Пришлём предварительный профиль: дополнишь данные, и только потом он выйдет.",
-      },
-    ],
-    links: [{ rel: "canonical", href: "/join/trainer" }],
-  }),
+  head: () => infoPageHead("join"),
   component: TrainerWelcomePage,
 });
 
@@ -185,7 +173,7 @@ function TrainerWelcomePage() {
             <nav className="welcome-crumbs" aria-label="Хлебные крошки">
               <Link to="/">Главная</Link>
               <span aria-hidden="true">/</span>
-              <span className="is-current" aria-current="page">Тренерам</span>
+              <span className="is-current" aria-current="page">{page.crumb}</span>
             </nav>
             <div className="welcome-grid">
               <div className="welcome-copy">

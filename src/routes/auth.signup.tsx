@@ -7,6 +7,8 @@ import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import type { PublicSignupRole } from "@/lib/auth/roles";
 import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { signupFn } from "@/lib/auth/functions";
+import { TRAINER_INVITE_LINE } from "@/lib/catalog/trainer-welcome";
+import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
 export const Route = createFileRoute("/auth/signup")({
   beforeLoad: async ({ context }) => {
@@ -17,6 +19,7 @@ export const Route = createFileRoute("/auth/signup")({
   head: () => ({
     meta: [
       { title: "Регистрация — trenio.by" },
+      NOINDEX_FOLLOW,
       {
         name: "description",
         content: "Создайте аккаунт на trenio.by: укажите имя и e-mail — пароль зададите по ссылке из письма.",
@@ -32,7 +35,7 @@ const SIGNUP_ROLES: Array<{
   description: string;
 }> = [
   { value: "user", title: "Я ищу тренера", description: "Сохраняйте избранное и открывайте контакты" },
-  { value: "trainer", title: "Я тренер", description: "Создайте профиль и принимайте заявки" },
+  { value: "trainer", title: "Я тренер", description: TRAINER_INVITE_LINE },
   { value: "club", title: "Я представляю клуб", description: "Добавьте филиал и команду тренеров" },
 ];
 
@@ -170,7 +173,7 @@ function SignupPage() {
                   {pending
                     ? "Отправка…"
                     : signupRole === "trainer"
-                      ? "Создать профиль тренера"
+                      ? "Создать аккаунт"
                       : signupRole === "club"
                         ? "Зарегистрировать клуб"
                         : "Зарегистрироваться"}

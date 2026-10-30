@@ -169,7 +169,6 @@ function EmailField({ email, verified, onRequest, onConfirm, onVerified }: Train
           }}
         />
       </label>
-      <p className="cabinet-note">Почта для связи видна на публичной странице после кода из письма. Это не вход в аккаунт.</p>
       {editing ? (
         <div className="cabinet-form__actions">
           <button
@@ -373,6 +372,7 @@ export function TrainerCardFields({
   afterAddress,
   priceLabel = "Цена от, BYN",
   self = false,
+  bioInvalid = false,
 }: {
   values: TrainerCardValues;
   onChange: (values: TrainerCardValues) => void;
@@ -385,6 +385,7 @@ export function TrainerCardFields({
   afterAddress?: ReactNode;
   priceLabel?: string;
   self?: boolean;
+  bioInvalid?: boolean;
 }) {
   function patch(partial: Partial<TrainerCardValues>) {
     onChange({ ...values, ...partial });
@@ -430,11 +431,20 @@ export function TrainerCardFields({
             </label>
           </div>
         )}
-        <label>
-          <span>{self ? "Как меня представить" : "Заголовок"}</span>
-          <input value={values.headline} maxLength={200} placeholder="Тренер по боксу" onChange={(event) => patch({ headline: event.target.value })} />
-        </label>
-        <ReviewEditor value={values.bio} onChange={(bio) => patch({ bio })} placeholder="Коротко о себе" />
+        {self ? (
+          <div>
+            <span className="cabinet-media__label">Как меня представить</span>
+            <ReviewEditor value={values.bio} onChange={(bio) => patch({ bio })} placeholder="Коротко о себе" invalid={bioInvalid} />
+          </div>
+        ) : (
+          <>
+            <label>
+              <span>Заголовок</span>
+              <input value={values.headline} maxLength={200} placeholder="Тренер по боксу" onChange={(event) => patch({ headline: event.target.value })} />
+            </label>
+            <ReviewEditor value={values.bio} onChange={(bio) => patch({ bio })} placeholder="Коротко о себе" />
+          </>
+        )}
       </ProfileSection>
       <ProfileSection id="trainer-docs" title="Документы">
         {certificates ? (
@@ -554,7 +564,6 @@ export function TrainerCardFields({
           <label>
             <span>Почта</span>
             <input type="email" inputMode="email" autoComplete="off" value={values.email} maxLength={320} placeholder="name@example.com" onChange={(event) => patch({ email: event.target.value })} />
-            <p className="cabinet-note">На публичной странице видна только после кода из письма. Это не вход в аккаунт.</p>
           </label>
         )}
       </ProfileSection>

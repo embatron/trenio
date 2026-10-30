@@ -12,6 +12,7 @@ import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { UserAvatar } from "@/components/user-avatar";
 import { TrainerName } from "@/components/trainer-name";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
+import { TRAINER_INVITE_LINE } from "@/lib/catalog/trainer-welcome";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const CHROME_CSS = `
@@ -54,17 +55,17 @@ body.is-search-docked .site-header__inner { padding: 12px var(--layout-gutter); 
   transition: opacity 0.35s ease, max-height 0.4s ease;
 }
 body.is-search-docked .site-header__search {
-  opacity: 1; max-height: 80px; overflow: visible; pointer-events: auto;
+  opacity: 1; max-height: 48px; overflow: visible; pointer-events: auto;
 }
 .search-block--header { width: min(100%, 700px); max-width: 100%; min-width: 0; }
 .search-block--header .search-shell {
-  width: 100%; max-width: 100%; min-width: 0; min-height: 52px; padding: 4px 5px;
+  width: 100%; max-width: 100%; min-width: 0; min-height: 40px; padding: 2px 3px;
   background: var(--white); border: 1px solid rgba(var(--dark-rgb), 0.08); border-radius: 999px;
   box-shadow: 0 4px 18px rgba(var(--dark-rgb), 0.06);
-  display: grid; grid-template-columns: minmax(0, 118fr) minmax(0, 196fr) minmax(0, 190fr) minmax(0, 142fr) 44px;
+  display: grid; grid-template-columns: minmax(0, 160fr) minmax(0, 240fr) minmax(0, 180fr) 36px;
   align-items: center; gap: 0; text-align: left;
 }
-.search-block--header .search-field { min-width: 0; height: 44px; display: flex; align-items: center; gap: 7px; padding: 0 11px; }
+.search-block--header .search-field { min-width: 0; height: 36px; display: flex; align-items: center; gap: 5px; padding: 0 8px; }
 .search-block--header .search-field.intent-select { position: relative; }
 .search-block--header .search-field + .search-field { border-left: 1px solid var(--line); }
 .search-block--header .search-icon { flex: 0 0 auto; display: grid; place-items: center; color: var(--muted); }
@@ -72,7 +73,7 @@ body.is-search-docked .site-header__search {
 .search-block--header .intent-dropdown__trigger svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .search-block--header .intent-dropdown__trigger {
   display: inline-flex; align-items: center; justify-content: space-between; gap: 7px;
-  width: 100%; min-width: 0; min-height: 44px; height: 100%; padding: 0; border: 0; background: transparent;
+  width: 100%; min-width: 0; min-height: 36px; height: 100%; padding: 0; border: 0; background: transparent;
   color: var(--text); font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; overflow: hidden;
 }
 .search-block--header .intent-dropdown__value { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
@@ -85,20 +86,20 @@ body.is-search-docked .site-header__search {
 }
 .search-block--header .combo-input::placeholder { color: var(--muted); }
 .search-block--header .combo-menu {
-  position: absolute; z-index: 5; top: calc(100% + 11px); left: 7px; right: 7px;
-  min-width: 219px; padding: 6px; border: 1px solid rgba(var(--dark-rgb), 0.08);
+  position: absolute; z-index: 5; top: calc(100% + 6px); left: 0; right: 0;
+  min-width: 180px; padding: 4px; border: 1px solid rgba(var(--dark-rgb), 0.08);
   border-radius: var(--card-radius); background: var(--white); box-shadow: 0 18px 46px rgba(var(--dark-rgb), 0.13); display: none;
 }
 .search-block--header .combo-select.is-open .combo-menu { display: grid; gap: 1px; }
-.search-block--header .combo-select[data-combo="location"] .combo-menu { max-height: 320px; overflow-y: auto; }
+.search-block--header .combo-select[data-combo="location"] .combo-menu { max-height: 280px; overflow-y: auto; }
 .search-block--header .combo-option {
-  border: 0; width: 100%; min-height: 44px; padding: 0 12px; border-radius: var(--radius-control);
+  border: 0; width: 100%; min-height: 32px; padding: 0 8px; border-radius: var(--radius-control);
   background: transparent; color: var(--text); cursor: pointer; font-size: 14px; font-weight: var(--fw-title); text-align: left;
 }
 .search-block--header .combo-option:hover,
 .search-block--header .combo-option.is-active { background: var(--light-bg); color: var(--primary-dark); }
 .search-block--header .search-submit {
-  width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--primary); color: #fff;
+  width: 36px; height: 36px; border: 0; border-radius: 50%; background: var(--primary); color: #fff;
   cursor: pointer; display: grid; place-items: center;
 }
 .search-block--header .search-submit svg { width: 17px; height: 17px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
@@ -130,7 +131,6 @@ body.is-search-docked .site-header__search {
 }
 .favorite-count.has-items { color: var(--primary); }
 .favorite-count.has-items svg { fill: currentColor; }
-.icon-btn--help { font-size: 15px; font-weight: var(--fw-title); letter-spacing: 0; }
 .account-face {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   min-width: 44px; min-height: 44px; max-width: 210px;
@@ -350,7 +350,7 @@ body.is-search-docked .site-header__search {
   body.is-search-docked .site-header__search {
     grid-column: 1 / -1;
     grid-row: 2;
-    max-height: 64px;
+    max-height: 48px;
   }
   .search-block--header { width: min(100%, 700px); }
 }
@@ -380,19 +380,8 @@ body.is-search-docked .site-header__search {
   .site-footer__brand { grid-column: 1 / -1; }
 }
 @media (max-width: 720px) {
-  body.is-search-docked .site-header__search { max-height: 108px; }
+  body.is-search-docked .site-header__search { max-height: 48px; }
   .search-block--header, .search-block--header .search-shell { width: 100%; }
-  .search-block--header .search-shell {
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr) 37px;
-    grid-template-rows: 37px 37px;
-    min-height: 0;
-    row-gap: 0;
-  }
-  .search-block--header .search-field[data-intent-dropdown="audience"] { grid-column: 1; grid-row: 1; border-left: 0; }
-  .search-block--header .search-field[data-intent-dropdown="format"] { grid-column: 2; grid-row: 1; }
-  .search-block--header .search-field[data-combo="sport"] { grid-column: 1; grid-row: 2; border-left: 0; border-top: 1px solid var(--line); }
-  .search-block--header .search-field[data-combo="location"] { grid-column: 2; grid-row: 2; border-top: 1px solid var(--line); }
-  .search-block--header .search-submit { grid-column: 3; grid-row: 1 / span 2; align-self: center; }
 }
 @media (max-width: 767px) {
   .site-header__inner,
@@ -436,7 +425,6 @@ body.is-search-docked .site-header__search {
 @media (max-width: 480px) {
   .site-header__nav,
   body.is-search-docked .site-header__nav { gap: 0; }
-  .site-header .icon-btn--help { display: none; }
 }
 @media (max-width: 359px) {
   .logo__img, .site-header .logo__img { height: 15px; }
@@ -708,9 +696,9 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           <div className="mega-col mega-col__hero">
             <span className="mega-kicker">Для тренеров</span>
             <h4>Стать тренером на trenio.by</h4>
-            <p>Бесплатный профиль, заявки от клиентов и расписание — всё в одном месте.</p>
+            <p>{TRAINER_INVITE_LINE}</p>
             <Link to="/join/trainer" className="cta" onClick={onClose}>
-              Создать профиль
+              Стать тренером
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6" /></svg>
             </Link>
           </div>
@@ -742,7 +730,6 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             <ul>
               <li><Link className="mega-link mega-link--text" to="/" onClick={onClose}>Найти тренера</Link></li>
               <li><Link className="mega-link mega-link--text" to="/map" search={{ sports: undefined, city: undefined }} onClick={onClose}>На карте</Link></li>
-              <li><Link className="mega-link mega-link--text" to="/blog/$slug" params={{ slug: "kak-vybrat-trenera" }} onClick={onClose}>Как выбрать тренера</Link></li>
               <li><Link className="mega-link mega-link--text" to="/auth/signup" onClick={onClose}>Создать аккаунт</Link></li>
               {user ? (
                 <li>
@@ -759,9 +746,8 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             <h5>Тренерам</h5>
             <ul>
               <li><Link className="mega-link mega-link--text" to="/me" activeOptions={{ exact: true }} onClick={onClose}>Кабинет тренера</Link></li>
-              <li><Link className="mega-link mega-link--text" to="/join/trainer" onClick={onClose}>Разместить профиль</Link></li>
-              <li><Link className="mega-link mega-link--text" to="/" onClick={onClose}>Тарифы и продвижение</Link></li>
-              <li><Link className="mega-link mega-link--text" to="/" onClick={onClose}>Помощь и FAQ</Link></li>
+              <li><Link className="mega-link mega-link--text" to="/join/trainer" onClick={onClose}>Оставить Instagram</Link></li>
+              <li><Link className="mega-link mega-link--text" to="/about" hash="razmeschenie" onClick={onClose}>Тарифы и продвижение</Link></li>
             </ul>
           </div>
         </div>
@@ -769,8 +755,8 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
       <div className="mega-footer">
         <div className="mega-sheet mega-footer__row">
           <div className="mega-footer__links">
-            <Link to="/" onClick={onClose}>О сервисе</Link>
-            <Link to="/" onClick={onClose}>Контакты</Link>
+            <Link to="/about" onClick={onClose}>О сервисе</Link>
+            <Link to="/contacts" onClick={onClose}>Контакты</Link>
             <Link to="/offer" onClick={onClose}>Договор оферты</Link>
             <Link to="/privacy" onClick={onClose}>Политика конфиденциальности</Link>
           </div>
@@ -913,7 +899,6 @@ export function SiteHeader({ middleSlot }: { middleSlot?: ReactNode }) {
           <Logo />
           <div className="site-header__search">{middleSlot ?? <CatalogSearchForm variant="header" />}</div>
           <nav className="site-header__nav" aria-label="Основное меню">
-            <Link to="/" className="icon-btn icon-btn--help" aria-label="Помощь" title="Помощь">?</Link>
             <MapLink />
             <MessageCount />
             <FavoriteCount />
@@ -954,23 +939,21 @@ export function SiteFooter() {
               <div className="site-footer__links">
                 <Link to="/">Тренеры</Link>
                 <Link to="/map" search={{ sports: undefined, city: undefined }}>На карте</Link>
-                <Link to="/clubs">Клубы</Link>
                 <Link to="/categories/">Категории</Link>
               </div>
             </div>
             <div className="site-footer__col">
               <h4>Тренерам</h4>
               <div className="site-footer__links">
-                <Link to="/join/trainer">Добавить профиль</Link>
+                <Link to="/join/trainer">Стать тренером</Link>
                 <Link to="/me" activeOptions={{ exact: true }}>Кабинет тренера</Link>
-                <a href="#">Помощь</a>
               </div>
             </div>
             <div className="site-footer__col">
               <h4>Компания</h4>
               <div className="site-footer__links">
-                <a href="#">О сервисе</a>
-                <a href="#">Контакты</a>
+                <Link to="/about">О сервисе</Link>
+                <Link to="/contacts">Контакты</Link>
                 <Link to="/offer">Договор оферты</Link>
                 <Link to="/privacy">Политика конфиденциальности</Link>
               </div>

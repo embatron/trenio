@@ -4,6 +4,7 @@ import { FavoriteButton } from "@/components/favorite-button";
 import { TrainerContactIcons } from "@/components/messages/trainer-contact-icons";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { pluralRu } from "@/lib/ru-plural";
+import { clubBreadcrumbs, clubPageHead } from "@/lib/seo/pages";
 
 type Club = {
   slug: string;
@@ -45,20 +46,7 @@ export const Route = createFileRoute("/clubs/$slug")({
   },
   head: ({ loaderData }) => {
     const c = loaderData?.club;
-    if (!c) return { meta: [{ title: "Клуб · trenio.by" }] };
-    const title = `${c.name} — клуб в ${c.city.label} · trenio`;
-    const desc = `${c.name}: направления, тренеры, цены и контакты. ${c.address}.`;
-    return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { property: "og:title", content: title },
-        { property: "og:description", content: desc },
-        { property: "og:type", content: "profile" },
-        { property: "og:url", content: `https://trenio.by/clubs/${c.slug}` },
-      ],
-      links: [{ rel: "canonical", href: `https://trenio.by/clubs/${c.slug}` }],
-    };
+    return clubPageHead(c ? { slug: c.slug, name: c.name, city: c.city, address: c.address } : null);
   },
   component: ClubPage,
 });
@@ -279,9 +267,14 @@ function ClubPage() {
       <main className="page-shell">
         <nav aria-label="Хлебные крошки">
           <ol className="breadcrumbs">
-            <li><Link to="/">Главная</Link></li>
-            <li><a href={`/clubs/${c.city.slug}`}>Клубы в {c.city.label === "Минск" ? "Минске" : c.city.label}</a></li>
-            <li className="is-current" aria-current="page">{c.name}</li>
+            {clubBreadcrumbs(c).map((crumb, index, crumbs) => {
+              const current = index === crumbs.length - 1;
+              return (
+                <li key={crumb.path} className={current ? "is-current" : undefined} aria-current={current ? "page" : undefined}>
+                  {current ? crumb.name : index === 0 ? <Link to="/">{crumb.name}</Link> : <a href={crumb.path}>{crumb.name}</a>}
+                </li>
+              );
+            })}
           </ol>
         </nav>
 
