@@ -15,6 +15,16 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // The VPS runs the same Nitro node server as the other sites. Without this,
+  // the Lovable helper builds a Cloudflare worker.
+  nitro: {
+    preset: "node-server",
+    output: {
+      dir: "dist",
+      serverDir: "dist/server",
+      publicDir: "dist/client",
+    },
+  },
   vite: {
     ssr: {
       external: ["ip-location-api", "sharp"],
