@@ -25,10 +25,10 @@ function assertUsable(input: z.infer<typeof saveSchema>) {
     throw new AuthError("Приветствие тренеру длиннее 4000 символов.", "VALIDATION");
   }
   if (userWelcomePartCount(input.userWelcome) < 4) {
-    throw new AuthError("В письме пользователю нужны четыре части, разделённые строкой ---.", "VALIDATION");
+    throw new AuthError("В письме пользователю нужны четыре части. Между ними — отдельная строка ---.", "VALIDATION");
   }
   if (!input.instagramMessage.includes("{doorUrl}")) {
-    throw new AuthError("В сообщении для Instagram оставьте метку {doorUrl} — это короткая ссылка.", "VALIDATION");
+    throw new AuthError("В сообщении для Instagram оставьте {doorUrl}. На её месте будет короткая ссылка этого тренера.", "VALIDATION");
   }
 }
 

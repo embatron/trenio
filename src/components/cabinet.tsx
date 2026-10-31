@@ -538,6 +538,9 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-table--trainers .cabinet-person__text { min-width: max-content; }
 .cabinet-table--trainers .cabinet-person__text strong,
 .cabinet-table--trainers .cabinet-person__meta { display: block; white-space: nowrap; overflow: visible; text-overflow: clip; }
+.cabinet-table--trainers a.cabinet-trainer-name { display: inline-flex; align-items: center; min-height: 44px; color: var(--primary); text-decoration: none; }
+.cabinet-table--trainers a.cabinet-trainer-name:hover { text-decoration: underline; }
+.cabinet-table--trainers a.cabinet-trainer-name .trainer-name__line { color: inherit; }
 .cabinet-table--trainers .cabinet-person__meta { margin-top: 2px; color: var(--muted); font-size: 11px; }
 .cabinet-table--trainers .cabinet-rating { display: inline-flex; align-items: center; justify-content: center; gap: 4px; vertical-align: middle; color: var(--dark); font-weight: var(--fw-title); }
 .cabinet-table--trainers .cabinet-rating svg { width: 14px; height: 14px; fill: #ffb400; }
@@ -765,6 +768,14 @@ a.cabinet-icon-btn { text-decoration: none; }
   .cabinet-nav__sub::-webkit-scrollbar { display: none; }
   .cabinet-nav__sub a { flex: 0 0 auto; }
 }
+.site-text { display: grid; gap: 8px; min-width: 0; }
+.site-text > p, .site-tokens p, .site-parts { margin: 0; max-width: 62ch; color: var(--muted); font-size: 14px; line-height: 1.45; }
+.site-tokens { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.site-tokens li { display: grid; gap: 4px; min-width: 0; }
+.site-tokens button { justify-self: start; max-width: 100%; min-height: 44px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-size: 14px; font-weight: var(--fw-title); text-align: left; cursor: pointer; }
+.site-tokens button:hover { border-color: var(--primary); color: var(--primary); }
+.site-tokens code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; font-weight: var(--fw-title); }
+.site-parts { display: grid; gap: 4px; padding-left: 1.2em; }
 @media (max-width: 640px) {
   .cabinet-stats { grid-template-columns: 1fr; }
   .cabinet-contact { grid-template-columns: 28px minmax(0, 1fr) auto; }
