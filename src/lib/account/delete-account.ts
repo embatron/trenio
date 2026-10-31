@@ -1,10 +1,11 @@
 import { randomBytes } from "node:crypto";
 import path from "node:path";
 
-import { and, eq, inArray, or, sql, type SQL } from "drizzle-orm";
+import { and, eq, inArray, isNotNull, or, sql, type SQL } from "drizzle-orm";
 
 import { consumeRateLimit, RATE_LIMITED_MESSAGE } from "@/auth/rate-limit";
-import { hashPassword, verifyPassword } from "@/auth/password";
+import { getDummyPasswordHash, hashPassword, verifyPassword } from "@/auth/password";
+import { createSession, findUserByLogin } from "@/auth/service";
 import { getDb } from "@/db";
 import {
   appLogs,
@@ -21,6 +22,7 @@ import {
   userFavorites,
   users,
   type TrainerReviewMessage,
+  type User,
 } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
 import { isGodUser } from "@/lib/auth/god";
@@ -38,6 +40,35 @@ import { removeConversationFiles } from "@/lib/messages/attachment-store";
 import { SITE_ORIGIN } from "@/lib/seo/site";
 
 export const DELETED_ACCOUNT_NAME = "Удалённый";
+export const ACCOUNT_HOLD_MONTHS = 6;
+
+const PROFILE_STATUSES = ["draft", "published", "hidden", "archived"] as const;
+type ProfileStatus = (typeof PROFILE_STATUSES)[number];
+
+export function accountHoldUntil(from: Date): Date {
+  const until = new Date(from.getTime());
+  const day = until.getUTCDate();
+  until.setUTCDate(1);
+  until.setUTCMonth(until.getUTCMonth() + ACCOUNT_HOLD_MONTHS);
+  const last = new Date(Date.UTC(until.getUTCFullYear(), until.getUTCMonth() + 1, 0)).getUTCDate();
+  until.setUTCDate(Math.min(day, last));
+  return until;
+}
+
+export function accountHoldOpen(deletedAt: Date | string | null | undefined, now = new Date()): boolean {
+  if (!deletedAt) return false;
+  const start = deletedAt instanceof Date ? deletedAt : new Date(deletedAt);
+  if (Number.isNaN(start.getTime())) return false;
+  return accountHoldUntil(start).getTime() > now.getTime();
+}
+
+export function isTombstoneEmail(email: string): boolean {
+  return /^deleted\.[0-9a-f-]{36}@users\.trenio\.invalid$/i.test(email);
+}
+
+function heldProfileStatus(value: string | null): ProfileStatus | null {
+  return PROFILE_STATUSES.find((item) => item === value) ?? null;
+}
 
 export function deletedAccountEmail(userId: string): string {
   return `deleted.${userId}@users.trenio.invalid`;
@@ -107,12 +138,16 @@ function welcomeMatches(contact: { instagrams: string[]; telegrams: string[]; ph
   return matches;
 }
 
-async function scrubAccountLogs(userId: string, email: string, phone: string | null) {
+async function retainAccountJournal(userId: string, email: string, phone: string | null, now = new Date()) {
+  const until = accountHoldUntil(now);
   const subjects = [email.trim().toLowerCase(), maskPhone(phone)].filter((value): value is string => Boolean(value));
   const match = subjects.length
     ? or(eq(appLogs.actorUserId, userId), inArray(appLogs.subject, subjects))
     : eq(appLogs.actorUserId, userId);
-  await getDb().update(appLogs).set({ subject: null, ip: null, userAgent: null }).where(match);
+  await getDb()
+    .update(appLogs)
+    .set({ expiresAt: sql`GREATEST(${appLogs.expiresAt}, ${until.toISOString()}::timestamptz)` })
+    .where(match);
 }
 
 export async function deleteOwnAccount(
@@ -134,6 +169,51 @@ export async function deleteOwnAccount(
   const matches = await verifyPassword(password, user.passwordHash);
   if (!matches) throw new AuthError("Неверный пароль.", "INVALID_CREDENTIALS");
 
+  const profiles = await db
+    .select({ id: trainerProfiles.id, status: trainerProfiles.status, slug: trainerProfiles.slug })
+    .from(trainerProfiles)
+    .where(eq(trainerProfiles.ownerUserId, user.id));
+  const now = new Date();
+
+  await db.transaction(async (tx) => {
+    await tx.delete(sessions).where(eq(sessions.userId, user.id));
+    await tx.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, user.id));
+    await tx.delete(emailVerificationTokens).where(eq(emailVerificationTokens.userId, user.id));
+    for (const profile of profiles) {
+      const nextStatus: ProfileStatus =
+        profile.status === "published" || profile.status === "draft" ? "hidden" : profile.status;
+      await tx
+        .update(trainerProfiles)
+        .set({ heldStatus: profile.status, status: nextStatus, updatedAt: now })
+        .where(eq(trainerProfiles.id, profile.id));
+    }
+    await tx
+      .update(users)
+      .set({ status: "deleted", deletedAt: now, updatedAt: now })
+      .where(eq(users.id, user.id));
+  });
+
+  await writeLog({
+    level: "info",
+    domain: "account",
+    action: "account.delete",
+    outcome: "success",
+    message: "Пользователь удалил аккаунт.",
+    subject: user.email,
+    actorUserId: user.id,
+    target: profiles[0]?.slug ?? null,
+    context: { profiles: profiles.length, holdMonths: ACCOUNT_HOLD_MONTHS },
+  });
+  try {
+    await retainAccountJournal(user.id, user.email, user.phone, now);
+  } catch (error) {
+    logCaught("account", "account.delete", error, { actorUserId: user.id, subject: user.email });
+  }
+}
+
+async function purgeAccountRecord(user: User): Promise<void> {
+  if (isTombstoneEmail(user.email)) return;
+  const db = getDb();
   const profiles = await db.select().from(trainerProfiles).where(eq(trainerProfiles.ownerUserId, user.id));
   const profileIds = profiles.map((profile) => profile.id);
   const slugs = profiles.map((profile) => profile.slug);
@@ -288,6 +368,7 @@ export async function deleteOwnAccount(
           telegram: "",
           telegramVerifiedAt: null,
           experienceYears: 0,
+          heldStatus: null,
           claimToken,
           claimPath: `/trainers/claim/${claimToken}`,
           previewToken: null,
@@ -310,6 +391,7 @@ export async function deleteOwnAccount(
         lastName: "",
         avatarPath: "",
         status: "deleted",
+        deletedAt: user.deletedAt,
         telegramUserId: null,
         telegramUsername: null,
         mailMessages: false,
@@ -330,23 +412,101 @@ export async function deleteOwnAccount(
     );
     await Promise.all(conversationIds.map((id) => removeConversationFiles(id)));
   } catch (error) {
-    logCaught("account", "account.delete", error, { actorUserId: user.id, target: slugs[0] ?? null });
+    logCaught("account", "account.purge", error, { actorUserId: user.id, target: slugs[0] ?? null, subject: user.email });
   }
 
   await writeLog({
     level: "info",
     domain: "account",
-    action: "account.delete",
+    action: "account.purge",
     outcome: "success",
-    message: "Аккаунт удалён.",
+    message: "Срок хранения удалённого аккаунта истёк.",
     subject: user.email,
     actorUserId: user.id,
     target: slugs[0] ?? null,
     context: { profiles: slugs.length, conversations: conversationIds.length },
   });
-  try {
-    await scrubAccountLogs(user.id, user.email, user.phone);
-  } catch (error) {
-    logCaught("account", "account.delete", error, { actorUserId: user.id });
+}
+
+export async function resolveDeletedLogin(user: User): Promise<"restore" | "gone"> {
+  if (accountHoldOpen(user.deletedAt) && !isTombstoneEmail(user.email)) return "restore";
+  if (user.deletedAt && !isTombstoneEmail(user.email)) {
+    try {
+      await purgeAccountRecord(user);
+    } catch (error) {
+      logCaught("account", "account.purge", error, { actorUserId: user.id, subject: user.email });
+    }
   }
+  return "gone";
+}
+
+export async function purgeExpiredAccounts(now = new Date()): Promise<number> {
+  const rows = await getDb()
+    .select()
+    .from(users)
+    .where(and(eq(users.status, "deleted"), isNotNull(users.deletedAt)));
+  let purged = 0;
+  for (const user of rows) {
+    if (isTombstoneEmail(user.email) || accountHoldOpen(user.deletedAt, now)) continue;
+    try {
+      await purgeAccountRecord(user);
+      purged += 1;
+    } catch (error) {
+      logCaught("account", "account.purge", error, { actorUserId: user.id, subject: user.email });
+    }
+  }
+  return purged;
+}
+
+export async function restoreOwnAccount(
+  email: string,
+  password: string,
+  meta: { ipAddress?: string | null; userAgent?: string | null },
+): Promise<{ token: string; expiresAt: Date }> {
+  const user = await findUserByLogin(email);
+  const hashToCheck = user?.passwordHash ?? (await getDummyPasswordHash());
+  const passwordMatches = await verifyPassword(password, hashToCheck);
+  if (!user || !passwordMatches) {
+    throw new AuthError("Неверный логин или пароль.", "INVALID_CREDENTIALS");
+  }
+  if (isGodUser(user.id)) {
+    return createSession(user.id, meta);
+  }
+  if (user.status === "suspended") {
+    throw new AuthError("Аккаунт заблокирован. Обратитесь в поддержку.", "ACCOUNT_SUSPENDED");
+  }
+  if (user.status === "deleted") {
+    if (!accountHoldOpen(user.deletedAt) || isTombstoneEmail(user.email)) {
+      if (user.deletedAt && !isTombstoneEmail(user.email)) {
+        try {
+          await purgeAccountRecord(user);
+        } catch (error) {
+          logCaught("account", "account.purge", error, { actorUserId: user.id, subject: user.email });
+        }
+      }
+      throw new AuthError("Неверный логин или пароль.", "INVALID_CREDENTIALS");
+    }
+    const now = new Date();
+    const db = getDb();
+    await db.transaction(async (tx) => {
+      const profiles = await tx
+        .select({ id: trainerProfiles.id, heldStatus: trainerProfiles.heldStatus })
+        .from(trainerProfiles)
+        .where(eq(trainerProfiles.ownerUserId, user.id));
+      for (const profile of profiles) {
+        const status = heldProfileStatus(profile.heldStatus);
+        if (!status) continue;
+        await tx
+          .update(trainerProfiles)
+          .set({ status, heldStatus: null, updatedAt: now })
+          .where(eq(trainerProfiles.id, profile.id));
+      }
+      await tx
+        .update(users)
+        .set({ status: "active", deletedAt: null, updatedAt: now })
+        .where(eq(users.id, user.id));
+    });
+  }
+
+  return createSession(user.id, meta);
 }

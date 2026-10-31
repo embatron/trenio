@@ -63,7 +63,7 @@ import {
   verifyEmailToken,
   type SessionUser,
 } from "@/auth/service";
-import { deleteOwnAccount } from "@/lib/account/delete-account";
+import { deleteOwnAccount, restoreOwnAccount } from "@/lib/account/delete-account";
 import { clearSessionCookie, readSessionToken, setSessionCookie } from "@/auth/session";
 import { writeLog, maskPhone } from "@/lib/log/logger";
 import type { LogOutcome } from "@/lib/log/policy";
@@ -100,7 +100,12 @@ function getRequestMeta() {
   };
 }
 
-async function finishLogin(session: { token: string }, remember = true, action = "auth.login") {
+async function finishLogin(
+  session: { token: string },
+  remember = true,
+  action = "auth.login",
+  message = "Вход выполнен.",
+) {
   setSessionCookie(session.token, remember);
   const user = await getSessionUserFromToken(session.token);
   if (!user) {
@@ -108,10 +113,10 @@ async function finishLogin(session: { token: string }, remember = true, action =
   }
   void writeLog({
     level: "info",
-    domain: "auth",
+    domain: action.startsWith("account.") ? "account" : "auth",
     action,
     outcome: "success",
-    message: "Вход выполнен.",
+    message,
     subject: user.email,
     actorUserId: user.id,
   });
@@ -189,6 +194,18 @@ export const loginFn = createServerFn({ method: "POST" })
         ipAddress: meta.ipAddress,
         userAgent: meta.userAgent,
       });
+      if ("restore" in session) {
+        void writeLog({
+          level: "info",
+          domain: "auth",
+          action: "auth.login",
+          outcome: "skipped",
+          message: "Аккаунт удалён. Предложено восстановление.",
+          subject: session.email,
+          actorUserId: session.userId,
+        });
+        return { ok: true as const, restore: true as const };
+      }
       return finishLogin(session, data.remember, "auth.login");
     } catch (error) {
       rethrowAuth(error, "auth.login", data.email, null, data.honeypot?.trim() ? "denied" : undefined);
@@ -659,6 +676,22 @@ export const updateMailPreferenceFn = createServerFn({ method: "POST" })
       return { ok: true as const };
     } catch (error) {
       rethrowAuth(error, "account.mail", context.user.email, context.user.id);
+    }
+  });
+
+export const restoreAccountFn = createServerFn({ method: "POST" })
+  .validator(loginSchema)
+  .handler(async ({ data }) => {
+    try {
+      if (data.honeypot?.trim()) {
+        throw new AuthError("Неверный логин или пароль.", "INVALID_CREDENTIALS");
+      }
+      const meta = getRequestMeta();
+      consumePasswordLoginLimit(data.email, meta.clientKey);
+      const session = await restoreOwnAccount(data.email, data.password, meta);
+      return finishLogin(session, data.remember, "account.restore", "Пользователь восстановил аккаунт.");
+    } catch (error) {
+      rethrowAuth(error, "account.restore", data.email, null);
     }
   });
 

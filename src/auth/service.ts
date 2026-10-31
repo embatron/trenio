@@ -310,6 +310,15 @@ export async function loginUser(input: {
     throw new AuthError("Неверный логин или пароль.", "INVALID_CREDENTIALS");
   }
 
+  if (user.status === "deleted") {
+    const { resolveDeletedLogin } = await import("@/lib/account/delete-account");
+    const decision = await resolveDeletedLogin(user);
+    if (decision === "restore") {
+      return { restore: true as const, userId: user.id, email: user.email };
+    }
+    throw new AuthError("Неверный логин или пароль.", "INVALID_CREDENTIALS");
+  }
+
   await assertUserCanAuthenticate(user);
   return createSession(user.id, {
     ipAddress: input.ipAddress,
@@ -490,6 +499,15 @@ export async function setPasswordFromEmailLink(
     .limit(1);
 
   if (!tokenRow || tokenRow.pendingEmail) {
+    throw new AuthError("Ссылка недействительна или устарела.", "INVALID_TOKEN");
+  }
+
+  const [owner] = await db
+    .select({ status: users.status })
+    .from(users)
+    .where(eq(users.id, tokenRow.userId))
+    .limit(1);
+  if (!owner || owner.status === "deleted" || owner.status === "suspended") {
     throw new AuthError("Ссылка недействительна или устарела.", "INVALID_TOKEN");
   }
 

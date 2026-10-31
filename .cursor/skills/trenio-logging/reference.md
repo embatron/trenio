@@ -19,7 +19,9 @@
 | `account.phone.request` / `account.phone.confirm` | Account phone |
 | `trainer.email.confirm` / `trainer.telegram.confirm` | Overview confirms the login email (same address on the card) and Telegram |
 | `account.password.change` / `account.avatar` / `account.name` / `account.mail` | Cabinet settings. `account.mail` stores the kind and whether it is on, not a letter |
-| `account.delete` | The person deleted their own account. Written before the email, phone mask, IP, and user-agent on their rows are cleared. No message text |
+| `account.delete` | The person deleted their own account. Data stays for six months. Subject, IP, and user-agent on that person's rows are kept, and those rows last until the hold ends. No message text |
+| `account.restore` | The person confirmed restoration on the login page. A session starts |
+| `account.purge` | The six-month hold ended. Written with the old email before the account is anonymized. No message text |
 | `email.preference` | A message or review letter was not sent because that kind is off |
 | `account.claim` | Trainer claim |
 | `email.send` / `email.dev` / `email.review` | Postfix or Resend, dev console, review mail. The letter is HTML. Do not store the body, a code, or a link |

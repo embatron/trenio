@@ -190,6 +190,12 @@ async function maybePurge(): Promise<void> {
   } catch (error) {
     console.error("[log] purge failed", error instanceof Error ? error.message : "unknown");
   }
+  try {
+    const { purgeExpiredAccounts } = await import("@/lib/account/delete-account");
+    await purgeExpiredAccounts();
+  } catch (error) {
+    console.error("[log] account purge failed", error instanceof Error ? error.message : "unknown");
+  }
 }
 
 export { maskPhone };

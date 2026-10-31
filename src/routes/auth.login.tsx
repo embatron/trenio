@@ -15,6 +15,7 @@ import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-f
 import {
   confirmSmsLoginFn,
   loginFn,
+  restoreAccountFn,
   loginWithTelegramFn,
   loginWithTelegramWebAppFn,
   requestSmsLoginFn,
@@ -59,10 +60,12 @@ function LoginPage() {
   const [phoneError, setPhoneError] = useState<string | undefined>();
   const [codeError, setCodeError] = useState<string | undefined>();
   const [devCode, setDevCode] = useState<string | null>(null);
+  const [restoreOffer, setRestoreOffer] = useState(false);
   const countdown = useCountdown(0);
   const phoneFormRef = useRef<HTMLFormElement>(null);
 
   const login = useAuthServerFn(loginFn);
+  const restoreAccount = useAuthServerFn(restoreAccountFn);
   const requestSms = useAuthServerFn(requestSmsLoginFn);
   const confirmSms = useAuthServerFn(confirmSmsLoginFn);
   const loginTelegram = useAuthServerFn(loginWithTelegramFn);
@@ -134,6 +137,7 @@ function LoginPage() {
                 onClick={() => {
                   setMethod(value);
                   setError(null);
+                  setRestoreOffer(false);
                 }}
               >
                 <strong>{label}</strong>
@@ -163,7 +167,14 @@ function LoginPage() {
                         honeypot: honeypotFromForm(event.currentTarget),
                       },
                     }),
-                  goAfterLogin,
+                  async (result) => {
+                    if (result && "restore" in result && result.restore) {
+                      setRestoreOffer(true);
+                      return;
+                    }
+                    setRestoreOffer(false);
+                    await goAfterLogin(result);
+                  },
                 );
               }}
             >
@@ -176,7 +187,10 @@ function LoginPage() {
                   placeholder="you@example.com"
                   autoComplete="username"
                   value={email}
-                  onChange={(event) => setEmail(event.target.value)}
+                  onChange={(event) => {
+                    setEmail(event.target.value);
+                    setRestoreOffer(false);
+                  }}
                 />
               </label>
               <label className="auth-field">
@@ -207,6 +221,35 @@ function LoginPage() {
               <button type="submit" className="auth-submit" disabled={pending}>
                 {pending ? "Вход…" : "Войти"}
               </button>
+              {restoreOffer ? (
+                <div className="auth-restore" role="status">
+                  <p>
+                    Этот аккаунт удалён. Данные хранятся шесть месяцев — его можно восстановить.
+                  </p>
+                  <button
+                    type="button"
+                    className="auth-submit"
+                    disabled={pending}
+                    onClick={(event) => {
+                      const form = event.currentTarget.form;
+                      void run(
+                        () =>
+                          restoreAccount({
+                            data: {
+                              email,
+                              password,
+                              remember: true,
+                              honeypot: form ? honeypotFromForm(form) : "",
+                            },
+                          }),
+                        goAfterLogin,
+                      );
+                    }}
+                  >
+                    {pending ? "Восстановление…" : "Восстановить аккаунт"}
+                  </button>
+                </div>
+              ) : null}
             </form>
           ) : null}
 

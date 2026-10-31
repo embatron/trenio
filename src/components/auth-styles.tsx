@@ -75,6 +75,8 @@ const AUTH_CSS = `
 .auth-roleswitch--3 { grid-template-columns: repeat(3, 1fr); }
 .auth-alert { padding: 12px 14px; border-radius: var(--radius-control); background: rgba(var(--primary-rgb), 0.08); border: 1px solid rgba(var(--primary-rgb), 0.2); color: var(--dark); font-size: 14px; line-height: 1.45; }
 .auth-alert--note { background: rgba(var(--dark-rgb), 0.04); border-color: rgba(var(--dark-rgb), 0.08); }
+.auth-restore { display: grid; gap: 12px; }
+.auth-restore p { margin: 0; font-size: 14px; line-height: 1.45; color: var(--text); }
 .auth-hp { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .auth-resend { min-height: 44px; padding: 0; border: 0; background: transparent; color: var(--primary); font-size: 14px; font-weight: var(--fw-heading); cursor: pointer; text-align: left; }
 .auth-resend:hover { text-decoration: underline; }

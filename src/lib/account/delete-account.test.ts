@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { deletedAccountEmail, ownedMediaPath, withoutTrainerReplies } from "./delete-account";
+import {
+  accountHoldOpen,
+  accountHoldUntil,
+  deletedAccountEmail,
+  isTombstoneEmail,
+  ownedMediaPath,
+  withoutTrainerReplies,
+} from "./delete-account";
 
 const owner = {
   userId: "11111111-1111-4111-8111-111111111111",
@@ -13,6 +20,19 @@ test("deleted account email does not keep the old mailbox", () => {
   const email = deletedAccountEmail(owner.userId);
   assert.equal(email, `deleted.${owner.userId}@users.trenio.invalid`);
   assert.equal(email.includes("@gmail.com"), false);
+  assert.equal(isTombstoneEmail(email), true);
+  assert.equal(isTombstoneEmail("person@trenio.by"), false);
+});
+
+test("a deleted account stays restorable for six calendar months", () => {
+  const start = new Date("2026-01-15T12:00:00.000Z");
+  const until = accountHoldUntil(start);
+  assert.equal(until.toISOString(), "2026-07-15T12:00:00.000Z");
+  assert.equal(accountHoldOpen(start, new Date("2026-07-15T11:59:59.000Z")), true);
+  assert.equal(accountHoldOpen(start, until), false);
+  assert.equal(accountHoldOpen(null), false);
+  const monthEnd = accountHoldUntil(new Date("2026-08-31T00:00:00.000Z"));
+  assert.equal(monthEnd.toISOString().slice(0, 10), "2027-02-28");
 });
 
 test("owned media stays inside this account and this card", () => {

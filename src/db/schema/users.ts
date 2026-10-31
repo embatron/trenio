@@ -55,6 +55,8 @@ export const users = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
     lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
+    /** Set while a self-deleted account can still be restored. */
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     telegramUserId: bigint("telegram_user_id", { mode: "number" }),
     telegramUsername: varchar("telegram_username", { length: 64 }),
     /** Letter when someone writes in Сообщения. */
@@ -71,6 +73,7 @@ export const users = pgTable(
     uniqueIndex("users_phone_unique").on(table.phone),
     uniqueIndex("users_telegram_user_id_unique").on(table.telegramUserId),
     index("users_status_idx").on(table.status),
+    index("users_deleted_at_idx").on(table.deletedAt),
   ],
 );
 
