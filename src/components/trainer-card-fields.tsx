@@ -108,9 +108,10 @@ function ProfileSection({
   );
 }
 
-function atLeastOne(raw: string, max: number) {
+function optionalYears(raw: string, max: number) {
+  if (!raw.trim()) return 0;
   const value = Number(raw);
-  if (!Number.isInteger(value) || value < 1) return 1;
+  if (!Number.isInteger(value) || value < 1) return 0;
   return Math.min(value, max);
 }
 
@@ -586,18 +587,17 @@ export function TrainerCardFields({
             onChange={(sportSlugs) => patch({ sportSlugs })}
           />
         </label>
-        <p className="cabinet-note">Не больше четырёх, из категорий второго уровня.</p>
+        <p className="cabinet-note">Не больше четырёх видов спорта.</p>
         <label>
           <span>{self ? "Мой тренерский стаж, лет" : "Общий тренерский стаж, лет"}</span>
           <input
             type="number"
-            required
             inputMode="numeric"
             min={1}
             max={80}
             step={1}
-            value={values.experienceYears}
-            onChange={(event) => patch({ experienceYears: atLeastOne(event.target.value, 80) })}
+            value={values.experienceYears >= 1 ? values.experienceYears : ""}
+            onChange={(event) => patch({ experienceYears: optionalYears(event.target.value, 80) })}
           />
         </label>
         <label>
@@ -639,14 +639,8 @@ export function TrainerCardFields({
           </div>
         </div>
         <div>
-          <span className="cabinet-media__label">
-            {self ? "С кем я работаю" : "С кем работает"}
-          </span>
-          <div
-            className="cabinet-choices"
-            role="group"
-            aria-label={self ? "С кем я работаю" : "С кем работает"}
-          >
+          <span className="cabinet-media__label">С кем я работаю</span>
+          <div className="cabinet-choices" role="group" aria-label="С кем я работаю">
             {TRAINER_AUDIENCE_OPTIONS.map((option) => (
               <button
                 key={option.id}

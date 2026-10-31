@@ -1,7 +1,6 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { AdminClaimLink } from "@/components/admin-trainers-table";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { TrainerCardFields, type TrainerCardValues } from "@/components/trainer-card-fields";
 import { TrainerName } from "@/components/trainer-name";
@@ -62,7 +61,7 @@ function draftFrom(trainer: AdminTrainer): Draft {
     ...fields,
     avatarPath: fields.avatarPath.split("?")[0],
     priceFrom: trainer.priceFrom != null && trainer.priceFrom >= 1 ? trainer.priceFrom : null,
-    experienceYears: Math.max(1, trainer.experienceYears || 1),
+    experienceYears: trainer.experienceYears >= 1 ? trainer.experienceYears : 0,
   };
 }
 
@@ -101,12 +100,6 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
           draft.slug
         )}
       </h2>
-      <p className="cabinet-gender">Род: {facts.gender}</p>
-      {detail.trainer.claimOpen ? (
-        <div className="cabinet-claim-bar">
-          <AdminClaimLink origin={detail.origin} trainer={detail.trainer} />
-        </div>
-      ) : null}
       <div className="cabinet-tabs" role="tablist" aria-label="Карточка тренера">
         {TABS.map((item) => (
           <button
@@ -230,7 +223,7 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
                   onClick={() => {
                     if (!draft.id) return;
                     if (placesSignature(draft.places) !== placesSignature(detail.trainer.places)) {
-                      setError("Сначала сохраните адреса, затем повторите геокодирование.");
+                      setError("Сначала сохраните адреса, затем найдите их на карте ещё раз.");
                       setSaved(null);
                       return;
                     }
@@ -248,7 +241,7 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
                       .finally(() => setGeoPending(false));
                   }}
                 >
-                  {geoPending ? "Геокодирование…" : "Перегеокодировать"}
+                  {geoPending ? "Ищем адрес…" : "Найти на карте ещё раз"}
                 </button>
               </div>
             )}
@@ -328,7 +321,6 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
       ) : null}
       {tab === "facts" ? (
         <dl className="cabinet-facts">
-          <div><dt>Род</dt><dd>{facts.gender}</dd></div>
           <div><dt>Привязка</dt><dd>{facts.linked ? facts.claimStatus : "Аккаунт не привязан"}</dd></div>
           <div><dt>Откуда карточка</dt><dd>{facts.createdSource}</dd></div>
           <div><dt>Instagram</dt><dd>{facts.instagramHandle || "—"}</dd></div>

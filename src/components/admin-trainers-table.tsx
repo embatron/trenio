@@ -5,7 +5,7 @@ import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { PhotoImage } from "@/components/photo-image";
 import { TrainerName } from "@/components/trainer-name";
 import { TablePager, useTablePage } from "@/components/table-pager";
-import { checkTrainerClaimLinkFn, TRAINER_PUBLISH_LABEL, type AdminTrainer, type ClaimLinkVerdict } from "@/lib/admin/trainers";
+import { TRAINER_PUBLISH_LABEL, type AdminTrainer } from "@/lib/admin/trainers";
 import { TrainerNoteCell } from "@/components/admin-trainer-note";
 import { issueTrainerInviteFn, markTrainerInviteSentFn } from "@/lib/catalog/trainer-magic";
 import { authErrorMessage } from "@/lib/auth/errors";
@@ -19,7 +19,6 @@ import { placeLine } from "@/lib/geo/schemas";
 const dateFormat = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short", year: "numeric" });
 const STAR_PATH = "M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z";
 
-const COPY_ICON = "M9 9h10v10H9zM5 15V5h10";
 const CHECK_ICON = "M5 12l5 5L20 7";
 const EDIT_ICON = "M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z";
 const MESSAGE_ICON = "M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 6l8 6 8-6";
@@ -103,18 +102,6 @@ function TrainerSocial({ instagram, telegram }: { instagram: string; telegram: s
   );
 }
 
-function shortClaimLabel(claimPath: string) {
-  const token = claimPath.split("/").filter(Boolean).at(-1) ?? "";
-  return token ? `/claim/${token.slice(0, 6)}…` : "/claim/…";
-}
-
-const CLAIM_VERDICT: Record<ClaimLinkVerdict, string> = {
-  current: "Актуальна",
-  used: "Уже не действует",
-  replaced: "В базе другой адрес",
-  missing: "Ссылки нет",
-};
-
 async function copyText(value: string) {
   try {
     await navigator.clipboard.writeText(value);
@@ -188,69 +175,6 @@ function InviteCopy({
     >
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d={copied ? CHECK_ICON : MESSAGE_ICON} /></svg>
     </button>
-  );
-}
-
-export function AdminClaimLink({
-  origin,
-  trainer,
-}: {
-  origin: string;
-  trainer: Pick<AdminTrainer, "slug" | "claimPath" | "claimOpen">;
-}) {
-  const checkLink = useAuthServerFn(checkTrainerClaimLinkFn);
-  const [copied, setCopied] = useState(false);
-  const [pending, setPending] = useState(false);
-  const [verdict, setVerdict] = useState<ClaimLinkVerdict | null>(null);
-  const [checked, setChecked] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  if (!trainer.claimPath || !trainer.claimOpen) return <>—</>;
-  const url = `${origin}${trainer.claimPath}`;
-  const state = verdict ?? "current";
-
-  return (
-    <div className="cabinet-claim">
-      <a className="cabinet-claim__url" href={url} target="_blank" rel="noopener noreferrer" title={url}>{shortClaimLabel(trainer.claimPath)}</a>
-      <div className="cabinet-claim__actions">
-        <button
-          type="button"
-          className="cabinet-icon-btn"
-          aria-label={copied ? "Скопировано" : "Скопировать ссылку"}
-          title={copied ? "Скопировано" : "Скопировать ссылку"}
-          onClick={() => {
-            void copyText(url).then((ok) => {
-              setCopied(ok);
-              setError(ok ? null : "Не удалось скопировать");
-              if (ok) window.setTimeout(() => setCopied(false), 2000);
-            });
-          }}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d={copied ? CHECK_ICON : COPY_ICON} /></svg>
-        </button>
-        <button
-          type="button"
-          className="cabinet-copy"
-          disabled={pending}
-          onClick={() => {
-            setPending(true);
-            setError(null);
-            void checkLink({ data: { slug: trainer.slug, claimPath: trainer.claimPath } })
-              .then((result) => {
-                setVerdict(result as ClaimLinkVerdict);
-                setChecked(true);
-              })
-              .catch((err: unknown) => setError(authErrorMessage(err)))
-              .finally(() => setPending(false));
-          }}
-        >
-          {pending ? "Проверка…" : "Проверить"}
-        </button>
-      </div>
-      <p className={`cabinet-claim__state${state === "current" ? " is-current" : " is-stale"}`}>
-        {checked ? `Проверено: ${CLAIM_VERDICT[state].toLowerCase()}` : CLAIM_VERDICT[state]}
-      </p>
-      {error ? <p className="cabinet-claim__state is-stale">{error}</p> : null}
-    </div>
   );
 }
 

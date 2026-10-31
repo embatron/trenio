@@ -3,7 +3,6 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { createServerFn } from "@tanstack/react-start";
-import { getRequest } from "@tanstack/react-start/server";
 import { and, avg, count, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
@@ -33,7 +32,6 @@ import { isStaff } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
 import { assertBelarusCity } from "@/lib/catalog/belarus-city.server";
 import { CERTIFICATE_CAPTION_MAX, MAX_TRAINER_CERTIFICATES, readCertificates, type TrainerCertificate } from "@/lib/catalog/certificate-file";
-import { genderLabel } from "@/lib/catalog/trainer-gender";
 import { editorHtml, reviewPlainText, sanitizeReviewHtml } from "@/lib/catalog/review-html";
 import { shrinkImage } from "@/lib/images/tinify";
 import { removeImageSet, writeImageSet } from "@/lib/images/store";
@@ -106,9 +104,6 @@ export type AdminTrainer = {
   popularity: number;
   catalog: boolean;
   account: AdminTrainerAccount | null;
-  claimPath: string;
-  /** The claim link still opens an unclaimed card. */
-  claimOpen: boolean;
   offerAccepted: boolean;
   /** Latest staff note. Empty when nobody has written one. */
   staffNote: string;
@@ -117,31 +112,6 @@ export type AdminTrainer = {
   /** When staff copied the Instagram message. Empty until that click. */
   inviteSentAt: string;
 };
-
-export type ClaimLinkVerdict = "current" | "used" | "replaced" | "missing";
-
-export function claimLinkOpen(row: { claimPath: string; claimStatus: string; status: string; ownerUserId: string | null }) {
-  return row.status !== "published" && row.claimPath.length > 0 && row.claimStatus === "unclaimed" && !row.ownerUserId;
-}
-
-export function claimLinkVerdict(
-  row: { claimPath: string; claimStatus: string; ownerUserId: string | null } | null,
-  shownPath: string,
-): ClaimLinkVerdict {
-  if (!row?.claimPath) return "missing";
-  if (row.claimPath !== shownPath) return "replaced";
-  if (row.claimStatus !== "unclaimed" || row.ownerUserId) return "used";
-  return "current";
-}
-
-function requestOrigin() {
-  const fallback = (process.env.APP_URL ?? "http://trenio.local").replace(/\/$/, "");
-  try {
-    return new URL(getRequest().url).origin;
-  } catch {
-    return fallback;
-  }
-}
 
 const CYR: Record<string, string> = {
   а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e", ж: "zh", з: "z", и: "i", й: "j",
@@ -285,7 +255,7 @@ const saveSchema = z.object({
   instagram: z.string().trim().max(300),
   telegram: z.string().trim().max(300),
   email: z.string().trim().max(320),
-  experienceYears: z.number().int().min(1).max(80),
+  experienceYears: z.number().int().min(0).max(80),
   formats: z.array(z.enum(["individual", "group"])).max(2),
   audiences: z.array(z.enum(["adult", "teen", "kid"])).max(3),
 });
@@ -309,7 +279,7 @@ function isCatalog(slug: string) {
 
 export const getAdminTrainersFn = createServerFn({ method: "GET" })
   .middleware([requireAuthMiddleware])
-  .handler(async ({ context }): Promise<{ origin: string; trainers: AdminTrainer[] }> => {
+  .handler(async ({ context }): Promise<{ trainers: AdminTrainer[] }> => {
     assertStaff(context.user.roles);
     const db = getDb();
     const [profileRows, ratingRows, interest, noteRows] = await Promise.all([
@@ -343,8 +313,6 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         audiences: trainerProfiles.audiences,
         avatarPath: trainerProfiles.avatarPath,
         createdAt: trainerProfiles.createdAt,
-        claimPath: trainerProfiles.claimPath,
-        claimStatus: trainerProfiles.claimStatus,
         offerAcceptedAt: trainerProfiles.offerAcceptedAt,
         inviteSentAt: trainerProfiles.inviteSentAt,
         ownerId: users.id,
@@ -426,13 +394,6 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       createdAt: row.createdAt.toISOString(),
       ...trainerStats(row.slug, ratings, interest),
       catalog: isCatalog(row.slug),
-      claimPath: row.claimPath,
-      claimOpen: claimLinkOpen({
-        claimPath: row.claimPath,
-        claimStatus: row.claimStatus,
-        status: row.status,
-        ownerUserId: row.ownerId,
-      }),
       offerAccepted: row.offerAcceptedAt != null,
       staffNote: latestNote.get(row.id)?.body ?? "",
       staffNoteAt: latestNote.get(row.id)?.at ?? "",
@@ -482,8 +443,6 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       ...trainerStats(trainer.slug, ratings, interest),
       catalog: true,
       account: null,
-      claimPath: "",
-      claimOpen: false,
       offerAccepted: false,
       staffNote: "",
       staffNoteAt: "",
@@ -492,7 +451,6 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
     }));
 
     return {
-      origin: requestOrigin(),
       trainers: [...fromDb, ...fromCatalog].sort((a, b) => a.fullName.localeCompare(b.fullName, "ru")),
     };
   });
@@ -671,26 +629,6 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
 
 const slugSchema = z.string().trim().min(1).max(30).regex(/^[a-z0-9._-]+$/);
 
-export const checkTrainerClaimLinkFn = createServerFn({ method: "POST" })
-  .middleware([requireAuthMiddleware])
-  .validator(z.object({
-    slug: slugSchema,
-    claimPath: z.string().trim().min(1).max(96),
-  }))
-  .handler(async ({ data, context }): Promise<ClaimLinkVerdict> => {
-    assertStaff(context.user.roles);
-    const [row] = await getDb()
-      .select({
-        claimPath: trainerProfiles.claimPath,
-        claimStatus: trainerProfiles.claimStatus,
-        ownerUserId: trainerProfiles.ownerUserId,
-      })
-      .from(trainerProfiles)
-      .where(eq(trainerProfiles.slug, data.slug))
-      .limit(1);
-    return claimLinkVerdict(row ?? null, data.claimPath);
-  });
-
 const CLAIM_LABEL = { unclaimed: "Не забран", claimed: "Привязан к аккаунту", disputed: "Спор" } as const;
 const SOURCE_LABEL = { self: "Сам тренер", branch_created: "Филиал", admin_created: "Администратор", import: "Импорт" } as const;
 const AUDIENCE_LABEL = { adult: "Взрослые", teen: "Подростки", kid: "Дети" } as const;
@@ -726,7 +664,6 @@ export type AdminTrainerLog = {
 
 export type AdminTrainerFacts = {
   claimStatus: string;
-  gender: string;
   createdSource: string;
   instagramHandle: string;
   telegram: string;
@@ -753,7 +690,6 @@ export type AdminTrainerFacts = {
 };
 
 export type AdminTrainerDetail = {
-  origin: string;
   trainer: AdminTrainer;
   photos: string[];
   certificates: TrainerCertificate[];
@@ -897,7 +833,6 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
     const latestNote = noteRowsForProfile[0];
 
     return {
-      origin: requestOrigin(),
       trainer: {
         id: row.id,
         slug: row.slug,
@@ -929,13 +864,6 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
           ...(interest[row.slug] ?? { views: 0, saves: 0 }),
         }),
         catalog: isCatalog(row.slug),
-        claimPath: row.claimPath,
-        claimOpen: claimLinkOpen({
-          claimPath: row.claimPath,
-          claimStatus: row.claimStatus,
-          status: row.status,
-          ownerUserId: row.ownerUserId,
-        }),
         offerAccepted: row.offerAcceptedAt != null,
         staffNote: latestNote?.body ?? "",
         staffNoteAt: latestNote?.createdAt.toISOString() ?? "",
@@ -968,7 +896,6 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
       logs: mergedLogs,
       facts: {
         claimStatus: CLAIM_LABEL[row.claimStatus],
-        gender: genderLabel(row.gender),
         createdSource: SOURCE_LABEL[row.createdSource],
         instagramHandle: row.instagramHandle,
         telegram: row.telegram,

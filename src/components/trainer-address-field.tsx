@@ -17,10 +17,9 @@ import {
 
 const SUGGEST_WAIT_MS = 400;
 
-const STATUS_LABEL: Record<GeocodeStatus, string> = {
-  ok: "Координаты найдены",
+const STATUS_LABEL: Record<Exclude<GeocodeStatus, "ok">, string> = {
   not_found: "Адрес не найден",
-  pending: "Ожидает геокодирования",
+  pending: "На карте ещё не отмечен",
 };
 
 function PlaceInput({
@@ -220,7 +219,7 @@ function PlaceInput({
           </svg>
         </button>
       ) : null}
-      {place.geocodeStatus && draft == null ? <span className={`geo-badge geo-badge--${place.geocodeStatus}`}>{STATUS_LABEL[place.geocodeStatus]}</span> : null}
+      {place.geocodeStatus && place.geocodeStatus !== "ok" && draft == null ? <span className={`geo-badge geo-badge--${place.geocodeStatus}`}>{STATUS_LABEL[place.geocodeStatus]}</span> : null}
       {showMenu ? (
         <ul className="entity-menu address-field__menu" id={listId} role="listbox">
           {loading && suggestions.length === 0 ? <li className="address-field__status">Ищем адрес…</li> : null}

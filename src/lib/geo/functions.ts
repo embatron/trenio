@@ -115,9 +115,9 @@ export const adminGeocodeTrainer = createServerFn({ method: "POST" })
     const pending = places.some((place) => place.geocodeStatus === "pending");
     const missing = places.some((place) => place.geocodeStatus === "not_found");
     const message = pending
-      ? "Сервис геокодирования недоступен. Уже найденные координаты сохранены."
+      ? "Сервис карт сейчас недоступен. Прежняя точка на карте сохранена."
       : missing
         ? "Часть адресов не найдена. На карточке останется текст."
-        : "Координаты обновлены.";
+        : "Точка на карте обновлена.";
     return { places, message };
   });

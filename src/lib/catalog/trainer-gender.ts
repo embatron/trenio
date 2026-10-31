@@ -36,9 +36,3 @@ export function genderAddress(gender: string): "был" | "была" | "был(�
   if (gender === "male") return "был";
   return "был(а)";
 }
-
-export function genderLabel(gender: string): "женский" | "мужской" | "не определён" {
-  if (gender === "female") return "женский";
-  if (gender === "male") return "мужской";
-  return "не определён";
-}
