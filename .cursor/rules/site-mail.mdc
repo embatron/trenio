@@ -1,0 +1,46 @@
+---
+description: Public mailbox and service mail From for trenio.by
+alwaysApply: true
+---
+
+# Site mail
+
+Two addresses. They are not interchangeable.
+
+## Public mailbox
+
+`trenioby@gmail.com` is `SITE_EMAIL` in `src/lib/seo/site.ts`.
+
+Footer, contacts, privacy, schema.org, and the bot contacts line read `SITE_EMAIL`. Do not hard-code another address. Do not put `hello@trenio.by` back. This address is where a person writes. The server does not send from it.
+
+## Service mail
+
+Every letter the site sends uses `From: Trenio <noreply@trenio.by>`.
+
+- Code default: `MAIL_FROM_DEFAULT` in `src/lib/mail/send.server.ts`.
+- Server value: `MAIL_FROM=Trenio <noreply@trenio.by>` in `.env`. The envelope sender is `noreply@trenio.by`.
+- Transport: local Postfix `sendmail` (`SENDMAIL_PATH`, default `/usr/sbin/sendmail`). `MAIL_ENABLED=false` turns sending off.
+- Signature: OpenDKIM signs `*@trenio.by` with selector `mail`.
+- DNS, both TXT: `v=spf1 ip4:130.49.141.250 ~all` on `trenio.by`, and the matching key on `mail._domainkey.trenio.by`. Gmail accepted a letter from this From after those records were published.
+
+Do not send as `trenioby@gmail.com`, `hello@trenio.by`, or `noreply@bronxgym.by`. Gmail rejects mail that claims to be from `@gmail.com` and comes from this server.
+
+Resend is only a fallback when sendmail is off and both `RESEND_API_KEY` and `MAIL_FROM` are set.
+
+Do not log the letter body, a reset link, or a code. `writeLog` gets the fact, the subject line, and the recipient.
+
+```ts
+// wrong: the public mailbox as the sender
+const from = "Trenio <trenioby@gmail.com>";
+
+// right: one service sender
+const from = "Trenio <noreply@trenio.by>";
+```
+
+```tsx
+// wrong: a second public address
+<a href="mailto:hello@trenio.by">hello@trenio.by</a>
+
+// right: the footer reads SITE_EMAIL
+<a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>
+```

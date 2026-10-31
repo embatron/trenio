@@ -16,6 +16,7 @@ const ICONS = {
   bookings: "M7 3v3M17 3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z",
   finance: "M4 5h16v14H4zM4 9h16M8 13h5",
   messages: "M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 6l8 6 8-6",
+  site: "M6 3h8l5 5v13H6zM14 3v5h5M8 13h8M8 17h5",
 } as const;
 
 export type CabinetIcon = keyof typeof ICONS;
@@ -79,7 +80,8 @@ export type AdminSectionPath =
   | "/admin/messages"
   | "/admin/accounts"
   | "/admin/finance"
-  | "/admin/settings";
+  | "/admin/settings"
+  | "/admin/site";
 
 export type TrainerSectionPath = "/trainer-admin" | "/trainer-admin/messages";
 
@@ -105,6 +107,10 @@ export type CabinetNavItem = {
   search?: { tab: "overview" | "settings" | "card" | "reviews" };
   sections?: readonly CabinetSectionLink[];
 };
+
+export function CabinetStyles() {
+  return <style dangerouslySetInnerHTML={{ __html: CABINET_CSS }} />;
+}
 
 export function CabinetShell({
   title,
@@ -508,6 +514,25 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-table--trainers td { font-size: 12px; }
 .cabinet-table--trainers th:first-child, .cabinet-table--trainers td:first-child { padding-left: 12px; }
 .cabinet-table--trainers td.is-audience { white-space: normal; }
+.cabinet-table--trainers td.is-note { white-space: normal; text-align: center; }
+.trainer-note-link { min-height: 44px; min-width: 44px; padding: 0 4px; border: 0; background: none; color: var(--primary); font: inherit; font-size: 12px; font-weight: var(--fw-title); text-decoration: underline; cursor: pointer; }
+.trainer-note-dialog { position: relative; width: min(520px, calc(100vw - 32px)); max-height: min(80vh, 720px); margin: auto; overflow: auto; border: 0; border-radius: 16px; padding: 20px; color: var(--text); background: var(--white); }
+.trainer-note-dialog::backdrop { background: color-mix(in srgb, var(--dark) 45%, transparent); }
+.trainer-note-dialog__close { position: absolute; top: 8px; right: 8px; }
+.trainer-note-dialog h2 { margin: 0 36px 12px 0; font-size: 18px; color: var(--dark); }
+.trainer-note-dialog textarea { width: 100%; min-height: 120px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-control); font: inherit; font-size: 15px; resize: vertical; }
+.trainer-note-dialog__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.trainer-note-dialog__save { min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
+.trainer-note-dialog__save:disabled { opacity: 0.6; cursor: default; }
+.trainer-note-history { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 12px; }
+.trainer-note-history li { padding-top: 12px; border-top: 1px solid var(--line); }
+.trainer-note-history span { color: var(--muted); font-size: 12px; }
+.trainer-note-history p { margin: 4px 0 0; white-space: pre-wrap; font-size: 14px; }
+.cabinet-table--trainers .is-sent { color: #16a34a; font-weight: var(--fw-title); }
+.cabinet-table--trainers .is-unsent { color: #d97706; font-weight: var(--fw-title); }
+.cabinet-icon-btn.is-inactive,
+.cabinet-icon-btn.is-inactive:disabled { color: var(--muted); opacity: 0.45; cursor: default; }
+.cabinet-icon-btn.is-inactive:hover { background: transparent; }
 .cabinet-table--trainers .cabinet-person { display: grid; grid-template-columns: 44px max-content auto; align-items: center; column-gap: 8px; width: max-content; }
 .cabinet-table--trainers .cabinet-row-actions { gap: 0; }
 .cabinet-table--trainers .cabinet-person__text { min-width: max-content; }
@@ -572,6 +597,14 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-form:has(.cabinet-section) { gap: 18px; }
 .cabinet-section { display: grid; gap: 12px; margin: 0; padding: 16px; border: 1px solid var(--line); border-radius: var(--card-radius); background: rgba(var(--dark-rgb), 0.025); scroll-margin-top: calc(var(--cabinet-sticky-top, 96px) + 16px); }
 .cabinet-section h3 { margin: 0; padding-bottom: 10px; border-bottom: 1px solid var(--line); font-size: 16px; font-weight: var(--fw-title); letter-spacing: -0.02em; color: var(--dark); }
+.mail-pref { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.mail-pref__label { margin: 0; color: var(--dark); font-size: 15px; font-weight: var(--fw-title); }
+.mail-switch { flex: 0 0 auto; width: 52px; height: 44px; padding: 0; border: 0; background: transparent; display: inline-flex; align-items: center; justify-content: flex-start; cursor: pointer; }
+.mail-switch__thumb { width: 44px; height: 26px; border-radius: 999px; background: #d1d5db; position: relative; }
+.mail-switch__thumb::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform 0.15s ease; }
+.mail-switch.is-on .mail-switch__thumb { background: var(--primary); }
+.mail-switch.is-on .mail-switch__thumb::after { transform: translateX(18px); }
+.mail-switch:disabled { opacity: 0.6; cursor: default; }
 .cabinet-section--place { background: rgba(var(--primary-rgb), 0.08); border-color: rgba(var(--primary-rgb), 0.35); }
 .cabinet-section--place h3 { border-bottom-color: rgba(var(--primary-rgb), 0.22); }
 .cabinet-section--contact { background: var(--white); border-color: var(--line); box-shadow: inset 3px 0 0 var(--primary); }

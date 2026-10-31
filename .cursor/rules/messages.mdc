@@ -11,11 +11,11 @@ The full file map and edit checklist are in `.cursor/skills/trenio-messages/SKIL
 
 ## Who may talk
 
-- One open conversation per account and one published trainer or club profile. No user-to-user chat and no support inbox.
-- A client starts a thread at `/account/messages`. A trainer or club stays in `/me/messages` for both client threads and threads they start with another profile. `/account/messages` redirects those roles to `/me/messages` and keeps the conversation id. Staff read other people's threads at `/admin/messages` and do not write there unless they are a participant.
+- One open conversation per account and one published trainer or club profile. No user-to-user chat. Questions to the portal go to the admin account `trenioby`. That thread has no trainer card.
+- A client starts a thread at `/account/messages`. A trainer or club stays in `/me/messages` for both client threads and threads they start with another profile. `/account/messages` redirects those roles to `/me/messages` and keeps the conversation id. Staff open `/admin/messages` on the «Переписки (N)» tab, every conversation on the site. «Жалобы (N)» is the second tab. Staff do not write in a thread unless they are a participant.
 - Trainer cards and the profile block after reviews («Как со мной связаться») use icon links: a phone handset, Instagram, Telegram, email, and a direct message. Instagram, Telegram, email, and the direct message open in a new tab. The handset is a `tel:` link and stays on this page. On the profile the formatted number sits beside the handset. Hide the direct icon when the slug is in `messaging.ownedSlugs`. A guest’s direct icon goes to login and returns to the same thread.
 - The owner or staff may close a thread. A participant cannot hide or delete it. The row stays for both sides. It is removed for everyone only when an account is deleted.
-- A blocked pair cannot send. A profile must be published.
+- A blocked pair cannot send. A profile must be published. The portal admin is the exception: a new trainer account gets one welcome from the admin user `trenioby` (`trenioby@gmail.com`), and the same thread stays open for questions. There is no trainer profile and no `/trainers/trenioby` page. The database rejects that slug. Admin and superadmin accounts do not get that welcome. The letter text is the site setting `trainer_welcome`, edited at `/admin/site`.
 - One user may message at most 10 different trainers per Europe/Minsk calendar day. The 11th is refused in a `CabinetNotice` popup. Repeating a trainer already messaged that day is allowed. Count the initiator's sent messages, not the owner's replies.
 
 ## Text and chrome
@@ -34,6 +34,8 @@ The full file map and edit checklist are in `.cursor/skills/trenio-messages/SKIL
 ## Live updates
 
 Poll every 5 seconds while the tab is visible (`MESSAGE_SCAN_MS`). Pause when `document.visibilityState` is `hidden`. Do not add WebSocket or SSE. A later self-hosted PartyKit keeps this schema.
+
+The message email is skipped when that account turned off «Сообщения» in settings. The Telegram notice still sends. The staff report letter does not use that switch.
 
 ```ts
 // wrong: raw HTML length, or the wide staff grid on a trainer page

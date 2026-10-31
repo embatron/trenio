@@ -9,6 +9,7 @@ import { compareByPopularity, ratingFor } from "@/lib/catalog/trainer-popularity
 import { getHomeStatsFn } from "@/lib/catalog/home-stats";
 import { listTrainerPricesFn, priceForCard } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
+import { CatalogEmpty } from "@/components/catalog-empty";
 import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
 import { SiteFaq } from "@/components/site-faq";
 import { HOME_FAQ } from "@/lib/catalog/site-faq";
@@ -61,8 +62,8 @@ function CategoryStrip() {
           <path d="M14 6l-6 6 6 6" />
         </svg>
       </button>
-      <div className="category-slider-viewport">
-        <div className="category-slider-track" ref={trackRef}>
+      <div className="category-slider-viewport" ref={trackRef}>
+        <div className="category-slider-track">
           {HOMEPAGE_CATEGORIES.map((category) => (
             <Link
               key={category.slug}
@@ -273,8 +274,8 @@ function PopularSlider() {
           <path d="M14 6l-6 6 6 6" />
         </svg>
       </button>
-      <div className="popular__viewport">
-        <div className="popular__track" ref={trackRef}>
+      <div className="popular__viewport" ref={trackRef}>
+        <div className="popular__track">
           {HOMEPAGE_CATEGORIES.map((category) => (
             <Link
               key={category.slug}
@@ -478,9 +479,9 @@ body.is-search-docked .site-header__search {
 .category-slider-nav.is-visible { display: grid; }
 .category-slider-nav:hover { box-shadow: 0 8px 20px rgba(var(--dark-rgb), 0.1); }
 .category-slider-nav svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.category-slider-viewport { flex: 1; min-width: 0; overflow: hidden; }
-.category-slider-track { display: flex; align-items: flex-start; gap: 14px; padding: 6px 0 8px; overflow-x: auto; scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; touch-action: pan-x; overscroll-behavior-x: contain; }
-.category-slider-track::-webkit-scrollbar { display: none; }
+.category-slider-viewport { flex: 1; min-width: 0; overflow-x: auto; overflow-y: hidden; scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; overscroll-behavior-x: contain; }
+.category-slider-viewport::-webkit-scrollbar { display: none; }
+.category-slider-track { display: flex; width: max-content; align-items: flex-start; gap: 14px; padding: 6px 0 8px; }
 .category-chip { flex: 0 0 96px; min-width: 96px; max-width: 96px; min-height: 88px; border: 0; background: transparent; padding: 0; cursor: pointer; display: grid; justify-items: center; align-content: start; gap: 8px; color: var(--text); text-decoration: none; transition: color 0.18s ease, transform 0.18s ease; }
 .category-chip:hover { transform: translateY(-2px); }
 .category-chip:hover .category-chip-icon { color: var(--accent-cyan); }
@@ -497,20 +498,22 @@ body.is-search-docked .site-header__search {
 
 /* Popular destinations slider. One page is a full row: 2, then 3, then 4. */
 .popular { position: relative; width: 100%; container: popular / inline-size; }
-.popular__viewport { min-width: 0; overflow: hidden; }
-.popular__track {
-  --popular-per: 2;
-  --popular-gap: var(--layout-gap);
-  display: flex; gap: var(--popular-gap); padding: 8px 0 12px; overflow-x: auto;
+.popular__viewport {
+  min-width: 0; overflow-x: auto; overflow-y: hidden;
   scroll-snap-type: x mandatory;
   scrollbar-width: none; -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-x;
+  touch-action: pan-x pan-y;
   overscroll-behavior-x: contain;
 }
-.popular__track::-webkit-scrollbar { display: none; }
+.popular__viewport::-webkit-scrollbar { display: none; }
+.popular__track {
+  --popular-per: 2;
+  --popular-gap: var(--layout-gap);
+  display: flex; width: max-content; min-width: 100%; gap: var(--popular-gap); padding: 8px 0 12px;
+}
 .popular-card {
-  flex: 0 0 calc((100% - (var(--popular-per) - 1) * var(--popular-gap)) / var(--popular-per));
+  flex: 0 0 calc((100cqi - (var(--popular-per) - 1) * var(--popular-gap)) / var(--popular-per));
   min-width: 0;
   position: relative; overflow: hidden;
   border-radius: var(--card-radius); padding: 0;
@@ -796,13 +799,15 @@ function Index() {
               </Link>
             </div>
 
-            <div className="trainer-grid">
-              {trainers.length === 0 ? (
-                <p className="section-sub">Тренеров пока нет. Раздел заполнится, когда появятся опубликованные профили.</p>
-              ) : trainers.map((t) => (
-                <CatalogTrainerCard key={t.slug} trainer={t} />
-              ))}
-            </div>
+            {trainers.length === 0 ? (
+              <CatalogEmpty title="Тренеров в Минске пока нет" />
+            ) : (
+              <div className="trainer-grid">
+                {trainers.map((t) => (
+                  <CatalogTrainerCard key={t.slug} trainer={t} />
+                ))}
+              </div>
+            )}
           </section>
 
           <section className="content-section" aria-labelledby="popular-heading">

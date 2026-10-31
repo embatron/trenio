@@ -2,7 +2,12 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { optionalBelarusPhone } from "../catalog/trainer-welcome";
-import { normalizeBelarusMobile, storedBelarusPhone } from "./phone";
+import {
+  belarusPhoneCaret,
+  clampBelarusPhoneSelection,
+  normalizeBelarusMobile,
+  storedBelarusPhone,
+} from "./phone";
 
 const STORED = "+375 29 123-45-67";
 const DIGITS = "375291234567";
@@ -40,4 +45,12 @@ test("a landline, a short number and a foreign number are not stored", () => {
   assert.equal(landline.phone, null);
   assert.equal(landline.error, "Укажите мобильный номер РБ: +375 25/29/33/44 …");
   assert.deepEqual(optionalBelarusPhone("+375"), { phone: null, error: null });
+});
+
+test("the caret starts after +375 and cannot sit inside the country code", () => {
+  assert.equal(belarusPhoneCaret(""), 4);
+  assert.equal(belarusPhoneCaret("+375"), 4);
+  assert.equal(belarusPhoneCaret("+375 29"), 5);
+  assert.deepEqual(clampBelarusPhoneSelection(0, 2), { start: 4, end: 4 });
+  assert.deepEqual(clampBelarusPhoneSelection(6, 8), { start: 6, end: 8 });
 });

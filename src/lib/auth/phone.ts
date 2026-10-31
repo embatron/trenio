@@ -52,6 +52,22 @@ export function validateBelarusMobile(raw: string): string | null {
   return null;
 }
 
+/** Caret sits after `+375`, and after the following space once the national digits start. */
+export function belarusPhoneCaret(value: string): number {
+  const text = constrainBelarusPhoneInput(value);
+  if (text.startsWith(`${BY_PHONE_COUNTRY_PREFIX} `)) return BY_PHONE_COUNTRY_PREFIX.length + 1;
+  return BY_PHONE_COUNTRY_PREFIX.length;
+}
+
+/** The country code stays before the caret. A selection inside `+375` moves out of it. */
+export function clampBelarusPhoneSelection(
+  start: number,
+  end: number,
+): { start: number; end: number } {
+  const min = BY_PHONE_COUNTRY_PREFIX.length;
+  return { start: Math.max(start, min), end: Math.max(end, min) };
+}
+
 /** Keep +375 in the field; format operator + number as the user types. */
 export function constrainBelarusPhoneInput(raw: string): string {
   let digits = digitsOnly(raw);

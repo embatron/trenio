@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 
+import { BelarusPhoneInput } from "@/components/belarus-phone-input";
 import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { ReviewEditor } from "@/components/review-editor";
 import { CityEntityInput } from "@/components/city-entity-input";
@@ -10,7 +11,7 @@ import { TrainerMediaField } from "@/components/trainer-media-field";
 import { MAX_TRAINER_PHOTOS } from "@/lib/admin/trainers";
 import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { authErrorMessage } from "@/lib/auth/errors";
-import { BY_PHONE_COUNTRY_PREFIX, constrainBelarusPhoneInput, formatBelarusPhone } from "@/lib/auth/phone";
+import { BY_PHONE_COUNTRY_PREFIX, constrainBelarusPhoneInput } from "@/lib/auth/phone";
 import type { TrainerPlace } from "@/lib/geo/schemas";
 import {
   TRAINER_AUDIENCE_OPTIONS,
@@ -48,7 +49,7 @@ export type TrainerEmailControl = {
 };
 
 export type TrainerPhoneControl =
-  | { linked: false; value: string; onChange: (value: string) => void }
+  | { linked: false; value: string; onChange: (value: string) => void; locked?: boolean }
   | {
       linked: true;
       value: string;
@@ -67,7 +68,10 @@ type MediaHandlers = {
 
 type CertificateHandlers = {
   initial: TrainerCertificate[];
-  onUpload: (file: { name: string; dataUrl: string }, caption: string) => Promise<TrainerCertificate>;
+  onUpload: (
+    file: { name: string; dataUrl: string },
+    caption: string,
+  ) => Promise<TrainerCertificate>;
   onCaption: (path: string, caption: string) => Promise<void>;
   onRemove: (path: string) => Promise<void>;
 };
@@ -93,7 +97,11 @@ function ProfileSection({
   children: ReactNode;
 }) {
   return (
-    <section id={id} className={tone ? `cabinet-section cabinet-section--${tone}` : "cabinet-section"} aria-labelledby={`${id}-title`}>
+    <section
+      id={id}
+      className={tone ? `cabinet-section cabinet-section--${tone}` : "cabinet-section"}
+      aria-labelledby={`${id}-title`}
+    >
       <h3 id={`${id}-title`}>{title}</h3>
       {children}
     </section>
@@ -117,7 +125,13 @@ function toggleValue<T extends string>(list: T[], value: T) {
   return list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
 }
 
-function EmailField({ email, verified, onRequest, onConfirm, onVerified }: TrainerEmailControl & { email: string }) {
+function EmailField({
+  email,
+  verified,
+  onRequest,
+  onConfirm,
+  onVerified,
+}: TrainerEmailControl & { email: string }) {
   const [editing, setEditing] = useState(!email);
   const [value, setValue] = useState(email);
   const [code, setCode] = useState("");
@@ -135,10 +149,21 @@ function EmailField({ email, verified, onRequest, onConfirm, onVerified }: Train
         <span className="cabinet-form__label-row">
           <span>
             Почта
-            {email && verified && !editing ? <> · <em className="cabinet-form__verified">подтверждена</em></> : email && !editing ? " · не подтверждена" : ""}
+            {email && verified && !editing ? (
+              <>
+                {" "}
+                · <em className="cabinet-form__verified">подтверждена</em>
+              </>
+            ) : email && !editing ? (
+              " · не подтверждена"
+            ) : (
+              ""
+            )}
           </span>
           {email && !editing ? (
-            <button type="button" className="cabinet-edit" onClick={() => setEditing(true)}>Редактировать</button>
+            <button type="button" className="cabinet-edit" onClick={() => setEditing(true)}>
+              Редактировать
+            </button>
           ) : email ? (
             <button
               type="button"
@@ -180,7 +205,9 @@ function EmailField({ email, verified, onRequest, onConfirm, onVerified }: Train
               setStatus("");
               void onRequest(value)
                 .then((result) => {
-                  setStatus(result.devCode ? `${result.message} Код: ${result.devCode}` : result.message);
+                  setStatus(
+                    result.devCode ? `${result.message} Код: ${result.devCode}` : result.message,
+                  );
                   setSent(!result.already);
                   if (result.already) {
                     setEditing(false);
@@ -198,7 +225,13 @@ function EmailField({ email, verified, onRequest, onConfirm, onVerified }: Train
       {editing && sent ? (
         <label>
           <span className="is-required">Код из письма</span>
-          <input inputMode="numeric" autoComplete="one-time-code" maxLength={8} value={code} onChange={(event) => setCode(event.target.value)} />
+          <input
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={8}
+            value={code}
+            onChange={(event) => setCode(event.target.value)}
+          />
           <div className="cabinet-form__actions">
             <button
               className="cabinet-form__ghost"
@@ -223,14 +256,21 @@ function EmailField({ email, verified, onRequest, onConfirm, onVerified }: Train
           </div>
         </label>
       ) : null}
-      {status ? <p className="cabinet-note" role="status">{status}</p> : null}
+      {status ? (
+        <p className="cabinet-note" role="status">
+          {status}
+        </p>
+      ) : null}
     </div>
   );
 }
 
 function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean }) {
   const [editing, setEditing] = useState(phone.linked ? !phone.value : false);
-  const [value, setValue] = useState(phone.linked ? constrainBelarusPhoneInput(phone.value) : phone.value);
+  const [phoneCaret, setPhoneCaret] = useState(0);
+  const [value, setValue] = useState(
+    phone.linked ? constrainBelarusPhoneInput(phone.value || BY_PHONE_COUNTRY_PREFIX) : phone.value,
+  );
   useEffect(() => {
     if (!phone.linked || editing) return;
     setValue(constrainBelarusPhoneInput(phone.value));
@@ -244,15 +284,10 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
     return (
       <label>
         <span>Телефон</span>
-        <input
-          value={phone.value ? formatBelarusPhone(phone.value) || phone.value : ""}
-          maxLength={32}
-          inputMode="tel"
-          placeholder="+375 29 123-45-67"
-          onChange={(event) => {
-            const next = event.target.value.trim();
-            phone.onChange(next ? constrainBelarusPhoneInput(next) : "");
-          }}
+        <BelarusPhoneInput
+          value={phone.value || BY_PHONE_COUNTRY_PREFIX}
+          readOnly={phone.locked}
+          onValue={(next) => phone.onChange(next === BY_PHONE_COUNTRY_PREFIX ? "" : next)}
         />
         <p className="cabinet-note">Подтверждение по SMS появится после привязки аккаунта.</p>
       </label>
@@ -267,10 +302,29 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
         <span className="cabinet-form__label-row">
           <span>
             Телефон
-            {phone.value && verified ? <> · <em className="cabinet-form__verified">подтверждён</em></> : phone.value && !editing ? " · не подтверждён" : ""}
+            {phone.value && verified ? (
+              <>
+                {" "}
+                · <em className="cabinet-form__verified">подтверждён</em>
+              </>
+            ) : phone.value && !editing ? (
+              " · не подтверждён"
+            ) : (
+              ""
+            )}
           </span>
           {phone.value && !editing ? (
-            <button type="button" className="cabinet-edit" onClick={() => setEditing(true)}>Редактировать</button>
+            <button
+              type="button"
+              className="cabinet-edit"
+              onClick={() => {
+                setValue(constrainBelarusPhoneInput(phone.value || BY_PHONE_COUNTRY_PREFIX));
+                setEditing(true);
+                setPhoneCaret((tick) => tick + 1);
+              }}
+            >
+              Редактировать
+            </button>
           ) : phone.value ? (
             <button
               type="button"
@@ -287,20 +341,23 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
             </button>
           ) : null}
         </span>
-        <input
-          type="tel"
-          inputMode="tel"
-          autoComplete="tel"
+        <BelarusPhoneInput
           readOnly={!editing}
-          placeholder={BY_PHONE_COUNTRY_PREFIX}
-          value={editing ? value : constrainBelarusPhoneInput(phone.value)}
-          onChange={(event) => {
-            setValue(constrainBelarusPhoneInput(event.target.value));
+          focusCaret={editing ? phoneCaret : 0}
+          value={
+            editing ? value : constrainBelarusPhoneInput(phone.value || BY_PHONE_COUNTRY_PREFIX)
+          }
+          onValue={(next) => {
+            setValue(next);
             setSent(false);
           }}
         />
       </label>
-      <p className="cabinet-note">{self ? "На публичной странице номер виден только после SMS." : "Номер совпадает с телефоном аккаунта и виден на сайте только после SMS."}</p>
+      <p className="cabinet-note">
+        {self
+          ? "На публичной странице номер виден только после SMS."
+          : "Номер совпадает с телефоном аккаунта и виден на сайте только после SMS."}
+      </p>
       {editing ? (
         <div className="cabinet-form__actions">
           <button
@@ -310,9 +367,12 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
             onClick={() => {
               setPending(true);
               setStatus("");
-              void phone.onRequest(value || BY_PHONE_COUNTRY_PREFIX)
+              void phone
+                .onRequest(value || BY_PHONE_COUNTRY_PREFIX)
                 .then((result) => {
-                  setStatus(result.devCode ? `${result.message} Код: ${result.devCode}` : result.message);
+                  setStatus(
+                    result.devCode ? `${result.message} Код: ${result.devCode}` : result.message,
+                  );
                   setSent(!result.already);
                   if (result.already) {
                     setEditing(false);
@@ -330,7 +390,13 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
       {editing && sent ? (
         <label>
           <span className="is-required">Код из SMS</span>
-          <input inputMode="numeric" autoComplete="one-time-code" maxLength={8} value={code} onChange={(event) => setCode(event.target.value)} />
+          <input
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={8}
+            value={code}
+            onChange={(event) => setCode(event.target.value)}
+          />
           <div className="cabinet-form__actions">
             <button
               className="cabinet-form__ghost"
@@ -338,7 +404,8 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
               disabled={pending}
               onClick={() => {
                 setPending(true);
-                void phone.onConfirm(value, code)
+                void phone
+                  .onConfirm(value, code)
                   .then((result) => {
                     setStatus(result.message);
                     setSent(false);
@@ -355,7 +422,11 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
           </div>
         </label>
       ) : null}
-      {status ? <p className="cabinet-note" role="status">{status}</p> : null}
+      {status ? (
+        <p className="cabinet-note" role="status">
+          {status}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -415,34 +486,70 @@ export function TrainerCardFields({
         {nick ? (
           <label>
             <span>Ник</span>
-            <input className="is-locked" value={nick} readOnly required aria-readonly="true" autoComplete="username" />
-            <p className="cabinet-note">Ник совпадает с Instagram: /trainers/{nick}. Сменить его можно только по запросу в поддержку.</p>
+            <input
+              className="is-locked"
+              value={nick}
+              readOnly
+              required
+              aria-readonly="true"
+              autoComplete="username"
+            />
+            <p className="cabinet-note">
+              Ник совпадает с Instagram: /trainers/{nick}. Сменить его можно только по запросу в
+              поддержку.
+            </p>
           </label>
         ) : null}
         {self ? null : (
           <div className="cabinet-form__row">
             <label>
               <span>Имя</span>
-              <input required value={values.firstName} maxLength={100} autoComplete="given-name" onChange={(event) => patch({ firstName: event.target.value })} />
+              <input
+                required
+                value={values.firstName}
+                maxLength={100}
+                autoComplete="given-name"
+                onChange={(event) => patch({ firstName: event.target.value })}
+              />
             </label>
             <label>
               <span>Фамилия</span>
-              <input required value={values.lastName} maxLength={100} autoComplete="family-name" onChange={(event) => patch({ lastName: event.target.value })} />
+              <input
+                required
+                value={values.lastName}
+                maxLength={100}
+                autoComplete="family-name"
+                onChange={(event) => patch({ lastName: event.target.value })}
+              />
             </label>
           </div>
         )}
         {self ? (
           <div>
             <span className="cabinet-media__label">Как меня представить</span>
-            <ReviewEditor value={values.bio} onChange={(bio) => patch({ bio })} placeholder="Коротко о себе" invalid={bioInvalid} />
+            <ReviewEditor
+              value={values.bio}
+              onChange={(bio) => patch({ bio })}
+              placeholder="Коротко о себе"
+              invalid={bioInvalid}
+            />
           </div>
         ) : (
           <>
             <label>
               <span>Заголовок</span>
-              <input value={values.headline} maxLength={200} placeholder="Тренер по боксу" onChange={(event) => patch({ headline: event.target.value })} />
+              <input
+                value={values.headline}
+                maxLength={200}
+                placeholder="Тренер по боксу"
+                onChange={(event) => patch({ headline: event.target.value })}
+              />
             </label>
-            <ReviewEditor value={values.bio} onChange={(bio) => patch({ bio })} placeholder="Коротко о себе" />
+            <ReviewEditor
+              value={values.bio}
+              onChange={(bio) => patch({ bio })}
+              placeholder="Коротко о себе"
+            />
           </>
         )}
       </ProfileSection>
@@ -461,12 +568,23 @@ export function TrainerCardFields({
       <ProfileSection id="trainer-work" title="Тренировки">
         <div>
           <span className="cabinet-media__label">Как проходят мои тренировки</span>
-          <ReviewEditor value={values.about} onChange={(about) => patch({ about })} placeholder="Как проходят мои тренировки" />
+          <ReviewEditor
+            value={values.about}
+            onChange={(about) => patch({ about })}
+            placeholder="Как проходят мои тренировки"
+          />
         </div>
-        <p className="cabinet-note">{self ? "Как и где проходят мои тренировки и чем они отличаются: место и формат." : "Расскажите подробно, как и где проходят тренировки и чем они отличаются: место и формат."}</p>
+        <p className="cabinet-note">
+          {self
+            ? "Как и где проходят мои тренировки и чем они отличаются: место и формат."
+            : "Расскажите подробно, как и где проходят тренировки и чем они отличаются: место и формат."}
+        </p>
         <label>
           <span>{self ? "Мои виды спорта" : "Виды спорта"}</span>
-          <SportEntityInput value={values.sportSlugs} onChange={(sportSlugs) => patch({ sportSlugs })} />
+          <SportEntityInput
+            value={values.sportSlugs}
+            onChange={(sportSlugs) => patch({ sportSlugs })}
+          />
         </label>
         <p className="cabinet-note">Не больше четырёх, из категорий второго уровня.</p>
         <label>
@@ -494,10 +612,19 @@ export function TrainerCardFields({
             onChange={(event) => patch({ priceFrom: optionalPrice(event.target.value) })}
           />
         </label>
-        <p className="cabinet-note">Рекомендуем указать минимальную стоимость тренировки: на карточке будет «От N BYN». Если сумму не указывать, останется «договорная».</p>
+        <p className="cabinet-note">
+          Рекомендуем указать минимальную стоимость тренировки: на карточке будет «От N BYN». Если
+          сумму не указывать, останется «договорная».
+        </p>
         <div>
-          <span className="cabinet-media__label">{self ? "Формат моих тренировок" : "Формат занятий"}</span>
-          <div className="cabinet-choices" role="group" aria-label={self ? "Формат моих тренировок" : "Формат занятий"}>
+          <span className="cabinet-media__label">
+            {self ? "Формат моих тренировок" : "Формат занятий"}
+          </span>
+          <div
+            className="cabinet-choices"
+            role="group"
+            aria-label={self ? "Формат моих тренировок" : "Формат занятий"}
+          >
             {TRAINER_FORMAT_OPTIONS.map((option) => (
               <button
                 key={option.id}
@@ -512,8 +639,14 @@ export function TrainerCardFields({
           </div>
         </div>
         <div>
-          <span className="cabinet-media__label">{self ? "С кем я работаю" : "С кем работает"}</span>
-          <div className="cabinet-choices" role="group" aria-label={self ? "С кем я работаю" : "С кем работает"}>
+          <span className="cabinet-media__label">
+            {self ? "С кем я работаю" : "С кем работает"}
+          </span>
+          <div
+            className="cabinet-choices"
+            role="group"
+            aria-label={self ? "С кем я работаю" : "С кем работает"}
+          >
             {TRAINER_AUDIENCE_OPTIONS.map((option) => (
               <button
                 key={option.id}
@@ -546,7 +679,12 @@ export function TrainerCardFields({
           <span>Instagram</span>
           <div className="cabinet-brand-field">
             <InstagramIcon />
-            <input value={values.instagram} maxLength={300} placeholder="https://instagram.com/…" onChange={(event) => patch({ instagram: event.target.value })} />
+            <input
+              value={values.instagram}
+              maxLength={300}
+              placeholder="https://instagram.com/…"
+              onChange={(event) => patch({ instagram: event.target.value })}
+            />
           </div>
           {self ? <p className="cabinet-note">Ссылка видна на публичной странице.</p> : null}
         </label>
@@ -554,16 +692,33 @@ export function TrainerCardFields({
           <span>Telegram</span>
           <div className="cabinet-brand-field">
             <TelegramIcon />
-            <input value={values.telegram} maxLength={300} placeholder="https://t.me/…" onChange={(event) => patch({ telegram: event.target.value })} />
+            <input
+              value={values.telegram}
+              maxLength={300}
+              placeholder="https://t.me/…"
+              onChange={(event) => patch({ telegram: event.target.value })}
+            />
           </div>
-          {self ? <p className="cabinet-note">На публичной странице появится после подтверждения ботом.</p> : null}
+          {self ? (
+            <p className="cabinet-note">
+              На публичной странице появится после подтверждения ботом.
+            </p>
+          ) : null}
         </label>
         {emailConfirm ? (
           <EmailField email={values.email} {...emailConfirm} />
         ) : (
           <label>
             <span>Почта</span>
-            <input type="email" inputMode="email" autoComplete="off" value={values.email} maxLength={320} placeholder="name@example.com" onChange={(event) => patch({ email: event.target.value })} />
+            <input
+              type="email"
+              inputMode="email"
+              autoComplete="off"
+              value={values.email}
+              maxLength={320}
+              placeholder="name@example.com"
+              onChange={(event) => patch({ email: event.target.value })}
+            />
           </label>
         )}
       </ProfileSection>

@@ -64,6 +64,9 @@ export type OwnTrainerProfile = {
   privacyAccepted: boolean;
 };
 
+export const OWN_PROFILE_STATUSES = ["published", "hidden"] as const;
+export type OwnProfileStatus = (typeof OWN_PROFILE_STATUSES)[number];
+
 const emptyProfile: OwnTrainerProfile = {
   firstName: "",
   lastName: "",
@@ -106,6 +109,7 @@ const saveSchema = z.object({
   telegram: z.string().trim().max(300),
   email: z.string().trim().max(320),
   experienceYears: z.number().int().min(1).max(80),
+  status: z.enum(OWN_PROFILE_STATUSES),
   formats: z.array(z.enum(["individual", "group"])).max(2),
   audiences: z.array(z.enum(["adult", "teen", "kid"])).max(3),
   image: z.string().max(2_200_000).optional(),
@@ -270,6 +274,7 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       experienceYears: data.experienceYears,
       formats: [...new Set(data.formats)],
       audiences: effectiveAudiences(data.audiences),
+      status: data.status,
       avatarPath: storedAvatar,
       ...(photos ? { photos } : {}),
       updatedAt: new Date(),
@@ -293,7 +298,6 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
         ...values,
         slug,
         sourceUrl: data.instagram || `https://trenio.by/trainers/${slug}`,
-        status: "draft",
         claimStatus: "claimed",
         createdSource: "self",
         ownerUserId: context.user.id,
@@ -308,12 +312,16 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       domain: "form",
       action: "form.trainer_profile",
       outcome: "success",
-      message: "Карточка тренера сохранена.",
+      message: data.status === "published" ? "Профиль опубликован." : "Профиль скрыт из каталога.",
       actorUserId: context.user.id,
       subject: context.user.email,
       target: profileSlug,
     });
-    return { ok: true as const, message: "Профиль тренера сохранён.", avatarPath };
+    return {
+      ok: true as const,
+      message: data.status === "published" ? "Профиль опубликован." : "Профиль скрыт. В каталоге его нет.",
+      avatarPath,
+    };
     } catch (error) {
       if (error instanceof AuthError) {
         void writeLog({

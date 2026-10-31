@@ -2,6 +2,10 @@ import { and, eq, gt, inArray, isNull } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { conversationReads, conversations, messages, trainerProfiles, userRoles, users } from "@/db/schema";
+import { reviewPlainText } from "@/lib/catalog/review-html";
+import { writeLog } from "@/lib/log/logger";
+import { renderLetter } from "@/lib/mail/letter";
+import { recipientAllowsMail } from "@/lib/mail/preferences";
 import { mailAppUrl, sendMail } from "@/lib/mail/send.server";
 
 const DEBOUNCE_MS = 2 * 60_000;
@@ -13,9 +17,9 @@ function personName(firstName: string, lastName: string | null) {
   return [firstName, lastName].filter(Boolean).join(" ") || "Пользователь";
 }
 
-function trainerName(fullName: string, firstName: string, lastName: string) {
+function trainerName(fullName: string | null, firstName: string | null, lastName: string | null) {
   const combined = [firstName, lastName].filter(Boolean).join(" ");
-  return fullName.trim() || combined || "Тренер";
+  return (fullName ?? "").trim() || combined || "Тренер";
 }
 
 async function deliver(input: { conversationId: string; messageId: number; recipientId: string }) {
@@ -51,15 +55,17 @@ async function deliver(input: { conversationId: string; messageId: number; recip
       email: users.email,
       telegramUserId: users.telegramUserId,
       ownerUserId: trainerProfiles.ownerUserId,
+      hostUserId: conversations.hostUserId,
       trainerFullName: trainerProfiles.fullName,
       trainerFirstName: trainerProfiles.firstName,
       trainerLastName: trainerProfiles.lastName,
+      trainerAvatar: trainerProfiles.avatarPath,
       userFirstName: users.firstName,
       userLastName: users.lastName,
     })
     .from(conversations)
     .innerJoin(users, eq(users.id, input.recipientId))
-    .innerJoin(trainerProfiles, eq(trainerProfiles.id, conversations.trainerProfileId))
+    .leftJoin(trainerProfiles, eq(trainerProfiles.id, conversations.trainerProfileId))
     .where(eq(conversations.id, input.conversationId))
     .limit(1);
   if (!row) return;
@@ -68,26 +74,68 @@ async function deliver(input: { conversationId: string; messageId: number; recip
     .select({ role: userRoles.role })
     .from(userRoles)
     .where(eq(userRoles.userId, input.recipientId));
-  const trainerSide = row.ownerUserId === input.recipientId;
+  const trainerSide = row.ownerUserId === input.recipientId || row.hostUserId === input.recipientId;
   const trainerCabinet = trainerSide || roles.some((item) => item.role === "trainer" || item.role === "club");
   const path = trainerCabinet
     ? `/me/messages/${input.conversationId}`
     : `/account/messages/${input.conversationId}`;
   const url = `${mailAppUrl()}${path}`;
-  const greetingName = trainerSide
-    ? trainerName(row.trainerFullName, row.trainerFirstName, row.trainerLastName)
-    : personName(row.userFirstName, row.userLastName);
+  const greetingName = row.hostUserId === input.recipientId
+    ? "Trenioby"
+    : trainerSide
+      ? trainerName(row.trainerFullName, row.trainerFirstName, row.trainerLastName)
+      : personName(row.userFirstName, row.userLastName);
 
-  await sendMail({
-    to: [row.email],
-    subject: "Новое сообщение на Trenio",
-    text: [
-      `Здравствуйте, ${greetingName}!`,
-      "",
-      "Вам написали на Trenio. Откройте переписку, чтобы ответить.",
-      url,
-    ].join("\n"),
+  const [posted] = await db
+    .select({ body: messages.body, senderId: messages.senderId })
+    .from(messages)
+    .where(eq(messages.id, input.messageId))
+    .limit(1);
+  if (!posted) return;
+  const [sender] = await db
+    .select({ firstName: users.firstName, lastName: users.lastName, avatarPath: users.avatarPath })
+    .from(users)
+    .where(eq(users.id, posted.senderId))
+    .limit(1);
+  const fromOwner = row.ownerUserId != null && posted.senderId === row.ownerUserId;
+  const fromPortal = row.hostUserId != null && posted.senderId === row.hostUserId;
+  const writerName = fromPortal
+    ? "Trenioby"
+    : fromOwner
+      ? trainerName(row.trainerFullName, row.trainerFirstName, row.trainerLastName)
+      : personName(sender?.firstName ?? "", sender?.lastName ?? null);
+  const quote = reviewPlainText(posted.body).trim() || "В сообщении нет текста, только вложение.";
+  const letter = renderLetter({
+    title: `${writerName} написал вам`,
+    lead: `Здравствуйте, ${greetingName}!`,
+    person: {
+      name: writerName,
+      avatarUrl: (fromOwner ? row.trainerAvatar : sender?.avatarPath) || undefined,
+      caption: fromPortal ? "Trenio" : fromOwner ? "Тренер" : "Клиент",
+    },
+    quote,
+    action: { href: url, label: "Открыть переписку" },
   });
+
+  if (await recipientAllowsMail(row.email, "messages")) {
+    await sendMail({
+      to: [row.email],
+      subject: `${writerName} написал вам на Trenio`,
+      text: letter.text,
+      html: letter.html,
+    });
+  } else {
+    void writeLog({
+      level: "info",
+      domain: "email",
+      action: "email.preference",
+      outcome: "skipped",
+      message: "Письмо о сообщении не отправлено: этот вид писем выключен.",
+      subject: row.email,
+      target: input.conversationId,
+      context: { kind: "messages" },
+    });
+  }
 
   if (!trainerSide || !row.telegramUserId) return;
   const token = process.env.TELEGRAM_LOGIN_BOT_TOKEN?.trim();
@@ -136,6 +184,7 @@ async function deliver(input: { conversationId: string; messageId: number; recip
 export async function notifyStaffAboutReport(input: {
   conversationId: string;
   reporterName: string;
+  reporterAvatar?: string;
   reporterSide: "client" | "trainer";
   trainerName: string;
   reason: string;
@@ -160,19 +209,18 @@ export async function notifyStaffAboutReport(input: {
     return;
   }
   const side = input.reporterSide === "trainer" ? "Тренер" : "Клиент";
+  const letter = renderLetter({
+    title: "Жалоба на переписку",
+    person: { name: input.reporterName, avatarUrl: input.reporterAvatar, caption: side },
+    quote: input.comment,
+    lines: [`Тренер: ${input.trainerName}`, `Причина: ${input.reason}`],
+    action: { href: `${mailAppUrl()}/admin/messages`, label: "Разобрать" },
+  });
   await sendMail({
     to,
     subject: `Жалоба на переписку: ${input.trainerName}`,
-    text: [
-      "Новая жалоба на переписку.",
-      `Кто пожаловался: ${input.reporterName} (${side})`,
-      `Тренер: ${input.trainerName}`,
-      `Причина: ${input.reason}`,
-      "",
-      input.comment,
-      "",
-      `Разобрать: ${mailAppUrl()}/admin/messages`,
-    ].join("\n"),
+    text: letter.text,
+    html: letter.html,
   });
   void writeLog({
     level: "info",

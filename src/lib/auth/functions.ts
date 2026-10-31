@@ -19,6 +19,7 @@ import {
   accountEmailSchema,
   accountPhoneCodeSchema,
   accountPhoneSchema,
+  mailPreferenceSchema,
   profileNameSchema,
   verifyEmailSchema,
   type PublicUser,
@@ -54,8 +55,10 @@ import {
   requestTrainerContactEmailCode,
   setAccountAvatar,
   resetPassword,
+  setPasswordFromEmailLink,
   revokeSessionByToken,
   updateAccountName,
+  updateMailPreference,
   verifyEmailToken,
   type SessionUser,
 } from "@/auth/service";
@@ -75,6 +78,10 @@ function toPublicUser(user: SessionUser): PublicUser {
     roles: user.roles,
     status: user.status,
     lastSignupIntent: user.lastSignupIntent,
+    mailMessages: user.mailMessages,
+    mailReviews: user.mailReviews,
+    mailSite: user.mailSite,
+    mailMarketing: user.mailMarketing,
   };
 }
 
@@ -377,6 +384,18 @@ export const resetPasswordFn = createServerFn({ method: "POST" })
     }
   });
 
+export const setPasswordFn = createServerFn({ method: "POST" })
+  .validator(resetPasswordSchema)
+  .handler(async ({ data }) => {
+    try {
+      const meta = getRequestMeta();
+      const session = await setPasswordFromEmailLink(data.token, data.password, meta);
+      return finishLogin(session, true, "auth.password.set");
+    } catch (error) {
+      rethrowAuth(error, "auth.password.set");
+    }
+  });
+
 export const verifyEmailFn = createServerFn({ method: "POST" })
   .validator(verifyEmailSchema)
   .handler(async ({ data }) => {
@@ -616,6 +635,28 @@ export const updateProfileFn = createServerFn({ method: "POST" })
       return { ok: true as const };
     } catch (error) {
       rethrowAuth(error, "account.name", context.user.email, context.user.id);
+    }
+  });
+
+export const updateMailPreferenceFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(mailPreferenceSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      await updateMailPreference(context.user.id, data.kind, data.enabled);
+      void writeLog({
+        level: "info",
+        domain: "account",
+        action: "account.mail",
+        outcome: "success",
+        message: "Настройка писем сохранена.",
+        subject: context.user.email,
+        actorUserId: context.user.id,
+        context: { kind: data.kind, enabled: data.enabled },
+      });
+      return { ok: true as const };
+    } catch (error) {
+      rethrowAuth(error, "account.mail", context.user.email, context.user.id);
     }
   });
 

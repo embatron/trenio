@@ -335,12 +335,13 @@ export const DIRECT_CSS = `
 .direct-list { display: flex; flex-direction: column; border-bottom: 1px solid var(--line); }
 .direct-list h2 { margin: 0; padding: 14px 16px; font-size: 16px; color: var(--dark); }
 .direct-list ul { list-style: none; margin: 0; padding: 0; overflow: auto; }
-.direct-list a { display: flex; align-items: center; gap: 10px; min-height: 64px; padding: 8px 12px; color: inherit; text-decoration: none; transition: background-color 0.15s ease; }
-.direct-list a:hover { background: rgba(var(--dark-rgb), 0.04); }
-.direct-list a:hover .trainer-name__line { color: var(--primary); }
-.direct-list a.is-active { background: rgba(var(--primary-rgb), 0.08); }
-.direct-list a.is-active:hover { background: rgba(var(--primary-rgb), 0.14); }
-.direct-list a.is-active .trainer-name__line { color: var(--primary); }
+.direct-list a, .direct-list button.direct-list__row { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 64px; padding: 8px 12px; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; text-decoration: none; cursor: pointer; transition: background-color 0.15s ease; }
+.direct-list a:hover, .direct-list button.direct-list__row:hover { background: rgba(var(--dark-rgb), 0.04); }
+.direct-list a:hover .trainer-name__line, .direct-list button.direct-list__row:hover .trainer-name__line { color: var(--primary); }
+.direct-list a.is-active, .direct-list button.direct-list__row.is-active { background: rgba(var(--primary-rgb), 0.08); }
+.direct-list a.is-active:hover, .direct-list button.direct-list__row.is-active:hover { background: rgba(var(--primary-rgb), 0.14); }
+.direct-list a.is-active .trainer-name__line, .direct-list button.direct-list__row.is-active .trainer-name__line { color: var(--primary); }
+.direct-list__aside { color: var(--muted); font-weight: var(--fw-ui); }
 .direct-list__text { display: grid; min-width: 0; flex: 1; }
 .direct-list__text strong { color: var(--dark); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .direct-list .trainer-name,

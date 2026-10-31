@@ -16,7 +16,7 @@ async () => {
     try {
       const next = new URL(url, location.href);
       const stp = next.searchParams.get("stp") || "";
-      if (thumbnailStp.test(stp) || /[?&]stp=/.test(next.search)) return true;
+      if (thumbnailStp.test(stp)) return true;
       return /\/s(?:100|150|206)x(?:100|150|206)\//.test(next.pathname);
     } catch {
       return true;
@@ -162,11 +162,26 @@ async () => {
     }
     return anchor;
   };
+  const username = location.pathname.split("/").filter(Boolean)[0] || "";
   const seenPosts = new Set();
   const posts = [];
   for (const anchor of document.querySelectorAll('a[href*="/p/"], a[href*="/reel/"]')) {
     const href = anchor.href.split("?")[0];
-    if (!/instagram\.com\/(p|reel)\//.test(href) || seenPosts.has(href)) continue;
+    let owner = "";
+    let kind = "";
+    try {
+      const parts = new URL(href).pathname.split("/").filter(Boolean);
+      if (parts[0] === "p" || parts[0] === "reel") {
+        kind = parts[0];
+        owner = username;
+      } else {
+        owner = parts[0] || "";
+        kind = parts[1] || "";
+      }
+    } catch {
+      continue;
+    }
+    if ((kind !== "p" && kind !== "reel") || owner.toLowerCase() !== username.toLowerCase() || seenPosts.has(href)) continue;
     seenPosts.add(href);
     const tile = tileRoot(anchor);
     const pinned = [...tile.querySelectorAll("svg, [aria-label], [title]")].some((el) =>
@@ -175,8 +190,6 @@ async () => {
     posts.push({ href, pinned });
   }
   const pinnedPosts = posts.filter((post) => post.pinned).slice(0, 3);
-
-  const username = location.pathname.split("/").filter(Boolean)[0] || "";
   const profilePictures = headerImages.filter((image) => /profile picture|фото профиля/i.test(image.alt));
   const avatar =
     profilePictures.find((image) => username && image.alt.toLowerCase().includes(username.toLowerCase())) ||

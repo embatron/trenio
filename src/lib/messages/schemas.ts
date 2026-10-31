@@ -44,7 +44,7 @@ export const messageCursorSchema = z.object({
 });
 
 export const listConversationsSchema = z.object({
-  view: z.enum(["own", "inbox"], { message: "Неизвестная лента." }),
+  view: z.enum(["own", "inbox", "staff"], { message: "Неизвестная лента." }),
   cursor: conversationCursorSchema.optional(),
 });
 
@@ -129,11 +129,15 @@ export type ConversationListItem = {
   unread: number;
   counterpart: CounterpartDto;
   trainerSlug: string;
+  /** The other person in a staff row: trainer when the title is the client, and the reverse. */
+  aside?: string;
 };
 
 export type ConversationListResult = {
   items: ConversationListItem[];
   nextCursor: ConversationCursor | null;
+  /** Full list size. Set for the staff view, which is paged. */
+  total?: number;
 };
 
 export type MessageAttachmentDto = {

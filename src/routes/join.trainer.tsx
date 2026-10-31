@@ -3,12 +3,17 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState, type FormEvent, type ReactNode } from "react";
 
 import { HoneypotField, honeypotFromForm } from "@/components/auth/honeypot-field";
+import { BelarusPhoneInput } from "@/components/belarus-phone-input";
 import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { BY_PHONE_COUNTRY_PREFIX, constrainBelarusPhoneInput } from "@/lib/auth/phone";
 import { submitTrainerWelcomeFn } from "@/lib/catalog/trainer-welcome.functions";
-import { optionalBelarusPhone, parseInstagramHandle, parseTelegramHandle } from "@/lib/catalog/trainer-welcome";
+import {
+  optionalBelarusPhone,
+  parseInstagramHandle,
+  parseTelegramHandle,
+} from "@/lib/catalog/trainer-welcome";
 import { infoPageCopy, infoPageHead } from "@/lib/seo/pages";
 
 const page = infoPageCopy("join");
@@ -173,32 +178,46 @@ function TrainerWelcomePage() {
             <nav className="welcome-crumbs" aria-label="Хлебные крошки">
               <Link to="/">Главная</Link>
               <span aria-hidden="true">/</span>
-              <span className="is-current" aria-current="page">{page.crumb}</span>
+              <span className="is-current" aria-current="page">
+                {page.crumb}
+              </span>
             </nav>
             <div className="welcome-grid">
               <div className="welcome-copy">
                 <h1 id="welcome-title">Привет!</h1>
                 <p>
-                  Мы сделали проект, где подбирают тренера в Беларуси — для себя или для ребёнка. Рядом с домом, по виду спорта и городу. Формат разный: индивидуально, в группе или как удобнее.
+                  Мы сделали проект, где подбирают тренера в Беларуси — для себя или для ребёнка.
+                  Рядом с домом, по виду спорта и городу. Формат разный: индивидуально, в группе или
+                  как удобнее.
                 </p>
                 <p>
-                  Оставь Instagram — по нему соберём предварительный профиль и пришлём тебе. Сможешь дополнить или обновить данные. Профиль не опубликуем, пока ты его не увидишь. Telegram и телефон добавь, если есть: так проще написать. Размещение бесплатное.
+                  Оставь Instagram — по нему соберём предварительный профиль и пришлём тебе. Сможешь
+                  дополнить или обновить данные. Профиль не опубликуем, пока ты его не увидишь.
+                  Telegram и телефон добавь, если есть: так проще написать. Размещение бесплатное.
                 </p>
                 <ul className="welcome-points">
                   <li>
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5" /></svg>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
                     Соберём карточку по твоему Instagram
                   </li>
                   <li>
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5" /></svg>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
                     Пришлём предварительный профиль
                   </li>
                   <li>
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5" /></svg>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
                     Сможешь дополнить или обновить данные
                   </li>
                   <li>
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5" /></svg>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
                     Не опубликуем, пока ты не посмотришь
                   </li>
                 </ul>
@@ -208,7 +227,9 @@ function TrainerWelcomePage() {
                 {done ? (
                   <div className="welcome-done">
                     <h2>Спасибо</h2>
-                    <p>Скоро с тобой свяжемся и подумаем, как лучше организовать твой новый профиль.</p>
+                    <p>
+                      Скоро с тобой свяжемся и подумаем, как лучше организовать твой новый профиль.
+                    </p>
                   </div>
                 ) : (
                   <>
@@ -258,15 +279,12 @@ function TrainerWelcomePage() {
                     </Field>
                     <Field label="Телефон">
                       <PhoneIcon />
-                      <input
-                        type="tel"
+                      <BelarusPhoneInput
                         name="phone"
-                        inputMode="tel"
-                        autoComplete="tel"
                         aria-invalid={error ? true : undefined}
                         value={phone}
-                        onChange={(event) => {
-                          setPhone(constrainBelarusPhoneInput(event.target.value));
+                        onValue={(next) => {
+                          setPhone(next);
                           setError(null);
                         }}
                       />
@@ -280,7 +298,9 @@ function TrainerWelcomePage() {
                         type="button"
                         onClick={() => {
                           setNoInstagram((value) => !value);
-                          setPhone((value) => constrainBelarusPhoneInput(value || BY_PHONE_COUNTRY_PREFIX));
+                          setPhone((value) =>
+                            constrainBelarusPhoneInput(value || BY_PHONE_COUNTRY_PREFIX),
+                          );
                           setError(null);
                         }}
                       >

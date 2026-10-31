@@ -27,6 +27,7 @@ type DraftFile = {
   sports?: ImportedTrainerDraft["sports"];
   primarySport?: ImportedTrainerDraft["primarySport"];
   city: string;
+  address?: string;
   priceFrom?: number | null;
   experienceYears?: number | null;
   formats?: ImportedTrainerDraft["formats"];
@@ -75,6 +76,7 @@ async function sync() {
       city: draft.city,
       citySlug: published?.city.slug,
       district: published?.district ?? "",
+      address: draft.address || "",
       priceFrom: draft.priceFrom ?? published?.priceFrom ?? null,
       languages: draft.languages ?? [],
       avatarPath: draft.avatarPath || published?.photo || "",

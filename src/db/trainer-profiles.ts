@@ -32,6 +32,7 @@ export type ImportedTrainerDraft = {
   city: string;
   citySlug?: string;
   district?: string;
+  address?: string;
   priceFrom?: number | null;
   languages?: string[];
   avatarPath?: string;
@@ -54,6 +55,18 @@ function newClaimToken() {
   return randomBytes(32).toString("base64url");
 }
 
+/** The face stays in the photo list. An empty import list must not wipe it. */
+function profilePhotos(listed: string[] | undefined, avatarPath: string, existing: string[] | undefined) {
+  const photos = (listed ?? []).map((item) => item.split("?")[0]).filter(Boolean);
+  const avatar = avatarPath.split("?")[0];
+  if (photos.length === 0) {
+    if (avatar) return [avatar];
+    return existing ?? [];
+  }
+  if (avatar && !photos.includes(avatar)) return [avatar, ...photos].slice(0, 9);
+  return photos.slice(0, 9);
+}
+
 export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
   const db = getDb();
   const slug = instagramProfileSlug(draft.handle);
@@ -63,6 +76,26 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
     .from(trainerProfiles)
     .where(eq(trainerProfiles.instagramHandle, slug))
     .limit(1);
+  const address = (draft.address ?? "").trim();
+  const keepPlace = Boolean(address) && existing?.address === address && existing.geocodeStatus === "ok";
+  const place = address
+    ? {
+        trainingPlaces: keepPlace
+          ? existing?.trainingPlaces ?? []
+          : [{
+              city: draft.city,
+              district: draft.district ?? "",
+              address,
+              lat: null,
+              lng: null,
+              geocodeStatus: "pending" as const,
+            }],
+        address,
+        addressLat: keepPlace ? existing?.addressLat ?? null : null,
+        addressLng: keepPlace ? existing?.addressLng ?? null : null,
+        geocodeStatus: keepPlace ? existing?.geocodeStatus ?? "pending" : "pending" as const,
+      }
+    : {};
   const [taken] = await db
     .select({ id: trainerProfiles.id, handle: trainerProfiles.instagramHandle })
     .from(trainerProfiles)
@@ -99,10 +132,11 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
     city: draft.city,
     citySlug: draft.citySlug || cityCatalogSlug(draft.city) || "",
     district: draft.district ?? "",
+    ...place,
     priceFrom: draft.priceFrom ?? null,
     languages: draft.languages ?? [],
     avatarPath: draft.avatarPath ?? "",
-    photos: draft.photos ?? (existing?.photos?.length ? existing.photos : draft.avatarPath ? [draft.avatarPath] : []),
+    photos: profilePhotos(draft.photos, draft.avatarPath ?? "", existing?.photos),
     certificates: draft.certificates ?? existing?.certificates ?? [],
     phone: formatBelarusPhone(draft.phone ?? ""),
     email: draft.email ?? "",

@@ -1,6 +1,8 @@
 import { useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import { AvatarCrop } from "@/components/avatar-crop";
+import { BelarusPhoneInput } from "@/components/belarus-phone-input";
 import { CabinetNotice } from "@/components/cabinet";
 import { PhotoImage } from "@/components/photo-image";
 import { UserAvatar } from "@/components/user-avatar";
@@ -13,8 +15,10 @@ import {
   requestAccountEmailCodeFn,
   requestAccountPhoneCodeFn,
   setAccountAvatarFn,
+  updateMailPreferenceFn,
   updateProfileFn,
 } from "@/lib/auth/functions";
+import type { MailKind } from "@/lib/mail/kinds";
 import { ROLE_LABELS } from "@/lib/auth/roles";
 import type { PublicUser } from "@/lib/auth/schemas";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
@@ -27,31 +31,31 @@ const ACCOUNT_STATUS: Record<string, string> = {
 };
 
 function showPhone(phone: string | null) {
-  if (!phone) return "";
-  return constrainBelarusPhoneInput(phone);
+  return constrainBelarusPhoneInput(phone || BY_PHONE_COUNTRY_PREFIX);
 }
 
-async function fileToJpeg(file: File): Promise<string> {
-  const url = URL.createObjectURL(file);
-  try {
-    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = () => reject(new Error("Не удалось прочитать изображение."));
-      img.src = url;
-    });
-    const max = 512;
-    const scale = Math.min(1, max / Math.max(image.width, image.height));
-    const canvas = document.createElement("canvas");
-    canvas.width = Math.max(1, Math.round(image.width * scale));
-    canvas.height = Math.max(1, Math.round(image.height * scale));
-    const ctx = canvas.getContext("2d");
-    if (!ctx) throw new Error("Не удалось обработать изображение.");
-    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-    return canvas.toDataURL("image/jpeg", 0.86);
-  } finally {
-    URL.revokeObjectURL(url);
-  }
+const MAIL_ROWS: Array<{ kind: MailKind; label: string; hint: string }> = [
+  { kind: "messages", label: "Сообщения", hint: "Письмо, когда вам написали в переписке." },
+  { kind: "reviews", label: "Отзывы", hint: "Письмо, когда ваш отзыв опубликован или отклонён." },
+  {
+    kind: "site",
+    label: "Оповещения с сайта",
+    hint: "Служебные новости кабинета, кроме кода, подтверждения почты и сброса пароля.",
+  },
+  {
+    kind: "marketing",
+    label: "Маркетинговые рассылки",
+    hint: "Новости trenio.by и подборки тренеров. Без согласия не отправляем.",
+  },
+];
+
+function mailFromUser(user: PublicUser) {
+  return {
+    messages: user.mailMessages,
+    reviews: user.mailReviews,
+    site: user.mailSite,
+    marketing: user.mailMarketing,
+  };
 }
 
 export function AccountProfileForm({
@@ -67,6 +71,7 @@ export function AccountProfileForm({
 }) {
   const router = useRouter();
   const updateProfile = useAuthServerFn(updateProfileFn);
+  const updateMail = useAuthServerFn(updateMailPreferenceFn);
   const changePassword = useAuthServerFn(changePasswordFn);
   const requestEmail = useAuthServerFn(requestAccountEmailCodeFn);
   const confirmEmail = useAuthServerFn(confirmAccountEmailCodeFn);
@@ -81,15 +86,23 @@ export function AccountProfileForm({
   const [emailSent, setEmailSent] = useState(false);
   const [phoneValue, setPhoneValue] = useState(showPhone(phone));
   const [phoneEditing, setPhoneEditing] = useState(!phone);
+  const [phoneCaret, setPhoneCaret] = useState(0);
   const [phoneCode, setPhoneCode] = useState("");
   const [phoneSent, setPhoneSent] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [avatarUrl, setAvatarUrl] = useState(profilePhoto || user.avatarPath);
+  const [cropFile, setCropFile] = useState<File | null>(null);
   const [pending, setPending] = useState(false);
+  const [mail, setMail] = useState(() => mailFromUser(user));
+  const [mailPending, setMailPending] = useState<MailKind | null>(null);
   const [popup, setPopup] = useState<{ title: string; message: string } | null>(null);
   const role = user.roles.map((item) => ROLE_LABELS[item]).join(", ");
+
+  useEffect(() => {
+    setMail(mailFromUser(user));
+  }, [user.mailMessages, user.mailReviews, user.mailSite, user.mailMarketing]);
 
   function ok(message: string) {
     setPopup({ title: "Готово", message });
@@ -121,7 +134,18 @@ export function AccountProfileForm({
         }}
       >
         <div className="cabinet-avatar">
-          {avatarUrl ? <PhotoImage className="cabinet-avatar__photo" src={avatarUrl} alt="" preset="avatar" width={72} height={72} /> : <UserAvatar name={[firstName, lastName].filter(Boolean).join(" ")} size={72} />}
+          {avatarUrl ? (
+            <PhotoImage
+              className="cabinet-avatar__photo"
+              src={avatarUrl}
+              alt=""
+              preset="avatar"
+              width={72}
+              height={72}
+            />
+          ) : (
+            <UserAvatar name={[firstName, lastName].filter(Boolean).join(" ")} size={72} />
+          )}
           {profilePhoto ? (
             <p className="cabinet-note">Аватар — моё главное фото из профиля.</p>
           ) : (
@@ -133,31 +157,57 @@ export function AccountProfileForm({
                 onChange={(event) => {
                   const file = event.target.files?.[0];
                   event.target.value = "";
-                  if (!file) return;
-                  setPending(true);
-                  void fileToJpeg(file)
-                    .then((image) => uploadAvatar({ data: { image } }))
-                    .then(async (result) => {
-                      const payload = result as { avatarPath: string; message: string };
-                      setAvatarUrl(payload.avatarPath);
-                      ok(payload.message);
-                      await router.invalidate();
-                    })
-                    .catch(fail)
-                    .finally(() => setPending(false));
+                  if (file) setCropFile(file);
                 }}
               />
             </label>
           )}
         </div>
+        {cropFile ? (
+          <AvatarCrop
+            file={cropFile}
+            pending={pending}
+            onCancel={() => setCropFile(null)}
+            onSave={(image) => {
+              const previous = avatarUrl;
+              setAvatarUrl(image);
+              setPending(true);
+              void uploadAvatar({ data: { image } })
+                .then(async (result) => {
+                  const payload = result as { avatarPath: string; message: string };
+                  setAvatarUrl(payload.avatarPath);
+                  setCropFile(null);
+                  ok(payload.message);
+                  await router.invalidate();
+                })
+                .catch((error) => {
+                  setAvatarUrl(previous);
+                  fail(error);
+                })
+                .finally(() => setPending(false));
+            }}
+          />
+        ) : null}
         <div className="cabinet-form__row">
           <label>
             <span>Имя</span>
-            <input required value={firstName} maxLength={100} autoComplete="given-name" onChange={(event) => setFirstName(event.target.value)} />
+            <input
+              required
+              value={firstName}
+              maxLength={100}
+              autoComplete="given-name"
+              onChange={(event) => setFirstName(event.target.value)}
+            />
           </label>
           <label>
             <span>Фамилия</span>
-            <input required value={lastName} maxLength={100} autoComplete="family-name" onChange={(event) => setLastName(event.target.value)} />
+            <input
+              required
+              value={lastName}
+              maxLength={100}
+              autoComplete="family-name"
+              onChange={(event) => setLastName(event.target.value)}
+            />
           </label>
         </div>
         <label>
@@ -165,15 +215,42 @@ export function AccountProfileForm({
             <span>
               Почта
               {" · "}
-              {user.emailVerified && email.trim().toLowerCase() === user.email.toLowerCase() ? <em className="cabinet-form__verified">подтверждена</em> : "не подтверждена"}
+              {user.emailVerified && email.trim().toLowerCase() === user.email.toLowerCase() ? (
+                <em className="cabinet-form__verified">подтверждена</em>
+              ) : (
+                "не подтверждена"
+              )}
             </span>
             {emailEditing ? (
-              <button type="button" className="cabinet-edit" onClick={() => { setEmail(user.email); setEmailEditing(false); setEmailSent(false); setEmailCode(""); }}>Отмена</button>
+              <button
+                type="button"
+                className="cabinet-edit"
+                onClick={() => {
+                  setEmail(user.email);
+                  setEmailEditing(false);
+                  setEmailSent(false);
+                  setEmailCode("");
+                }}
+              >
+                Отмена
+              </button>
             ) : (
-              <button type="button" className="cabinet-edit" onClick={() => setEmailEditing(true)}>Редактировать</button>
+              <button type="button" className="cabinet-edit" onClick={() => setEmailEditing(true)}>
+                Редактировать
+              </button>
             )}
           </span>
-          <input type="email" required autoComplete="email" readOnly={!emailEditing} value={email} onChange={(event) => { setEmail(event.target.value); setEmailSent(false); }} />
+          <input
+            type="email"
+            required
+            autoComplete="email"
+            readOnly={!emailEditing}
+            value={email}
+            onChange={(event) => {
+              setEmail(event.target.value);
+              setEmailSent(false);
+            }}
+          />
         </label>
         {emailEditing ? (
           <div className="cabinet-form__actions">
@@ -185,8 +262,16 @@ export function AccountProfileForm({
                 setPending(true);
                 void requestEmail({ data: { email: email.trim() } })
                   .then((result) => {
-                    const payload = result as { message: string; already?: boolean; devCode?: string };
-                    ok(payload.devCode ? `${payload.message} Код: ${payload.devCode}` : payload.message);
+                    const payload = result as {
+                      message: string;
+                      already?: boolean;
+                      devCode?: string;
+                    };
+                    ok(
+                      payload.devCode
+                        ? `${payload.message} Код: ${payload.devCode}`
+                        : payload.message,
+                    );
                     setEmailSent(!payload.already);
                     if (payload.already) setEmailEditing(false);
                   })
@@ -201,7 +286,13 @@ export function AccountProfileForm({
         {emailEditing && emailSent ? (
           <label>
             <span className="is-required">Код из письма</span>
-            <input inputMode="numeric" autoComplete="one-time-code" maxLength={8} value={emailCode} onChange={(event) => setEmailCode(event.target.value)} />
+            <input
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={8}
+              value={emailCode}
+              onChange={(event) => setEmailCode(event.target.value)}
+            />
             <div className="cabinet-form__actions">
               <button
                 className="cabinet-form__ghost"
@@ -231,22 +322,52 @@ export function AccountProfileForm({
           <span className="cabinet-form__label-row">
             <span>
               Телефон
-              {phone && phoneVerified && !phoneEditing ? <> · <em className="cabinet-form__verified">подтверждён</em></> : phone && !phoneEditing ? " · не подтверждён" : ""}
+              {phone && phoneVerified && !phoneEditing ? (
+                <>
+                  {" "}
+                  · <em className="cabinet-form__verified">подтверждён</em>
+                </>
+              ) : phone && !phoneEditing ? (
+                " · не подтверждён"
+              ) : (
+                ""
+              )}
             </span>
             {phone && !phoneEditing ? (
-              <button type="button" className="cabinet-edit" onClick={() => setPhoneEditing(true)}>Редактировать</button>
+              <button
+                type="button"
+                className="cabinet-edit"
+                onClick={() => {
+                  setPhoneValue(showPhone(phone));
+                  setPhoneEditing(true);
+                  setPhoneCaret((tick) => tick + 1);
+                }}
+              >
+                Редактировать
+              </button>
             ) : phone ? (
-              <button type="button" className="cabinet-edit" onClick={() => { setPhoneValue(showPhone(phone)); setPhoneEditing(false); setPhoneSent(false); setPhoneCode(""); }}>Отмена</button>
+              <button
+                type="button"
+                className="cabinet-edit"
+                onClick={() => {
+                  setPhoneValue(showPhone(phone));
+                  setPhoneEditing(false);
+                  setPhoneSent(false);
+                  setPhoneCode("");
+                }}
+              >
+                Отмена
+              </button>
             ) : null}
           </span>
-          <input
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
+          <BelarusPhoneInput
             readOnly={!phoneEditing}
-            placeholder={BY_PHONE_COUNTRY_PREFIX}
+            focusCaret={phoneEditing ? phoneCaret : 0}
             value={phoneValue}
-            onChange={(event) => { setPhoneValue(constrainBelarusPhoneInput(event.target.value)); setPhoneSent(false); }}
+            onValue={(next) => {
+              setPhoneValue(next);
+              setPhoneSent(false);
+            }}
           />
         </label>
         {phoneEditing ? (
@@ -259,8 +380,16 @@ export function AccountProfileForm({
                 setPending(true);
                 void requestPhone({ data: { phone: phoneValue || BY_PHONE_COUNTRY_PREFIX } })
                   .then((result) => {
-                    const payload = result as { message: string; already?: boolean; devCode?: string };
-                    ok(payload.devCode ? `${payload.message} Код: ${payload.devCode}` : payload.message);
+                    const payload = result as {
+                      message: string;
+                      already?: boolean;
+                      devCode?: string;
+                    };
+                    ok(
+                      payload.devCode
+                        ? `${payload.message} Код: ${payload.devCode}`
+                        : payload.message,
+                    );
                     setPhoneSent(!payload.already);
                     if (payload.already) setPhoneEditing(false);
                   })
@@ -275,7 +404,13 @@ export function AccountProfileForm({
         {phoneEditing && phoneSent ? (
           <label>
             <span className="is-required">Код из SMS</span>
-            <input inputMode="numeric" autoComplete="one-time-code" maxLength={8} value={phoneCode} onChange={(event) => setPhoneCode(event.target.value)} />
+            <input
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={8}
+              value={phoneCode}
+              onChange={(event) => setPhoneCode(event.target.value)}
+            />
             <div className="cabinet-form__actions">
               <button
                 className="cabinet-form__ghost"
@@ -309,7 +444,9 @@ export function AccountProfileForm({
           <span>Статус аккаунта</span>
           <input value={ACCOUNT_STATUS[user.status] ?? user.status} readOnly />
         </label>
-        <button className="cabinet-form__submit" type="submit" disabled={pending}>{pending ? "Сохранение…" : "Сохранить"}</button>
+        <button className="cabinet-form__submit" type="submit" disabled={pending}>
+          {pending ? "Сохранение…" : "Сохранить"}
+        </button>
       </form>
       <form
         className="cabinet-form"
@@ -334,20 +471,88 @@ export function AccountProfileForm({
       >
         <label>
           <span>Текущий пароль</span>
-          <input type="password" required autoComplete="current-password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} />
+          <input
+            type="password"
+            required
+            autoComplete="current-password"
+            value={currentPassword}
+            onChange={(event) => setCurrentPassword(event.target.value)}
+          />
         </label>
         <label>
           <span>Новый пароль</span>
-          <input type="password" required minLength={8} autoComplete="new-password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} />
+          <input
+            type="password"
+            required
+            minLength={8}
+            autoComplete="new-password"
+            value={newPassword}
+            onChange={(event) => setNewPassword(event.target.value)}
+          />
         </label>
         <label>
           <span>Повторите новый пароль</span>
-          <input type="password" required minLength={8} autoComplete="new-password" value={repeatPassword} onChange={(event) => setRepeatPassword(event.target.value)} />
+          <input
+            type="password"
+            required
+            minLength={8}
+            autoComplete="new-password"
+            value={repeatPassword}
+            onChange={(event) => setRepeatPassword(event.target.value)}
+          />
         </label>
-        <button className="cabinet-form__submit" type="submit" disabled={pending}>{pending ? "Сохранение…" : "Сменить пароль"}</button>
-        <p className="cabinet-note">Нужны минимум 8 символов, цифра и заглавная буква. Эта сессия останется, остальные устройства выйдут.</p>
+        <button className="cabinet-form__submit" type="submit" disabled={pending}>
+          {pending ? "Сохранение…" : "Сменить пароль"}
+        </button>
+        <p className="cabinet-note">
+          Нужны минимум 8 символов, цифра и заглавная буква. Эта сессия останется, остальные
+          устройства выйдут.
+        </p>
       </form>
-      {popup ? <CabinetNotice title={popup.title} message={popup.message} onClose={() => setPopup(null)} /> : null}
+      <div className="cabinet-form">
+        <section className="cabinet-section" id="mail">
+          <h3>Письма</h3>
+          <p className="cabinet-note">Код, подтверждение почты и сброс пароля отключить нельзя.</p>
+          {MAIL_ROWS.map((row) => {
+            const on = mail[row.kind];
+            return (
+              <div className="mail-pref" key={row.kind}>
+                <div>
+                  <p className="mail-pref__label">{row.label}</p>
+                  <p className="cabinet-note">{row.hint}</p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={on}
+                  aria-label={row.label}
+                  className={`mail-switch${on ? " is-on" : ""}`}
+                  disabled={mailPending !== null}
+                  onClick={() => {
+                    const next = !on;
+                    setMail((current) => ({ ...current, [row.kind]: next }));
+                    setMailPending(row.kind);
+                    void updateMail({ data: { kind: row.kind, enabled: next } })
+                      .then(async () => {
+                        await router.invalidate();
+                      })
+                      .catch((error) => {
+                        setMail((current) => ({ ...current, [row.kind]: on }));
+                        fail(error);
+                      })
+                      .finally(() => setMailPending(null));
+                  }}
+                >
+                  <span className="mail-switch__thumb" />
+                </button>
+              </div>
+            );
+          })}
+        </section>
+      </div>
+      {popup ? (
+        <CabinetNotice title={popup.title} message={popup.message} onClose={() => setPopup(null)} />
+      ) : null}
     </>
   );
 }

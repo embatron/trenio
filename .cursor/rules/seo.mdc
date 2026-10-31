@@ -63,3 +63,13 @@ A new indexable info page uses `infoPageHead` (`AboutPage`, `ContactPage`, or `W
 - `/blog`. `/clubs` stays out of the sitemap while `CLUBS_LIST` is empty.
 
 Canonical is absolute and has no query string. Filtered and private URLs stay out of `sitemap.xml`.
+
+## Live site
+
+The public origin is `https://trenio.by` (`SITE_ORIGIN`). HTTP and `www.trenio.by` redirect to that origin. Canonical, Open Graph, sitemap locations, and mail links use it. Do not point those at `trenio.local`.
+
+`https://trenio.by/sitemap.xml` lists the indexable catalog and info pages. `robots.txt` names that sitemap and `Host: trenio.by`. Submit the sitemap in Google Search Console for the URL-prefix property `https://trenio.by`. Do not commit a verification token.
+
+Google Analytics is one GA4 tag, `GA_MEASUREMENT_ID` in `src/lib/seo/analytics.ts`, loaded from the root document. Do not add a second tracker or Google Tag Manager.
+
+`PUBLISHED_TRAINERS` stays empty until a real profile is published. Do not put the old Instagram fixtures back into that list.

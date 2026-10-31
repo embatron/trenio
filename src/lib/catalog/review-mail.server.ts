@@ -4,6 +4,9 @@ import { getDb } from "@/db";
 import { userRoles, users } from "@/db/schema";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
 import { reviewPlainText } from "@/lib/catalog/review-html";
+import { writeLog } from "@/lib/log/logger";
+import { renderLetter } from "@/lib/mail/letter";
+import { recipientAllowsMail } from "@/lib/mail/preferences";
 import { mailAppUrl, sendMail } from "@/lib/mail/send.server";
 
 async function staffEmails() {
@@ -23,20 +26,23 @@ export async function notifyStaffAboutReview(input: {
   body: string;
 }) {
   const trainer = getPublishedTrainer(input.trainerSlug)?.name ?? input.trainerSlug;
-  const text = [
-    "Новый отзыв ждёт модерации.",
-    `Отправитель: ${input.authorName} (${input.authorEmail})`,
-    `Тренер: ${trainer}`,
-    `Оценка: ${input.rating} из 5`,
-    "",
-    reviewPlainText(input.body),
-    "",
-    `Разобрать: ${mailAppUrl()}/admin/reviews`,
-  ].join("\n");
+  const [author] = await getDb()
+    .select({ avatarPath: users.avatarPath })
+    .from(users)
+    .where(eq(users.email, input.authorEmail))
+    .limit(1);
+  const letter = renderLetter({
+    title: "Новый отзыв ждёт модерации",
+    person: { name: input.authorName, avatarUrl: author?.avatarPath, caption: input.authorEmail },
+    quote: reviewPlainText(input.body),
+    lines: [`Тренер: ${trainer}`, `Оценка: ${input.rating} из 5`],
+    action: { href: `${mailAppUrl()}/admin/reviews`, label: "Разобрать" },
+  });
   await sendMail({
     to: await staffEmails(),
     subject: `Отзыв на модерации: ${trainer}`,
-    text,
+    text: letter.text,
+    html: letter.html,
   });
 }
 
@@ -49,12 +55,35 @@ export async function notifyAuthorAboutReview(input: {
   const trainer = getPublishedTrainer(input.trainerSlug)?.name ?? input.trainerSlug;
   const profile = `${mailAppUrl()}/trainers/${input.trainerSlug}`;
   const cabinet = `${mailAppUrl()}/account`;
-  const text = input.status === "published"
-    ? [`Ваш отзыв о ${trainer} опубликован.`, "", profile].join("\n")
-    : [`Ваш отзыв о ${trainer} отклонён.`, "", `Комментарий: ${input.note?.trim() || "без комментария"}`, "", `Кабинет: ${cabinet}`].join("\n");
+  const published = input.status === "published";
+  const note = input.note?.trim() ?? "";
+  const letter = renderLetter({
+    title: published ? "Отзыв опубликован" : "Отзыв отклонён",
+    lead: published ? `Ваш отзыв о ${trainer} опубликован.` : `Ваш отзыв о ${trainer} отклонён.`,
+    person: note ? { name: "Trenio", caption: "Комментарий модератора" } : undefined,
+    quote: note || undefined,
+    action: {
+      href: published ? profile : cabinet,
+      label: published ? "Открыть профиль" : "Открыть кабинет",
+    },
+  });
+  if (!(await recipientAllowsMail(input.email, "reviews"))) {
+    void writeLog({
+      level: "info",
+      domain: "email",
+      action: "email.preference",
+      outcome: "skipped",
+      message: "Письмо об отзыве не отправлено: этот вид писем выключен.",
+      subject: input.email,
+      target: input.trainerSlug,
+      context: { kind: "reviews" },
+    });
+    return;
+  }
   await sendMail({
     to: [input.email],
-    subject: input.status === "published" ? `Отзыв опубликован: ${trainer}` : `Отзыв отклонён: ${trainer}`,
-    text,
+    subject: published ? `Отзыв опубликован: ${trainer}` : `Отзыв отклонён: ${trainer}`,
+    text: letter.text,
+    html: letter.html,
   });
 }

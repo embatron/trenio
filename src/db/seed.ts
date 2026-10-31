@@ -3,7 +3,7 @@ import "dotenv/config";
 import { eq } from "drizzle-orm";
 
 import { closeDb, getDb } from "./index";
-import { trainerReviews, userRoles, users } from "./schema";
+import { userRoles, users } from "./schema";
 import { hashPassword, normalizeEmail } from "../auth/password";
 
 async function seed() {
@@ -97,36 +97,6 @@ async function seed() {
     console.info(`Created user ${clientEmail}`);
   }
   await db.insert(userRoles).values({ userId: clientId, role: "user" }).onConflictDoNothing();
-  await db
-    .insert(trainerReviews)
-    .values([
-      {
-        trainerSlug: "levsha_team",
-        userId: clientId,
-        authorName: "Анна К.",
-        rating: 5,
-        body: "Занимаюсь у Сергея уже полгода. Техника ставится спокойно и по делу, на тренировке всегда понятно, что делать.",
-        status: "published",
-      },
-      {
-        trainerSlug: "antipenko.training",
-        userId: clientId,
-        authorName: "Анна К.",
-        rating: 4,
-        body: "Хожу на кикбоксинг к Владимиру. Зал спокойный, объяснения понятные, пока жду, когда отзыв проверят.",
-        status: "pending",
-      },
-      {
-        trainerSlug: "farkhad_akhmejanau",
-        userId: clientId,
-        authorName: "Анна К.",
-        rating: 3,
-        body: "Нормальный тренер, но в тексте мало подробностей о занятии.",
-        status: "rejected",
-        moderationNote: "В отзыве нет описания занятия, поэтому его нельзя публиковать.",
-      },
-    ])
-    .onConflictDoNothing();
 
   console.info("Seed complete.");
   console.info(`  Admin: ${adminEmail} / ${adminPassword}`);

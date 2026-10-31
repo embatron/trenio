@@ -27,9 +27,10 @@ export const conversations = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    trainerProfileId: uuid("trainer_profile_id")
-      .notNull()
-      .references(() => trainerProfiles.id, { onDelete: "cascade" }),
+    /** Set for a thread with a trainer or club card. Empty when the other party is the portal admin. */
+    trainerProfileId: uuid("trainer_profile_id").references(() => trainerProfiles.id, { onDelete: "cascade" }),
+    /** Portal admin who writes the welcome. Set only when there is no trainer card. */
+    hostUserId: uuid("host_user_id").references(() => users.id, { onDelete: "cascade" }),
     status: conversationStatusEnum("status").notNull().default("open"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     lastMessageAt: timestamp("last_message_at", { withTimezone: true }),
@@ -40,8 +41,15 @@ export const conversations = pgTable(
     uniqueIndex("conversations_open_pair_unique")
       .on(table.userId, table.trainerProfileId)
       .where(sql`${table.status} = 'open'`),
+    uniqueIndex("conversations_open_portal_unique")
+      .on(table.userId, table.hostUserId)
+      .where(sql`${table.status} = 'open' AND ${table.hostUserId} IS NOT NULL`),
     index("conversations_user_activity_idx").on(table.userId, table.lastMessageAt.desc()),
     index("conversations_trainer_activity_idx").on(table.trainerProfileId, table.lastMessageAt.desc()),
+    check(
+      "conversations_party",
+      sql`(${table.trainerProfileId} IS NOT NULL AND ${table.hostUserId} IS NULL) OR (${table.trainerProfileId} IS NULL AND ${table.hostUserId} IS NOT NULL)`,
+    ),
   ],
 );
 

@@ -1,7 +1,7 @@
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 import { seoHead } from "@/lib/seo/head";
 import { aboutPage, breadcrumbList, collectionPage, contactPage, homeGraph, webPage, type SeoCrumb } from "@/lib/seo/schema";
-import { absoluteUrl } from "@/lib/seo/site";
+import { absoluteUrl, SITE_EMAIL } from "@/lib/seo/site";
 
 /**
  * `@type` values each live template emits. An empty list is noindex and has no JSON-LD.
@@ -61,7 +61,7 @@ const INFO_PAGES = {
     path: "/contacts",
     crumb: "Контакты",
     title: "Контакты | trenio.by",
-    description: "Написать trenio.by: hello@trenio.by. Вопросы по карточке, оферте и персональным данным.",
+    description: `Написать trenio.by: ${SITE_EMAIL}. Вопросы по карточке, оферте и персональным данным.`,
   },
   offer: {
     path: "/offer",

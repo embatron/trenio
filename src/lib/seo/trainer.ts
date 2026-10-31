@@ -22,6 +22,7 @@ export type TrainerSeoSource = {
 };
 
 function sportPath(sport: TrainerSeoSource["primarySport"]) {
+  if (!sport.slug) return "/categories";
   if (sport.parentSlug === sport.slug) return `/categories/${sport.slug}`;
   return `/categories/${sport.parentSlug}/${sport.slug}`;
 }
@@ -33,7 +34,9 @@ function sameAs(trainer: TrainerSeoSource) {
 }
 
 export function trainerSeoHead(trainer: TrainerSeoSource) {
-  const place = cityIn(trainer.city.slug, trainer.city.label);
+  const place = trainer.city.label.trim()
+    ? cityIn(trainer.city.slug, trainer.city.label)
+    : "Беларуси";
   const phrase = trainerByPhrase(trainer.sportDatives);
   const path = `/trainers/${trainer.slug}`;
   const url = absoluteUrl(path);

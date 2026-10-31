@@ -1,15 +1,78 @@
 {
-  "avatarUrl": "https://scontent-fra3-2.cdninstagram.com/v/t51.82787-19/587795430_17933776707115690_4951052716923328754_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=104&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=actrPyMOcPUQ7kNvwEdMHGw&_nc_oc=AdopS6n5j5_NbbGIhUGyfxzb2jz4CNibPRbI8n7cWpn1_Hvi_DpVFdTVp3TLQ3eZF1Q&_nc_zt=24&_nc_ht=scontent-fra3-2.cdninstagram.com&_nc_gid=C94Tn-MRUl7b287vFXQvkg&_nc_ss=7b689&oh=00_AQP3p93JteACoWeShU88-4mFfUsDd6GIYGZKWV7U0OyMEQ&oe=6AD85643",
-  "avatarMime": "image/jpeg",
-  "avatarBase64": "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",
-  "avatarWidth": null,
-  "avatarHeight": null,
   "sourceUrl": "https://www.instagram.com/antipenko.training/",
   "blocked": null,
   "ogTitle": "ТРЕНЕР | КИКБОКСИНГ | БОКС (@antipenko.training) • Instagram photos and videos",
-  "ogDescription": "428 Followers, 593 Following, 36 Posts - See Instagram photos and videos from ТРЕНЕР | КИКБОКСИНГ | БОКС (@antipenko.training)",
-  "headerText": "antipenko.training\nТРЕНЕР | КИКБОКСИНГ | БОКС\n36 posts\n429 followers\n587 following\nPersonal Coach\n🙋🏻‍♂️Владимир\n📍Минск\n🥊Кикбоксинг и бокс\n🏋🏻ОФП для любого уровня подготовки\n☎️+375(33)637-62-68\n📩Вопросы в ЛС\n@bronxgym.by\nantipenko.training\nFollowed by sok_nastya_ya, ar.boxing.by + 10 more\nFollowing\nMessage\nКемп ОФП\nДети\nOffice\nСборы 2024🦈\nMytraining\nПитер2024\n😻\nPadwork",
+  "ogDescription": "430 Followers, 596 Following, 37 Posts - See Instagram photos and videos from ТРЕНЕР | КИКБОКСИНГ | БОКС (@antipenko.training)",
+  "ogImage": "https://scontent-waw2-1.cdninstagram.com/v/t51.82787-19/587795430_17933776707115690_4951052716923328754_n.jpg?stp=dst-jpg_s100x100_tt6&_nc_cat=104&ccb=7-5&_nc_sid=bf7eb4&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=QHadYCspGw8Q7kNvwHHdwC9&_nc_oc=AdoOEGnx1m81DYaG73Y3o0LG-M4d-3vrU2-1HWoZuNqMSfNULPN7rVFM_Y1LmtBFxJs&_nc_zt=24&_nc_ht=scontent-waw2-1.cdninstagram.com&_nc_gid=TDIJ5Y1OIa_PSdkepITzfw&_nc_ss=7b6a8&oh=00_AQRedsgiwbiUftoZKavo-nodFuxOu_yD-kl-anMRBYDCag&oe=6AEBAC43",
+  "headerText": "antipenko.training\nТРЕНЕР | КИКБОКСИНГ | БОКС\n37 posts\n430 followers\n590 following\nPersonal Coach\n🙋🏻‍♂️Владимир\n📍Минск\n🥊Кикбоксинг и бокс\n🏋🏻ОФП для любого уровня подготовки\n☎️+375(33)637-62-68\n📩Вопросы в ЛС\n@bronxgym.by\nantipenko.training\nFollowed by sok_nastya_ya, ar.boxing.by + 12 more\nFollowing\nMessage\nКемп ОФП\nДети\nOffice\nСборы 2024🦈\nMytraining\nПитер2024\n😻\nPadwork",
+  "headerImages": [
+    {
+      "alt": "antipenko.training's profile picture",
+      "src": "https://scontent-waw2-1.cdninstagram.com/v/t51.82787-19/587795430_17933776707115690_4951052716923328754_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=104&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=QHadYCspGw8Q7kNvwHHdwC9&_nc_oc=AdoOEGnx1m81DYaG73Y3o0LG-M4d-3vrU2-1HWoZuNqMSfNULPN7rVFM_Y1LmtBFxJs&_nc_zt=24&_nc_ht=scontent-waw2-1.cdninstagram.com&_nc_gid=TqSf3frJxVfe6ctO8vqhOg&_nc_ss=7b6a8&oh=00_AQSg2y6AZlxQ_0VC-IYcf4VSd27C9ZqNOfyaOrQJCDPiQg&oe=6AEBAC43",
+      "width": 150
+    },
+    {
+      "alt": "",
+      "src": "https://scontent-waw2-2.cdninstagram.com/v/t51.82787-19/843141904_18334921555274362_4762094843359344271_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=101&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy44NTMuQzMifQ%3D%3D&_nc_ohc=25HE-eK0OgAQ7kNvwH3OVDD&_nc_oc=AdqavmgHV-0eJ7lKH8SPXSuekJK704_2IzNGTLv-kVKonodEnGBA_BZ5ZcL61EURlrg&_nc_zt=24&_nc_ht=scontent-waw2-2.cdninstagram.com&_nc_gid=TqSf3frJxVfe6ctO8vqhOg&_nc_ss=7b6a8&oh=00_AQQgymtCT3j70rac2ay3nYlujN6aHisXjwgGif0usqT57A&oe=6AEBA91E",
+      "width": 150
+    },
+    {
+      "alt": "",
+      "src": "https://scontent-waw2-2.cdninstagram.com/v/t51.2885-19/277037024_321810416506689_3854957326641577185_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=105&ig_cache_key=GOA-gxBBl49TryQBAOG8wp5Dj381bkULAAAB1501500j-ccb7-5&ccb=7-5&_nc_sid=669407&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=ruRpa3aDxx8Q7kNvwGzJGPO&_nc_oc=AdroeRsWSG9GnLgnnN1tUMX4tblUuuKIzwvvh8VNczTH73O2EBHPHWtyf1AbBnaq6gA&_nc_zt=24&_nc_ht=scontent-waw2-2.cdninstagram.com&_nc_ss=7b6a8&oh=00_AQQkhZHP3RSGtwqAM9bFhkYyg_tj00fnm_4l4d9BdLCKew&oe=6AEBC2E9",
+      "width": 150
+    },
+    {
+      "alt": "",
+      "src": "https://scontent-waw2-1.cdninstagram.com/v/t51.82787-19/711751751_18534384148076793_5736937557813496226_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=108&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=vRdH0PTuu-IQ7kNvwF-Pfqg&_nc_oc=Adq9h_9bvikD0zglS0XSBqw05p-WXTrtV9dMMt29GwyqOGMa71YfVO29eV2nZK-zrlo&_nc_zt=24&_nc_ht=scontent-waw2-1.cdninstagram.com&_nc_gid=TqSf3frJxVfe6ctO8vqhOg&_nc_ss=7b6a8&oh=00_AQSCrv0ijTNKkmkRAOmwxdHOQK33JvM-mKTe5kDAPHnuTQ&oe=6AEBBFA2",
+      "width": 150
+    },
+    {
+      "alt": "antipenko.training's highlight story picture",
+      "src": "https://scontent-waw2-2.cdninstagram.com/v/t51.82787-15/706488751_17968152540115690_5204550733245715198_n.jpg?stp=c0.455.1170.1170a_dst-jpg_e35_s150x150_tt6&_nc_cat=105&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6Ij8ueHBpZHMuMTE3MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=PRviEqQVvrQQ7kNvwGEXS2c&_nc_oc=AdqC8lfEQqWFLA7LaQolcWCOFimWAd3LwJ-7D1lrlcAqHR6rzaAOt5H1AlkqcIEpnZo&_nc_zt=23&_nc_ht=scontent-waw2-2.cdninstagram.com&_nc_gid=Oh2IpdZSI3VwUX1qXUGqLw&_nc_ss=7b6a8&oh=00_AQRVdfkkJ9qde5wVvZJSaj4wYGeHv1hBbIdeHn1UPtQQtg&oe=6AEBD153",
+      "width": 150
+    },
+    {
+      "alt": "antipenko.training's highlight story picture",
+      "src": "https://scontent-waw2-1.cdninstagram.com/v/t51.82787-15/534764799_17919091797115690_5090452065403297243_n.jpg?stp=c0.455.1170.1170a_dst-jpg_e35_s150x150_tt6&_nc_cat=107&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6Ij8ueHBpZHMuMTE3MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=hpt0MzOdlLgQ7kNvwHMxGhA&_nc_oc=AdqXOiTWewXKjenIhC8oDdTUbPxDUH8eGgAAh_dJZMEcuDUscL4iM72i0MJorvdb0NI&_nc_zt=23&_nc_ht=scontent-waw2-1.cdninstagram.com&_nc_gid=Oh2IpdZSI3VwUX1qXUGqLw&_nc_ss=7b6a8&oh=00_AQStf_CiG_VwYJ_EFb-IzB0TWH1dZkjivqP5uP2ciaQQqA&oe=6AEBBD3E",
+      "width": 150
+    },
+    {
+      "alt": "antipenko.training's highlight story picture",
+      "src": "https://scontent-waw2-2.cdninstagram.com/v/t51.2885-15/514775667_1078318157588159_8802667038519438266_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=100&ccb=7-5&_nc_sid=acbce5&_nc_ohc=8haZ8BSksXgQ7kNvwF8h1EW&_nc_oc=AdrpAqNle7HkaxoIEu4syaltGVOKzDG4Mqm70NA3P7dCJvbHFiqwa3lRgFEpiZ8iAR0&_nc_zt=23&_nc_ht=scontent-waw2-2.cdninstagram.com&_nc_ss=7b6a8&oh=00_AQShbFJs8JHS3TLj_kRITQgDICXJl2Mex937IN1aqtogTw&oe=6AEBCE4A",
+      "width": 150
+    },
+    {
+      "alt": "antipenko.training's highlight story picture",
+      "src": "https://scontent-waw2-1.cdninstagram.com/v/t51.2885-15/453718762_459257977015989_5547505323180545935_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=111&ccb=7-5&_nc_sid=acbce5&_nc_ohc=KpsIlo2IrqsQ7kNvwHlZDBD&_nc_oc=Ado8wMy3iiBudmghAJlSBOfM4OweBpPfHX8J9_UY1Ycyg30qHskK3AxZInbFlbysUXw&_nc_zt=23&_nc_ht=scontent-waw2-1.cdninstagram.com&_nc_ss=7b6a8&oh=00_AQQ7QSeHnTUzEZOi2W5HgPBL8FjLJdM9J7_T5rBBmzS2Ng&oe=6AEBD82A",
+      "width": 150
+    },
+    {
+      "alt": "antipenko.training's highlight story picture",
+      "src": "https://scontent-waw2-1.cdninstagram.com/v/t51.82787-15/586621630_18079488038140596_6413740326539301006_n.jpg?stp=c0.221.1170.1170a_dst-jpg_e35_s150x150_tt6&_nc_cat=104&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6Ij8ueHBpZHMuMTE3MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=SRh0VBC2xaAQ7kNvwF6pEqK&_nc_oc=AdrTStaRbFqJsI5NUlekAt0-O5qbzvidGLyHGCpl8BcqIvbrmXQEXOqNW9GwDo4MxUc&_nc_zt=23&_nc_ht=scontent-waw2-1.cdninstagram.com&_nc_gid=Oh2IpdZSI3VwUX1qXUGqLw&_nc_ss=7b6a8&oh=00_AQQSj3vLcjsTHfcnx9HYPPopxv4s6MeURlT4L44_RvALYQ&oe=6AEBAE99",
+      "width": 150
+    },
+    {
+      "alt": "antipenko.training's highlight story picture",
+      "src": "https://scontent-waw2-2.cdninstagram.com/v/t51.2885-15/446226921_361331693625127_4492848669104006965_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=103&ccb=7-5&_nc_sid=acbce5&_nc_ohc=zy_82Cfhy3cQ7kNvwEtEokX&_nc_oc=AdruNdKOUFcb4Suh2jIdwzs5IUpRWETZYKOTuf_L9MKWUvKAq6JolxlHbGrIw_iPGfI&_nc_zt=23&_nc_ht=scontent-waw2-2.cdninstagram.com&_nc_ss=7b6a8&oh=00_AQS0stp3pnvyKSYLD5nzFlkBoat1QDeE5t9oRaTkQpkZxA&oe=6AEBB0EE",
+      "width": 150
+    },
+    {
+      "alt": "antipenko.training's highlight story picture",
+      "src": "https://scontent-waw2-2.cdninstagram.com/v/t51.82787-15/561354342_18083374054788323_4278682296407319607_n.jpg?stp=c0.455.1170.1170a_dst-jpg_e35_s150x150_tt6&_nc_cat=105&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6Ij8ueHBpZHMuMTE3MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=PjKDnJJzuTMQ7kNvwHjWlff&_nc_oc=Adpb8nGXH9NHOHymOPyyWEfdKdl_meVeem3hXPWkiYXcMzbr4CRm_U03K9_2Ors36BI&_nc_zt=23&_nc_ht=scontent-waw2-2.cdninstagram.com&_nc_gid=Oh2IpdZSI3VwUX1qXUGqLw&_nc_ss=7b6a8&oh=00_AQTbOn4fh8Fxh6Q5i4aTCqkg4ko2kYNfkjZfGO1ceDGQ9g&oe=6AEBBED3",
+      "width": 150
+    },
+    {
+      "alt": "antipenko.training's highlight story picture",
+      "src": "https://scontent-waw2-1.cdninstagram.com/v/t51.2885-15/416573734_918874572963283_810213990495233071_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=111&ccb=7-5&_nc_sid=acbce5&_nc_ohc=hIdAq14qh10Q7kNvwGtXZ1J&_nc_oc=AdqrN2S-6TwzMKOeOgtD5HmtQC1z1fYb1dgmQFPd2RmlN-CMESFXuTIosJABd5sIvF0&_nc_zt=23&_nc_ht=scontent-waw2-1.cdninstagram.com&_nc_ss=7b6a8&oh=00_AQQHm7igMoNfO4rorbAkSIr7aLz3A4oefvLFYDPFotjZow&oe=6AEBADC0",
+      "width": 150
+    }
+  ],
   "externalUrl": "",
+  "contacts": {
+    "emails": [],
+    "phones": [],
+    "telegrams": []
+  },
   "highlights": [
     "Кемп ОФП",
     "Дети",
@@ -54,22 +117,47 @@
       "href": "https://www.instagram.com/stories/highlights/18001951157109832/"
     }
   ],
-  "contacts": {
-    "emails": [],
-    "phones": [],
-    "telegrams": []
-  },
+  "posts": [],
+  "pinnedPosts": [],
+  "avatarUrl": "",
+  "avatarMime": "",
+  "avatarBase64": "",
+  "avatarWidth": 0,
+  "avatarHeight": 0,
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/antipenko.training/p/DNdTapKoSnb/",
+      "ogDescription": "78 likes, 13 comments - antipenko.training on August 17, 2025: \"🥊Приглашаю на групповые тренировки по кикбоксингу, детей и подростков 12+\n\n• Обучение ударной технике\n  • Развитие силы, координации и выносливости\n • Воспитание характера\n • Развитие мышления \n\n📍Пр. Пушкина, 68А\n\n#kickboxing #boxing #kids #тренировкиминск #кикбоксингминск\". ",
+      "heading": "",
+      "visibleText": "farkhad_akhmejanau bronxgym.by antipenko.training BronxGym.by Following antipenko.training 62w 🥊Приглашаю на групповые тренировки по кикбоксингу, детей и подростков 12+ • Обучение ударной технике • Развитие силы, координации и выносливости • Воспитание характера • Развитие мышления 📍Пр. Пушкина, 68А #kickboxing #boxing #kids #тренировкиминск #кикбоксингминск dmbeg.f1ght 61w Эксперт по калибровке джеба👊 Гуру мощных мидл-киков🦿 Reply eriknadirian 61w После тренировки у вас будет, левый коронный, правый похоронный 😮 Reply View all 1 replies andronik_kickboxing 61w Очень хороший тренер, 3 года вместе работаем, всем рекомендую ‼️ 2 likes Reply View all 1 replies timoshkotimofey 61w 👍🏻 👍🏻 👍🏻🔥 Reply View all 1 replies mr.ermolaev11 61w Уроки жизни и удара — от одного наставника.🔥 1 like Reply View all 1 replies 1q4x6c 61w 🔥🔥🔥🔥 Reply View all 1 replies yurkoits_d1mmon 62w 🔥🔥🔥🥊 Reply View all 1 replies andronik_kickboxing 61w Очень хороший тренер, 3 года вместе работаем, всем рекомендую ‼️ 2 likes Reply View all 1 replies mr.ermolaev11 61w Уроки жизни и удара — от одного наставника.🔥 1 like Reply View all 1 replies dmbeg.f1ght 61w Эксперт по калибровке джеба👊 Гуру мощных мидл-киков🦿 Reply 1q4x6c 61w 🔥🔥🔥🔥 Reply View all 1 replies yurkoits_d1mmon 62w 🔥🔥🔥🥊 Reply View all 1 replies timoshkotimofey 61w 👍🏻 👍🏻 👍🏻🔥 Reply View all 1 replies eriknadirian 61w После тренировки у вас будет, левый коронный, правый похоронный 😮 Reply View all 1 replies 80 13 Liked by ar.boxing.by and 79 others August 17, 2025 More posts from antipenko.training",
+      "caption": "🥊Приглашаю на групповые тренировки по кикбоксингу, детей и подростков 12+\n\n• Обучение ударной технике\n  • Развитие силы, координации и выносливости\n • Воспитание характера\n • Развитие мышления \n\n📍Пр. Пушкина, 68А\n\n#kickboxing #boxing #kids #тренировкиминск #кикбоксингминск",
+      "photos": []
+    }
+  ],
   "aboutFrames": [],
-  "pinned": [],
   "resolved": {
     "firstName": "Владимир",
     "lastName": "",
     "nameQuotes": [
       "Владимир"
     ],
-    "bio": "🙋🏻‍♂️Владимир\n📍Минск\n🥊Кикбоксинг и бокс\n🏋🏻ОФП для любого уровня подготовки\n☎️+375(33)637-62-68\n📩Вопросы в ЛС\n@bronxgym.by",
-    "about": [],
+    "sourceBio": "Personal Coach\n🙋🏻‍♂️Владимир\n📍Минск\n🥊Кикбоксинг и бокс\n🏋🏻ОФП для любого уровня подготовки\n☎️+375(33)637-62-68\n📩Вопросы в ЛС\n@bronxgym.by",
     "aboutProfile": [],
+    "presentation": "Я Владимир, тренер по кикбоксингу и боксу в Минске. Веду ОФП для любого уровня подготовки.",
+    "presentationQuotes": [
+      "Владимир",
+      "ТРЕНЕР | КИКБОКСИНГ | БОКС",
+      "Кикбоксинг и бокс",
+      "Минск",
+      "ОФП для любого уровня подготовки"
+    ],
+    "training": "Приглашаю на групповые тренировки по кикбоксингу, детей и подростков 12+. На занятии разбираем ударную технику, развиваем силу, координацию и выносливость. Занятия проходят на Пр. Пушкина, 68А.",
+    "trainingQuotes": [
+      "групповые тренировки по кикбоксингу, детей и подростков 12+",
+      "Обучение ударной технике",
+      "Развитие силы, координации и выносливости",
+      "Пр. Пушкина, 68А"
+    ],
     "sportQuotes": [
       "ТРЕНЕР | КИКБОКСИНГ | БОКС",
       "Кикбоксинг и бокс",
@@ -78,11 +166,11 @@
     "coachedSports": [
       {
         "slug": "kikboksing",
-        "quote": "ТРЕНЕР | КИКБОКСИНГ | БОКС"
+        "quote": "Кикбоксинг и бокс"
       },
       {
         "slug": "boks",
-        "quote": "ТРЕНЕР | КИКБОКСИНГ | БОКС"
+        "quote": "Кикбоксинг и бокс"
       },
       {
         "slug": "ofp",
@@ -90,14 +178,23 @@
       }
     ],
     "practicedSports": [],
+    "unrelatedSports": [],
     "primarySportSlug": "kikboksing",
     "city": "Минск",
     "priceFrom": null,
-    "phone": "+375 33 637-62-68",
+    "phone": "+375(33)637-62-68",
     "email": "",
     "telegram": "",
     "languages": [],
     "experienceYears": null,
-    "formats": []
+    "formats": [
+      "group"
+    ],
+    "audiences": [
+      "kid",
+      "teen"
+    ],
+    "photoKeeps": [],
+    "photoSkips": []
   }
 }

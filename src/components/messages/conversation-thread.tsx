@@ -51,6 +51,7 @@ export function ConversationThread({
   onReopen,
   onBlock,
   busy,
+  onBack,
 }: {
   view: "own" | "inbox";
   thread: ThreadResult | null;
@@ -67,6 +68,7 @@ export function ConversationThread({
   onReopen: () => void;
   onBlock: () => void;
   busy: boolean;
+  onBack?: () => void;
 }) {
   const mobile = useIsMobile();
   const [reportOpen, setReportOpen] = useState(false);
@@ -106,7 +108,9 @@ export function ConversationThread({
       ) : !thread ? null : (
         <>
           <header className="direct-thread__head">
-            {mobile ? (
+            {mobile && onBack ? (
+              <button type="button" className="direct-back" onClick={onBack}>К списку</button>
+            ) : mobile ? (
               <Link to={listPath} className="direct-back">К списку</Link>
             ) : null}
             <UserAvatar name={thread.counterpart.name} src={thread.counterpart.avatarPath || null} size={44} />

@@ -14,9 +14,18 @@
     "Farkhad Akhmejanau"
   ],
   "headline": "Тренер по кикбоксингу",
-  "bio": "Тренер по кикбоксингу / Минск - Групповые/персональные занятия Prospekt Pushkina 68A, Minsk, Belarus 220002",
-  "about": [],
-  "pinned": [],
+  "sourceBio": "Тренер по кикбоксингу / Минск",
+  "sourceAbout": [],
+  "bio": "Я Farkhad Akhmejanau, тренер по кикбоксингу в Минске.",
+  "about": [
+    "Занятия групповые и персональные."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/farkhad_akhmejanau/reel/DEY3L38oGin/",
+      "caption": ""
+    }
+  ],
   "sports": [
     {
       "slug": "kikboksing",
@@ -32,6 +41,7 @@
     "label": "Кикбоксинг"
   },
   "city": "Минск",
+  "address": "Prospekt Pushkina 68A",
   "cityCandidates": [
     "Минск"
   ],
@@ -41,8 +51,24 @@
     "individual",
     "group"
   ],
+  "audiences": [],
   "languages": [],
   "avatarPath": "/trainers/instagram/farkhad_akhmejanau.jpg",
+  "photos": [
+    "/trainers/instagram/farkhad_akhmejanau.jpg",
+    "/trainers/instagram/farkhad_akhmejanau-g2.jpg",
+    "/trainers/instagram/farkhad_akhmejanau-g3.jpg",
+    "/trainers/instagram/farkhad_akhmejanau-g4.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 2,
+    "gallery": 3,
+    "certificates": 0,
+    "skipped": 3
+  },
   "contacts": {
     "instagram": "https://www.instagram.com/farkhad_akhmejanau/",
     "phone": "",
@@ -54,7 +80,6 @@
     "price",
     "phone",
     "email",
-    "telegram",
-    "pinnedPosts"
+    "telegram"
   ]
 }

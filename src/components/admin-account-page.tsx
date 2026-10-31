@@ -5,6 +5,7 @@ import { TablePager, useTablePage } from "@/components/table-pager";
 import { TrainerName } from "@/components/trainer-name";
 import { UserAvatar } from "@/components/user-avatar";
 import { ACCOUNT_STATUS_LABEL, type AdminAccountDetail } from "@/lib/admin/accounts";
+import { displayUserId } from "@/lib/auth/god";
 import { displayAccountLogin } from "@/lib/auth/login-name";
 import { ROLE_LABELS } from "@/lib/auth/roles";
 
@@ -66,6 +67,10 @@ export function AdminAccountPage({ account }: { account: AdminAccountDetail }) {
             </div>
           </div>
           <dl className="cabinet-facts">
+            <div>
+              <dt>ID</dt>
+              <dd>{displayUserId(account.id)}</dd>
+            </div>
             <div>
               <dt>Почта</dt>
               <dd>{displayAccountLogin(account.email)}</dd>

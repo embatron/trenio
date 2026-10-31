@@ -112,6 +112,12 @@ export const trainerProfiles = pgTable(
     claimToken: varchar("claim_token", { length: 64 }).notNull(),
     /** Unique path, `/trainers/claim/{claimToken}`. Full URL is `APP_URL` plus this path. */
     claimPath: varchar("claim_path", { length: 96 }).notNull(),
+    /** One-time URL that shows this profile as a visitor would see it. Cleared on first open. */
+    previewToken: varchar("preview_token", { length: 64 }),
+    /** One-time URL that opens the profile editor. Cleared on first open. */
+    editToken: varchar("edit_token", { length: 64 }),
+    /** Set when staff copies the Instagram message. Stays after the profile is published. */
+    inviteSentAt: timestamp("invite_sent_at", { withTimezone: true }),
     claimedAt: timestamp("claimed_at", { withTimezone: true }),
     /** Set when the trainer accepts the public offer while claiming the profile. */
     offerAcceptedAt: timestamp("offer_accepted_at", { withTimezone: true }),
@@ -125,6 +131,8 @@ export const trainerProfiles = pgTable(
     uniqueIndex("trainer_profiles_instagram_handle_unique").on(table.instagramHandle),
     uniqueIndex("trainer_profiles_claim_token_unique").on(table.claimToken),
     uniqueIndex("trainer_profiles_claim_path_unique").on(table.claimPath),
+    uniqueIndex("trainer_profiles_preview_token_unique").on(table.previewToken),
+    uniqueIndex("trainer_profiles_edit_token_unique").on(table.editToken),
     index("trainer_profiles_status_idx").on(table.status),
     index("trainer_profiles_claim_status_idx").on(table.claimStatus),
     index("trainer_profiles_city_slug_idx").on(table.citySlug),

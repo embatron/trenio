@@ -37,6 +37,10 @@ public/trainers/admin/
 .wrangler/
 .dev.vars
 
+# Production VPS login. Never commit.
+.cursor/skills/trenio-vps/
+.cursor/rules/trenio-vps.mdc
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

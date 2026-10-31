@@ -11,7 +11,7 @@ async () => {
     try {
       const next = new URL(url, location.href);
       const stp = next.searchParams.get("stp") || "";
-      if (thumbnailStp.test(stp) || /[?&]stp=/.test(next.search)) return true;
+      if (thumbnailStp.test(stp)) return true;
       return /\/s(?:100|150|206)x(?:100|150|206)\//.test(next.pathname);
     } catch {
       return true;

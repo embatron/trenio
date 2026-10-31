@@ -9,6 +9,7 @@ import {
   index,
   primaryKey,
   bigint,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -56,6 +57,14 @@ export const users = pgTable(
     lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
     telegramUserId: bigint("telegram_user_id", { mode: "number" }),
     telegramUsername: varchar("telegram_username", { length: 64 }),
+    /** Letter when someone writes in Сообщения. */
+    mailMessages: boolean("mail_messages").notNull().default(true),
+    /** Letter when the person's review is published or rejected. */
+    mailReviews: boolean("mail_reviews").notNull().default(true),
+    /** Service notices that are not a code, a password reset, a message, or a review. */
+    mailSite: boolean("mail_site").notNull().default(true),
+    /** News and picks. Off until the person turns it on. */
+    mailMarketing: boolean("mail_marketing").notNull().default(false),
   },
   (table) => [
     uniqueIndex("users_email_unique").on(table.email),

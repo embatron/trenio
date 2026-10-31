@@ -13,6 +13,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { TrainerName } from "@/components/trainer-name";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 import { TRAINER_INVITE_LINE } from "@/lib/catalog/trainer-welcome";
+import { SITE_EMAIL } from "@/lib/seo/site";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const CHROME_CSS = `
@@ -126,9 +127,10 @@ body.is-search-docked .site-header__search {
 .favorite-count { position: relative; width: 44px; height: 44px; }
 .favorite-count__n {
   position: absolute; top: 2px; right: 0; min-width: 16px; height: 16px; padding: 0 4px;
-  border-radius: 999px; background: var(--primary); color: #fff;
+  border-radius: 999px; background: transparent; color: var(--muted);
   font-size: 10px; font-weight: var(--fw-title); line-height: 16px; text-align: center;
 }
+.favorite-count.has-items .favorite-count__n { background: var(--primary); color: #fff; }
 .favorite-count.has-items { color: var(--primary); }
 .favorite-count.has-items svg { fill: currentColor; }
 .account-face {
@@ -961,7 +963,7 @@ export function SiteFooter() {
           </div>
           <div className="site-footer__bottom">
             <span>© 2026 trenio.by</span>
-            <a href="mailto:hello@trenio.by">hello@trenio.by</a>
+            <a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>
           </div>
         </div>
       </footer>

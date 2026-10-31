@@ -65,6 +65,7 @@ These are the live gaps. Repeat one only when the task touches it.
 - There is no blog. Do not add `/blog` until an article is actually published.
 - `/clubs` is `noindex` while `CLUBS_LIST` is empty. Index it when a published club exists, and use the `SportsActivityLocation` graph already on `/clubs/$slug`.
 - City and category pages do not emit `ItemList` of trainers. Add it only from the trainers the page actually renders.
-- Yandex Webmaster and Google Search Console are not connected in the repo. Submit `https://trenio.by/sitemap.xml` there. Do not commit verification tokens.
+- Yandex Webmaster is not connected. Google Search Console uses the URL-prefix property `https://trenio.by`. The sitemap is `https://trenio.by/sitemap.xml`. Do not commit verification tokens.
+- Google Analytics is the one GA4 tag in `src/lib/seo/analytics.ts`, loaded from the root document. Do not add a second tracker or Tag Manager. `PUBLISHED_TRAINERS` stays empty until a real profile is published.
 - `/search` is disallowed and `noindex`. The `SearchAction` still points at `?sport=`. Do not open `/search` to crawlers to chase a sitelinks box.
 - The SSR crash page in `src/lib/error-page.ts` is English. It is `noindex`. Translating it is a product-language fix, not a ranking project.

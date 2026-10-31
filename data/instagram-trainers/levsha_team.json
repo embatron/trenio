@@ -3,7 +3,7 @@
   "sourceUrl": "https://www.instagram.com/levsha_team/",
   "handle": "levsha_team",
   "slug": "levsha_team",
-  "status": "published",
+  "status": "draft",
   "claimStatus": "unclaimed",
   "createdSource": "import",
   "firstName": "Сергей",
@@ -14,9 +14,16 @@
     "Сергей Овсяников"
   ],
   "headline": "Тренер по тайскому боксу",
-  "bio": "🥊Тренер по МуайТай и кикбоксингу в Минске 📍(Петровщина/Пушкина) 👉стаж 30 лет 🏆Мастер спорта по тайскому боксу 🏆Мастер спорта по рукопашному бою",
+  "sourceBio": "стаж 30 лет",
+  "sourceAbout": [],
+  "bio": "Я Сергей Овсяников, тренер по тайскому боксу и кикбоксингу в Минске. Мастер спорта по тайскому боксу и по рукопашному бою.",
   "about": [],
-  "pinned": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/levsha_team/reel/DQv4o1ODfrR/",
+      "caption": "Готовимся!"
+    }
+  ],
   "sports": [
     {
       "slug": "tajskij-boks",
@@ -35,7 +42,7 @@
     {
       "slug": "rukopashnyj",
       "label": "Рукопашный бой",
-      "quote": "Мастер спорта по рукопашному бою"
+      "quote": "рукопашному бою"
     }
   ],
   "primarySport": {
@@ -44,25 +51,42 @@
     "label": "Тайский бокс"
   },
   "city": "Минск",
+  "address": "Петровщина/Пушкина",
   "cityCandidates": [
     "Минск"
   ],
   "priceFrom": null,
-  "experienceYears": 30,
+  "experienceYears": null,
   "formats": [],
+  "audiences": [],
   "languages": [],
   "avatarPath": "/trainers/instagram/levsha_team.jpg",
+  "photos": [
+    "/trainers/instagram/levsha_team.jpg",
+    "/trainers/instagram/levsha_team-g2.jpg",
+    "/trainers/instagram/levsha_team-g3.jpg",
+    "/trainers/instagram/levsha_team-g4.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 2,
+    "gallery": 3,
+    "certificates": 0,
+    "skipped": 5
+  },
   "contacts": {
     "instagram": "https://www.instagram.com/levsha_team/",
     "phone": "",
     "email": "",
-    "telegram": "https://t.me/levsha_team",
+    "telegram": "",
     "website": ""
   },
   "missing": [
     "price",
     "phone",
     "email",
-    "pinnedPosts"
+    "telegram"
   ]
 }

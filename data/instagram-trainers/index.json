@@ -1,21 +1,41 @@
 {
-  "updatedAt": "2026-10-21T15:15:19.224Z",
+  "updatedAt": "2026-10-31T15:44:41.689Z",
   "profiles": [
     {
-      "handle": "shum_ann",
-      "slug": "shum_ann",
-      "fullName": "Аня Шумилова",
-      "primarySport": "ОФК",
-      "city": "Минск",
+      "handle": "embatron.eth",
+      "slug": "embatron.eth",
+      "fullName": "embatron",
+      "primarySport": "",
+      "city": "",
       "status": "draft",
       "missing": [
+        "lastName",
+        "sport",
+        "city",
         "price",
+        "avatar",
         "phone",
         "email",
         "telegram",
         "pinnedPosts"
       ],
-      "file": "data/instagram-trainers/shum_ann.json"
+      "file": "data/instagram-trainers/embatron.eth.json"
+    },
+    {
+      "handle": "andronik_kickboxing",
+      "slug": "andronik_kickboxing",
+      "fullName": "Андрей",
+      "primarySport": "Кикбоксинг",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/andronik_kickboxing.json"
     },
     {
       "handle": "antipenko.training",
@@ -23,31 +43,14 @@
       "fullName": "Владимир",
       "primarySport": "Кикбоксинг",
       "city": "Минск",
-      "status": "published",
+      "status": "draft",
       "missing": [
         "lastName",
         "price",
         "email",
-        "telegram",
-        "pinnedPosts"
+        "telegram"
       ],
       "file": "data/instagram-trainers/antipenko.training.json"
-    },
-    {
-      "handle": "levsha_team",
-      "slug": "levsha_team",
-      "fullName": "Сергей Овсяников",
-      "primarySport": "Тайский бокс",
-      "city": "Минск",
-      "status": "published",
-      "missing": [
-        "price",
-        "phone",
-        "email",
-        "telegram",
-        "pinnedPosts"
-      ],
-      "file": "data/instagram-trainers/levsha_team.json"
     },
     {
       "handle": "ar.boxing.by",
@@ -55,12 +58,11 @@
       "fullName": "Артём Романович",
       "primarySport": "Бокс",
       "city": "Минск",
-      "status": "published",
+      "status": "draft",
       "missing": [
         "price",
         "email",
-        "telegram",
-        "pinnedPosts"
+        "telegram"
       ],
       "file": "data/instagram-trainers/ar.boxing.by.json"
     },
@@ -75,10 +77,42 @@
         "price",
         "phone",
         "email",
-        "telegram",
-        "pinnedPosts"
+        "telegram"
       ],
       "file": "data/instagram-trainers/farkhad_akhmejanau.json"
+    },
+    {
+      "handle": "shum_ann",
+      "slug": "shum_ann",
+      "fullName": "Шумилова",
+      "primarySport": "ОФК",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "firstName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "gender",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/shum_ann.json"
+    },
+    {
+      "handle": "levsha_team",
+      "slug": "levsha_team",
+      "fullName": "Сергей Овсяников",
+      "primarySport": "Тайский бокс",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/levsha_team.json"
     }
   ]
 }

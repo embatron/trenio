@@ -65,6 +65,8 @@ type ResolvedProfile = {
   unrelatedSports?: SportRole[];
   primarySportSlug?: string;
   city?: string;
+  /** Street or hall, copied as printed. Not geocoded. */
+  address?: string;
   priceFrom?: number | null;
   phone?: string;
   email?: string;
@@ -92,6 +94,8 @@ type RawExtract = {
   contacts?: { emails?: string[]; phones?: string[]; telegrams?: string[] };
   aboutFrames?: string[];
   pinned?: PinnedPost[];
+  /** Other grid posts. Photos only. Their captions are not card-text quotes. */
+  extraPosts?: PinnedPost[];
   avatarUrl?: string;
   avatarMime?: string;
   avatarBase64?: string;
@@ -332,10 +336,18 @@ function matchLanguages(text: string): string[] {
 }
 
 function matchExperience(text: string): number | null {
-  const stag = text.match(/стаж\s*(\d{1,2})\s*(?:год|года|лет)/iu);
-  if (stag) return Number(stag[1]);
-  const more = text.match(/более\s*(\d{1,2})\s*лет/iu);
-  if (more) return Number(more[1]);
+  const patterns = [
+    /тренерск\p{L}*\s+стаж\s*(?:более\s*)?(\d{1,2})\s*(?:год|года|лет)/iu,
+    /стаж\s+тренер\p{L}*\s*(?:более\s*)?(\d{1,2})\s*(?:год|года|лет)/iu,
+    /стаж\s+работ\p{L}*\s+тренер\p{L}*\s*(?:более\s*)?(\d{1,2})\s*(?:год|года|лет)/iu,
+    /опыт\s+тренерск\p{L}*(?:\s+работ\p{L}*)?\s*(?:более\s*)?(\d{1,2})\s*(?:год|года|лет)/iu,
+    /(?:тренирую|преподаю)(?:\s+уже)?\s*(?:более\s*)?(\d{1,2})\s*(?:год|года|лет)/iu,
+    /более\s*(\d{1,2})\s*лет\s+тренерск/iu,
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) return Number(match[1]);
+  }
   return null;
 }
 
@@ -356,6 +368,7 @@ function matchAudiences(text: string): Array<"adult" | "kid" | "teen"> {
 }
 
 const SESSION_CUE = /тренировк|заняти|в зале|группов|индивидуальн|персональн|разминк|спарринг/iu;
+const PLACE_CUE = /улиц|проспект|пр-т|(?<![\p{L}])пр\.|переул|бульвар|проезд|площад|pushkin|пушкин/iu;
 const CARD_NOISE = /[#\p{Extended_Pictographic}\uFE0F]|https?:\/\/|t\.me\/|@[\p{L}\d_]/iu;
 const CARD_CTA = /директ|в\s+лс\b|подпиши|пиши(?:те)?|ссылка в шапке|для записи/iu;
 const SKIP_REASONS = new Set(["text", "logo", "flyer", "duplicate", "not-trainer"]);
@@ -392,7 +405,7 @@ function assertCardText(rawPath: string, label: string, text: string, quotes: st
   if (/[<>]/.test(text) || CARD_NOISE.test(text) || CARD_CTA.test(text)) {
     fail(rawPath, `${label} must be plain sentences: no emoji, hashtags, links, @names, or a call to write in direct.`);
   }
-  if (!quotes.length) fail(rawPath, `${label} needs verbatim quotes from the profile, the about highlight, or a pinned caption.`);
+  if (!quotes.length) fail(rawPath, `${label} needs verbatim quotes from the biography or the about highlight.`);
   for (const quote of quotes) {
     if (quote.trim().length < 4 || !includesNorm(corpus, quote)) {
       fail(rawPath, `${label} quote is not in the source: ${quote}`);
@@ -480,7 +493,14 @@ async function writeAvatar(handle: string, raw: RawExtract): Promise<string> {
   if (!raw.avatarBase64) return kept;
   const bytes = Buffer.from(raw.avatarBase64, "base64");
   const size = await imageSides(bytes);
-  if (!size || size.w < AVATAR_MIN_SIDE || size.h < AVATAR_MIN_SIDE) return kept;
+  if (!size || size.w < 1 || size.h < 1) return kept;
+  if (kept) {
+    const previous = await imageSides(readFileSync(avatarFile(handle)));
+    if (previous && previous.w >= AVATAR_MIN_SIDE && previous.h >= AVATAR_MIN_SIDE && size.w * size.h <= previous.w * previous.h) {
+      return kept;
+    }
+  }
+  if ((size.w < AVATAR_MIN_SIDE || size.h < AVATAR_MIN_SIDE) && kept) return kept;
   await storeAvatar(bytes, avatarFile(handle));
   return avatarPublicPath(handle);
 }
@@ -523,6 +543,9 @@ async function saveOne(rawPath: string, settlements: string[]) {
   const corpus = corpusOf(raw);
   const pins = (raw.pinned || []).slice(0, 3);
   if ((raw.pinned || []).length > 3) fail(rawPath, "More than 3 pinned posts were stored.");
+  const extras = (raw.extraPosts || []).slice(0, 3);
+  if ((raw.extraPosts || []).length > 3) fail(rawPath, "More than 3 other posts were stored.");
+  const photoSources = [...pins, ...extras];
 
   const firstName = cleanLine(resolved.firstName || "");
   const lastName = cleanLine(resolved.lastName || "");
@@ -564,6 +587,14 @@ async function saveOne(rawPath: string, settlements: string[]) {
     if (!includesNorm(corpus, quote)) fail(rawPath, `Sport quote is not in the source: ${quote}`);
   }
   const evidence = [profileSurface, ...aboutFrames, ...pins.map((post) => `${post.caption || ""}\n${post.visibleText || ""}`)].join("\n");
+  const cardCorpus = [profileSurface, ...aboutFrames].join("\n");
+  const address = cleanLine(resolved.address || "");
+  if (PLACE_CUE.test(evidence) && !address) {
+    fail(rawPath, "The source names a training place. Copy that line into address. Do not put it in the card text and do not geocode it.");
+  }
+  if (address && !includesNorm(evidence, address)) {
+    fail(rawPath, "address is not a verbatim piece of the profile, the about highlight, or a pinned caption.");
+  }
   const expected = matchSports(evidence);
   const bySlug = new Map(expected.map((sport) => [sport.slug, sport]));
   const readRoles = (roles: SportRole[] | undefined, label: string) => (roles || []).map((role) => {
@@ -647,7 +678,9 @@ async function saveOne(rawPath: string, settlements: string[]) {
 
   const experienceInText = matchExperience(evidence);
   const experienceYears = resolved.experienceYears ?? null;
-  if (experienceYears !== experienceInText) fail(rawPath, `Experience must be ${experienceInText ?? "empty"}, matching the text.`);
+  if (experienceYears !== experienceInText) {
+    fail(rawPath, `Coaching experience must be ${experienceInText ?? "empty"}. A bare «стаж N лет» is not coaching experience.`);
+  }
 
   const formatsInText = matchFormats(evidence);
   const formats = resolved.formats || [];
@@ -665,15 +698,19 @@ async function saveOne(rawPath: string, settlements: string[]) {
   const training = trainingParagraphs.join("\n\n");
   const trainingQuotes = (resolved.trainingQuotes || []).map(cleanLine).filter(Boolean);
   const cardSurface = `${presentation}\n${training}`;
+  const vagueExperience = evidence.match(/стаж\s*(\d{1,2})\s*(?:год|года|лет)/iu);
+  if (vagueExperience && experienceYears == null && cardSurface.includes(vagueExperience[1])) {
+    fail(rawPath, `The source says «стаж ${vagueExperience[1]}» without saying it is coaching experience. Leave that number out of the card.`);
+  }
   if (/[\p{L}]{4,}/u.test(evidence) && !presentation) {
     fail(rawPath, "Write presentation («Как меня представить») from the source.");
   }
-  assertCardText(rawPath, "presentation", presentation, presentationQuotes, corpus, 700, 4);
-  assertCardText(rawPath, "training", training, trainingQuotes, corpus, 1600, 8);
+  assertCardText(rawPath, "presentation", presentation, presentationQuotes, cardCorpus, 700, 4);
+  assertCardText(rawPath, "training", training, trainingQuotes, cardCorpus, 1600, 8);
   if (trainingParagraphs.length > 3) fail(rawPath, "training has at most 3 paragraphs.");
-  const sessionInSource = [profileSurface, ...aboutFrames, ...pins.map((post) => `${post.caption || ""}\n${post.visibleText || ""}`)].some((part) => SESSION_CUE.test(part));
-  if (sessionInSource && !training) fail(rawPath, "The source describes a session. Write training («Как проходят мои тренировки»).");
-  if (!sessionInSource && training) fail(rawPath, "training describes a session the source does not.");
+  const sessionInProfile = SESSION_CUE.test(cardCorpus);
+  if (sessionInProfile && !training) fail(rawPath, "The biography or the about highlight describes a session. Write training («Как проходят мои тренировки»).");
+  if (!sessionInProfile && training) fail(rawPath, "training describes a session the biography and the about highlight do not. A pinned caption fills fields and stays out of the card.");
   if (training && !trainingQuotes.some((quote) => SESSION_CUE.test(quote))) {
     fail(rawPath, "trainingQuotes must include the line that describes the session.");
   }
@@ -693,13 +730,18 @@ async function saveOne(rawPath: string, settlements: string[]) {
       fail(rawPath, `${hit.label} is not a coached or practiced sport. Leave it out of the card text.`);
     }
   }
-  if (primary && !catalogPhrases().some((phrase) => phrase.slug === primary.slug && aliasRegex(phrase.alias).test(foldYo(presentation)))) {
-    fail(rawPath, `presentation must name the coached sport (${primary.label}).`);
+  const sportInProfile = primary
+    ? catalogPhrases().some((phrase) => phrase.slug === primary.slug && aliasRegex(phrase.alias).test(foldYo(cardCorpus)))
+    : false;
+  if (sportInProfile && !catalogPhrases().some((phrase) => phrase.slug === primary?.slug && aliasRegex(phrase.alias).test(foldYo(presentation)))) {
+    fail(rawPath, `presentation must name the coached sport (${primary?.label}).`);
   }
   const namedCities = matchCities(cardSurface, settlements);
   const extraCities = namedCities.filter((name) => name !== city);
   if (extraCities.length) fail(rawPath, `Card text names ${extraCities.join(", ")}. The saved city is ${city || "empty"}.`);
-  if (city && !matchCities(presentation, settlements).includes(city)) fail(rawPath, `presentation must name ${city}.`);
+  if (city && matchCities(cardCorpus, settlements).includes(city) && !matchCities(presentation, settlements).includes(city)) {
+    fail(rawPath, `presentation must name ${city}.`);
+  }
 
   const avatarPath = await writeAvatar(handle, raw);
   const avatarStem = fileStem(raw.avatarUrl || "");
@@ -710,7 +752,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
   if (new Set(decisionKeys).size !== decisionKeys.length) fail(rawPath, "A pinned photo is listed twice.");
   for (const item of [...keeps, ...skips]) {
     const postUrl = (item.postUrl || "").split("?")[0];
-    const post = pins.find((candidate) => (candidate.url || "").split("?")[0] === postUrl);
+    const post = photoSources.find((candidate) => (candidate.url || "").split("?")[0] === postUrl);
     const count = post?.photos?.length ?? 0;
     if (!post || item.index == null || item.index < 0 || item.index >= count) {
       fail(rawPath, `Photo decision does not match a stored pinned image: ${postUrl || "missing url"} #${item.index ?? "?"}.`);
@@ -719,7 +761,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
   const decided = new Set<string>();
   const gallery: Array<{ bytes: Buffer; stem: string }> = [];
   const certificates: Array<{ bytes: Buffer; caption: string }> = [];
-  for (const post of pins) {
+  for (const post of photoSources) {
     const postUrl = (post.url || "").split("?")[0];
     const postSource = `${post.ogDescription || ""}\n${post.heading || ""}\n${post.visibleText || ""}\n${post.caption || ""}`;
     (post.photos || []).forEach((photo, index) => {
@@ -853,6 +895,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
       ? { slug: primary.slug, parentSlug: primary.parentSlug, label: primary.label }
       : null,
     city,
+    address,
     cityCandidates: cities,
     priceFrom,
     experienceYears,

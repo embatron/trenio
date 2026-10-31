@@ -43,6 +43,8 @@ import { trainerSeoHead } from "@/lib/seo/trainer";
 import { cityIn } from "@/lib/seo/text";
 import { getTrainerAddressFn } from "@/lib/geo/functions";
 import { pluralRu } from "@/lib/ru-plural";
+import { TrainerDoorEditor } from "@/components/trainer-door-editor";
+import { getMagicTrainerFn, loadVisibleTrainerFn, type MagicTrainerDraft } from "@/lib/catalog/trainer-magic";
 import { TRAINER_LEGACY_SLUGS } from "@/lib/catalog/trainer-slugs";
 
 type Trainer = {
@@ -157,8 +159,15 @@ export const Route = createFileRoute("/trainers/$slug")({
   loader: async ({ params }) => {
     const legacy = TRAINER_LEGACY_SLUGS[params.slug];
     if (legacy) throw redirect({ to: "/trainers/$slug", params: { slug: legacy } });
-    const published = params.slug ? getPublishedTrainer(params.slug) : undefined;
+    const [visible, doorDraft] = params.slug
+      ? await Promise.all([
+          loadVisibleTrainerFn({ data: { slug: params.slug } }),
+          getMagicTrainerFn().catch(() => null),
+        ])
+      : [null, null];
+    const published = visible?.trainer ?? (params.slug ? getPublishedTrainer(params.slug) : undefined);
     if (!published) throw notFound();
+    const access = visible?.access ?? "public";
     const [{ reviews, summary, ownStatus, ownComment, isOwner }, ratings, prices, media, place, contacts] = await Promise.all([
       listTrainerReviewsFn({ data: { slug: published.slug } }),
       listTrainerRatingSummariesFn(),
@@ -179,12 +188,14 @@ export const Route = createFileRoute("/trainers/$slug")({
       isOwner,
       photos: media.photos,
       contacts,
+      access,
+      editor: doorDraft && doorDraft.slug === published.slug ? doorDraft : null,
     };
   },
   head: ({ loaderData }) => {
     const t = loaderData?.trainer;
     if (!t) return { meta: [{ title: "Тренер · trenio.by" }, { name: "robots", content: "noindex, follow" }] };
-    return trainerSeoHead({
+    const seo = trainerSeoHead({
       slug: t.slug,
       name: t.name,
       sports: t.sports,
@@ -199,6 +210,14 @@ export const Route = createFileRoute("/trainers/$slug")({
       places: t.places,
       priceLines: t.taxonomy.groups.flatMap((group) => group.items),
     });
+    if ((loaderData?.access ?? "public") === "public") return seo;
+    return {
+      ...seo,
+      meta: [
+        ...seo.meta.filter((item) => !("name" in item) || item.name !== "robots"),
+        { name: "robots", content: "noindex,follow" },
+      ],
+    };
   },
   component: TrainerPage,
 });
@@ -211,6 +230,7 @@ const CSS = `
 .breadcrumbs a { color: var(--muted); text-decoration: none; }
 .breadcrumbs a:hover { color: var(--primary-dark); }
 .breadcrumbs li + li::before { content: "›"; margin-right: 8px; color: var(--line); }
+.profile-access { margin: 0 0 16px; padding: 12px 14px; border-radius: 12px; background: #fff6e8; color: var(--dark); font-size: 14px; line-height: 1.45; }
 
 .profile-layout { display: grid; grid-template-columns: var(--aside-w) minmax(0, 1fr); gap: 32px; align-items: start; }
 .profile-main { position: relative; display: grid; gap: 22px; min-width: 0; }
@@ -653,15 +673,18 @@ function ReviewReply({ id }: { id: string }) {
 }
 
 function TrainerPage() {
-  const { trainer: t, isOwner, photos: storedPhotos, contacts } = Route.useLoaderData() as {
+  const { trainer: t, isOwner, photos: storedPhotos, contacts, access, editor } = Route.useLoaderData() as {
     trainer: Trainer;
     isOwner: boolean;
     photos: string[];
     contacts: PublicTrainerContacts;
+    access: "public" | "staff" | "preview";
+    editor: MagicTrainerDraft | null;
   };
   useEffect(() => {
+    if (access !== "public") return;
     void recordTrainerProfileViewFn({ data: { slug: t.slug } });
-  }, [t.slug]);
+  }, [access, t.slug]);
   const { user } = useRouteContext({ from: "__root__" });
   const [photoIdx, setPhotoIdx] = useState(0);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -735,12 +758,19 @@ function TrainerPage() {
 
       <main>
         <div className="layout-container trainer-page__inner">
+        {access === "staff" ? (
+          <p className="profile-access">Профиль не опубликован. В каталоге его нет. Статус меняет тренер в настройках профиля: при входе туда он по умолчанию опубликован.</p>
+        ) : null}
+        {editor ? <TrainerDoorEditor draft={editor} /> : null}
+        {access === "preview" && !editor ? (
+          <p className="profile-access">Это предварительный просмотр. В каталоге страницы пока нет. Статус публикации меняете вы. При входе в настройки он по умолчанию опубликован. Ссылку можно открывать снова, пока профиль не опубликован. После публикации она откроет страницу в каталоге.</p>
+        ) : null}
         <nav aria-label="Хлебные крошки">
           <ol className="breadcrumbs">
             <li><Link to="/">Главная</Link></li>
             <li>
               {cityCatalogBySlug(t.city.slug) ? (
-                <Link to="/city/$slug" params={{ slug: t.city.slug }}>Тренеры в {cityIn(t.city.slug, t.city.label)}</Link>
+                <Link to="/city/$slug" params={{ slug: t.city.slug }} search={{ sports: undefined }}>Тренеры в {cityIn(t.city.slug, t.city.label)}</Link>
               ) : (
                 <span>Тренеры в {cityIn(t.city.slug, t.city.label)}</span>
               )}

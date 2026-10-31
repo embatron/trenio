@@ -8,7 +8,7 @@ import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { confirmAccountPhoneCodeFn, confirmTrainerContactEmailCodeFn, requestAccountPhoneCodeFn, requestTrainerContactEmailCodeFn } from "@/lib/auth/functions";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { reviewPlainText } from "@/lib/catalog/review-html";
-import { saveOwnTrainerProfileFn, type OwnTrainerProfile } from "@/lib/catalog/trainer-own";
+import { OWN_PROFILE_STATUSES, saveOwnTrainerProfileFn, type OwnProfileStatus, type OwnTrainerProfile } from "@/lib/catalog/trainer-own";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 
 export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) {
@@ -25,6 +25,7 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
   const requestContactEmail = useAuthServerFn(requestTrainerContactEmailCodeFn);
   const confirmContactEmail = useAuthServerFn(confirmTrainerContactEmailCodeFn);
   const [form, setForm] = useState(profile);
+  const [publication, setPublication] = useState<OwnProfileStatus>("published");
   const [pending, setPending] = useState(false);
   useEffect(() => {
     setForm((current) => ({
@@ -88,7 +89,7 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
           setBioInvalid(false);
           setPending(true);
           const { avatarPath: _avatarPath, slug: _slug, certificates: _certificates, photos: _photos, phoneVerified: _phoneVerified, emailVerified: _emailVerified, telegramVerified: _telegramVerified, phone: _phone, offerAccepted: _offerAccepted, privacyAccepted: _privacyAccepted, firstName: _firstName, lastName: _lastName, ...fields } = form;
-          void save({ data: fields })
+          void save({ data: { ...fields, status: publication } })
             .then(async (result) => {
               const payload = result as { message: string };
               setPopup({ title: "Готово", message: payload.message });
@@ -123,6 +124,17 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
               void router.invalidate();
             },
           }}
+          leading={(
+            <label>
+              <span>Статус публикации</span>
+              <select value={publication} onChange={(event) => setPublication(event.target.value as OwnProfileStatus)}>
+                {OWN_PROFILE_STATUSES.map((status) => (
+                  <option key={status} value={status}>{status === "published" ? "Опубликован" : "Скрыт"}</option>
+                ))}
+              </select>
+              <p className="cabinet-note">При входе в настройки статус — «Опубликован». Его можно сменить: скрытый профиль не показывается в каталоге.</p>
+            </label>
+          )}
           emailConfirm={{
             verified: form.emailVerified,
             onRequest: async (email) => (await requestContactEmail({ data: { email } })) as { message: string; already?: boolean; devCode?: string },

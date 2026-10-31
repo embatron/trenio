@@ -61,6 +61,37 @@ const STATEMENTS = [
   "COMMENT ON COLUMN message_reports.comment IS 'Комментарий того, кто пожаловался. Это не текст сообщения из чата.'",
   "COMMENT ON COLUMN message_reports.status IS 'new — новая, reviewed — разобрана, dismissed — отклонена.'",
   "COMMENT ON COLUMN message_reports.message_id IS 'Старая жалоба на одно сообщение. У жалобы на всю переписку пусто.'",
+  "ALTER TABLE conversations ALTER COLUMN trainer_profile_id DROP NOT NULL",
+  "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS host_user_id uuid REFERENCES users(id) ON DELETE CASCADE",
+  `UPDATE conversations AS conversation
+   SET host_user_id = profile.owner_user_id,
+       trainer_profile_id = NULL
+   FROM trainer_profiles AS profile
+   WHERE conversation.trainer_profile_id = profile.id
+     AND profile.slug = 'trenioby'
+     AND profile.owner_user_id IS NOT NULL`,
+  "ALTER TABLE conversations DROP CONSTRAINT IF EXISTS conversations_party",
+  `ALTER TABLE conversations ADD CONSTRAINT conversations_party CHECK (
+     (trainer_profile_id IS NOT NULL AND host_user_id IS NULL)
+     OR (trainer_profile_id IS NULL AND host_user_id IS NOT NULL)
+   )`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS conversations_open_portal_unique
+   ON conversations (user_id, host_user_id)
+   WHERE status = 'open' AND host_user_id IS NOT NULL`,
+  "DELETE FROM trainer_profiles WHERE slug = 'trenioby'",
+  `CREATE OR REPLACE FUNCTION reject_trenioby_trainer_slug() RETURNS trigger AS $$
+   BEGIN
+     IF NEW.slug = 'trenioby' THEN
+       RAISE EXCEPTION 'trainer slug trenioby is reserved';
+     END IF;
+     RETURN NEW;
+   END;
+   $$ LANGUAGE plpgsql`,
+  "DROP TRIGGER IF EXISTS trainer_profiles_reject_trenioby ON trainer_profiles",
+  `CREATE TRIGGER trainer_profiles_reject_trenioby
+   BEFORE INSERT OR UPDATE OF slug ON trainer_profiles
+   FOR EACH ROW EXECUTE FUNCTION reject_trenioby_trainer_slug()`,
+  "COMMENT ON COLUMN conversations.host_user_id IS 'Админ портала в приветственном диалоге. Карточки тренера у этого диалога нет.'",
 ];
 
 async function main() {

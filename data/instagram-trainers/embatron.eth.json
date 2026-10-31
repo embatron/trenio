@@ -1,0 +1,65 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/embatron.eth/",
+  "handle": "embatron.eth",
+  "slug": "embatron.eth",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "embatron",
+  "lastName": "",
+  "fullName": "embatron",
+  "gender": "male",
+  "nameQuotes": [
+    "embatron"
+  ],
+  "headline": "",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "bio": "Меня зовут embatron.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/embatron.eth-g2.jpg",
+  "photos": [
+    "/trainers/instagram/embatron.eth-g2.jpg",
+    "/trainers/instagram/embatron.eth-g3.jpg",
+    "/trainers/instagram/embatron.eth-g4.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": false,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 4,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/embatron.eth/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "sport",
+    "city",
+    "price",
+    "avatar",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

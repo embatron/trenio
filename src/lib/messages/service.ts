@@ -1,4 +1,5 @@
 import { and, desc, eq, inArray, isNull, or, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 
 import { consumeRateLimit } from "@/auth/rate-limit";
 import { getDb } from "@/db";
@@ -15,6 +16,7 @@ import {
 } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
 import { reviewPlainText, reviewTextLength, sanitizeReviewHtml } from "@/lib/catalog/review-html";
+import { isGodUser } from "@/lib/auth/god";
 import { isStaff } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
 import {
@@ -27,6 +29,8 @@ import {
 import { removeMessageFile, writeMessageFile, writeMessagePreview } from "@/lib/messages/attachment-store";
 import { logCaught } from "@/lib/log/logger";
 import { notifyStaffAboutReport, scheduleMessageNotification } from "@/lib/messages/notify";
+
+const hostUsers = alias(users, "conversation_hosts");
 import {
   CONVERSATION_PAGE_SIZE,
   DAILY_TRAINER_LIMIT_MESSAGE,
@@ -66,6 +70,7 @@ export type ConversationAccess = {
 type AccessMode = "read" | "write" | "close" | "reopen" | "block";
 
 export function assertConversationAccess(actor: MessageActor, row: ConversationAccess, mode: AccessMode): void {
+  if (isGodUser(actor.id)) return;
   const staff = isStaff(actor.roles);
   const participant = actor.id === row.userId || (row.ownerUserId != null && actor.id === row.ownerUserId);
   if (mode === "read") {
@@ -97,6 +102,7 @@ export function canMessage(input: {
   published: boolean;
   blocked: boolean;
 }): { ok: true } | { ok: false; message: string } {
+  if (isGodUser(input.actorId)) return { ok: true };
   if (input.ownerUserId && input.actorId === input.ownerUserId) {
     return { ok: false, message: "Нельзя написать своему профилю." };
   }
@@ -124,7 +130,7 @@ export function getCounterparty(input: {
       firstName: input.trainerFirstName,
       lastName: input.trainerLastName,
       avatarPath: input.trainerAvatarPath,
-      slug: input.trainerSlug,
+      slug: input.trainerSlug || null,
       kind: "trainer",
     };
   }
@@ -159,6 +165,33 @@ function trainerLabel(fullName: string, firstName: string, lastName: string) {
   return fullName.trim() || personName(firstName, lastName) || "Тренер";
 }
 
+function listedTrainer(row: {
+  trainerFullName: string | null;
+  trainerFirstName: string | null;
+  trainerLastName: string | null;
+  trainerAvatar: string | null;
+  trainerSlug: string | null;
+  hostUserId: string | null;
+  hostAvatar: string | null;
+}) {
+  if (!row.trainerSlug && row.hostUserId) {
+    return {
+      name: "Trenioby",
+      firstName: "Trenioby",
+      lastName: "",
+      avatarPath: row.hostAvatar ?? "",
+      slug: "",
+    };
+  }
+  return {
+    name: trainerLabel(row.trainerFullName ?? "", row.trainerFirstName ?? "", row.trainerLastName ?? ""),
+    firstName: row.trainerFirstName ?? "",
+    lastName: row.trainerLastName ?? "",
+    avatarPath: row.trainerAvatar ?? "",
+    slug: row.trainerSlug ?? "",
+  };
+}
+
 function asNumber(value: number | string | bigint) {
   const number = typeof value === "number" ? value : Number(value);
   return Number.isFinite(number) ? number : 0;
@@ -181,6 +214,7 @@ function isUniqueViolation(error: unknown) {
 }
 
 function assertSendRate(userId: string) {
+  if (isGodUser(userId)) return;
   const minute = consumeRateLimit(`msg:min:${userId}`, 60_000, 10);
   if (!minute.ok) {
     throw new AuthError(`Слишком много сообщений. Подождите ${minute.retryAfterSec} с.`, "RATE_LIMITED");
@@ -191,6 +225,7 @@ function assertSendRate(userId: string) {
 
 /** Messages this user already sent today, as the client of the thread. Replies from a profile owner are not counted. */
 async function assertDailyTrainerOutreach(userId: string, trainerProfileId: string) {
+  if (isGodUser(userId)) return;
   const [row] = await getDb()
     .select({
       trainers: sql<number>`count(distinct ${conversations.trainerProfileId})::int`,
@@ -260,10 +295,8 @@ function accessFrom(conversation: Conversation, profile: ProfileRow, blocked: bo
   };
 }
 
-async function loadConversation(conversationId: string) {
-  const [conversation] = await getDb().select().from(conversations).where(eq(conversations.id, conversationId)).limit(1);
-  if (!conversation) return null;
-  const [profile] = await getDb()
+async function profileById(id: string): Promise<ProfileRow | null> {
+  const [row] = await getDb()
     .select({
       id: trainerProfiles.id,
       slug: trainerProfiles.slug,
@@ -275,10 +308,42 @@ async function loadConversation(conversationId: string) {
       avatarPath: trainerProfiles.avatarPath,
     })
     .from(trainerProfiles)
-    .where(eq(trainerProfiles.id, conversation.trainerProfileId))
+    .where(eq(trainerProfiles.id, id))
     .limit(1);
+  return row ?? null;
+}
+
+/** The welcome thread has no trainer card. The other party is the admin account, shown as Trenioby. */
+async function portalProfile(hostUserId: string | null): Promise<ProfileRow | null> {
+  if (!hostUserId) return null;
+  const [user] = await getDb()
+    .select({ avatarPath: users.avatarPath })
+    .from(users)
+    .where(eq(users.id, hostUserId))
+    .limit(1);
+  if (!user) return null;
+  return {
+    id: hostUserId,
+    slug: "",
+    status: "published",
+    ownerUserId: hostUserId,
+    fullName: "Trenioby",
+    firstName: "Trenioby",
+    lastName: "",
+    avatarPath: user.avatarPath,
+  };
+}
+
+async function loadConversation(conversationId: string) {
+  const [conversation] = await getDb().select().from(conversations).where(eq(conversations.id, conversationId)).limit(1);
+  if (!conversation) return null;
+  const profile = conversation.trainerProfileId
+    ? await profileById(conversation.trainerProfileId)
+    : await portalProfile(conversation.hostUserId);
   if (!profile) return null;
-  const blocked = await isBlocked(conversation.userId, conversation.trainerProfileId);
+  const blocked = conversation.trainerProfileId
+    ? await isBlocked(conversation.userId, conversation.trainerProfileId)
+    : false;
   return { conversation, profile, access: accessFrom(conversation, profile, blocked) };
 }
 
@@ -543,7 +608,9 @@ export async function sendMessage(
       .from(messages)
       .where(and(eq(messages.conversationId, conversationId), eq(messages.clientId, input.clientId)))
       .limit(1);
-    if (!duplicate) await assertDailyTrainerOutreach(actor.id, loaded.conversation.trainerProfileId);
+    if (!duplicate && loaded.conversation.trainerProfileId) {
+      await assertDailyTrainerOutreach(actor.id, loaded.conversation.trainerProfileId);
+    }
   }
   assertSendRate(actor.id);
   const saved = await getDb().transaction(async (tx) => {
@@ -616,16 +683,23 @@ const activityAt = sql<Date>`COALESCE(${conversations.lastMessageAt}, ${conversa
 
 export async function listConversations(
   actor: MessageActor,
-  input: { view: "own" | "inbox"; cursor?: ConversationCursor },
+  input: { view: "own" | "inbox" | "staff"; cursor?: ConversationCursor },
 ): Promise<ConversationListResult> {
+  if (input.view === "staff" && !isStaff(actor.roles)) {
+    throw new AuthError("Недостаточно прав.", "FORBIDDEN");
+  }
   if (input.view === "inbox" && !actor.roles.some((role) => role === "trainer" || role === "club" || role === "admin" || role === "superadmin")) {
     throw new AuthError("Нет доступа к перепискам профиля.", "FORBIDDEN");
   }
-  const filters = [
-    input.view === "own"
-      ? eq(conversations.userId, actor.id)
-      : or(eq(conversations.userId, actor.id), eq(trainerProfiles.ownerUserId, actor.id)),
-  ];
+  const filters = [];
+  if (input.view === "own") filters.push(eq(conversations.userId, actor.id));
+  if (input.view === "inbox") {
+    filters.push(or(
+      eq(conversations.userId, actor.id),
+      eq(trainerProfiles.ownerUserId, actor.id),
+      eq(conversations.hostUserId, actor.id),
+    ));
+  }
   if (input.cursor) {
     const at = new Date(input.cursor.at);
     if (Number.isNaN(at.getTime())) throw new AuthError("Некорректная страница.", "VALIDATION");
@@ -642,14 +716,18 @@ export async function listConversations(
       trainerFirstName: trainerProfiles.firstName,
       trainerLastName: trainerProfiles.lastName,
       trainerAvatar: trainerProfiles.avatarPath,
+      ownerUserId: trainerProfiles.ownerUserId,
+      hostUserId: conversations.hostUserId,
+      hostAvatar: hostUsers.avatarPath,
       userFirstName: users.firstName,
       userLastName: users.lastName,
       userAvatar: users.avatarPath,
     })
     .from(conversations)
-    .innerJoin(trainerProfiles, eq(trainerProfiles.id, conversations.trainerProfileId))
+    .leftJoin(trainerProfiles, eq(trainerProfiles.id, conversations.trainerProfileId))
+    .leftJoin(hostUsers, eq(hostUsers.id, conversations.hostUserId))
     .innerJoin(users, eq(users.id, conversations.userId))
-    .where(and(...filters))
+    .where(filters.length > 0 ? and(...filters) : undefined)
     .orderBy(desc(activityAt), desc(conversations.id))
     .limit(CONVERSATION_PAGE_SIZE + 1);
 
@@ -685,34 +763,46 @@ export async function listConversations(
     for (const row of unreadRows) unread.set(row.conversationId, asNumber(row.count));
   }
 
+  let total: number | undefined;
+  if (input.view === "staff") {
+    const [counted] = await getDb().select({ n: sql<number>`count(*)::int` }).from(conversations);
+    total = Number(counted?.n ?? 0);
+  }
+
   const items = page.map((row) => {
     const activity = iso(row.activityAt) ?? new Date(0).toISOString();
+    const clientName = personName(row.userFirstName, row.userLastName);
+    const trainer = listedTrainer(row);
+    const counterpart = getCounterparty({
+      viewerId: actor.id,
+      conversationUserId: row.userId,
+      userName: clientName,
+      userFirstName: row.userFirstName,
+      userLastName: row.userLastName ?? "",
+      userAvatarPath: row.userAvatar,
+      trainerName: trainer.name,
+      trainerFirstName: trainer.firstName,
+      trainerLastName: trainer.lastName,
+      trainerAvatarPath: trainer.avatarPath,
+      trainerSlug: trainer.slug,
+    });
+    const involved = row.userId === actor.id || row.ownerUserId === actor.id || row.hostUserId === actor.id;
     return {
       id: row.id,
       status: row.status,
       activityAt: activity,
       preview: previews.get(row.id) ?? "",
-      unread: unread.get(row.id) ?? 0,
-      trainerSlug: row.trainerSlug,
-      counterpart: getCounterparty({
-        viewerId: actor.id,
-        conversationUserId: row.userId,
-        userName: personName(row.userFirstName, row.userLastName),
-        userFirstName: row.userFirstName,
-        userLastName: row.userLastName ?? "",
-        userAvatarPath: row.userAvatar,
-        trainerName: trainerLabel(row.trainerFullName, row.trainerFirstName, row.trainerLastName),
-        trainerFirstName: row.trainerFirstName,
-        trainerLastName: row.trainerLastName,
-        trainerAvatarPath: row.trainerAvatar,
-        trainerSlug: row.trainerSlug,
-      }),
+      unread: input.view === "staff" && !involved ? 0 : unread.get(row.id) ?? 0,
+      trainerSlug: trainer.slug,
+      counterpart,
+      aside: input.view === "staff" ? (counterpart.kind === "user" ? trainer.name : clientName) : undefined,
     };
   });
   const last = items[items.length - 1];
   return {
     items,
     nextCursor: hasMore && last ? { at: last.activityAt, id: last.id } : null,
+    total,
   };
 }
 
@@ -781,7 +871,7 @@ export async function listMessages(
     canWrite,
     canClose: allows(actor, loaded.access, "close"),
     canReopen: allows(actor, loaded.access, "reopen"),
-    canBlock: allows(actor, loaded.access, "block"),
+    canBlock: Boolean(loaded.conversation.trainerProfileId) && allows(actor, loaded.access, "block"),
     canHide: false,
     canReport: isParticipant(actor.id, loaded.access),
     composeLimit,
@@ -875,7 +965,7 @@ export async function reportMessage(actor: MessageActor, input: { conversationId
     return { ok: true as const, duplicate: true };
   }
   const [reporter] = await getDb()
-    .select({ firstName: users.firstName, lastName: users.lastName })
+    .select({ firstName: users.firstName, lastName: users.lastName, avatarPath: users.avatarPath })
     .from(users)
     .where(eq(users.id, actor.id))
     .limit(1);
@@ -883,6 +973,7 @@ export async function reportMessage(actor: MessageActor, input: { conversationId
     await notifyStaffAboutReport({
       conversationId: loaded.conversation.id,
       reporterName: personName(reporter?.firstName, reporter?.lastName),
+      reporterAvatar: reporter?.avatarPath ?? "",
       reporterSide,
       trainerName: trainerLabel(loaded.profile.fullName, loaded.profile.firstName, loaded.profile.lastName),
       reason: reason.label,
@@ -915,11 +1006,15 @@ export async function listReports(actor: MessageActor): Promise<ReportRow[]> {
       trainerFirstName: trainerProfiles.firstName,
       trainerLastName: trainerProfiles.lastName,
       trainerSlug: trainerProfiles.slug,
+      trainerAvatar: trainerProfiles.avatarPath,
+      hostUserId: conversations.hostUserId,
+      hostAvatar: hostUsers.avatarPath,
     })
     .from(messageReports)
     .leftJoin(messages, eq(messages.id, messageReports.messageId))
     .innerJoin(conversations, eq(conversations.id, messageReports.conversationId))
-    .innerJoin(trainerProfiles, eq(trainerProfiles.id, conversations.trainerProfileId))
+    .leftJoin(trainerProfiles, eq(trainerProfiles.id, conversations.trainerProfileId))
+    .leftJoin(hostUsers, eq(hostUsers.id, conversations.hostUserId))
     .innerJoin(users, eq(users.id, messageReports.reporterId))
     .orderBy(desc(messageReports.createdAt));
   return rows.map((row) => ({
@@ -935,8 +1030,8 @@ export async function listReports(actor: MessageActor): Promise<ReportRow[]> {
     conversationStatus: row.conversationStatus,
     reporterId: row.reporterId,
     reporterName: personName(row.reporterFirstName, row.reporterLastName),
-    trainerName: trainerLabel(row.trainerFullName, row.trainerFirstName, row.trainerLastName),
-    trainerSlug: row.trainerSlug,
+    trainerName: listedTrainer(row).name,
+    trainerSlug: listedTrainer(row).slug,
   }));
 }
 
@@ -960,6 +1055,9 @@ async function reviewOpenReports(conversationId: string) {
 
 export async function blockPair(actor: MessageActor, conversationId: string) {
   const loaded = await requireConversation(actor, conversationId, "block");
+  if (!loaded.conversation.trainerProfileId) {
+    throw new AuthError("Этот диалог нельзя заблокировать.", "VALIDATION");
+  }
   await getDb()
     .insert(blockedPairs)
     .values({ userId: loaded.conversation.userId, trainerProfileId: loaded.conversation.trainerProfileId })
@@ -986,9 +1084,9 @@ export async function unreadSummary(userId: string): Promise<MessagingSummary> {
         SELECT count(*)::int
         FROM messages m
         INNER JOIN conversations c ON c.id = m.conversation_id
-        INNER JOIN trainer_profiles p ON p.id = c.trainer_profile_id
+        LEFT JOIN trainer_profiles p ON p.id = c.trainer_profile_id
         LEFT JOIN conversation_reads r ON r.conversation_id = c.id AND r.user_id = ${userId}::uuid
-        WHERE p.owner_user_id = ${userId}::uuid
+        WHERE (p.owner_user_id = ${userId}::uuid OR c.host_user_id = ${userId}::uuid)
           AND c.user_id <> ${userId}::uuid
           AND m.deleted_at IS NULL
           AND m.sender_id <> ${userId}::uuid

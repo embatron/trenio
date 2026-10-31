@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { InfoPage } from "@/components/info-page";
 import { infoPageCopy, infoPageHead } from "@/lib/seo/pages";
+import { SITE_EMAIL } from "@/lib/seo/site";
 
 const page = infoPageCopy("contacts");
 
@@ -19,7 +20,7 @@ function ContactsPage() {
       <section>
         <h2>Почта</h2>
         <p>
-          <a className="info-mail" href="mailto:hello@trenio.by">hello@trenio.by</a>
+          <a className="info-mail" href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>
         </p>
         <p>Ответ придёт на ту же почту. Отдельного телефона поддержки нет: занятие и запись согласуют напрямую с тренером.</p>
       </section>

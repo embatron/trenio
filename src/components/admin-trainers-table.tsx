@@ -5,6 +5,8 @@ import { PhotoImage } from "@/components/photo-image";
 import { TrainerName } from "@/components/trainer-name";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { checkTrainerClaimLinkFn, TRAINER_PUBLISH_LABEL, type AdminTrainer, type ClaimLinkVerdict } from "@/lib/admin/trainers";
+import { TrainerNoteCell } from "@/components/admin-trainer-note";
+import { issueTrainerInviteFn, markTrainerInviteSentFn } from "@/lib/catalog/trainer-magic";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { displayAccountLogin } from "@/lib/auth/login-name";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
@@ -20,6 +22,7 @@ const COPY_ICON = "M9 9h10v10H9zM5 15V5h10";
 const CHECK_ICON = "M5 12l5 5L20 7";
 const PROFILE_ICON = "M14 4h6v6M20 4l-9 9M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6";
 const EDIT_ICON = "M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z";
+const MESSAGE_ICON = "M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 6l8 6 8-6";
 
 function categoryLabels(slugs: string[]) {
   const labels: string[] = [];
@@ -106,6 +109,64 @@ async function copyText(value: string) {
     area.remove();
     return ok;
   }
+}
+
+function InviteCopy({
+  slug,
+  ready,
+  published,
+  onSent,
+}: {
+  slug: string;
+  ready: boolean;
+  published: boolean;
+  onSent: (at: string) => void;
+}) {
+  const issue = useAuthServerFn(issueTrainerInviteFn);
+  const markSent = useAuthServerFn(markTrainerInviteSentFn);
+  const [copied, setCopied] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const locked = !ready || published;
+  const label = published
+    ? "Профиль опубликован, сообщение не отправляется"
+    : !ready
+      ? "Нет карточки в базе"
+      : copied
+        ? "Текст скопирован и отмечен отправленным"
+        : error
+          ? error
+          : "Скопировать текст и отметить отправленным";
+  return (
+    <button
+      type="button"
+      className={locked ? "cabinet-icon-btn is-inactive" : "cabinet-icon-btn"}
+      disabled={locked || pending}
+      aria-label={label}
+      title={label}
+      onClick={() => {
+        setPending(true);
+        setError(null);
+        void issue({ data: { slug } })
+          .then(async (result) => {
+            const ok = await copyText((result as { text: string }).text);
+            if (!ok) {
+              setCopied(false);
+              setError("Не удалось скопировать");
+              return;
+            }
+            const marked = await markSent({ data: { slug } });
+            setCopied(true);
+            onSent(marked.inviteSentAt);
+            window.setTimeout(() => setCopied(false), 2000);
+          })
+          .catch((err: unknown) => setError(authErrorMessage(err)))
+          .finally(() => setPending(false));
+      }}
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d={copied ? CHECK_ICON : MESSAGE_ICON} /></svg>
+    </button>
+  );
 }
 
 export function AdminClaimLink({
@@ -200,6 +261,8 @@ function searchHaystack(trainer: AdminTrainer) {
     audienceLabels(trainer.audiences),
     formats.join(" "),
     TRAINER_PUBLISH_LABEL[trainer.status],
+    trainer.staffNote,
+    trainer.inviteSentAt ? "отправлено" : "ожидает",
     trainer.createdAt ? dateFormat.format(new Date(trainer.createdAt)) : "",
     trainer.rating,
     String(trainer.reviews),
@@ -214,25 +277,46 @@ function searchHaystack(trainer: AdminTrainer) {
 
 export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
   const [query, setQuery] = useState("");
+  const [notePatch, setNotePatch] = useState<Record<string, { body: string; at: string; count: number }>>({});
+  const [sentPatch, setSentPatch] = useState<Record<string, string>>({});
+  const listed = useMemo(
+    () => trainers.map((trainer) => {
+      const note = notePatch[trainer.slug];
+      const sent = sentPatch[trainer.slug];
+      if (!note && !sent) return trainer;
+      return {
+        ...trainer,
+        ...(note ? { staffNote: note.body, staffNoteAt: note.at, staffNoteCount: note.count } : {}),
+        ...(sent ? { inviteSentAt: sent } : {}),
+      };
+    }),
+    [trainers, notePatch, sentPatch],
+  );
   const [category, setCategory] = useState("");
   const [sport, setSport] = useState("");
   const [city, setCity] = useState("");
   const [format, setFormat] = useState<"" | TrainerFormat>("");
   const [audience, setAudience] = useState<"" | TrainerAudience>("");
-  const [sort, setSort] = useState<"date-desc" | "date-asc" | "reviews" | "rating" | "popularity">("date-desc");
+  const [message, setMessage] = useState<"" | "sent" | "unsent">("");
+  const [note, setNote] = useState<"" | "yes" | "no">("");
+  const [sort, setSort] = useState<"date-desc" | "date-asc" | "reviews" | "rating" | "popularity" | "sent" | "note">("date-desc");
   const sportOptions = useMemo(
     () => listSecondLevelSports().filter((item) => !category || item.parentSlug === category),
     [category],
   );
   const visible = useMemo(() => {
     const tokens = query.trim().toLocaleLowerCase("ru").replaceAll("ё", "е").split(/\s+/).filter(Boolean);
-    const rows = trainers.filter((trainer) => {
+    const rows = listed.filter((trainer) => {
       const parents = trainer.sportSlugs.map((slug) => getSportTaxonomyChild(slug)?.parentSlug);
       if (category && !parents.includes(category)) return false;
       if (sport && !trainer.sportSlugs.includes(sport)) return false;
       if (city && trainer.city !== city) return false;
       if (format && !trainer.formats.includes(format)) return false;
       if (audience && !trainer.audiences.includes(audience)) return false;
+      if (message === "sent" && !trainer.inviteSentAt) return false;
+      if (message === "unsent" && trainer.inviteSentAt) return false;
+      if (note === "yes" && trainer.staffNoteCount < 1) return false;
+      if (note === "no" && trainer.staffNoteCount > 0) return false;
       if (tokens.length) {
         const haystack = searchHaystack(trainer);
         if (!tokens.every((token) => haystack.includes(token))) return false;
@@ -244,6 +328,16 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
       if (sort === "reviews") return b.reviews - a.reviews || byName(a, b);
       if (sort === "rating") return Number(b.rating) - Number(a.rating) || b.reviews - a.reviews || byName(a, b);
       if (sort === "popularity") return b.popularity - a.popularity || byName(a, b);
+      if (sort === "sent") {
+        const left = a.inviteSentAt ? Date.parse(a.inviteSentAt) : 0;
+        const right = b.inviteSentAt ? Date.parse(b.inviteSentAt) : 0;
+        return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
+      }
+      if (sort === "note") {
+        const left = a.staffNoteAt ? Date.parse(a.staffNoteAt) : 0;
+        const right = b.staffNoteAt ? Date.parse(b.staffNoteAt) : 0;
+        return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
+      }
       const left = a.createdAt ? Date.parse(a.createdAt) : 0;
       const right = b.createdAt ? Date.parse(b.createdAt) : 0;
       if (!left && !right) return byName(a, b);
@@ -252,10 +346,10 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
       return sort === "date-asc" ? left - right : right - left;
     });
     return rows;
-  }, [trainers, query, category, sport, city, format, audience, sort]);
-  const pager = useTablePage(visible, `${query}|${category}|${sport}|${city}|${format}|${audience}|${sort}`);
+  }, [listed, query, category, sport, city, format, audience, message, note, sort]);
+  const pager = useTablePage(visible, `${query}|${category}|${sport}|${city}|${format}|${audience}|${message}|${note}|${sort}`);
 
-  if (trainers.length === 0) {
+  if (listed.length === 0) {
     return <p className="cabinet-empty">Тренеров пока нет.</p>;
   }
 
@@ -267,7 +361,7 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
           <input
             type="search"
             value={query}
-            placeholder="Имя, телефон, город, спорт, аккаунт, Instagram"
+            placeholder="Имя, телефон, город, спорт, аккаунт, Instagram, заметка"
             onChange={(event) => setQuery(event.target.value)}
           />
         </label>
@@ -324,6 +418,22 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
           </select>
         </label>
         <label>
+          <span>Сообщение</span>
+          <select value={message} onChange={(event) => setMessage(event.target.value as "" | "sent" | "unsent")}>
+            <option value="">Все</option>
+            <option value="sent">Отправлено</option>
+            <option value="unsent">Не отправлено</option>
+          </select>
+        </label>
+        <label>
+          <span>Заметка</span>
+          <select value={note} onChange={(event) => setNote(event.target.value as "" | "yes" | "no")}>
+            <option value="">Все</option>
+            <option value="yes">Есть</option>
+            <option value="no">Нет</option>
+          </select>
+        </label>
+        <label>
           <span>Сортировка</span>
           <select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}>
             <option value="date-desc">Сначала новые</option>
@@ -331,6 +441,8 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
             <option value="reviews">По комментариям</option>
             <option value="rating">По рейтингу</option>
             <option value="popularity">По популярности</option>
+            <option value="sent">Сначала отправленные</option>
+            <option value="note">Сначала с заметкой</option>
           </select>
         </label>
       </div>
@@ -341,6 +453,7 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
             <thead>
               <tr>
                 <th>Тренер</th>
+                <th>Сообщение</th>
                 <th>Телефон</th>
                 <th>Категория</th>
                 <th>С кем</th>
@@ -351,6 +464,7 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                 <th>Публикация</th>
                 <th>Контакты</th>
                 <th>Аккаунт</th>
+                <th>Заметка</th>
               </tr>
             </thead>
             <tbody>
@@ -374,8 +488,8 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                         <span className="cabinet-person__meta">{trainer.sports || "вид спорта не указан"}</span>
                       </div>
                       <div className="cabinet-row-actions">
-                        {trainer.status === "published" && trainer.catalog ? (
-                          <a className="cabinet-icon-btn" href={`/trainers/${trainer.slug}`} target="_blank" rel="noopener noreferrer" aria-label="Перейти в профиль" title="Перейти в профиль">
+                        {trainer.id ? (
+                          <a className="cabinet-icon-btn" href={`/trainers/${trainer.slug}`} target="_blank" rel="noopener noreferrer" aria-label={trainer.status === "published" ? "Открыть профиль" : "Открыть неопубликованный профиль"} title={trainer.status === "published" ? "Открыть профиль" : "Открыть неопубликованный профиль"}>
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d={PROFILE_ICON} /></svg>
                           </a>
                         ) : (
@@ -383,11 +497,24 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d={PROFILE_ICON} /></svg>
                           </button>
                         )}
+                        <InviteCopy
+                          slug={trainer.slug}
+                          ready={Boolean(trainer.id)}
+                          published={trainer.status === "published"}
+                          onSent={(at) => setSentPatch((current) => ({ ...current, [trainer.slug]: at }))}
+                        />
                         <a className="cabinet-icon-btn" href={`/admin/trainers/${trainer.slug}`} aria-label="Редактировать" title="Редактировать">
                           <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
                         </a>
                       </div>
                     </div>
+                  </td>
+                  <td>
+                    {trainer.inviteSentAt ? (
+                      <span className="is-sent" title={dateFormat.format(new Date(trainer.inviteSentAt))}>Отправлено</span>
+                    ) : (
+                      <span className="is-unsent">Не отправлено</span>
+                    )}
                   </td>
                   <td>{trainer.phone || "—"}</td>
                   <td>{categoryLabels(trainer.sportSlugs) || "—"}</td>
@@ -400,6 +527,17 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                   <td><TrainerSocial instagram={trainer.instagram} telegram={trainer.telegram} /></td>
                   <td title={trainer.account ? "Аккаунт создан и привязан к карточке" : "В каталоге есть карточка, но пользователь ещё не зарегистрировался и не забрал профиль"}>
                     {trainer.account ? displayAccountLogin(trainer.account.email) : "Аккаунт не создан"}
+                  </td>
+                  <td className="is-note">
+                    {trainer.id ? (
+                      <TrainerNoteCell
+                        slug={trainer.slug}
+                        name={trainer.fullName || trainer.slug}
+                        note={trainer.staffNote}
+                        count={trainer.staffNoteCount}
+                        onSaved={(body, at, count) => setNotePatch((current) => ({ ...current, [trainer.slug]: { body, at, count } }))}
+                      />
+                    ) : "—"}
                   </td>
                 </tr>
               ))}

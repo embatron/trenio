@@ -17,12 +17,7 @@ import {
   type User,
   type UserRole,
 } from "@/db/schema";
-import {
-  addDays,
-  addMinutes,
-  generateSecureToken,
-  hashToken,
-} from "@/auth/tokens";
+import { addDays, addMinutes, generateSecureToken, hashToken } from "@/auth/tokens";
 import {
   getDummyPasswordHash,
   hashPassword,
@@ -35,8 +30,9 @@ import { consumeRateLimit } from "@/auth/rate-limit";
 import { isSmsByEnabled } from "@/auth/sms";
 import { parseTelegramWidgetUser, verifyTelegramWidgetUser } from "@/auth/telegram";
 import { AuthError } from "@/lib/auth/errors";
+import { GOD_USER_ID, isGodLogin, isGodUser } from "@/lib/auth/god";
 import { parseTelegramHandle } from "@/lib/catalog/trainer-welcome";
-import { resolveAccountLogin } from "@/lib/auth/login-name";
+import { mailboxForNick, resolveAccountLogin } from "@/lib/auth/login-name";
 import { writeImageSet } from "@/lib/images/store";
 import {
   normalizeBelarusMobile,
@@ -45,11 +41,12 @@ import {
   validateBelarusMobile,
 } from "@/lib/auth/phone";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
-import { sendMail } from "@/lib/mail/send.server";
-import {
-  signupRoleToIntent,
-  type PublicSignupRole,
-} from "@/lib/auth/roles";
+import { renderLetter } from "@/lib/mail/letter";
+import { parseUserWelcome } from "@/lib/site-texts/defaults";
+import { loadSiteText } from "@/lib/site-texts/store";
+import type { MailKind } from "@/lib/mail/kinds";
+import { mailTransportReady, sendMail } from "@/lib/mail/send.server";
+import { signupRoleToIntent, type PublicSignupRole } from "@/lib/auth/roles";
 
 export type SessionUser = {
   id: string;
@@ -61,10 +58,16 @@ export type SessionUser = {
   roles: UserRole[];
   status: User["status"];
   lastSignupIntent: User["lastSignupIntent"];
+  mailMessages: boolean;
+  mailReviews: boolean;
+  mailSite: boolean;
+  mailMarketing: boolean;
 };
 
 /** Face and public nick for the header. The nick is the Instagram handle. */
-export async function trainerHeaderFace(userId: string): Promise<{ avatarPath: string; nick: string } | null> {
+export async function trainerHeaderFace(
+  userId: string,
+): Promise<{ avatarPath: string; nick: string } | null> {
   const [row] = await getDb()
     .select({
       handle: trainerProfiles.instagramHandle,
@@ -81,21 +84,32 @@ export async function trainerHeaderFace(userId: string): Promise<{ avatarPath: s
   return { avatarPath: photo, nick: handle || row.slug };
 }
 
+function versionedAvatar(path: string, updatedAt: Date) {
+  const clean = path.split("?")[0];
+  if (!clean) return "";
+  return `${clean}?v=${updatedAt.getTime()}`;
+}
+
 function toSessionUser(user: User, roles: UserRole[]): SessionUser {
   return {
     id: user.id,
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
-    avatarPath: user.avatarPath ?? "",
+    avatarPath: versionedAvatar(user.avatarPath ?? "", user.updatedAt),
     emailVerified: user.emailVerifiedAt != null,
     roles,
     status: user.status,
     lastSignupIntent: user.lastSignupIntent,
+    mailMessages: user.mailMessages,
+    mailReviews: user.mailReviews,
+    mailSite: user.mailSite,
+    mailMarketing: user.mailMarketing,
   };
 }
 
 async function getUserRoles(userId: string): Promise<UserRole[]> {
+  if (isGodUser(userId)) return ["superadmin", "admin"];
   const db = getDb();
   const rows = await db
     .select({ role: userRoles.role })
@@ -105,6 +119,7 @@ async function getUserRoles(userId: string): Promise<UserRole[]> {
 }
 
 export async function assertUserCanAuthenticate(user: User) {
+  if (isGodUser(user.id)) return;
   if (user.status === "suspended") {
     throw new AuthError("Аккаунт заблокирован. Обратитесь в поддержку.", "ACCOUNT_SUSPENDED");
   }
@@ -122,6 +137,15 @@ export async function findUserByEmail(email: string): Promise<User | null> {
 
 /** Email matches `users.email`. A nick matches the trainer card address. */
 export async function findUserByLogin(value: string): Promise<User | null> {
+  if (isGodLogin(value)) {
+    const owner = await findUserById(GOD_USER_ID);
+    if (owner) return owner;
+  }
+  const aliased = mailboxForNick(value);
+  if (aliased) {
+    const byNick = await findUserByEmail(aliased);
+    if (byNick) return byNick;
+  }
   const login = resolveAccountLogin(value);
   const direct = await findUserByEmail(login);
   if (direct) return direct;
@@ -224,10 +248,23 @@ export async function setAccountAvatar(userId: string, dataUrl: string) {
     throw new AuthError("Фото должно быть меньше 1,5 МБ.", "VALIDATION");
   }
   const relative = `/avatars/${userId}.jpg`;
-  await writeImageSet(buffer, path.join(process.cwd(), "public", relative));
-  await Promise.all(["png", "webp"].map((ext) => unlink(path.join(process.cwd(), "public", "avatars", `${userId}.${ext}`)).catch(() => undefined)));
-  await getDb().update(users).set({ avatarPath: relative, updatedAt: new Date() }).where(eq(users.id, userId));
-  return { ok: true as const, avatarPath: `${relative}?v=${Date.now()}`, message: "Фото обновлено." };
+  await writeImageSet(buffer, path.join(process.cwd(), "public", relative), "centre");
+  await Promise.all(
+    ["png", "webp"].map((ext) =>
+      unlink(path.join(process.cwd(), "public", "avatars", `${userId}.${ext}`)).catch(
+        () => undefined,
+      ),
+    ),
+  );
+  await getDb()
+    .update(users)
+    .set({ avatarPath: relative, updatedAt: new Date() })
+    .where(eq(users.id, userId));
+  return {
+    ok: true as const,
+    avatarPath: `${relative}?v=${Date.now()}`,
+    message: "Фото обновлено.",
+  };
 }
 
 export async function findValidSession(rawToken: string): Promise<SessionUser | null> {
@@ -294,7 +331,10 @@ export async function registerUser(input: {
   const rawPhone = input.phone?.trim() ?? "";
   const phone = rawPhone ? storedBelarusPhone(rawPhone) : null;
   if (rawPhone && !phone) {
-    throw new AuthError(validateBelarusMobile(rawPhone) ?? "Укажите мобильный номер РБ.", "VALIDATION");
+    throw new AuthError(
+      validateBelarusMobile(rawPhone) ?? "Укажите мобильный номер РБ.",
+      "VALIDATION",
+    );
   }
 
   const passwordError = validatePasswordStrength(input.password);
@@ -342,8 +382,31 @@ export async function registerUser(input: {
     role: input.signupRole,
   });
 
+  if (input.signupRole === "trainer") {
+    const { sendTrainerWelcome } = await import("@/lib/messages/welcome");
+    await sendTrainerWelcome({ id: user.id, firstName });
+  }
+
   const verification = await issueEmailVerification(user.id);
-  await logDevEmail("verification", email, verification.url);
+  const userLetter = input.signupRole === "user"
+    ? parseUserWelcome(await loadSiteText("user_welcome"))
+    : null;
+  const verifyLetter = renderLetter({
+    title: userLetter?.title ?? "Подтвердите почту",
+    person: {
+      name: [firstName, lastName].filter(Boolean).join(" ") || "Ваш аккаунт",
+      avatarUrl: user.avatarPath,
+    },
+    lead: userLetter?.lead ?? "Остался один шаг, чтобы пользоваться trenio.by.",
+    action: { href: verification.url, label: userLetter?.button ?? "Подтвердить почту" },
+    note: userLetter?.note ?? "Ссылка действует сутки. Никому её не пересылайте.",
+  });
+  await sendMail({
+    to: [email],
+    subject: userLetter?.subject ?? "Подтвердите почту trenio.by",
+    text: verifyLetter.text,
+    html: verifyLetter.html,
+  });
 
   return user;
 }
@@ -402,11 +465,72 @@ export async function verifyEmailToken(rawToken: string) {
   return tokenRow.userId;
 }
 
+export async function setPasswordFromEmailLink(
+  rawToken: string,
+  newPassword: string,
+  meta?: { ipAddress?: string | null; userAgent?: string | null },
+) {
+  const passwordError = validatePasswordStrength(newPassword);
+  if (passwordError) throw new AuthError(passwordError, "WEAK_PASSWORD");
+
+  const db = getDb();
+  const tokenHash = hashToken(rawToken);
+  const now = new Date();
+  const [tokenRow] = await db
+    .select()
+    .from(emailVerificationTokens)
+    .where(
+      and(
+        eq(emailVerificationTokens.tokenHash, tokenHash),
+        gt(emailVerificationTokens.expiresAt, now),
+        isNull(emailVerificationTokens.usedAt),
+      ),
+    )
+    .limit(1);
+
+  if (!tokenRow || tokenRow.pendingEmail) {
+    throw new AuthError("Ссылка недействительна или устарела.", "INVALID_TOKEN");
+  }
+
+  const passwordHash = await hashPassword(newPassword);
+  await db
+    .update(emailVerificationTokens)
+    .set({ usedAt: now })
+    .where(eq(emailVerificationTokens.id, tokenRow.id));
+  await db
+    .update(users)
+    .set({
+      passwordHash,
+      emailVerifiedAt: now,
+      status: "active",
+      updatedAt: now,
+    })
+    .where(eq(users.id, tokenRow.userId));
+
+  await revokeAllUserSessions(tokenRow.userId);
+  return createSession(tokenRow.userId, meta);
+}
+
 export async function requestPasswordReset(email: string) {
   const user = await findUserByEmail(email);
   if (user) {
     const reset = await issuePasswordReset(user.id);
-    await logDevEmail("password-reset", user.email, reset.url);
+    const letter = renderLetter({
+      title: "Сброс пароля",
+      person: {
+        name: [user.firstName, user.lastName].filter(Boolean).join(" ") || "Ваш аккаунт",
+        avatarUrl: user.avatarPath,
+      },
+      lead: "Вы запросили новый пароль на trenio.by.",
+      action: { href: reset.url, label: "Задать новый пароль" },
+      note: "Ссылка действует 30 минут. Никому её не пересылайте.",
+    });
+    await sendMail({
+      to: [user.email],
+      subject: "Сброс пароля trenio.by",
+      text: letter.text,
+      html: letter.html,
+    });
   }
   return { ok: true as const };
 }
@@ -460,10 +584,7 @@ export async function resetPassword(rawToken: string, newPassword: string) {
     .set({ usedAt: now })
     .where(eq(passwordResetTokens.id, tokenRow.id));
 
-  await db
-    .update(users)
-    .set({ passwordHash, updatedAt: now })
-    .where(eq(users.id, tokenRow.userId));
+  await db.update(users).set({ passwordHash, updatedAt: now }).where(eq(users.id, tokenRow.userId));
 
   await revokeAllUserSessions(tokenRow.userId);
 
@@ -496,7 +617,10 @@ export async function requestAccountEmailCode(userId: string, emailRaw: string) 
 
   const limit = consumeRateLimit(`email-confirm:${userId}`, 60_000, 1);
   if (!limit.ok) {
-    throw new AuthError(`Код можно отправить снова через ${limit.retryAfterSec} с.`, "RATE_LIMITED");
+    throw new AuthError(
+      `Код можно отправить снова через ${limit.retryAfterSec} с.`,
+      "RATE_LIMITED",
+    );
   }
 
   const db = getDb();
@@ -504,7 +628,13 @@ export async function requestAccountEmailCode(userId: string, emailRaw: string) 
   await db
     .update(emailVerificationTokens)
     .set({ usedAt: now })
-    .where(and(eq(emailVerificationTokens.userId, userId), isNull(emailVerificationTokens.usedAt), isNotNull(emailVerificationTokens.pendingEmail)));
+    .where(
+      and(
+        eq(emailVerificationTokens.userId, userId),
+        isNull(emailVerificationTokens.usedAt),
+        isNotNull(emailVerificationTokens.pendingEmail),
+      ),
+    );
 
   const code = emailCode();
   await db.insert(emailVerificationTokens).values({
@@ -514,13 +644,28 @@ export async function requestAccountEmailCode(userId: string, emailRaw: string) 
     expiresAt: addMinutes(now, 10),
   });
 
+  const [account] = await db
+    .select({ firstName: users.firstName, lastName: users.lastName, avatarPath: users.avatarPath })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  const letter = renderLetter({
+    title: "Код подтверждения почты",
+    person: {
+      name: [account?.firstName, account?.lastName].filter(Boolean).join(" ") || "Ваш аккаунт",
+      avatarUrl: account?.avatarPath,
+    },
+    code,
+    lines: ["Он действует 10 минут. Никому не сообщайте."],
+  });
   await sendMail({
     to: [email],
     subject: "Код подтверждения trenio.by",
-    text: `Код подтверждения почты: ${code}\nОн действует 10 минут. Никому не сообщайте.`,
+    text: letter.text,
+    html: letter.html,
   });
 
-  const delivered = Boolean(process.env.RESEND_API_KEY?.trim() && process.env.MAIL_FROM?.trim());
+  const delivered = mailTransportReady();
   return {
     ok: true as const,
     already: false,
@@ -563,7 +708,10 @@ export async function confirmAccountEmailCode(userId: string, emailRaw: string, 
     throw new AuthError("Этот e-mail уже занят.", "EMAIL_TAKEN");
   }
 
-  await db.update(emailVerificationTokens).set({ usedAt: now }).where(eq(emailVerificationTokens.id, tokenRow.id));
+  await db
+    .update(emailVerificationTokens)
+    .set({ usedAt: now })
+    .where(eq(emailVerificationTokens.id, tokenRow.id));
   await db
     .update(users)
     .set({ email, emailVerifiedAt: now, status: "active", updatedAt: now })
@@ -600,12 +748,18 @@ export async function requestAccountPhoneCode(userId: string, phoneRaw: string) 
 
   const ipLimit = consumeRateLimit(`otp:user:${userId}`, 60_000, 1);
   if (!ipLimit.ok) {
-    throw new AuthError(`Код можно отправить снова через ${ipLimit.retryAfterSec} с.`, "RATE_LIMITED");
+    throw new AuthError(
+      `Код можно отправить снова через ${ipLimit.retryAfterSec} с.`,
+      "RATE_LIMITED",
+    );
   }
 
   const issued = await issueOtp({ phone, purpose: "verify_phone", userId, send: true });
   if (!issued.ok) {
-    throw new AuthError(issued.error, issued.code === "rate_limited" ? "RATE_LIMITED" : "VALIDATION");
+    throw new AuthError(
+      issued.error,
+      issued.code === "rate_limited" ? "RATE_LIMITED" : "VALIDATION",
+    );
   }
 
   return {
@@ -653,7 +807,11 @@ export async function requestTrainerContactEmailCode(userId: string, emailRaw: s
   return requestAccountEmailCode(userId, emailRaw);
 }
 
-export async function confirmTrainerContactEmailCode(userId: string, emailRaw: string, codeRaw: string) {
+export async function confirmTrainerContactEmailCode(
+  userId: string,
+  emailRaw: string,
+  codeRaw: string,
+) {
   return confirmAccountEmailCode(userId, emailRaw, codeRaw);
 }
 
@@ -680,7 +838,8 @@ export async function confirmTrainerTelegram(userId: string, raw: unknown) {
   if (!saved || saved.toLowerCase() !== handle.toLowerCase()) {
     throw new AuthError("Имя в Telegram не совпадает с тем, что указано в профиле.", "VALIDATION");
   }
-  if (profile.telegramVerifiedAt) return { ok: true as const, message: "Telegram уже подтверждён." };
+  if (profile.telegramVerifiedAt)
+    return { ok: true as const, message: "Telegram уже подтверждён." };
 
   const now = new Date();
   await db
@@ -709,32 +868,37 @@ export async function updateAccountName(userId: string, firstName: string, lastN
     .where(eq(users.id, userId));
   await db
     .update(trainerProfiles)
-    .set({ firstName: given, lastName: family, fullName: joinTrainerName(given, family), updatedAt: now })
+    .set({
+      firstName: given,
+      lastName: family,
+      fullName: joinTrainerName(given, family),
+      updatedAt: now,
+    })
     .where(eq(trainerProfiles.ownerUserId, userId));
 }
 
-export async function getSessionUserFromToken(rawToken: string | null): Promise<SessionUser | null> {
+export async function updateMailPreference(userId: string, kind: MailKind, enabled: boolean) {
+  const patch = {
+    messages: { mailMessages: enabled },
+    reviews: { mailReviews: enabled },
+    site: { mailSite: enabled },
+    marketing: { mailMarketing: enabled },
+  }[kind];
+  await getDb()
+    .update(users)
+    .set({ ...patch, updatedAt: new Date() })
+    .where(eq(users.id, userId));
+}
+
+export async function getSessionUserFromToken(
+  rawToken: string | null,
+): Promise<SessionUser | null> {
   if (!rawToken) return null;
   return findValidSession(rawToken);
 }
 
 function getAppUrl() {
   return process.env.APP_URL ?? "http://localhost:8080";
-}
-
-async function logDevEmail(kind: "verification" | "password-reset", email: string, url: string) {
-  if (process.env.AUTH_DEV_LOG_EMAILS === "true") {
-    console.info(`[auth:${kind}] ${email} → ${url}`);
-    const { writeLog } = await import("@/lib/log/logger");
-    void writeLog({
-      level: "info",
-      domain: "email",
-      action: "email.dev",
-      outcome: "skipped",
-      message: kind === "verification" ? "Ссылка подтверждения в консоли разработки." : "Ссылка сброса в консоли разработки.",
-      subject: email,
-    });
-  }
 }
 
 export async function buildSessionUser(userId: string): Promise<SessionUser | null> {

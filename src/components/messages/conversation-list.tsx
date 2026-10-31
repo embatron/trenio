@@ -22,8 +22,9 @@ export function ConversationList({
   hasMore,
   loadingMore,
   onMore,
+  onOpen,
 }: {
-  view: "own" | "inbox";
+  view: "own" | "inbox" | "staff";
   items: ConversationListItem[];
   activeId: string | null;
   loading: boolean;
@@ -31,6 +32,7 @@ export function ConversationList({
   hasMore: boolean;
   loadingMore: boolean;
   onMore: () => void;
+  onOpen?: (id: string) => void;
 }) {
   return (
     <div className="direct-list">
@@ -42,7 +44,7 @@ export function ConversationList({
       ) : error ? (
         <p className="direct-empty">{error}</p>
       ) : items.length === 0 ? (
-        <p className="direct-empty">{view === "inbox" ? "Сообщений пока нет" : "Сообщений пока нет — напишите тренеру с его карточки"}</p>
+        <p className="direct-empty">{view === "own" ? "Сообщений пока нет — напишите тренеру с его карточки" : view === "staff" ? "Переписок пока нет" : "Сообщений пока нет"}</p>
       ) : (
         <ul>
           {items.map((item) => {
@@ -53,6 +55,7 @@ export function ConversationList({
                 <span className="direct-list__text">
                   <strong>
                     <TrainerName firstName={item.counterpart.firstName} lastName={item.counterpart.lastName} empty={item.counterpart.name} />
+                    {item.aside ? <span className="direct-list__aside"> · {item.aside}</span> : null}
                   </strong>
                   <em>{item.preview || "Нет сообщений"}</em>
                 </span>
@@ -64,7 +67,16 @@ export function ConversationList({
             );
             return (
               <li key={item.id}>
-                {view === "own" ? (
+                {onOpen ? (
+                  <button
+                    type="button"
+                    className={`direct-list__row${className ? ` ${className}` : ""}`}
+                    aria-current={item.id === activeId ? "page" : undefined}
+                    onClick={() => onOpen(item.id)}
+                  >
+                    {body}
+                  </button>
+                ) : view === "own" ? (
                   <Link
                     className={className}
                     to="/account/messages/$conversationId"

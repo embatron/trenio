@@ -1,0 +1,97 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/andronik_kickboxing/",
+  "handle": "andronik_kickboxing",
+  "slug": "andronik_kickboxing",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Андрей",
+  "lastName": "",
+  "fullName": "Андрей",
+  "gender": "male",
+  "nameQuotes": [
+    "Андрей | Кикбоксинг"
+  ],
+  "headline": "Тренер по кикбоксингу",
+  "sourceBio": "Кикбоксинг | Муай Тай",
+  "sourceAbout": [],
+  "bio": "Я Андрей, тренер по кикбоксингу и муай тай в Минске. Тренирую мужчин и девушек. Счёт боёв 3:0.",
+  "about": [
+    "Тренировки индивидуальные, по кикбоксингу и муай тай."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/andronik_kickboxing/reel/DYSDH7mMI7N/",
+      "caption": "Бокс меняет не только тело. Он меняет состояние. Если давно хотел попробовать — напиши мне в директ"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    },
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "муай тай"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "boks",
+      "label": "Бокс",
+      "quote": "Бокс меняет не только тело"
+    }
+  ],
+  "primarySport": {
+    "slug": "kikboksing",
+    "parentSlug": "edinoborstva",
+    "label": "Кикбоксинг"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/andronik_kickboxing.jpg",
+  "photos": [
+    "/trainers/instagram/andronik_kickboxing.jpg",
+    "/trainers/instagram/andronik_kickboxing-g2.jpg",
+    "/trainers/instagram/andronik_kickboxing-g3.jpg",
+    "/trainers/instagram/andronik_kickboxing-g4.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 3,
+    "certificates": 0,
+    "skipped": 3
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/andronik_kickboxing/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

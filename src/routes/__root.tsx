@@ -8,11 +8,13 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
+import { GA_MEASUREMENT_ID, googleAnalyticsSnippet } from "@/lib/seo/analytics";
 import appCss from "../styles.css?url";
 import type { PublicUser } from "@/lib/auth/schemas";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { installClientLogReporter, reportClientEvent } from "@/lib/log/client-reporter";
 import { CatalogMiss } from "@/components/catalog-miss";
+import { TelegramAppChrome } from "@/components/telegram-tab-bar";
 import { FavoritesProvider } from "@/components/favorites-store";
 import { MessagesLive } from "@/components/messages/messages-live";
 import { Toaster } from "@/components/ui/sonner";
@@ -104,9 +106,8 @@ export const Route = createRootRouteWithContext<{
     try {
       const messaging = await unreadCountFn({ data: {} });
       return { user, messaging };
-    } catch (error) {
-      const { logCaught } = await import("@/lib/log/logger");
-      logCaught("message", "message.unread", error);
+    } catch {
+      // unreadCountFn already writes the failure. The root route stays in the client graph.
       return { user, messaging: EMPTY_MESSAGING };
     }
   },
@@ -148,6 +149,8 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="ru">
       <head>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} />
+        <script dangerouslySetInnerHTML={{ __html: googleAnalyticsSnippet() }} />
         <HeadContent />
       </head>
       <body>
@@ -170,6 +173,7 @@ function RootComponent() {
         <MessagesLive userId={user?.id ?? null} initial={messaging}>
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
+          <TelegramAppChrome />
           <Toaster />
         </MessagesLive>
       </FavoritesProvider>

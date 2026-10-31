@@ -17,6 +17,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as OfferRouteImport } from './routes/offer'
 import { Route as MeRouteImport } from './routes/me'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as MailRouteImport } from './routes/mail'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as ContactsRouteImport } from './routes/contacts'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -31,6 +32,7 @@ import { Route as ClubsIndexRouteImport } from './routes/clubs.index'
 import { Route as CategoriesIndexRouteImport } from './routes/categories.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AccountIndexRouteImport } from './routes/account.index'
+import { Route as TrainersReviseRouteImport } from './routes/trainers.revise'
 import { Route as TrainersSlugRouteImport } from './routes/trainers.$slug'
 import { Route as TrainerAdminMessagesRouteImport } from './routes/trainer-admin.messages'
 import { Route as MeSettingsRouteImport } from './routes/me.settings'
@@ -39,6 +41,7 @@ import { Route as MeProfileRouteImport } from './routes/me.profile'
 import { Route as MeMessagesRouteImport } from './routes/me.messages'
 import { Route as MeFavoritesRouteImport } from './routes/me.favorites'
 import { Route as JoinTrainerRouteImport } from './routes/join.trainer'
+import { Route as HiCodeRouteImport } from './routes/hi.$code'
 import { Route as ClubsSlugRouteImport } from './routes/clubs.$slug'
 import { Route as CitySlugRouteImport } from './routes/city.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
@@ -51,6 +54,7 @@ import { Route as AuthLoginRouteImport } from './routes/auth.login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
 import { Route as AuthConfirmEmailRouteImport } from './routes/auth.confirm-email'
 import { Route as AdminTrainersRouteImport } from './routes/admin.trainers'
+import { Route as AdminSiteRouteImport } from './routes/admin.site'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminMessagesRouteImport } from './routes/admin.messages'
@@ -64,10 +68,14 @@ import { Route as AccountBookingsRouteImport } from './routes/account.bookings'
 import { Route as CitySlugIndexRouteImport } from './routes/city.$slug.index'
 import { Route as AdminTrainersIndexRouteImport } from './routes/admin.trainers.index'
 import { Route as AdminAccountsIndexRouteImport } from './routes/admin.accounts.index'
+import { Route as TrainersPreviewTokenRouteImport } from './routes/trainers.preview.$token'
+import { Route as TrainersEditTokenRouteImport } from './routes/trainers.edit.$token'
 import { Route as TrainersClaimTokenRouteImport } from './routes/trainers.claim.$token'
 import { Route as TrainerAdminMessagesConversationIdRouteImport } from './routes/trainer-admin.messages.$conversationId'
 import { Route as MessagesFilesIdRouteImport } from './routes/messages.files.$id'
 import { Route as MeMessagesConversationIdRouteImport } from './routes/me.messages.$conversationId'
+import { Route as HiCodeViewRouteImport } from './routes/hi.$code.view'
+import { Route as HiCodeEditRouteImport } from './routes/hi.$code.edit'
 import { Route as CitySlugSportRouteImport } from './routes/city.$slug.$sport'
 import { Route as CategoryParentSlugChildSlugRouteImport } from './routes/category.$parentSlug.$childSlug'
 import { Route as CategoriesParentSlugChildSlugRouteImport } from './routes/categories.$parentSlug.$childSlug'
@@ -115,6 +123,11 @@ const MeRoute = MeRouteImport.update({
 const MapRoute = MapRouteImport.update({
   id: '/map',
   path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MailRoute = MailRouteImport.update({
+  id: '/mail',
+  path: '/mail',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FavoritesRoute = FavoritesRouteImport.update({
@@ -187,6 +200,11 @@ const AccountIndexRoute = AccountIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AccountRoute,
 } as any)
+const TrainersReviseRoute = TrainersReviseRouteImport.update({
+  id: '/trainers/revise',
+  path: '/trainers/revise',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TrainersSlugRoute = TrainersSlugRouteImport.update({
   id: '/trainers/$slug',
   path: '/trainers/$slug',
@@ -225,6 +243,11 @@ const MeFavoritesRoute = MeFavoritesRouteImport.update({
 const JoinTrainerRoute = JoinTrainerRouteImport.update({
   id: '/join/trainer',
   path: '/join/trainer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HiCodeRoute = HiCodeRouteImport.update({
+  id: '/hi/$code',
+  path: '/hi/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClubsSlugRoute = ClubsSlugRouteImport.update({
@@ -285,6 +308,11 @@ const AuthConfirmEmailRoute = AuthConfirmEmailRouteImport.update({
 const AdminTrainersRoute = AdminTrainersRouteImport.update({
   id: '/trainers',
   path: '/trainers',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSiteRoute = AdminSiteRouteImport.update({
+  id: '/site',
+  path: '/site',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
@@ -352,6 +380,16 @@ const AdminAccountsIndexRoute = AdminAccountsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminAccountsRoute,
 } as any)
+const TrainersPreviewTokenRoute = TrainersPreviewTokenRouteImport.update({
+  id: '/trainers/preview/$token',
+  path: '/trainers/preview/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrainersEditTokenRoute = TrainersEditTokenRouteImport.update({
+  id: '/trainers/edit/$token',
+  path: '/trainers/edit/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TrainersClaimTokenRoute = TrainersClaimTokenRouteImport.update({
   id: '/trainers/claim/$token',
   path: '/trainers/claim/$token',
@@ -374,6 +412,16 @@ const MeMessagesConversationIdRoute =
     path: '/$conversationId',
     getParentRoute: () => MeMessagesRoute,
   } as any)
+const HiCodeViewRoute = HiCodeViewRouteImport.update({
+  id: '/view',
+  path: '/view',
+  getParentRoute: () => HiCodeRoute,
+} as any)
+const HiCodeEditRoute = HiCodeEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => HiCodeRoute,
+} as any)
 const CitySlugSportRoute = CitySlugSportRouteImport.update({
   id: '/$sport',
   path: '/$sport',
@@ -427,6 +475,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/contacts': typeof ContactsRoute
   '/favorites': typeof FavoritesRoute
+  '/mail': typeof MailRoute
   '/map': typeof MapRoute
   '/me': typeof MeRouteWithChildren
   '/offer': typeof OfferRoute
@@ -445,6 +494,7 @@ export interface FileRoutesByFullPath {
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/site': typeof AdminSiteRoute
   '/admin/trainers': typeof AdminTrainersRouteWithChildren
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -457,6 +507,7 @@ export interface FileRoutesByFullPath {
   '/category/$slug': typeof CategorySlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
   '/clubs/$slug': typeof ClubsSlugRoute
+  '/hi/$code': typeof HiCodeRouteWithChildren
   '/join/trainer': typeof JoinTrainerRoute
   '/me/favorites': typeof MeFavoritesRoute
   '/me/messages': typeof MeMessagesRouteWithChildren
@@ -465,6 +516,7 @@ export interface FileRoutesByFullPath {
   '/me/settings': typeof MeSettingsRoute
   '/trainer-admin/messages': typeof TrainerAdminMessagesRouteWithChildren
   '/trainers/$slug': typeof TrainersSlugRoute
+  '/trainers/revise': typeof TrainersReviseRoute
   '/account/': typeof AccountIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/categories/': typeof CategoriesIndexRoute
@@ -477,10 +529,14 @@ export interface FileRoutesByFullPath {
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
   '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
   '/city/$slug/$sport': typeof CitySlugSportRouteWithChildren
+  '/hi/$code/edit': typeof HiCodeEditRoute
+  '/hi/$code/view': typeof HiCodeViewRoute
   '/me/messages/$conversationId': typeof MeMessagesConversationIdRoute
   '/messages/files/$id': typeof MessagesFilesIdRoute
   '/trainer-admin/messages/$conversationId': typeof TrainerAdminMessagesConversationIdRoute
   '/trainers/claim/$token': typeof TrainersClaimTokenRoute
+  '/trainers/edit/$token': typeof TrainersEditTokenRoute
+  '/trainers/preview/$token': typeof TrainersPreviewTokenRoute
   '/admin/accounts/': typeof AdminAccountsIndexRoute
   '/admin/trainers/': typeof AdminTrainersIndexRoute
   '/city/$slug/': typeof CitySlugIndexRoute
@@ -494,6 +550,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/contacts': typeof ContactsRoute
   '/favorites': typeof FavoritesRoute
+  '/mail': typeof MailRoute
   '/map': typeof MapRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
@@ -509,6 +566,7 @@ export interface FileRoutesByTo {
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/site': typeof AdminSiteRoute
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -519,6 +577,7 @@ export interface FileRoutesByTo {
   '/categories/$slug': typeof CategoriesSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/clubs/$slug': typeof ClubsSlugRoute
+  '/hi/$code': typeof HiCodeRouteWithChildren
   '/join/trainer': typeof JoinTrainerRoute
   '/me/favorites': typeof MeFavoritesRoute
   '/me/messages': typeof MeMessagesRouteWithChildren
@@ -527,6 +586,7 @@ export interface FileRoutesByTo {
   '/me/settings': typeof MeSettingsRoute
   '/trainer-admin/messages': typeof TrainerAdminMessagesRouteWithChildren
   '/trainers/$slug': typeof TrainersSlugRoute
+  '/trainers/revise': typeof TrainersReviseRoute
   '/account': typeof AccountIndexRoute
   '/admin': typeof AdminIndexRoute
   '/categories': typeof CategoriesIndexRoute
@@ -538,10 +598,14 @@ export interface FileRoutesByTo {
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
   '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
+  '/hi/$code/edit': typeof HiCodeEditRoute
+  '/hi/$code/view': typeof HiCodeViewRoute
   '/me/messages/$conversationId': typeof MeMessagesConversationIdRoute
   '/messages/files/$id': typeof MessagesFilesIdRoute
   '/trainer-admin/messages/$conversationId': typeof TrainerAdminMessagesConversationIdRoute
   '/trainers/claim/$token': typeof TrainersClaimTokenRoute
+  '/trainers/edit/$token': typeof TrainersEditTokenRoute
+  '/trainers/preview/$token': typeof TrainersPreviewTokenRoute
   '/admin/accounts': typeof AdminAccountsIndexRoute
   '/admin/trainers': typeof AdminTrainersIndexRoute
   '/city/$slug': typeof CitySlugIndexRoute
@@ -558,6 +622,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/contacts': typeof ContactsRoute
   '/favorites': typeof FavoritesRoute
+  '/mail': typeof MailRoute
   '/map': typeof MapRoute
   '/me': typeof MeRouteWithChildren
   '/offer': typeof OfferRoute
@@ -576,6 +641,7 @@ export interface FileRoutesById {
   '/admin/messages': typeof AdminMessagesRoute
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/site': typeof AdminSiteRoute
   '/admin/trainers': typeof AdminTrainersRouteWithChildren
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -588,6 +654,7 @@ export interface FileRoutesById {
   '/category/$slug': typeof CategorySlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
   '/clubs/$slug': typeof ClubsSlugRoute
+  '/hi/$code': typeof HiCodeRouteWithChildren
   '/join/trainer': typeof JoinTrainerRoute
   '/me/favorites': typeof MeFavoritesRoute
   '/me/messages': typeof MeMessagesRouteWithChildren
@@ -596,6 +663,7 @@ export interface FileRoutesById {
   '/me/settings': typeof MeSettingsRoute
   '/trainer-admin/messages': typeof TrainerAdminMessagesRouteWithChildren
   '/trainers/$slug': typeof TrainersSlugRoute
+  '/trainers/revise': typeof TrainersReviseRoute
   '/account/': typeof AccountIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/categories/': typeof CategoriesIndexRoute
@@ -608,10 +676,14 @@ export interface FileRoutesById {
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
   '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
   '/city/$slug/$sport': typeof CitySlugSportRouteWithChildren
+  '/hi/$code/edit': typeof HiCodeEditRoute
+  '/hi/$code/view': typeof HiCodeViewRoute
   '/me/messages/$conversationId': typeof MeMessagesConversationIdRoute
   '/messages/files/$id': typeof MessagesFilesIdRoute
   '/trainer-admin/messages/$conversationId': typeof TrainerAdminMessagesConversationIdRoute
   '/trainers/claim/$token': typeof TrainersClaimTokenRoute
+  '/trainers/edit/$token': typeof TrainersEditTokenRoute
+  '/trainers/preview/$token': typeof TrainersPreviewTokenRoute
   '/admin/accounts/': typeof AdminAccountsIndexRoute
   '/admin/trainers/': typeof AdminTrainersIndexRoute
   '/city/$slug/': typeof CitySlugIndexRoute
@@ -629,6 +701,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contacts'
     | '/favorites'
+    | '/mail'
     | '/map'
     | '/me'
     | '/offer'
@@ -647,6 +720,7 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/reviews'
     | '/admin/settings'
+    | '/admin/site'
     | '/admin/trainers'
     | '/auth/confirm-email'
     | '/auth/forgot-password'
@@ -659,6 +733,7 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/city/$slug'
     | '/clubs/$slug'
+    | '/hi/$code'
     | '/join/trainer'
     | '/me/favorites'
     | '/me/messages'
@@ -667,6 +742,7 @@ export interface FileRouteTypes {
     | '/me/settings'
     | '/trainer-admin/messages'
     | '/trainers/$slug'
+    | '/trainers/revise'
     | '/account/'
     | '/admin/'
     | '/categories/'
@@ -679,10 +755,14 @@ export interface FileRouteTypes {
     | '/categories/$parentSlug/$childSlug'
     | '/category/$parentSlug/$childSlug'
     | '/city/$slug/$sport'
+    | '/hi/$code/edit'
+    | '/hi/$code/view'
     | '/me/messages/$conversationId'
     | '/messages/files/$id'
     | '/trainer-admin/messages/$conversationId'
     | '/trainers/claim/$token'
+    | '/trainers/edit/$token'
+    | '/trainers/preview/$token'
     | '/admin/accounts/'
     | '/admin/trainers/'
     | '/city/$slug/'
@@ -696,6 +776,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/contacts'
     | '/favorites'
+    | '/mail'
     | '/map'
     | '/offer'
     | '/privacy'
@@ -711,6 +792,7 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/reviews'
     | '/admin/settings'
+    | '/admin/site'
     | '/auth/confirm-email'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -721,6 +803,7 @@ export interface FileRouteTypes {
     | '/categories/$slug'
     | '/category/$slug'
     | '/clubs/$slug'
+    | '/hi/$code'
     | '/join/trainer'
     | '/me/favorites'
     | '/me/messages'
@@ -729,6 +812,7 @@ export interface FileRouteTypes {
     | '/me/settings'
     | '/trainer-admin/messages'
     | '/trainers/$slug'
+    | '/trainers/revise'
     | '/account'
     | '/admin'
     | '/categories'
@@ -740,10 +824,14 @@ export interface FileRouteTypes {
     | '/admin/trainers/$slug'
     | '/categories/$parentSlug/$childSlug'
     | '/category/$parentSlug/$childSlug'
+    | '/hi/$code/edit'
+    | '/hi/$code/view'
     | '/me/messages/$conversationId'
     | '/messages/files/$id'
     | '/trainer-admin/messages/$conversationId'
     | '/trainers/claim/$token'
+    | '/trainers/edit/$token'
+    | '/trainers/preview/$token'
     | '/admin/accounts'
     | '/admin/trainers'
     | '/city/$slug'
@@ -759,6 +847,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contacts'
     | '/favorites'
+    | '/mail'
     | '/map'
     | '/me'
     | '/offer'
@@ -777,6 +866,7 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/reviews'
     | '/admin/settings'
+    | '/admin/site'
     | '/admin/trainers'
     | '/auth/confirm-email'
     | '/auth/forgot-password'
@@ -789,6 +879,7 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/city/$slug'
     | '/clubs/$slug'
+    | '/hi/$code'
     | '/join/trainer'
     | '/me/favorites'
     | '/me/messages'
@@ -797,6 +888,7 @@ export interface FileRouteTypes {
     | '/me/settings'
     | '/trainer-admin/messages'
     | '/trainers/$slug'
+    | '/trainers/revise'
     | '/account/'
     | '/admin/'
     | '/categories/'
@@ -809,10 +901,14 @@ export interface FileRouteTypes {
     | '/categories/$parentSlug/$childSlug'
     | '/category/$parentSlug/$childSlug'
     | '/city/$slug/$sport'
+    | '/hi/$code/edit'
+    | '/hi/$code/view'
     | '/me/messages/$conversationId'
     | '/messages/files/$id'
     | '/trainer-admin/messages/$conversationId'
     | '/trainers/claim/$token'
+    | '/trainers/edit/$token'
+    | '/trainers/preview/$token'
     | '/admin/accounts/'
     | '/admin/trainers/'
     | '/city/$slug/'
@@ -829,6 +925,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   ContactsRoute: typeof ContactsRoute
   FavoritesRoute: typeof FavoritesRoute
+  MailRoute: typeof MailRoute
   MapRoute: typeof MapRoute
   MeRoute: typeof MeRouteWithChildren
   OfferRoute: typeof OfferRoute
@@ -848,14 +945,18 @@ export interface RootRouteChildren {
   CategorySlugRoute: typeof CategorySlugRoute
   CitySlugRoute: typeof CitySlugRouteWithChildren
   ClubsSlugRoute: typeof ClubsSlugRoute
+  HiCodeRoute: typeof HiCodeRouteWithChildren
   JoinTrainerRoute: typeof JoinTrainerRoute
   TrainersSlugRoute: typeof TrainersSlugRoute
+  TrainersReviseRoute: typeof TrainersReviseRoute
   CategoriesIndexRoute: typeof CategoriesIndexRoute
   ClubsIndexRoute: typeof ClubsIndexRoute
   CategoriesParentSlugChildSlugRoute: typeof CategoriesParentSlugChildSlugRoute
   CategoryParentSlugChildSlugRoute: typeof CategoryParentSlugChildSlugRoute
   MessagesFilesIdRoute: typeof MessagesFilesIdRoute
   TrainersClaimTokenRoute: typeof TrainersClaimTokenRoute
+  TrainersEditTokenRoute: typeof TrainersEditTokenRoute
+  TrainersPreviewTokenRoute: typeof TrainersPreviewTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -914,6 +1015,13 @@ declare module '@tanstack/react-router' {
       path: '/map'
       fullPath: '/map'
       preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mail': {
+      id: '/mail'
+      path: '/mail'
+      fullPath: '/mail'
+      preLoaderRoute: typeof MailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/favorites': {
@@ -1014,6 +1122,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountIndexRouteImport
       parentRoute: typeof AccountRoute
     }
+    '/trainers/revise': {
+      id: '/trainers/revise'
+      path: '/trainers/revise'
+      fullPath: '/trainers/revise'
+      preLoaderRoute: typeof TrainersReviseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/trainers/$slug': {
       id: '/trainers/$slug'
       path: '/trainers/$slug'
@@ -1068,6 +1183,13 @@ declare module '@tanstack/react-router' {
       path: '/join/trainer'
       fullPath: '/join/trainer'
       preLoaderRoute: typeof JoinTrainerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hi/$code': {
+      id: '/hi/$code'
+      path: '/hi/$code'
+      fullPath: '/hi/$code'
+      preLoaderRoute: typeof HiCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/clubs/$slug': {
@@ -1152,6 +1274,13 @@ declare module '@tanstack/react-router' {
       path: '/trainers'
       fullPath: '/admin/trainers'
       preLoaderRoute: typeof AdminTrainersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/site': {
+      id: '/admin/site'
+      path: '/site'
+      fullPath: '/admin/site'
+      preLoaderRoute: typeof AdminSiteRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/settings': {
@@ -1245,6 +1374,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAccountsIndexRouteImport
       parentRoute: typeof AdminAccountsRoute
     }
+    '/trainers/preview/$token': {
+      id: '/trainers/preview/$token'
+      path: '/trainers/preview/$token'
+      fullPath: '/trainers/preview/$token'
+      preLoaderRoute: typeof TrainersPreviewTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trainers/edit/$token': {
+      id: '/trainers/edit/$token'
+      path: '/trainers/edit/$token'
+      fullPath: '/trainers/edit/$token'
+      preLoaderRoute: typeof TrainersEditTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/trainers/claim/$token': {
       id: '/trainers/claim/$token'
       path: '/trainers/claim/$token'
@@ -1272,6 +1415,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/me/messages/$conversationId'
       preLoaderRoute: typeof MeMessagesConversationIdRouteImport
       parentRoute: typeof MeMessagesRoute
+    }
+    '/hi/$code/view': {
+      id: '/hi/$code/view'
+      path: '/view'
+      fullPath: '/hi/$code/view'
+      preLoaderRoute: typeof HiCodeViewRouteImport
+      parentRoute: typeof HiCodeRoute
+    }
+    '/hi/$code/edit': {
+      id: '/hi/$code/edit'
+      path: '/edit'
+      fullPath: '/hi/$code/edit'
+      preLoaderRoute: typeof HiCodeEditRouteImport
+      parentRoute: typeof HiCodeRoute
     }
     '/city/$slug/$sport': {
       id: '/city/$slug/$sport'
@@ -1399,6 +1556,7 @@ interface AdminRouteChildren {
   AdminMessagesRoute: typeof AdminMessagesRoute
   AdminReviewsRoute: typeof AdminReviewsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminSiteRoute: typeof AdminSiteRoute
   AdminTrainersRoute: typeof AdminTrainersRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -1409,6 +1567,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminMessagesRoute: AdminMessagesRoute,
   AdminReviewsRoute: AdminReviewsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
+  AdminSiteRoute: AdminSiteRoute,
   AdminTrainersRoute: AdminTrainersRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
 }
@@ -1501,6 +1660,19 @@ const CitySlugRouteWithChildren = CitySlugRoute._addFileChildren(
   CitySlugRouteChildren,
 )
 
+interface HiCodeRouteChildren {
+  HiCodeEditRoute: typeof HiCodeEditRoute
+  HiCodeViewRoute: typeof HiCodeViewRoute
+}
+
+const HiCodeRouteChildren: HiCodeRouteChildren = {
+  HiCodeEditRoute: HiCodeEditRoute,
+  HiCodeViewRoute: HiCodeViewRoute,
+}
+
+const HiCodeRouteWithChildren =
+  HiCodeRoute._addFileChildren(HiCodeRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R403Route: R403Route,
@@ -1510,6 +1682,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   ContactsRoute: ContactsRoute,
   FavoritesRoute: FavoritesRoute,
+  MailRoute: MailRoute,
   MapRoute: MapRoute,
   MeRoute: MeRouteWithChildren,
   OfferRoute: OfferRoute,
@@ -1529,25 +1702,19 @@ const rootRouteChildren: RootRouteChildren = {
   CategorySlugRoute: CategorySlugRoute,
   CitySlugRoute: CitySlugRouteWithChildren,
   ClubsSlugRoute: ClubsSlugRoute,
+  HiCodeRoute: HiCodeRouteWithChildren,
   JoinTrainerRoute: JoinTrainerRoute,
   TrainersSlugRoute: TrainersSlugRoute,
+  TrainersReviseRoute: TrainersReviseRoute,
   CategoriesIndexRoute: CategoriesIndexRoute,
   ClubsIndexRoute: ClubsIndexRoute,
   CategoriesParentSlugChildSlugRoute: CategoriesParentSlugChildSlugRoute,
   CategoryParentSlugChildSlugRoute: CategoryParentSlugChildSlugRoute,
   MessagesFilesIdRoute: MessagesFilesIdRoute,
   TrainersClaimTokenRoute: TrainersClaimTokenRoute,
+  TrainersEditTokenRoute: TrainersEditTokenRoute,
+  TrainersPreviewTokenRoute: TrainersPreviewTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

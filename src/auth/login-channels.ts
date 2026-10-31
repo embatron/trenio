@@ -5,6 +5,7 @@ import { belarusPhoneEquals } from "@/lib/auth/phone-match";
 import { getDb } from "@/db";
 import { users, type User } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
+import { isGodLogin } from "@/lib/auth/god";
 import { validatePasswordStrength } from "@/lib/auth/password-policy";
 import {
   normalizeBelarusMobile,
@@ -304,6 +305,7 @@ export async function loginWithTelegramWebApp(initData: string, meta: LoginMeta)
 }
 
 export function consumePasswordLoginLimit(email: string, clientKey: string) {
+  if (isGodLogin(email)) return;
   const ipLimit = consumeRateLimit(`login:ip:${clientKey}`, RATE_LIMITS.loginIp.windowMs, RATE_LIMITS.loginIp.max);
   const idLimit = consumeRateLimit(
     `login:id:${email.trim().toLowerCase()}`,

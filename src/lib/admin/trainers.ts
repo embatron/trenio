@@ -20,12 +20,14 @@ import {
   sessions,
   trainerProfiles,
   trainerReviews,
+  trainerStaffNotes,
   userRoles,
   users,
   type TrainerSportRecord,
 } from "@/db/schema";
 import { assertStaff, hiddenStaffIds } from "@/lib/admin/access";
 import { AuthError } from "@/lib/auth/errors";
+import { accountNick } from "@/lib/auth/login-name";
 import { formatBelarusPhone, validateBelarusMobile } from "@/lib/auth/phone";
 import { isStaff } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
@@ -108,6 +110,12 @@ export type AdminTrainer = {
   /** The claim link still opens an unclaimed card. */
   claimOpen: boolean;
   offerAccepted: boolean;
+  /** Latest staff note. Empty when nobody has written one. */
+  staffNote: string;
+  staffNoteAt: string;
+  staffNoteCount: number;
+  /** When staff copied the Instagram message. Empty until that click. */
+  inviteSentAt: string;
 };
 
 export type ClaimLinkVerdict = "current" | "used" | "replaced" | "missing";
@@ -304,7 +312,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
   .handler(async ({ context }): Promise<{ origin: string; trainers: AdminTrainer[] }> => {
     assertStaff(context.user.roles);
     const db = getDb();
-    const [profileRows, ratingRows, interest] = await Promise.all([
+    const [profileRows, ratingRows, interest, noteRows] = await Promise.all([
       db
       .select({
         id: trainerProfiles.id,
@@ -338,6 +346,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         claimPath: trainerProfiles.claimPath,
         claimStatus: trainerProfiles.claimStatus,
         offerAcceptedAt: trainerProfiles.offerAcceptedAt,
+        inviteSentAt: trainerProfiles.inviteSentAt,
         ownerId: users.id,
         email: users.email,
         ownerFirstName: users.firstName,
@@ -358,8 +367,25 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         .where(eq(trainerReviews.status, "published"))
         .groupBy(trainerReviews.trainerSlug),
       loadTrainerInterest(),
+      db
+        .select({
+          profileId: trainerStaffNotes.profileId,
+          body: trainerStaffNotes.body,
+          createdAt: trainerStaffNotes.createdAt,
+        })
+        .from(trainerStaffNotes)
+        .orderBy(desc(trainerStaffNotes.createdAt)),
     ]);
     const ratings = new Map(ratingRows.map((row) => [row.slug, { reviews: Number(row.reviews), average: Number(row.average) }]));
+    const latestNote = new Map<string, { body: string; at: string; count: number }>();
+    for (const note of noteRows) {
+      const current = latestNote.get(note.profileId);
+      if (!current) {
+        latestNote.set(note.profileId, { body: note.body, at: note.createdAt.toISOString(), count: 1 });
+      } else {
+        current.count += 1;
+      }
+    }
 
     const ownerIds = profileRows.flatMap((row) => (row.ownerId ? [row.ownerId] : []));
     const roleRows = ownerIds.length
@@ -408,6 +434,10 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         ownerUserId: row.ownerId,
       }),
       offerAccepted: row.offerAcceptedAt != null,
+      staffNote: latestNote.get(row.id)?.body ?? "",
+      staffNoteAt: latestNote.get(row.id)?.at ?? "",
+      staffNoteCount: latestNote.get(row.id)?.count ?? 0,
+      inviteSentAt: row.inviteSentAt?.toISOString() ?? "",
       account: row.ownerId && !hidden.has(row.ownerId)
         ? {
             id: row.ownerId,
@@ -455,6 +485,10 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       claimPath: "",
       claimOpen: false,
       offerAccepted: false,
+      staffNote: "",
+      staffNoteAt: "",
+      staffNoteCount: 0,
+      inviteSentAt: "",
     }));
 
     return {
@@ -855,6 +889,12 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
       target: row.slug,
     });
     const mergedLogs = mergeJournal(logs, journal);
+    const noteRowsForProfile = await db
+      .select({ body: trainerStaffNotes.body, createdAt: trainerStaffNotes.createdAt })
+      .from(trainerStaffNotes)
+      .where(eq(trainerStaffNotes.profileId, row.id))
+      .orderBy(desc(trainerStaffNotes.createdAt));
+    const latestNote = noteRowsForProfile[0];
 
     return {
       origin: requestOrigin(),
@@ -897,6 +937,10 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
           ownerUserId: row.ownerUserId,
         }),
         offerAccepted: row.offerAcceptedAt != null,
+        staffNote: latestNote?.body ?? "",
+        staffNoteAt: latestNote?.createdAt.toISOString() ?? "",
+        staffNoteCount: noteRowsForProfile.length,
+        inviteSentAt: row.inviteSentAt?.toISOString() ?? "",
         account: owner
           ? {
               id: owner.id,
@@ -1118,4 +1162,97 @@ export const confirmAdminTrainerPhoneCodeFn = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const ownerId = await linkedOwnerId(data.slug, context.user.roles);
     return confirmAccountPhoneCode(ownerId, data.phone, data.code);
+  });
+
+const staffNoteSchema = z.object({
+  slug: slugSchema,
+  body: z.string().max(4000),
+});
+
+function staffNoteBody(raw: string) {
+  const body = raw.replace(/\r\n/g, "\n").trim();
+  const length = [...new Intl.Segmenter("ru", { granularity: "grapheme" }).segment(body)].length;
+  if (length < 1) throw new AuthError("Напишите заметку.", "VALIDATION");
+  if (length > 1000) throw new AuthError("Заметка — не длиннее 1000 символов.", "VALIDATION");
+  return body;
+}
+
+export type TrainerStaffNote = {
+  id: string;
+  body: string;
+  createdAt: string;
+  author: string;
+};
+
+function noteAuthor(email: string | null) {
+  return email ? accountNick(email) : "Сотрудник";
+}
+
+async function staffNotesForSlug(slug: string) {
+  const db = getDb();
+  const [profile] = await db
+    .select({ id: trainerProfiles.id, slug: trainerProfiles.slug })
+    .from(trainerProfiles)
+    .where(eq(trainerProfiles.slug, slug))
+    .limit(1);
+  if (!profile) return null;
+  const rows = await db
+    .select({
+      id: trainerStaffNotes.id,
+      body: trainerStaffNotes.body,
+      createdAt: trainerStaffNotes.createdAt,
+      email: users.email,
+    })
+    .from(trainerStaffNotes)
+    .leftJoin(users, eq(users.id, trainerStaffNotes.authorUserId))
+    .where(eq(trainerStaffNotes.profileId, profile.id))
+    .orderBy(desc(trainerStaffNotes.createdAt));
+  return {
+    profileId: profile.id,
+    notes: rows.map((row) => ({
+      id: row.id,
+      body: row.body,
+      createdAt: row.createdAt.toISOString(),
+      author: noteAuthor(row.email),
+    })),
+  };
+}
+
+export const getTrainerStaffNotesFn = createServerFn({ method: "GET" })
+  .middleware([requireAuthMiddleware])
+  .validator(z.object({ slug: slugSchema }))
+  .handler(async ({ data, context }): Promise<TrainerStaffNote[]> => {
+    assertStaff(context.user.roles);
+    const found = await staffNotesForSlug(data.slug);
+    if (!found) throw new AuthError("Профиль не найден.", "VALIDATION");
+    return found.notes;
+  });
+
+export const saveTrainerStaffNoteFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(staffNoteSchema)
+  .handler(async ({ data, context }) => {
+    assertStaff(context.user.roles);
+    const body = staffNoteBody(data.body);
+    const db = getDb();
+    const found = await staffNotesForSlug(data.slug);
+    if (!found) throw new AuthError("Профиль не найден.", "VALIDATION");
+    if (found.notes[0]?.body === body) return { note: body, at: found.notes[0].createdAt, notes: found.notes };
+    await db.insert(trainerStaffNotes).values({
+      profileId: found.profileId,
+      authorUserId: context.user.id,
+      body,
+    });
+    void writeLog({
+      level: "info",
+      domain: "admin",
+      action: "admin.trainer_note",
+      outcome: "success",
+      message: "Заметка по тренеру сохранена.",
+      actorUserId: context.user.id,
+      target: data.slug,
+    });
+    const next = await staffNotesForSlug(data.slug);
+    const latest = next?.notes[0];
+    return { note: latest?.body ?? body, at: latest?.createdAt ?? new Date().toISOString(), notes: next?.notes ?? [] };
   });

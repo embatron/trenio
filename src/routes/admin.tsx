@@ -17,6 +17,7 @@ const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: AdminS
   { id: "accounts", label: "Аккаунты", icon: "accounts", to: "/admin/accounts" },
   { id: "finance", label: "Бухгалтерия", icon: "finance", to: "/admin/finance" },
   { id: "settings", label: "Настройки", icon: "profile", to: "/admin/settings" },
+  { id: "site", label: "Настройки сайта", icon: "site", to: "/admin/site" },
 ];
 
 export const Route = createFileRoute("/admin")({

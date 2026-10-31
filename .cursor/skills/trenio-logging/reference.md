@@ -18,17 +18,23 @@
 | `account.email.request` / `account.email.confirm` | Account email change |
 | `account.phone.request` / `account.phone.confirm` | Account phone |
 | `trainer.email.confirm` / `trainer.telegram.confirm` | Overview confirms the login email (same address on the card) and Telegram |
-| `account.password.change` / `account.avatar` / `account.name` | Cabinet settings |
+| `account.password.change` / `account.avatar` / `account.name` / `account.mail` | Cabinet settings. `account.mail` stores the kind and whether it is on, not a letter |
+| `email.preference` | A message or review letter was not sent because that kind is off |
 | `account.claim` | Trainer claim |
-| `email.send` / `email.dev` / `email.review` | Resend, dev console, review mail |
+| `email.send` / `email.dev` / `email.review` | Postfix or Resend, dev console, review mail. The letter is HTML. Do not store the body, a code, or a link |
 | `sms.send` / `sms.dev` | SMS.BY, or the dev console without the code |
 | `form.welcome` / `form.review` / `form.trainer_admin` / `form.trainer_profile` | Public and cabinet forms. `form.welcome` awaits the insert. `target` is the Instagram or Telegram handle. A phone is `subject` as a mask, and a phone-only welcome leaves `target` empty. The welcome row stores `+375 29 123-45-67`, not the raw field. A honeypot is `denied` with `reason: honeypot` and no handle. |
 | `map.area` | `listMapAreaFn` |
 | `map.locate` | Browser geolocation on `/map` and `/search`. Warn only. The visitor sees no note. The row has no coordinates. |
 | `geo.cache.read` / `geo.cache.write` / `geo.profile` / `geo.visitor` | Geocoder and visitor place |
-| `message.send` / `message.file` / `message.ensure` / `message.close` / `message.reopen` / `message.report` / `message.dismiss` / `message.block` / `message.notify` | Message mutations, attachment upload, and notices. Log the size and extension, not the file name or the file body. A download is logged only when it fails |
+| `message.send` / `message.file` / `message.ensure` / `message.close` / `message.reopen` / `message.report` / `message.dismiss` / `message.block` / `message.notify` / `message.welcome` | Message mutations, attachment upload, and notices. `message.welcome` is the portal greeting to a new trainer. Log the size and extension, not the file name, the file body, or the welcome text. A download is logged only when it fails |
 | `message.list` / `message.thread` / `message.read` / `message.unread` / `message.hide` | Failures only |
 | `admin.review` | Review publish or reject |
+| `admin.trainer_invite` | Staff copied the trainer message. The row stores the slug, not the links or the gap list. A published profile is `denied` |
+| `admin.trainer_invite_sent` | The copied message was marked sent. The row stores the slug, not the text |
+| `admin.trainer_note` | Staff saved a trainer note. The row stores the slug, not the note text |
+| `admin.trainer_remove` | A trainer profile was removed from the portal. The row stores the slug |
+| `catalog.trainer_preview` / `catalog.trainer_edit` / `catalog.trainer_save` / `catalog.trainer_publish` | Profile preview and edit links. They stay valid until the profile is published, then open the public trainer URL. A missing link is `denied`. Tokens and URLs stay out of the row |
 | `catalog.claim` | Welcome-link side effect failed |
 | `system.ready` / `system.unhandled` / `system.ssr` / `system.purge` / `system.probe` | Process and unhandled errors |
 | `system.image` | TinyPNG failed while storing an upload. The original sharp file is kept. The API key is not stored |

@@ -2,10 +2,11 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 
 import { AdminAccountPage } from "@/components/admin-account-page";
 import { getAdminAccountFn } from "@/lib/admin/accounts";
+import { isAccountId } from "@/lib/auth/god";
 
 export const Route = createFileRoute("/admin/accounts/$id")({
   loader: async ({ params }) => {
-    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(params.id)) throw notFound();
+    if (!isAccountId(params.id)) throw notFound();
     const account = await getAdminAccountFn({ data: { id: params.id } });
     if (!account) throw notFound();
     return account;

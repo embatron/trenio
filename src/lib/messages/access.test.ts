@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { AuthError } from "@/lib/auth/errors";
+import { GOD_USER_ID } from "@/lib/auth/god";
 import { assertConversationAccess, canMessage, getCounterparty, type ConversationAccess, type MessageActor } from "@/lib/messages/service";
 
 const userId = "11111111-1111-4111-8111-111111111111";
@@ -33,6 +34,13 @@ test("a stranger cannot read or write another conversation", () => {
     return true;
   });
   assert.throws(() => assertConversationAccess(actor(strangerId, ["trainer"]), openRow, "write"), AuthError);
+});
+
+test("the owner id can read and write any thread", () => {
+  const closed = { ...openRow, status: "closed" as const, blocked: true, published: false };
+  assert.doesNotThrow(() => assertConversationAccess(actor(GOD_USER_ID, ["user"]), closed, "write"));
+  assert.doesNotThrow(() => assertConversationAccess(actor(GOD_USER_ID, []), closed, "block"));
+  assert.equal(canMessage({ actorId: GOD_USER_ID, ownerUserId: ownerId, published: false, blocked: true }).ok, true);
 });
 
 test("staff can read any thread and cannot write into it", () => {

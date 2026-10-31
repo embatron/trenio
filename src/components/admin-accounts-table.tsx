@@ -5,6 +5,7 @@ import { TablePager, useTablePage } from "@/components/table-pager";
 import { TrainerName } from "@/components/trainer-name";
 import { UserAvatar } from "@/components/user-avatar";
 import { ACCOUNT_STATUS_LABEL, type AdminAccount } from "@/lib/admin/accounts";
+import { displayUserId } from "@/lib/auth/god";
 import { displayAccountLogin } from "@/lib/auth/login-name";
 import { ALL_ROLES, ROLE_LABELS } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
@@ -22,6 +23,7 @@ function accountStatusClass(status: string) {
 
 function searchHaystack(account: AdminAccount) {
   return [
+    displayUserId(account.id),
     account.name,
     account.email,
     displayAccountLogin(account.email),

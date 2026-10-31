@@ -1,13 +1,9 @@
 import { useEffect, useState, type ReactNode } from "react";
 
 import { HoneypotField } from "@/components/auth/honeypot-field";
+import { BelarusPhoneInput } from "@/components/belarus-phone-input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import {
-  BY_PHONE_COUNTRY_PREFIX,
-  OTP_CODE_LENGTH,
-  constrainBelarusPhoneInput,
-  validateBelarusMobile,
-} from "@/lib/auth/phone";
+import { BY_PHONE_COUNTRY_PREFIX, OTP_CODE_LENGTH, validateBelarusMobile } from "@/lib/auth/phone";
 
 export function useCountdown(initial: number) {
   const [left, setLeft] = useState(initial);
@@ -70,14 +66,11 @@ export function PhoneOtpFields({
       <HoneypotField />
       <label className="auth-field">
         <span className="auth-field__label">Телефон</span>
-        <input
+        <BelarusPhoneInput
           id={`${idPrefix}-phone`}
-          type="tel"
           required
-          inputMode="tel"
-          autoComplete="tel"
           value={phone || BY_PHONE_COUNTRY_PREFIX}
-          onChange={(event) => onPhoneChange(constrainBelarusPhoneInput(event.target.value))}
+          onValue={onPhoneChange}
         />
         {phoneError ? <span className="auth-field__error">{phoneError}</span> : null}
       </label>

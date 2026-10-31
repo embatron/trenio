@@ -69,6 +69,11 @@ export const profileNameSchema = z.object({
   lastName: z.string().trim().min(1, "Укажите фамилию").max(100),
 });
 
+export const mailPreferenceSchema = z.object({
+  kind: z.enum(["messages", "reviews", "site", "marketing"]),
+  enabled: z.boolean(),
+});
+
 export const accountAvatarSchema = z.object({
   image: z.string().min(32).max(2_200_000),
 });
@@ -109,4 +114,8 @@ export type PublicUser = {
   roles: UserRole[];
   status: string;
   lastSignupIntent: string | null;
+  mailMessages: boolean;
+  mailReviews: boolean;
+  mailSite: boolean;
+  mailMarketing: boolean;
 };

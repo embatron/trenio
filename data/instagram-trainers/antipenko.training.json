@@ -3,7 +3,7 @@
   "sourceUrl": "https://www.instagram.com/antipenko.training/",
   "handle": "antipenko.training",
   "slug": "antipenko.training",
-  "status": "published",
+  "status": "draft",
   "claimStatus": "unclaimed",
   "createdSource": "import",
   "firstName": "Владимир",
@@ -14,9 +14,16 @@
     "Владимир"
   ],
   "headline": "Тренер по кикбоксингу",
-  "bio": "🙋🏻‍♂️Владимир 📍Минск 🥊Кикбоксинг и бокс 🏋🏻ОФП для любого уровня подготовки 📩Вопросы в ЛС @bronxgym.by",
+  "sourceBio": "Кикбоксинг и бокс",
+  "sourceAbout": [],
+  "bio": "Я Владимир, тренер по кикбоксингу и боксу в Минске. Веду ОФП для любого уровня подготовки.",
   "about": [],
-  "pinned": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/antipenko.training/p/DNdTapKoSnb/",
+      "caption": "Приглашаю на групповые тренировки по кикбоксингу, детей и подростков 12+"
+    }
+  ],
   "sports": [
     {
       "slug": "kikboksing",
@@ -32,7 +39,7 @@
     },
     {
       "slug": "ofp",
-      "parentSlug": "ofp",
+      "parentSlug": "fitnes",
       "label": "ОФП",
       "evidence": "ОФП"
     }
@@ -44,25 +51,45 @@
     "label": "Кикбоксинг"
   },
   "city": "Минск",
+  "address": "",
   "cityCandidates": [
     "Минск"
   ],
   "priceFrom": null,
   "experienceYears": null,
-  "formats": [],
+  "formats": [
+    "group"
+  ],
+  "audiences": [
+    "kid",
+    "teen"
+  ],
   "languages": [],
   "avatarPath": "/trainers/instagram/antipenko.training.jpg",
+  "photos": [
+    "/trainers/instagram/antipenko.training.jpg",
+    "/trainers/instagram/antipenko.training-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 2,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 5
+  },
   "contacts": {
     "instagram": "https://www.instagram.com/antipenko.training/",
     "phone": "+375 33 637-62-68",
     "email": "",
-    "telegram": "https://t.me/antipenko_training",
+    "telegram": "",
     "website": ""
   },
   "missing": [
     "lastName",
     "price",
     "email",
-    "pinnedPosts"
+    "telegram"
   ]
 }

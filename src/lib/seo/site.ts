@@ -10,7 +10,8 @@ export const SITE_LOCALE = "ru-BY";
 
 export const OG_LOCALE = "ru_BY";
 
-export const SITE_EMAIL = "hello@trenio.by";
+/** Public mailbox. Footer, contacts, privacy, and schema.org use this address. */
+export const SITE_EMAIL = "trenioby@gmail.com";
 
 /** Square mark for the organization logo in structured data. */
 export const SITE_LOGO = "/logo-mark.png";

@@ -39,7 +39,7 @@ Message mutations log `domain: "message"` through `writeLog` in `src/lib/message
 
 1. Resolve the published profile by slug. Unpublished or missing profiles cannot be messaged.
 2. Open or create the one `open` row for `(user_id, trainer_profile_id)`. A second open row hits the partial unique index.
-3. `assertConversationAccess` decides read, write, close, reopen, block. Staff may read any thread. Staff write only when they are the initiator or the owner.
+3. `assertConversationAccess` decides read, write, close, reopen, block. Staff may read any thread. Staff write only when they are the initiator or the owner. The welcome thread is with the admin user `trenioby` (`conversations.host_user_id`). It has no trainer profile, so the name is not a link to `/trainers/trenioby`. The database rejects a trainer slug `trenioby`. Do not create that card. The letter body is the `trainer_welcome` row, edited at `/admin/site`.
 4. `sendMessage` is idempotent on `(conversation_id, client_id)` via `ON CONFLICT DO NOTHING`.
 5. `consumeRateLimit` still caps sends: 10 per minute and 300 per day. A separate durable check allows one user to message at most 10 distinct trainer profiles per Europe/Minsk calendar day. A repeat to a trainer already messaged that day is allowed. The profile owner's replies are not counted. The 11th trainer is refused with `DAILY_TRAINER_LIMIT_MESSAGE`, and the cabinet shows that text in `CabinetNotice`.
 
@@ -49,10 +49,11 @@ Message mutations log `domain: "message"` through `writeLog` in `src/lib/message
 2. `reviewTextLength` counts graphemes. First message from the initiator: `FIRST_MESSAGE_MAX_LENGTH` (1000). Every later message: `MESSAGE_MAX_LENGTH` (4000). Stored HTML: `MESSAGE_HTML_MAX_LENGTH` (12000). Attachments do not count toward that limit. An empty body is stored only when at least one attachment is linked.
 3. On Ctrl+Enter or ⌘+Enter, send `composerBody(editor.innerHTML, state)`. The visible field wins when React state is still empty. Plain Enter stays a line break.
 4. Insert and set `last_message_at` in one transaction. Do not hide or delete the conversation. A participant has no such action. The thread is removed for both sides only when an account is deleted.
-5. Notify the other party through `scheduleMessageNotification` (2 minute debounce, no message body). Skip when `last_read_at` is under 30 seconds and `last_read_message_id` already covers this id.
+5. Notify the other party through `scheduleMessageNotification` (2 minute debounce). The HTML letter includes the sender name, a circular portrait, and the message text. Telegram stays a short link without the text. Skip when `last_read_at` is under 30 seconds and `last_read_message_id` already covers this id. Do not write the message text into `app_logs`.
 
 ## Receipts and unread
 
+- The message letter is skipped when the recipient turned off «Сообщения» in settings (`users.mail_messages`). Telegram still sends. Staff report mail is not part of that switch.
 - `conversation_reads.last_read_message_id` is a bigint with no foreign key.
 - For the sender, the other reader is the profile owner when the viewer is the initiator, and the initiator when the viewer is the owner. No owner means the receipt stays `delivered`.
 - `receipt` is `read` when that cursor is greater than or equal to the message id, otherwise `delivered`. The bubble copy is «Прочитано» or «Доставлено». Pending client sends show «Отправка…».
@@ -67,7 +68,7 @@ Message mutations log `domain: "message"` through `writeLog` in `src/lib/message
 - Client bubbles are turquoise (`is-user`). Trainer bubbles are coral (`is-trainer`). `mine` only places the bubble on the right.
 - A participant files one report for the whole conversation from the header flag. The dialog asks for a reason and a comment. `reportMessage` writes `conversation_id`, `reporter_side` (`client` or `trainer`), the Russian reason, and the plain comment, and leaves `message_id` empty. A second report from the same person is a duplicate, not a new row. `notifyStaffAboutReport` mails active admins. Do not put the comment in `app_logs`; log `commentLength` only.
 - In the list and the thread header the given name and surname stay on one line. Do not show «Открыта» or «Закрыта» next to the name. A closed thread is explained in the composer. The composer text is 14px.
-- The header envelope goes to `/me/messages` for a trainer or club. Staff with a zero personal count go to `/admin/messages`. Everyone else goes to `/account/messages`.
+- The header envelope goes to `/me/messages` for a trainer or club. Staff with a zero personal count go to `/admin/messages`. Everyone else goes to `/account/messages`. `/admin/messages` opens on «Переписки (N)» (every conversation). «Жалобы (N)» is the second tab.
 - `MessageEditor` inserts emoji with a text node and an `input` event so the controlled editor keeps the character. Do not rely on `document.execCommand` alone.
 - The emoji panel is in the toolbar flow (`display: contents` on `.emoji-picker`), not a popup that the thread can clip.
 - `TrainerContactIcons` replaces the «Написать» label on trainer cards, search cards, and favorites. On a trainer profile the same icons sit after reviews under «Как со мной связаться». The phone is a handset and a `tel:` link; the profile row also shows the number. Telegram uses `TelegramIcon` from `src/components/brand-icons.tsx`. Direct opens `/me/messages?trainer={slug}` for a trainer or club and `/account/messages?trainer={slug}` for a client, in a new tab. A guest still lands on login and returns to the client thread; after login a trainer or club is redirected into `/me`.
