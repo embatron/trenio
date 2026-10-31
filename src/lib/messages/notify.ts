@@ -210,6 +210,7 @@ export async function notifyStaffAboutReport(input: {
   }
   const side = input.reporterSide === "trainer" ? "Тренер" : "Клиент";
   const letter = renderLetter({
+    service: true,
     title: "Жалоба на переписку",
     person: { name: input.reporterName, avatarUrl: input.reporterAvatar, caption: side },
     quote: input.comment,

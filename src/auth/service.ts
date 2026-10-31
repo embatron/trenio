@@ -392,6 +392,7 @@ export async function registerUser(input: {
     ? parseUserWelcome(await loadSiteText("user_welcome"))
     : null;
   const verifyLetter = renderLetter({
+    service: true,
     title: userLetter?.title ?? "Подтвердите почту",
     person: {
       name: [firstName, lastName].filter(Boolean).join(" ") || "Ваш аккаунт",
@@ -516,6 +517,7 @@ export async function requestPasswordReset(email: string) {
   if (user) {
     const reset = await issuePasswordReset(user.id);
     const letter = renderLetter({
+      service: true,
       title: "Сброс пароля",
       person: {
         name: [user.firstName, user.lastName].filter(Boolean).join(" ") || "Ваш аккаунт",
@@ -650,6 +652,7 @@ export async function requestAccountEmailCode(userId: string, emailRaw: string) 
     .where(eq(users.id, userId))
     .limit(1);
   const letter = renderLetter({
+    service: true,
     title: "Код подтверждения почты",
     person: {
       name: [account?.firstName, account?.lastName].filter(Boolean).join(" ") || "Ваш аккаунт",

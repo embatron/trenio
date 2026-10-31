@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 
 import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { PhotoImage } from "@/components/photo-image";
@@ -20,7 +21,6 @@ const STAR_PATH = "M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L
 
 const COPY_ICON = "M9 9h10v10H9zM5 15V5h10";
 const CHECK_ICON = "M5 12l5 5L20 7";
-const PROFILE_ICON = "M14 4h6v6M20 4l-9 9M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6";
 const EDIT_ICON = "M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z";
 const MESSAGE_ICON = "M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 6l8 6 8-6";
 
@@ -58,6 +58,28 @@ function TrainerStars({ rating, reviews }: { rating: string; reviews: number }) 
       <span>{text}</span>
       <span className="cabinet-rating__count">({reviews})</span>
     </span>
+  );
+}
+
+function TrainerProfileLink({ trainer }: { trainer: AdminTrainer }) {
+  const name = trainer.firstName || trainer.lastName ? (
+    <TrainerName firstName={trainer.firstName} lastName={trainer.lastName} />
+  ) : (
+    trainer.slug
+  );
+  if (!trainer.id) return name;
+  const label = trainer.status === "published" ? "Открыть профиль" : "Открыть неопубликованный профиль";
+  return (
+    <Link
+      className="cabinet-trainer-name"
+      to="/trainers/$slug"
+      params={{ slug: trainer.slug }}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={label}
+    >
+      {name}
+    </Link>
   );
 }
 
@@ -479,24 +501,11 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                       )}
                       <div className="cabinet-person__text">
                         <strong title={trainer.fullName || trainer.slug}>
-                          {trainer.firstName || trainer.lastName ? (
-                            <TrainerName firstName={trainer.firstName} lastName={trainer.lastName} />
-                          ) : (
-                            trainer.slug
-                          )}
+                          <TrainerProfileLink trainer={trainer} />
                         </strong>
                         <span className="cabinet-person__meta">{trainer.sports || "вид спорта не указан"}</span>
                       </div>
                       <div className="cabinet-row-actions">
-                        {trainer.id ? (
-                          <a className="cabinet-icon-btn" href={`/trainers/${trainer.slug}`} target="_blank" rel="noopener noreferrer" aria-label={trainer.status === "published" ? "Открыть профиль" : "Открыть неопубликованный профиль"} title={trainer.status === "published" ? "Открыть профиль" : "Открыть неопубликованный профиль"}>
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d={PROFILE_ICON} /></svg>
-                          </a>
-                        ) : (
-                          <button type="button" className="cabinet-icon-btn" disabled aria-label="Профиль не опубликован" title="Профиль не опубликован">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d={PROFILE_ICON} /></svg>
-                          </button>
-                        )}
                         <InviteCopy
                           slug={trainer.slug}
                           ready={Boolean(trainer.id)}

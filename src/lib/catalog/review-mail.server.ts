@@ -32,6 +32,7 @@ export async function notifyStaffAboutReview(input: {
     .where(eq(users.email, input.authorEmail))
     .limit(1);
   const letter = renderLetter({
+    service: true,
     title: "Новый отзыв ждёт модерации",
     person: { name: input.authorName, avatarUrl: author?.avatarPath, caption: input.authorEmail },
     quote: reviewPlainText(input.body),

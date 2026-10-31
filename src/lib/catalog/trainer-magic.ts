@@ -671,6 +671,7 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
     const link = `${origin}/hi/${row.previewToken}?mail=${encodeURIComponent(linkToken)}`;
     try {
       const letter = renderLetter({
+        service: true,
         title: "Почта и редактирование профиля",
         person: {
           name: [row.firstName, row.lastName].filter(Boolean).join(" ") || "Тренер",

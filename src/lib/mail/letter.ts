@@ -19,6 +19,11 @@ export type Letter = {
   lines?: string[];
   action?: { href: string; label: string };
   note?: string;
+  /**
+   * Code, registration, password reset, and staff mail.
+   * Those letters have no unsubscribe link.
+   */
+  service?: boolean;
 };
 
 function escapeHtml(value: string) {
@@ -59,6 +64,7 @@ export function mailSettingsUrl() {
 export function renderLetter(letter: Letter) {
   const lines = letter.lines ?? [];
   const code = letter.code?.trim() ?? "";
+  const service = letter.service === true || code !== "";
   const settingsUrl = mailSettingsUrl();
   const home = mailAppUrl();
   const text = [
@@ -72,7 +78,7 @@ export function renderLetter(letter: Letter) {
     letter.action ? `${letter.action.label}: ${letter.action.href}` : "",
     letter.note ?? "",
     `trenio.by · ${SITE_EMAIL}`,
-    `Отписаться: ${settingsUrl}`,
+    service ? "" : `Отписаться: ${settingsUrl}`,
   ].filter((line) => line !== "").join("\n\n");
 
   const person = letter.person
@@ -90,16 +96,19 @@ export function renderLetter(letter: Letter) {
     : "";
   const note = letter.note ? `<p style="margin:0 0 9px;font:14px/1.45 Arial,sans-serif;color:#6b7280;">${escapeHtml(letter.note)}</p>` : "";
   const lead = letter.lead ? `<p style="margin:0 0 9px;font:16px/1.5 Arial,sans-serif;color:#1f2937;">${escapeHtml(letter.lead)}</p>` : "";
-  const logo = `${home}/logo.webp`;
+  const logo = `${home}/logo-mail.png`;
+  const unsubscribe = service
+    ? ""
+    : `<tr><td style="padding-top:13px;font:13px/1.45 Arial,sans-serif;"><a href="${escapeHtml(settingsUrl)}" style="color:#9ca3af;text-decoration:underline;">Отписаться</a></td></tr>`;
 
   const html = `<!DOCTYPE html><html lang="ru"><body style="margin:0;padding:26px;background:#f9fafb;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
 <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="width:100%;max-width:560px;background:#ffffff;border-radius:22px;padding:31px;">
-<tr><td><a href="${escapeHtml(home)}" style="text-decoration:none;"><img src="${escapeHtml(logo)}" width="157" height="40" alt="trenio.by" style="display:block;width:157px;height:40px;border:0;"></a></td></tr>
+<tr><td style="background:#ffffff;"><a href="${escapeHtml(home)}" style="text-decoration:none;"><img src="${escapeHtml(logo)}" width="157" height="40" alt="trenio.by" style="display:block;width:157px;height:40px;border:0;background:#ffffff;"></a></td></tr>
 <tr><td style="padding-top:20px;font:700 22px Arial,sans-serif;color:#111827;">${escapeHtml(letter.title)}</td></tr>
 <tr><td style="padding-top:13px;">${lead}${person}${quote}${codeBlock}${bodyLines}${action}${note}</td></tr>
 <tr><td style="padding-top:20px;font:13px Arial,sans-serif;color:#6b7280;">trenio.by · ${escapeHtml(SITE_EMAIL)}</td></tr>
-<tr><td style="padding-top:13px;font:13px/1.45 Arial,sans-serif;"><a href="${escapeHtml(settingsUrl)}" style="color:#9ca3af;text-decoration:underline;">Отписаться</a></td></tr>
+${unsubscribe}
 </table></td></tr></table></body></html>`;
 
   return { text, html };

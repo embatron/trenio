@@ -17,7 +17,7 @@ test("a letter keeps the person, the words, and a round portrait", () => {
   assert.match(letter.html, /Привет\nи ещё строка|Привет/);
   assert.match(letter.text, /Анна <Шум>/);
   assert.match(letter.text, /https:\/\/trenio\.by\/me\/messages\/1/);
-  assert.match(letter.html, /logo\.webp/);
+  assert.match(letter.html, /logo-mail\.png/);
   assert.match(letter.html, /alt="trenio\.by"/);
   assert.match(letter.html, />Отписаться</);
   assert.match(letter.text, /Отписаться: /);
@@ -44,4 +44,17 @@ test("a confirmation code is its own bold line", () => {
   assert.match(letter.html, />482913</);
   assert.match(letter.text, /482913/);
   assert.doesNotMatch(letter.html, /Код: 482913/);
+  assert.doesNotMatch(letter.html, /Отписаться/);
+  assert.doesNotMatch(letter.text, /Отписаться/);
+});
+
+test("registration mail has no unsubscribe link", () => {
+  const letter = renderLetter({
+    service: true,
+    title: "Подтвердите почту",
+    action: { href: "https://trenio.by/auth/verify?token=test", label: "Подтвердить почту" },
+  });
+  assert.doesNotMatch(letter.html, /Отписаться/);
+  assert.doesNotMatch(letter.text, /Отписаться/);
+  assert.match(letter.html, /logo-mail\.png/);
 });
