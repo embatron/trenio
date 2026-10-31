@@ -7,7 +7,7 @@ import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { inferTrainerGender, type TrainerGender } from "@/lib/catalog/trainer-gender";
 import { instagramProfileSlug } from "@/lib/catalog/trainer-slugs";
 import { getDb } from "./index";
-import { trainerProfiles, type TrainerPinnedPost, type TrainerSportRecord } from "./schema";
+import { trainerProfiles, users, type TrainerPinnedPost, type TrainerSportRecord } from "./schema";
 
 export type ImportedTrainerDraft = {
   handle: string;
@@ -104,6 +104,17 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
       : eq(trainerProfiles.slug, slug))
     .limit(1);
   if (taken) throw new Error(`Nick ${slug} is already used by @${taken.handle}.`);
+
+  if (existing?.ownerUserId) {
+    const [owner] = await db
+      .select({ status: users.status })
+      .from(users)
+      .where(eq(users.id, existing.ownerUserId))
+      .limit(1);
+    if (owner?.status === "deleted") {
+      return { id: existing.id, claimPath: existing.claimPath, created: false as const };
+    }
+  }
 
   const claimToken = existing?.claimToken ?? newClaimToken();
   const claimPath = existing?.claimPath ?? claimPathFor(claimToken);

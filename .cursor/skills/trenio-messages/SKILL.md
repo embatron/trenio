@@ -18,6 +18,7 @@ Read `.cursor/rules/messages.mdc` first. Product copy and limits are in `docs/TE
 | --- | --- |
 | Tables | `src/db/schema/messages.ts`. Apply attachment SQL with `npm run messages:install`, not `db:push` |
 | File rules and storage | `src/lib/messages/attachments.ts`, `src/lib/messages/attachment-store.ts`, `src/lib/messages/file-download.ts` |
+| Account deletion | `src/lib/account/delete-account.ts` removes every thread of that account for both sides, then the files |
 | Access, send, read cursor, unread SQL | `src/lib/messages/service.ts` |
 | Zod and preview | `src/lib/messages/schemas.ts` |
 | Server functions | `src/lib/messages/functions.ts` |

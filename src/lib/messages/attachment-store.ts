@@ -1,4 +1,4 @@
-import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import sharp from "sharp";
@@ -66,4 +66,13 @@ export async function readMessageFile(conversationId: string, id: string, ext: s
 export async function removeMessageFile(conversationId: string, id: string, ext: string) {
   await unlink(messageFilePath(conversationId, id, ext)).catch(() => undefined);
   await unlink(messagePreviewPath(conversationId, id)).catch(() => undefined);
+}
+
+/** Drop every file of a conversation that is being removed with an account. */
+export async function removeConversationFiles(conversationId: string) {
+  if (!safeId(conversationId)) return;
+  const root = path.resolve(ROOT);
+  const dir = path.resolve(root, conversationId);
+  if (!dir.startsWith(root + path.sep)) return;
+  await rm(dir, { recursive: true, force: true });
 }

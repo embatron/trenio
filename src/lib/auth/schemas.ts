@@ -83,6 +83,10 @@ export const changePasswordSchema = z.object({
   newPassword: z.string().min(8, "Пароль должен содержать минимум 8 символов"),
 });
 
+export const deleteAccountSchema = z.object({
+  password: z.string().min(1, "Введите пароль").max(128),
+});
+
 export const accountEmailSchema = z.object({
   email: z.string().trim().email("Введите корректный e-mail"),
 });

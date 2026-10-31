@@ -12,6 +12,7 @@ import {
   changePasswordFn,
   confirmAccountEmailCodeFn,
   confirmAccountPhoneCodeFn,
+  deleteAccountFn,
   requestAccountEmailCodeFn,
   requestAccountPhoneCodeFn,
   setAccountAvatarFn,
@@ -19,7 +20,7 @@ import {
   updateProfileFn,
 } from "@/lib/auth/functions";
 import type { MailKind } from "@/lib/mail/kinds";
-import { ROLE_LABELS } from "@/lib/auth/roles";
+import { isStaff, ROLE_LABELS } from "@/lib/auth/roles";
 import type { PublicUser } from "@/lib/auth/schemas";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 
@@ -78,6 +79,12 @@ export function AccountProfileForm({
   const requestPhone = useAuthServerFn(requestAccountPhoneCodeFn);
   const confirmPhone = useAuthServerFn(confirmAccountPhoneCodeFn);
   const uploadAvatar = useAuthServerFn(setAccountAvatarFn);
+  const removeAccount = useAuthServerFn(deleteAccountFn);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteError, setDeleteError] = useState("");
+  const [deletePending, setDeletePending] = useState(false);
+  const canDelete = !isStaff(user.roles);
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName ?? "");
   const [email, setEmail] = useState(user.email);
@@ -103,6 +110,15 @@ export function AccountProfileForm({
   useEffect(() => {
     setMail(mailFromUser(user));
   }, [user.mailMessages, user.mailReviews, user.mailSite, user.mailMarketing]);
+
+  useEffect(() => {
+    if (!deleteOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !deletePending) setDeleteOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [deleteOpen, deletePending]);
 
   function ok(message: string) {
     setPopup({ title: "Готово", message });
@@ -550,6 +566,80 @@ export function AccountProfileForm({
           })}
         </section>
       </div>
+      {canDelete ? (
+        <div className="cabinet-form">
+          <p className="cabinet-delete">
+            <button
+              type="button"
+              className="cabinet-delete__link"
+              onClick={() => {
+                setDeleteError("");
+                setDeletePassword("");
+                setDeleteOpen(true);
+              }}
+            >
+              Удалить аккаунт
+            </button>
+          </p>
+        </div>
+      ) : null}
+      {deleteOpen ? (
+        <div
+          className="cabinet-modal"
+          onClick={() => {
+            if (!deletePending) setDeleteOpen(false);
+          }}
+        >
+          <div
+            className="cabinet-modal__card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-account-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 id="delete-account-title">Удалить аккаунт</h2>
+            <p>
+              Аккаунт закроется сразу. Карточка пропадёт из каталога, переписка удалится у обеих сторон, ваши отзывы и избранное исчезнут. Чужие отзывы о вас останутся без ваших ответов. Вернуть это нельзя.
+            </p>
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                setDeleteError("");
+                setDeletePending(true);
+                void removeAccount({ data: { password: deletePassword } })
+                  .then(() => {
+                    window.location.assign("/");
+                  })
+                  .catch((error: unknown) => {
+                    setDeleteError(authErrorMessage(error));
+                    setDeletePending(false);
+                  });
+              }}
+            >
+              <label>
+                <span>Пароль</span>
+                <input
+                  type="password"
+                  required
+                  autoFocus
+                  autoComplete="current-password"
+                  value={deletePassword}
+                  onChange={(event) => setDeletePassword(event.target.value)}
+                />
+              </label>
+              {deleteError ? <p className="cabinet-form__error">{deleteError}</p> : null}
+              <div className="cabinet-modal__actions">
+                <button type="button" className="cabinet-form__ghost" disabled={deletePending} onClick={() => setDeleteOpen(false)}>
+                  Отмена
+                </button>
+                <button type="submit" disabled={deletePending}>
+                  {deletePending ? "Удаление…" : "Удалить"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      ) : null}
       {popup ? (
         <CabinetNotice title={popup.title} message={popup.message} onClose={() => setPopup(null)} />
       ) : null}

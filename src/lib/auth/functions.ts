@@ -15,6 +15,7 @@ import {
   telegramWidgetSchema,
   accountAvatarSchema,
   changePasswordSchema,
+  deleteAccountSchema,
   accountEmailCodeSchema,
   accountEmailSchema,
   accountPhoneCodeSchema,
@@ -62,6 +63,7 @@ import {
   verifyEmailToken,
   type SessionUser,
 } from "@/auth/service";
+import { deleteOwnAccount } from "@/lib/account/delete-account";
 import { clearSessionCookie, readSessionToken, setSessionCookie } from "@/auth/session";
 import { writeLog, maskPhone } from "@/lib/log/logger";
 import type { LogOutcome } from "@/lib/log/policy";
@@ -657,6 +659,19 @@ export const updateMailPreferenceFn = createServerFn({ method: "POST" })
       return { ok: true as const };
     } catch (error) {
       rethrowAuth(error, "account.mail", context.user.email, context.user.id);
+    }
+  });
+
+export const deleteAccountFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(deleteAccountSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      await deleteOwnAccount({ id: context.user.id, roles: context.user.roles }, data.password);
+      clearSessionCookie();
+      return { ok: true as const };
+    } catch (error) {
+      rethrowAuth(error, "account.delete", context.user.email, context.user.id);
     }
   });
 
