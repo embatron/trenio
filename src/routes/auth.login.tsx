@@ -109,7 +109,6 @@ function LoginPage() {
         <div className="auth-card">
           <div className="auth-card__head">
             <h1 className="auth-title">С возвращением</h1>
-            <p className="auth-sub">Войдите по почте, телефону или Telegram.</p>
           </div>
 
           <TelegramWebAppAuthButton

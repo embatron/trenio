@@ -38,6 +38,7 @@ export function CredentialsRequiredDialog() {
     emailRef.current?.focus();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    document.documentElement.classList.add("is-credentials-locked");
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -48,6 +49,7 @@ export function CredentialsRequiredDialog() {
     return () => {
       window.removeEventListener("keydown", onKey, true);
       document.body.style.overflow = previousOverflow;
+      document.documentElement.classList.remove("is-credentials-locked");
       for (const node of locked) {
         if (node.getAttribute("data-credentials-inert") === "1") {
           node.inert = false;

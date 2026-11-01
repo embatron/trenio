@@ -123,7 +123,6 @@ function SignupPage() {
         <div className="auth-card">
           <div className="auth-card__head">
             <h1 className="auth-title">Создать аккаунт</h1>
-            <p className="auth-sub">Зарегистрируйтесь по почте, телефону или Telegram.</p>
           </div>
 
           <TelegramWebAppAuthButton
