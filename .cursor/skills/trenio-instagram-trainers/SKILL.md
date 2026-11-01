@@ -185,7 +185,7 @@ Write `data/instagram-trainers/_raw/{handle}.json` with the extract, the `pinned
 ./node_modules/.bin/tsx .cursor/skills/trenio-instagram-trainers/scripts/save-draft.ts data/instagram-trainers/_raw/{handle}.json
 ```
 
-If the script rejects the file, revise the thought it names and run it again. Do not edit the draft JSON by hand. The script refuses a given name that is not in the quotes, a given name that contradicts the name written next to the surname, a pasted caption, a card sentence that adds a city, number, or sport, and a city or price that the text does not state.
+If the script rejects the file, revise the thought it names and run it again. Do not edit the draft JSON by hand. The script refuses a given name that is not in the quotes, a given name that contradicts the name written next to the surname, a pasted caption, a card sentence that adds a city, number, or sport, and a city or price that the text does not state. When the text names no settlement and no street, leave `city` empty: the script stores Минск. Do not write that default into the card text. The profile crumb is then «Тренеры в Минске».
 
 ### 6. Report
 

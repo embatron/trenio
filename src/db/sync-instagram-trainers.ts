@@ -28,6 +28,7 @@ type DraftFile = {
   primarySport?: ImportedTrainerDraft["primarySport"];
   city: string;
   address?: string;
+  cityCandidates?: string[];
   priceFrom?: number | null;
   experienceYears?: number | null;
   formats?: ImportedTrainerDraft["formats"];
@@ -45,6 +46,16 @@ const DRAFT_DIR = join(process.cwd(), "data/instagram-trainers");
 
 function publishedExtras(instagramUrl: string) {
   return PUBLISHED_TRAINERS.find((trainer) => trainer.instagram === instagramUrl);
+}
+
+/** No street and no named settlement: the catalog city is Minsk. */
+function importedCity(draft: DraftFile): string {
+  const city = (draft.city || "").trim();
+  if (city) return city;
+  if ((draft.address || "").trim()) return "";
+  const named = (draft.cityCandidates ?? []).map((name) => name.trim()).filter(Boolean);
+  if (named.length > 0) return "";
+  return "Минск";
 }
 
 async function sync() {
@@ -73,7 +84,7 @@ async function sync() {
       primarySport: draft.primarySport ?? null,
       audiences: draft.audiences?.length ? draft.audiences : published?.audiences?.length ? published.audiences : ["adult"],
       formats: draft.formats?.length ? draft.formats : published?.formats ?? [],
-      city: draft.city,
+      city: importedCity(draft),
       citySlug: published?.city.slug,
       district: published?.district ?? "",
       address: draft.address || "",

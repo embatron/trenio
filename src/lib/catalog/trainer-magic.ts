@@ -72,6 +72,18 @@ function cookieOptions() {
   };
 }
 
+/** An imported card with no street and no settlement is shown in Minsk. */
+function importedCityLabel(row: TrainerProfile): string {
+  const stored = row.city.trim();
+  if (stored) return stored;
+  if (row.createdSource !== "import") return "";
+  if ((row.address ?? "").trim()) return "";
+  const placed = (row.trainingPlaces ?? []).some((place) =>
+    (place.city ?? "").trim() || (place.address ?? "").trim() || (place.district ?? "").trim(),
+  );
+  return placed ? "" : "Минск";
+}
+
 export function profileToPublished(row: TrainerProfile): PublishedTrainer {
   const sports = (row.sports ?? []).flatMap((sport) => {
     const slug = sport?.slug?.trim() ?? "";
@@ -89,7 +101,7 @@ export function profileToPublished(row: TrainerProfile): PublishedTrainer {
         label: row.primarySport.label || row.primarySport.slug,
       }
     : sports[0] ?? { slug: "", parentSlug: "", label: "" };
-  const cityLabel = row.city.trim();
+  const cityLabel = importedCityLabel(row);
   return {
     slug: row.slug,
     name: joinTrainerName(row.firstName, row.lastName) || row.fullName || row.slug,

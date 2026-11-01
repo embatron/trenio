@@ -18,7 +18,7 @@ The name and the description are decided in sequential thinking, then checked by
 | `audiences` | `adult`, `kid`, `teen` in that order, only when the text says so (`взрослые`, `дети` / `ребёнок`, `подростки` / `юниоры`, or all ages). The draft stays empty when the profile does not say. A later sync treats an empty list as adults | Not stated |
 | `headline` | `Тренер по {titleGenitive}` after a taxonomy match | No sport matched |
 | `sports`, `primarySport` | Taxonomy phrases inside `sportQuotes` | No sport phrase |
-| `city` | The single Belarus settlement in the profile, the about highlight, and pinned captions | Zero or several cities |
+| `city` | The single Belarus settlement in the profile, the about highlight, and pinned captions | Zero or several cities. Leave `resolved.city` empty. When none are named and `address` is empty, the script stores Минск. Do not write that default into the card text |
 | `address` | The street or hall line from the biography, the about highlight, or a pinned caption. Stored as printed. Not geocoded during import | No street or hall is named |
 | `priceFrom` | A number next to BYN or руб | No price in the text |
 | `languages` | A named language (`русский`, `беларуская`, `английский`, `польский`). The country name `Беларуси` is not the language | Not mentioned |
@@ -48,7 +48,7 @@ A pinned caption is read for fields: sport, experience, audience, address, city,
 
 «Как меня представить» (`bio`) is what a person reads first:
 
-1. Who this is and which sport they coach. Name the saved city in this text.
+1. Who this is and which sport they coach. Name the city when the biography or the highlight names it. A Minsk default is not named.
 2. Who they work with, or the level, when the source says it.
 3. One more fact from the source (format or experience), when it exists.
 

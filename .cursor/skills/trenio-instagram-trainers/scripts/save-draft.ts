@@ -629,9 +629,11 @@ async function saveOne(rawPath: string, settlements: string[]) {
   const cityHits = matchCities(corpus, settlements);
   const cued = cityHits.filter((name) => cityNamedAsPlace(corpus, name));
   const cities = cued.length === 1 ? cued : cityHits;
-  const city = cleanLine(resolved.city || "");
+  let city = cleanLine(resolved.city || "");
   if (cities.length === 1 && city !== cities[0]) fail(rawPath, `City in the text is ${cities[0]}.`);
   if (cities.length !== 1 && city) fail(rawPath, `City is ambiguous or absent (${cityHits.join(", ") || "none"}). Leave it empty.`);
+  const statedCity = city;
+  if (!statedCity && !address && cities.length === 0) city = "Минск";
 
   const priceInText = matchPrice(corpus);
   const priceFrom = resolved.priceFrom ?? null;
@@ -737,10 +739,10 @@ async function saveOne(rawPath: string, settlements: string[]) {
     fail(rawPath, `presentation must name the coached sport (${primary?.label}).`);
   }
   const namedCities = matchCities(cardSurface, settlements);
-  const extraCities = namedCities.filter((name) => name !== city);
-  if (extraCities.length) fail(rawPath, `Card text names ${extraCities.join(", ")}. The saved city is ${city || "empty"}.`);
-  if (city && matchCities(cardCorpus, settlements).includes(city) && !matchCities(presentation, settlements).includes(city)) {
-    fail(rawPath, `presentation must name ${city}.`);
+  const extraCities = namedCities.filter((name) => name !== statedCity);
+  if (extraCities.length) fail(rawPath, `Card text names ${extraCities.join(", ")}. The saved city is ${statedCity || "empty"}.`);
+  if (statedCity && matchCities(cardCorpus, settlements).includes(statedCity) && !matchCities(presentation, settlements).includes(statedCity)) {
+    fail(rawPath, `presentation must name ${statedCity}.`);
   }
 
   const avatarPath = await writeAvatar(handle, raw);
