@@ -43,7 +43,6 @@ import { trainerSeoHead } from "@/lib/seo/trainer";
 import { cityIn } from "@/lib/seo/text";
 import { getTrainerAddressFn } from "@/lib/geo/functions";
 import { pluralRu } from "@/lib/ru-plural";
-import { TrainerDoorEditor } from "@/components/trainer-door-editor";
 import { getMagicTrainerFn, loadVisibleTrainerFn, type MagicTrainerDraft } from "@/lib/catalog/trainer-magic";
 import { TRAINER_LEGACY_SLUGS } from "@/lib/catalog/trainer-slugs";
 
@@ -701,6 +700,7 @@ function TrainerPage() {
         : null;
   const reviewLabel = t.reviews.length === 0 ? "Сделать первый отзыв" : "Добавить отзыв";
   const staff = Boolean(user && isStaff(user.roles));
+  const canRevise = Boolean(editor) && !isOwner;
 
   const photos = storedPhotos.length > 0 ? storedPhotos : [t.photo].filter(Boolean);
   const photoMove = useRef(0);
@@ -760,10 +760,6 @@ function TrainerPage() {
         <div className="layout-container trainer-page__inner">
         {access === "staff" ? (
           <p className="profile-access">Профиль не опубликован. В каталоге его нет. Статус меняет тренер в настройках профиля: при входе туда он по умолчанию опубликован.</p>
-        ) : null}
-        {editor ? <TrainerDoorEditor draft={editor} /> : null}
-        {access === "preview" && !editor ? (
-          <p className="profile-access">Это предварительный просмотр. В каталоге страницы пока нет. Статус публикации меняете вы. При входе в настройки он по умолчанию опубликован. Ссылку можно открывать снова, пока профиль не опубликован. После публикации она откроет страницу в каталоге.</p>
         ) : null}
         <nav aria-label="Хлебные крошки">
           <ol className="breadcrumbs">
@@ -835,8 +831,8 @@ function TrainerPage() {
             </div>
           </aside>
 
-          <div className={`profile-main${staff || isOwner ? " has-tools" : ""}`}>
-            {staff || isOwner ? (
+          <div className={`profile-main${staff || isOwner || canRevise ? " has-tools" : ""}`}>
+            {staff || isOwner || canRevise ? (
               <div className="profile-tools">
                 {staff ? (
                   <Link className="profile-edit" to="/admin/trainers/$slug" params={{ slug: t.slug }} aria-label="Редактировать профиль" title="Редактировать профиль">
@@ -845,6 +841,11 @@ function TrainerPage() {
                 ) : null}
                 {isOwner ? (
                   <Link className="profile-edit" to="/me/profile" aria-label="Редактировать свой профиль" title="Редактировать свой профиль">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
+                  </Link>
+                ) : null}
+                {canRevise ? (
+                  <Link className="profile-edit" to="/trainers/revise" aria-label="Редактировать свой профиль" title="Редактировать свой профиль">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
                   </Link>
                 ) : null}

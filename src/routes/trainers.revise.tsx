@@ -5,6 +5,7 @@ import { AuthStyles } from "@/components/auth-styles";
 import { CabinetStyles } from "@/components/cabinet";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { TrainerCardFields, type TrainerCardValues } from "@/components/trainer-card-fields";
+import { TrainerDoorMail } from "@/components/trainer-door-editor";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import {
@@ -95,12 +96,13 @@ function ReviseForm({ initial }: { initial: MagicTrainerDraft }) {
     setError(null);
     setSaved(null);
     void save({ data: payload() })
-      .then(() => {
+      .then((result) => {
+        const message = (result as { message?: string }).message;
         if (publication === "published") {
           window.location.assign(`/trainers/${initial.slug}`);
           return;
         }
-        setSaved("Профиль скрыт. В каталоге его нет.");
+        setSaved(message ?? "Профиль скрыт. В каталоге его нет.");
       })
       .catch((err: unknown) => setError(authErrorMessage(err)))
       .finally(() => setPending(false));
@@ -114,9 +116,11 @@ function ReviseForm({ initial }: { initial: MagicTrainerDraft }) {
         <div className="layout-container" style={{ paddingBlock: "32px 64px" }}>
           <article className="cabinet-card">
             <h2>Профиль</h2>
-            <p className="cabinet-note">
-              Статус публикации меняете вы. При входе он стоит «Опубликован». Скрытый профиль в каталоге не показывается.
+            <p className="cabinet-note cabinet-note--lede">
+              Статус публикации меняете вы. При входе он стоит «Опубликован». Скрытый профиль в каталоге не показывается.{" "}
+              <Link to="/trainers/$slug" params={{ slug: initial.slug }}>Страница, как её видит посетитель</Link>
             </p>
+            {initial.phoneLocked ? null : <TrainerDoorMail />}
             <form
               className="cabinet-form"
               onSubmit={(event) => {
