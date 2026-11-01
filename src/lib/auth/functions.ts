@@ -7,6 +7,7 @@ import {
   forgotPasswordSchema,
   loginSchema,
   resetPasswordSchema,
+  signupCredentialsSchema,
   signupSchema,
   smsConfirmSchema,
   smsRequestSchema,
@@ -41,10 +42,18 @@ import {
 } from "@/auth/login-channels";
 import { getTelegramLoginConfig } from "@/auth/telegram";
 import {
+  confirmSmsSignup,
+  requestSmsSignup,
+  saveSignupCredentials,
+  signupWithEmail,
+  signupWithTelegramWebApp,
+  signupWithTelegramWidget,
+} from "@/auth/signup-channels";
+import { isPendingSignupEmail } from "@/lib/auth/pending-email";
+import {
   getSessionUserFromToken,
   loginUser,
   trainerHeaderFace,
-  registerUser,
   requestPasswordReset,
   changeAccountPassword,
   confirmAccountEmailCode,
@@ -69,14 +78,16 @@ import { writeLog, maskPhone } from "@/lib/log/logger";
 import type { LogOutcome } from "@/lib/log/policy";
 
 function toPublicUser(user: SessionUser): PublicUser {
+  const needsCredentials = isPendingSignupEmail(user.email);
   return {
     id: user.id,
-    email: user.email,
+    email: needsCredentials ? "" : user.email,
     firstName: user.firstName,
     lastName: user.lastName,
     avatarPath: user.avatarPath,
     nick: "",
-    emailVerified: user.emailVerified,
+    emailVerified: needsCredentials ? false : user.emailVerified,
+    needsCredentials,
     roles: user.roles,
     status: user.status,
     lastSignupIntent: user.lastSignupIntent,
@@ -117,7 +128,7 @@ async function finishLogin(
     action,
     outcome: "success",
     message,
-    subject: user.email,
+    subject: isPendingSignupEmail(user.email) ? null : user.email,
     actorUserId: user.id,
   });
   return {
@@ -303,30 +314,119 @@ export const signupFn = createServerFn({ method: "POST" })
   .validator(signupSchema)
   .handler(async ({ data }) => {
     try {
-      await registerUser({
-        email: data.email,
-        password: data.password,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phone: data.phone,
-        signupRole: data.signupRole,
-      });
+      const result = await signupWithEmail(
+        { email: data.email, password: data.password },
+        { ...getRequestMeta(), honeypot: data.honeypot },
+      );
+      if ("restore" in result) {
+        void writeLog({
+          level: "info",
+          domain: "auth",
+          action: "auth.signup",
+          outcome: "skipped",
+          message: "Аккаунт удалён. Предложено восстановление.",
+          subject: data.email,
+        });
+        return { ok: true as const, restore: true as const };
+      }
+      return finishLogin(
+        result.session,
+        true,
+        result.created ? "auth.signup" : "auth.login",
+        result.created ? "Аккаунт создан по почте." : "Вход выполнен.",
+      );
+    } catch (error) {
+      rethrowAuth(error, "auth.signup", data.email, null, data.honeypot?.trim() ? "denied" : undefined);
+    }
+  });
 
+export const requestSmsSignupFn = createServerFn({ method: "POST" })
+  .validator(smsRequestSchema)
+  .handler(async ({ data }) => {
+    try {
+      const result = await requestSmsSignup(data.phone, { ...getRequestMeta(), honeypot: data.honeypot });
+      logChannel("auth.signup.sms", data.phone, result);
+      return result;
+    } catch (error) {
+      rethrowAuth(error, "auth.signup.sms", maskPhone(data.phone));
+    }
+  });
+
+export const confirmSmsSignupFn = createServerFn({ method: "POST" })
+  .validator(smsConfirmSchema)
+  .handler(async ({ data }) => {
+    try {
+      const result = await confirmSmsSignup(data.phone, data.code, {
+        ...getRequestMeta(),
+        honeypot: data.honeypot,
+      });
+      return finishLogin(
+        result.session,
+        true,
+        "auth.signup.sms",
+        result.created ? "Аккаунт создан по телефону." : "Вход по телефону выполнен.",
+      );
+    } catch (error) {
+      rethrowAuth(error, "auth.signup.sms", maskPhone(data.phone));
+    }
+  });
+
+export const signupWithTelegramFn = createServerFn({ method: "POST" })
+  .validator(telegramWidgetSchema)
+  .handler(async ({ data }) => {
+    try {
+      const result = await signupWithTelegramWidget(data, {
+        ...getRequestMeta(),
+        honeypot: data.honeypot,
+      });
+      return finishLogin(
+        result.session,
+        true,
+        "auth.signup.telegram",
+        result.created ? "Аккаунт создан через Telegram." : "Вход через Telegram выполнен.",
+      );
+    } catch (error) {
+      rethrowAuth(error, "auth.signup.telegram");
+    }
+  });
+
+export const signupWithTelegramWebAppFn = createServerFn({ method: "POST" })
+  .validator(telegramWebAppSchema)
+  .handler(async ({ data }) => {
+    try {
+      const result = await signupWithTelegramWebApp(data.initData, {
+        ...getRequestMeta(),
+        honeypot: data.honeypot,
+      });
+      return finishLogin(
+        result.session,
+        true,
+        "auth.signup.telegram.webapp",
+        result.created ? "Аккаунт создан через Telegram." : "Вход через Telegram выполнен.",
+      );
+    } catch (error) {
+      rethrowAuth(error, "auth.signup.telegram.webapp");
+    }
+  });
+
+export const completeSignupCredentialsFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(signupCredentialsSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      await saveSignupCredentials(context.user.id, data.email, data.password);
       void writeLog({
         level: "info",
         domain: "auth",
-        action: "auth.signup",
+        action: "auth.signup.credentials",
         outcome: "success",
-        message: "Аккаунт создан.",
+        message: "Почта и пароль сохранены.",
         subject: data.email,
-        context: { role: data.signupRole },
+        actorUserId: context.user.id,
       });
-      return {
-        ok: true as const,
-        message: "Аккаунт создан. Проверьте e-mail для подтверждения, затем войдите.",
-      };
+      return { ok: true as const };
     } catch (error) {
-      rethrowAuth(error, "auth.signup", data.email);
+      rethrowAuth(error, "auth.signup.credentials", data.email, context.user.id);
     }
   });
 

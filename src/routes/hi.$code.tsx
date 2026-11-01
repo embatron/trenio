@@ -16,7 +16,7 @@ export const Route = createFileRoute("/hi/$code")({
     const mail = new URLSearchParams(location.searchStr).get("mail") ?? "";
     if (mail) {
       const opened = await finishTrainerMailFn({ data: { code: params.code, token: mail } });
-      if (opened) throw redirect({ to: "/me/profile" });
+      if (opened) throw redirect({ to: "/me" });
       return null;
     }
     const door = await enterTrainerDoorFn({ data: { code: params.code } });

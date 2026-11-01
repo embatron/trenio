@@ -255,7 +255,7 @@ async function completeTelegramLogin(
   meta: LoginMeta,
 ) {
   const user = await findUserByTelegramId(telegramUserId);
-  if (!user || user.status === "deleted" || (!user.emailVerifiedAt && !user.phoneVerifiedAt)) {
+  if (!user || user.status === "deleted") {
     throw new AuthError(TELEGRAM_NOT_LINKED, "INVALID_CREDENTIALS");
   }
 

@@ -11,7 +11,10 @@
 | `auth.login` | Email or nick login, including honeypot denial |
 | `auth.sms.request` / `auth.sms.confirm` | SMS login |
 | `auth.telegram` / `auth.telegram.webapp` | Telegram login |
-| `auth.signup` / `auth.logout` | Registration and logout |
+| `auth.signup` / `auth.logout` | Email registration and logout |
+| `auth.signup.sms` | Phone registration: SMS request and confirm |
+| `auth.signup.telegram` / `auth.signup.telegram.webapp` | Telegram registration |
+| `auth.signup.credentials` | Mailbox and password saved after phone or Telegram signup. The password is not stored |
 | `auth.password.forgot` / `auth.password.reset` | Email reset. The token is not stored |
 | `auth.password.forgot_sms` / `auth.password.reset_sms` | SMS reset |
 | `auth.email.verify` | Email confirmation |
@@ -26,7 +29,7 @@
 | `account.claim` | Trainer claim |
 | `email.send` / `email.dev` / `email.review` | Postfix or Resend, dev console, review mail. The letter is HTML. Do not store the body, a code, or a link |
 | `sms.send` / `sms.dev` | SMS.BY, or the dev console without the code |
-| `form.welcome` / `form.review` / `form.trainer_admin` / `form.trainer_profile` | Public and cabinet forms. `form.welcome` awaits the insert. `target` is the Instagram or Telegram handle. A phone is `subject` as a mask, and a phone-only welcome leaves `target` empty. The welcome row stores `+375 29 123-45-67`, not the raw field. A honeypot is `denied` with `reason: honeypot` and no handle. |
+| `form.welcome` / `form.review` / `form.trainer_admin` / `form.trainer_profile` / `form.trainer_contacts` | Public and cabinet forms. `form.trainer_contacts` stores Instagram and Telegram on the trainer card. `form.welcome` awaits the insert. `target` is the Instagram or Telegram handle. A phone is `subject` as a mask, and a phone-only welcome leaves `target` empty. The welcome row stores `+375 29 123-45-67`, not the raw field. A honeypot is `denied` with `reason: honeypot` and no handle. |
 | `map.area` | `listMapAreaFn` |
 | `map.locate` | Browser geolocation on `/map` and `/search`. Warn only. The visitor sees no note. The row has no coordinates. |
 | `geo.cache.read` / `geo.cache.write` / `geo.profile` / `geo.suggest` / `geo.visitor` | Geocoder, address suggestions, and visitor place. `geo.suggest` and `geo.profile` log a failure when the map service does not answer. The row does not store the address text |

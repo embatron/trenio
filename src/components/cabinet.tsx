@@ -1,6 +1,7 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
+import { CredentialsRequiredDialog } from "@/components/auth/credentials-required-dialog";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { TrainerName } from "@/components/trainer-name";
 import { UserAvatar } from "@/components/user-avatar";
@@ -16,6 +17,7 @@ const ICONS = {
   bookings: "M7 3v3M17 3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z",
   finance: "M4 5h16v14H4zM4 9h16M8 13h5",
   messages: "M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 6l8 6 8-6",
+  contacts: "M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM9 8h6M9 12h6M9 16h4",
   site: "M6 3h8l5 5v13H6zM14 3v5h5M8 13h8M8 17h5",
 } as const;
 
@@ -91,6 +93,7 @@ export type MeSectionPath =
   | "/me/reviews"
   | "/me/favorites"
   | "/me/profile"
+  | "/me/contacts"
   | "/me/settings";
 
 export type CabinetSectionLink = {
@@ -141,6 +144,7 @@ export function CabinetShell({
   logoutPending: boolean;
   children: ReactNode;
 }) {
+  const { user } = useRouteContext({ from: "__root__" });
   const name = joinTrainerName(firstName, lastName) || "Без имени";
   const publicSlug = profileSlug?.trim() || "";
   const identity = <TrainerName firstName={firstName} lastName={lastName} empty="Без имени" />;
@@ -337,6 +341,7 @@ export function CabinetShell({
         </div>
       </main>
       <SiteFooter />
+      {user?.needsCredentials ? <CredentialsRequiredDialog /> : null}
       <style>{CABINET_CSS}</style>
     </>
   );
@@ -658,6 +663,9 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-form__ok { margin: 0; color: #157a3a; font-size: 13px; font-weight: var(--fw-title); }
 .cabinet-form__error { margin: 0; color: var(--primary-dark); font-size: 13px; font-weight: var(--fw-ui); }
 .cabinet-modal { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: var(--layout-gutter); background: rgba(var(--dark-rgb), 0.45); }
+.cabinet-modal--lock { z-index: 500; }
+.cabinet-modal--lock .auth-field__toggle { background: transparent; color: var(--muted); border-radius: 0; min-height: 44px; padding: 0 10px; justify-self: auto; width: auto; }
+.cabinet-modal--lock .auth-submit { width: 100%; justify-self: stretch; height: 50px; border-radius: var(--radius-control); }
 .cabinet-modal__card { width: min(440px, 100%); display: grid; gap: 12px; padding: 20px; border-radius: var(--card-radius); background: var(--white); }
 .cabinet-modal__card h2 { margin: 0; font-size: 18px; color: var(--dark); }
 .cabinet-modal__card p { margin: 0; color: var(--text); }

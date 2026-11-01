@@ -34,11 +34,13 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
       phoneVerified: profile.phoneVerified,
       email: profile.email,
       emailVerified: profile.emailVerified,
+      instagram: profile.instagram,
+      telegram: profile.telegram,
       slug: profile.slug,
       photos: profile.photos,
       certificates: profile.certificates,
     }));
-  }, [profile.phone, profile.phoneVerified, profile.email, profile.emailVerified, profile.slug, profile.photos, profile.certificates]);
+  }, [profile.phone, profile.phoneVerified, profile.email, profile.emailVerified, profile.instagram, profile.telegram, profile.slug, profile.photos, profile.certificates]);
   const [bioInvalid, setBioInvalid] = useState(false);
   const [popup, setPopup] = useState<{ title: string; message: string } | null>(null);
   const media = form.slug
@@ -112,6 +114,7 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
             if (reviewPlainText(values.bio)) setBioInvalid(false);
             setForm((current) => ({ ...current, ...values }));
           }}
+          mode="profile"
           photos={media?.photos ?? null}
           certificates={media?.certificates ?? null}
           phone={{

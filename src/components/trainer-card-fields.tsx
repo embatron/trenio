@@ -81,7 +81,6 @@ export const TRAINER_PROFILE_SECTIONS = [
   { id: "trainer-docs", label: "Документы" },
   { id: "trainer-work", label: "Тренировки" },
   { id: "trainer-places", label: "Адреса" },
-  { id: "trainer-contacts", label: "Контакты" },
 ] as const;
 
 function ProfileSection({
@@ -90,7 +89,7 @@ function ProfileSection({
   tone,
   children,
 }: {
-  id: (typeof TRAINER_PROFILE_SECTIONS)[number]["id"];
+  id: (typeof TRAINER_PROFILE_SECTIONS)[number]["id"] | "trainer-contacts";
   title: string;
   tone?: "place" | "contact";
   children: ReactNode;
@@ -444,6 +443,7 @@ export function TrainerCardFields({
   priceLabel = "Цена от, BYN",
   self = false,
   bioInvalid = false,
+  mode = "full",
 }: {
   values: TrainerCardValues;
   onChange: (values: TrainerCardValues) => void;
@@ -457,13 +457,18 @@ export function TrainerCardFields({
   priceLabel?: string;
   self?: boolean;
   bioInvalid?: boolean;
+  mode?: "full" | "profile" | "contacts";
 }) {
   function patch(partial: Partial<TrainerCardValues>) {
     onChange({ ...values, ...partial });
   }
+  const showProfile = mode !== "contacts";
+  const showContacts = mode !== "profile";
 
   return (
     <>
+      {showProfile ? (
+      <>
       <ProfileSection id="trainer-photos" title="Фото">
         {photos ? (
           <TrainerMediaField
@@ -665,6 +670,9 @@ export function TrainerCardFields({
         />
         {afterAddress}
       </ProfileSection>
+      </>
+      ) : null}
+      {showContacts ? (
       <ProfileSection id="trainer-contacts" title="Контакты" tone="contact">
         <PhoneField phone={phone} self={self} />
         <label>
@@ -714,6 +722,7 @@ export function TrainerCardFields({
           </label>
         )}
       </ProfileSection>
+      ) : null}
     </>
   );
 }

@@ -78,7 +78,7 @@ export function AdminAccountsTable({ accounts }: { accounts: AdminAccount[] }) {
   return (
     <>
       <p className="cabinet-note cabinet-note--lede">
-        Только подтверждённые входы в сервис. Карточки тренеров без аккаунта смотрите в разделе{" "}
+        Аккаунты с подтверждённой почтой, телефоном или Telegram. Карточки тренеров без аккаунта смотрите в разделе{" "}
         <Link to="/admin/trainers">Тренеры</Link>.
       </p>
       <div className="cabinet-filters">

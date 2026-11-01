@@ -40,6 +40,7 @@ import { Route as MeReviewsRouteImport } from './routes/me.reviews'
 import { Route as MeProfileRouteImport } from './routes/me.profile'
 import { Route as MeMessagesRouteImport } from './routes/me.messages'
 import { Route as MeFavoritesRouteImport } from './routes/me.favorites'
+import { Route as MeContactsRouteImport } from './routes/me.contacts'
 import { Route as JoinTrainerRouteImport } from './routes/join.trainer'
 import { Route as HiCodeRouteImport } from './routes/hi.$code'
 import { Route as ClubsSlugRouteImport } from './routes/clubs.$slug'
@@ -238,6 +239,11 @@ const MeMessagesRoute = MeMessagesRouteImport.update({
 const MeFavoritesRoute = MeFavoritesRouteImport.update({
   id: '/favorites',
   path: '/favorites',
+  getParentRoute: () => MeRoute,
+} as any)
+const MeContactsRoute = MeContactsRouteImport.update({
+  id: '/contacts',
+  path: '/contacts',
   getParentRoute: () => MeRoute,
 } as any)
 const JoinTrainerRoute = JoinTrainerRouteImport.update({
@@ -509,6 +515,7 @@ export interface FileRoutesByFullPath {
   '/clubs/$slug': typeof ClubsSlugRoute
   '/hi/$code': typeof HiCodeRouteWithChildren
   '/join/trainer': typeof JoinTrainerRoute
+  '/me/contacts': typeof MeContactsRoute
   '/me/favorites': typeof MeFavoritesRoute
   '/me/messages': typeof MeMessagesRouteWithChildren
   '/me/profile': typeof MeProfileRoute
@@ -579,6 +586,7 @@ export interface FileRoutesByTo {
   '/clubs/$slug': typeof ClubsSlugRoute
   '/hi/$code': typeof HiCodeRouteWithChildren
   '/join/trainer': typeof JoinTrainerRoute
+  '/me/contacts': typeof MeContactsRoute
   '/me/favorites': typeof MeFavoritesRoute
   '/me/messages': typeof MeMessagesRouteWithChildren
   '/me/profile': typeof MeProfileRoute
@@ -656,6 +664,7 @@ export interface FileRoutesById {
   '/clubs/$slug': typeof ClubsSlugRoute
   '/hi/$code': typeof HiCodeRouteWithChildren
   '/join/trainer': typeof JoinTrainerRoute
+  '/me/contacts': typeof MeContactsRoute
   '/me/favorites': typeof MeFavoritesRoute
   '/me/messages': typeof MeMessagesRouteWithChildren
   '/me/profile': typeof MeProfileRoute
@@ -735,6 +744,7 @@ export interface FileRouteTypes {
     | '/clubs/$slug'
     | '/hi/$code'
     | '/join/trainer'
+    | '/me/contacts'
     | '/me/favorites'
     | '/me/messages'
     | '/me/profile'
@@ -805,6 +815,7 @@ export interface FileRouteTypes {
     | '/clubs/$slug'
     | '/hi/$code'
     | '/join/trainer'
+    | '/me/contacts'
     | '/me/favorites'
     | '/me/messages'
     | '/me/profile'
@@ -881,6 +892,7 @@ export interface FileRouteTypes {
     | '/clubs/$slug'
     | '/hi/$code'
     | '/join/trainer'
+    | '/me/contacts'
     | '/me/favorites'
     | '/me/messages'
     | '/me/profile'
@@ -1176,6 +1188,13 @@ declare module '@tanstack/react-router' {
       path: '/favorites'
       fullPath: '/me/favorites'
       preLoaderRoute: typeof MeFavoritesRouteImport
+      parentRoute: typeof MeRoute
+    }
+    '/me/contacts': {
+      id: '/me/contacts'
+      path: '/contacts'
+      fullPath: '/me/contacts'
+      preLoaderRoute: typeof MeContactsRouteImport
       parentRoute: typeof MeRoute
     }
     '/join/trainer': {
@@ -1587,6 +1606,7 @@ const MeMessagesRouteWithChildren = MeMessagesRoute._addFileChildren(
 )
 
 interface MeRouteChildren {
+  MeContactsRoute: typeof MeContactsRoute
   MeFavoritesRoute: typeof MeFavoritesRoute
   MeMessagesRoute: typeof MeMessagesRouteWithChildren
   MeProfileRoute: typeof MeProfileRoute
@@ -1596,6 +1616,7 @@ interface MeRouteChildren {
 }
 
 const MeRouteChildren: MeRouteChildren = {
+  MeContactsRoute: MeContactsRoute,
   MeFavoritesRoute: MeFavoritesRoute,
   MeMessagesRoute: MeMessagesRouteWithChildren,
   MeProfileRoute: MeProfileRoute,

@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { CabinetShell, type MeSectionPath } from "@/components/cabinet";
+import { CabinetShell, type CabinetIcon, type MeSectionPath } from "@/components/cabinet";
 import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
 import { TRAINER_PROFILE_SECTIONS } from "@/components/trainer-card-fields";
@@ -15,10 +15,11 @@ import { listOwnTrainerReviewsFn, listTrainerRatingSummariesFn } from "@/lib/cat
 import { getOwnTrainerViewStatsFn } from "@/lib/catalog/trainer-views";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
-const SECTIONS: Array<{ id: string; label: string; icon: "overview" | "profile" | "trainers" | "reviews" | "favorites" | "messages"; to: MeSectionPath; sections?: typeof TRAINER_PROFILE_SECTIONS }> = [
+const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: MeSectionPath; sections?: typeof TRAINER_PROFILE_SECTIONS }> = [
   { id: "overview", label: "Обзор", icon: "overview", to: "/me" },
   { id: "messages", label: "Сообщения", icon: "messages", to: "/me/messages" },
   { id: "profile", label: "Профиль", icon: "trainers", to: "/me/profile", sections: TRAINER_PROFILE_SECTIONS },
+  { id: "contacts", label: "Контакты", icon: "contacts", to: "/me/contacts" },
   { id: "reviews", label: "Отзывы", icon: "reviews", to: "/me/reviews" },
   { id: "favorites", label: "Избранное", icon: "favorites", to: "/me/favorites" },
   { id: "settings", label: "Настройки", icon: "profile", to: "/me/settings" },
@@ -67,7 +68,7 @@ function MeLayout() {
       ? "overview"
       : SECTIONS.find((item) => pathname === item.to)?.id ?? "overview";
   const face = trainer?.photos[0] || trainer?.avatarPath || user.avatarPath || null;
-  const items = SECTIONS.filter((item) => item.id !== "profile" || trainer).map((item) => {
+  const items = SECTIONS.filter((item) => (item.id !== "profile" && item.id !== "contacts") || trainer).map((item) => {
     if (item.id === "messages") return { ...item, badge: messaging.inbox + messaging.own };
     if (item.id === "reviews") return { ...item, badge: reviews.length };
     if (item.id === "favorites") return { ...item, badge: ready ? keys.length : undefined };

@@ -43,6 +43,7 @@ import { trainerSeoHead } from "@/lib/seo/trainer";
 import { cityIn } from "@/lib/seo/text";
 import { getTrainerAddressFn } from "@/lib/geo/functions";
 import { pluralRu } from "@/lib/ru-plural";
+import { TrainerDoorMailDialog } from "@/components/trainer-door-editor";
 import { getMagicTrainerFn, loadVisibleTrainerFn, type MagicTrainerDraft } from "@/lib/catalog/trainer-magic";
 import { TRAINER_LEGACY_SLUGS } from "@/lib/catalog/trainer-slugs";
 
@@ -288,7 +289,7 @@ const CSS = `
 .profile-identity__name { min-width: 0; margin: 0; font-size: var(--fs-page); font-weight: var(--fw-heading); letter-spacing: -0.035em; color: var(--dark); line-height: 1.05; }
 .profile-identity__name .trainer-name { flex-wrap: nowrap; }
 .profile-identity__name .trainer-name__line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.profile-edit { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; color: var(--dark); text-decoration: none; }
+.profile-edit { width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0; background: transparent; border-radius: 50%; color: var(--dark); font: inherit; text-decoration: none; cursor: pointer; }
 .profile-edit:hover { background: rgba(var(--dark-rgb), 0.04); color: var(--primary); }
 .profile-edit svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .review-reply__open { align-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--primary-dark); font: inherit; font-size: 14px; font-weight: var(--fw-title); cursor: pointer; }
@@ -701,6 +702,7 @@ function TrainerPage() {
   const reviewLabel = t.reviews.length === 0 ? "Сделать первый отзыв" : "Добавить отзыв";
   const staff = Boolean(user && isStaff(user.roles));
   const canRevise = Boolean(editor) && !isOwner;
+  const [mailOpen, setMailOpen] = useState(false);
 
   const photos = storedPhotos.length > 0 ? storedPhotos : [t.photo].filter(Boolean);
   const photoMove = useRef(0);
@@ -845,9 +847,9 @@ function TrainerPage() {
                   </Link>
                 ) : null}
                 {canRevise ? (
-                  <Link className="profile-edit" to="/trainers/revise" aria-label="Редактировать свой профиль" title="Редактировать свой профиль">
+                  <button type="button" className="profile-edit" aria-haspopup="dialog" aria-label="Редактировать свой профиль" title="Редактировать свой профиль" onClick={() => setMailOpen(true)}>
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
-                  </Link>
+                  </button>
                 ) : null}
               </div>
             ) : null}
@@ -1098,6 +1100,7 @@ function TrainerPage() {
       </div> : null}
 
       <SiteFooter />
+      {mailOpen ? <TrainerDoorMailDialog onClose={() => setMailOpen(false)} /> : null}
       {reviewSent ? (
         <CabinetNotice
           title="Ваш отзыв на модерации"

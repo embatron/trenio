@@ -1,4 +1,5 @@
 import { AuthError } from "@/lib/auth/errors";
+import { isPendingSignupEmail } from "@/lib/auth/pending-email";
 
 const NICK_DOMAIN = "nick.trenio.by";
 
@@ -27,6 +28,7 @@ export function resolveAccountLogin(value: string): string {
 }
 
 export function displayAccountLogin(email: string): string {
+  if (isPendingSignupEmail(email)) return "не указана";
   const suffix = `@${NICK_DOMAIN}`;
   return email.endsWith(suffix) ? email.slice(0, -suffix.length) : email;
 }

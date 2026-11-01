@@ -1,4 +1,4 @@
-import { randomBytes, randomInt } from "node:crypto";
+import { randomBytes } from "node:crypto";
 
 import { createServerFn } from "@tanstack/react-start";
 import { getCookie, getRequest, setCookie } from "@tanstack/react-start/server";
@@ -11,7 +11,7 @@ import { consumeRateLimit, RATE_LIMITED_MESSAGE } from "@/auth/rate-limit";
 import { hashPassword, normalizeEmail } from "@/auth/password";
 import { setSessionCookie } from "@/auth/session";
 import { createSession, findUserByEmail } from "@/auth/service";
-import { addDays, addMinutes, generateSecureToken, hashToken } from "@/auth/tokens";
+import { addDays, generateSecureToken, hashToken } from "@/auth/tokens";
 import { getDb } from "@/db";
 import { emailVerificationTokens, trainerProfiles, userRoles, users, type TrainerProfile } from "@/db/schema";
 import { renderLetter } from "@/lib/mail/letter";
@@ -589,12 +589,6 @@ const doorEmailSchema = z.object({
   email: z.string().trim().email("Введите корректный e-mail").max(320),
 });
 
-function doorCodeValue(): string {
-  const max = 10 ** 6;
-  const min = 10 ** 5;
-  return String(randomInt(min, max));
-}
-
 async function claimDoorAccount(profileId: string, userId: string, email: string) {
   const now = new Date();
   const db = getDb();
@@ -670,41 +664,31 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
     await db.update(users).set({ firstName: row.firstName || user.firstName || "Тренер", lastName: row.lastName || null, updatedAt: now }).where(eq(users.id, user.id));
     await db.update(emailVerificationTokens).set({ usedAt: now }).where(and(eq(emailVerificationTokens.userId, user.id), isNull(emailVerificationTokens.usedAt)));
 
-    const code = doorCodeValue();
     const linkToken = generateSecureToken();
-    await db.insert(emailVerificationTokens).values([
-      {
-        userId: user.id,
-        pendingEmail: email,
-        tokenHash: hashToken(`${row.id}:${user.id}:${code}`),
-        expiresAt: addMinutes(now, 10),
-      },
-      {
-        userId: user.id,
-        pendingEmail: email,
-        tokenHash: hashToken(`${row.id}:${linkToken}`),
-        expiresAt: addDays(now, 7),
-      },
-    ]);
+    await db.insert(emailVerificationTokens).values({
+      userId: user.id,
+      pendingEmail: email,
+      tokenHash: hashToken(`${row.id}:${linkToken}`),
+      expiresAt: addDays(now, 7),
+    });
     const origin = requestOrigin();
     const link = `${origin}/hi/${row.previewToken}?mail=${encodeURIComponent(linkToken)}`;
     try {
       const letter = renderLetter({
         service: true,
-        title: "Почта и редактирование профиля",
+        title: "Вход в кабинет",
         person: {
           name: [row.firstName, row.lastName].filter(Boolean).join(" ") || "Тренер",
           avatarUrl: row.avatarPath,
           caption: "Ваш профиль",
         },
-        code,
-        lines: ["Он действует 10 минут. Никому не сообщайте."],
-        action: { href: link, label: "Открыть редактирование" },
-        note: "Ссылка подтверждает почту и сразу открывает профиль.",
+        lines: ["Ссылка подтверждает почту и открывает кабинет. Она действует 7 дней."],
+        action: { href: link, label: "Открыть кабинет" },
+        note: "Если вы не запрашивали это письмо, просто удалите его.",
       });
       await sendMail({
         to: [email],
-        subject: "Почта и редактирование профиля trenio.by",
+        subject: "Вход в кабинет trenio.by",
         text: letter.text,
         html: letter.html,
       });
@@ -712,11 +696,20 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
       logCaught("email", "email.send", error, { subject: email, target: row.slug });
       throw new AuthError("Письмо не отправилось. Попробуйте ещё раз.", "VALIDATION");
     }
-    const delivered = mailTransportReady();
+    void writeLog({
+      level: "info",
+      domain: "email",
+      action: "email.send",
+      outcome: "success",
+      message: "Ссылка в кабинет отправлена на почту.",
+      subject: email,
+      target: row.slug,
+    });
     return {
       ok: true as const,
-      message: "Код и ссылка на редактирование отправлены на почту.",
-      devCode: !delivered && process.env.NODE_ENV !== "production" ? code : undefined,
+      message: mailTransportReady()
+        ? "Ссылка отправлена на почту. Откройте письмо — оно подтвердит почту и откроет кабинет."
+        : "Письмо записано в журнал сервера. Ссылка в нём открывает кабинет.",
     };
   });
 
@@ -753,7 +746,7 @@ export const confirmDoorEmailFn = createServerFn({ method: "POST" })
       actorUserId: user.id,
       target: row.slug,
     });
-    return { ok: true as const, message: "Почта подтверждена. Аккаунт активен. Ссылка из письма открывает редактирование профиля." };
+    return { ok: true as const, message: "Почта подтверждена. Аккаунт активен. Ссылка из письма открывает кабинет." };
   });
 
 export const finishTrainerMailFn = createServerFn({ method: "GET" })
@@ -786,7 +779,7 @@ export const finishTrainerMailFn = createServerFn({ method: "GET" })
       domain: "account",
       action: "account.claim",
       outcome: "success",
-      message: "Письмо открыло редактирование. Почта подтверждена.",
+      message: "Письмо открыло кабинет. Почта подтверждена.",
       subject: tokenRow.pendingEmail,
       actorUserId: tokenRow.userId,
       target: row.slug,

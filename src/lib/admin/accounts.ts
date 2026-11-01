@@ -1,4 +1,4 @@
-import { and, desc, eq, isNotNull, ne } from "drizzle-orm";
+import { and, desc, eq, isNotNull, ne, or } from "drizzle-orm";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
@@ -69,7 +69,16 @@ export const getAdminAccountsFn = createServerFn({ method: "GET" })
           lastLoginAt: users.lastLoginAt,
         })
         .from(users)
-        .where(and(ne(users.status, "deleted"), isNotNull(users.emailVerifiedAt)))
+        .where(
+          and(
+            ne(users.status, "deleted"),
+            or(
+              isNotNull(users.emailVerifiedAt),
+              isNotNull(users.phoneVerifiedAt),
+              isNotNull(users.telegramUserId),
+            ),
+          ),
+        )
         .orderBy(desc(users.createdAt)),
       db.select({ userId: userRoles.userId, role: userRoles.role }).from(userRoles),
     ]);

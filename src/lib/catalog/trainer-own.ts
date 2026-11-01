@@ -372,3 +372,46 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       throw failure;
     }
   });
+
+export const saveOwnTrainerContactsFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(z.object({
+    instagram: z.string().trim().max(300),
+    telegram: z.string().trim().max(300),
+  }))
+  .handler(async ({ data, context }) => {
+    assertTrainer(context.user.roles);
+    const [existing] = await getDb()
+      .select({ id: trainerProfiles.id, slug: trainerProfiles.slug })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.ownerUserId, context.user.id))
+      .limit(1);
+    if (!existing) {
+      void writeLog({
+        level: "warn",
+        domain: "form",
+        action: "form.trainer_contacts",
+        outcome: "denied",
+        message: "Карточка тренера не привязана.",
+        actorUserId: context.user.id,
+        subject: context.user.email,
+      });
+      throw new AuthError("Карточка в каталоге к этому аккаунту пока не привязана.", "VALIDATION");
+    }
+    await getDb().update(trainerProfiles).set({
+      instagramUrl: data.instagram,
+      telegram: data.telegram,
+      updatedAt: new Date(),
+    }).where(eq(trainerProfiles.id, existing.id));
+    void writeLog({
+      level: "info",
+      domain: "form",
+      action: "form.trainer_contacts",
+      outcome: "success",
+      message: "Контакты профиля сохранены.",
+      actorUserId: context.user.id,
+      subject: context.user.email,
+      target: existing.slug,
+    });
+    return { ok: true as const, message: "Контакты сохранены." };
+  });

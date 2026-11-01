@@ -27,21 +27,21 @@ Mutations only via `createServerFn` + middleware. `beforeLoad` is UX, not the se
 
 ## Target flow
 
-1. Signup: имя + email (+ intent), **без пароля**.
-2. Письмо `{APP_URL}/auth/set-password?token=` (24 ч) → пароль → кабинет / onboarding.
-3. Email считается подтверждённым после клика по ссылке. Смена email — письмо на **новый** адрес; `users.email` не менять до клика.
-4. Вход: email + пароль **или** подтверждённый мобильный РБ + SMS.
-5. Одна учётка, роли в `user_roles`. Не делать два портала `/member` и `/admin`.
+1. Signup uses the same three channels as login: email + password, Belarus mobile + SMS, or Telegram (widget or Mini App). There is no role picker. The account is `user` with `client_signup`.
+2. The channel used to sign up is verified immediately: `email_verified_at`, `phone_verified_at`, or `telegram_user_id` from the bot check. Status is `active`. No confirmation letter.
+3. Phone and Telegram accounts get an internal mailbox `pending.{id}@users.trenio.invalid` and a random password hash. In the cabinet a dialog asks for a real email and a password. It has no close control, ignores Escape and the backdrop, and stays until save. That save sets `email_verified_at` and the chosen password. It does not replace the later email-change code.
+4. Login stays email + password, a verified Belarus mobile + SMS, or an already linked Telegram.
+5. One account, roles in `user_roles`. Do not add a second portal. Trainer and club roles come later (claim, staff), not from this form.
 
 ## Non-negotiables
 
 - Ссылки в письмах только из `APP_URL`, не из `Host` / `getRequestUrl().origin`.
 - Rate limit по `X-Real-IP`, не по `X-Forwarded-For[0]`.
-- Одинаковые ответы: логин, forgot-password, занятый email, honeypot signup (успех «проверьте почту»).
-- Не светить `EMAIL_TAKEN` клиенту.
+- Одинаковые ответы: логин и forgot-password. Honeypot на регистрации не открывает сессию.
+- Занятая почта на регистрации и в окне почты/пароля называется прямо: сессия создаётся сразу, письмо-заглушка больше не скрывает факт.
 - Токены: CSPRNG ≥ 32 байта, SHA-256 в БД, одноразовые. Новый reset/email-change отзывает unused того же user.
 - Сброс и смена пароля: `revokeAllUserSessions`, затем новая сессия (таблица `sessions`, не cookie-only version).
 - Пароли: **scrypt**. Honeypot `company_url`. Dev-ссылки только при `AUTH_DEV_LOG_EMAILS` / non-production.
-- Public signup: `user`, `trainer`, `club`. `admin` / `superadmin` — seed/staff.
+- Public signup creates `user` only. `trainer` and `club` come from claim or staff. `admin` / `superadmin` stay seed/staff.
 
 Update `docs/TECH_SPEC.md` §4, `docs/ACCOUNT_MODEL.md`, and `docs/AUTH.md` when the model changes.
