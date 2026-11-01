@@ -11,6 +11,7 @@ const AUTH_CSS = `
 .auth-card--wide { max-width: 620px; }
 .auth-card__head { text-align: center; margin-bottom: 26px; }
 .auth-title { margin: 0 0 8px; font-size: 30px; font-weight: var(--fw-heading); letter-spacing: -0.035em; color: var(--dark); }
+.auth-card__head .auth-title:last-child { margin-bottom: 0; }
 .auth-sub { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
 .auth-success { width: 56px; height: 56px; margin: 0 auto 16px; border-radius: 50%; background: rgba(var(--primary-rgb), 0.12); color: var(--primary); display: grid; place-items: center; font-size: 26px; font-weight: var(--fw-heading); }
 

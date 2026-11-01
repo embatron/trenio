@@ -664,6 +664,8 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-form__error { margin: 0; color: var(--primary-dark); font-size: 13px; font-weight: var(--fw-ui); }
 .cabinet-modal { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: var(--layout-gutter); background: rgba(var(--dark-rgb), 0.45); }
 .cabinet-modal--lock { z-index: 500; }
+html.is-credentials-locked body > *:not(.cabinet-modal--lock) { pointer-events: none !important; }
+html.is-credentials-locked .cabinet-modal--lock { pointer-events: auto; }
 .cabinet-modal--lock .auth-field__toggle { background: transparent; color: var(--muted); border-radius: 0; min-height: 44px; padding: 0 10px; justify-self: auto; width: auto; }
 .cabinet-modal--lock .auth-submit { width: 100%; justify-self: stretch; height: 50px; border-radius: var(--radius-control); }
 .cabinet-modal__card { width: min(440px, 100%); display: grid; gap: 12px; padding: 20px; border-radius: var(--card-radius); background: var(--white); }
