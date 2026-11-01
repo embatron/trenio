@@ -22,16 +22,11 @@ import {
   type TrainerPublishStatus,
 } from "@/lib/admin/trainers";
 import { authErrorMessage } from "@/lib/auth/errors";
-import { adminGeocodeTrainer } from "@/lib/geo/functions";
-import { placeHasText, placeLine, type TrainerPlace } from "@/lib/geo/schemas";
+import type { TrainerPlace } from "@/lib/geo/schemas";
 import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import type { UserRole } from "@/lib/auth/types";
-
-function placesSignature(places: TrainerPlace[]) {
-  return places.filter(placeHasText).map((place) => placeLine(place)).join("\n");
-}
 
 const TABS = [
   { id: "profile", label: "Профиль" },
@@ -76,11 +71,9 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
   const removeCertificate = useAuthServerFn(removeAdminTrainerCertificateFn);
   const requestPhone = useAuthServerFn(requestAdminTrainerPhoneCodeFn);
   const confirmPhone = useAuthServerFn(confirmAdminTrainerPhoneCodeFn);
-  const regeocode = useAuthServerFn(adminGeocodeTrainer);
   const [tab, setTab] = useState<TabId>("profile");
   const [draft, setDraft] = useState<Draft>(() => draftFrom(detail.trainer));
   const [pending, setPending] = useState(false);
-  const [geoPending, setGeoPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
   const { facts } = detail;
@@ -146,9 +139,9 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
               },
             })
               .then((result) => {
-                const payload = result as { places: TrainerPlace[] };
+                const payload = result as { places: TrainerPlace[]; message?: string };
                 setDraft((current) => ({ ...current, places: payload.places }));
-                setSaved("Профиль сохранён.");
+                setSaved(payload.message ?? "Профиль сохранён.");
                 return router.invalidate();
               })
               .catch((err: unknown) => setError(authErrorMessage(err)))
@@ -213,37 +206,6 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
                 </select>
                 <p className="cabinet-note">Тренер сам меняет статус в настройках профиля. При входе туда он по умолчанию опубликован. Здесь можно поставить и другие статусы.</p>
               </label>
-            )}
-            afterAddress={(
-              <div className="geo-status">
-                <button
-                  className="cabinet-form__ghost"
-                  type="button"
-                  disabled={geoPending || !draft.id || !draft.places.some(placeHasText)}
-                  onClick={() => {
-                    if (!draft.id) return;
-                    if (placesSignature(draft.places) !== placesSignature(detail.trainer.places)) {
-                      setError("Сначала сохраните адреса, затем найдите их на карте ещё раз.");
-                      setSaved(null);
-                      return;
-                    }
-                    setGeoPending(true);
-                    setError(null);
-                    setSaved(null);
-                    void regeocode({ data: { id: draft.id } })
-                      .then((result) => {
-                        const payload = result as { places: TrainerPlace[]; message: string };
-                        setDraft((current) => ({ ...current, places: payload.places }));
-                        setSaved(payload.message);
-                        return router.invalidate();
-                      })
-                      .catch((err: unknown) => setError(authErrorMessage(err)))
-                      .finally(() => setGeoPending(false));
-                  }}
-                >
-                  {geoPending ? "Ищем адрес…" : "Найти на карте ещё раз"}
-                </button>
-              </div>
             )}
           />
           <p className="cabinet-note">

@@ -22,7 +22,7 @@ import { editorHtml, reviewPlainText, sanitizeReviewHtml } from "@/lib/catalog/r
 import { writeImageSet } from "@/lib/images/store";
 import { MAX_TRAINER_SPORTS, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
-import { placesFromProfile, placesShape, type TrainerPlace } from "@/lib/geo/schemas";
+import { placesFromProfile, placesShape, savedWithMapNotice, type TrainerPlace } from "@/lib/geo/schemas";
 
 const CYR: Record<string, string> = {
   а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e", ж: "zh", з: "z", и: "i", й: "j",
@@ -319,7 +319,10 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
     });
     return {
       ok: true as const,
-      message: data.status === "published" ? "Профиль опубликован." : "Профиль скрыт. В каталоге его нет.",
+      message: savedWithMapNotice(
+        data.status === "published" ? "Профиль опубликован." : "Профиль скрыт. В каталоге его нет.",
+        places,
+      ),
       avatarPath,
     };
     } catch (error) {

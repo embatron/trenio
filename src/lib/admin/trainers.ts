@@ -41,7 +41,7 @@ import { popularityScore } from "@/lib/catalog/trainer-popularity";
 import { loadTrainerInterest, type TrainerInterest } from "@/lib/catalog/trainer-interest";
 import { getSportTaxonomyChild, listSecondLevelSports, MAX_TRAINER_SPORTS, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
-import { placesFromProfile, placesShape, type TrainerPlace } from "@/lib/geo/schemas";
+import { placesFromProfile, placesShape, savedWithMapNotice, type TrainerPlace } from "@/lib/geo/schemas";
 
 export const TRAINER_PUBLISH_STATUSES = ["draft", "published", "hidden", "archived"] as const;
 export type TrainerPublishStatus = (typeof TRAINER_PUBLISH_STATUSES)[number];
@@ -622,7 +622,7 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
     });
     return {
       ok: true as const,
-      message: "Профиль тренера сохранён.",
+      message: savedWithMapNotice("Профиль тренера сохранён.", places),
       places,
     };
   });

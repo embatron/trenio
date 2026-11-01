@@ -3,7 +3,6 @@ import { useEffect, useState, type ReactNode } from "react";
 import { BelarusPhoneInput } from "@/components/belarus-phone-input";
 import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { ReviewEditor } from "@/components/review-editor";
-import { CityEntityInput } from "@/components/city-entity-input";
 import { TrainerPlacesField } from "@/components/trainer-address-field";
 import { SportEntityInput } from "@/components/sport-entity-input";
 import { TrainerCertificatesField } from "@/components/trainer-certificates-field";
@@ -659,12 +658,11 @@ export function TrainerCardFields({
         </div>
       </ProfileSection>
       <ProfileSection id="trainer-places" title="Адреса" tone="place">
-        <label>
-          <span>{self ? "Город, где я тренирую" : "Город"}</span>
-          <CityEntityInput value={values.city} onChange={(city) => patch({ city })} />
-        </label>
-        <p className="cabinet-note">Только населённый пункт Беларуси.</p>
-        <TrainerPlacesField places={values.places} onChange={(places) => patch({ places })} />
+        <TrainerPlacesField
+          city={values.city}
+          places={values.places}
+          onChange={(next) => patch(next)}
+        />
         {afterAddress}
       </ProfileSection>
       <ProfileSection id="trainer-contacts" title="Контакты" tone="contact">

@@ -35,7 +35,7 @@ import {
 } from "@/lib/catalog/published-trainers";
 import { MAX_TRAINER_SPORTS, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
-import { placesFromProfile, placesShape } from "@/lib/geo/schemas";
+import { placesFromProfile, placesShape, savedWithMapNotice } from "@/lib/geo/schemas";
 import { logCaught, writeLog } from "@/lib/log/logger";
 
 const PREVIEW_COOKIE = "trenio_trainer_preview";
@@ -533,7 +533,14 @@ async function saveFromCookie(data: z.infer<typeof cardSchema>, publish: boolean
     message: publish ? "Тренер опубликовал профиль по ссылке." : "Профиль сохранён по ссылке.",
     target: row.slug,
   });
-  return { ok: true as const, published: publish };
+  return {
+    ok: true as const,
+    published: publish,
+    message: savedWithMapNotice(
+      publish ? "Профиль опубликован." : "Профиль скрыт. В каталоге его нет.",
+      places,
+    ),
+  };
 }
 
 export const saveMagicTrainerFn = createServerFn({ method: "POST" })

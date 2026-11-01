@@ -11,6 +11,12 @@ export function asGeocodeStatus(value: string | null | undefined): GeocodeStatus
 export const MAX_TRAINING_PLACES = 3;
 export const BELARUS_COUNTRY = "Беларусь";
 export const FOREIGN_ADDRESS_MESSAGE = "Адрес должен быть в Беларуси. Адреса других стран не сохраняются.";
+export const MAP_TEMPORARILY_UNAVAILABLE = "Сервис карт временно недоступен. Попробуйте ещё раз чуть позже.";
+
+export function savedWithMapNotice(message: string, places: Array<{ geocodeStatus: GeocodeStatus | null }>) {
+  if (!places.some((place) => place.geocodeStatus === "pending")) return message;
+  return `${message} ${MAP_TEMPORARILY_UNAVAILABLE}`;
+}
 
 export type AddressSuggestion = {
   displayName: string;

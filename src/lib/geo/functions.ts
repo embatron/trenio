@@ -9,8 +9,10 @@ import { trainerProfiles } from "@/db/schema";
 import { assertStaff } from "@/lib/admin/access";
 import { AuthError } from "@/lib/auth/errors";
 import { editorHtml } from "@/lib/catalog/review-html";
+import { writeLog } from "@/lib/log/logger";
 import { mirrorTrainingPlace, resolveTrainingPlaces, suggestCachedOrRemote } from "@/lib/geo/resolve";
 import {
+  MAP_TEMPORARILY_UNAVAILABLE,
   placesFromProfile,
   placeLine,
   suggestAddressSchema,
@@ -25,17 +27,29 @@ function toSuggestions(hits: AddressSuggestion[]): AddressSuggestion[] {
 export const suggestAddress = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
   .validator(suggestAddressSchema)
-  .handler(async ({ data, context }): Promise<{ suggestions: AddressSuggestion[] }> => {
+  .handler(async ({ data, context }): Promise<{ suggestions: AddressSuggestion[]; unavailable: boolean }> => {
     const limit = consumeRateLimit(
       `geo:suggest:${context.user.id}`,
       RATE_LIMITS.geocodeUser.windowMs,
       RATE_LIMITS.geocodeUser.max,
     );
     if (!limit.ok) throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
-    const hits = await suggestCachedOrRemote(data.query, () => true);
-    if (hits === "limited") return { suggestions: [] };
+    const found = await suggestCachedOrRemote(data.query, () => true);
+    if (found.kind === "limited") return { suggestions: [], unavailable: false };
+    if (found.kind === "unavailable") {
+      void writeLog({
+        level: "warn",
+        domain: "geo",
+        action: "geo.suggest",
+        outcome: "failure",
+        message: MAP_TEMPORARILY_UNAVAILABLE,
+        actorUserId: context.user.id,
+      });
+      return { suggestions: [], unavailable: true };
+    }
     return {
-      suggestions: toSuggestions(hits.map((hit) => ({
+      unavailable: false,
+      suggestions: toSuggestions(found.hits.map((hit) => ({
         displayName: hit.displayName,
         city: hit.city,
         district: hit.district,

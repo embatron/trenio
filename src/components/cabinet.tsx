@@ -688,14 +688,18 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .entity-menu button:hover, .cabinet-modal__card--form .entity-menu button:hover { background: rgba(var(--dark-rgb), 0.04); }
 .places-field { display: grid; gap: 12px; margin: 0; padding: 0; border: 0; min-width: 0; }
 .places-field legend { font-weight: var(--fw-title); }
-.places-field__row { display: grid; gap: 8px; }
+.places-field__row { display: grid; gap: 6px; min-width: 0; }
+.places-field__line { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; align-items: start; }
+.places-field__line.has-remove { grid-template-columns: minmax(0, 1fr) 44px; }
+.places-field__line > .address-field { min-width: 0; }
 .places-field__parts { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
-.places-field__add, .places-field__remove { min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-weight: var(--fw-title); cursor: pointer; justify-self: start; }
+.places-field__add { min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-weight: var(--fw-title); cursor: pointer; justify-self: start; }
 .address-field { position: relative; }
 .cabinet-form .address-field input[type="text"], .cabinet-form .address-field input:not([type="hidden"]) { padding-right: 48px; }
 .address-field__clear { position: absolute; top: 0; right: 0; width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
 .address-field__clear svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .address-field__status { min-height: 44px; display: flex; align-items: center; padding: 0 10px; color: var(--muted); font-size: 14px; }
+.address-field__notice { margin: 6px 0 0; color: var(--primary-dark); font-size: 13px; }
 .address-field__menu button.address-hit {
   display: flex; flex-direction: column; align-items: stretch; justify-content: center;
   gap: 1px; min-height: 44px; height: auto; padding: 6px 12px; white-space: normal;

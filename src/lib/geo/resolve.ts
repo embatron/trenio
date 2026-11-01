@@ -1,10 +1,11 @@
 import { AuthError } from "@/lib/auth/errors";
-import { logCaught } from "@/lib/log/logger";
+import { logCaught, writeLog } from "@/lib/log/logger";
 import { readGeocodeCache, writeGeocodeCache, type CachedGeocode } from "@/lib/geo/cache";
 import { probeAddressCountry, searchNominatim, type GeocodeHit } from "@/lib/geo/nominatim";
 import { normalizeQuery, sanitizeQuery } from "@/lib/geo/normalize";
 import {
   FOREIGN_ADDRESS_MESSAGE,
+  MAP_TEMPORARILY_UNAVAILABLE,
   MAX_TRAINING_PLACES,
   placeHasText,
   placeLine,
@@ -170,27 +171,33 @@ export async function resolveProfileAddressSafe(
   }
 }
 
+export type SuggestLookup =
+  | { kind: "ok"; hits: GeocodeHit[] }
+  | { kind: "unavailable" }
+  | { kind: "limited" };
+
 export async function suggestCachedOrRemote(
   query: string,
   allowRemote: () => boolean,
-): Promise<GeocodeHit[] | "limited"> {
+): Promise<SuggestLookup> {
   const norm = normalizeQuery(query);
-  if (!norm) return [];
+  if (!norm) return { kind: "ok", hits: [] };
   const cached = await readCache(norm);
   if (cached !== "miss") {
-    if (cached.foreign || !cached.hit) return [];
-    return [cached.hit];
+    if (cached.foreign || !cached.hit) return { kind: "ok", hits: [] };
+    return { kind: "ok", hits: [cached.hit] };
   }
-  if (!allowRemote()) return "limited";
+  if (!allowRemote()) return { kind: "limited" };
 
   const remote = await searchNominatim(query, { limit: 5, countrycodes: "by", belarusOnly: true });
-  if (remote.kind !== "ok") return [];
+  if (remote.kind === "unavailable") return { kind: "unavailable" };
+  if (remote.kind !== "ok") return { kind: "ok", hits: [] };
   await writeCache(norm, remote.hits[0] ?? null);
   for (const hit of remote.hits) {
     const displayNorm = normalizeQuery(hit.displayName);
     if (displayNorm) await writeCache(displayNorm, hit);
   }
-  return remote.hits.filter((hit) => hit.countryCode === "by").slice(0, 5);
+  return { kind: "ok", hits: remote.hits.filter((hit) => hit.countryCode === "by").slice(0, 5) };
 }
 
 function placeQuery(place: { city: string; district: string; address: string }) {
@@ -224,6 +231,7 @@ export async function resolveTrainingPlaces(
   const force = options?.force === true;
   const rows = input.filter(placeHasText).slice(0, MAX_TRAINING_PLACES);
   const resolved: TrainerPlace[] = [];
+  let reportedUnavailable = false;
   for (const row of rows) {
     const current = existing.find((place) => samePlaceText(place, row)) ?? null;
     if (!force && current?.geocodeStatus === "ok" && current.lat != null && current.lng != null) {
@@ -256,6 +264,16 @@ export async function resolveTrainingPlaces(
     if (result.kind === "ok") {
       resolved.push(fromHit(row, result.hit));
       continue;
+    }
+    if (result.kind === "unavailable" && !reportedUnavailable) {
+      reportedUnavailable = true;
+      void writeLog({
+        level: "warn",
+        domain: "geo",
+        action: "geo.profile",
+        outcome: "failure",
+        message: MAP_TEMPORARILY_UNAVAILABLE,
+      });
     }
     resolved.push({
       city: row.city.trim(),
