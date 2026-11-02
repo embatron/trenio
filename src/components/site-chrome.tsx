@@ -795,7 +795,6 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             <ul>
               <li><Link className="mega-link mega-link--text" to="/me" activeOptions={{ exact: true }} onClick={onClose}>Кабинет тренера</Link></li>
               <li><Link className="mega-link mega-link--text" to="/join/trainer" onClick={onClose}>Оставить Instagram</Link></li>
-              <li><Link className="mega-link mega-link--text" to="/about" hash="razmeschenie" onClick={onClose}>Тарифы и продвижение</Link></li>
             </ul>
           </div>
         </div>

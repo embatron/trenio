@@ -38,7 +38,7 @@ function AboutPage() {
           Instagram виден сразу, потому что карточка часто собирается с открытого профиля.
         </p>
       </section>
-      <section id="razmeschenie">
+      <section>
         <h2>Тренерам</h2>
         <p>
           Размещение бесплатное, комиссии за обращение нет. На странице <Link to="/join/trainer">«Привет!»</Link> оставляют Instagram,

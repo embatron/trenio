@@ -685,7 +685,6 @@ body.is-search-docked .site-header__search {
 .cta-banner__actions { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
 .cta-btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 999px; font-size: 15px; font-weight: var(--fw-title); text-decoration: none; cursor: pointer; border: 0; transition: transform 0.18s ease, box-shadow 0.18s ease; }
 .cta-btn--primary { background: #fff; color: var(--primary-dark); }
-.cta-btn--ghost { background: rgba(255, 255, 255, 0.14); color: #fff; border: 1px solid rgba(255, 255, 255, 0.35); }
 .cta-btn:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18); }
 
 @media (max-width: 960px) {
@@ -952,9 +951,6 @@ function Index() {
                     >
                       <path d="M5 12h14M13 6l6 6-6 6" />
                     </svg>
-                  </Link>
-                  <Link className="cta-btn cta-btn--ghost" to="/about" hash="razmeschenie">
-                    Узнать о тарифах
                   </Link>
                 </div>
               </div>
