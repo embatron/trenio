@@ -6,7 +6,7 @@ import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
 import { TRAINER_PROFILE_SECTIONS } from "@/components/trainer-card-fields";
 import { logoutFn } from "@/lib/auth/functions";
-import { hasAnyRole, ROLE_LABELS } from "@/lib/auth/roles";
+import { deniedCabinetTarget, hasAnyRole, ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { getUserCabinetFn } from "@/lib/cabinet";
 import { listTrainerPricesFn } from "@/lib/catalog/trainer-price";
@@ -31,9 +31,8 @@ export const Route = createFileRoute("/me")({
       const next = location.pathname.startsWith("/me") ? location.pathname : "/me";
       throw redirect({ to: "/auth/login", search: { redirect: next } });
     }
-    if (!hasAnyRole(context.user.roles, ["trainer", "club", "admin", "superadmin"])) {
-      throw redirect({ to: "/" });
-    }
+    const away = deniedCabinetTarget("me", context.user.roles);
+    if (away) throw redirect({ href: away });
   },
   head: () => ({ meta: [{ title: "Кабинет тренера — trenio.by" }, NOINDEX_FOLLOW] }),
   loader: async ({ context }) => {

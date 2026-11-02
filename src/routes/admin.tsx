@@ -6,7 +6,7 @@ import { CabinetShell, type AdminSectionPath, type CabinetIcon } from "@/compone
 import { getAdminShellFn } from "@/lib/admin/shell";
 import { MESSAGE_SCAN_MS } from "@/lib/messages/polling";
 import { logoutFn } from "@/lib/auth/functions";
-import { isStaff, ROLE_LABELS } from "@/lib/auth/roles";
+import { deniedCabinetTarget, ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 
 const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: AdminSectionPath }> = [
@@ -26,9 +26,8 @@ export const Route = createFileRoute("/admin")({
       const next = location.pathname.startsWith("/admin") ? location.pathname : "/admin";
       throw redirect({ to: "/auth/login", search: { redirect: next } });
     }
-    if (!isStaff(context.user.roles)) {
-      throw redirect({ to: context.user.roles.some((role) => role === "trainer" || role === "club") ? "/me" : "/" });
-    }
+    const away = deniedCabinetTarget("admin", context.user.roles);
+    if (away) throw redirect({ href: away });
   },
   loader: () => getAdminShellFn(),
   head: () => ({

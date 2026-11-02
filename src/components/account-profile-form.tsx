@@ -48,7 +48,7 @@ const MAIL_ROWS: Array<{ kind: MailKind; label: string; hint: string }> = [
   {
     kind: "site",
     label: "Оповещения с сайта",
-    hint: "Служебные новости кабинета, кроме кода, подтверждения почты и сброса пароля.",
+    hint: "Служебные новости кабинета. Они включены всегда.",
   },
   {
     kind: "marketing",
@@ -613,9 +613,10 @@ export function AccountProfileForm({
       <div className="cabinet-form">
         <section className="cabinet-section" id="mail">
           <h3>Письма</h3>
-          <p className="cabinet-note">Код, подтверждение почты и сброс пароля отключить нельзя.</p>
+          <p className="cabinet-note">Код, подтверждение почты, сброс пароля и служебные оповещения отключить нельзя.</p>
           {MAIL_ROWS.map((row) => {
-            const on = mail[row.kind];
+            const locked = row.kind === "site";
+            const on = locked || mail[row.kind];
             return (
               <div className="mail-pref" key={row.kind}>
                 <div>
@@ -626,10 +627,12 @@ export function AccountProfileForm({
                   type="button"
                   role="switch"
                   aria-checked={on}
+                  aria-disabled={locked || undefined}
                   aria-label={row.label}
-                  className={`mail-switch${on ? " is-on" : ""}`}
-                  disabled={mailPending !== null}
+                  className={`mail-switch${on ? " is-on" : ""}${locked ? " is-locked" : ""}`}
+                  disabled={locked || mailPending !== null}
                   onClick={() => {
+                    if (locked) return;
                     const next = !on;
                     setMail((current) => ({ ...current, [row.kind]: next }));
                     setMailPending(row.kind);

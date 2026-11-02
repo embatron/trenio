@@ -65,6 +65,43 @@ export function getCabinetPath(roles: UserRole[]): "/admin" | "/me" | "/account/
   return "/account/reviews";
 }
 
+/** Trainer cabinet path that keeps the open thread and the `trainer` query. */
+export function accountPathForTrainer(pathname: string, searchStr = ""): string {
+  const conversation = pathname.match(/^\/account\/messages\/([0-9a-f-]{36})\/?$/i)?.[1];
+  if (conversation) return `/me/messages/${conversation}`;
+  if (pathname.startsWith("/account/messages")) {
+    const trainer = new URLSearchParams(searchStr.replace(/^\?/, "")).get("trainer")?.trim().slice(0, 30) ?? "";
+    return trainer ? `/me/messages?trainer=${encodeURIComponent(trainer)}` : "/me/messages";
+  }
+  if (pathname.startsWith("/account/reviews")) return "/me/reviews";
+  if (pathname.startsWith("/account/favorites")) return "/me/favorites";
+  if (pathname.startsWith("/account/settings")) return "/me/settings";
+  return "/me";
+}
+
+/**
+ * Null when this role may open the cabinet. Otherwise the path to send them to.
+ * A staff member who is also a trainer may open `/me`. Everyone else stays in one cabinet.
+ */
+export function deniedCabinetTarget(
+  area: "admin" | "me" | "account",
+  roles: UserRole[],
+  pathname = "",
+  searchStr = "",
+): string | null {
+  if (area === "admin") {
+    if (isStaff(roles)) return null;
+    return hasAnyRole(roles, ["trainer", "club"]) ? "/me" : "/";
+  }
+  if (area === "me") {
+    if (hasAnyRole(roles, ["trainer", "club"])) return null;
+    return isStaff(roles) ? "/admin" : "/";
+  }
+  if (isStaff(roles)) return "/admin";
+  if (hasAnyRole(roles, ["trainer", "club"])) return accountPathForTrainer(pathname, searchStr);
+  return null;
+}
+
 export const ROLE_LABELS: Record<UserRole, string> = {
   user: "Пользователь",
   trainer: "Тренер",

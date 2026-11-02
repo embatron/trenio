@@ -1183,6 +1183,9 @@ export async function updateAccountName(userId: string, firstName: string, lastN
 }
 
 export async function updateMailPreference(userId: string, kind: MailKind, enabled: boolean) {
+  if (kind === "site" && !enabled) {
+    throw new AuthError("Служебные оповещения отключить нельзя.", "VALIDATION");
+  }
   const patch = {
     messages: { mailMessages: enabled },
     reviews: { mailReviews: enabled },

@@ -6,11 +6,11 @@ import type { MailKind } from "@/lib/mail/kinds";
 
 /** True when this address still wants that kind of letter. Unknown addresses stay off marketing only. */
 export async function recipientAllowsMail(email: string, kind: MailKind): Promise<boolean> {
+  if (kind === "site") return true;
   const [row] = await getDb()
     .select({
       messages: users.mailMessages,
       reviews: users.mailReviews,
-      site: users.mailSite,
       marketing: users.mailMarketing,
     })
     .from(users)

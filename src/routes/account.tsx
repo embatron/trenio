@@ -5,7 +5,7 @@ import { CabinetShell, type AccountSectionPath } from "@/components/cabinet";
 import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
 import { logoutFn } from "@/lib/auth/functions";
-import { ROLE_LABELS } from "@/lib/auth/roles";
+import { deniedCabinetTarget, ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { getUserCabinetFn } from "@/lib/cabinet";
 import { listTrainerPricesFn } from "@/lib/catalog/trainer-price";
@@ -26,6 +26,8 @@ export const Route = createFileRoute("/account")({
       const next = location.pathname.startsWith("/account") ? location.pathname : "/account/reviews";
       throw redirect({ to: "/auth/login", search: { redirect: next } });
     }
+    const away = deniedCabinetTarget("account", context.user.roles, location.pathname, location.searchStr);
+    if (away) throw redirect({ href: away });
   },
   head: () => ({ meta: [{ title: "Кабинет — trenio.by" }, NOINDEX_FOLLOW] }),
   loader: async () => {

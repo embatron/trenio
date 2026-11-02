@@ -544,10 +544,12 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-table--trainers .cabinet-person__text { min-width: max-content; }
 .cabinet-table--trainers .cabinet-person__text strong,
 .cabinet-table--trainers .cabinet-person__meta { display: block; white-space: nowrap; overflow: visible; text-overflow: clip; }
-.cabinet-table--trainers a.cabinet-trainer-name { display: inline-flex; align-items: center; min-height: 44px; color: var(--primary); text-decoration: none; }
+.cabinet-table--trainers .cabinet-person__text { display: flex; flex-direction: column; justify-content: center; gap: 1px; line-height: 1.15; }
+.cabinet-table--trainers .cabinet-person__text strong { line-height: 1.15; }
+.cabinet-table--trainers a.cabinet-trainer-name { display: inline; min-height: 0; line-height: 1.15; color: var(--primary); text-decoration: none; }
 .cabinet-table--trainers a.cabinet-trainer-name:hover { text-decoration: underline; }
-.cabinet-table--trainers a.cabinet-trainer-name .trainer-name__line { color: inherit; }
-.cabinet-table--trainers .cabinet-person__meta { margin-top: 2px; color: var(--muted); font-size: 11px; }
+.cabinet-table--trainers a.cabinet-trainer-name .trainer-name__line { color: inherit; line-height: 1.15; }
+.cabinet-table--trainers .cabinet-person__meta { margin-top: 0; color: var(--muted); font-size: 11px; line-height: 1.15; }
 .cabinet-table--trainers .cabinet-rating { display: inline-flex; align-items: center; justify-content: center; gap: 4px; vertical-align: middle; color: var(--dark); font-weight: var(--fw-title); }
 .cabinet-table--trainers .cabinet-rating svg { width: 14px; height: 14px; fill: #ffb400; }
 .cabinet-table--trainers .cabinet-rating.is-empty { color: var(--muted); font-weight: var(--fw-ui); }
@@ -614,6 +616,7 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .mail-switch.is-on .mail-switch__thumb { background: var(--primary); }
 .mail-switch.is-on .mail-switch__thumb::after { transform: translateX(18px); }
 .mail-switch:disabled { opacity: 0.6; cursor: default; }
+.mail-switch.is-locked:disabled { opacity: 1; cursor: default; }
 .cabinet-section--place { background: rgba(var(--primary-rgb), 0.08); border-color: rgba(var(--primary-rgb), 0.35); }
 .cabinet-section--place h3 { border-bottom-color: rgba(var(--primary-rgb), 0.22); }
 .cabinet-section .places-field { padding: 12px; border-radius: var(--radius-control); background: var(--white); border: 1px solid rgba(var(--primary-rgb), 0.18); }
