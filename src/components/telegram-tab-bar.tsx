@@ -1,8 +1,8 @@
 import { useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 
-import { TELEGRAM_NAV, activeTelegramNavPath } from "@/lib/telegram/nav";
-import { getTelegramWebApp, prepareTelegramWebApp } from "@/lib/telegram-webapp";
+import { TELEGRAM_NAV, TELEGRAM_SUPPORT_URL, activeTelegramNavPath } from "@/lib/telegram/nav";
+import { ensureTelegramWebApp, getTelegramWebApp, openTelegramAccount, prepareTelegramWebApp } from "@/lib/telegram-webapp";
 
 const NAV_ICONS: Record<string, { paths: readonly string[]; pin?: boolean; plus?: boolean }> = {
   trainers: {
@@ -50,27 +50,14 @@ function NavIcon({ command }: { command: string }) {
   );
 }
 
-const SCRIPT_SRC = "https://telegram.org/js/telegram-web-app.js";
-
 function useTelegramShell(): boolean {
   const [inside, setInside] = useState(false);
 
   useEffect(() => {
-    const mark = () => {
+    ensureTelegramWebApp(() => {
       prepareTelegramWebApp();
       setInside(Boolean(getTelegramWebApp()?.initData?.trim()));
-    };
-    const existing = document.querySelector<HTMLScriptElement>("script[src*='telegram-web-app.js']");
-    if (existing) {
-      if (window.Telegram?.WebApp) mark();
-      else existing.addEventListener("load", mark, { once: true });
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = SCRIPT_SRC;
-    script.async = true;
-    script.onload = mark;
-    document.head.appendChild(script);
+    });
   }, []);
 
   return inside;
@@ -163,6 +150,12 @@ export function TelegramAppChrome() {
                 </a>
               );
             })}
+            <button type="button" onClick={() => openTelegramAccount(TELEGRAM_SUPPORT_URL)}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 6h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H9l-4 3v-3H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z" />
+              </svg>
+              <span>Вопросы</span>
+            </button>
           </div>
         </div>
         <ScrollHint direction="end" on={more.end} />
@@ -238,7 +231,8 @@ html.telegram-webapp body { padding-bottom: calc(76px + env(safe-area-inset-bott
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.tg-tabbar a {
+.tg-tabbar a,
+.tg-tabbar button {
   flex: 0 0 auto;
   width: auto;
   display: flex;
@@ -258,7 +252,9 @@ html.telegram-webapp body { padding-bottom: calc(76px + env(safe-area-inset-bott
   text-decoration: none;
   white-space: nowrap;
 }
-.tg-tabbar a svg {
+.tg-tabbar button { border: 0; background: transparent; cursor: pointer; }
+.tg-tabbar a svg,
+.tg-tabbar button svg {
   width: 22px;
   height: 22px;
   fill: none;

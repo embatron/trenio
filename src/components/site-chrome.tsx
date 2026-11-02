@@ -9,6 +9,7 @@ import { pluralRu } from "@/lib/ru-plural";
 import { BELARUS_OBLAST_CENTERS } from "@/lib/catalog/city-taxonomy";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
+import { InstallBanner } from "@/components/install-banner";
 import { UserAvatar } from "@/components/user-avatar";
 import { TrainerName } from "@/components/trainer-name";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
@@ -930,7 +931,7 @@ export function SiteHeader({ middleSlot }: { middleSlot?: ReactNode }) {
       <ChromeStyles />
       <div className={`mega-overlay${menuOpen ? " is-open" : ""}`} onClick={close} aria-hidden={!menuOpen} />
       <header className={`site-header${menuOpen ? " is-menu-open" : ""}`} id="site-header" ref={headerRef}>
-
+        <InstallBanner />
         <div className="site-header__inner">
           <Logo />
           <div className="site-header__search">{middleSlot ?? <CatalogSearchForm variant="header" />}</div>

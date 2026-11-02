@@ -7,6 +7,10 @@ export type TelegramNavItem = {
   text: string;
 };
 
+/** Opens a private chat. The reply keyboard cannot hold a link, so the bot answers with an inline button. */
+export const TELEGRAM_SUPPORT_URL = "https://t.me/embatron";
+export const TELEGRAM_SUPPORT_LABEL = "Написать @embatron";
+
 /** Same sections as the site footer and the two cabinets. Order is the bot keyboard, then the Mini App bar. */
 export const TELEGRAM_NAV: readonly TelegramNavItem[] = [
   {
@@ -95,7 +99,18 @@ export function telegramMainKeyboard(origin: string): TelegramKeyboardButton[][]
     );
     rows.push(pair);
   }
+  rows.push([{ text: TELEGRAM_SUPPORT_LABEL }]);
   return rows;
+}
+
+export function telegramSupportText(): string {
+  return `По всем вопросам пишите <a href="${TELEGRAM_SUPPORT_URL}">@embatron</a>.`;
+}
+
+export function telegramSupportInlineKeyboard(): { inline_keyboard: Array<Array<{ text: string; url: string }>> } {
+  return {
+    inline_keyboard: [[{ text: TELEGRAM_SUPPORT_LABEL, url: TELEGRAM_SUPPORT_URL }]],
+  };
 }
 
 export function resolveTelegramAction(text: string): string | null {
@@ -103,6 +118,7 @@ export function resolveTelegramAction(text: string): string | null {
   if (!trimmed) return null;
   const [head, ...rest] = trimmed.split(/\s+/);
   const command = (head ?? "").split("@")[0]?.toLowerCase() ?? "";
+  if (trimmed === TELEGRAM_SUPPORT_LABEL) return "support";
   if (command.startsWith("/")) {
     if (command === "/start" && rest[0]) {
       const payload = rest[0].toLowerCase();
@@ -147,6 +163,7 @@ export function telegramHomeText(account: { firstName: string } | null): string 
     link,
     "",
     "Кнопки внизу открывают каталог, карту, сообщения и кабинеты.",
+    "По всем вопросам — кнопка «Написать @embatron».",
   ].join("\n");
 }
 

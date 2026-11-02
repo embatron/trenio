@@ -13,6 +13,8 @@ import {
   telegramPublicOrigin,
   telegramSectionNote,
   telegramSectionText,
+  telegramSupportInlineKeyboard,
+  telegramSupportText,
   telegramUnknownText,
 } from "./nav";
 
@@ -39,7 +41,12 @@ type TelegramUpdate = {
   };
 };
 
-async function sendMenu(token: string, chatId: number, text: string, origin: string): Promise<void> {
+async function sendBotMessage(
+  token: string,
+  chatId: number,
+  text: string,
+  replyMarkup: Record<string, unknown>,
+): Promise<void> {
   const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -48,11 +55,7 @@ async function sendMenu(token: string, chatId: number, text: string, origin: str
       text,
       parse_mode: "HTML",
       disable_web_page_preview: true,
-      reply_markup: {
-        keyboard: telegramMainKeyboard(origin),
-        resize_keyboard: true,
-        is_persistent: true,
-      },
+      reply_markup: replyMarkup,
     }),
   });
   if (!response.ok) {
@@ -60,6 +63,18 @@ async function sendMenu(token: string, chatId: number, text: string, origin: str
   }
   const body = (await response.json()) as { ok?: boolean; description?: string };
   if (!body.ok) throw new Error(body.description || "telegram sendMessage failed");
+}
+
+async function sendMenu(token: string, chatId: number, text: string, origin: string): Promise<void> {
+  await sendBotMessage(token, chatId, text, {
+    keyboard: telegramMainKeyboard(origin),
+    resize_keyboard: true,
+    is_persistent: true,
+  });
+}
+
+async function sendSupport(token: string, chatId: number): Promise<void> {
+  await sendBotMessage(token, chatId, telegramSupportText(), telegramSupportInlineKeyboard());
 }
 
 async function linkedTelegramAccount(chatId: number): Promise<{ firstName: string } | null> {
@@ -107,6 +122,14 @@ export async function handleTelegramMenuWebhook(request: Request): Promise<Respo
 
   const action = resolveTelegramAction(text);
   const origin = telegramPublicOrigin();
+  if (action === "support") {
+    try {
+      await sendSupport(token, chatId);
+    } catch (error) {
+      logCaught("api", "telegram.menu", error, { target: String(chatId) });
+    }
+    return new Response("ok");
+  }
   const account = await linkedTelegramAccount(chatId);
   let reply = telegramUnknownText();
   if (action === "home") {
