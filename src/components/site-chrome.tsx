@@ -9,12 +9,14 @@ import { pluralRu } from "@/lib/ru-plural";
 import { BELARUS_OBLAST_CENTERS } from "@/lib/catalog/city-taxonomy";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
+import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { InstallBanner } from "@/components/install-banner";
 import { UserAvatar } from "@/components/user-avatar";
 import { TrainerName } from "@/components/trainer-name";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 import { TRAINER_INVITE_LINE } from "@/lib/catalog/trainer-welcome";
-import { SITE_EMAIL } from "@/lib/seo/site";
+import { SITE_EMAIL, SITE_INSTAGRAM_URL } from "@/lib/seo/site";
+import { PORTAL_TELEGRAM_URL } from "@/lib/site-texts/defaults";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const CHROME_CSS = `
@@ -326,6 +328,15 @@ body.is-search-docked .site-header__search {
 }
 .mega-footer a:hover { background: var(--white); color: var(--primary); }
 .mega-footer a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.portal-social { display: flex; align-items: center; gap: 4px; margin-top: 16px; }
+.portal-social a {
+  width: 44px; height: 44px; min-height: 44px; padding: 0;
+  display: grid; place-items: center; border-radius: 50%; text-decoration: none;
+}
+.portal-social svg { width: 24px; height: 24px; }
+.site-footer .portal-social a:hover { background: rgba(255, 255, 255, 0.08); }
+.mega-footer .portal-social { margin-top: 0; flex: 0 0 auto; }
+.mega-footer .portal-social a:hover { background: var(--white); color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   .mega-overlay, .mega-panel, .mega-sports__toggle svg { transition: none; }
 }
@@ -797,9 +808,37 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             <Link to="/offer" onClick={onClose}>Договор оферты</Link>
             <Link to="/privacy" onClick={onClose}>Политика конфиденциальности</Link>
           </div>
+          <PortalSocial onClose={onClose} />
           <span>© 2026 trenio.by</span>
         </div>
       </div>
+    </div>
+  );
+}
+
+function PortalSocial({ onClose }: { onClose?: () => void }) {
+  return (
+    <div className="portal-social">
+      <a
+        href={PORTAL_TELEGRAM_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Telegram"
+        title="Telegram"
+        onClick={onClose}
+      >
+        <TelegramIcon />
+      </a>
+      <a
+        href={SITE_INSTAGRAM_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Instagram"
+        title="Instagram"
+        onClick={onClose}
+      >
+        <InstagramIcon />
+      </a>
     </div>
   );
 }
@@ -970,6 +1009,7 @@ export function SiteFooter() {
             <div className="site-footer__brand">
               <Logo />
               <p className="site-footer__tagline">Поиск тренеров и спортивных занятий в Беларуси — индивидуально и в группе.</p>
+              <PortalSocial />
             </div>
             <div className="site-footer__col">
               <h4>Поиск</h4>
