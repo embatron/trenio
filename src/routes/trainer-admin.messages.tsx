@@ -5,6 +5,7 @@ import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
 import { MessagesWorkspace } from "@/components/messages/messages-workspace";
 import { logoutFn } from "@/lib/auth/functions";
+import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { hasAnyRole, ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { listOwnTrainerReviewsFn } from "@/lib/catalog/trainer-reviews";
@@ -36,6 +37,7 @@ function TrainerMessagesPage() {
   const validId = conversationId && /^[0-9a-f-]{36}$/i.test(conversationId) ? conversationId : null;
   const [pending, setPending] = useState(false);
   const logout = useAuthServerFn(logoutFn);
+  const face = useLiveAvatar(user?.id, user?.avatarPath);
   if (!user) return null;
   const role = user.roles.map((item) => ROLE_LABELS[item]).join(", ");
 
@@ -47,7 +49,7 @@ function TrainerMessagesPage() {
         firstName={user.firstName}
         lastName={user.lastName}
         role={role}
-        avatarUrl={user.avatarPath || null}
+        avatarUrl={face || null}
         items={[
           { id: "overview", label: "Обзор", icon: "overview", to: "/trainer-admin" },
           { id: "reviews", label: "Отзывы", icon: "reviews", to: "/trainer-admin", search: { tab: "reviews" }, badge: reviewCount },

@@ -6,6 +6,7 @@ import { CabinetShell, type AdminSectionPath, type CabinetIcon } from "@/compone
 import { getAdminShellFn } from "@/lib/admin/shell";
 import { MESSAGE_SCAN_MS } from "@/lib/messages/polling";
 import { logoutFn } from "@/lib/auth/functions";
+import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { deniedCabinetTarget, ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 
@@ -50,6 +51,7 @@ function AdminLayout() {
   const shellRef = useRef(shell);
   shellRef.current = shell;
   const logout = useAuthServerFn(logoutFn);
+  const face = useLiveAvatar(user?.id, user?.avatarPath);
   useLayoutEffect(() => {
     document.documentElement.classList.add("is-staff-layout");
     return () => document.documentElement.classList.remove("is-staff-layout");
@@ -105,7 +107,7 @@ function AdminLayout() {
         firstName={user.firstName}
         lastName={user.lastName}
         role={role}
-        avatarUrl={user.avatarPath || null}
+        avatarUrl={face || null}
         items={items}
         active={active}
         logoutPending={pending}

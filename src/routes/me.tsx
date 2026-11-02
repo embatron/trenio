@@ -6,6 +6,7 @@ import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
 import { TRAINER_PROFILE_SECTIONS } from "@/components/trainer-card-fields";
 import { logoutFn } from "@/lib/auth/functions";
+import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { deniedCabinetTarget, hasAnyRole, ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { getUserCabinetFn } from "@/lib/cabinet";
@@ -58,6 +59,7 @@ function MeLayout() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [pending, setPending] = useState(false);
   const logout = useAuthServerFn(logoutFn);
+  const accountFace = useLiveAvatar(user?.id, user?.avatarPath);
   if (!user) return null;
 
   const role = user.roles.map((item) => ROLE_LABELS[item]).join(", ");
@@ -66,7 +68,7 @@ function MeLayout() {
     : pathname === "/me" || pathname === "/me/"
       ? "overview"
       : SECTIONS.find((item) => pathname === item.to)?.id ?? "overview";
-  const face = trainer?.photos[0] || trainer?.avatarPath || user.avatarPath || null;
+  const face = trainer?.photos[0] || trainer?.avatarPath || accountFace || null;
   const items = SECTIONS.filter((item) => (item.id !== "profile" && item.id !== "contacts") || trainer).map((item) => {
     if (item.id === "messages") return { ...item, badge: messaging.inbox + messaging.own };
     if (item.id === "reviews") return { ...item, badge: reviews.length };

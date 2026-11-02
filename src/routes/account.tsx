@@ -5,6 +5,7 @@ import { CabinetShell, type AccountSectionPath } from "@/components/cabinet";
 import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
 import { logoutFn } from "@/lib/auth/functions";
+import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { deniedCabinetTarget, ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { getUserCabinetFn } from "@/lib/cabinet";
@@ -45,6 +46,7 @@ function AccountLayout() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [pending, setPending] = useState(false);
   const logout = useAuthServerFn(logoutFn);
+  const face = useLiveAvatar(user?.id, user?.avatarPath);
   if (!user) return null;
 
   const role = user.roles.map((item) => ROLE_LABELS[item]).join(", ");
@@ -65,7 +67,7 @@ function AccountLayout() {
       firstName={user.firstName}
       lastName={user.lastName}
       role={role}
-      avatarUrl={user.avatarPath || null}
+      avatarUrl={face || null}
       items={items}
       active={active}
       logoutPending={pending}

@@ -2,6 +2,7 @@ import { Link, useRouteContext, useRouterState } from "@tanstack/react-router";
 import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
 import { logoutFn } from "@/lib/auth/functions";
+import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { getCabinetPath, hasAnyRole, isStaff } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
@@ -557,6 +558,7 @@ function AccountButton() {
   const logout = useAuthServerFn(logoutFn);
   const messaging = useMessaging();
   const { keys, ready } = useFavorites();
+  const face = useLiveAvatar(user?.id, user?.avatarPath);
 
   useEffect(() => () => window.clearTimeout(closeTimer.current), []);
 
@@ -644,7 +646,7 @@ function AccountButton() {
           setOpen((value) => !value);
         }}
       >
-        <UserAvatar name={name} src={user.avatarPath} size={32} />
+        <UserAvatar name={name} src={face} size={32} />
         {user.nick ? <span className="account-face__nick">{user.nick}</span> : null}
       </Link>
       <nav className="account-menu__panel" id="account-menu" aria-label="Кабинет">

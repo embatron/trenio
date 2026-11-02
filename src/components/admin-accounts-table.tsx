@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 
 import { TablePager, useTablePage } from "@/components/table-pager";
@@ -6,6 +6,7 @@ import { TrainerName } from "@/components/trainer-name";
 import { UserAvatar } from "@/components/user-avatar";
 import { ACCOUNT_STATUS_LABEL, type AdminAccount } from "@/lib/admin/accounts";
 import { displayUserId } from "@/lib/auth/god";
+import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { displayAccountLogin } from "@/lib/auth/login-name";
 import { ALL_ROLES, ROLE_LABELS } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
@@ -39,6 +40,8 @@ function searchHaystack(account: AdminAccount) {
 }
 
 export function AdminAccountsTable({ accounts }: { accounts: AdminAccount[] }) {
+  const { user } = useRouteContext({ from: "__root__" });
+  const liveAvatar = useLiveAvatar(user?.id, user?.avatarPath);
   const [query, setQuery] = useState("");
   const [role, setRole] = useState<"" | UserRole>("");
   const [status, setStatus] = useState<"" | (typeof ACCOUNT_STATUSES)[number]>("");
@@ -145,7 +148,11 @@ export function AdminAccountsTable({ accounts }: { accounts: AdminAccount[] }) {
                     <tr key={account.id}>
                       <td>
                         <div className="cabinet-person">
-                          <UserAvatar name={name} src={account.avatarPath} size={44} />
+                          <UserAvatar
+                            name={name}
+                            src={user && account.id === user.id ? liveAvatar || account.avatarPath : account.avatarPath}
+                            size={44}
+                          />
                           <div className="cabinet-person__text">
                             <Link to="/admin/accounts/$id" params={{ id: account.id }} title={name}>
                               <strong>

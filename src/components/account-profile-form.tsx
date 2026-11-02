@@ -27,6 +27,7 @@ import type { TelegramWidgetUser } from "@/lib/auth/telegram-widget";
 import type { MailKind } from "@/lib/mail/kinds";
 import { BECOME_TRAINER_MAX, requestBecomeTrainerFn } from "@/lib/account/become-trainer";
 import { reviewTextLength } from "@/lib/catalog/review-html";
+import { publishLiveAvatar, useLiveAvatar } from "@/lib/auth/live-avatar";
 import { hasAnyRole, isStaff, ROLE_LABELS } from "@/lib/auth/roles";
 import type { PublicUser } from "@/lib/auth/schemas";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
@@ -187,7 +188,9 @@ export function AccountProfileForm({
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState(profilePhoto || user.avatarPath);
+  const liveAvatar = useLiveAvatar(user.id, user.avatarPath);
+  const [preview, setPreview] = useState<string | null>(null);
+  const avatarUrl = profilePhoto || preview || liveAvatar;
   const [cropFile, setCropFile] = useState<File | null>(null);
   const [pending, setPending] = useState(false);
   const [mail, setMail] = useState(() => mailFromUser(user));
@@ -262,19 +265,25 @@ export function AccountProfileForm({
             pending={pending}
             onCancel={() => setCropFile(null)}
             onSave={(image) => {
-              const previous = avatarUrl;
-              setAvatarUrl(image);
+              const previous = user.avatarPath;
+              setPreview(image);
+              publishLiveAvatar(user.id, image);
               setPending(true);
               void uploadAvatar({ data: { image } })
                 .then(async (result) => {
-                  const payload = result as { avatarPath: string; message: string };
-                  setAvatarUrl(payload.avatarPath);
+                  const payload = result as { avatarPath?: string; message?: string };
+                  const path = typeof payload.avatarPath === "string" ? payload.avatarPath : "";
+                  if (path) {
+                    publishLiveAvatar(user.id, path);
+                    setPreview(null);
+                  }
                   setCropFile(null);
-                  ok(payload.message);
+                  ok(payload.message || "Фото обновлено.");
                   await router.invalidate();
                 })
                 .catch((error) => {
-                  setAvatarUrl(previous);
+                  setPreview(null);
+                  publishLiveAvatar(user.id, previous);
                   fail(error);
                 })
                 .finally(() => setPending(false));

@@ -9,6 +9,7 @@ import { TRAINER_PROFILE_SECTIONS } from "@/components/trainer-card-fields";
 import { TrainerProfileForm } from "@/components/trainer-profile-form";
 import { TrainerReviewsPanel } from "@/components/trainer-reviews-panel";
 import { logoutFn } from "@/lib/auth/functions";
+import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { displayAccountLogin } from "@/lib/auth/login-name";
 import { hasAnyRole, ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
@@ -70,6 +71,7 @@ function TrainerCabinetPage() {
     setEnterCard(true);
   }, []);
   const logout = useAuthServerFn(logoutFn);
+  const accountFace = useLiveAvatar(user?.id, user?.avatarPath);
   if (!user) return null;
 
   const role = user.roles.map((item) => ROLE_LABELS[item]).join(", ");
@@ -82,7 +84,7 @@ function TrainerCabinetPage() {
       firstName={user.firstName}
       lastName={user.lastName}
       role={role}
-      avatarUrl={profileFace || user.avatarPath || null}
+      avatarUrl={profileFace || accountFace || null}
       items={[
         ...(trainer ? TABS : TABS.filter((item) => item.id !== "card")).map((item) => (
           item.id === "reviews" ? { ...item, badge: reviews.length } : item

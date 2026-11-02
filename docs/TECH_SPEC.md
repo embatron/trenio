@@ -136,7 +136,7 @@ IP берётся из `CF-Connecting-IP` или `X-Real-IP`. Если в зап
 - `requestSmsSignupFn`, `confirmSmsSignupFn`, `signupWithTelegramFn`, `signupWithTelegramWebAppFn`, `completeSignupCredentialsFn`
 - `loginWithTelegramFn`, `loginWithTelegramWebAppFn`, `getTelegramLoginConfigFn`
 - `forgotPasswordFn`, `requestPasswordResetSmsFn`, `confirmPasswordResetSmsFn`
-- `resetPasswordFn`, `verifyEmailFn`, `updateProfileFn` — имя и фамилия текущего аккаунта двумя полями; `setAccountAvatarFn` — фото в `public/avatars/`. Каталог создаётся с правами 755, иначе nginx не читает файл и кружок остаётся пустым. На сервере `/avatars/`, `/trainers/admin/` и `/trainers/self/` отдаёт nginx из `public/`, а не снимок сборки
+- `resetPasswordFn`, `verifyEmailFn`, `updateProfileFn` — имя и фамилия текущего аккаунта двумя полями; `setAccountAvatarFn` — фото в `public/avatars/`. Каталог создаётся с правами 755, иначе nginx не читает файл и кружок остаётся пустым. После сохранения кружок в форме, в шапке и в боковой карточке кабинета меняется сразу, без перезагрузки страницы. На сервере `/avatars/`, `/trainers/admin/` и `/trainers/self/` отдаёт nginx из `public/`, а не снимок сборки
 - `changePasswordFn` — смена пароля из кабинета по текущему паролю, текущая сессия сохраняется
 - `requestAccountEmailCodeFn`, `confirmAccountEmailCodeFn` — смена почты кодом из письма
 - `requestAccountPhoneCodeFn`, `confirmAccountPhoneCodeFn` — привязка телефона SMS-кодом. Подтверждённый номер записывается и в карточку тренера, если она есть

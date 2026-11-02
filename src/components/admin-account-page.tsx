@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { TablePager, useTablePage } from "@/components/table-pager";
@@ -6,6 +6,7 @@ import { TrainerName } from "@/components/trainer-name";
 import { UserAvatar } from "@/components/user-avatar";
 import { ACCOUNT_STATUS_LABEL, type AdminAccountDetail } from "@/lib/admin/accounts";
 import { displayUserId } from "@/lib/auth/god";
+import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { displayAccountLogin } from "@/lib/auth/login-name";
 import { ROLE_LABELS } from "@/lib/auth/roles";
 
@@ -30,6 +31,8 @@ function formatWhen(value: string) {
 }
 
 export function AdminAccountPage({ account }: { account: AdminAccountDetail }) {
+  const { user } = useRouteContext({ from: "__root__" });
+  const liveAvatar = useLiveAvatar(user?.id, user?.avatarPath);
   const [tab, setTab] = useState<TabId>("profile");
   const name = account.name || "Без имени";
   const logins = useTablePage(account.logins);
@@ -57,7 +60,11 @@ export function AdminAccountPage({ account }: { account: AdminAccountDetail }) {
         <>
           <div className="cabinet-account">
             <div className="cabinet-person">
-              <UserAvatar name={name} src={account.avatarPath} size={44} />
+              <UserAvatar
+                name={name}
+                src={user && account.id === user.id ? liveAvatar || account.avatarPath : account.avatarPath}
+                size={44}
+              />
               <div>
                 <strong>
                   <TrainerName firstName={account.firstName} lastName={account.lastName} empty="Без имени" />
