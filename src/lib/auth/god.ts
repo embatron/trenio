@@ -1,10 +1,11 @@
-import { SITE_EMAIL } from "@/lib/seo/site";
-
 /** Owner account. The nil UUID is user id 0 on every page and in every table. */
 export const GOD_USER_ID = "00000000-0000-0000-0000-000000000000";
 
-/** Admin and superadmin are this one mailbox. */
-export const GOD_EMAIL = SITE_EMAIL;
+/**
+ * Superadmin mailbox. The admin account is a different permanent user on
+ * trenioby@gmail.com. Neither row is deleted or created again.
+ */
+export const GOD_EMAIL = "embatron@gmail.com";
 
 const ACCOUNT_ID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -15,7 +16,7 @@ export function isGodUser(userId: string | null | undefined): boolean {
 
 export function isGodLogin(value: string): boolean {
   const raw = value.trim().toLowerCase();
-  return raw === GOD_EMAIL || raw === "trenioby" || raw === "embatron";
+  return raw === GOD_EMAIL || raw === "embatron";
 }
 
 /** Staff account routes accept a normal UUID and the zero id. */

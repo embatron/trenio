@@ -25,7 +25,7 @@ import {
   type User,
 } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
-import { isGodUser } from "@/lib/auth/god";
+import { GOD_USER_ID, isGodUser } from "@/lib/auth/god";
 import { normalizeBelarusMobile } from "@/lib/auth/phone";
 import { belarusPhoneEquals } from "@/lib/auth/phone-match";
 import { isStaff } from "@/lib/auth/roles";
@@ -41,6 +41,12 @@ import { SITE_ORIGIN } from "@/lib/seo/site";
 
 export const DELETED_ACCOUNT_NAME = "Удалённый";
 export const ACCOUNT_HOLD_MONTHS = 6;
+
+/** The owner and the portal admin. Same ids forever: do not delete or insert them again. */
+export const PERMANENT_USER_IDS = new Set([
+  GOD_USER_ID,
+  "7461164d-c06e-424a-88e2-37d9d70e3748",
+]);
 
 const PROFILE_STATUSES = ["draft", "published", "hidden", "archived"] as const;
 type ProfileStatus = (typeof PROFILE_STATUSES)[number];
@@ -154,7 +160,7 @@ export async function deleteOwnAccount(
   actor: { id: string; roles: UserRole[] },
   password: string,
 ): Promise<void> {
-  if (isGodUser(actor.id) || isStaff(actor.roles)) {
+  if (isGodUser(actor.id) || isStaff(actor.roles) || PERMANENT_USER_IDS.has(actor.id)) {
     throw new AuthError("Удаление служебного аккаунта недоступно. Напишите в поддержку.", "FORBIDDEN");
   }
 
@@ -212,7 +218,7 @@ export async function deleteOwnAccount(
 }
 
 async function purgeAccountRecord(user: User): Promise<void> {
-  if (isTombstoneEmail(user.email)) return;
+  if (isTombstoneEmail(user.email) || isGodUser(user.id) || PERMANENT_USER_IDS.has(user.id)) return;
   const db = getDb();
   const profiles = await db.select().from(trainerProfiles).where(eq(trainerProfiles.ownerUserId, user.id));
   const profileIds = profiles.map((profile) => profile.id);
