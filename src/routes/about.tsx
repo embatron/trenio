@@ -69,7 +69,7 @@ function AboutPage() {
           </div>
         </section>
 
-        <section className="about-chapter about-chapter--soft" aria-labelledby="about-work">
+        <section className="about-chapter" aria-labelledby="about-work">
           <div className="layout-container about-split about-split--flip">
             <Cover src="/about/what-we-do.png" alt="Профиль уже собран" />
             <div className="about-copy">
@@ -155,7 +155,6 @@ const CSS = `
 .about-hero h1 { margin: 0 0 12px; font-size: var(--fs-display); letter-spacing: -0.04em; color: var(--dark); }
 .about-lead { margin: 0; max-width: 36rem; font-size: 18px; line-height: 1.5; }
 .about-chapter { padding-block: clamp(28px, 5vw, 64px); }
-.about-chapter--soft { background: var(--light-bg); }
 .about-split {
   display: grid;
   grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
