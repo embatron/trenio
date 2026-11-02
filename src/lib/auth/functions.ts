@@ -88,6 +88,7 @@ function toPublicUser(user: SessionUser): PublicUser {
     nick: "",
     emailVerified: needsCredentials ? false : user.emailVerified,
     needsCredentials,
+    needsDoorPassword: user.needsPassword && user.lastSignupIntent === "trainer_claim",
     roles: user.roles,
     status: user.status,
     lastSignupIntent: user.lastSignupIntent,

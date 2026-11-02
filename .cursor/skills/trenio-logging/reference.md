@@ -27,6 +27,7 @@
 | `account.purge` | The six-month hold ended. Written with the old email before the account is anonymized. No message text |
 | `email.preference` | A message or review letter was not sent because that kind is off |
 | `account.claim` | Trainer claim |
+| `account.password` | Password chosen after the short Instagram link. The row has no password |
 | `email.send` / `email.dev` / `email.review` | Postfix or Resend, dev console, review mail. The letter is HTML. Do not store the body, a code, or a link |
 | `sms.send` / `sms.dev` | SMS.BY, or the dev console without the code |
 | `form.welcome` / `form.review` / `form.trainer_admin` / `form.trainer_profile` / `form.trainer_contacts` | Public and cabinet forms. `form.trainer_contacts` stores Instagram and Telegram on the trainer card. `form.welcome` awaits the insert. `target` is the Instagram or Telegram handle. A phone is `subject` as a mask, and a phone-only welcome leaves `target` empty. The welcome row stores `+375 29 123-45-67`, not the raw field. A honeypot is `denied` with `reason: honeypot` and no handle. |

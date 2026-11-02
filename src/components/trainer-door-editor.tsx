@@ -37,7 +37,7 @@ export function TrainerDoorMail({ autoFocus = false }: { autoFocus?: boolean }) 
       ) : (
         <>
           <label>
-            <span>Почта</span>
+            <span>Email</span>
             <input
               type="email"
               autoComplete="email"
@@ -91,17 +91,21 @@ export function TrainerDoorMailDialog({ onClose }: { onClose: () => void }) {
         aria-labelledby="door-mail-title"
         onClick={(event) => event.stopPropagation()}
       >
-        <h2 id="door-mail-title">Почта для кабинета</h2>
-        <p>На этот адрес придёт ссылка. Она подтвердит почту и откроет кабинет.</p>
+        <button type="button" className="door-mail-modal__x" aria-label="Закрыть" onClick={onClose}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+        <h2 id="door-mail-title">Создание аккаунта тренера</h2>
+        <p>Введите свой e-mail. На него придёт ссылка сразу с доступом в кабинет, и создание аккаунта будет завершено. Если письма нет, проверьте папку «Спам».</p>
         <TrainerDoorMail autoFocus />
-        <button type="button" className="door-mail-modal__close" onClick={onClose}>Закрыть</button>
       </div>
       <style>{`
         .door-mail-modal { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: rgba(var(--dark-rgb), 0.45); }
-        .door-mail-modal__card { box-sizing: border-box; width: min(440px, 100%); display: grid; gap: 12px; padding: 20px; border-radius: var(--card-radius); background: var(--white); color: var(--text); }
-        .door-mail-modal__card h2 { margin: 0; font-size: 18px; color: var(--dark); }
+        .door-mail-modal__card { position: relative; box-sizing: border-box; width: min(440px, 100%); display: grid; gap: 12px; padding: 20px; border-radius: var(--card-radius); background: var(--white); color: var(--text); }
+        .door-mail-modal__card h2 { margin: 0; padding-right: 36px; font-size: 18px; color: var(--dark); }
         .door-mail-modal__card > p { margin: 0; }
-        .door-mail-modal__close { justify-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font: inherit; font-weight: var(--fw-title); cursor: pointer; }
+        .door-mail-modal__x { position: absolute; top: 8px; right: 8px; width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; }
+        .door-mail-modal__x svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+        .door-mail-modal__x:hover { color: var(--dark); }
       `}</style>
     </div>
   );

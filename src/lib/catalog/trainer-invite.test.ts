@@ -33,7 +33,7 @@ test("an empty import lists the real gaps, including city, places and price", ()
   assert.match(text, /— места, где ты тренируешь/);
   assert.match(text, /— цена персональных занятий/);
   assert.match(text, /только для тебя/);
-  assert.match(text, /аккаунт становится активным/);
+  assert.match(text, /пароль в кабинете/);
   assert.equal(text.split(door).length, 2);
   assert.equal(text.includes(publicUrl), false);
 });

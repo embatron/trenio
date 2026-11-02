@@ -8,7 +8,7 @@ import { z } from "zod";
 import { optionalAuthMiddleware, requireAuthMiddleware } from "@/auth/middleware";
 import { clientIpFromHeaders } from "@/auth/request-meta";
 import { consumeRateLimit, RATE_LIMITED_MESSAGE } from "@/auth/rate-limit";
-import { hashPassword, normalizeEmail } from "@/auth/password";
+import { hashPassword, normalizeEmail, validatePasswordStrength } from "@/auth/password";
 import { setSessionCookie } from "@/auth/session";
 import { createSession, findUserByEmail } from "@/auth/service";
 import { addDays, generateSecureToken, hashToken } from "@/auth/tokens";
@@ -452,6 +452,8 @@ export type MagicTrainerDraft = {
   audiences: TrainerAudience[];
   phone: string;
   phoneLocked: boolean;
+  /** Short Instagram link is open and the profile is still unclaimed. */
+  magicDoor: boolean;
   photos: string[];
   certificates: ReturnType<typeof readCertificates>;
 };
@@ -483,6 +485,7 @@ export const getMagicTrainerFn = createServerFn({ method: "GET" })
       audiences: row.audiences,
       phone: row.phone,
       phoneLocked: Boolean(row.ownerUserId),
+      magicDoor: getCookie(PREVIEW_COOKIE) === row.slug && Boolean(row.previewToken) && !row.ownerUserId && row.status !== "published",
       photos: (row.photos?.length ? row.photos : row.avatarPath ? [row.avatarPath] : []).slice(0, 9),
       certificates: readCertificates(row.certificates),
     };
@@ -614,9 +617,6 @@ async function claimDoorAccount(profileId: string, userId: string, email: string
   });
   const session = await createSession(userId, { remember: true });
   setSessionCookie(session.token, true);
-  const [named] = await getDb().select({ firstName: trainerProfiles.firstName }).from(trainerProfiles).where(eq(trainerProfiles.id, profileId)).limit(1);
-  const { sendTrainerWelcome } = await import("@/lib/messages/welcome");
-  await sendTrainerWelcome({ id: userId, firstName: named?.firstName ?? "" });
 }
 
 async function ensureDoorUser(email: string) {
@@ -637,6 +637,7 @@ async function ensureDoorUser(email: string) {
       firstName: "Тренер",
       status: "pending_verification",
       lastSignupIntent: "trainer_claim",
+      needsPassword: true,
     }).returning();
     await tx.insert(userRoles).values({ userId: user.id, role: "trainer" });
     return user;
@@ -652,7 +653,9 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
       throw new AuthError("Ссылка на редактирование уже не действует.", "VALIDATION");
     }
     if (row.ownerUserId) throw new AuthError("Этот профиль уже привязан. Войдите в аккаунт.", "VALIDATION");
-    if (!row.previewToken) throw new AuthError("Ссылка на редактирование уже не действует.", "VALIDATION");
+    if (!row.previewToken || getCookie(PREVIEW_COOKIE) !== row.slug) {
+      throw new AuthError("Ссылка на редактирование уже не действует.", "VALIDATION");
+    }
     const email = normalizeEmail(data.email);
     const ip = clientIpFromHeaders(getRequest().headers.get("x-real-ip"));
     const limit = consumeRateLimit(`door-email:${row.id}:${ip}`, 60_000, 1);
@@ -661,7 +664,12 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
     const user = await ensureDoorUser(email);
     const db = getDb();
     const now = new Date();
-    await db.update(users).set({ firstName: row.firstName || user.firstName || "Тренер", lastName: row.lastName || null, updatedAt: now }).where(eq(users.id, user.id));
+    await db.update(users).set({
+      firstName: row.firstName || user.firstName || "Тренер",
+      lastName: row.lastName || null,
+      needsPassword: true,
+      updatedAt: now,
+    }).where(eq(users.id, user.id));
     await db.update(emailVerificationTokens).set({ usedAt: now }).where(and(eq(emailVerificationTokens.userId, user.id), isNull(emailVerificationTokens.usedAt)));
 
     const linkToken = generateSecureToken();
@@ -785,4 +793,85 @@ export const finishTrainerMailFn = createServerFn({ method: "GET" })
       target: row.slug,
     });
     return { ok: true as const };
+  });
+
+/** Password chosen in the cabinet after the magic-link mail. That step finishes the account. */
+export const setDoorPasswordFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(z.object({
+    password: z.string().min(1).max(128),
+    passwordConfirm: z.string().min(1).max(128),
+  }))
+  .handler(async ({ data, context }) => {
+    if (data.password !== data.passwordConfirm) throw new AuthError("Пароли не совпадают.", "VALIDATION");
+    const policyError = validatePasswordStrength(data.password);
+    if (policyError) throw new AuthError(policyError, "WEAK_PASSWORD");
+    if (context.user.lastSignupIntent !== "trainer_claim" || !context.user.needsPassword) {
+      throw new AuthError("Пароль уже задан.", "VALIDATION");
+    }
+    const [owned] = await getDb().select({
+      slug: trainerProfiles.slug,
+      firstName: trainerProfiles.firstName,
+      lastName: trainerProfiles.lastName,
+      avatarPath: trainerProfiles.avatarPath,
+    }).from(trainerProfiles).where(eq(trainerProfiles.ownerUserId, context.user.id)).limit(1);
+    if (!owned) throw new AuthError("Пароль уже задан.", "VALIDATION");
+
+    await getDb().update(users).set({
+      passwordHash: await hashPassword(data.password),
+      needsPassword: false,
+      updatedAt: new Date(),
+    }).where(eq(users.id, context.user.id));
+    void writeLog({
+      level: "info",
+      domain: "account",
+      action: "account.password",
+      outcome: "success",
+      message: "Тренер задал пароль по короткой ссылке.",
+      subject: context.user.email,
+      actorUserId: context.user.id,
+      target: owned.slug,
+    });
+
+    const { sendTrainerWelcome } = await import("@/lib/messages/welcome");
+    await sendTrainerWelcome({ id: context.user.id, firstName: owned.firstName || context.user.firstName });
+
+    let mailed = false;
+    try {
+      const letter = renderLetter({
+        service: true,
+        title: "Аккаунт создан",
+        person: {
+          name: [owned.firstName, owned.lastName].filter(Boolean).join(" ") || "Тренер",
+          avatarUrl: owned.avatarPath,
+          caption: "Ваш профиль",
+        },
+        lines: ["Пароль сохранён. Кабинет тренера открыт."],
+        action: { href: `${requestOrigin()}/me`, label: "Открыть кабинет" },
+      });
+      await sendMail({
+        to: [context.user.email],
+        subject: "Аккаунт создан · trenio.by",
+        text: letter.text,
+        html: letter.html,
+      });
+      mailed = true;
+      void writeLog({
+        level: "info",
+        domain: "email",
+        action: "email.send",
+        outcome: "success",
+        message: "Письмо о создании аккаунта отправлено.",
+        subject: context.user.email,
+        actorUserId: context.user.id,
+        target: owned.slug,
+      });
+    } catch (error) {
+      logCaught("email", "email.send", error, { subject: context.user.email, target: owned.slug });
+    }
+    return {
+      ok: true as const,
+      mailed,
+      message: mailed ? "Аккаунт создан. Письмо отправлено на почту." : "Аккаунт создан.",
+    };
   });

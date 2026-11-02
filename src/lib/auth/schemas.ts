@@ -118,6 +118,8 @@ export type PublicUser = {
   emailVerified: boolean;
   /** Phone or Telegram signup still needs a real mailbox and a chosen password. */
   needsCredentials: boolean;
+  /** Magic-link trainer still has to choose a password in the cabinet. */
+  needsDoorPassword: boolean;
   roles: UserRole[];
   status: string;
   lastSignupIntent: string | null;

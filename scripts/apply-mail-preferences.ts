@@ -5,6 +5,7 @@ const STATEMENTS = [
   "ALTER TABLE users ADD COLUMN IF NOT EXISTS mail_reviews boolean NOT NULL DEFAULT true",
   "ALTER TABLE users ADD COLUMN IF NOT EXISTS mail_site boolean NOT NULL DEFAULT true",
   "ALTER TABLE users ADD COLUMN IF NOT EXISTS mail_marketing boolean NOT NULL DEFAULT false",
+  "ALTER TABLE users ADD COLUMN IF NOT EXISTS needs_password boolean NOT NULL DEFAULT false",
 ];
 
 async function main() {

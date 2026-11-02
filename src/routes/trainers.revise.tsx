@@ -10,12 +10,12 @@ export const Route = createFileRoute("/trainers/revise")({
     const draft = await getMagicTrainerFn();
     if (!draft) return null;
     if (draft.status === "published") throw redirect({ to: "/trainers/$slug", params: { slug: draft.slug } });
-    if (draft.phoneLocked) throw redirect({ to: "/me" });
+    if (!draft.magicDoor) throw redirect({ to: "/trainers/$slug", params: { slug: draft.slug } });
     return { slug: draft.slug };
   },
   head: () => ({
     meta: [
-      { title: "Почта для кабинета · trenio.by" },
+      { title: "Создание аккаунта тренера · trenio.by" },
       { name: "description", content: "Ссылка из письма открывает кабинет." },
       { name: "robots", content: "noindex,follow" },
     ],
@@ -33,8 +33,8 @@ function RevisePage() {
         <div className="auth-card">
           {loaded ? (
             <>
-              <h1 className="auth-title">Почта для кабинета</h1>
-              <p className="auth-sub">На этот адрес придёт ссылка. Она подтвердит почту и откроет кабинет.</p>
+              <h1 className="auth-title">Создание аккаунта тренера</h1>
+              <p className="auth-sub">Введите свой e-mail. На него придёт ссылка сразу с доступом в кабинет, и создание аккаунта будет завершено. Если письма нет, проверьте папку «Спам».</p>
               <TrainerDoorMail autoFocus />
             </>
           ) : (

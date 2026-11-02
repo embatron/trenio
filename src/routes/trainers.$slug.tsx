@@ -701,8 +701,8 @@ function TrainerPage() {
         : null;
   const reviewLabel = t.reviews.length === 0 ? "Сделать первый отзыв" : "Добавить отзыв";
   const staff = Boolean(user && isStaff(user.roles));
-  const canRevise = Boolean(editor) && !isOwner;
-  const [mailOpen, setMailOpen] = useState(false);
+  const magicDoor = Boolean(editor?.magicDoor) && !isOwner;
+  const [mailOpen, setMailOpen] = useState(magicDoor);
 
   const photos = storedPhotos.length > 0 ? storedPhotos : [t.photo].filter(Boolean);
   const photoMove = useRef(0);
@@ -833,8 +833,8 @@ function TrainerPage() {
             </div>
           </aside>
 
-          <div className={`profile-main${staff || isOwner || canRevise ? " has-tools" : ""}`}>
-            {staff || isOwner || canRevise ? (
+          <div className={`profile-main${staff || isOwner || magicDoor ? " has-tools" : ""}`}>
+            {staff || isOwner || magicDoor ? (
               <div className="profile-tools">
                 {staff ? (
                   <Link className="profile-edit" to="/admin/trainers/$slug" params={{ slug: t.slug }} aria-label="Редактировать профиль" title="Редактировать профиль">
@@ -846,8 +846,8 @@ function TrainerPage() {
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
                   </Link>
                 ) : null}
-                {canRevise ? (
-                  <button type="button" className="profile-edit" aria-haspopup="dialog" aria-label="Редактировать свой профиль" title="Редактировать свой профиль" onClick={() => setMailOpen(true)}>
+                {magicDoor ? (
+                  <button type="button" className="profile-edit" aria-haspopup="dialog" aria-label="Создать аккаунт" title="Создать аккаунт" onClick={() => setMailOpen(true)}>
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
                   </button>
                 ) : null}

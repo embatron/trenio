@@ -2,6 +2,7 @@ import { Link, useRouteContext } from "@tanstack/react-router";
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 import { CredentialsRequiredDialog } from "@/components/auth/credentials-required-dialog";
+import { DoorPasswordDialog } from "@/components/auth/door-password-dialog";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { TrainerName } from "@/components/trainer-name";
 import { UserAvatar } from "@/components/user-avatar";
@@ -342,6 +343,7 @@ export function CabinetShell({
       </main>
       <SiteFooter />
       {user?.needsCredentials ? <CredentialsRequiredDialog /> : null}
+      {user?.needsDoorPassword && !user.needsCredentials ? <DoorPasswordDialog /> : null}
       <style>{CABINET_CSS}</style>
     </>
   );

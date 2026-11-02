@@ -62,6 +62,8 @@ export type SessionUser = {
   mailReviews: boolean;
   mailSite: boolean;
   mailMarketing: boolean;
+  /** Short Instagram link created the account and the trainer has not chosen a password yet. */
+  needsPassword: boolean;
 };
 
 /** Face and public nick for the header. The nick is the Instagram handle. */
@@ -105,6 +107,7 @@ function toSessionUser(user: User, roles: UserRole[]): SessionUser {
     mailReviews: user.mailReviews,
     mailSite: user.mailSite,
     mailMarketing: user.mailMarketing,
+    needsPassword: user.needsPassword,
   };
 }
 

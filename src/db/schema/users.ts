@@ -47,6 +47,8 @@ export const users = pgTable(
     phone: varchar("phone", { length: 32 }),
     phoneVerifiedAt: timestamp("phone_verified_at", { withTimezone: true }),
     passwordHash: text("password_hash").notNull(),
+    /** True only for a trainer created from the short Instagram link, until they choose a password. */
+    needsPassword: boolean("needs_password").notNull().default(false),
     firstName: varchar("first_name", { length: 100 }).notNull(),
     lastName: varchar("last_name", { length: 100 }),
     avatarPath: varchar("avatar_path", { length: 300 }).notNull().default(""),
