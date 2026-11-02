@@ -20,8 +20,8 @@
 | `auth.password.forgot_sms` / `auth.password.reset_sms` | SMS reset |
 | `auth.email.verify` | Email confirmation |
 | `account.email.request` / `account.email.confirm` | Account email change |
-| `account.phone.request` / `account.phone.confirm` | Account phone |
-| `trainer.email.confirm` / `trainer.telegram.confirm` | Overview confirms the login email (same address on the card) and Telegram |
+| `account.phone.request` / `account.phone.confirm` | Account phone. A signed Telegram contact uses `account.phone.confirm` and does not store the contact string, initData, or a widget payload. That path does not write Telegram |
+| `trainer.email.confirm` / `trainer.telegram.confirm` | Overview confirms the login email (same address on the card) and Telegram. A Belarus mobile inside the signed Telegram payload can be stored with the confirm. The log has no phone digits. A phone-only share does not use this action |
 | `account.password.change` / `account.avatar` / `account.name` / `account.mail` | Cabinet settings. `account.mail` stores the kind and whether it is on, not a letter |
 | `account.delete` | The person deleted their own account. Data stays for six months. Subject, IP, and user-agent on that person's rows are kept, and those rows last until the hold ends. No message text |
 | `account.restore` | The person confirmed restoration on the login page. A session starts |

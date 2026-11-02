@@ -14,6 +14,8 @@ import {
   smsResetSchema,
   telegramWebAppSchema,
   telegramWidgetSchema,
+  trainerTelegramPhoneSchema,
+  trainerTelegramWebAppSchema,
   accountAvatarSchema,
   changePasswordSchema,
   deleteAccountSchema,
@@ -59,7 +61,9 @@ import {
   confirmAccountEmailCode,
   confirmAccountPhoneCode,
   confirmTrainerContactEmailCode,
+  confirmTrainerPhoneFromTelegram,
   confirmTrainerTelegram,
+  confirmTrainerTelegramWebApp,
   linkAccountTelegram,
   linkAccountTelegramWebApp,
   unlinkAccountTelegram,
@@ -659,13 +663,75 @@ export const confirmTrainerTelegramFn = createServerFn({ method: "POST" })
         domain: "account",
         action: "trainer.telegram.confirm",
         outcome: "success",
-        message: "Telegram для связи подтверждён.",
+        message: result.phoneStored
+          ? "Telegram подтверждён, номер из Telegram записан."
+          : "Telegram для связи подтверждён.",
         actorUserId: context.user.id,
         subject,
       });
       return result;
     } catch (error) {
       rethrowAuth(error, "trainer.telegram.confirm", accountLogSubject(context.user.email), context.user.id);
+    }
+  });
+
+export const confirmTrainerTelegramWebAppFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(trainerTelegramWebAppSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      const result = await confirmTrainerTelegramWebApp(context.user.id, data.initData, data.contact);
+      const subject = accountLogSubject(context.user.email);
+      if (result.linkedAccount) {
+        void writeLog({
+          level: "info",
+          domain: "auth",
+          action: "auth.telegram.link",
+          outcome: "success",
+          message: "Telegram привязан к аккаунту при подтверждении карточки.",
+          actorUserId: context.user.id,
+          subject,
+        });
+      }
+      void writeLog({
+        level: "info",
+        domain: "account",
+        action: "trainer.telegram.confirm",
+        outcome: "success",
+        message: result.phoneStored
+          ? "Telegram подтверждён, номер из Telegram записан."
+          : "Telegram для связи подтверждён.",
+        actorUserId: context.user.id,
+        subject,
+      });
+      return result;
+    } catch (error) {
+      rethrowAuth(error, "trainer.telegram.confirm", accountLogSubject(context.user.email), context.user.id);
+    }
+  });
+
+export const confirmTrainerPhoneFromTelegramFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(trainerTelegramPhoneSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      const result = await confirmTrainerPhoneFromTelegram(
+        context.user.id,
+        { initData: data.initData, widget: data.widget },
+        data.contact,
+      );
+      void writeLog({
+        level: "info",
+        domain: "account",
+        action: "account.phone.confirm",
+        outcome: "success",
+        message: result.message,
+        actorUserId: context.user.id,
+        subject: accountLogSubject(context.user.email),
+      });
+      return result;
+    } catch (error) {
+      rethrowAuth(error, "account.phone.confirm", accountLogSubject(context.user.email), context.user.id);
     }
   });
 

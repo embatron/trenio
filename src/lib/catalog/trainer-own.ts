@@ -11,6 +11,7 @@ import { trainerProfiles, users } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
 import { markLogged, writeLog } from "@/lib/log/logger";
 import { formatBelarusPhone } from "@/lib/auth/phone";
+import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
 import { normalizeEmail } from "@/auth/password";
 import { hasAnyRole } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
@@ -166,7 +167,11 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
       places: placesFromProfile(row),
       priceFrom: row.priceFrom != null && row.priceFrom >= 1 ? row.priceFrom : null,
       phone,
-      instagram: row.instagramUrl,
+      instagram: cabinetInstagram({
+        instagramUrl: row.instagramUrl,
+        instagramHandle: row.instagramHandle,
+        createdSource: row.createdSource,
+      }),
       telegram: row.telegram,
       email,
       experienceYears: row.experienceYears >= 1 ? row.experienceYears : 0,

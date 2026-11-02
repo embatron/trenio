@@ -36,24 +36,23 @@ function parseUser(raw: unknown): TelegramWebAppUser | null {
   };
 }
 
-export function verifyTelegramWebAppInitData(
-  initData: string,
+/** Signed Mini App query string. `hash` is checked; the caller reads the fields. */
+export function verifyTelegramWebAppQuery(
+  query: string,
   nowSeconds = Math.floor(Date.now() / 1000),
-): TelegramWebAppUser | null {
+  maxAgeSeconds = TELEGRAM_WEBAPP_AUTH_MAX_AGE_SECONDS,
+): URLSearchParams | null {
   if (!isTelegramLoginConfigured()) return null;
   const token = loginBotToken();
-  if (!token || !initData.trim()) return null;
+  if (!token || !query.trim()) return null;
 
-  const params = new URLSearchParams(initData);
+  const params = new URLSearchParams(query);
   const hash = params.get("hash");
   const authDateRaw = params.get("auth_date");
-  const userRaw = params.get("user");
-  if (!hash || !authDateRaw || !userRaw) return null;
+  if (!hash || !authDateRaw) return null;
 
   const authDate = Number(authDateRaw);
-  if (!Number.isFinite(authDate) || Math.abs(nowSeconds - authDate) > TELEGRAM_WEBAPP_AUTH_MAX_AGE_SECONDS) {
-    return null;
-  }
+  if (!Number.isFinite(authDate) || Math.abs(nowSeconds - authDate) > maxAgeSeconds) return null;
 
   const pairs = [...params.entries()]
     .filter(([key]) => key !== "hash")
@@ -61,7 +60,16 @@ export function verifyTelegramWebAppInitData(
     .sort();
   const digest = createHmac("sha256", secretKey(token)).update(pairs.join("\n")).digest("hex");
   if (!hexEqual(digest, hash)) return null;
+  return params;
+}
 
+export function verifyTelegramWebAppInitData(
+  initData: string,
+  nowSeconds = Math.floor(Date.now() / 1000),
+): TelegramWebAppUser | null {
+  const params = verifyTelegramWebAppQuery(initData, nowSeconds);
+  const userRaw = params?.get("user");
+  if (!userRaw) return null;
   try {
     return parseUser(JSON.parse(userRaw));
   } catch {

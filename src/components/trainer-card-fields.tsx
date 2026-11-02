@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 
 import { BelarusPhoneInput } from "@/components/belarus-phone-input";
+import { PhoneCodeDialogs, usePhoneCodeDialog } from "@/components/phone-code-dialog";
 import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { ReviewEditor } from "@/components/review-editor";
 import { TrainerPlacesField } from "@/components/trainer-address-field";
@@ -274,10 +275,12 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
     if (!phone.linked || editing) return;
     setValue(constrainBelarusPhoneInput(phone.value));
   }, [editing, phone]);
-  const [code, setCode] = useState("");
-  const [sent, setSent] = useState(false);
   const [pending, setPending] = useState(false);
   const [status, setStatus] = useState("");
+  const codeDialog = usePhoneCodeDialog(() => {
+    setEditing(false);
+    if (phone.linked) phone.onVerified();
+  });
 
   if (!phone.linked) {
     return (
@@ -331,8 +334,6 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
               onClick={() => {
                 setValue(constrainBelarusPhoneInput(phone.value));
                 setEditing(false);
-                setSent(false);
-                setCode("");
                 setStatus("");
               }}
             >
@@ -348,7 +349,7 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
           }
           onValue={(next) => {
             setValue(next);
-            setSent(false);
+            codeDialog.reset();
           }}
         />
       </label>
@@ -369,14 +370,8 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
               void phone
                 .onRequest(value || BY_PHONE_COUNTRY_PREFIX)
                 .then((result) => {
-                  setStatus(
-                    result.devCode ? `${result.message} Код: ${result.devCode}` : result.message,
-                  );
-                  setSent(!result.already);
-                  if (result.already) {
-                    setEditing(false);
-                    phone.onVerified();
-                  }
+                  setStatus("");
+                  codeDialog.openFromRequest(result);
                 })
                 .catch((err: unknown) => setStatus(authErrorMessage(err)))
                 .finally(() => setPending(false));
@@ -386,41 +381,25 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
           </button>
         </div>
       ) : null}
-      {editing && sent ? (
-        <label>
-          <span className="is-required">Код из SMS</span>
-          <input
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            maxLength={8}
-            value={code}
-            onChange={(event) => setCode(event.target.value)}
-          />
-          <div className="cabinet-form__actions">
-            <button
-              className="cabinet-form__ghost"
-              type="button"
-              disabled={pending}
-              onClick={() => {
-                setPending(true);
-                void phone
-                  .onConfirm(value, code)
-                  .then((result) => {
-                    setStatus(result.message);
-                    setSent(false);
-                    setCode("");
-                    setEditing(false);
-                    phone.onVerified();
-                  })
-                  .catch((err: unknown) => setStatus(authErrorMessage(err)))
-                  .finally(() => setPending(false));
-              }}
-            >
-              Подтвердить код
-            </button>
-          </div>
-        </label>
+      {editing && codeDialog.issued && codeDialog.phase === "closed" ? (
+        <div className="cabinet-form__actions">
+          <button className="cabinet-form__ghost" type="button" onClick={codeDialog.reopen}>Ввести код</button>
+        </div>
       ) : null}
+      <PhoneCodeDialogs
+        phase={codeDialog.phase}
+        code={codeDialog.code}
+        error={codeDialog.error}
+        pending={codeDialog.pending}
+        devCode={codeDialog.devCode}
+        doneMessage={codeDialog.doneMessage}
+        onCode={codeDialog.setCode}
+        onSubmit={() => {
+          void codeDialog.submit(() => phone.onConfirm(value, codeDialog.code));
+        }}
+        onCloseCode={codeDialog.closeCode}
+        onCloseDone={codeDialog.closeDone}
+      />
       {status ? (
         <p className="cabinet-note" role="status">
           {status}

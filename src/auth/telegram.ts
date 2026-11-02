@@ -41,6 +41,7 @@ export function parseTelegramWidgetUser(raw: unknown): TelegramWidgetUser | null
     last_name: typeof data.last_name === "string" ? data.last_name : undefined,
     username: typeof data.username === "string" ? data.username : undefined,
     photo_url: typeof data.photo_url === "string" ? data.photo_url : undefined,
+    phone_number: typeof data.phone_number === "string" && data.phone_number ? data.phone_number : undefined,
     auth_date: authDate,
     hash,
   };

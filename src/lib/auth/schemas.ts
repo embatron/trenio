@@ -30,6 +30,7 @@ export const telegramWidgetSchema = z.object({
   last_name: z.string().optional(),
   username: z.string().optional(),
   photo_url: z.string().optional(),
+  phone_number: z.string().max(32).optional(),
   auth_date: z.coerce.number().int(),
   hash: z.string().min(8),
   honeypot: honeypotSchema,
@@ -39,6 +40,23 @@ export const telegramWebAppSchema = z.object({
   initData: z.string().min(8).max(4096),
   honeypot: honeypotSchema,
 });
+
+export const trainerTelegramWebAppSchema = z.object({
+  initData: z.string().min(8).max(4096),
+  contact: z.string().max(4096).optional(),
+  honeypot: honeypotSchema,
+});
+
+export const trainerTelegramPhoneSchema = z
+  .object({
+    initData: z.string().max(4096).optional(),
+    widget: telegramWidgetSchema.optional(),
+    contact: z.string().min(8).max(4096),
+    honeypot: honeypotSchema,
+  })
+  .refine((data) => Boolean(data.initData?.trim() || data.widget), {
+    message: "Не удалось подтвердить Telegram.",
+  });
 
 export const signupSchema = z.object({
   email: z.string().trim().email("Введите корректный e-mail"),

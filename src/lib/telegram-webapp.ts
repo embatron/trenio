@@ -5,6 +5,10 @@ export type TelegramWebAppBackButton = {
   offClick: (callback: () => void) => void;
 };
 
+export type TelegramContactResponse =
+  | { status: "sent"; response?: string }
+  | { status: "cancelled"; response?: string };
+
 export type TelegramWebApp = {
   initData: string;
   ready: () => void;
@@ -13,6 +17,7 @@ export type TelegramWebApp = {
   setBackgroundColor?: (color: string) => void;
   disableVerticalSwipes?: () => void;
   BackButton?: TelegramWebAppBackButton;
+  requestContact?: (callback: (shared: boolean, response?: TelegramContactResponse) => void) => void;
 };
 
 declare global {
@@ -29,6 +34,33 @@ export function getTelegramWebApp(): TelegramWebApp | null {
 
 export function getTelegramWebAppInitData(): string {
   return getTelegramWebApp()?.initData?.trim() ?? "";
+}
+
+/** Signed contact query, or null when Telegram did not share a number. The raw phone is not returned. */
+export function requestTelegramContact(timeoutMs = 60_000): Promise<string | null> {
+  return new Promise((resolve) => {
+    const webApp = getTelegramWebApp();
+    if (!webApp?.requestContact) {
+      resolve(null);
+      return;
+    }
+    let settled = false;
+    const finish = (value: string | null) => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timer);
+      resolve(value);
+    };
+    const timer = window.setTimeout(() => finish(null), timeoutMs);
+    try {
+      webApp.requestContact((shared, response) => {
+        if (shared && response?.status === "sent" && response.response) finish(response.response);
+        else finish(null);
+      });
+    } catch {
+      finish(null);
+    }
+  });
 }
 
 export function prepareTelegramWebApp(): void {

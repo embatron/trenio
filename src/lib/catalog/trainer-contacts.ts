@@ -5,6 +5,7 @@ import { z } from "zod";
 import { getDb } from "@/db";
 import { trainerProfiles, users } from "@/db/schema";
 import { formatBelarusPhone } from "@/lib/auth/phone";
+import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
 
 export type PublicTrainerContacts = {
@@ -33,6 +34,8 @@ export const getPublicTrainerContactsFn = createServerFn({ method: "GET" })
         email: trainerProfiles.email,
         emailVerifiedAt: trainerProfiles.emailVerifiedAt,
         instagramUrl: trainerProfiles.instagramUrl,
+        instagramHandle: trainerProfiles.instagramHandle,
+        createdSource: trainerProfiles.createdSource,
         telegram: trainerProfiles.telegram,
         telegramVerifiedAt: trainerProfiles.telegramVerifiedAt,
         ownerUserId: trainerProfiles.ownerUserId,
@@ -46,7 +49,13 @@ export const getPublicTrainerContactsFn = createServerFn({ method: "GET" })
       .where(eq(trainerProfiles.slug, data.slug))
       .limit(1);
 
-    const instagram = row?.instagramUrl || listed?.instagram || "";
+    const instagram = row
+      ? cabinetInstagram({
+          instagramUrl: row.instagramUrl,
+          instagramHandle: row.instagramHandle,
+          createdSource: row.createdSource,
+        }) || listed?.instagram || ""
+      : listed?.instagram || "";
     const email = row?.ownerUserId
       ? row.accountEmailVerifiedAt ? row.accountEmail ?? "" : ""
       : row?.emailVerifiedAt ? row.email : "";

@@ -28,8 +28,14 @@ import {
 import { issueOtp, verifyOtp } from "@/auth/otp";
 import { consumeRateLimit } from "@/auth/rate-limit";
 import { isSmsByEnabled } from "@/auth/sms";
+import { readTelegramContact } from "@/auth/telegram-contact";
 import { parseTelegramWidgetUser, verifyTelegramWidgetUser } from "@/auth/telegram";
 import { verifyTelegramWebAppInitData } from "@/auth/telegram-webapp";
+import {
+  planTrainerPhoneOnly,
+  planTrainerTelegramConfirm,
+  type TelegramPhoneAction,
+} from "@/lib/catalog/trainer-contact-cross";
 import { cleanTelegramUsername, decideTelegramBind } from "@/lib/auth/telegram-link";
 import { AuthError } from "@/lib/auth/errors";
 import { GOD_USER_ID, isGodLogin, isGodUser } from "@/lib/auth/god";
@@ -953,46 +959,104 @@ export async function unlinkAccountTelegram(userId: string) {
   return { ok: true as const, message: "Telegram отвязан. Вход по нему больше не откроет этот аккаунт." };
 }
 
-export async function confirmTrainerTelegram(userId: string, raw: unknown) {
-  const widget = parseTelegramWidgetUser(raw);
-  if (!widget || !verifyTelegramWidgetUser(widget)) {
-    throw new AuthError("Не удалось подтвердить Telegram.", "VALIDATION");
-  }
-  const handle = widget.username ? parseTelegramHandle(widget.username) : null;
-  if (!handle) throw new AuthError("В Telegram нет имени пользователя.", "VALIDATION");
+async function storeVerifiedTrainerPhone(userId: string, stored: string, now: Date) {
+  const digits = normalizeBelarusMobile(stored);
+  if (!digits) throw new AuthError("Укажите мобильный номер РБ.", "VALIDATION");
+  const db = getDb();
+  const [owner] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(and(belarusPhoneEquals(users.phone, digits), ne(users.id, userId)))
+    .limit(1);
+  if (owner) throw new AuthError("Этот телефон уже привязан к другому аккаунту.", "PHONE_TAKEN");
+  await db
+    .update(users)
+    .set({ phone: stored, phoneVerifiedAt: now, updatedAt: now })
+    .where(eq(users.id, userId));
+  await db
+    .update(trainerProfiles)
+    .set({ phone: stored, updatedAt: now })
+    .where(eq(trainerProfiles.ownerUserId, userId));
+}
 
+function phoneNote(action: TelegramPhoneAction, taken: boolean): { text: string; stored: boolean } {
+  if (taken) return { text: " Номер из Telegram уже занят другим аккаунтом.", stored: false };
+  if (action.kind === "store") return { text: " Номер из Telegram подтверждён.", stored: true };
+  if (action.kind === "keep-other") return { text: " Подтверждённый телефон оставлен.", stored: false };
+  return { text: "", stored: false };
+}
+
+async function applyTelegramPhone(userId: string, action: TelegramPhoneAction, now: Date) {
+  if (action.kind !== "store") return phoneNote(action, false);
+  try {
+    await storeVerifiedTrainerPhone(userId, action.phone, now);
+    return phoneNote(action, false);
+  } catch (error) {
+    if (error instanceof AuthError && error.code === "PHONE_TAKEN") return phoneNote(action, true);
+    throw error;
+  }
+}
+
+type TelegramIdentity = { id: number; username?: string; phone: string | null; acceptPhone: boolean };
+
+async function confirmTrainerTelegramIdentity(userId: string, identity: TelegramIdentity) {
   const db = getDb();
   const [profile] = await db
     .select({
       id: trainerProfiles.id,
       telegram: trainerProfiles.telegram,
       telegramVerifiedAt: trainerProfiles.telegramVerifiedAt,
+      phone: trainerProfiles.phone,
     })
     .from(trainerProfiles)
     .where(eq(trainerProfiles.ownerUserId, userId))
     .limit(1);
   if (!profile) throw new AuthError("Сначала сохраните профиль.", "VALIDATION");
-  const saved = parseTelegramHandle(profile.telegram);
-  if (!saved || saved.toLowerCase() !== handle.toLowerCase()) {
+  const [account] = await db
+    .select({ phone: users.phone, phoneVerifiedAt: users.phoneVerifiedAt })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+
+  const plan = planTrainerTelegramConfirm({
+    savedTelegram: profile.telegram,
+    incomingUsername: identity.username ?? null,
+    currentPhone: account?.phone || profile.phone || "",
+    phoneVerified: account?.phoneVerifiedAt != null,
+    incomingPhone: identity.phone,
+    acceptPhone: identity.acceptPhone,
+  });
+  if (plan.error === "missing") throw new AuthError("В Telegram нет имени пользователя.", "VALIDATION");
+  if (plan.error === "mismatch") {
     throw new AuthError("Имя в Telegram не совпадает с тем, что указано в профиле.", "VALIDATION");
+  }
+  if (plan.decision.kind !== "write" && plan.decision.kind !== "verify") {
+    throw new AuthError("Не удалось подтвердить Telegram.", "VALIDATION");
   }
 
   const now = new Date();
-  if (!profile.telegramVerifiedAt) {
+  const telegram = plan.decision.kind === "write" ? `@${plan.decision.handle}` : profile.telegram;
+  if (plan.decision.kind === "write" || !profile.telegramVerifiedAt) {
     await db
       .update(trainerProfiles)
-      .set({ telegramVerifiedAt: now, updatedAt: now })
+      .set({ telegram, telegramVerifiedAt: now, updatedAt: now })
       .where(eq(trainerProfiles.id, profile.id));
   }
 
+  const skippedPhone = identity.acceptPhone && identity.phone && plan.phone.kind === "ignore"
+    ? " Номер из Telegram не является мобильным РБ."
+    : "";
+
   try {
-    const bound = await bindTelegramLogin(userId, widget.id, widget.username);
-    const message = bound.linkedAccount
-      ? "Telegram подтверждён. Теперь им можно войти в этот аккаунт."
-      : profile.telegramVerifiedAt
+    const bound = await bindTelegramLogin(userId, identity.id, identity.username);
+    const phone = await applyTelegramPhone(userId, plan.phone, now);
+    const phoneText = skippedPhone || phone.text;
+    const base = bound.linkedAccount
+      ? "Telegram добавлен и подтверждён. Теперь им можно войти в этот аккаунт."
+      : profile.telegramVerifiedAt && plan.decision.kind === "verify"
         ? "Telegram уже подтверждён."
-        : "Telegram подтверждён.";
-    return { ok: true as const, linkedAccount: bound.linkedAccount, message };
+        : "Telegram добавлен и подтверждён.";
+    return { ok: true as const, linkedAccount: bound.linkedAccount, phoneStored: phone.stored, message: `${base}${phoneText}` };
   } catch (error) {
     const blocked =
       error instanceof AuthError &&
@@ -1002,9 +1066,92 @@ export async function confirmTrainerTelegram(userId: string, raw: unknown) {
     return {
       ok: true as const,
       linkedAccount: false,
+      phoneStored: false,
       message: `Telegram на карточке подтверждён. ${error.message}`,
     };
   }
+}
+
+export async function confirmTrainerTelegram(userId: string, raw: unknown) {
+  const widget = parseTelegramWidgetUser(raw);
+  if (!widget || !verifyTelegramWidgetUser(widget)) {
+    throw new AuthError("Не удалось подтвердить Telegram.", "VALIDATION");
+  }
+  return confirmTrainerTelegramIdentity(userId, {
+    id: widget.id,
+    username: widget.username,
+    phone: widget.phone_number ?? null,
+    acceptPhone: Boolean(widget.phone_number),
+  });
+}
+
+export async function confirmTrainerTelegramWebApp(userId: string, initData: string, contactRaw?: string) {
+  const profile = verifyTelegramWebAppInitData(initData);
+  if (!profile) throw new AuthError("Не удалось подтвердить Telegram.", "VALIDATION");
+  const contact = contactRaw?.trim() ? readTelegramContact(contactRaw) : null;
+  const acceptPhone = Boolean(contact && contact.userId === profile.id);
+  const result = await confirmTrainerTelegramIdentity(userId, {
+    id: profile.id,
+    username: profile.username,
+    phone: acceptPhone ? contact!.phone : null,
+    acceptPhone,
+  });
+  if (contactRaw?.trim() && !acceptPhone) {
+    return { ...result, message: `${result.message} Номер из Telegram не принят.` };
+  }
+  return result;
+}
+
+export async function confirmTrainerPhoneFromTelegram(
+  userId: string,
+  proof: { initData?: string; widget?: unknown },
+  contactRaw: string,
+) {
+  const ids: number[] = [];
+  if (proof.initData?.trim()) {
+    const profile = verifyTelegramWebAppInitData(proof.initData);
+    if (!profile) throw new AuthError("Не удалось подтвердить Telegram.", "VALIDATION");
+    ids.push(profile.id);
+  }
+  if (proof.widget) {
+    const widget = parseTelegramWidgetUser(proof.widget);
+    if (!widget || !verifyTelegramWidgetUser(widget)) {
+      throw new AuthError("Не удалось подтвердить Telegram.", "VALIDATION");
+    }
+    ids.push(widget.id);
+  }
+  const contact = readTelegramContact(contactRaw);
+  if (!contact || ids.length === 0 || ids.some((id) => id !== contact.userId)) {
+    throw new AuthError("Не удалось подтвердить номер из Telegram.", "VALIDATION");
+  }
+
+  const db = getDb();
+  const [account] = await db
+    .select({ phone: users.phone, phoneVerifiedAt: users.phoneVerifiedAt })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  const [profile] = await db
+    .select({ phone: trainerProfiles.phone })
+    .from(trainerProfiles)
+    .where(eq(trainerProfiles.ownerUserId, userId))
+    .limit(1);
+  const plan = planTrainerPhoneOnly({
+    currentPhone: account?.phone || profile?.phone || "",
+    phoneVerified: account?.phoneVerifiedAt != null,
+    incomingPhone: contact.phone,
+    proofMatchesContact: true,
+  });
+  if (plan.touchesTelegram) {
+    throw new AuthError("Не удалось подтвердить номер из Telegram.", "VALIDATION");
+  }
+  if (plan.phone.kind === "ignore") {
+    throw new AuthError("Telegram не передал мобильный номер РБ. Телефон не изменён.", "VALIDATION");
+  }
+  if (plan.phone.kind === "keep") return { ok: true as const, message: "Телефон уже подтверждён." };
+  if (plan.phone.kind === "keep-other") return { ok: true as const, message: "Подтверждённый телефон оставлен." };
+  await storeVerifiedTrainerPhone(userId, plan.phone.phone, new Date());
+  return { ok: true as const, message: "Телефон подтверждён через Telegram." };
 }
 
 export async function updateAccountName(userId: string, firstName: string, lastName: string) {
