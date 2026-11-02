@@ -52,6 +52,7 @@ import { Route as AuthSignupRouteImport } from './routes/auth.signup'
 import { Route as AuthSetPasswordRouteImport } from './routes/auth.set-password'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
+import { Route as AuthGoogleRouteImport } from './routes/auth.google'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
 import { Route as AuthConfirmEmailRouteImport } from './routes/auth.confirm-email'
 import { Route as AdminTrainersRouteImport } from './routes/admin.trainers'
@@ -80,6 +81,7 @@ import { Route as HiCodeEditRouteImport } from './routes/hi.$code.edit'
 import { Route as CitySlugSportRouteImport } from './routes/city.$slug.$sport'
 import { Route as CategoryParentSlugChildSlugRouteImport } from './routes/category.$parentSlug.$childSlug'
 import { Route as CategoriesParentSlugChildSlugRouteImport } from './routes/categories.$parentSlug.$childSlug'
+import { Route as AuthGoogleCallbackRouteImport } from './routes/auth.google.callback'
 import { Route as AdminTrainersSlugRouteImport } from './routes/admin.trainers.$slug'
 import { Route as AdminAccountsIdRouteImport } from './routes/admin.accounts.$id'
 import { Route as AccountMessagesConversationIdRouteImport } from './routes/account.messages.$conversationId'
@@ -301,6 +303,11 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthGoogleRoute = AuthGoogleRouteImport.update({
+  id: '/auth/google',
+  path: '/auth/google',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   id: '/auth/forgot-password',
   path: '/auth/forgot-password',
@@ -445,6 +452,11 @@ const CategoriesParentSlugChildSlugRoute =
     path: '/categories/$parentSlug/$childSlug',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthGoogleRoute,
+} as any)
 const AdminTrainersSlugRoute = AdminTrainersSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -504,6 +516,7 @@ export interface FileRoutesByFullPath {
   '/admin/trainers': typeof AdminTrainersRouteWithChildren
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/google': typeof AuthGoogleRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
@@ -533,6 +546,7 @@ export interface FileRoutesByFullPath {
   '/account/messages/$conversationId': typeof AccountMessagesConversationIdRoute
   '/admin/accounts/$id': typeof AdminAccountsIdRoute
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
+  '/auth/google/callback': typeof AuthGoogleCallbackRoute
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
   '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
   '/city/$slug/$sport': typeof CitySlugSportRouteWithChildren
@@ -576,6 +590,7 @@ export interface FileRoutesByTo {
   '/admin/site': typeof AdminSiteRoute
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/google': typeof AuthGoogleRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
@@ -604,6 +619,7 @@ export interface FileRoutesByTo {
   '/account/messages/$conversationId': typeof AccountMessagesConversationIdRoute
   '/admin/accounts/$id': typeof AdminAccountsIdRoute
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
+  '/auth/google/callback': typeof AuthGoogleCallbackRoute
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
   '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
   '/hi/$code/edit': typeof HiCodeEditRoute
@@ -653,6 +669,7 @@ export interface FileRoutesById {
   '/admin/trainers': typeof AdminTrainersRouteWithChildren
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/google': typeof AuthGoogleRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
@@ -682,6 +699,7 @@ export interface FileRoutesById {
   '/account/messages/$conversationId': typeof AccountMessagesConversationIdRoute
   '/admin/accounts/$id': typeof AdminAccountsIdRoute
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
+  '/auth/google/callback': typeof AuthGoogleCallbackRoute
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
   '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
   '/city/$slug/$sport': typeof CitySlugSportRouteWithChildren
@@ -733,6 +751,7 @@ export interface FileRouteTypes {
     | '/admin/trainers'
     | '/auth/confirm-email'
     | '/auth/forgot-password'
+    | '/auth/google'
     | '/auth/login'
     | '/auth/reset-password'
     | '/auth/set-password'
@@ -762,6 +781,7 @@ export interface FileRouteTypes {
     | '/account/messages/$conversationId'
     | '/admin/accounts/$id'
     | '/admin/trainers/$slug'
+    | '/auth/google/callback'
     | '/categories/$parentSlug/$childSlug'
     | '/category/$parentSlug/$childSlug'
     | '/city/$slug/$sport'
@@ -805,6 +825,7 @@ export interface FileRouteTypes {
     | '/admin/site'
     | '/auth/confirm-email'
     | '/auth/forgot-password'
+    | '/auth/google'
     | '/auth/login'
     | '/auth/reset-password'
     | '/auth/set-password'
@@ -833,6 +854,7 @@ export interface FileRouteTypes {
     | '/account/messages/$conversationId'
     | '/admin/accounts/$id'
     | '/admin/trainers/$slug'
+    | '/auth/google/callback'
     | '/categories/$parentSlug/$childSlug'
     | '/category/$parentSlug/$childSlug'
     | '/hi/$code/edit'
@@ -881,6 +903,7 @@ export interface FileRouteTypes {
     | '/admin/trainers'
     | '/auth/confirm-email'
     | '/auth/forgot-password'
+    | '/auth/google'
     | '/auth/login'
     | '/auth/reset-password'
     | '/auth/set-password'
@@ -910,6 +933,7 @@ export interface FileRouteTypes {
     | '/account/messages/$conversationId'
     | '/admin/accounts/$id'
     | '/admin/trainers/$slug'
+    | '/auth/google/callback'
     | '/categories/$parentSlug/$childSlug'
     | '/category/$parentSlug/$childSlug'
     | '/city/$slug/$sport'
@@ -948,6 +972,7 @@ export interface RootRouteChildren {
   TrainerAdminRoute: typeof TrainerAdminRouteWithChildren
   AuthConfirmEmailRoute: typeof AuthConfirmEmailRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthGoogleRoute: typeof AuthGoogleRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   AuthSetPasswordRoute: typeof AuthSetPasswordRoute
@@ -1274,6 +1299,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/google': {
+      id: '/auth/google'
+      path: '/auth/google'
+      fullPath: '/auth/google'
+      preLoaderRoute: typeof AuthGoogleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/forgot-password': {
       id: '/auth/forgot-password'
       path: '/auth/forgot-password'
@@ -1470,6 +1502,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesParentSlugChildSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/google/callback': {
+      id: '/auth/google/callback'
+      path: '/callback'
+      fullPath: '/auth/google/callback'
+      preLoaderRoute: typeof AuthGoogleCallbackRouteImport
+      parentRoute: typeof AuthGoogleRoute
+    }
     '/admin/trainers/$slug': {
       id: '/admin/trainers/$slug'
       path: '/$slug'
@@ -1653,6 +1692,18 @@ const TrainerAdminRouteWithChildren = TrainerAdminRoute._addFileChildren(
   TrainerAdminRouteChildren,
 )
 
+interface AuthGoogleRouteChildren {
+  AuthGoogleCallbackRoute: typeof AuthGoogleCallbackRoute
+}
+
+const AuthGoogleRouteChildren: AuthGoogleRouteChildren = {
+  AuthGoogleCallbackRoute: AuthGoogleCallbackRoute,
+}
+
+const AuthGoogleRouteWithChildren = AuthGoogleRoute._addFileChildren(
+  AuthGoogleRouteChildren,
+)
+
 interface CitySlugSportRouteChildren {
   CitySlugSportChildRoute: typeof CitySlugSportChildRoute
   CitySlugSportIndexRoute: typeof CitySlugSportIndexRoute
@@ -1714,6 +1765,7 @@ const rootRouteChildren: RootRouteChildren = {
   TrainerAdminRoute: TrainerAdminRouteWithChildren,
   AuthConfirmEmailRoute: AuthConfirmEmailRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthGoogleRoute: AuthGoogleRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthSetPasswordRoute: AuthSetPasswordRoute,
