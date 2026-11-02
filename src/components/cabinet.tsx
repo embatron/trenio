@@ -616,7 +616,6 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .mail-switch:disabled { opacity: 0.6; cursor: default; }
 .cabinet-section--place { background: rgba(var(--primary-rgb), 0.08); border-color: rgba(var(--primary-rgb), 0.35); }
 .cabinet-section--place h3 { border-bottom-color: rgba(var(--primary-rgb), 0.22); }
-.cabinet-section--contact { background: var(--white); border-color: var(--line); box-shadow: inset 3px 0 0 var(--primary); }
 .cabinet-section .places-field { padding: 12px; border-radius: var(--radius-control); background: var(--white); border: 1px solid rgba(var(--primary-rgb), 0.18); }
 .cabinet-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .cabinet-form__row > label { min-width: 0; }

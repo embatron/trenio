@@ -92,7 +92,7 @@ function ProfileSection({
 }: {
   id: (typeof TRAINER_PROFILE_SECTIONS)[number]["id"] | "trainer-contacts";
   title: string;
-  tone?: "place" | "contact";
+  tone?: "place";
   children: ReactNode;
 }) {
   return (
@@ -652,7 +652,7 @@ export function TrainerCardFields({
       </>
       ) : null}
       {showContacts ? (
-      <ProfileSection id="trainer-contacts" title="Контакты" tone="contact">
+      <ProfileSection id="trainer-contacts" title="Контакты">
         <PhoneField phone={phone} self={self} />
         <label>
           <span>Instagram</span>
