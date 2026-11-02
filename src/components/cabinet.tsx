@@ -618,6 +618,8 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .mail-switch.is-on .mail-switch__thumb::after { transform: translateX(18px); }
 .mail-switch:disabled { opacity: 0.6; cursor: default; }
 .mail-switch.is-locked:disabled { opacity: 1; cursor: default; }
+.mail-switch.is-locked .mail-switch__thumb { background: #c9a8aa; }
+.mail-switch.is-locked .mail-switch__thumb::after { background: #f3f4f6; }
 .cabinet-section--place { background: rgba(var(--primary-rgb), 0.08); border-color: rgba(var(--primary-rgb), 0.35); }
 .cabinet-section--place h3 { border-bottom-color: rgba(var(--primary-rgb), 0.22); }
 .cabinet-section .places-field { padding: 12px; border-radius: var(--radius-control); background: var(--white); border: 1px solid rgba(var(--primary-rgb), 0.18); }
