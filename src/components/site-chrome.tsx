@@ -207,6 +207,7 @@ body.is-search-docked .site-header__search {
   border-bottom: 1px solid var(--line);
 }
 .mega-cats .mega-sheet { padding-top: 16px; padding-bottom: 14px; }
+.mega-sports__toggle { display: none; }
 .mega-cats__row {
   display: grid; grid-template-columns: repeat(8, minmax(112px, 1fr));
   gap: 16px 12px; margin: 0; padding: 0; list-style: none;
@@ -325,7 +326,7 @@ body.is-search-docked .site-header__search {
 .mega-footer a:hover { background: var(--white); color: var(--primary); }
 .mega-footer a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) {
-  .mega-overlay, .mega-panel { transition: none; }
+  .mega-overlay, .mega-panel, .mega-sports__toggle svg { transition: none; }
 }
 
 .site-footer { background: var(--dark); color: #f2f2f2; padding: var(--layout-section-y) 0 28px; }
@@ -399,6 +400,25 @@ body.is-search-docked .site-header__search {
   }
   .site-header__search,
   body.is-search-docked .site-header__search { display: none; }
+  .mega-sports__toggle {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    width: 100%; min-height: 44px; margin: 0; padding: 0 4px;
+    border: 0; border-radius: var(--radius-control); background: transparent;
+    color: var(--dark); font: inherit; font-size: 15px; font-weight: var(--fw-title);
+    letter-spacing: -0.01em; text-align: left; cursor: pointer;
+  }
+  .mega-sports__toggle:hover { color: var(--primary-dark); }
+  .mega-sports__toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .mega-sports__toggle svg {
+    width: 18px; height: 18px; flex: 0 0 auto;
+    stroke: currentColor; fill: none; stroke-width: var(--icon-stroke);
+    stroke-linecap: round; stroke-linejoin: round;
+    transform: rotate(90deg); transition: transform 0.2s ease;
+  }
+  .mega-cats.is-open .mega-sports__toggle svg { transform: rotate(-90deg); }
+  .mega-cats__row { display: none; }
+  .mega-cats.is-open .mega-cats__row { display: grid; margin-top: 12px; }
+  .mega-cats.is-open .mega-sheet { padding-bottom: 18px; }
   .account-face { max-width: 44px; padding-right: 0; }
   .account-face__nick { display: none; }
 }
@@ -654,8 +674,12 @@ function MegaPin() {
 
 function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { user } = useRouteContext({ from: "__root__" });
+  const [sportsOpen, setSportsOpen] = useState(false);
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      setSportsOpen(false);
+      return;
+    }
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
@@ -675,9 +699,19 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
       aria-hidden={!open}
       inert={!open}
     >
-      <div className="mega-cats">
+      <div className={`mega-cats${sportsOpen ? " is-open" : ""}`}>
         <div className="mega-sheet">
-          <ul className="mega-cats__row">
+          <button
+            type="button"
+            className="mega-sports__toggle"
+            aria-expanded={sportsOpen}
+            aria-controls="mega-sports"
+            onClick={() => setSportsOpen((value) => !value)}
+          >
+            Выбрать спорт
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6" /></svg>
+          </button>
+          <ul className="mega-cats__row" id="mega-sports">
             {MEGA_CATEGORIES.map((category) => (
               <li key={category.slug}>
                 <Link className="mega-cat" to="/categories/$slug" params={{ slug: category.slug }} onClick={onClose}>
