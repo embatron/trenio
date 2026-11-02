@@ -8,6 +8,6 @@ test("admin and superadmin share the public mailbox", () => {
   assert.equal(isGodLogin("trenioby@gmail.com"), true);
   assert.equal(isGodLogin("Trenioby"), true);
   assert.equal(isGodLogin("embatron"), true);
-  assert.equal(isGodLogin("embatron@gmail.com"), true);
+  assert.equal(isGodLogin("embatron@gmail.com"), false);
   assert.equal(isGodLogin("coach@example.com"), false);
 });

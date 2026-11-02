@@ -3,7 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { AuthStyles } from "@/components/auth-styles";
+import { PasswordStrength } from "@/components/auth/password-strength";
 import { completeSignupCredentialsFn } from "@/lib/auth/functions";
+import { validatePasswordStrength } from "@/lib/auth/password-policy";
 import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
 
 export function CredentialsRequiredDialog() {
@@ -83,6 +85,11 @@ export function CredentialsRequiredDialog() {
               setMismatch("Пароли не совпадают.");
               return;
             }
+            const policyError = validatePasswordStrength(password);
+            if (policyError) {
+              setMismatch(policyError);
+              return;
+            }
             setMismatch(null);
             void run(
               () => save({ data: { email, password } }),
@@ -124,7 +131,7 @@ export function CredentialsRequiredDialog() {
                 {showPassword ? "Скрыть" : "Показать"}
               </button>
             </div>
-            <span className="auth-field__hint auth-field__hint--block">Цифра и заглавная буква.</span>
+            <PasswordStrength password={password} />
           </label>
           <label className="auth-field">
             <span className="auth-field__label">Пароль ещё раз</span>
@@ -133,9 +140,13 @@ export function CredentialsRequiredDialog() {
               required
               autoComplete="new-password"
               placeholder="Повторите пароль"
+              aria-invalid={repeat.length > 0 && repeat !== password}
               value={repeat}
               onChange={(event) => setRepeat(event.target.value)}
             />
+            {repeat.length > 0 && repeat !== password ? (
+              <span className="auth-field__hint auth-field__hint--block">Пароли пока не совпадают.</span>
+            ) : null}
           </label>
           <button type="submit" className="auth-submit" disabled={pending}>
             {pending ? "Сохранение…" : "Сохранить"}

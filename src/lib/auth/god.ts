@@ -15,7 +15,7 @@ export function isGodUser(userId: string | null | undefined): boolean {
 
 export function isGodLogin(value: string): boolean {
   const raw = value.trim().toLowerCase();
-  return raw === GOD_EMAIL || raw === "trenioby" || raw === "embatron" || raw === "embatron@gmail.com";
+  return raw === GOD_EMAIL || raw === "trenioby" || raw === "embatron";
 }
 
 /** Staff account routes accept a normal UUID and the zero id. */

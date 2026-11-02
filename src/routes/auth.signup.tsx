@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 
 import { AuthStyles } from "@/components/auth-styles";
 import { honeypotFromForm, HoneypotField } from "@/components/auth/honeypot-field";
+import { PasswordStrength } from "@/components/auth/password-strength";
 import {
   clientValidatePhone,
   PhoneOtpFields,
@@ -230,7 +231,7 @@ function SignupPage() {
                     {showPassword ? "Скрыть" : "Показать"}
                   </button>
                 </div>
-                <span className="auth-field__hint auth-field__hint--block">Цифра и заглавная буква.</span>
+                <PasswordStrength password={password} />
               </label>
               <PrivacyCheck accepted={accepted} onChange={setAccepted} />
               <button type="submit" className="auth-submit" disabled={pending}>
