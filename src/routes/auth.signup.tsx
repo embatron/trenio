@@ -78,6 +78,10 @@ function SignupPage() {
   const router = useRouter();
   const { redirect: returnPath } = Route.useSearch();
   const { error, pending, run, redirectTo, setError } = useAuthSubmit();
+  const acceptPrivacy = (value: boolean) => {
+    setAccepted(value);
+    if (value) setError(null);
+  };
 
   const goAfterSignup = async (
     result: { redirectTo?: string; user?: { needsCredentials?: boolean } } | null,
@@ -166,6 +170,15 @@ function SignupPage() {
             ))}
           </div>
 
+          <div className="auth-google-slot">
+            <GoogleLoginButton
+              returnPath={returnPath}
+              disabled={!accepted}
+              onBlocked={() => setError("Примите политику конфиденциальности.")}
+            />
+            <div className="auth-or" aria-hidden="true">или</div>
+          </div>
+
           <AuthAlert message={error} />
           {devCode && method === "phone" ? (
             <div className="auth-alert auth-alert--note" style={{ marginBottom: 16 }}>
@@ -234,12 +247,10 @@ function SignupPage() {
                 </div>
                 <PasswordStrength password={password} />
               </label>
-              <PrivacyCheck accepted={accepted} onChange={setAccepted} />
+              <PrivacyCheck accepted={accepted} onChange={acceptPrivacy} />
               <button type="submit" className="auth-submit" disabled={pending}>
                 {pending ? "Создание…" : "Зарегистрироваться"}
               </button>
-              <div className="auth-or" aria-hidden="true">или</div>
-              <GoogleLoginButton returnPath={returnPath} disabled={!accepted} />
               {restoreOffer ? (
                 <div className="auth-restore" role="status">
                   <p>Этот аккаунт удалён. Данные хранятся шесть месяцев — его можно восстановить.</p>
@@ -313,7 +324,7 @@ function SignupPage() {
                   if (phoneFormRef.current) void sendSms(phoneFormRef.current);
                 }}
               >
-                <PrivacyCheck accepted={accepted} onChange={setAccepted} />
+                <PrivacyCheck accepted={accepted} onChange={acceptPrivacy} />
               </PhoneOtpFields>
             </form>
           ) : null}
@@ -323,7 +334,7 @@ function SignupPage() {
               <p className="auth-muted">
                 Если этот Telegram уже привязан, откроется тот же аккаунт. Второй аккаунт не создаётся.
               </p>
-              <PrivacyCheck accepted={accepted} onChange={setAccepted} />
+              <PrivacyCheck accepted={accepted} onChange={acceptPrivacy} />
               <TelegramLoginButton
                 missing="Регистрация через Telegram сейчас недоступна. Выберите почту или телефон."
                 onAuth={async (telegram: TelegramWidgetUser) => {

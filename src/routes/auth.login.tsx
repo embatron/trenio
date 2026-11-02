@@ -161,6 +161,11 @@ function LoginPage() {
             ))}
           </div>
 
+          <div className="auth-google-slot">
+            <GoogleLoginButton returnPath={returnPath} />
+            <div className="auth-or" aria-hidden="true">или</div>
+          </div>
+
           <AuthAlert message={error ?? googleMessage} />
           {devCode && method === "phone" ? (
             <div className="auth-alert auth-alert--note" style={{ marginBottom: 16 }}>
@@ -237,8 +242,6 @@ function LoginPage() {
               <button type="submit" className="auth-submit" disabled={pending}>
                 {pending ? "Вход…" : "Войти"}
               </button>
-              <div className="auth-or" aria-hidden="true">или</div>
-              <GoogleLoginButton returnPath={returnPath} />
               {restoreOffer ? (
                 <div className="auth-restore" role="status">
                   <p>

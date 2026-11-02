@@ -1,7 +1,15 @@
 import { GoogleIcon } from "@/components/brand-icons";
 
 /** Starts the Google redirect. The same address signs in or creates the account. */
-export function GoogleLoginButton({ returnPath, disabled = false }: { returnPath?: string; disabled?: boolean }) {
+export function GoogleLoginButton({
+  returnPath,
+  disabled = false,
+  onBlocked,
+}: {
+  returnPath?: string;
+  disabled?: boolean;
+  onBlocked?: () => void;
+}) {
   const next = returnPath ? `?redirect=${encodeURIComponent(returnPath)}` : "";
   const label = (
     <>
@@ -11,9 +19,9 @@ export function GoogleLoginButton({ returnPath, disabled = false }: { returnPath
   );
   if (disabled) {
     return (
-      <span className="auth-google is-disabled" aria-disabled="true">
+      <button type="button" className="auth-google" onClick={onBlocked}>
         {label}
-      </span>
+      </button>
     );
   }
   return (
