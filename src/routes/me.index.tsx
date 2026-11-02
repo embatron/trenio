@@ -139,20 +139,20 @@ function popularityAnswer(
   }
   const cardMissing = CARD_LABELS.filter((item) => !checklist[item.key]).map((item) => item.label);
   const contactMissing = CONTACT_LABELS.filter((item) => !checklist[item.key]).map((item) => item.label);
-  const fromPeople = parts.rating + parts.reviews + parts.views + parts.saves;
+  const fromUsers = parts.rating + parts.reviews + parts.views + parts.saves;
   const cardLine = checklist.card === limits.cardFields
     ? `Карточка уже собрана: все ${limits.card} баллов за поля ваши.`
     : `Карточку можно собрать самим, ещё до отзывов. Десять полей, каждое по ${limits.cardEach} ${pluralRu(limits.cardEach, "балл", "балла", "баллов")}: фото, текст о себе, как проходят тренировки, вид спорта, стаж, цена, формат, город, адрес и диплом. Закрыто ${checklist.card} из ${limits.cardFields} — это ${points(parts.card)}. Осталось: ${joinRu(cardMissing)}.`;
   const contactLine = checklist.contacts === limits.contactFields
-    ? `Контакты тоже на месте. Телефон, Instagram, Telegram и почта дают по ${limits.contactEach} баллов, вместе ${limits.contacts}.`
-    : `Контакты считаются отдельно, по ${limits.contactEach} баллов: телефон, Instagram, Telegram и почта. Добавлено ${checklist.contacts} из ${limits.contactFields} — это ${points(parts.contacts)}. Не хватает: ${joinRu(contactMissing)}.`;
-  const peopleLine = fromPeople === 0
-    ? `От людей можно набрать ещё до ${limits.rating + limits.reviews + limits.views + limits.saves} баллов, и первые шаги самые щедрые. Пятёрка даёт ${limits.rating}, ${limits.reviewCap} отзывов — ${limits.reviews}, ${limits.viewCap} визитов за месяц — ${limits.views}, ${limits.saveCap} сохранений — ${limits.saves}.`
-    : `От людей сейчас ${points(fromPeople)}. Оценки — ${parts.rating} из ${limits.rating}, отзывы — ${parts.reviews} из ${limits.reviews}, визиты этого месяца — ${parts.views} из ${limits.views}, избранное — ${parts.saves} из ${limits.saves}. Первые шаги здесь заметнее следующих.`;
+    ? `Контакты тоже на месте. Телефон, Instagram, Telegram и почта закрывают ещё ${limits.contacts} баллов. Вместе с полями это ваши ${limits.self}.`
+    : `Контакты тоже ваши и входят в те же ${limits.self}. Телефон, Instagram, Telegram и почта вместе дают ${limits.contacts} баллов: один — 3, два — 5, три — 8. Добавлено ${checklist.contacts} из ${limits.contactFields} — это ${points(parts.contacts)}. Не хватает: ${joinRu(contactMissing)}.`;
+  const peopleLine = fromUsers === 0
+    ? `От пользователей можно набрать ещё до ${limits.rating + limits.reviews + limits.views + limits.saves} баллов, и первые шаги самые щедрые. Пятёрка даёт ${limits.rating}, ${limits.reviewCap} отзывов — ${limits.reviews}, ${limits.viewCap} визитов за месяц — ${limits.views}, ${limits.saveCap} сохранений — ${limits.saves}.`
+    : `От пользователей сейчас ${points(fromUsers)}. Оценки — ${parts.rating} из ${limits.rating}, отзывы — ${parts.reviews} из ${limits.reviews}, визиты этого месяца — ${parts.views} из ${limits.views}, избранное — ${parts.saves} из ${limits.saves}. Первые шаги здесь заметнее следующих.`;
 
   return (
     <>
-      <p>Это ваши баллы от 0 до 100. Чем их больше, тем выше карточка, когда в каталоге выбрано «По популярности». Сейчас у вас {parts.total}.</p>
+      <p>Это ваши баллы от 0 до 100. Чем их больше, тем выше карточка, когда в каталоге выбрано «По популярности». Сейчас у вас {parts.total}. До {limits.self} вы собираете сами, остальное приносят пользователи.</p>
       <p>{cardLine}</p>
       <p>{contactLine}</p>
       <p>{peopleLine}</p>

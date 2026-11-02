@@ -9,24 +9,33 @@ export type TrainerRatingSnapshot = {
 
 /**
  * Caps a trainer can read. The parts add up to 100.
- * Ten card fields are 3 points each. Four contacts are 5 points each.
- * The rest comes from people, and the first events still weigh more.
+ * The trainer fills the card and the contacts, at most 30.
+ * Users bring the other 70 through ratings, reviews, visits, and saves.
+ * The first of those events still weigh more.
  */
 export const POPULARITY_LIMITS = {
   cardFields: 10,
-  cardEach: 3,
-  card: 30,
+  cardEach: 2,
+  card: 20,
   contactFields: 4,
-  contactEach: 5,
-  contacts: 20,
-  rating: 20,
-  reviews: 10,
-  views: 12,
-  saves: 8,
+  contacts: 10,
+  self: 30,
+  rating: 25,
+  reviews: 15,
+  views: 20,
+  saves: 10,
   reviewCap: 20,
   viewCap: 15,
   saveCap: 5,
 } as const;
+
+/** Four contacts share 10 points. The steps stay whole numbers: 3, then 5, 8, and 10. */
+const CONTACT_POINTS = [0, 3, 5, 8, 10] as const;
+
+export function contactPoints(filled: number) {
+  const index = Math.min(CONTACT_POINTS.length - 1, Math.max(0, Math.trunc(filled)));
+  return CONTACT_POINTS[index] ?? 0;
+}
 
 export type PopularityParts = {
   card: number;
@@ -159,8 +168,8 @@ export function popularityChecklist(source: PopularitySource): PopularityCheckli
 
 /**
  * Catalog rank from 0 to 100.
- * A filled card and added contacts are the starting points.
- * Rating, reviews, monthly visits, and saves still raise the card, with diminishing returns.
+ * A filled card and added contacts are at most 30 points.
+ * Ratings, reviews, monthly visits, and saves bring the other 70, with diminishing returns.
  */
 export function popularityParts(item: {
   rating: string;
@@ -173,7 +182,7 @@ export function popularityParts(item: {
   const cardFilled = Math.min(POPULARITY_LIMITS.cardFields, Math.max(0, item.cardFilled ?? 0));
   const contactsFilled = Math.min(POPULARITY_LIMITS.contactFields, Math.max(0, item.contactsFilled ?? 0));
   const card = cardFilled * POPULARITY_LIMITS.cardEach;
-  const contacts = contactsFilled * POPULARITY_LIMITS.contactEach;
+  const contacts = contactPoints(contactsFilled);
   const rating = item.reviews > 0
     ? Math.round(POPULARITY_LIMITS.rating * Math.min(ratingValue(item.rating), 5) / 5)
     : 0;
