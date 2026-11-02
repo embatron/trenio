@@ -258,6 +258,21 @@ test("each indexable page kind emits its schema types", () => {
 
   assertKind("map", mapPageHead(false));
   for (const kind of ["about", "contacts", "offer", "privacy", "join"] as const) assertKind(kind, infoPageHead(kind));
+  const about = infoPageHead("about");
+  assert.equal(graphTypes(about).has("FAQPage"), false);
+  assert.equal(about.links[0]?.href, "https://trenio.by/about");
+  assert.equal(about.meta.some((item) => "title" in item && item.title === "О сервисе | trenio.by"), true);
+  assert.equal(
+    about.meta.some(
+      (item) =>
+        "name" in item &&
+        item.name === "description" &&
+        item.content ===
+          "Каталог тренеров в Беларуси: город, вид спорта и цена. Клиент пишет напрямую, страницу публикует сам тренер, размещение бесплатное.",
+    ),
+    true,
+  );
+  assert.equal(about.meta.some((item) => "content" in item && item.content === "index, follow"), true);
   assert.match(JSON.stringify(infoPageHead("join").scripts), /Тренерам/);
 
   const club = clubPageHead({

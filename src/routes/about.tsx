@@ -214,7 +214,7 @@ const CSS = `
   color: var(--muted); font-size: 15px; font-weight: var(--fw-title); text-decoration: none;
 }
 .about-related a:hover { color: var(--primary); }
-@media (max-width: 960px) {
+@media (max-width: 767px) {
   .about-split, .about-split--flip { grid-template-columns: 1fr; }
   .about-split--flip .about-frame { order: 0; }
 }
