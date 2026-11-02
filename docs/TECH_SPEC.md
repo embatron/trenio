@@ -414,7 +414,7 @@ Breakpoint для collapse sidebar/grid: **`960px`**. Новые страниц�
 | `AUTH_DEV_LOG_EMAILS` | Log auth links and review mail to console |
 | `LOG_LEVEL`           | Порог журнала `app_logs`: debug, info, warn, error, fatal. По умолчанию info |
 | `MAIL_ENABLED`        | `true` — локальный Postfix. `false` — письмо не уходит. В production включено, если переменная пустая |
-| `MAIL_FROM`           | Служебный отправитель: `Trenio <noreply@trenio.by>`. Конверт тот же. SMTP-приветствие для этого домена — `trenio.by`, чужое имя сайта не используется. В подвале остаётся `SITE_EMAIL` (`trenioby@gmail.com`). SPF — `v=spf1 ip4:130.49.141.250 ~all`, DKIM — селектор `mail`. Записи DMARC у домена нет |
+| `MAIL_FROM`           | Служебный отправитель: `Trenio <noreply@trenio.by>`. Конверт тот же и выходит клиентом Postfix `trenio` с приветствием `trenio.by`. Почта `bronxgym.by` идёт клиентом `bronxgym` с приветствием `mail.bronxgym.by`. В подвале остаётся `SITE_EMAIL` (`trenioby@gmail.com`). SPF — `v=spf1 ip4:130.49.141.250 ~all`, DKIM — селектор `mail`, DMARC — `v=DMARC1; p=none; rua=mailto:trenioby@gmail.com` |
 | `SENDMAIL_PATH`       | Путь к `sendmail`, по умолчанию `/usr/sbin/sendmail` |
 | `RESEND_API_KEY`      | Запасной путь, только если Postfix выключен и задан `MAIL_FROM` |
 | `SMS_BY_ENABLED`      | `true` включает отправку через SMS.BY |
@@ -519,7 +519,7 @@ npm run format
 | `.cursor/skills/trenio-seo/` | Заголовки, canonical, robots, sitemap и schema.org для страниц Беларуси. Субагент `seo` |
 | `.cursor/agents/seo.md` | Субагент SEO: правит публичные страницы и рекомендует только то, что меняет индекс, запрос или доверие |
 | `.cursor/rules/seo.mdc` | Публичный документ через `seoHead`; канонический адрес `https://trenio.by`; один счётчик GA4 |
-| `.cursor/rules/site-mail.mdc` | Публичная почта `trenioby@gmail.com` (`SITE_EMAIL`). Служебные письма — Postfix, From `Trenio <noreply@trenio.by>` |
+| `.cursor/rules/site-mail.mdc` | Публичная почта `trenioby@gmail.com` (`SITE_EMAIL`). Служебные письма — Postfix, From `Trenio <noreply@trenio.by>`, приветствие `trenio.by`. Почта `bronxgym.by` идёт своим клиентом |
 | `.cursor/commands/hooks.md` | Slash-команда `/hooks` — сетка, иконки, PWA, mobile, docs             |
 | `.cursor/commands/logging.md` | Slash-команда `/logging` — проверка логгеров и пробная запись |
 | `.cursor/commands/diagnosis.md` | Slash-команда `/diagnosis` — причина сбоя по журналу |
