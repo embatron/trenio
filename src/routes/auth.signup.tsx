@@ -125,17 +125,19 @@ function SignupPage() {
             <h1 className="auth-title">Создать аккаунт</h1>
           </div>
 
-          <TelegramWebAppAuthButton
-            onAuth={async (initData) => {
-              if (!accepted) {
-                setError("Примите политику конфиденциальности.");
-                return;
-              }
-              setError(null);
-              const result = await run(() => signupTelegramWebApp({ data: { initData } }));
-              await goAfterSignup(result);
-            }}
-          />
+          <div className="auth-webapp-slot">
+            <TelegramWebAppAuthButton
+              onAuth={async (initData) => {
+                if (!accepted) {
+                  setError("Примите политику конфиденциальности.");
+                  return;
+                }
+                setError(null);
+                const result = await run(() => signupTelegramWebApp({ data: { initData } }));
+                await goAfterSignup(result);
+              }}
+            />
+          </div>
 
           <div className="auth-roleswitch auth-roleswitch--3" role="tablist" aria-label="Способ регистрации">
             {(

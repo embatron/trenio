@@ -748,6 +748,9 @@ a.cat-pill { text-decoration: none; }
   .cat-filters { position: static; }
   .cat-cta { grid-template-columns: 1fr; padding: var(--layout-block-gap) var(--layout-gap); }
 }
+@media (max-width: 767px) {
+  .cat-child-nav__tile, .cat-pill { min-height: 32px; padding: 4px 10px; font-size: 13px; line-height: 1.25; }
+}
 @media (max-width: 640px) {
   .cat-hero .layout-container:has(.cat-hero__photo) { grid-template-columns: 1fr; }
   .cat-hero__photo { display: none; }

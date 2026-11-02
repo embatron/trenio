@@ -690,7 +690,7 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
           avatarUrl: row.avatarPath,
           caption: "Ваш профиль",
         },
-        lines: ["Ссылка подтверждает почту и открывает кабинет. Она действует 7 дней."],
+        lines: ["Вот ваша ссылка для прямого входа в кабинет:"],
         action: { href: link, label: "Открыть кабинет" },
         note: "Если вы не запрашивали это письмо, просто удалите его.",
       });
@@ -872,6 +872,6 @@ export const setDoorPasswordFn = createServerFn({ method: "POST" })
     return {
       ok: true as const,
       mailed,
-      message: mailed ? "Аккаунт создан. Письмо отправлено на почту." : "Аккаунт создан.",
+      message: "Дальше можно работать со своим аккаунтом.",
     };
   });

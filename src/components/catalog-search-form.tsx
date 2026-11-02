@@ -83,8 +83,17 @@ const FORM_CSS = `
   .catalog-search.search-block--hero .search-field[data-combo="location"] { grid-column: 1; grid-row: 2; border-left: 0; border-top: 1px solid var(--line); }
   .catalog-search.search-block--hero .search-submit { grid-column: 2; grid-row: 1 / span 2; }
 }
+@media (max-width: 767px) {
+  .catalog-search .search-intent { gap: 6px 12px; margin-bottom: 12px; font-size: 13px; }
+  .catalog-search .intent-group { gap: 4px; }
+  .catalog-search .audience-tab, .catalog-search .format-tab {
+    min-height: 32px;
+    padding: 3px 10px;
+    font-size: 13px;
+    line-height: 1.25;
+  }
+}
 @media (max-width: 620px) {
-  .catalog-search .search-intent { font-size: 14px; }
   .catalog-search .search-field { padding-inline: 12px; }
   .catalog-search .combo-input { font-size: 17px; }
 }

@@ -87,12 +87,18 @@ const AUTH_CSS = `
 .auth-field__error { color: var(--primary); font-size: 13px; font-weight: var(--fw-ui); }
 .auth-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
 
+/* Mini App shortcut sits above the method tabs and covers them on a phone. */
+@media (max-width: 767px) {
+  .auth-webapp-slot { display: none; }
+}
+
 @media (max-width: 600px) {
   .auth-card { padding: 28px 22px; }
   .auth-title { font-size: 26px; }
   .auth-form--grid { grid-template-columns: 1fr; }
   .auth-roleswitch { grid-template-columns: 1fr; }
   .auth-roleswitch--3 { grid-template-columns: 1fr; }
+  .auth-role--compact { min-height: 40px; padding: 8px 10px; }
 }
 `;
 

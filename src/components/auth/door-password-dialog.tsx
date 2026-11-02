@@ -108,6 +108,7 @@ export function DoorPasswordDialog() {
             </button>
             <h2 id="door-password-title">Аккаунт создан</h2>
             <p>{done}</p>
+            <button type="button" className="auth-submit" autoFocus onClick={close}>Ок, принял</button>
           </>
         ) : (
           <>
@@ -131,7 +132,7 @@ export function DoorPasswordDialog() {
                 setError(null);
                 void save({ data: { password, passwordConfirm: repeat } })
                   .then((result) => {
-                    const message = (result as { message?: string }).message ?? "Аккаунт создан.";
+                    const message = (result as { message?: string }).message ?? "Дальше можно работать со своим аккаунтом.";
                     setDone(message);
                   })
                   .catch((err: unknown) => {
@@ -179,8 +180,18 @@ export function DoorPasswordDialog() {
       <style>{`
         .door-password { position: relative; }
         .door-password h2 { padding-right: 36px; }
-        .door-password__x { position: absolute; top: 8px; right: 8px; width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; }
-        .door-password__x svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+        .cabinet-modal__card .door-password__x {
+          position: absolute; top: 8px; right: 8px; left: auto;
+          width: 44px; height: 44px; min-height: 44px; padding: 0;
+          display: grid; place-items: center; justify-self: end; align-self: start;
+          border: 0; border-radius: 50%; background: transparent; color: var(--muted);
+          font-weight: var(--fw-ui, 600); cursor: pointer;
+        }
+        .cabinet-modal__card .door-password__x svg {
+          width: 20px; height: 20px; max-width: none; display: block;
+          fill: none; stroke: currentColor; stroke-width: var(--icon-stroke);
+          stroke-linecap: round; stroke-linejoin: round;
+        }
         .door-strength { display: flex; align-items: center; gap: 10px; min-height: 28px; }
         .door-strength__mark { width: 28px; height: 28px; flex: 0 0 auto; }
         .door-strength__mark path { fill: none; stroke: rgba(var(--dark-rgb), 0.18); stroke-width: var(--icon-stroke); stroke-linecap: round; }

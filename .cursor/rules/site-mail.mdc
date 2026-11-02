@@ -20,6 +20,7 @@ Every letter the site sends uses `From: Trenio <noreply@trenio.by>`.
 - Code default: `MAIL_FROM_DEFAULT` in `src/lib/mail/send.server.ts`.
 - Server value: `MAIL_FROM=Trenio <noreply@trenio.by>` in `.env`. The envelope sender is `noreply@trenio.by`.
 - Transport: local Postfix `sendmail` (`SENDMAIL_PATH`, default `/usr/sbin/sendmail`). `MAIL_ENABLED=false` turns sending off.
+- Greeting: mail from `@trenio.by` uses the Postfix client `trenio` and announces `trenio.by`. The machine default stays the other site's name. Do not point Trenio mail back at that name.
 - Signature: OpenDKIM signs `*@trenio.by` with selector `mail`.
 - DNS, both TXT: `v=spf1 ip4:130.49.141.250 ~all` on `trenio.by`, and the matching key on `mail._domainkey.trenio.by`. Gmail accepted a letter from this From after those records were published.
 

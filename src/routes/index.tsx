@@ -619,8 +619,14 @@ body.is-search-docked .site-header__search {
 @media (max-width: 767px) {
   body.is-search-docked .site-header__search { display: none; }
 }
+@media (max-width: 767px) {
+  .search-intent { gap: 6px 12px; font-size: 13px; }
+  .intent-group { gap: 4px; }
+  .audience-tab, .format-tab { padding: 3px 10px; font-size: 13px; line-height: 1.25; }
+  .audience-tab.is-active { box-shadow: none; }
+}
 @media (max-width: 620px) {
-  .search-intent { font-size: 14px; justify-content: center; }
+  .search-intent { justify-content: center; }
   .hero-title { margin-bottom: 22px; font-size: clamp(30px, 8vw, 40px); letter-spacing: -0.05em; }
   .search-field { padding-inline: 12px; }
   .combo-input { font-size: 17px; }

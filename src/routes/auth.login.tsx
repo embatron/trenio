@@ -111,13 +111,15 @@ function LoginPage() {
             <h1 className="auth-title">С возвращением</h1>
           </div>
 
-          <TelegramWebAppAuthButton
-            onAuth={async (initData) => {
-              setError(null);
-              const result = await run(() => loginTelegramWebApp({ data: { initData } }));
-              await goAfterLogin(result);
-            }}
-          />
+          <div className="auth-webapp-slot">
+            <TelegramWebAppAuthButton
+              onAuth={async (initData) => {
+                setError(null);
+                const result = await run(() => loginTelegramWebApp({ data: { initData } }));
+                await goAfterLogin(result);
+              }}
+            />
+          </div>
 
           <div className="auth-roleswitch auth-roleswitch--3" role="tablist" aria-label="Способ входа">
             {(

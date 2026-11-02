@@ -1,11 +1,34 @@
+import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { authErrorMessage } from "@/lib/auth/errors";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { requestDoorEmailFn } from "@/lib/catalog/trainer-magic";
 
+const LOGIN_PHRASE = "Войдите в аккаунт";
+
+function DoorMailNotice({ message }: { message: string }) {
+  const index = message.indexOf(LOGIN_PHRASE);
+  if (index < 0) return message;
+  return (
+    <>
+      {message.slice(0, index)}
+      <Link to="/auth/login">{LOGIN_PHRASE}</Link>
+      {message.slice(index + LOGIN_PHRASE.length)}
+    </>
+  );
+}
+
 /** Email for an unclaimed profile opened by the short Instagram link. */
-export function TrainerDoorMail({ autoFocus = false }: { autoFocus?: boolean }) {
+export function TrainerDoorMail({
+  autoFocus = false,
+  onSent,
+  onDone,
+}: {
+  autoFocus?: boolean;
+  onSent?: () => void;
+  onDone?: () => void;
+}) {
   const requestEmail = useAuthServerFn(requestDoorEmailFn);
   const [email, setEmail] = useState("");
   const [pending, setPending] = useState(false);
@@ -19,6 +42,7 @@ export function TrainerDoorMail({ autoFocus = false }: { autoFocus?: boolean }) 
       .then((result) => {
         const message = (result as { message: string }).message;
         setSent(message);
+        onSent?.();
       })
       .catch((err: unknown) => setError(authErrorMessage(err)))
       .finally(() => setPending(false));
@@ -33,7 +57,12 @@ export function TrainerDoorMail({ autoFocus = false }: { autoFocus?: boolean }) 
       }}
     >
       {sent ? (
-        <p className="door-mail__ok" role="status">{sent}</p>
+        <>
+          <p className="door-mail__ok" id="door-mail-sent" role="status">{sent}</p>
+          {onDone ? (
+            <button type="button" autoFocus onClick={onDone}>Ок, понял</button>
+          ) : null}
+        </>
       ) : (
         <>
           <label>
@@ -53,7 +82,7 @@ export function TrainerDoorMail({ autoFocus = false }: { autoFocus?: boolean }) 
           </button>
         </>
       )}
-      {error ? <p className="door-mail__error" role="alert">{error}</p> : null}
+      {error ? <p className="door-mail__error" role="alert"><DoorMailNotice message={error} /></p> : null}
       <style>{`
         .door-mail { display: grid; gap: 12px; }
         .door-mail label { display: grid; gap: 6px; }
@@ -63,12 +92,14 @@ export function TrainerDoorMail({ autoFocus = false }: { autoFocus?: boolean }) 
         .door-mail button:disabled { opacity: 0.6; cursor: default; }
         .door-mail__ok { margin: 0; }
         .door-mail__error { margin: 0; color: var(--primary-dark); }
+        .door-mail__error a { color: var(--primary); font-weight: var(--fw-title); text-decoration: underline; text-underline-offset: 3px; }
       `}</style>
     </form>
   );
 }
 
 export function TrainerDoorMailDialog({ onClose }: { onClose: () => void }) {
+  const [sent, setSent] = useState(false);
   useEffect(() => {
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -88,15 +119,19 @@ export function TrainerDoorMailDialog({ onClose }: { onClose: () => void }) {
         className="door-mail-modal__card"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="door-mail-title"
+        aria-labelledby={sent ? "door-mail-sent" : "door-mail-title"}
         onClick={(event) => event.stopPropagation()}
       >
         <button type="button" className="door-mail-modal__x" aria-label="Закрыть" onClick={onClose}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </button>
-        <h2 id="door-mail-title">Создание аккаунта тренера</h2>
-        <p>Введите свой e-mail. На него придёт ссылка сразу с доступом в кабинет, и создание аккаунта будет завершено. Если письма нет, проверьте папку «Спам».</p>
-        <TrainerDoorMail autoFocus />
+        {sent ? null : (
+          <>
+            <h2 id="door-mail-title">Создание аккаунта тренера</h2>
+            <p>Введите свой e-mail. На него придёт ссылка сразу с доступом в кабинет, и создание аккаунта будет завершено. Если письма нет, проверьте папку «Спам».</p>
+          </>
+        )}
+        <TrainerDoorMail autoFocus onSent={() => setSent(true)} onDone={onClose} />
       </div>
       <style>{`
         .door-mail-modal { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: rgba(var(--dark-rgb), 0.45); }

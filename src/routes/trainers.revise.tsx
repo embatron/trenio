@@ -1,4 +1,5 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 
 import { AuthStyles } from "@/components/auth-styles";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
@@ -25,6 +26,8 @@ export const Route = createFileRoute("/trainers/revise")({
 
 function RevisePage() {
   const loaded = Route.useLoaderData();
+  const navigate = useNavigate();
+  const [sent, setSent] = useState(false);
   return (
     <div className="auth-page">
       <AuthStyles />
@@ -33,9 +36,19 @@ function RevisePage() {
         <div className="auth-card">
           {loaded ? (
             <>
-              <h1 className="auth-title">Создание аккаунта тренера</h1>
-              <p className="auth-sub">Введите свой e-mail. На него придёт ссылка сразу с доступом в кабинет, и создание аккаунта будет завершено. Если письма нет, проверьте папку «Спам».</p>
-              <TrainerDoorMail autoFocus />
+              {sent ? null : (
+                <>
+                  <h1 className="auth-title">Создание аккаунта тренера</h1>
+                  <p className="auth-sub">Введите свой e-mail. На него придёт ссылка сразу с доступом в кабинет, и создание аккаунта будет завершено. Если письма нет, проверьте папку «Спам».</p>
+                </>
+              )}
+              <TrainerDoorMail
+                autoFocus
+                onSent={() => setSent(true)}
+                onDone={() => {
+                  void navigate({ to: "/trainers/$slug", params: { slug: loaded.slug } });
+                }}
+              />
             </>
           ) : (
             <>

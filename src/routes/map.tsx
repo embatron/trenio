@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { CatalogEmpty } from "@/components/catalog-empty";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
@@ -20,7 +21,6 @@ import { MAP_CRUMB, mapPageHead } from "@/lib/seo/pages";
 import { TRAINER_FORMAT_OPTIONS } from "@/lib/catalog/published-trainers";
 import { listMapAreaFn, type MapAreaFeature, type MapTrainer } from "@/lib/catalog/map-trainers";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
-import { TRAINER_INVITE_LINE } from "@/lib/catalog/trainer-welcome";
 import { resolveVisitorPointFn, type VisitorPoint } from "@/lib/catalog/visitor-place";
 import { reportClientEvent } from "@/lib/log/client-reporter";
 import { pluralRu } from "@/lib/ru-plural";
@@ -322,9 +322,6 @@ export function CatalogMapScreen({
             ? "В этом направлении никого нет"
             : "На карте пока нет мест с координатами"
     : "В этой области карты никого нет";
-  const firstInSection = matched === 0 && (
-    mode === "search" || selectedSports.length > 0 || extraActive > 0
-  );
 
   useEffect(() => {
     if (!frame) return;
@@ -763,19 +760,19 @@ export function CatalogMapScreen({
                     {Array.from({ length: 6 }, (_, index) => <div key={index} className="map-skeleton" />)}
                   </div>
                 ) : rows.length === 0 ? (
-                  <div className="cat-empty">
-                    <h3>{loadError ? "Не удалось загрузить тренеров" : emptyTitle}</h3>
-                    {loadError ? (
+                  loadError ? (
+                    <div className="cat-empty">
+                      <h3>Не удалось загрузить тренеров</h3>
                       <p>Проверьте сеть и подвиньте карту ещё раз.</p>
-                    ) : firstInSection ? (
-                      <p>{TRAINER_INVITE_LINE}</p>
-                    ) : matched != null && matched > 0 ? (
+                    </div>
+                  ) : matched != null && matched > 0 ? (
+                    <div className="cat-empty">
+                      <h3>{emptyTitle}</h3>
                       <p>Отдалите карту или сдвиньте её — тренеры за краем кадра появятся здесь.</p>
-                    ) : null}
-                    {firstInSection && !loadError ? (
-                      <Link to="/join/trainer" className="map-join">Стать первым тренером в этом разделе</Link>
-                    ) : null}
-                  </div>
+                    </div>
+                  ) : (
+                    <CatalogEmpty title={emptyTitle} />
+                  )
                 ) : (
                   <>
                     <div className={`map-people${loading ? " is-pending" : ""}`}>
@@ -828,8 +825,6 @@ const PAGE_CSS = `
 .map-hero p { margin: 0; font-size: var(--fs-meta); line-height: 1.45; color: var(--muted); max-width: 68ch; }
 .map-hero em { font-style: normal; color: var(--primary); }
 .map-hero__search { width: 100%; margin-top: 8px; }
-.map-join { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 22px; border-radius: var(--radius-control); background: var(--primary); color: #fff; font-size: 14px; font-weight: var(--fw-title); text-decoration: none; text-align: center; }
-.map-join:hover { background: var(--primary-dark); }
 @media (min-width: 768px) {
   .map-hero__search { display: none; }
 }
@@ -926,8 +921,11 @@ const PAGE_CSS = `
 .cat-empty { padding: 28px 16px; text-align: center; border-radius: var(--card-radius); border: 1px solid rgba(var(--primary-rgb), 0.16); background: rgba(var(--primary-rgb), 0.04); display: grid; gap: 8px; justify-items: center; }
 .cat-empty h3 { margin: 0; font-size: 20px; font-weight: var(--fw-heading); color: var(--dark); }
 .cat-empty p { margin: 0; color: var(--muted); font-size: 14px; }
-@media (max-width: 640px) {
-  .map-join { width: 100%; }
+@media (max-width: 767px) {
+  .map-more__applied li { min-height: 32px; padding-left: 10px; }
+  .map-more__applied button { width: 32px; height: 32px; }
+  .map-more__pill, .map-tax__btn { min-height: 32px; padding: 4px 10px; font-size: 13px; line-height: 1.25; }
+  .map-tax__btn { padding-left: 6px; }
 }
 @media (min-width: 720px) {
   .map-people { grid-template-columns: repeat(3, minmax(0, 1fr)); }
