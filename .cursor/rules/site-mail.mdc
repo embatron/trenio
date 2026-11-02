@@ -20,9 +20,19 @@ Every letter the site sends uses `From: Trenio <noreply@trenio.by>`.
 - Code default: `MAIL_FROM_DEFAULT` in `src/lib/mail/send.server.ts`.
 - Server value: `MAIL_FROM=Trenio <noreply@trenio.by>` in `.env`. The envelope sender is `noreply@trenio.by`.
 - Transport: local Postfix `sendmail` (`SENDMAIL_PATH`, default `/usr/sbin/sendmail`). `MAIL_ENABLED=false` turns sending off.
-- Greeting: mail from `@trenio.by` uses the Postfix client `trenio` and announces `trenio.by`. The machine default stays the other site's name. Do not point Trenio mail back at that name.
-- Signature: OpenDKIM signs `*@trenio.by` with selector `mail`.
-- DNS, both TXT: `v=spf1 ip4:130.49.141.250 ~all` on `trenio.by`, and the matching key on `mail._domainkey.trenio.by`. Gmail accepted a letter from this From after those records were published.
+- Signature: OpenDKIM signs `*@trenio.by` with selector `mail`. The same daemon signs `bronxgym.by` with its own key. Do not reuse one key for both domains.
+- DNS for `trenio.by`: SPF `v=spf1 ip4:130.49.141.250 ~all`, DKIM at `mail._domainkey.trenio.by`, DMARC at `_dmarc.trenio.by` (`v=DMARC1; p=none; rua=mailto:trenioby@gmail.com`). Do not add a second SPF record.
+
+## Shared Postfix
+
+One host sends for both domains. The envelope domain chooses the path. Do not merge them.
+
+| Envelope | Postfix client | Greeting |
+| --- | --- | --- |
+| `@trenio.by` | `trenio` | `trenio.by` |
+| `@bronxgym.by` | `bronxgym` | `mail.bronxgym.by` |
+
+The map is `/etc/postfix/sender_transport`. A Trenio letter must not go out through the bronxgym client, and a BronxGym letter must not announce `trenio.by`. The public IP still has no reverse record, so that gap is not fixed by this split.
 
 Do not send as `trenioby@gmail.com`, `hello@trenio.by`, or `noreply@bronxgym.by`. Gmail rejects mail that claims to be from `@gmail.com` and comes from this server.
 
