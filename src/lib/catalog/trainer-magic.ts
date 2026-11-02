@@ -840,18 +840,22 @@ export const setDoorPasswordFn = createServerFn({ method: "POST" })
     try {
       const letter = renderLetter({
         service: true,
-        title: "Аккаунт создан",
+        title: "Поздравляем!",
+        lead: "Мы создали ваш аккаунт. Рады, что вы теперь с нами.",
         person: {
           name: [owned.firstName, owned.lastName].filter(Boolean).join(" ") || "Тренер",
           avatarUrl: owned.avatarPath,
           caption: "Ваш профиль",
         },
-        lines: ["Пароль сохранён. Кабинет тренера открыт."],
+        lines: [
+          "Пароль сохранён, кабинет тренера открыт.",
+          "Дальше работаем вместе: профиль, люди, которые вас ищут, и всё, что захочется поправить. Если появится вопрос, просто напишите нам.",
+        ],
         action: { href: `${requestOrigin()}/me`, label: "Открыть кабинет" },
       });
       await sendMail({
         to: [context.user.email],
-        subject: "Аккаунт создан · trenio.by",
+        subject: "Поздравляем, аккаунт создан · trenio.by",
         text: letter.text,
         html: letter.html,
       });

@@ -7,9 +7,15 @@ import { addAdminTrainerCertificateFn, addAdminTrainerPhotoFn, removeAdminTraine
 import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { confirmAccountPhoneCodeFn, confirmTrainerContactEmailCodeFn, requestAccountPhoneCodeFn, requestTrainerContactEmailCodeFn } from "@/lib/auth/functions";
 import { authErrorMessage } from "@/lib/auth/errors";
-import { reviewPlainText } from "@/lib/catalog/review-html";
-import { OWN_PROFILE_STATUSES, saveOwnTrainerProfileFn, type OwnProfileStatus, type OwnTrainerProfile } from "@/lib/catalog/trainer-own";
+import { reviewPlainText, reviewTextLength } from "@/lib/catalog/review-html";
+import { NICK_SUPPORT_MAX, OWN_PROFILE_STATUSES, requestNickSupportFn, saveOwnTrainerProfileFn, type OwnProfileStatus, type OwnTrainerProfile } from "@/lib/catalog/trainer-own";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
+
+const PUBLICATION_LABEL: Record<OwnProfileStatus, string> = {
+  published: "Опубликован",
+  hidden: "Скрыт",
+  archived: "Снят с публикации",
+};
 
 export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) {
   const router = useRouter();
@@ -24,9 +30,11 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
   const confirmPhone = useAuthServerFn(confirmAccountPhoneCodeFn);
   const requestContactEmail = useAuthServerFn(requestTrainerContactEmailCodeFn);
   const confirmContactEmail = useAuthServerFn(confirmTrainerContactEmailCodeFn);
+  const requestNick = useAuthServerFn(requestNickSupportFn);
   const [form, setForm] = useState(profile);
-  const [publication, setPublication] = useState<OwnProfileStatus>("published");
+  const [publication, setPublication] = useState<OwnProfileStatus>(profile.status);
   const [pending, setPending] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
   useEffect(() => {
     setForm((current) => ({
       ...current,
@@ -127,16 +135,27 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
               void router.invalidate();
             },
           }}
+          onNickSupport={() => setSupportOpen(true)}
           leading={(
-            <label>
-              <span>Статус публикации</span>
-              <select value={publication} onChange={(event) => setPublication(event.target.value as OwnProfileStatus)}>
-                {OWN_PROFILE_STATUSES.map((status) => (
-                  <option key={status} value={status}>{status === "published" ? "Опубликован" : "Скрыт"}</option>
-                ))}
-              </select>
-              <p className="cabinet-note">При входе в настройки статус — «Опубликован». Его можно сменить: скрытый профиль не показывается в каталоге.</p>
-            </label>
+            <fieldset className="publish-pick">
+              <legend>Статус публикации</legend>
+              <div className="publish-pick__row" role="group" aria-label="Статус публикации">
+                {OWN_PROFILE_STATUSES.map((status) => {
+                  const on = publication === status;
+                  return (
+                    <label key={status} className={`publish-pick__option is-${status}${on ? " is-on" : ""}`}>
+                      <input
+                        type="checkbox"
+                        checked={on}
+                        onChange={() => setPublication(status)}
+                      />
+                      <span className="publish-pick__box" aria-hidden="true" />
+                      <span>{PUBLICATION_LABEL[status]}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </fieldset>
           )}
           emailConfirm={{
             verified: form.emailVerified,
@@ -150,6 +169,90 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
         <button className="cabinet-form__submit" type="submit" disabled={pending}>{pending ? "Сохранение…" : "Сохранить профиль"}</button>
       </form>
       {popup ? <CabinetNotice title={popup.title} message={popup.message} onClose={() => setPopup(null)} /> : null}
+      {supportOpen ? (
+        <NickSupportDialog
+          nick={profile.slug}
+          onSend={(request) => requestNick({ data: { request } }) as Promise<{ message: string }>}
+          onClose={() => setSupportOpen(false)}
+        />
+      ) : null}
     </>
+  );
+}
+
+function NickSupportDialog({
+  nick,
+  onSend,
+  onClose,
+}: {
+  nick: string;
+  onSend: (request: string) => Promise<{ message: string }>;
+  onClose: () => void;
+}) {
+  const [request, setRequest] = useState("");
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+  const [sent, setSent] = useState("");
+  const length = reviewTextLength(request);
+  const over = length > NICK_SUPPORT_MAX;
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div className="cabinet-modal" onClick={onClose}>
+      <div
+        className="cabinet-modal__card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="nick-support-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        {sent ? (
+          <>
+            <h2 id="nick-support-title">Запрос отправлен</h2>
+            <p>{sent}</p>
+            <button type="button" onClick={onClose}>Закрыть</button>
+          </>
+        ) : (
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              const text = request.trim();
+              if (!text || over) return;
+              setPending(true);
+              setError("");
+              void onSend(text)
+                .then((result) => setSent(result.message))
+                .catch((err: unknown) => setError(authErrorMessage(err)))
+                .finally(() => setPending(false));
+            }}
+          >
+            <h2 id="nick-support-title">Смена ника</h2>
+            <p>Сейчас адрес /trainers/{nick}. Напишите, какой ник нужен.</p>
+            <label>
+              <span>Запрос</span>
+              <textarea
+                value={request}
+                onChange={(event) => setRequest(event.target.value)}
+                maxLength={4000}
+                required
+                autoFocus
+              />
+            </label>
+            <p className={over ? "cabinet-form__error" : "cabinet-note"}>{length}/{NICK_SUPPORT_MAX}</p>
+            {error ? <p className="cabinet-form__error">{error}</p> : null}
+            <div className="cabinet-modal__actions">
+              <button type="submit" disabled={pending || !request.trim() || over}>{pending ? "Отправка…" : "Отправить"}</button>
+              <button type="button" className="cabinet-form__ghost" onClick={onClose}>Закрыть</button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
   );
 }

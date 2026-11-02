@@ -25,7 +25,9 @@ import {
 } from "@/lib/auth/functions";
 import type { TelegramWidgetUser } from "@/lib/auth/telegram-widget";
 import type { MailKind } from "@/lib/mail/kinds";
-import { isStaff, ROLE_LABELS } from "@/lib/auth/roles";
+import { BECOME_TRAINER_MAX, requestBecomeTrainerFn } from "@/lib/account/become-trainer";
+import { reviewTextLength } from "@/lib/catalog/review-html";
+import { hasAnyRole, isStaff, ROLE_LABELS } from "@/lib/auth/roles";
 import type { PublicUser } from "@/lib/auth/schemas";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 
@@ -163,11 +165,14 @@ export function AccountProfileForm({
   const confirmPhone = useAuthServerFn(confirmAccountPhoneCodeFn);
   const uploadAvatar = useAuthServerFn(setAccountAvatarFn);
   const removeAccount = useAuthServerFn(deleteAccountFn);
+  const requestTrainer = useAuthServerFn(requestBecomeTrainerFn);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
   const [deleteError, setDeleteError] = useState("");
   const [deletePending, setDeletePending] = useState(false);
   const canDelete = !isStaff(user.roles);
+  const canBecomeTrainer = !hasAnyRole(user.roles, ["trainer", "club", "admin", "superadmin"]);
+  const [trainerOpen, setTrainerOpen] = useState(false);
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName ?? "");
   const [email, setEmail] = useState(user.email);
@@ -535,6 +540,13 @@ export function AccountProfileForm({
         <button className="cabinet-form__submit" type="submit" disabled={pending}>
           {pending ? "Сохранение…" : "Сохранить"}
         </button>
+        {canBecomeTrainer ? (
+          <p className="cabinet-note">
+            <button type="button" className="cabinet-text-link" onClick={() => setTrainerOpen(true)}>
+              Стать тренером
+            </button>
+          </p>
+        ) : null}
       </form>
       <TelegramAccountLink user={user} onOk={ok} onFail={fail} />
       <form
@@ -716,6 +728,87 @@ export function AccountProfileForm({
       {popup ? (
         <CabinetNotice title={popup.title} message={popup.message} onClose={() => setPopup(null)} />
       ) : null}
+      {trainerOpen ? (
+        <BecomeTrainerDialog
+          onSend={(request) => requestTrainer({ data: { request } }) as Promise<{ message: string }>}
+          onClose={() => setTrainerOpen(false)}
+        />
+      ) : null}
     </>
+  );
+}
+
+function BecomeTrainerDialog({
+  onSend,
+  onClose,
+}: {
+  onSend: (request: string) => Promise<{ message: string }>;
+  onClose: () => void;
+}) {
+  const [request, setRequest] = useState("");
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+  const [sent, setSent] = useState("");
+  const length = reviewTextLength(request);
+  const over = length > BECOME_TRAINER_MAX;
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div className="cabinet-modal" onClick={onClose}>
+      <div
+        className="cabinet-modal__card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="become-trainer-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        {sent ? (
+          <>
+            <h2 id="become-trainer-title">Запрос отправлен</h2>
+            <p>{sent}</p>
+            <button type="button" onClick={onClose}>Закрыть</button>
+          </>
+        ) : (
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              const text = request.trim();
+              if (!text || over) return;
+              setPending(true);
+              setError("");
+              void onSend(text)
+                .then((result) => setSent(result.message))
+                .catch((err: unknown) => setError(authErrorMessage(err)))
+                .finally(() => setPending(false));
+            }}
+          >
+            <h2 id="become-trainer-title">Стать тренером</h2>
+            <p>Напишите, чем вы занимаетесь. Мы ответим на почту.</p>
+            <label>
+              <span>Запрос</span>
+              <textarea
+                value={request}
+                onChange={(event) => setRequest(event.target.value)}
+                maxLength={4000}
+                required
+                autoFocus
+              />
+            </label>
+            <p className={over ? "cabinet-form__error" : "cabinet-note"}>{length}/{BECOME_TRAINER_MAX}</p>
+            {error ? <p className="cabinet-form__error">{error}</p> : null}
+            <div className="cabinet-modal__actions">
+              <button type="submit" disabled={pending || !request.trim() || over}>{pending ? "Отправка…" : "Отправить"}</button>
+              <button type="button" className="cabinet-form__ghost" onClick={onClose}>Закрыть</button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
   );
 }

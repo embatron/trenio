@@ -29,6 +29,8 @@ Sport suggestions come from `src/lib/catalog/sport-taxonomy.ts` (category labels
 
 The city field shows the detected or saved settlement. When none is known, it shows `Минск`. Do not pick another fallback city. Sport category filters use that same city.
 
+`/map` opens on the IP point only when that IP is in Belarus. Any other country, or a missing point, opens on Minsk. A coordinate inside the Belarus rectangle does not count when the country is not Belarus.
+
 ```ts
 // wrong: ask a third party for the city
 const city = await fetch(`https://ipapi.co/${ip}/city`);

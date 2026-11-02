@@ -204,7 +204,7 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
                     <option key={status} value={status}>{TRAINER_PUBLISH_LABEL[status]}</option>
                   ))}
                 </select>
-                <p className="cabinet-note">Тренер сам меняет статус в настройках профиля. При входе туда он по умолчанию опубликован. Здесь можно поставить и другие статусы.</p>
+                <p className="cabinet-note">Тренер сам выбирает статус в настройках профиля: опубликован, скрыт или снят с публикации. Здесь можно поставить и другие статусы.</p>
               </label>
             )}
           />

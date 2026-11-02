@@ -9,13 +9,13 @@ export type TrainerRatingSnapshot = {
 
 /** Caps a trainer can read. The four weights add up to 100. */
 export const POPULARITY_LIMITS = {
-  rating: 50,
-  reviews: 25,
-  views: 15,
-  saves: 10,
+  rating: 40,
+  reviews: 20,
+  views: 25,
+  saves: 15,
   reviewCap: 20,
-  viewCap: 30,
-  saveCap: 10,
+  viewCap: 15,
+  saveCap: 5,
 } as const;
 
 export type PopularityParts = {
@@ -63,8 +63,8 @@ function logPoints(value: number, cap: number, max: number) {
 
 /**
  * Catalog rank from 0 to 100.
- * Rating quality is half. Review volume, monthly views, and saves fill the rest
- * with diminishing returns, the same shape review catalogs use for vote volume.
+ * Rating quality is still the largest part. Monthly profile visits and saves
+ * weigh more than review volume, with diminishing returns.
  */
 export function popularityParts(item: {
   rating: string;

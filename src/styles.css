@@ -330,14 +330,42 @@ html.is-staff-layout {
   font-weight: var(--fw-title); letter-spacing: 0.02em; text-transform: uppercase;
   box-shadow: 0 6px 18px rgba(var(--dark-rgb), 0.08);
 }
-.trainer-card__save {
-  position: absolute; top: 8px; right: 8px; width: 44px; height: 44px; border: 0; border-radius: 50%;
+.trainer-card__actions {
+  position: absolute; top: 8px; right: 8px; z-index: 2;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.trainer-card__save,
+.trainer-card__share {
+  width: 44px; height: 44px; border: 0; border-radius: 50%;
   background: rgba(255, 255, 255, 0.92); color: var(--muted); cursor: pointer;
   display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb), 0.08);
 }
-.trainer-card__save.is-saved { color: var(--primary); }
-.trainer-card__save svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.trainer-card__save.is-saved,
+.trainer-card__share:hover,
+.trainer-card__share:focus-visible { color: var(--primary); }
+.trainer-card__save svg,
+.trainer-card__share svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .trainer-card__save.is-saved svg { fill: currentColor; }
+.copy-toast {
+  position: fixed; left: 50%; bottom: max(20px, env(safe-area-inset-bottom)); z-index: 400;
+  margin: 0; padding: 12px 18px; border-radius: 999px; background: #00c853; color: #063318;
+  font-size: 14px; font-weight: var(--fw-title); line-height: 1.2; white-space: nowrap;
+  box-shadow: 0 14px 36px rgba(0, 140, 60, 0.28); pointer-events: none;
+  animation: copy-toast 1.4s cubic-bezier(0.22, 0.9, 0.24, 1) forwards;
+}
+@keyframes copy-toast {
+  0% { transform: translate(-50%, 140%); opacity: 0; }
+  18% { transform: translate(-50%, 0); opacity: 1; }
+  55% { transform: translate(-50%, 0); opacity: 1; }
+  100% { transform: translate(-50%, 160%); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .copy-toast { animation: copy-toast-fade 1.4s linear forwards; }
+  @keyframes copy-toast-fade {
+    0%, 62% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, 0); }
+  }
+}
 .trainer-card__body { display: flex; flex-direction: column; gap: 8px; padding: 16px 16px 18px; }
 .trainer-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .trainer-name { display: flex; flex-direction: row; flex-wrap: nowrap; align-items: baseline; gap: 0.35em; min-width: 0; }
@@ -360,7 +388,6 @@ html.is-staff-layout {
 .trainer-card__hit, .sr-card__hit, .club-trainer-card__hit {
   position: absolute; inset: 0; z-index: 1;
 }
-.trainer-card__save { z-index: 2; }
 .trainer-contacts { position: relative; z-index: 2; }
 .trainer-contacts { display: inline-flex; align-items: center; margin-left: auto; }
 .trainer-contacts__link {

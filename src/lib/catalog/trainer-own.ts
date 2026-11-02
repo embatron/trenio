@@ -2,14 +2,20 @@ import { randomBytes } from "node:crypto";
 import path from "node:path";
 
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { requireAuthMiddleware } from "@/auth/middleware";
+import { clientIpFromHeaders } from "@/auth/request-meta";
+import { consumeRateLimit, RATE_LIMITED_MESSAGE } from "@/auth/rate-limit";
 import { getDb } from "@/db";
 import { trainerProfiles, users } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
 import { markLogged, writeLog } from "@/lib/log/logger";
+import { renderLetter } from "@/lib/mail/letter";
+import { sendMail } from "@/lib/mail/send.server";
+import { SITE_EMAIL } from "@/lib/seo/site";
 import { formatBelarusPhone } from "@/lib/auth/phone";
 import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
 import { normalizeEmail } from "@/auth/password";
@@ -19,7 +25,7 @@ import { assertBelarusCity } from "@/lib/catalog/belarus-city.server";
 import { readCertificates, type TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { effectiveAudiences, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { joinTrainerName, trainerNameParts } from "@/lib/catalog/trainer-name";
-import { editorHtml, reviewPlainText, sanitizeReviewHtml } from "@/lib/catalog/review-html";
+import { editorHtml, reviewPlainText, reviewTextLength, sanitizeReviewHtml } from "@/lib/catalog/review-html";
 import { writeImageSet } from "@/lib/images/store";
 import { MAX_TRAINER_SPORTS, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
@@ -63,10 +69,24 @@ export type OwnTrainerProfile = {
   telegramVerified: boolean;
   offerAccepted: boolean;
   privacyAccepted: boolean;
+  status: OwnProfileStatus;
 };
 
-export const OWN_PROFILE_STATUSES = ["published", "hidden"] as const;
+export const OWN_PROFILE_STATUSES = ["published", "hidden", "archived"] as const;
 export type OwnProfileStatus = (typeof OWN_PROFILE_STATUSES)[number];
+export const NICK_SUPPORT_MAX = 1000;
+
+/** Draft has no trainer-facing box. The first save can publish it. */
+export function ownFacingStatus(status: string | null | undefined): OwnProfileStatus {
+  if (status === "hidden" || status === "archived" || status === "published") return status;
+  return "published";
+}
+
+function ownStatusMessage(status: OwnProfileStatus) {
+  if (status === "published") return "Профиль опубликован.";
+  if (status === "hidden") return "Профиль скрыт. В каталоге его нет.";
+  return "Профиль снят с публикации.";
+}
 
 const emptyProfile: OwnTrainerProfile = {
   firstName: "",
@@ -95,6 +115,7 @@ const emptyProfile: OwnTrainerProfile = {
   telegramVerified: false,
   offerAccepted: false,
   privacyAccepted: false,
+  status: "published",
 };
 
 const saveSchema = z.object({
@@ -186,6 +207,7 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
       telegramVerified: row.telegramVerifiedAt != null,
       offerAccepted: row.offerAcceptedAt != null,
       privacyAccepted: row.privacyAcceptedAt != null,
+      status: ownFacingStatus(row.status),
     };
   });
 
@@ -317,17 +339,14 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       domain: "form",
       action: "form.trainer_profile",
       outcome: "success",
-      message: data.status === "published" ? "Профиль опубликован." : "Профиль скрыт из каталога.",
+      message: ownStatusMessage(data.status),
       actorUserId: context.user.id,
       subject: context.user.email,
       target: profileSlug,
     });
     return {
       ok: true as const,
-      message: savedWithMapNotice(
-        data.status === "published" ? "Профиль опубликован." : "Профиль скрыт. В каталоге его нет.",
-        places,
-      ),
+      message: savedWithMapNotice(ownStatusMessage(data.status), places),
       avatarPath,
     };
     } catch (error) {
@@ -376,6 +395,109 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       markLogged(failure);
       throw failure;
     }
+  });
+
+export const requestNickSupportFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(z.object({
+    request: z.string().trim().min(1).max(4000),
+  }))
+  .handler(async ({ data, context }) => {
+    assertTrainer(context.user.roles);
+    const request = data.request.trim();
+    const chars = reviewTextLength(request);
+    if (!reviewPlainText(request) || chars < 1) {
+      throw new AuthError("Напишите, какой ник нужен.", "VALIDATION");
+    }
+    if (chars > NICK_SUPPORT_MAX) {
+      throw new AuthError("Запрос не длиннее 1000 символов.", "VALIDATION");
+    }
+    const ip = clientIpFromHeaders(getRequest().headers.get("x-real-ip"));
+    const byUser = consumeRateLimit(`support:nick:${context.user.id}`, 60 * 60_000, 5);
+    const byIp = byUser.ok ? consumeRateLimit(`support:nick:ip:${ip}`, 60 * 60_000, 8) : byUser;
+    if (!byUser.ok || !byIp.ok) {
+      void writeLog({
+        level: "warn",
+        domain: "form",
+        action: "form.nick_support",
+        outcome: "denied",
+        message: RATE_LIMITED_MESSAGE,
+        actorUserId: context.user.id,
+        subject: context.user.email,
+      });
+      throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
+    }
+    const [profile] = await getDb()
+      .select({
+        slug: trainerProfiles.slug,
+        firstName: trainerProfiles.firstName,
+        lastName: trainerProfiles.lastName,
+        fullName: trainerProfiles.fullName,
+      })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.ownerUserId, context.user.id))
+      .limit(1);
+    if (!profile?.slug) {
+      void writeLog({
+        level: "warn",
+        domain: "form",
+        action: "form.nick_support",
+        outcome: "denied",
+        message: "Карточка тренера не привязана.",
+        actorUserId: context.user.id,
+        subject: context.user.email,
+      });
+      throw new AuthError("Карточка в каталоге к этому аккаунту пока не привязана.", "VALIDATION");
+    }
+    const name = joinTrainerName(profile.firstName || context.user.firstName, profile.lastName || context.user.lastName)
+      || profile.fullName
+      || context.user.email;
+    const letter = renderLetter({
+      title: "Запрос в поддержку",
+      lead: "Смена ника",
+      service: true,
+      lines: [
+        `Кто: ${name}`,
+        `Почта: ${context.user.email}`,
+        `Сейчас: /trainers/${profile.slug}`,
+      ],
+      quote: request,
+    });
+    try {
+      await sendMail({
+        to: [SITE_EMAIL],
+        subject: "[SUPPORT REQUEST]",
+        text: letter.text,
+        html: letter.html,
+      });
+    } catch (error) {
+      void writeLog({
+        level: "error",
+        domain: "form",
+        action: "form.nick_support",
+        outcome: "failure",
+        message: "Запрос на смену ника не отправился.",
+        actorUserId: context.user.id,
+        subject: context.user.email,
+        target: profile.slug,
+        error,
+      });
+      const failure = new AuthError("Не удалось отправить запрос. Попробуйте ещё раз.", "VALIDATION");
+      markLogged(failure);
+      throw failure;
+    }
+    void writeLog({
+      level: "info",
+      domain: "form",
+      action: "form.nick_support",
+      outcome: "success",
+      message: "Запрос на смену ника отправлен.",
+      actorUserId: context.user.id,
+      subject: context.user.email,
+      target: profile.slug,
+      context: { chars },
+    });
+    return { ok: true as const, message: "Запрос отправлен. Мы ответим на почту." };
   });
 
 export const saveOwnTrainerContactsFn = createServerFn({ method: "POST" })

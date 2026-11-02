@@ -899,10 +899,13 @@ const PAGE_CSS = `
 .map-people .trainer-card__sport { font-size: 12px; line-height: 1.3; }
 .map-people .trainer-card__price { font-size: 13px; }
 .map-people .trainer-card__footer { margin-top: 0; padding-top: 8px; }
-.map-people .trainer-card__save {
-  top: 2px; right: 2px; background: transparent; box-shadow: none;
+.map-people .trainer-card__actions { top: 2px; right: 2px; gap: 0; }
+.map-people .trainer-card__save,
+.map-people .trainer-card__share {
+  background: transparent; box-shadow: none;
 }
-.map-people .trainer-card__save svg {
+.map-people .trainer-card__save svg,
+.map-people .trainer-card__share svg {
   width: 28px; height: 28px; padding: 7px; border-radius: 50%; box-sizing: border-box;
   background: rgba(255, 255, 255, 0.92); box-shadow: 0 4px 12px rgba(var(--dark-rgb), 0.12);
 }

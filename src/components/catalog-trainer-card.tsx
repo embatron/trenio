@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { FavoriteButton } from "@/components/favorite-button";
+import { ShareProfileButton } from "@/components/share-profile";
 import { TrainerContactIcons } from "@/components/messages/trainer-contact-icons";
 import { PhotoImage } from "@/components/photo-image";
 import { TrainerName } from "@/components/trainer-name";
@@ -47,7 +48,10 @@ export function CatalogTrainerCard({
       <div className="trainer-card__media">
         <PhotoImage className="trainer-card__photo" src={trainer.photo} alt={trainer.name} preset="card" width={480} height={600} loading="lazy" />
         {trainer.badge ? <span className="trainer-card__badge">{trainer.badge}</span> : null}
-        <FavoriteButton target={{ type: "trainer", slug: trainer.slug }} className="trainer-card__save" />
+        <div className="trainer-card__actions">
+          <FavoriteButton target={{ type: "trainer", slug: trainer.slug }} className="trainer-card__save" />
+          <ShareProfileButton slug={trainer.slug} className="trainer-card__share" />
+        </div>
       </div>
       <div className="trainer-card__body">
         <div className="trainer-card__head">

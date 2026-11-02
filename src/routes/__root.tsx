@@ -17,6 +17,7 @@ import { CatalogMiss } from "@/components/catalog-miss";
 import { TelegramAppChrome } from "@/components/telegram-tab-bar";
 import { FavoritesProvider } from "@/components/favorites-store";
 import { MessagesLive } from "@/components/messages/messages-live";
+import { CopyLinkToast } from "@/components/share-profile";
 import { Toaster } from "@/components/ui/sonner";
 import { getSessionFn } from "@/lib/auth/functions";
 import { unreadCountFn } from "@/lib/messages/functions";
@@ -175,6 +176,7 @@ function RootComponent() {
           <Outlet />
           <TelegramAppChrome />
           <Toaster />
+          <CopyLinkToast />
         </MessagesLive>
       </FavoritesProvider>
     </QueryClientProvider>

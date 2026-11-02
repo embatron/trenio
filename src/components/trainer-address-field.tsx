@@ -430,7 +430,7 @@ export function TrainerPlacesField({
         </button>
       ) : null}
       <p className="cabinet-note">
-        До трёх адресов. Подсказки на русском. Адрес другой страны не сохранится.
+        До трех адресов
       </p>
       {confirmIndex != null ? (
         <div className="cabinet-modal" onClick={() => setConfirmIndex(null)}>

@@ -185,7 +185,9 @@ async function detectBelarusCity(ip: string): Promise<string | null> {
 }
 
 async function detectPoint(ip: string): Promise<{ lat: number; lng: number } | null> {
-  return pointFromHit(await lookupHit(ip));
+  const hit = await lookupHit(ip);
+  if (!hit || hit.country !== "BY") return null;
+  return pointFromHit(hit);
 }
 
 function placeFromCity(city: string): CatalogPlace {
@@ -238,7 +240,7 @@ function pointResult(point: { lat: number; lng: number } | null, lookupOnClient:
   };
 }
 
-/** IP coordinates for distance sorting. The place cookie still stores only the settlement name. */
+/** Belarus IP coordinates for the map. Another country returns no point, and the map opens on Minsk. */
 export async function resolveVisitorPoint(): Promise<VisitorPoint> {
   const ip = clientPublicIp();
   if (!ip) return pointResult(null, true);

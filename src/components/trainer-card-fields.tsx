@@ -418,6 +418,7 @@ export function TrainerCardFields({
   emailConfirm,
   leading,
   nick,
+  onNickSupport,
   afterAddress,
   priceLabel = "Цена от, BYN",
   self = false,
@@ -432,6 +433,7 @@ export function TrainerCardFields({
   emailConfirm?: TrainerEmailControl;
   leading?: ReactNode;
   nick?: string;
+  onNickSupport?: () => void;
   afterAddress?: ReactNode;
   priceLabel?: string;
   self?: boolean;
@@ -463,26 +465,34 @@ export function TrainerCardFields({
         ) : (
           <p className="cabinet-note">Фото можно добавить после первого сохранения профиля.</p>
         )}
-        {self && photos ? <p className="cabinet-note">Первое фото — мой аватар.</p> : null}
       </ProfileSection>
       <ProfileSection id="trainer-main" title="Основное">
         {leading}
         {nick ? (
-          <label>
-            <span>Ник</span>
-            <input
-              className="is-locked"
-              value={nick}
-              readOnly
-              required
-              aria-readonly="true"
-              autoComplete="username"
-            />
+          <div>
+            <label>
+              <span>Ник</span>
+              <input
+                className="is-locked"
+                value={nick}
+                readOnly
+                required
+                aria-readonly="true"
+                autoComplete="username"
+              />
+            </label>
             <p className="cabinet-note">
-              Ник совпадает с Instagram: /trainers/{nick}. Сменить его можно только по запросу в
-              поддержку.
+              Ник совпадает с Instagram: /trainers/{nick}. Сменить его можно только по{" "}
+              {onNickSupport ? (
+                <button type="button" className="cabinet-text-link" onClick={onNickSupport}>
+                  запросу в поддержку
+                </button>
+              ) : (
+                "запросу в поддержку"
+              )}
+              .
             </p>
-          </label>
+          </div>
         ) : null}
         {self ? null : (
           <div className="cabinet-form__row">

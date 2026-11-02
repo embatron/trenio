@@ -60,7 +60,6 @@ function AccountLayout() {
   return (
     <CabinetShell
       title="Личный кабинет"
-      lede="Ваши сообщения, отзывы и сохранённые карточки."
       firstName={user.firstName}
       lastName={user.lastName}
       role={role}

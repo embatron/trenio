@@ -27,6 +27,7 @@ import {
 } from "@/lib/catalog/trainer-reviews";
 import { CabinetNotice } from "@/components/cabinet";
 import { FavoriteButton } from "@/components/favorite-button";
+import { ShareProfileButton } from "@/components/share-profile";
 import { TrainerAddressMap } from "@/components/trainer-address-map";
 import { TrainerContactIcons } from "@/components/messages/trainer-contact-icons";
 import { getPublicTrainerContactsFn, type PublicTrainerContacts } from "@/lib/catalog/trainer-contacts";
@@ -246,9 +247,11 @@ const CSS = `
 .photo-slider__slide { flex: 0 0 100%; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; }
 .photo-slider__slide img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; user-select: none; }
 .photo-slider__badge { position: absolute; top: 12px; left: 12px; z-index: 2; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,0.94); color: var(--primary-dark); font-size: 11px; font-weight: var(--fw-title); letter-spacing: 0.02em; text-transform: uppercase; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
-.profile-save { position: absolute; top: 10px; right: 10px; z-index: 2; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255,255,255,0.92); color: var(--muted); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
-.profile-save.is-saved { color: var(--primary); }
+.profile-actions { position: absolute; top: 10px; right: 10px; z-index: 2; display: flex; flex-direction: column; gap: 8px; }
+.profile-save, .profile-share { width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255,255,255,0.92); color: var(--muted); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
+.profile-save.is-saved, .profile-share:hover, .profile-share:focus-visible { color: var(--primary); }
 .profile-save svg { width: 20px; height: 20px; fill: currentColor; }
+.profile-share svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .photo-slider__nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.92); color: var(--dark); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); z-index: 2; }
 .photo-slider__nav--prev { left: 10px; } .photo-slider__nav--next { right: 10px; }
 .photo-slider__nav svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
@@ -806,7 +809,10 @@ function TrainerPage() {
                     ))}
                   </div>
                   {t.badge && <span className="photo-slider__badge">{t.badge}</span>}
-                  <FavoriteButton target={{ type: "trainer", slug: t.slug }} className="profile-save" />
+                  <div className="profile-actions">
+                    <FavoriteButton target={{ type: "trainer", slug: t.slug }} className="profile-save" />
+                    <ShareProfileButton slug={t.slug} className="profile-share" />
+                  </div>
                   {photos.length > 1 ? (
                     <>
                       <button className="photo-slider__nav photo-slider__nav--prev" type="button" aria-label="Предыдущее фото" onClick={() => showPhoto(photoIdx - 1)}>
