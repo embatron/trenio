@@ -29,7 +29,7 @@ import {
 import { verifyTelegramWebAppInitData } from "@/auth/telegram-webapp";
 
 const TELEGRAM_NOT_LINKED =
-  "Этот Telegram ещё не привязан к аккаунту trenio.by. Войдите по e-mail и подключите его в профиле.";
+  "Этот Telegram ещё не привязан. Войдите по почте или телефону и привяжите его в настройках.";
 
 const SMS_UNAVAILABLE = "Вход по SMS временно недоступен. Войдите по e-mail.";
 const SMS_RESET_UNAVAILABLE = "Сброс по SMS временно недоступен.";

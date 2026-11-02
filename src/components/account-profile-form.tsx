@@ -2,6 +2,8 @@ import { useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { AvatarCrop } from "@/components/avatar-crop";
+import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
+import { TelegramWebAppAuthButton } from "@/components/auth/telegram-webapp-auth-button";
 import { BelarusPhoneInput } from "@/components/belarus-phone-input";
 import { CabinetNotice } from "@/components/cabinet";
 import { PhotoImage } from "@/components/photo-image";
@@ -13,12 +15,16 @@ import {
   confirmAccountEmailCodeFn,
   confirmAccountPhoneCodeFn,
   deleteAccountFn,
+  linkAccountTelegramFn,
+  linkAccountTelegramWebAppFn,
   requestAccountEmailCodeFn,
   requestAccountPhoneCodeFn,
   setAccountAvatarFn,
+  unlinkAccountTelegramFn,
   updateMailPreferenceFn,
   updateProfileFn,
 } from "@/lib/auth/functions";
+import type { TelegramWidgetUser } from "@/lib/auth/telegram-widget";
 import type { MailKind } from "@/lib/mail/kinds";
 import { isStaff, ROLE_LABELS } from "@/lib/auth/roles";
 import type { PublicUser } from "@/lib/auth/schemas";
@@ -57,6 +63,84 @@ function mailFromUser(user: PublicUser) {
     site: user.mailSite,
     marketing: user.mailMarketing,
   };
+}
+
+function TelegramAccountLink({
+  user,
+  onOk,
+  onFail,
+}: {
+  user: PublicUser;
+  onOk: (message: string) => void;
+  onFail: (error: unknown) => void;
+}) {
+  const router = useRouter();
+  const linkWidget = useAuthServerFn(linkAccountTelegramFn);
+  const linkWebApp = useAuthServerFn(linkAccountTelegramWebAppFn);
+  const unlink = useAuthServerFn(unlinkAccountTelegramFn);
+  const [pending, setPending] = useState(false);
+
+  async function finish(message: string) {
+    onOk(message);
+    await router.invalidate();
+  }
+
+  return (
+    <section className="cabinet-form cabinet-section" id="telegram">
+      <h3>Telegram</h3>
+      {user.telegramLinked ? (
+        <>
+          <p className="cabinet-note">
+            {user.telegramUsername
+              ? `К аккаунту привязан @${user.telegramUsername}. Этим Telegram можно войти.`
+              : "К аккаунту привязан Telegram. Им можно войти."}
+          </p>
+          <button
+            className="cabinet-form__ghost"
+            type="button"
+            disabled={pending}
+            onClick={() => {
+              setPending(true);
+              void unlink()
+                .then((result) => finish((result as { message: string }).message))
+                .catch(onFail)
+                .finally(() => setPending(false));
+            }}
+          >
+            {pending ? "Отвязка…" : "Отвязать Telegram"}
+          </button>
+        </>
+      ) : (
+        <>
+          <p className="cabinet-note">
+            Привяжите Telegram, чтобы входить им в этот аккаунт. Второй аккаунт с ним не создаётся.
+          </p>
+          <TelegramWebAppAuthButton
+            label="Привязать Telegram"
+            pendingLabel="Привязка…"
+            onAuth={async (initData) => {
+              try {
+                const result = await linkWebApp({ data: { initData } });
+                await finish((result as { message: string }).message);
+              } catch (error) {
+                onFail(error);
+              }
+            }}
+          />
+          <TelegramLoginButton
+            missing="Привязка через Telegram сейчас недоступна."
+            onAuth={(telegram: TelegramWidgetUser) => {
+              setPending(true);
+              void linkWidget({ data: telegram })
+                .then((result) => finish((result as { message: string }).message))
+                .catch(onFail)
+                .finally(() => setPending(false));
+            }}
+          />
+        </>
+      )}
+    </section>
+  );
 }
 
 export function AccountProfileForm({
@@ -464,6 +548,7 @@ export function AccountProfileForm({
           {pending ? "Сохранение…" : "Сохранить"}
         </button>
       </form>
+      <TelegramAccountLink user={user} onOk={ok} onFail={fail} />
       <form
         className="cabinet-form"
         onSubmit={(event) => {

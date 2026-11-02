@@ -294,13 +294,18 @@ function LoginPage() {
           ) : null}
 
           {method === "telegram" ? (
-            <TelegramLoginButton
-              onAuth={async (telegram: TelegramWidgetUser) => {
-                setError(null);
-                const result = await run(() => loginTelegram({ data: telegram }));
-                await goAfterLogin(result);
-              }}
-            />
+            <div className="auth-form">
+              <p className="auth-muted">
+                Вход открывает аккаунт, к которому этот Telegram уже привязан. Если почта уже есть, войдите ею и привяжите Telegram в настройках.
+              </p>
+              <TelegramLoginButton
+                onAuth={async (telegram: TelegramWidgetUser) => {
+                  setError(null);
+                  const result = await run(() => loginTelegram({ data: telegram }));
+                  await goAfterLogin(result);
+                }}
+              />
+            </div>
           ) : null}
 
           <p className="auth-foot">

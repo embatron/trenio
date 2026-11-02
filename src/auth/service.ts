@@ -29,6 +29,8 @@ import { issueOtp, verifyOtp } from "@/auth/otp";
 import { consumeRateLimit } from "@/auth/rate-limit";
 import { isSmsByEnabled } from "@/auth/sms";
 import { parseTelegramWidgetUser, verifyTelegramWidgetUser } from "@/auth/telegram";
+import { verifyTelegramWebAppInitData } from "@/auth/telegram-webapp";
+import { cleanTelegramUsername, decideTelegramBind } from "@/lib/auth/telegram-link";
 import { AuthError } from "@/lib/auth/errors";
 import { GOD_USER_ID, isGodLogin, isGodUser } from "@/lib/auth/god";
 import { parseTelegramHandle } from "@/lib/catalog/trainer-welcome";
@@ -62,6 +64,8 @@ export type SessionUser = {
   mailReviews: boolean;
   mailSite: boolean;
   mailMarketing: boolean;
+  telegramLinked: boolean;
+  telegramUsername: string | null;
   /** Short Instagram link created the account and the trainer has not chosen a password yet. */
   needsPassword: boolean;
 };
@@ -107,6 +111,8 @@ function toSessionUser(user: User, roles: UserRole[]): SessionUser {
     mailReviews: user.mailReviews,
     mailSite: user.mailSite,
     mailMarketing: user.mailMarketing,
+    telegramLinked: user.telegramUserId != null,
+    telegramUsername: user.telegramUsername,
     needsPassword: user.needsPassword,
   };
 }
@@ -839,6 +845,114 @@ export async function confirmTrainerContactEmailCode(
   return confirmAccountEmailCode(userId, emailRaw, codeRaw);
 }
 
+function isUniqueViolation(error: unknown): boolean {
+  let current: unknown = error;
+  for (let depth = 0; depth < 4 && current; depth += 1) {
+    if (typeof current === "object" && current && "code" in current && (current as { code?: string }).code === "23505") {
+      return true;
+    }
+    current = typeof current === "object" && current && "cause" in current ? (current as { cause?: unknown }).cause : null;
+  }
+  return false;
+}
+
+async function markMatchingTrainerTelegram(userId: string, username: string | null, now: Date) {
+  const handle = username ? parseTelegramHandle(username) : null;
+  if (!handle) return false;
+  const db = getDb();
+  const [profile] = await db
+    .select({ id: trainerProfiles.id, telegram: trainerProfiles.telegram, telegramVerifiedAt: trainerProfiles.telegramVerifiedAt })
+    .from(trainerProfiles)
+    .where(eq(trainerProfiles.ownerUserId, userId))
+    .limit(1);
+  const saved = profile ? parseTelegramHandle(profile.telegram) : null;
+  if (!profile || !saved || saved.toLowerCase() !== handle.toLowerCase()) return false;
+  if (profile.telegramVerifiedAt) return true;
+  await db
+    .update(trainerProfiles)
+    .set({ telegramVerifiedAt: now, updatedAt: now })
+    .where(eq(trainerProfiles.id, profile.id));
+  return true;
+}
+
+export async function bindTelegramLogin(userId: string, incomingId: number, usernameRaw: string | undefined) {
+  const db = getDb();
+  const [self] = await db
+    .select({ id: users.id, telegramUserId: users.telegramUserId })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  if (!self) throw new AuthError("Аккаунт недоступен.", "UNAUTHORIZED");
+  const [owner] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.telegramUserId, incomingId))
+    .limit(1);
+  const decision = decideTelegramBind({
+    userId,
+    incomingId,
+    currentId: self.telegramUserId,
+    ownerId: owner?.id ?? null,
+  });
+  if (decision === "taken") {
+    throw new AuthError("Этот Telegram уже привязан к другому аккаунту.", "VALIDATION");
+  }
+  if (decision === "replace-blocked") {
+    throw new AuthError("К аккаунту уже привязан другой Telegram. Сначала отвяжите его в настройках.", "VALIDATION");
+  }
+
+  const username = cleanTelegramUsername(usernameRaw);
+  const now = new Date();
+  if (decision === "link") {
+    try {
+      await db
+        .update(users)
+        .set({ telegramUserId: incomingId, telegramUsername: username, updatedAt: now })
+        .where(eq(users.id, userId));
+    } catch (error) {
+      if (isUniqueViolation(error)) {
+        throw new AuthError("Этот Telegram уже привязан к другому аккаунту.", "VALIDATION");
+      }
+      throw error;
+    }
+  } else if (username && username !== undefined) {
+    await db.update(users).set({ telegramUsername: username, updatedAt: now }).where(eq(users.id, userId));
+  }
+
+  await markMatchingTrainerTelegram(userId, username, now);
+  return {
+    ok: true as const,
+    already: decision === "same",
+    linkedAccount: decision === "link",
+    telegramUsername: username ?? "",
+    message: decision === "same"
+      ? "Этот Telegram уже привязан к аккаунту."
+      : "Telegram привязан. Теперь им можно войти.",
+  };
+}
+
+export async function linkAccountTelegram(userId: string, raw: unknown) {
+  const widget = parseTelegramWidgetUser(raw);
+  if (!widget || !verifyTelegramWidgetUser(widget)) {
+    throw new AuthError("Не удалось подтвердить Telegram.", "VALIDATION");
+  }
+  return bindTelegramLogin(userId, widget.id, widget.username);
+}
+
+export async function linkAccountTelegramWebApp(userId: string, initData: string) {
+  const profile = verifyTelegramWebAppInitData(initData);
+  if (!profile) throw new AuthError("Не удалось подтвердить Telegram.", "VALIDATION");
+  return bindTelegramLogin(userId, profile.id, profile.username);
+}
+
+export async function unlinkAccountTelegram(userId: string) {
+  await getDb()
+    .update(users)
+    .set({ telegramUserId: null, telegramUsername: null, updatedAt: new Date() })
+    .where(eq(users.id, userId));
+  return { ok: true as const, message: "Telegram отвязан. Вход по нему больше не откроет этот аккаунт." };
+}
+
 export async function confirmTrainerTelegram(userId: string, raw: unknown) {
   const widget = parseTelegramWidgetUser(raw);
   if (!widget || !verifyTelegramWidgetUser(widget)) {
@@ -862,15 +976,35 @@ export async function confirmTrainerTelegram(userId: string, raw: unknown) {
   if (!saved || saved.toLowerCase() !== handle.toLowerCase()) {
     throw new AuthError("Имя в Telegram не совпадает с тем, что указано в профиле.", "VALIDATION");
   }
-  if (profile.telegramVerifiedAt)
-    return { ok: true as const, message: "Telegram уже подтверждён." };
 
   const now = new Date();
-  await db
-    .update(trainerProfiles)
-    .set({ telegramVerifiedAt: now, updatedAt: now })
-    .where(eq(trainerProfiles.id, profile.id));
-  return { ok: true as const, message: "Telegram подтверждён." };
+  if (!profile.telegramVerifiedAt) {
+    await db
+      .update(trainerProfiles)
+      .set({ telegramVerifiedAt: now, updatedAt: now })
+      .where(eq(trainerProfiles.id, profile.id));
+  }
+
+  try {
+    const bound = await bindTelegramLogin(userId, widget.id, widget.username);
+    const message = bound.linkedAccount
+      ? "Telegram подтверждён. Теперь им можно войти в этот аккаунт."
+      : profile.telegramVerifiedAt
+        ? "Telegram уже подтверждён."
+        : "Telegram подтверждён.";
+    return { ok: true as const, linkedAccount: bound.linkedAccount, message };
+  } catch (error) {
+    const blocked =
+      error instanceof AuthError &&
+      (error.message.startsWith("Этот Telegram уже привязан") ||
+        error.message.startsWith("К аккаунту уже привязан"));
+    if (!blocked) throw error;
+    return {
+      ok: true as const,
+      linkedAccount: false,
+      message: `Telegram на карточке подтверждён. ${error.message}`,
+    };
+  }
 }
 
 export async function updateAccountName(userId: string, firstName: string, lastName: string) {

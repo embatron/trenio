@@ -1,4 +1,8 @@
+import { eq } from "drizzle-orm";
+
 import { loginBotToken } from "@/auth/telegram";
+import { getDb } from "@/db";
+import { users } from "@/db/schema";
 import { logCaught, writeLog } from "@/lib/log/logger";
 
 import {
@@ -7,7 +11,9 @@ import {
   telegramMainKeyboard,
   telegramNavItem,
   telegramPublicOrigin,
+  telegramSectionNote,
   telegramSectionText,
+  telegramUnknownText,
 } from "./nav";
 
 const WEBHOOK_PATH = "/api/telegram/webhook";
@@ -56,6 +62,21 @@ async function sendMenu(token: string, chatId: number, text: string, origin: str
   if (!body.ok) throw new Error(body.description || "telegram sendMessage failed");
 }
 
+async function linkedTelegramAccount(chatId: number): Promise<{ firstName: string } | null> {
+  try {
+    const [row] = await getDb()
+      .select({ firstName: users.firstName, status: users.status })
+      .from(users)
+      .where(eq(users.telegramUserId, chatId))
+      .limit(1);
+    if (!row || row.status === "deleted") return null;
+    return { firstName: row.firstName };
+  } catch (error) {
+    logCaught("api", "telegram.menu", error, { target: String(chatId) });
+    return null;
+  }
+}
+
 export async function handleTelegramMenuWebhook(request: Request): Promise<Response> {
   if (!verifyWebhookSecret(request)) {
     await writeLog({
@@ -85,11 +106,18 @@ export async function handleTelegramMenuWebhook(request: Request): Promise<Respo
   if (!chatId || message?.chat?.type !== "private" || !text) return new Response("ok");
 
   const action = resolveTelegramAction(text);
-  if (!action) return new Response("ok");
-
   const origin = telegramPublicOrigin();
-  const item = action === "home" ? null : telegramNavItem(action);
-  const reply = item ? telegramSectionText(item, origin) : telegramHomeText();
+  const account = await linkedTelegramAccount(chatId);
+  let reply = telegramUnknownText();
+  if (action === "home") {
+    reply = telegramHomeText(account);
+  } else if (action) {
+    const item = telegramNavItem(action);
+    if (!item) return new Response("ok");
+    const note = telegramSectionNote(action, account);
+    reply = telegramSectionText(item, origin);
+    if (note) reply = `${reply}\n\n${note}`;
+  }
 
   try {
     await sendMenu(token, chatId, reply, origin);

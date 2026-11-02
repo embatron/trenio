@@ -135,14 +135,35 @@ function escapeHtml(value: string): string {
   return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-export function telegramHomeText(): string {
+export function telegramHomeText(account: { firstName: string } | null): string {
+  const link = account
+    ? `Этот Telegram привязан к аккаунту ${escapeHtml(account.firstName)}. Кнопка «Войти через Telegram» на сайте откроет его.`
+    : "Этот Telegram ещё не привязан. Новый аккаунт создаётся на регистрации. Если почта уже есть, войдите и привяжите Telegram в настройках: второй аккаунт с ним не создаётся.";
   return [
     "<b>trenio.by</b>",
     "",
     "Поиск тренеров и спортивных занятий в Беларуси.",
     "",
+    link,
+    "",
     "Кнопки внизу открывают каталог, карту, сообщения и кабинеты.",
   ].join("\n");
+}
+
+export function telegramUnknownText(): string {
+  return [
+    "Я открываю разделы trenio.by.",
+    "",
+    "Напишите /start или нажмите кнопку внизу.",
+    "Привязать вход можно в настройках аккаунта на сайте.",
+  ].join("\n");
+}
+
+/** Extra line for cabinets. The name is already escaped. */
+export function telegramSectionNote(action: string, account: { firstName: string } | null): string | null {
+  if (action !== "messages" && action !== "account" && action !== "me") return null;
+  if (!account) return "Этот Telegram ещё не привязан, поэтому кабинет попросит вход.";
+  return `Вход откроет аккаунт ${escapeHtml(account.firstName)}.`;
 }
 
 export function telegramSectionText(item: TelegramNavItem, origin: string): string {

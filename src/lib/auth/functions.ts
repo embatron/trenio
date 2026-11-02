@@ -60,6 +60,9 @@ import {
   confirmAccountPhoneCode,
   confirmTrainerContactEmailCode,
   confirmTrainerTelegram,
+  linkAccountTelegram,
+  linkAccountTelegramWebApp,
+  unlinkAccountTelegram,
   requestAccountEmailCode,
   requestAccountPhoneCode,
   requestTrainerContactEmailCode,
@@ -96,6 +99,8 @@ function toPublicUser(user: SessionUser): PublicUser {
     mailReviews: user.mailReviews,
     mailSite: user.mailSite,
     mailMarketing: user.mailMarketing,
+    telegramLinked: user.telegramLinked,
+    telegramUsername: user.telegramUsername,
   };
 }
 
@@ -627,12 +632,28 @@ export const confirmTrainerContactEmailCodeFn = createServerFn({ method: "POST" 
     }
   });
 
+function accountLogSubject(email: string): string | null {
+  return isPendingSignupEmail(email) ? null : email;
+}
+
 export const confirmTrainerTelegramFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
   .validator(telegramWidgetSchema)
   .handler(async ({ data, context }) => {
     try {
       const result = await confirmTrainerTelegram(context.user.id, data);
+      const subject = accountLogSubject(context.user.email);
+      if (result.linkedAccount) {
+        void writeLog({
+          level: "info",
+          domain: "auth",
+          action: "auth.telegram.link",
+          outcome: "success",
+          message: "Telegram привязан к аккаунту при подтверждении карточки.",
+          actorUserId: context.user.id,
+          subject,
+        });
+      }
       void writeLog({
         level: "info",
         domain: "account",
@@ -640,11 +661,75 @@ export const confirmTrainerTelegramFn = createServerFn({ method: "POST" })
         outcome: "success",
         message: "Telegram для связи подтверждён.",
         actorUserId: context.user.id,
-        subject: context.user.email,
+        subject,
       });
       return result;
     } catch (error) {
-      rethrowAuth(error, "trainer.telegram.confirm", context.user.email, context.user.id);
+      rethrowAuth(error, "trainer.telegram.confirm", accountLogSubject(context.user.email), context.user.id);
+    }
+  });
+
+export const linkAccountTelegramFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(telegramWidgetSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      const result = await linkAccountTelegram(context.user.id, data);
+      void writeLog({
+        level: "info",
+        domain: "auth",
+        action: "auth.telegram.link",
+        outcome: "success",
+        message: result.already ? "Telegram уже был привязан к аккаунту." : "Telegram привязан к аккаунту.",
+        actorUserId: context.user.id,
+        subject: accountLogSubject(context.user.email),
+        target: result.telegramUsername || null,
+      });
+      return result;
+    } catch (error) {
+      rethrowAuth(error, "auth.telegram.link", accountLogSubject(context.user.email), context.user.id);
+    }
+  });
+
+export const linkAccountTelegramWebAppFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(telegramWebAppSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      const result = await linkAccountTelegramWebApp(context.user.id, data.initData);
+      void writeLog({
+        level: "info",
+        domain: "auth",
+        action: "auth.telegram.link",
+        outcome: "success",
+        message: result.already ? "Telegram уже был привязан к аккаунту." : "Telegram привязан к аккаунту из Mini App.",
+        actorUserId: context.user.id,
+        subject: accountLogSubject(context.user.email),
+        target: result.telegramUsername || null,
+      });
+      return result;
+    } catch (error) {
+      rethrowAuth(error, "auth.telegram.link", accountLogSubject(context.user.email), context.user.id);
+    }
+  });
+
+export const unlinkAccountTelegramFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .handler(async ({ context }) => {
+    try {
+      const result = await unlinkAccountTelegram(context.user.id);
+      void writeLog({
+        level: "info",
+        domain: "auth",
+        action: "auth.telegram.unlink",
+        outcome: "success",
+        message: "Telegram отвязан от аккаунта.",
+        actorUserId: context.user.id,
+        subject: accountLogSubject(context.user.email),
+      });
+      return result;
+    } catch (error) {
+      rethrowAuth(error, "auth.telegram.unlink", accountLogSubject(context.user.email), context.user.id);
     }
   });
 

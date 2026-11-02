@@ -15,8 +15,12 @@ function TelegramPlaneIcon() {
 
 export function TelegramWebAppAuthButton({
   onAuth,
+  label = "Войти через Telegram",
+  pendingLabel = "Вход…",
 }: {
   onAuth: (initData: string) => Promise<void>;
+  label?: string;
+  pendingLabel?: string;
 }) {
   const [pending, setPending] = useState(false);
   const [initData, setInitData] = useState("");
@@ -48,7 +52,7 @@ export function TelegramWebAppAuthButton({
     >
       <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
         <TelegramPlaneIcon />
-        {pending ? "Вход…" : "Войти через Telegram"}
+        {pending ? pendingLabel : label}
       </span>
     </button>
   );

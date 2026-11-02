@@ -72,7 +72,6 @@ export function TelegramLoginButton({ onAuth, missing }: TelegramLoginButtonProp
   return (
     <div className="auth-telegram">
       <div ref={hostRef} className="h-10 w-[238px] overflow-hidden" />
-      <p className="auth-muted">Кнопка открывает бота @{username}.</p>
     </div>
   );
 }

@@ -314,6 +314,9 @@ function SignupPage() {
 
           {method === "telegram" ? (
             <div className="auth-form">
+              <p className="auth-muted">
+                Если этот Telegram уже привязан, откроется тот же аккаунт. Второй аккаунт не создаётся.
+              </p>
               <PrivacyCheck accepted={accepted} onChange={setAccepted} />
               <TelegramLoginButton
                 missing="Регистрация через Telegram сейчас недоступна. Выберите почту или телефон."

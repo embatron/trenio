@@ -127,4 +127,6 @@ export type PublicUser = {
   mailReviews: boolean;
   mailSite: boolean;
   mailMarketing: boolean;
+  telegramLinked: boolean;
+  telegramUsername: string | null;
 };
