@@ -88,7 +88,7 @@ function TelegramAccountLink({
   }
 
   return (
-    <section className="cabinet-form cabinet-section" id="telegram">
+    <section className="cabinet-form" id="telegram">
       <h3>Telegram</h3>
       {user.telegramLinked ? (
         <>

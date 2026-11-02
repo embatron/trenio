@@ -605,6 +605,7 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-card > .cabinet-note--lede a { color: var(--primary); font-weight: var(--fw-title); text-decoration: none; }
 .cabinet-card > .cabinet-note--lede a:hover { text-decoration: underline; }
 .cabinet-form { display: grid; gap: 12px; padding: 16px 18px; }
+.cabinet-form > h3 { margin: 0; font-size: 16px; font-weight: var(--fw-title); letter-spacing: -0.02em; color: var(--dark); }
 .cabinet-form:has(.cabinet-section) { gap: 18px; }
 .cabinet-section { display: grid; gap: 12px; margin: 0; padding: 16px; border: 1px solid var(--line); border-radius: var(--card-radius); background: rgba(var(--dark-rgb), 0.025); scroll-margin-top: calc(var(--cabinet-sticky-top, 96px) + 16px); }
 .cabinet-section h3 { margin: 0; padding-bottom: 10px; border-bottom: 1px solid var(--line); font-size: 16px; font-weight: var(--fw-title); letter-spacing: -0.02em; color: var(--dark); }
