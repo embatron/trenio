@@ -29,9 +29,6 @@ function MeContactsPage() {
   return (
     <article className="cabinet-card">
       <h2>Контакты</h2>
-      <p className="cabinet-note cabinet-note--lede">
-        Телефон, почта, Instagram и Telegram. Они стоят на публичной странице отдельно от текста профиля.
-      </p>
       <TrainerContactsForm profile={trainer} />
     </article>
   );

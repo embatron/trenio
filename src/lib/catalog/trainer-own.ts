@@ -18,6 +18,7 @@ import { sendMail } from "@/lib/mail/send.server";
 import { SITE_EMAIL } from "@/lib/seo/site";
 import { formatBelarusPhone } from "@/lib/auth/phone";
 import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
+import { parseTelegramHandle } from "@/lib/catalog/trainer-welcome";
 import { normalizeEmail } from "@/auth/password";
 import { hasAnyRole } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
@@ -310,8 +311,9 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
     let profileSlug = existing?.slug ?? values.instagramHandle;
     try {
     if (existing) {
-      if (existing.instagramHandle && !data.instagram) {
+      if (existing.instagramHandle) {
         values.instagramHandle = existing.instagramHandle;
+        values.instagramUrl = existing.instagramUrl;
       }
       await db.update(trainerProfiles).set(values).where(eq(trainerProfiles.id, existing.id));
     } else {
@@ -509,7 +511,12 @@ export const saveOwnTrainerContactsFn = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     assertTrainer(context.user.roles);
     const [existing] = await getDb()
-      .select({ id: trainerProfiles.id, slug: trainerProfiles.slug })
+      .select({
+        id: trainerProfiles.id,
+        slug: trainerProfiles.slug,
+        telegram: trainerProfiles.telegram,
+        telegramVerifiedAt: trainerProfiles.telegramVerifiedAt,
+      })
       .from(trainerProfiles)
       .where(eq(trainerProfiles.ownerUserId, context.user.id))
       .limit(1);
@@ -525,9 +532,12 @@ export const saveOwnTrainerContactsFn = createServerFn({ method: "POST" })
       });
       throw new AuthError("Карточка в каталоге к этому аккаунту пока не привязана.", "VALIDATION");
     }
+    const previous = parseTelegramHandle(existing.telegram);
+    const next = parseTelegramHandle(data.telegram);
+    const sameTelegram = Boolean(previous && next && previous.toLowerCase() === next.toLowerCase());
     await getDb().update(trainerProfiles).set({
-      instagramUrl: data.instagram,
       telegram: data.telegram,
+      telegramVerifiedAt: sameTelegram ? existing.telegramVerifiedAt : null,
       updatedAt: new Date(),
     }).where(eq(trainerProfiles.id, existing.id));
     void writeLog({

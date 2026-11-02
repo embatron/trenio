@@ -231,7 +231,8 @@ const CSS = `
 .breadcrumbs a { color: var(--muted); text-decoration: none; }
 .breadcrumbs a:hover { color: var(--primary-dark); }
 .breadcrumbs li + li::before { content: "›"; margin-right: 8px; color: var(--line); }
-.profile-access { margin: 0 0 16px; padding: 12px 14px; border-radius: 12px; background: #fff6e8; color: var(--dark); font-size: 14px; line-height: 1.45; }
+.profile-access { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 16px; padding: 12px 14px; border: 1px solid rgba(var(--primary-rgb), 0.22); border-radius: 12px; background: rgba(var(--primary-rgb), 0.08); color: var(--dark); font-size: 14px; line-height: 1.45; }
+.profile-access svg { width: 20px; height: 20px; flex: 0 0 auto; margin-top: 1px; color: var(--primary); fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 
 .profile-layout { display: grid; grid-template-columns: var(--aside-w) minmax(0, 1fr); gap: 32px; align-items: start; }
 .profile-main { position: relative; display: grid; gap: 22px; min-width: 0; }
@@ -381,8 +382,8 @@ const CSS = `
 .review-form__submit { min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font-size: 14px; font-weight: var(--fw-title); cursor: pointer; }
 .review-form__submit:disabled { opacity: 0.6; cursor: default; }
 .review-form__cancel { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--white); color: var(--dark); font-size: 14px; font-weight: var(--fw-ui); cursor: pointer; }
-.review-form__error { margin: 0; color: var(--primary-dark); font-size: 13px; font-weight: var(--fw-ui); }
-.review-note { margin: 0; color: var(--muted); font-size: 13px; font-weight: var(--fw-ui); }
+.review-form__error { margin: 0; color: var(--primary-dark); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
+.review-note { margin: 0; color: var(--muted); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
 .review-note a { color: var(--primary); font-weight: var(--fw-title); text-decoration: none; }
 .review-note a:hover { text-decoration: underline; }
 .trainer-page .cabinet-modal { position: fixed; inset: 0; z-index: 400; display: grid; place-items: center; padding: var(--layout-gutter); background: rgba(var(--dark-rgb), 0.45); }
@@ -390,7 +391,7 @@ const CSS = `
 .trainer-page .cabinet-modal__card h2 { margin: 0; padding: 0; border: 0; font-size: 18px; color: var(--dark); }
 .trainer-page .cabinet-modal__card p { margin: 0; color: var(--text); }
 .trainer-page .cabinet-modal__card button { justify-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
-.review-form__hint { margin: 0; color: var(--muted); font-size: 13px; }
+.review-form__hint { margin: 6px 0 0; color: var(--muted); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
 
 
 .similar-trainers { min-width: 0; padding-top: 8px; }
@@ -763,9 +764,20 @@ function TrainerPage() {
 
       <main>
         <div className="layout-container trainer-page__inner">
-        {access === "staff" ? (
-          <p className="profile-access">Профиль не опубликован. В каталоге его нет. Статус меняет тренер в настройках профиля: при входе туда он по умолчанию опубликован.</p>
-        ) : null}
+        {access === "public" ? null : (
+          <p className="profile-access" role="status">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 8v4" />
+              <circle cx="12" cy="16" r="0.9" fill="currentColor" stroke="none" />
+            </svg>
+            <span>
+              {access === "preview"
+                ? "Профиль пока не опубликован и в каталоге его нет. Страница открыта по уникальной ссылке и видна только вам."
+                : "Профиль не опубликован. В каталоге его нет. Статус меняет тренер в настройках профиля: при входе туда он по умолчанию опубликован."}
+            </span>
+          </p>
+        )}
         <nav aria-label="Хлебные крошки">
           <ol className="breadcrumbs">
             <li><Link to="/">Главная</Link></li>
@@ -1059,6 +1071,7 @@ function TrainerPage() {
             </div>
 
 
+            {t.similar.length > 0 ? (
             <section className="similar-trainers" aria-labelledby="similar-heading">
               <div className="similar-trainers__head">
                 <h2 className="profile-heading" id="similar-heading">Похожие тренеры</h2>
@@ -1088,6 +1101,7 @@ function TrainerPage() {
                 </div>
               </div>
             </section>
+            ) : null}
           </div>
         </article>
         </div>

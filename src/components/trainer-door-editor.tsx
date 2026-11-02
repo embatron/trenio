@@ -90,8 +90,8 @@ export function TrainerDoorMail({
         .door-mail input { box-sizing: border-box; width: 100%; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--text); font: inherit; font-size: 16px; }
         .door-mail button { justify-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
         .door-mail button:disabled { opacity: 0.6; cursor: default; }
-        .door-mail__ok { margin: 0; }
-        .door-mail__error { margin: 0; color: var(--primary-dark); }
+        .door-mail__ok { margin: 0; font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
+        .door-mail__error { margin: 0; color: var(--primary-dark); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
         .door-mail__error a { color: var(--primary); font-weight: var(--fw-title); text-decoration: underline; text-underline-offset: 3px; }
       `}</style>
     </form>
@@ -135,8 +135,8 @@ export function TrainerDoorMailDialog({ onClose }: { onClose: () => void }) {
       </div>
       <style>{`
         .door-mail-modal { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: rgba(var(--dark-rgb), 0.45); }
-        .door-mail-modal__card { position: relative; box-sizing: border-box; width: min(440px, 100%); display: grid; gap: 12px; padding: 20px; border-radius: var(--card-radius); background: var(--white); color: var(--text); }
-        .door-mail-modal__card h2 { margin: 0; padding-right: 36px; font-size: 18px; color: var(--dark); }
+        .door-mail-modal__card { position: relative; box-sizing: border-box; width: min(440px, 100%); display: grid; gap: 12px; padding: 20px 64px 20px 20px; border-radius: var(--card-radius); background: var(--white); color: var(--text); }
+        .door-mail-modal__card h2 { margin: 0; font-size: 18px; color: var(--dark); }
         .door-mail-modal__card > p { margin: 0; }
         .door-mail-modal__x { position: absolute; top: 8px; right: 8px; width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; }
         .door-mail-modal__x svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }

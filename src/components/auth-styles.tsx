@@ -35,7 +35,7 @@ const AUTH_CSS = `
 .auth-field__label { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: var(--fw-heading); color: var(--text); }
 .auth-field__hint { color: var(--primary); font-size: 13px; font-weight: var(--fw-heading); text-decoration: none; }
 .auth-field__hint:hover { text-decoration: underline; }
-.auth-field__hint--block { display: block; color: var(--muted); font-weight: 500; }
+.auth-field__hint--block { display: block; margin: 0; color: var(--muted); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
 .auth-field input[type="text"], .auth-field input[type="email"], .auth-field input[type="password"], .auth-field input[type="tel"] {
   width: 100%; height: 48px; border-radius: var(--radius-control); border: 1px solid rgba(var(--dark-rgb), 0.12);
   background: #fff; padding: 0 16px; font-size: 15px; color: var(--text); outline: 0;
@@ -71,7 +71,7 @@ const AUTH_CSS = `
 .auth-role--compact { text-align: center; padding: 12px 10px; }
 .auth-role--compact strong { margin-bottom: 0; }
 .auth-role strong { display: block; font-size: 15px; font-weight: var(--fw-title); color: var(--dark); margin-bottom: 4px; letter-spacing: -0.01em; }
-.auth-role span { display: block; font-size: 13px; color: var(--muted); line-height: 1.35; }
+.auth-role span { display: block; font-size: 13px; color: var(--muted); font-weight: var(--fw-body); line-height: 1.45; }
 .auth-role.is-active { border-color: var(--primary); background: rgba(var(--primary-rgb), 0.05); }
 .auth-roleswitch--3 { grid-template-columns: repeat(3, 1fr); }
 .auth-alert { padding: 12px 14px; border-radius: var(--radius-control); background: rgba(var(--primary-rgb), 0.08); border: 1px solid rgba(var(--primary-rgb), 0.2); color: var(--dark); font-size: 14px; line-height: 1.45; }
@@ -84,7 +84,7 @@ const AUTH_CSS = `
 .auth-resend:disabled { opacity: 0.6; cursor: not-allowed; text-decoration: none; }
 .auth-muted { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; text-align: center; }
 .auth-telegram { display: grid; justify-items: center; gap: 12px; }
-.auth-field__error { color: var(--primary); font-size: 13px; font-weight: var(--fw-ui); }
+.auth-field__error { margin: 0; color: var(--primary); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
 .auth-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
 
 /* Mini App shortcut sits above the method tabs and covers them on a phone. */

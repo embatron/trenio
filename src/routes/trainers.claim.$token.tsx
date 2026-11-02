@@ -198,8 +198,8 @@ const CLAIM_CSS = `
 .auth-card__head .auth-sub + .auth-sub { margin-top: 10px; }
 .claim-form .auth-field input { height: 48px; }
 .claim-form .auth-field__label,
-.claim-form .auth-field__hint--block,
 .claim-form .auth-field__toggle { font-size: 14px; }
+.claim-form .auth-field__hint--block { font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
 .claim-form .auth-field__input-wrap input { padding-right: 112px; }
 .claim-form input.is-locked { background: #eceff3; color: var(--muted); cursor: default; }
 .auth-main { overflow-x: clip; }

@@ -109,9 +109,6 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
             .finally(() => setPending(false));
         }}
       >
-        {profile.offerAccepted ? null : (
-          <p className="cabinet-note">Согласие с офертой ещё не отмечено.</p>
-        )}
         <TrainerCardFields
           nick={profile.slug}
           self

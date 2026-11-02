@@ -28,8 +28,9 @@ export function TrainerContactsForm({ profile }: { profile: OwnTrainerProfile })
       emailVerified: profile.emailVerified,
       instagram: profile.instagram,
       telegram: profile.telegram,
+      telegramVerified: profile.telegramVerified,
     }));
-  }, [profile.phone, profile.phoneVerified, profile.email, profile.emailVerified, profile.instagram, profile.telegram]);
+  }, [profile.phone, profile.phoneVerified, profile.email, profile.emailVerified, profile.instagram, profile.telegram, profile.telegramVerified]);
 
   return (
     <>
@@ -51,6 +52,7 @@ export function TrainerContactsForm({ profile }: { profile: OwnTrainerProfile })
         <TrainerCardFields
           mode="contacts"
           self
+          telegramVerified={form.telegram === profile.telegram && profile.telegramVerified}
           values={form}
           onChange={(values: TrainerCardValues) => setForm((current) => ({ ...current, ...values }))}
           photos={null}

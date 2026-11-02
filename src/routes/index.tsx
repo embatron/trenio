@@ -5,7 +5,7 @@ import { SportIcon } from "@/components/sport-icon";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 import { PUBLISHED_TRAINERS } from "@/lib/catalog/published-trainers";
-import { compareByPopularity, ratingFor } from "@/lib/catalog/trainer-popularity";
+import { compareByPopularity, popularityChecklist, ratingFor } from "@/lib/catalog/trainer-popularity";
 import { getHomeStatsFn } from "@/lib/catalog/home-stats";
 import { listTrainerPricesFn, priceForCard } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
@@ -713,6 +713,19 @@ function Index() {
   const { ratings, prices, stats } = Route.useLoaderData();
   const trainers = PUBLISHED_TRAINERS.map((trainer) => {
     const rating = ratingFor(trainer.slug, ratings);
+    const fill = popularityChecklist({
+      photo: trainer.photo,
+      bio: trainer.bio,
+      sports: trainer.sports,
+      experience: trainer.experience,
+      price: trainer.priceFrom,
+      formats: trainer.formats,
+      city: trainer.city.label,
+      phone: trainer.phone,
+      instagram: trainer.instagram,
+      telegram: trainer.telegram,
+      email: trainer.email,
+    });
     return {
       slug: trainer.slug,
       name: trainer.name,
@@ -725,6 +738,8 @@ function Index() {
       reviews: rating.reviews,
       views: rating.views,
       saves: rating.saves,
+      cardFilled: fill.card,
+      contactsFilled: fill.contacts,
       price: priceForCard(trainer.slug, trainer.priceFrom, prices),
       city: trainer.city.label,
       district: trainer.district,

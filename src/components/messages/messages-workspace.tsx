@@ -413,8 +413,8 @@ export const DIRECT_CSS = `
 .direct-composer__bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 12px; border-top: 1px solid var(--line); background: var(--light-bg); }
 .direct-composer__send { margin-left: auto; background: var(--primary); color: #fff; border-color: transparent; }
 .direct-composer__send:disabled, .direct-thread__actions button:disabled { opacity: 0.55; cursor: default; }
-.direct-composer__count, .direct-composer__hint, .direct-empty { margin: 0; color: var(--muted); font-size: 13px; }
-.direct-composer__hint { margin: 0; padding: 8px 12px 0; }
+.direct-composer__count, .direct-composer__hint, .direct-empty { margin: 0; color: var(--muted); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
+.direct-composer__hint { margin: 0; padding: 6px 12px 0; }
 .direct-composer__count.is-over { color: var(--primary); }
 .direct-composer__attach { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--dark); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
 .direct-composer__attach svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }

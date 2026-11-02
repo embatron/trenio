@@ -37,7 +37,8 @@ import { shrinkImage } from "@/lib/images/tinify";
 import { removeImageSet, writeImageSet } from "@/lib/images/store";
 import { effectiveAudiences, getPublishedTrainer, PUBLISHED_TRAINERS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { joinTrainerName, trainerNameParts } from "@/lib/catalog/trainer-name";
-import { popularityScore } from "@/lib/catalog/trainer-popularity";
+import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
+import { popularityChecklist, popularityScore } from "@/lib/catalog/trainer-popularity";
 import { loadTrainerInterest, type TrainerInterest } from "@/lib/catalog/trainer-interest";
 import { getSportTaxonomyChild, listSecondLevelSports, MAX_TRAINER_SPORTS, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
@@ -264,13 +265,24 @@ function trainerStats(
   slug: string,
   ratings: Map<string, { reviews: number; average: number }>,
   interest: Record<string, TrainerInterest>,
+  fill: { card: number; contacts: number },
 ) {
   const row = ratings.get(slug);
   const reviews = row?.reviews ?? 0;
   const average = row?.average ?? 0;
   const rating = reviews > 0 && Number.isFinite(average) ? average.toFixed(1) : "0";
   const signal = interest[slug] ?? { views: 0, saves: 0 };
-  return { reviews, rating, popularity: popularityScore({ rating, reviews, ...signal }) };
+  return {
+    reviews,
+    rating,
+    popularity: popularityScore({
+      rating,
+      reviews,
+      ...signal,
+      cardFilled: fill.card,
+      contactsFilled: fill.contacts,
+    }),
+  };
 }
 
 function isCatalog(slug: string) {
@@ -312,6 +324,10 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         formats: trainerProfiles.formats,
         audiences: trainerProfiles.audiences,
         avatarPath: trainerProfiles.avatarPath,
+        photos: trainerProfiles.photos,
+        certificates: trainerProfiles.certificates,
+        instagramHandle: trainerProfiles.instagramHandle,
+        createdSource: trainerProfiles.createdSource,
         createdAt: trainerProfiles.createdAt,
         offerAcceptedAt: trainerProfiles.offerAcceptedAt,
         inviteSentAt: trainerProfiles.inviteSentAt,
@@ -392,7 +408,28 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       audiences: effectiveAudiences(row.audiences),
       avatarPath: row.avatarPath,
       createdAt: row.createdAt.toISOString(),
-      ...trainerStats(row.slug, ratings, interest),
+      ...trainerStats(row.slug, ratings, interest, popularityChecklist({
+        photo: row.avatarPath,
+        photos: row.photos,
+        bio: row.bio,
+        about: row.about,
+        sports: row.sports,
+        experience: row.experienceYears,
+        price: row.priceFrom,
+        formats: row.formats,
+        city: row.city,
+        places: row.trainingPlaces,
+        address: row.address,
+        certificates: row.certificates,
+        phone: row.phone,
+        instagram: cabinetInstagram({
+          instagramUrl: row.instagramUrl,
+          instagramHandle: row.instagramHandle,
+          createdSource: row.createdSource,
+        }),
+        telegram: row.telegram,
+        email: row.ownerId && !hidden.has(row.ownerId) ? (row.email ?? "") : row.ownerId ? "" : row.contactEmail,
+      })),
       catalog: isCatalog(row.slug),
       offerAccepted: row.offerAcceptedAt != null,
       staffNote: latestNote.get(row.id)?.body ?? "",
@@ -440,7 +477,19 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       audiences: trainer.audiences,
       avatarPath: trainer.photo,
       createdAt: "",
-      ...trainerStats(trainer.slug, ratings, interest),
+      ...trainerStats(trainer.slug, ratings, interest, popularityChecklist({
+        photo: trainer.photo,
+        bio: trainer.bio,
+        sports: trainer.sports,
+        experience: trainer.experience,
+        price: trainer.priceFrom,
+        formats: trainer.formats,
+        city: trainer.city.label,
+        phone: trainer.phone,
+        instagram: trainer.instagram,
+        telegram: trainer.telegram,
+        email: trainer.email,
+      })),
       catalog: true,
       account: null,
       offerAccepted: false,
@@ -831,6 +880,28 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
       .where(eq(trainerStaffNotes.profileId, row.id))
       .orderBy(desc(trainerStaffNotes.createdAt));
     const latestNote = noteRowsForProfile[0];
+    const fill = popularityChecklist({
+      photo: row.avatarPath,
+      photos: row.photos,
+      bio: row.bio,
+      about: row.about,
+      sports: row.sports,
+      experience: row.experienceYears,
+      price: row.priceFrom,
+      formats: row.formats,
+      city: row.city,
+      places: row.trainingPlaces,
+      address: row.address,
+      certificates: row.certificates,
+      phone: row.phone,
+      instagram: cabinetInstagram({
+        instagramUrl: row.instagramUrl,
+        instagramHandle: row.instagramHandle,
+        createdSource: row.createdSource,
+      }),
+      telegram: row.telegram,
+      email: owner ? owner.email : row.email,
+    });
 
     return {
       trainer: {
@@ -862,6 +933,8 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
           rating: reviews > 0 ? average.toFixed(1) : "0",
           reviews,
           ...(interest[row.slug] ?? { views: 0, saves: 0 }),
+          cardFilled: fill.card,
+          contactsFilled: fill.contacts,
         }),
         catalog: isCatalog(row.slug),
         offerAccepted: row.offerAcceptedAt != null,

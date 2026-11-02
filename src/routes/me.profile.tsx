@@ -8,7 +8,7 @@ const meRoute = getRouteApi("/me");
 export const Route = createFileRoute("/me/profile")({
   head: () => ({
     meta: [
-      { title: "Профиль · trenio.by" },
+      { title: "Мой профиль · trenio.by" },
       { name: "description", content: "Публичная карточка тренера." },
       { name: "robots", content: "noindex,follow" },
     ],
@@ -33,7 +33,7 @@ function MeProfilePage() {
   if (!trainer) {
     return (
       <article className="cabinet-card">
-        <h2>Профиль</h2>
+        <h2>Мой профиль</h2>
         <p className="cabinet-empty">Карточка в каталоге к этому аккаунту пока не привязана.</p>
       </article>
     );
@@ -46,7 +46,7 @@ function MeProfilePage() {
         try { localStorage.setItem("trenio-trainer-profile-card", "1"); } catch { /* ignore */ }
       }}
     >
-      <h2>Профиль</h2>
+      <h2>Мой профиль</h2>
       <TrainerProfileForm profile={trainer} />
     </article>
   );

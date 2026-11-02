@@ -476,7 +476,7 @@ export function TrainerContactStatus({ profile }: { profile: OwnTrainerProfile }
         label="Instagram"
         value={channelLabel(instagram, "instagram")}
         added={Boolean(instagram)}
-        verified={null}
+        verified={instagram ? true : null}
         gender="m"
       />
       <Row

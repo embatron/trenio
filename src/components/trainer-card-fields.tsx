@@ -88,13 +88,16 @@ function ProfileSection({
   id,
   title,
   tone,
+  plain,
   children,
 }: {
   id: (typeof TRAINER_PROFILE_SECTIONS)[number]["id"] | "trainer-contacts";
   title: string;
   tone?: "place";
+  plain?: boolean;
   children: ReactNode;
 }) {
+  if (plain) return <>{children}</>;
   return (
     <section
       id={id}
@@ -123,6 +126,35 @@ function optionalPrice(raw: string): number | null {
 
 function toggleValue<T extends string>(list: T[], value: T) {
   return list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
+}
+
+function LineMark({ children }: { children: ReactNode }) {
+  return (
+    <svg className="line-icon" viewBox="0 0 24 24" aria-hidden="true">
+      {children}
+    </svg>
+  );
+}
+
+function PhoneMark() {
+  return (
+    <LineMark>
+      <path d="M8 4h3l1.5 3.5-2 1.2a11 11 0 0 0 4.8 4.8l1.2-2L20 13v3a2 2 0 0 1-2 2A14 14 0 0 1 6 6a2 2 0 0 1 2-2z" />
+    </LineMark>
+  );
+}
+
+function MailMark() {
+  return (
+    <LineMark>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="M3 7l9 6 9-6" />
+    </LineMark>
+  );
+}
+
+function ContactControl({ locked, children }: { locked?: boolean; children: ReactNode }) {
+  return <div className={locked ? "cabinet-brand-field is-locked" : "cabinet-brand-field"}>{children}</div>;
 }
 
 function EmailField({
@@ -180,19 +212,22 @@ function EmailField({
             </button>
           ) : null}
         </span>
-        <input
-          type="email"
-          inputMode="email"
-          autoComplete="off"
-          readOnly={Boolean(email) && !editing}
-          maxLength={320}
-          placeholder="name@example.com"
-          value={editing || !email ? value : email}
-          onChange={(event) => {
-            setValue(event.target.value);
-            setSent(false);
-          }}
-        />
+        <ContactControl locked={Boolean(email) && !editing}>
+          <MailMark />
+          <input
+            type="email"
+            inputMode="email"
+            autoComplete="off"
+            readOnly={Boolean(email) && !editing}
+            maxLength={320}
+            placeholder="name@example.com"
+            value={editing || !email ? value : email}
+            onChange={(event) => {
+              setValue(event.target.value);
+              setSent(false);
+            }}
+          />
+        </ContactControl>
       </label>
       {editing ? (
         <div className="cabinet-form__actions">
@@ -286,11 +321,14 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
     return (
       <label>
         <span>Телефон</span>
-        <BelarusPhoneInput
-          value={phone.value || BY_PHONE_COUNTRY_PREFIX}
-          readOnly={phone.locked}
-          onValue={(next) => phone.onChange(next === BY_PHONE_COUNTRY_PREFIX ? "" : next)}
-        />
+        <ContactControl locked={phone.locked}>
+          <PhoneMark />
+          <BelarusPhoneInput
+            value={phone.value || BY_PHONE_COUNTRY_PREFIX}
+            readOnly={phone.locked}
+            onValue={(next) => phone.onChange(next === BY_PHONE_COUNTRY_PREFIX ? "" : next)}
+          />
+        </ContactControl>
         <p className="cabinet-note">Подтверждение по SMS появится после привязки аккаунта.</p>
       </label>
     );
@@ -341,22 +379,27 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
             </button>
           ) : null}
         </span>
-        <BelarusPhoneInput
-          readOnly={!editing}
-          focusCaret={editing ? phoneCaret : 0}
-          value={
-            editing ? value : constrainBelarusPhoneInput(phone.value || BY_PHONE_COUNTRY_PREFIX)
-          }
-          onValue={(next) => {
-            setValue(next);
-            codeDialog.reset();
-          }}
-        />
+        <ContactControl locked={!editing}>
+          <PhoneMark />
+          <BelarusPhoneInput
+            readOnly={!editing}
+            focusCaret={editing ? phoneCaret : 0}
+            value={
+              editing ? value : constrainBelarusPhoneInput(phone.value || BY_PHONE_COUNTRY_PREFIX)
+            }
+            onValue={(next) => {
+              setValue(next);
+              codeDialog.reset();
+            }}
+          />
+        </ContactControl>
       </label>
       <p className="cabinet-note">
-        {self
-          ? "На публичной странице номер виден только после SMS."
-          : "Номер совпадает с телефоном аккаунта и виден на сайте только после SMS."}
+        {verified
+          ? "Номер виден на публичной странице."
+          : self
+            ? "На публичной странице номер виден только после SMS."
+            : "Номер совпадает с телефоном аккаунта и виден на сайте только после SMS."}
       </p>
       {editing ? (
         <div className="cabinet-form__actions">
@@ -423,6 +466,7 @@ export function TrainerCardFields({
   priceLabel = "Цена от, BYN",
   self = false,
   bioInvalid = false,
+  telegramVerified = false,
   mode = "full",
 }: {
   values: TrainerCardValues;
@@ -438,6 +482,7 @@ export function TrainerCardFields({
   priceLabel?: string;
   self?: boolean;
   bioInvalid?: boolean;
+  telegramVerified?: boolean;
   mode?: "full" | "profile" | "contacts";
 }) {
   function patch(partial: Partial<TrainerCardValues>) {
@@ -482,13 +527,13 @@ export function TrainerCardFields({
               />
             </label>
             <p className="cabinet-note">
-              Ник совпадает с Instagram: /trainers/{nick}. Сменить его можно только по{" "}
+              Ник совпадает с Instagram: /trainers/{nick}. Сменить его можно только{" "}
               {onNickSupport ? (
                 <button type="button" className="cabinet-text-link" onClick={onNickSupport}>
-                  запросу в поддержку
+                  по запросу в поддержку
                 </button>
               ) : (
-                "запросу в поддержку"
+                "по запросу в поддержку"
               )}
               .
             </p>
@@ -547,7 +592,7 @@ export function TrainerCardFields({
           </>
         )}
       </ProfileSection>
-      <ProfileSection id="trainer-docs" title="Документы">
+      <ProfileSection id="trainer-docs" title="Документы (диплом, курсы и пр.)">
         {certificates ? (
           <TrainerCertificatesField
             initial={certificates.initial}
@@ -662,24 +707,37 @@ export function TrainerCardFields({
       </>
       ) : null}
       {showContacts ? (
-      <ProfileSection id="trainer-contacts" title="Контакты">
+      <ProfileSection id="trainer-contacts" title="Контакты" plain={mode === "contacts"}>
         <PhoneField phone={phone} self={self} />
         <label>
           <span>Instagram</span>
-          <div className="cabinet-brand-field">
+          <ContactControl locked={self}>
             <InstagramIcon />
             <input
               value={values.instagram}
               maxLength={300}
               placeholder="https://instagram.com/…"
-              onChange={(event) => patch({ instagram: event.target.value })}
+              readOnly={self}
+              aria-readonly={self || undefined}
+              className={self ? "is-locked" : undefined}
+              onChange={self ? undefined : (event) => patch({ instagram: event.target.value })}
             />
-          </div>
-          {self ? <p className="cabinet-note">Ссылка видна на публичной странице.</p> : null}
+          </ContactControl>
+          {self ? (
+            <p className="cabinet-note">Ник Instagram менять нельзя. По нему открывается кабинет.</p>
+          ) : null}
         </label>
         <label>
-          <span>Telegram</span>
-          <div className="cabinet-brand-field">
+          <span>
+            Telegram
+            {self && values.telegram && telegramVerified ? (
+              <>
+                {" "}
+                · <em className="cabinet-form__verified">подтверждён</em>
+              </>
+            ) : null}
+          </span>
+          <ContactControl>
             <TelegramIcon />
             <input
               value={values.telegram}
@@ -687,10 +745,12 @@ export function TrainerCardFields({
               placeholder="https://t.me/…"
               onChange={(event) => patch({ telegram: event.target.value })}
             />
-          </div>
+          </ContactControl>
           {self ? (
             <p className="cabinet-note">
-              На публичной странице появится после подтверждения ботом.
+              {telegramVerified
+                ? "Имя видно на публичной странице."
+                : "На публичной странице появится после подтверждения ботом."}
             </p>
           ) : null}
         </label>
@@ -699,15 +759,18 @@ export function TrainerCardFields({
         ) : (
           <label>
             <span>Почта</span>
-            <input
-              type="email"
-              inputMode="email"
-              autoComplete="off"
-              value={values.email}
-              maxLength={320}
-              placeholder="name@example.com"
-              onChange={(event) => patch({ email: event.target.value })}
-            />
+            <ContactControl>
+              <MailMark />
+              <input
+                type="email"
+                inputMode="email"
+                autoComplete="off"
+                value={values.email}
+                maxLength={320}
+                placeholder="name@example.com"
+                onChange={(event) => patch({ email: event.target.value })}
+              />
+            </ContactControl>
           </label>
         )}
       </ProfileSection>

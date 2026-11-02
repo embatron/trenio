@@ -179,7 +179,7 @@ export function DoorPasswordDialog() {
       </div>
       <style>{`
         .door-password { position: relative; }
-        .door-password h2 { padding-right: 36px; }
+        .door-password:has(.door-password__x) { padding-right: 64px; }
         .cabinet-modal__card .door-password__x {
           position: absolute; top: 8px; right: 8px; left: auto;
           width: 44px; height: 44px; min-height: 44px; padding: 0;

@@ -152,7 +152,7 @@ AGENTS.md             # Entry point для агентов
 | `/me/contacts`          | `me.contacts.tsx`          | Контакты карточки: телефон, почта, Instagram и Telegram |
 | `/me/settings`          | `me.settings.tsx`          | Имя, фамилия и телефон аккаунта. Тот же блок «Письма», что в настройках клиента |
 | `/trainer-admin`        | `trainer-admin.tsx`        | Старый адрес кабинета: перенаправляет на `/me`, `?tab=settings` на `/me/settings`, `?tab=card` на `/me/profile`, `?tab=reviews` на `/me/reviews` |
-| `/about`                | `about.tsx`                | О сервисе: каталог, что не обещаем, бесплатное размещение     |
+| `/about`                | `about.tsx`                | О сервисе: лендинг «Кто мы», «Что мы делаем», «Как это работает». У каждой главы обложка |
 | `/contacts`             | `contacts.tsx`             | Контакты: trenioby@gmail.com                                  |
 | `/privacy`              | `privacy.tsx`              | Политика конфиденциальности                                   |
 | `/join/trainer`         | `join.trainer.tsx`         | «Привет!». Instagram, Telegram и телефон РБ. Ссылка «У меня нет Instagram» открывает Telegram и телефон. Сюда ведут «Стать тренером», «Оставить Instagram» и пустой каталог. Текст приглашения один: «Скинь свой Instagram — профиль заполним мы.» |

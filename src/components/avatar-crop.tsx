@@ -41,7 +41,7 @@ const CSS = `
   -webkit-user-drag: none;
   pointer-events: none;
 }
-.avatar-crop__hint { margin: 0; align-self: stretch; color: var(--muted); font-size: 13px; line-height: 1.4; }
+.avatar-crop__hint { margin: 0; align-self: stretch; color: var(--muted); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
 .avatar-crop__size { display: grid; gap: 4px; width: min(${FRAME}px, 100%); }
 .avatar-crop__size span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
 .avatar-crop__size input[type="range"] {

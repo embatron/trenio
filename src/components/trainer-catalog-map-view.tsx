@@ -530,7 +530,7 @@ const MAP_VIEW_CSS = `
 .catalog-map__photo { width: 48px; height: 64px; object-fit: cover; object-position: top center; border-radius: 10px; display: block; background: var(--light-bg); }
 .catalog-map__photo--empty { display: grid; place-items: center; color: var(--primary); font-weight: var(--fw-title); font-size: 18px; }
 .catalog-map__copy { min-width: 0; display: grid; gap: 1px; align-content: start; }
-.catalog-map__tip:has(.catalog-map__close) .catalog-map__copy { padding-right: 36px; }
+.catalog-map__tip:has(.catalog-map__close) .catalog-map__copy { padding-right: 52px; }
 .catalog-map__copy .trainer-name { font-size: 14px; }
 .catalog-map__sport { color: var(--muted); font-size: 12px; line-height: 1.3; }
 .catalog-map__where, .catalog-map__more { margin: 0; padding: 0 6px 2px; color: var(--muted); font-size: 12px; line-height: 1.3; }

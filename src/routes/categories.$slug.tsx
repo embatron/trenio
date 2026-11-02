@@ -18,7 +18,7 @@ import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { matchesCatalogAudience, PUBLISHED_TRAINERS, TRAINER_FORMAT_OPTIONS, trainersForCategory, type PublishedTrainer } from "@/lib/catalog/published-trainers";
-import { compareByPopularity, compareByRating, compareByReviews, ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
+import { compareByPopularity, compareByRating, compareByReviews, popularityChecklist, ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
 import { compareTrainerPrice, listTrainerPricesFn, priceForCard, type TrainerPriceMap } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { categoryRouteHead } from "@/lib/seo/catalog";
@@ -481,6 +481,8 @@ type TrainerCard = {
   reviews: number;
   views: number;
   saves: number;
+  cardFilled: number;
+  contactsFilled: number;
   price: number | null;
   city: string;
   district: string;
@@ -494,6 +496,19 @@ type TrainerCard = {
 
 function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, TrainerRatingSnapshot>, prices: TrainerPriceMap): TrainerCard {
   const rating = ratingFor(trainer.slug, ratings);
+  const fill = popularityChecklist({
+    photo: trainer.photo,
+    bio: trainer.bio,
+    sports: trainer.sports,
+    experience: trainer.experience,
+    price: trainer.priceFrom,
+    formats: trainer.formats,
+    city: trainer.city.label,
+    phone: trainer.phone,
+    instagram: trainer.instagram,
+    telegram: trainer.telegram,
+    email: trainer.email,
+  });
   return {
     slug: trainer.slug,
     name: trainer.name,
@@ -507,6 +522,8 @@ function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, Train
     reviews: rating.reviews,
     views: rating.views,
     saves: rating.saves,
+    cardFilled: fill.card,
+    contactsFilled: fill.contacts,
     price: priceForCard(trainer.slug, trainer.priceFrom, prices),
     city: trainer.city.label,
     district: trainer.district,

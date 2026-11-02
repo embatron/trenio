@@ -35,7 +35,7 @@ export const Route = createFileRoute("/me")({
     const away = deniedCabinetTarget("me", context.user.roles);
     if (away) throw redirect({ href: away });
   },
-  head: () => ({ meta: [{ title: "Кабинет тренера — trenio.by" }, NOINDEX_FOLLOW] }),
+  head: () => ({ meta: [{ title: "Личный кабинет тренера — trenio.by" }, NOINDEX_FOLLOW] }),
   loader: async ({ context }) => {
     const isTrainer = Boolean(context.user && hasAnyRole(context.user.roles, ["trainer", "club"]));
     const [cabinet, ratings, prices, trainer, reviews, views] = await Promise.all([
@@ -79,7 +79,7 @@ function MeLayout() {
 
   return (
     <CabinetShell
-      title="Личный кабинет"
+      title="Личный кабинет тренера"
       firstName={user.firstName}
       lastName={user.lastName}
       role={role}

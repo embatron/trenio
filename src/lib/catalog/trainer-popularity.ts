@@ -7,23 +7,73 @@ export type TrainerRatingSnapshot = {
   saves: number;
 };
 
-/** Caps a trainer can read. The four weights add up to 100. */
+/**
+ * Caps a trainer can read. The parts add up to 100.
+ * Ten card fields are 3 points each. Four contacts are 5 points each.
+ * The rest comes from people, and the first events still weigh more.
+ */
 export const POPULARITY_LIMITS = {
-  rating: 40,
-  reviews: 20,
-  views: 25,
-  saves: 15,
+  cardFields: 10,
+  cardEach: 3,
+  card: 30,
+  contactFields: 4,
+  contactEach: 5,
+  contacts: 20,
+  rating: 20,
+  reviews: 10,
+  views: 12,
+  saves: 8,
   reviewCap: 20,
   viewCap: 15,
   saveCap: 5,
 } as const;
 
 export type PopularityParts = {
+  card: number;
+  contacts: number;
   rating: number;
   reviews: number;
   views: number;
   saves: number;
   total: number;
+};
+
+export type PopularityChecklist = {
+  card: number;
+  contacts: number;
+  photo: boolean;
+  bio: boolean;
+  about: boolean;
+  sports: boolean;
+  experience: boolean;
+  price: boolean;
+  format: boolean;
+  city: boolean;
+  place: boolean;
+  certificate: boolean;
+  phone: boolean;
+  instagram: boolean;
+  telegram: boolean;
+  email: boolean;
+};
+
+export type PopularitySource = {
+  photo?: string;
+  photos?: readonly string[];
+  bio?: string;
+  about?: string | readonly string[];
+  sports?: readonly unknown[];
+  experience?: number;
+  price?: number | null;
+  formats?: readonly unknown[];
+  city?: string;
+  places?: readonly { city?: string; address?: string }[];
+  address?: string | null;
+  certificates?: readonly unknown[];
+  phone?: string;
+  instagram?: string;
+  telegram?: string;
+  email?: string;
 };
 
 const emptySnapshot: TrainerRatingSnapshot = { rating: "0", reviews: 0, views: 0, saves: 0 };
@@ -61,24 +111,76 @@ function logPoints(value: number, cap: number, max: number) {
   return Math.round(max * Math.min(1, ratio));
 }
 
+function visibleText(value: string | null | undefined) {
+  if (!value) return "";
+  return value.replace(/<[^>]+>/g, " ").replace(/&nbsp;/gi, " ").replace(/\s+/g, " ").trim();
+}
+
+function aboutFilled(about: PopularitySource["about"]) {
+  if (!about) return false;
+  if (typeof about === "string") return visibleText(about).length > 0;
+  return about.some((part) => visibleText(part).length > 0);
+}
+
+function certificateFilled(items: readonly unknown[] | undefined) {
+  return (items ?? []).some((item) => {
+    if (typeof item === "string") return item.trim().length > 0;
+    if (item && typeof item === "object" && "path" in item) {
+      return String((item as { path?: unknown }).path ?? "").trim().length > 0;
+    }
+    return false;
+  });
+}
+
+/** How many card fields and contacts are filled. Each kind shares its points equally. */
+export function popularityChecklist(source: PopularitySource): PopularityChecklist {
+  const flags = {
+    photo: visibleText(source.photo).length > 0 || (source.photos ?? []).some((item) => visibleText(item).length > 0),
+    bio: visibleText(source.bio).length > 0,
+    about: aboutFilled(source.about),
+    sports: (source.sports ?? []).length > 0,
+    experience: (source.experience ?? 0) >= 1,
+    price: source.price != null && source.price >= 1,
+    format: (source.formats ?? []).length > 0,
+    city: visibleText(source.city).length > 0,
+    place: (source.places ?? []).some((item) => visibleText(item.city).length > 0 || visibleText(item.address).length > 0)
+      || visibleText(source.address).length > 0,
+    certificate: certificateFilled(source.certificates),
+    phone: visibleText(source.phone).length > 0,
+    instagram: visibleText(source.instagram).length > 0,
+    telegram: visibleText(source.telegram).length > 0,
+    email: visibleText(source.email).length > 0,
+  };
+  const card = [flags.photo, flags.bio, flags.about, flags.sports, flags.experience, flags.price, flags.format, flags.city, flags.place, flags.certificate]
+    .filter(Boolean).length;
+  const contacts = [flags.phone, flags.instagram, flags.telegram, flags.email].filter(Boolean).length;
+  return { card, contacts, ...flags };
+}
+
 /**
  * Catalog rank from 0 to 100.
- * Rating quality is still the largest part. Monthly profile visits and saves
- * weigh more than review volume, with diminishing returns.
+ * A filled card and added contacts are the starting points.
+ * Rating, reviews, monthly visits, and saves still raise the card, with diminishing returns.
  */
 export function popularityParts(item: {
   rating: string;
   reviews: number;
   views?: number;
   saves?: number;
+  cardFilled?: number;
+  contactsFilled?: number;
 }): PopularityParts {
+  const cardFilled = Math.min(POPULARITY_LIMITS.cardFields, Math.max(0, item.cardFilled ?? 0));
+  const contactsFilled = Math.min(POPULARITY_LIMITS.contactFields, Math.max(0, item.contactsFilled ?? 0));
+  const card = cardFilled * POPULARITY_LIMITS.cardEach;
+  const contacts = contactsFilled * POPULARITY_LIMITS.contactEach;
   const rating = item.reviews > 0
     ? Math.round(POPULARITY_LIMITS.rating * Math.min(ratingValue(item.rating), 5) / 5)
     : 0;
   const reviews = logPoints(item.reviews, POPULARITY_LIMITS.reviewCap, POPULARITY_LIMITS.reviews);
   const views = logPoints(item.views ?? 0, POPULARITY_LIMITS.viewCap, POPULARITY_LIMITS.views);
   const saves = logPoints(item.saves ?? 0, POPULARITY_LIMITS.saveCap, POPULARITY_LIMITS.saves);
-  return { rating, reviews, views, saves, total: rating + reviews + views + saves };
+  return { card, contacts, rating, reviews, views, saves, total: card + contacts + rating + reviews + views + saves };
 }
 
 export function popularityScore(item: {
@@ -86,11 +188,21 @@ export function popularityScore(item: {
   reviews: number;
   views?: number;
   saves?: number;
+  cardFilled?: number;
+  contactsFilled?: number;
 }) {
   return popularityParts(item).total;
 }
 
-export function compareByPopularity<T extends { name: string; rating: string; reviews: number; views: number; saves: number }>(a: T, b: T) {
+export function compareByPopularity<T extends {
+  name: string;
+  rating: string;
+  reviews: number;
+  views: number;
+  saves: number;
+  cardFilled?: number;
+  contactsFilled?: number;
+}>(a: T, b: T) {
   const byScore = popularityScore(b) - popularityScore(a);
   if (byScore !== 0) return byScore;
   return byName(a, b);
