@@ -14,6 +14,6 @@ export function decideTelegramBind(input: {
 }
 
 export function cleanTelegramUsername(value: string | null | undefined): string | null {
-  const clean = (value ?? "").replace(/^@/, "").trim().slice(0, 64);
+  const clean = (value ?? "").trim().replace(/^@/, "").slice(0, 64);
   return clean || null;
 }
