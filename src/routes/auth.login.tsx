@@ -9,22 +9,17 @@ import {
   useCountdown,
 } from "@/components/auth/phone-otp-fields";
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
-import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
-import { TelegramWebAppAuthButton } from "@/components/auth/telegram-webapp-auth-button";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
 import {
   confirmSmsLoginFn,
   loginFn,
   restoreAccountFn,
-  loginWithTelegramFn,
-  loginWithTelegramWebAppFn,
   requestSmsLoginFn,
 } from "@/lib/auth/functions";
 import { BY_PHONE_COUNTRY_PREFIX, OTP_CODE_LENGTH } from "@/lib/auth/phone";
 import { safeReturnPath } from "@/lib/auth/return-path";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
-import type { TelegramWidgetUser } from "@/lib/auth/telegram-widget";
 
 export const Route = createFileRoute("/auth/login")({
   validateSearch: (search: Record<string, unknown>): { redirect?: string; google?: string } => {
@@ -46,14 +41,14 @@ export const Route = createFileRoute("/auth/login")({
       NOINDEX_FOLLOW,
       {
         name: "description",
-        content: "Войдите в trenio.by по e-mail, Google, телефону или Telegram, чтобы искать тренировки и вести профиль.",
+        content: "Войдите в trenio.by по e-mail, Google или телефону, чтобы искать тренировки и вести профиль.",
       },
     ],
   }),
   component: LoginPage,
 });
 
-type LoginMethod = "email" | "phone" | "telegram";
+type LoginMethod = "email" | "phone";
 
 function LoginPage() {
   const [method, setMethod] = useState<LoginMethod>("email");
@@ -74,8 +69,6 @@ function LoginPage() {
   const restoreAccount = useAuthServerFn(restoreAccountFn);
   const requestSms = useAuthServerFn(requestSmsLoginFn);
   const confirmSms = useAuthServerFn(confirmSmsLoginFn);
-  const loginTelegram = useAuthServerFn(loginWithTelegramFn);
-  const loginTelegramWebApp = useAuthServerFn(loginWithTelegramWebAppFn);
   const router = useRouter();
   const { redirect: returnPath, google } = Route.useSearch();
   const googleMessage = google === "deleted"
@@ -126,22 +119,11 @@ function LoginPage() {
             <h1 className="auth-title">С возвращением</h1>
           </div>
 
-          <div className="auth-webapp-slot">
-            <TelegramWebAppAuthButton
-              onAuth={async (initData) => {
-                setError(null);
-                const result = await run(() => loginTelegramWebApp({ data: { initData } }));
-                await goAfterLogin(result);
-              }}
-            />
-          </div>
-
-          <div className="auth-roleswitch auth-roleswitch--3" role="tablist" aria-label="Способ входа">
+          <div className="auth-roleswitch" role="tablist" aria-label="Способ входа">
             {(
               [
                 ["email", "Email"],
                 ["phone", "Телефон"],
-                ["telegram", "Telegram"],
               ] as const
             ).map(([value, label]) => (
               <button
@@ -313,21 +295,6 @@ function LoginPage() {
                 }}
               />
             </form>
-          ) : null}
-
-          {method === "telegram" ? (
-            <div className="auth-form">
-              <p className="auth-muted">
-                Вход открывает аккаунт, к которому этот Telegram уже привязан. Если почта уже есть, войдите ею и привяжите Telegram в настройках.
-              </p>
-              <TelegramLoginButton
-                onAuth={async (telegram: TelegramWidgetUser) => {
-                  setError(null);
-                  const result = await run(() => loginTelegram({ data: telegram }));
-                  await goAfterLogin(result);
-                }}
-              />
-            </div>
           ) : null}
 
           <p className="auth-foot">

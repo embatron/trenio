@@ -10,8 +10,6 @@ import {
   PhoneOtpFields,
   useCountdown,
 } from "@/components/auth/phone-otp-fields";
-import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
-import { TelegramWebAppAuthButton } from "@/components/auth/telegram-webapp-auth-button";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
 import {
@@ -19,14 +17,11 @@ import {
   requestSmsSignupFn,
   restoreAccountFn,
   signupFn,
-  signupWithTelegramFn,
-  signupWithTelegramWebAppFn,
 } from "@/lib/auth/functions";
 import { BY_PHONE_COUNTRY_PREFIX, OTP_CODE_LENGTH } from "@/lib/auth/phone";
 import { getPostLoginPath } from "@/lib/auth/roles";
 import { safeReturnPath } from "@/lib/auth/return-path";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
-import type { TelegramWidgetUser } from "@/lib/auth/telegram-widget";
 
 export const Route = createFileRoute("/auth/signup")({
   validateSearch: (search: Record<string, unknown>): { redirect?: string } =>
@@ -44,14 +39,14 @@ export const Route = createFileRoute("/auth/signup")({
       NOINDEX_FOLLOW,
       {
         name: "description",
-        content: "Создайте аккаунт trenio.by по почте, телефону или Telegram.",
+        content: "Создайте аккаунт trenio.by по почте, Google или телефону.",
       },
     ],
   }),
   component: SignupPage,
 });
 
-type SignupMethod = "email" | "phone" | "telegram";
+type SignupMethod = "email" | "phone";
 
 function SignupPage() {
   const [method, setMethod] = useState<SignupMethod>("email");
@@ -73,8 +68,6 @@ function SignupPage() {
   const restoreAccount = useAuthServerFn(restoreAccountFn);
   const requestSms = useAuthServerFn(requestSmsSignupFn);
   const confirmSms = useAuthServerFn(confirmSmsSignupFn);
-  const signupTelegram = useAuthServerFn(signupWithTelegramFn);
-  const signupTelegramWebApp = useAuthServerFn(signupWithTelegramWebAppFn);
   const router = useRouter();
   const { redirect: returnPath } = Route.useSearch();
   const { error, pending, run, redirectTo, setError } = useAuthSubmit();
@@ -131,26 +124,11 @@ function SignupPage() {
             <h1 className="auth-title">Создать аккаунт</h1>
           </div>
 
-          <div className="auth-webapp-slot">
-            <TelegramWebAppAuthButton
-              onAuth={async (initData) => {
-                if (!accepted) {
-                  setError("Примите политику конфиденциальности.");
-                  return;
-                }
-                setError(null);
-                const result = await run(() => signupTelegramWebApp({ data: { initData } }));
-                await goAfterSignup(result);
-              }}
-            />
-          </div>
-
-          <div className="auth-roleswitch auth-roleswitch--3" role="tablist" aria-label="Способ регистрации">
+          <div className="auth-roleswitch" role="tablist" aria-label="Способ регистрации">
             {(
               [
                 ["email", "Email"],
                 ["phone", "Телефон"],
-                ["telegram", "Telegram"],
               ] as const
             ).map(([value, label]) => (
               <button
@@ -327,27 +305,6 @@ function SignupPage() {
                 <PrivacyCheck accepted={accepted} onChange={acceptPrivacy} />
               </PhoneOtpFields>
             </form>
-          ) : null}
-
-          {method === "telegram" ? (
-            <div className="auth-form">
-              <p className="auth-muted">
-                Если этот Telegram уже привязан, откроется тот же аккаунт. Второй аккаунт не создаётся.
-              </p>
-              <PrivacyCheck accepted={accepted} onChange={acceptPrivacy} />
-              <TelegramLoginButton
-                missing="Регистрация через Telegram сейчас недоступна. Выберите почту или телефон."
-                onAuth={async (telegram: TelegramWidgetUser) => {
-                  if (!accepted) {
-                    setError("Примите политику конфиденциальности.");
-                    return;
-                  }
-                  setError(null);
-                  const result = await run(() => signupTelegram({ data: telegram }));
-                  await goAfterSignup(result);
-                }}
-              />
-            </div>
           ) : null}
 
           <p className="auth-foot">

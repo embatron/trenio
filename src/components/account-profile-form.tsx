@@ -115,8 +115,8 @@ function TelegramAccountLink({
         <>
           <p className="cabinet-note">
             {user.telegramUsername
-              ? `К аккаунту привязан @${user.telegramUsername}. Этим Telegram можно войти.`
-              : "К аккаунту привязан Telegram. Им можно войти."}
+              ? `К аккаунту привязан @${user.telegramUsername}.`
+              : "К аккаунту привязан Telegram."}
           </p>
           <button
             className="cabinet-form__ghost"
@@ -136,7 +136,7 @@ function TelegramAccountLink({
       ) : (
         <>
           <p className="cabinet-note">
-            Привяжите Telegram, чтобы входить им в этот аккаунт. Второй аккаунт с ним не создаётся.
+            Привяжите Telegram к этому аккаунту. Второй аккаунт с ним не создаётся.
           </p>
           <TelegramWebAppAuthButton
             label="Привязать Telegram"
