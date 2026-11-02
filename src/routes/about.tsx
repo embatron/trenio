@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import type { ReactNode } from "react";
 
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { infoPageCopy, infoPageHead } from "@/lib/seo/pages";
@@ -17,34 +16,10 @@ const RELATED = [
   { to: "/privacy", label: "Политика конфиденциальности" },
 ] as const;
 
-/**
- * Cover slots. `image` stays empty until a file is in `public/`.
- * The poster line is the cover until that photo is set.
- */
-const COVERS = {
-  who: "",
-  work: "",
-  next: "",
-} as const;
-
-function Cover({
-  tone,
-  index,
-  line,
-  image,
-}: {
-  tone: "rose" | "coral" | "ink";
-  index: string;
-  line: ReactNode;
-  image: string;
-}) {
+function Cover({ src, alt }: { src: string; alt: string }) {
   return (
-    <figure className={`about-frame about-frame--${tone}`}>
-      {image ? <img src={image} alt="" /> : null}
-      <div className="about-frame__poster">
-        <span>{index}</span>
-        <p>{line}</p>
-      </div>
+    <figure className="about-frame">
+      <img src={src} alt={alt} width={864} height={1152} />
     </figure>
   );
 }
@@ -73,18 +48,7 @@ function AboutPage() {
 
         <section className="about-chapter" aria-labelledby="about-who">
           <div className="layout-container about-split">
-            <Cover
-              tone="rose"
-              index="01"
-              image={COVERS.who}
-              line={
-                <>
-                  Ищешь тренера
-                  <br />
-                  в Беларуси?
-                </>
-              }
-            />
+            <Cover src="/about/who-we-are.png" alt="Ищешь тренера в Беларуси?" />
             <div className="about-copy">
               <h2 id="about-who">Кто мы</h2>
               <p>
@@ -107,18 +71,7 @@ function AboutPage() {
 
         <section className="about-chapter about-chapter--soft" aria-labelledby="about-work">
           <div className="layout-container about-split about-split--flip">
-            <Cover
-              tone="coral"
-              index="02"
-              image={COVERS.work}
-              line={
-                <>
-                  Профиль
-                  <br />
-                  уже собран
-                </>
-              }
-            />
+            <Cover src="/about/what-we-do.png" alt="Профиль уже собран" />
             <div className="about-copy">
               <h2 id="about-work">Что мы делаем</h2>
               <p>
@@ -135,18 +88,7 @@ function AboutPage() {
 
         <section className="about-chapter" aria-labelledby="about-next">
           <div className="layout-container about-split">
-            <Cover
-              tone="ink"
-              index="03"
-              image={COVERS.next}
-              line={
-                <>
-                  Дальше —
-                  <br />
-                  ты
-                </>
-              }
-            />
+            <Cover src="/about/how-it-works.png" alt="Дальше — ты" />
             <div className="about-copy">
               <h2 id="about-next">Как это работает</h2>
               <p>
@@ -223,58 +165,15 @@ const CSS = `
 .about-split--flip { grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.82fr); }
 .about-split--flip .about-frame { order: 2; }
 .about-frame {
-  position: relative;
-  display: flex;
   margin: 0;
-  min-height: 280px;
-  aspect-ratio: 4 / 5;
   border-radius: calc(var(--card-radius) + 6px);
   overflow: hidden;
+  background: #f6f1e8;
 }
 .about-frame img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover; display: block;
-}
-.about-frame__poster {
-  position: relative;
-  z-index: 1;
-  display: flex; flex: 1; flex-direction: column; justify-content: space-between;
-  min-height: 0;
-  padding: clamp(18px, 3vw, 28px);
-}
-.about-frame--rose {
-  background:
-    radial-gradient(circle at 12% 0%, #fff 0%, transparent 42%),
-    linear-gradient(160deg, #ffe8e6 0%, #ffd0cc 48%, #f6b2ad 100%);
-  color: var(--dark);
-}
-.about-frame--coral {
-  background:
-    radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.45), transparent 36%),
-    linear-gradient(165deg, #ff8d86 0%, var(--primary) 58%, var(--primary-dark) 100%);
-  color: #fff;
-}
-.about-frame--ink {
-  background:
-    radial-gradient(circle at 0% 100%, rgba(var(--primary-rgb), 0.55), transparent 46%),
-    linear-gradient(165deg, #1f2937 0%, #111827 70%);
-  color: #fff;
-}
-.about-frame__poster span {
-  font-size: 13px; font-weight: var(--fw-title); letter-spacing: 0.08em;
-}
-.about-frame__poster p {
-  margin: 0;
-  max-width: 11ch;
-  font-size: clamp(32px, 4vw, 52px);
-  line-height: 0.98;
-  letter-spacing: -0.045em;
-  font-weight: var(--fw-heading);
-}
-.about-frame img + .about-frame__poster {
-  background: linear-gradient(180deg, rgba(17, 24, 39, 0.05), rgba(17, 24, 39, 0.55));
-  color: #fff;
+  display: block;
+  width: 100%;
+  height: auto;
 }
 .about-copy h2 {
   margin: 0 0 14px;
@@ -318,8 +217,6 @@ const CSS = `
 @media (max-width: 960px) {
   .about-split, .about-split--flip { grid-template-columns: 1fr; }
   .about-split--flip .about-frame { order: 0; }
-  .about-frame { aspect-ratio: 16 / 10; min-height: 0; }
-  .about-frame__poster p { font-size: clamp(28px, 8vw, 40px); }
 }
 @media (max-width: 640px) {
   .about-lead { font-size: 16px; }
