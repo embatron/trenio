@@ -61,6 +61,8 @@ export const users = pgTable(
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     telegramUserId: bigint("telegram_user_id", { mode: "number" }),
     telegramUsername: varchar("telegram_username", { length: 64 }),
+    /** Stable Google account id. Set when the person signs in with Google. */
+    googleSub: varchar("google_sub", { length: 255 }),
     /** Letter when someone writes in Сообщения. */
     mailMessages: boolean("mail_messages").notNull().default(true),
     /** Letter when the person's review is published or rejected. */
@@ -74,6 +76,7 @@ export const users = pgTable(
     uniqueIndex("users_email_unique").on(table.email),
     uniqueIndex("users_phone_unique").on(table.phone),
     uniqueIndex("users_telegram_user_id_unique").on(table.telegramUserId),
+    uniqueIndex("users_google_sub_unique").on(table.googleSub),
     index("users_status_idx").on(table.status),
     index("users_deleted_at_idx").on(table.deletedAt),
   ],

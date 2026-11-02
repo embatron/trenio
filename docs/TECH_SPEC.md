@@ -422,6 +422,8 @@ Breakpoint для collapse sidebar/grid: **`960px`**. Новые страниц�
 | `SMS_BY_ENABLED`      | `true` включает отправку через SMS.BY |
 | `SMS_BY_API_KEY`      | Токен SMS.BY                        |
 | `SMS_BY_ALPHANAME_ID` | ID альфа-имени отправителя          |
+| `GOOGLE_CLIENT_ID` | Клиент входа через Google. Адрес возврата: `APP_URL` + `/auth/google/callback` |
+| `GOOGLE_CLIENT_SECRET` | Секрет того же клиента. Только на сервере, в репозиторий не кладётся |
 | `TELEGRAM_LOGIN_BOT_TOKEN` | Токен бота входа в Telegram    |
 | `TELEGRAM_LOGIN_BOT_USERNAME` | Username бота без `@`          |
 | `VITE_TELEGRAM_LOGIN_BOT_USERNAME` | Тот же username для виджета на клиенте |

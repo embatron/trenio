@@ -58,7 +58,7 @@ npm run site:install # тексты писем и Instagram в site_texts, бе�
 
 Публичная регистрация создаёт только `user`. Роли `trainer` и `club` появляются при привязке карточки или назначении staff. `admin` / `superadmin` — только через seed или назначение staff.
 
-Маршруты auth: `/auth/login` и `/auth/signup` (e-mail, SMS, Telegram), `/auth/forgot-password` (e-mail или SMS), `/auth/reset-password`, `/auth/verify-email`.
+Маршруты auth: `/auth/login` и `/auth/signup` (e-mail, Google, SMS, Telegram), `/auth/google` и `/auth/google/callback` (вход через Google), `/auth/forgot-password` (e-mail или SMS), `/auth/reset-password`, `/auth/verify-email`.
 
 Подробнее о доменной модели — [ACCOUNT_MODEL.md](./ACCOUNT_MODEL.md).
 
@@ -128,7 +128,8 @@ AGENTS.md             # Entry point для агентов
 | `/clubs`                | `clubs.index.tsx`          | Каталог клубов                                                |
 | `/clubs/$slug`          | `clubs.$slug.tsx`          | Профиль клуба / филиала                                       |
 | `/join/trainer`         | `join.trainer.tsx`         | «Привет!». Instagram, Telegram и телефон РБ. Ссылка «У меня нет Instagram» открывает Telegram и телефон. Сюда ведут «Стать тренером», «Оставить Instagram» и пустой каталог. Текст приглашения один: «Скинь свой Instagram — профиль заполним мы.» |
-| `/auth/login`           | `auth.login.tsx`           | Вход: e-mail, SMS, Telegram                                   |
+| `/auth/login`           | `auth.login.tsx`           | Вход: e-mail, Google, SMS, Telegram                           |
+| `/auth/google`          | `auth.google.ts`           | Начало входа через Google. Возврат на `/auth/google/callback` |
 | `/auth/signup`          | `auth.signup.tsx`          | Регистрация по почте, телефону или Telegram. Роль не спрашивается. После телефона или Telegram кабинет требует почту и пароль в окне, которое нельзя закрыть |
 | `/auth/forgot-password` | `auth.forgot-password.tsx` | Сброс пароля по e-mail или SMS                                |
 | `/auth/reset-password`  | `auth.reset-password.tsx`  | Новый пароль по токену                                        |

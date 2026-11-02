@@ -2,6 +2,7 @@ import { createFileRoute, Link, redirect, useRouter } from "@tanstack/react-rout
 import { useRef, useState } from "react";
 
 import { AuthStyles } from "@/components/auth-styles";
+import { GoogleLoginButton } from "@/components/auth/google-login-button";
 import { honeypotFromForm, HoneypotField } from "@/components/auth/honeypot-field";
 import { PasswordStrength } from "@/components/auth/password-strength";
 import {
@@ -237,6 +238,8 @@ function SignupPage() {
               <button type="submit" className="auth-submit" disabled={pending}>
                 {pending ? "Создание…" : "Зарегистрироваться"}
               </button>
+              <div className="auth-or" aria-hidden="true">или</div>
+              <GoogleLoginButton returnPath={returnPath} disabled={!accepted} />
               {restoreOffer ? (
                 <div className="auth-restore" role="status">
                   <p>Этот аккаунт удалён. Данные хранятся шесть месяцев — его можно восстановить.</p>

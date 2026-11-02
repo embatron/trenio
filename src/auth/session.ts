@@ -26,6 +26,12 @@ export function setSessionCookie(token: string, _remember = true) {
   setCookie(SESSION_COOKIE, token, cookieBaseOptions(SESSION_MAX_AGE_SECONDS));
 }
 
+/** Same cookie as `setSessionCookie`, for a redirect response the router returns itself. */
+export function sessionCookieHeader(token: string): string {
+  const secure = isProduction() ? "; Secure" : "";
+  return `${SESSION_COOKIE}=${encodeURIComponent(token)}; HttpOnly; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}; SameSite=Lax${secure}`;
+}
+
 export function clearSessionCookie() {
   deleteCookie(SESSION_COOKIE, { path: "/" });
 }

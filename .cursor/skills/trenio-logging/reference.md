@@ -11,6 +11,7 @@
 | `auth.login` | Email or nick login, including honeypot denial |
 | `auth.sms.request` / `auth.sms.confirm` | SMS login |
 | `auth.telegram` / `auth.telegram.webapp` | Telegram login |
+| `auth.login.google` / `auth.signup.google` | Google sign-in. The code, token, and client secret are not stored |
 | `auth.telegram.link` / `auth.telegram.unlink` | Bind or unbind Telegram on the signed-in account. No initData and no widget payload |
 | `auth.signup` / `auth.logout` | Email registration and logout |
 | `auth.signup.sms` | Phone registration: SMS request and confirm |

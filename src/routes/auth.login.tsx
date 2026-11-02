@@ -8,6 +8,7 @@ import {
   PhoneOtpFields,
   useCountdown,
 } from "@/components/auth/phone-otp-fields";
+import { GoogleLoginButton } from "@/components/auth/google-login-button";
 import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
 import { TelegramWebAppAuthButton } from "@/components/auth/telegram-webapp-auth-button";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
@@ -26,8 +27,13 @@ import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 import type { TelegramWidgetUser } from "@/lib/auth/telegram-widget";
 
 export const Route = createFileRoute("/auth/login")({
-  validateSearch: (search: Record<string, unknown>): { redirect?: string } =>
-    typeof search.redirect === "string" ? { redirect: search.redirect } : {},
+  validateSearch: (search: Record<string, unknown>): { redirect?: string; google?: string } => {
+    const redirect = typeof search.redirect === "string" ? search.redirect : undefined;
+    const google = search.google === "failed" || search.google === "deleted" || search.google === "blocked" || search.google === "taken"
+      ? search.google
+      : undefined;
+    return { ...(redirect ? { redirect } : {}), ...(google ? { google } : {}) };
+  },
   beforeLoad: async ({ context, search }) => {
     if (context.user) {
       const next = safeReturnPath(search.redirect);
@@ -40,7 +46,7 @@ export const Route = createFileRoute("/auth/login")({
       NOINDEX_FOLLOW,
       {
         name: "description",
-        content: "Войдите в trenio.by по e-mail, телефону или Telegram, чтобы искать тренировки и вести профиль.",
+        content: "Войдите в trenio.by по e-mail, Google, телефону или Telegram, чтобы искать тренировки и вести профиль.",
       },
     ],
   }),
@@ -71,7 +77,16 @@ function LoginPage() {
   const loginTelegram = useAuthServerFn(loginWithTelegramFn);
   const loginTelegramWebApp = useAuthServerFn(loginWithTelegramWebAppFn);
   const router = useRouter();
-  const { redirect: returnPath } = Route.useSearch();
+  const { redirect: returnPath, google } = Route.useSearch();
+  const googleMessage = google === "deleted"
+    ? "Этот аккаунт удалён. Войдите паролем и восстановите его."
+    : google === "blocked"
+      ? "Аккаунт заблокирован. Обратитесь в поддержку."
+      : google === "taken"
+        ? "Эта почта уже привязана к другому аккаунту Google."
+        : google === "failed"
+          ? "Не удалось войти через Google. Попробуйте ещё раз."
+          : null;
   const { error, pending, run, redirectTo, setError } = useAuthSubmit();
 
   const goAfterLogin = async (result: { redirectTo?: string } | null) => {
@@ -146,7 +161,7 @@ function LoginPage() {
             ))}
           </div>
 
-          <AuthAlert message={error} />
+          <AuthAlert message={error ?? googleMessage} />
           {devCode && method === "phone" ? (
             <div className="auth-alert auth-alert--note" style={{ marginBottom: 16 }}>
               Dev-код: {devCode}
@@ -222,6 +237,8 @@ function LoginPage() {
               <button type="submit" className="auth-submit" disabled={pending}>
                 {pending ? "Вход…" : "Войти"}
               </button>
+              <div className="auth-or" aria-hidden="true">или</div>
+              <GoogleLoginButton returnPath={returnPath} />
               {restoreOffer ? (
                 <div className="auth-restore" role="status">
                   <p>

@@ -84,6 +84,12 @@ const AUTH_CSS = `
 .auth-resend:disabled { opacity: 0.6; cursor: not-allowed; text-decoration: none; }
 .auth-muted { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; text-align: center; }
 .auth-telegram { display: grid; justify-items: center; gap: 12px; }
+.auth-or { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; margin: 4px 0; color: var(--muted); font-size: 13px; }
+.auth-or::before, .auth-or::after { content: ""; height: 1px; background: rgba(var(--dark-rgb), 0.12); }
+.auth-google { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; height: 50px; border-radius: var(--radius-control); border: 1px solid rgba(var(--dark-rgb), 0.14); background: #fff; color: var(--dark); font-size: 15px; font-weight: var(--fw-title); letter-spacing: -0.01em; text-decoration: none; }
+.auth-google:hover { border-color: var(--primary); }
+.auth-google svg { width: 18px; height: 18px; flex: 0 0 auto; }
+.auth-google.is-disabled { opacity: 0.55; }
 .auth-field__error { margin: 0; color: var(--primary); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
 .auth-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
 
