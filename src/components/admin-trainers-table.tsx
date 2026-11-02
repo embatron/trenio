@@ -385,8 +385,8 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
             <option value="date-desc">Сначала новые</option>
             <option value="date-asc">Сначала старые</option>
             <option value="reviews">По комментариям</option>
-            <option value="rating">По рейтингу</option>
-            <option value="popularity">По популярности</option>
+            <option value="rating">По оценке</option>
+            <option value="popularity">По рейтингу</option>
             <option value="sent">Сначала отправленные</option>
             <option value="note">Сначала с заметкой</option>
           </select>
@@ -406,7 +406,7 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                 <th>Город</th>
                 <th>Добавлен</th>
                 <th>Рейтинг</th>
-                <th>Популярность</th>
+                <th>Рейтинг</th>
                 <th>Публикация</th>
                 <th>Контакты</th>
                 <th>Аккаунт</th>

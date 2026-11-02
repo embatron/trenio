@@ -134,7 +134,7 @@ function popularityAnswer(
   const limits = POPULARITY_LIMITS;
   if (!parts || !rating || !checklist) {
     return (
-      <p>Популярность — это баллы от 0 до 100. Чем их больше, тем выше карточка в каталоге, когда человек выбирает «По популярности».</p>
+      <p>Рейтинг — это баллы от 0 до 100. Чем их больше, тем выше карточка в каталоге, когда человек выбирает «По рейтингу».</p>
     );
   }
   const cardMissing = CARD_LABELS.filter((item) => !checklist[item.key]).map((item) => item.label);
@@ -152,7 +152,7 @@ function popularityAnswer(
 
   return (
     <>
-      <p>Это ваши баллы от 0 до 100. Чем их больше, тем выше карточка, когда в каталоге выбрано «По популярности». Сейчас у вас {parts.total}. До {limits.self} вы собираете сами, остальное приносят пользователи.</p>
+      <p>Это ваши баллы от 0 до 100. Чем их больше, тем выше карточка, когда в каталоге выбрано «По рейтингу». Сейчас у вас {parts.total}. До {limits.self} вы собираете сами, остальное приносят пользователи.</p>
       <p>{cardLine}</p>
       <p>{contactLine}</p>
       <p>{peopleLine}</p>
@@ -213,7 +213,7 @@ function MeOverviewPage() {
               <path d="M14 7h6v6" />
             </StatMark>
             <strong>{parts?.total ?? 0}</strong>
-            <span>Популярность</span>
+            <span>Рейтинг</span>
             <span className="cabinet-stat__delta is-flat">из 100</span>
           </div>
         </div>
@@ -229,7 +229,7 @@ function MeOverviewPage() {
         <SiteFaq
           items={[
             { q: "Как считаются посещения?", a: visitsAnswer() },
-            { q: "Как считается популярность?", a: popularityAnswer(parts, rating, checklist) },
+            { q: "Как считается рейтинг?", a: popularityAnswer(parts, rating, checklist) },
             {
               q: "Когда способ связи виден клиенту?",
               a: "Клиент видит не всё, что указано в профиле. Телефон и Telegram добавляются здесь. Телефон появляется на странице после SMS. Если Telegram сам передаёт номер, номер сразу считается подтверждённым. Добавление только телефона Telegram не меняет. Telegram на странице появляется после кнопки бота. Если вместе с ним приходит номер, номер тоже подтверждается. Instagram уже показан, если профиль пришёл из Instagram или в карточке есть ссылка. Почта на странице — та же, которой вы входите в аккаунт, после кода из письма.",

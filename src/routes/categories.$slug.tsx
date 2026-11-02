@@ -1631,8 +1631,8 @@ export function CategoryCatalogPage({
                   setSort(next);
                   rememberFilters({ sort: next });
                 }}>
-                  <option value="popular">По популярности</option>
-                  <option value="rating">По рейтингу</option>
+                  <option value="popular">По рейтингу</option>
+                  <option value="rating">По оценке</option>
                   <option value="reviews">По отзывам</option>
                   <option value="price-asc">Сначала дешевле</option>
                   <option value="price-desc">Сначала дороже</option>
