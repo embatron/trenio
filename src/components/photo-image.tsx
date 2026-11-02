@@ -1,4 +1,4 @@
-import { useState, type MouseEvent } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 
 import { variantImagePath } from "@/lib/images/variants";
 
@@ -42,6 +42,9 @@ export function PhotoImage({
   onFinalError?: () => void;
 }) {
   const [useMaster, setUseMaster] = useState(false);
+  useEffect(() => {
+    setUseMaster(false);
+  }, [src]);
   const raster = /\.(jpe?g|png|webp)(\?|$)/i.test(src);
   const giveUp = () => onFinalError?.();
   if (!raster || src.startsWith("blob:") || src.startsWith("data:") || useMaster) {

@@ -263,7 +263,7 @@ export async function setAccountAvatar(userId: string, dataUrl: string) {
     throw new AuthError("Фото должно быть меньше 1,5 МБ.", "VALIDATION");
   }
   const relative = `/avatars/${userId}.jpg`;
-  await writeImageSet(buffer, path.join(process.cwd(), "public", relative), "centre");
+  await writeImageSet(buffer, path.join(process.cwd(), "public", relative), "centre", "later");
   await Promise.all(
     ["png", "webp"].map((ext) =>
       unlink(path.join(process.cwd(), "public", "avatars", `${userId}.${ext}`)).catch(

@@ -42,11 +42,21 @@ async function writeDerivatives(
   );
 }
 
+async function writePrepared(
+  prepared: Buffer,
+  absoluteMaster: string,
+  position: "attention" | "centre",
+) {
+  await writeFile(absoluteMaster, prepared);
+  await writeDerivatives(sharp(prepared, { failOn: "none" }), absoluteMaster, position);
+}
+
 /** Master plus fixed derivatives. Orientation is applied, metadata is dropped, nothing is upscaled. */
 export async function writeImageSet(
   buffer: Buffer,
   absoluteMaster: string,
   position: "attention" | "centre" = "attention",
+  compress: "now" | "later" = "now",
 ) {
   const directory = path.dirname(absoluteMaster);
   await mkdir(directory, { recursive: true });
@@ -56,9 +66,18 @@ export async function writeImageSet(
     .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
     .jpeg({ quality: 82, mozjpeg: true })
     .toBuffer();
+  if (compress === "later") {
+    await writePrepared(prepared, absoluteMaster, position);
+    void shrinkImage(prepared)
+      .then(async (master) => {
+        if (master.equals(prepared)) return;
+        await writePrepared(master, absoluteMaster, position);
+      })
+      .catch(() => undefined);
+    return;
+  }
   const master = await shrinkImage(prepared);
-  await writeFile(absoluteMaster, master);
-  await writeDerivatives(sharp(master, { failOn: "none" }), absoluteMaster, position);
+  await writePrepared(master, absoluteMaster, position);
 }
 
 /** Derivatives beside an existing master. The master file stays as stored. */

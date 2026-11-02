@@ -25,6 +25,7 @@ export function UserAvatar({
     <span className="user-avatar" style={{ width: size, height: size }} aria-hidden="true">
       {photo && !failed ? (
         <PhotoImage
+          key={photo}
           src={photo}
           alt=""
           preset="avatar"

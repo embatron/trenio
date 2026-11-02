@@ -1,5 +1,6 @@
 import { useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 
 import { AvatarCrop } from "@/components/avatar-crop";
 import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
@@ -28,9 +29,29 @@ import type { MailKind } from "@/lib/mail/kinds";
 import { BECOME_TRAINER_MAX, requestBecomeTrainerFn } from "@/lib/account/become-trainer";
 import { reviewTextLength } from "@/lib/catalog/review-html";
 import { publishLiveAvatar, useLiveAvatar } from "@/lib/auth/live-avatar";
+import { variantImagePath } from "@/lib/images/variants";
 import { hasAnyRole, isStaff, ROLE_LABELS } from "@/lib/auth/roles";
 import type { PublicUser } from "@/lib/auth/schemas";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
+
+/** The circle uses the 128px file. Wait for that response so the old cached face is not painted again. */
+function preloadAvatar(src: string): Promise<void> {
+  const url = variantImagePath(src, "s128");
+  return new Promise((resolve) => {
+    const img = new Image();
+    const done = () => resolve();
+    const timer = window.setTimeout(done, 8000);
+    img.onload = () => {
+      window.clearTimeout(timer);
+      done();
+    };
+    img.onerror = () => {
+      window.clearTimeout(timer);
+      done();
+    };
+    img.src = url;
+  });
+}
 
 const ACCOUNT_STATUS: Record<string, string> = {
   pending_verification: "На проверке",
@@ -192,6 +213,7 @@ export function AccountProfileForm({
   const [preview, setPreview] = useState<string | null>(null);
   const avatarUrl = profilePhoto || preview || liveAvatar;
   const [cropFile, setCropFile] = useState<File | null>(null);
+  const [avatarBusy, setAvatarBusy] = useState(false);
   const [pending, setPending] = useState(false);
   const [mail, setMail] = useState(() => mailFromUser(user));
   const [mailPending, setMailPending] = useState<MailKind | null>(null);
@@ -250,6 +272,7 @@ export function AccountProfileForm({
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
+                disabled={avatarBusy}
                 onChange={(event) => {
                   const file = event.target.files?.[0];
                   event.target.value = "";
@@ -266,27 +289,35 @@ export function AccountProfileForm({
             onCancel={() => setCropFile(null)}
             onSave={(image) => {
               const previous = user.avatarPath;
-              setPreview(image);
-              publishLiveAvatar(user.id, image);
-              setPending(true);
+              flushSync(() => {
+                setPreview(image);
+                setCropFile(null);
+                publishLiveAvatar(user.id, image);
+              });
+              setAvatarBusy(true);
               void uploadAvatar({ data: { image } })
                 .then(async (result) => {
-                  const payload = result as { avatarPath?: string; message?: string };
-                  const path = typeof payload.avatarPath === "string" ? payload.avatarPath : "";
+                  const payload =
+                    result && typeof result === "object"
+                      ? (result as { avatarPath?: string; message?: string })
+                      : null;
+                  const path = payload && typeof payload.avatarPath === "string" ? payload.avatarPath : "";
                   if (path) {
+                    await preloadAvatar(path);
                     publishLiveAvatar(user.id, path);
                     setPreview(null);
                   }
-                  setCropFile(null);
-                  ok(payload.message || "Фото обновлено.");
-                  await router.invalidate();
+                  ok(payload?.message || "Фото обновлено.");
                 })
                 .catch((error) => {
                   setPreview(null);
                   publishLiveAvatar(user.id, previous);
                   fail(error);
                 })
-                .finally(() => setPending(false));
+                .finally(() => {
+                  setAvatarBusy(false);
+                  void router.invalidate().catch(() => undefined);
+                });
             }}
           />
         ) : null}
