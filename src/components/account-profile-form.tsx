@@ -6,7 +6,6 @@ import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
 import { TelegramWebAppAuthButton } from "@/components/auth/telegram-webapp-auth-button";
 import { BelarusPhoneInput } from "@/components/belarus-phone-input";
 import { CabinetNotice } from "@/components/cabinet";
-import { PhotoImage } from "@/components/photo-image";
 import { UserAvatar } from "@/components/user-avatar";
 import { constrainBelarusPhoneInput, BY_PHONE_COUNTRY_PREFIX } from "@/lib/auth/phone";
 import { authErrorMessage } from "@/lib/auth/errors";
@@ -234,18 +233,7 @@ export function AccountProfileForm({
         }}
       >
         <div className="cabinet-avatar">
-          {avatarUrl ? (
-            <PhotoImage
-              className="cabinet-avatar__photo"
-              src={avatarUrl}
-              alt=""
-              preset="avatar"
-              width={72}
-              height={72}
-            />
-          ) : (
-            <UserAvatar name={[firstName, lastName].filter(Boolean).join(" ")} size={72} />
-          )}
+          <UserAvatar name={[firstName, lastName].filter(Boolean).join(" ")} src={avatarUrl} size={72} />
           {profilePhoto ? (
             <p className="cabinet-note">Аватар — моё главное фото из профиля.</p>
           ) : (

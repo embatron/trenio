@@ -28,6 +28,7 @@ export function PhotoImage({
   height,
   loading,
   onClick,
+  onFinalError,
 }: {
   src: string;
   alt: string;
@@ -37,11 +38,14 @@ export function PhotoImage({
   height?: number;
   loading?: "eager" | "lazy";
   onClick?: (event: MouseEvent<HTMLImageElement>) => void;
+  /** The variant and the original file both failed to load. */
+  onFinalError?: () => void;
 }) {
   const [useMaster, setUseMaster] = useState(false);
   const raster = /\.(jpe?g|png|webp)(\?|$)/i.test(src);
+  const giveUp = () => onFinalError?.();
   if (!raster || src.startsWith("blob:") || src.startsWith("data:") || useMaster) {
-    return <img className={className} src={src} alt={alt} width={width} height={height} loading={loading} onClick={onClick} />;
+    return <img className={className} src={src} alt={alt} width={width} height={height} loading={loading} onClick={onClick} onError={giveUp} />;
   }
   const presetInfo = PRESET[preset];
   const srcSet = presetInfo.srcSet

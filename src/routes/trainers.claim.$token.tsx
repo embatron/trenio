@@ -2,7 +2,7 @@ import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useLayoutEffect, useState } from "react";
 
 import { AuthStyles } from "@/components/auth-styles";
-import { PhotoImage } from "@/components/photo-image";
+import { UserAvatar } from "@/components/user-avatar";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
@@ -102,7 +102,7 @@ function ClaimPage() {
               try { localStorage.setItem(`trenio-claim-profile:${preview.handle}`, "1"); } catch { /* ignore */ }
             }}
           >
-            {preview.photo ? <PhotoImage src={preview.photo} alt="" preset="avatar" width={72} height={72} /> : null}
+            <UserAvatar name={preview.fullName || "Тренер"} src={preview.photo} size={72} />
             <div>
               <strong>{preview.fullName || "Тренер"}</strong>
               <span>{[preview.headline, preview.city].filter(Boolean).join(" · ") || "Город ещё не указан"}</span>

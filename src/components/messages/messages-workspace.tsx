@@ -374,17 +374,39 @@ export const DIRECT_CSS = `
 .direct-bubble p, .direct-bubble__text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; color: inherit; }
 .direct-bubble .review-html, .direct-bubble .review-html p, .direct-bubble .review-html a { color: inherit; }
 .direct-bubble .review-html p { margin: 0; }
-.direct-bubble .review-html ul, .direct-bubble .review-html ol { margin: 4px 0; padding-left: 1.2em; }
+.direct-bubble .review-html p + p { margin-top: 0.7em; }
+.direct-bubble .review-html p:empty,
+.direct-bubble .review-html p:has(> br:only-child) { min-height: 1.2em; }
+.direct-bubble .review-html :is(b, strong) { font-weight: 700; }
+.direct-bubble .review-html :is(i, em) { font-style: italic; }
+.direct-bubble .review-html ul, .direct-bubble .review-html ol { margin: 0.45em 0; padding-left: 1.2em; }
+.direct-bubble .review-html ul { list-style: disc; }
+.direct-bubble .review-html ol { list-style: decimal; }
+.direct-bubble .review-html li + li { margin-top: 0.25em; }
 .direct-bubble__meta { display: flex; justify-content: flex-end; align-items: baseline; gap: 8px; margin-top: 4px; }
 .direct-bubble__meta time, .direct-bubble__meta .direct-bubble__state { margin: 0; font-size: 11px; opacity: 0.85; }
 .direct-bubble.is-deleted { opacity: 0.7; font-style: italic; }
 .direct-bubble__retry { min-height: 44px; border: 0; background: transparent; color: var(--muted); padding: 0 4px; }
-.direct-thread__actions button.direct-icon,
-.direct-report { width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
-.direct-thread__actions button.direct-icon svg,
-.direct-report svg { width: 20px; height: 20px; display: block; }
-.direct-thread__actions button.direct-icon:hover,
-.direct-report:hover { color: var(--dark); background: rgba(var(--dark-rgb), 0.05); }
+.direct-thread__actions button.direct-icon { width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.direct-thread__actions button.direct-icon svg { width: 20px; height: 20px; display: block; }
+.direct-thread__actions button.direct-icon:hover { color: var(--dark); background: rgba(var(--dark-rgb), 0.05); }
+.direct-menu { position: relative; }
+.direct-thread__actions .direct-menu__btn {
+  width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 50%;
+  background: transparent; color: var(--dark); font-size: 24px; font-weight: 700; line-height: 1;
+  justify-content: center;
+}
+.direct-thread__actions .direct-menu__btn:hover { background: rgba(var(--dark-rgb), 0.06); }
+.direct-menu__list {
+  position: absolute; top: calc(100% + 4px); right: 0; z-index: 6; min-width: 180px; padding: 6px;
+  border: 1px solid var(--line); border-radius: 12px; background: var(--white);
+  box-shadow: 0 10px 28px rgba(var(--dark-rgb), 0.12);
+}
+.direct-thread__actions .direct-menu__list button {
+  width: 100%; min-height: 44px; padding: 0 12px; border: 0; border-radius: 8px;
+  background: transparent; color: var(--dark); font: inherit; font-weight: var(--fw-ui); justify-content: flex-start;
+}
+.direct-thread__actions .direct-menu__list button:hover { background: rgba(var(--primary-rgb), 0.08); color: var(--primary); }
 .direct-composer { width: 100%; padding: 0; border-top: 1px solid var(--line); }
 .direct-composer__box { width: 100%; border: 0; border-radius: 0; background: var(--white); overflow: hidden; }
 .direct-editor, .direct-editor .rsw-editor { width: 100%; border: 0; border-radius: 0; min-height: 0; box-shadow: none; }

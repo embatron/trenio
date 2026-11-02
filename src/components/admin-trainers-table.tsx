@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 
 import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
-import { PhotoImage } from "@/components/photo-image";
+import { UserAvatar } from "@/components/user-avatar";
 import { TrainerName } from "@/components/trainer-name";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { TRAINER_PUBLISH_LABEL, type AdminTrainer } from "@/lib/admin/trainers";
@@ -418,11 +418,7 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                 <tr key={trainer.slug}>
                   <td>
                     <div className="cabinet-person">
-                      {trainer.avatarPath ? (
-                        <PhotoImage src={trainer.avatarPath} alt="" preset="avatar" />
-                      ) : (
-                        <span className="cabinet-person__mark" aria-hidden="true">{(trainer.firstName || trainer.fullName || "?").slice(0, 1)}</span>
-                      )}
+                      <UserAvatar name={trainer.fullName || trainer.firstName || trainer.slug} src={trainer.avatarPath} size={44} />
                       <div className="cabinet-person__text">
                         <strong title={trainer.fullName || trainer.slug}>
                           <TrainerProfileLink trainer={trainer} />

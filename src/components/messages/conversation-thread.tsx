@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { MessageBubble } from "@/components/messages/message-bubble";
 import { MessageComposer, type ComposerFile } from "@/components/messages/message-composer";
@@ -72,6 +72,8 @@ export function ConversationThread({
 }) {
   const mobile = useIsMobile();
   const [reportOpen, setReportOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
   const [reason, setReason] = useState<(typeof REPORT_REASONS)[number]["id"]>(REPORT_REASONS[0].id);
   const [comment, setComment] = useState("");
   const commentLength = reviewTextLength(comment);
@@ -91,6 +93,22 @@ export function ConversationThread({
     if (firstOpen) opened.current = thread?.conversationId ?? null;
     if (firstOpen || stick.current || lastMine) el.scrollTop = el.scrollHeight;
   }, [thread?.conversationId, messages.length, lastId, lastClient, lastMine]);
+
+  useEffect(() => {
+    if (!moreOpen) return;
+    const onPointer = (event: PointerEvent) => {
+      if (!moreRef.current?.contains(event.target as Node)) setMoreOpen(false);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMoreOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [moreOpen]);
 
   const listPath = view === "own" ? "/account/messages" : "/me/messages";
   const hint = thread && !thread.canWrite
@@ -137,9 +155,32 @@ export function ConversationThread({
               {thread.canReopen && thread.status === "closed" ? <button type="button" onClick={onReopen} disabled={busy}>Открыть</button> : null}
               {thread.canBlock ? <button type="button" onClick={onBlock} disabled={busy}>Заблокировать</button> : null}
               {thread.canReport ? (
-                <button type="button" className="direct-report" onClick={() => setReportOpen(true)} aria-label="Пожаловаться на переписку" title="Пожаловаться на переписку">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20V4" /><path d="M6 4h10l-2.2 3.2L16 10.4H6" /></svg>
-                </button>
+                <div className="direct-menu" ref={moreRef}>
+                  <button
+                    type="button"
+                    className="direct-menu__btn"
+                    aria-haspopup="menu"
+                    aria-expanded={moreOpen}
+                    aria-label="Ещё"
+                    onClick={() => setMoreOpen((open) => !open)}
+                  >
+                    …
+                  </button>
+                  {moreOpen ? (
+                    <div className="direct-menu__list" role="menu">
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => {
+                          setMoreOpen(false);
+                          setReportOpen(true);
+                        }}
+                      >
+                        Пожаловаться
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
               ) : null}
             </div>
           </header>

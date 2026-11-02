@@ -1,8 +1,9 @@
-import Avatar from "boring-avatars";
+import { useEffect, useState } from "react";
 
 import { PhotoImage } from "@/components/photo-image";
 
-const COLORS = ["#f04b50", "#111827", "#f6b4b6", "#9ca3af", "#ffe4e6"];
+/** Same mark as the site icon. Shown when a portrait is missing or will not load. */
+export const DEFAULT_AVATAR_SRC = "/favicon-32.png";
 
 export function UserAvatar({
   name,
@@ -13,13 +14,26 @@ export function UserAvatar({
   src?: string | null;
   size?: number;
 }) {
-  const label = name.trim() || "Пользователь";
+  const photo = src?.trim() ?? "";
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [photo]);
+
   return (
     <span className="user-avatar" style={{ width: size, height: size }} aria-hidden="true">
-      {src ? (
-        <PhotoImage src={src} alt="" preset="avatar" width={size} height={size} />
+      {photo && !failed ? (
+        <PhotoImage
+          src={photo}
+          alt=""
+          preset="avatar"
+          width={size}
+          height={size}
+          onFinalError={() => setFailed(true)}
+        />
       ) : (
-        <Avatar size={size} name={label} variant="beam" colors={COLORS} title={false} />
+        <img className="user-avatar__mark" src={DEFAULT_AVATAR_SRC} alt="" width={size} height={size} />
       )}
     </span>
   );

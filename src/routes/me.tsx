@@ -17,10 +17,10 @@ import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
 const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: MeSectionPath; sections?: typeof TRAINER_PROFILE_SECTIONS }> = [
   { id: "overview", label: "Обзор", icon: "overview", to: "/me" },
-  { id: "messages", label: "Сообщения", icon: "messages", to: "/me/messages" },
-  { id: "profile", label: "Профиль", icon: "trainers", to: "/me/profile", sections: TRAINER_PROFILE_SECTIONS },
-  { id: "contacts", label: "Контакты", icon: "contacts", to: "/me/contacts" },
-  { id: "reviews", label: "Отзывы", icon: "reviews", to: "/me/reviews" },
+  { id: "messages", label: "Мои сообщения", icon: "messages", to: "/me/messages" },
+  { id: "profile", label: "Мой профиль", icon: "trainers", to: "/me/profile", sections: TRAINER_PROFILE_SECTIONS },
+  { id: "contacts", label: "Мои контакты", icon: "contacts", to: "/me/contacts" },
+  { id: "reviews", label: "Мои отзывы", icon: "reviews", to: "/me/reviews" },
   { id: "favorites", label: "Избранное", icon: "favorites", to: "/me/favorites" },
   { id: "settings", label: "Настройки", icon: "profile", to: "/me/settings" },
 ];
