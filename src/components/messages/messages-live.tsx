@@ -1,6 +1,8 @@
 import { useServerFn } from "@tanstack/react-start";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 
+import { isAuthorizationRequired } from "@/lib/auth/errors";
+import { redirectToLogin } from "@/lib/auth/return-path";
 import { unreadCountFn } from "@/lib/messages/functions";
 import { MESSAGE_SCAN_MS } from "@/lib/messages/polling";
 import { EMPTY_MESSAGING, type MessagingSummary } from "@/lib/messages/schemas";
@@ -39,7 +41,12 @@ export function MessagesLive({
       try {
         const next = await unreadRef.current({ data: {} });
         if (!stop) setSummary(next);
-      } catch {
+      } catch (error) {
+        if (isAuthorizationRequired(error)) {
+          stop = true;
+          redirectToLogin();
+          return;
+        }
         /* keep the last count; the next pass retries */
       }
     };

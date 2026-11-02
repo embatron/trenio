@@ -5,6 +5,7 @@ import { readSessionToken } from "@/auth/session";
 import { getDb } from "@/db";
 import { messageAttachments, messages } from "@/db/schema";
 import { isAuthError } from "@/lib/auth/errors";
+import { loginHref } from "@/lib/auth/return-path";
 import { isStaff } from "@/lib/auth/roles";
 import { readMessageFile, readMessagePreview } from "@/lib/messages/attachment-store";
 import { logCaught } from "@/lib/log/logger";
@@ -32,7 +33,13 @@ export async function sendMessageFile(id: string, preview = false): Promise<Resp
   try {
     const token = readSessionToken();
     const user = token ? await findValidSession(token) : null;
-    if (!user) return plain(401, "Требуется авторизация.");
+    if (!user) {
+      const next = `/messages/files/${id}${preview ? "?preview=1" : ""}`;
+      return new Response(null, {
+        status: 302,
+        headers: { location: loginHref(next), "cache-control": "private, no-store" },
+      });
+    }
     const [row] = await getDb()
       .select({
         conversationId: messageAttachments.conversationId,

@@ -14,7 +14,7 @@ import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
 const SECTIONS: Array<{ id: string; label: string; icon: "reviews" | "bookings" | "favorites" | "profile" | "messages"; to: AccountSectionPath }> = [
-  { id: "messages", label: "Сообщения", icon: "messages", to: "/account/messages" },
+  { id: "messages", label: "Мои сообщения", icon: "messages", to: "/account/messages" },
   { id: "reviews", label: "Мои отзывы", icon: "reviews", to: "/account/reviews" },
   { id: "bookings", label: "Мои записи", icon: "bookings", to: "/account/bookings" },
   { id: "favorites", label: "Избранное", icon: "favorites", to: "/account/favorites" },

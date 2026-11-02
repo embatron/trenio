@@ -19,7 +19,9 @@ import { FavoritesProvider } from "@/components/favorites-store";
 import { MessagesLive } from "@/components/messages/messages-live";
 import { CopyLinkToast } from "@/components/share-profile";
 import { Toaster } from "@/components/ui/sonner";
+import { isAuthorizationRequired } from "@/lib/auth/errors";
 import { getSessionFn } from "@/lib/auth/functions";
+import { redirectToLogin } from "@/lib/auth/return-path";
 import { unreadCountFn } from "@/lib/messages/functions";
 import { EMPTY_MESSAGING, type MessagingSummary } from "@/lib/messages/schemas";
 
@@ -41,7 +43,15 @@ function NotFoundComponent() {
   );
 }
 
+function AuthorizationRedirect() {
+  useEffect(() => {
+    redirectToLogin();
+  }, []);
+  return null;
+}
+
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+  if (isAuthorizationRequired(error)) return <AuthorizationRedirect />;
   console.error(error);
   const router = useRouter();
   useEffect(() => {

@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Direct messages
 
-The product label is «Сообщения». Do not rename the header control or the list heading to «Переписки». The trainer cabinet sidebar item is «Мои сообщения». The account and admin sidebars stay «Сообщения».
+The product label is «Сообщения». Do not rename the header envelope or the list heading to «Переписки». The trainer cabinet sidebar and the plain-user account sidebar both say «Мои сообщения». The admin sidebar stays «Сообщения».
 
 The full file map and edit checklist are in `.cursor/skills/trenio-messages/SKILL.md`. Product behavior stays in `docs/TECH_SPEC.md` §4.6.
 

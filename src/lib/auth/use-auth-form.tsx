@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useNavigate } from "@tanstack/react-router";
 
-import { authErrorMessage, isAuthError } from "@/lib/auth/errors";
+import { authErrorMessage, isAuthError, isAuthorizationRequired } from "@/lib/auth/errors";
+import { redirectToLogin } from "@/lib/auth/return-path";
 
 export function useAuthSubmit() {
   const [error, setError] = useState<string | null>(null);
@@ -17,6 +18,10 @@ export function useAuthSubmit() {
       await onSuccess?.(result);
       return result;
     } catch (err) {
+      if (isAuthorizationRequired(err)) {
+        redirectToLogin();
+        return null;
+      }
       if (isAuthError(err)) {
         setError(err.message);
       } else {

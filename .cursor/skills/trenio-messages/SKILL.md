@@ -63,7 +63,7 @@ Message mutations log `domain: "message"` through `writeLog` in `src/lib/message
 
 ## UI
 
-- The trainer cabinet sidebar item is «Мои сообщения». Account and admin nav labels stay «Сообщения». The list heading and the header control stay «Сообщения». Badges are `.cabinet-nav__badge` numbers, including zero for those three counts on the account sidebar.
+- The trainer cabinet sidebar and the plain-user account sidebar both say «Мои сообщения». The admin nav label stays «Сообщения». The list heading and the header envelope stay «Сообщения». Badges are `.cabinet-nav__badge` numbers, including zero for those three counts on the account sidebar.
 - The conversation list is newest activity first. On a wide screen, `/account/messages` and `/me/messages` with no id replace the URL with the first row. On a phone, stay on the list until a row is opened; the thread then fills the screen under the header, and «К списку» returns to the list. Hover tints the row and turns the name brand-colored. Do not steal `?trainer=` while that conversation is still opening. The trainer list includes threads the trainer started.
 - Image bubbles use `/messages/files/{id}?preview=1` (a stored JPEG, at most 640px inside) as a 72px thumbnail. The tap target opens the original on the same page and can rotate it by 90 degrees. Documents stay named links. While a send is in flight, a local image uses its object URL in the same frame.
 - Client bubbles are turquoise (`is-user`). Trainer bubbles are coral (`is-trainer`). `mine` only places the bubble on the right.

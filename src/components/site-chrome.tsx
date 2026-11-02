@@ -492,7 +492,7 @@ type HeaderMenuItem =
   | { id: string; label: string; kind: "me"; to: MeMenuTo };
 
 const ACCOUNT_MENU: HeaderMenuItem[] = [
-  { id: "messages", label: "Сообщения", kind: "account", to: "/account/messages" },
+  { id: "messages", label: "Мои сообщения", kind: "account", to: "/account/messages" },
   { id: "reviews", label: "Мои отзывы", kind: "account", to: "/account/reviews" },
   { id: "bookings", label: "Мои записи", kind: "account", to: "/account/bookings" },
   { id: "favorites", label: "Избранное", kind: "account", to: "/account/favorites" },
