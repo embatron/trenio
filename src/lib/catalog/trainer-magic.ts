@@ -788,19 +788,19 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
     try {
       const letter = renderLetter({
         service: true,
-        title: "Вход в кабинет",
+        title: "Ваш профиль",
         person: {
           name: [row.firstName, row.lastName].filter(Boolean).join(" ") || "Тренер",
           avatarUrl: row.avatarPath,
           caption: "Ваш профиль",
         },
-        lines: ["Ссылка действует один час. На странице нажмите кнопку, чтобы открыть кабинет."],
-        action: { href: link, label: "Открыть кабинет" },
+        lines: ["Ссылка действует один час и сразу открывает вашу страницу."],
+        action: { href: link, label: "Открыть профиль" },
         note: "Если вы не запрашивали это письмо, просто удалите его.",
       });
       await sendMail({
         to: [email],
-        subject: "Вход в кабинет trenio.by",
+        subject: "Ваш профиль на trenio.by",
         text: letter.text,
         html: letter.html,
       });
@@ -813,7 +813,7 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
       domain: "email",
       action: "email.send",
       outcome: "success",
-      message: "Ссылка в кабинет отправлена на почту.",
+      message: "Ссылка на профиль отправлена на почту.",
       subject: email,
       target: row.slug,
     });
@@ -892,18 +892,18 @@ export const openTrainerMailFn = createServerFn({ method: "POST" })
       await getDb().insert(userRoles).values({ userId: user.id, role: "trainer" });
     }
     await attachDoorProfile(row.id, user.id, email);
-    const redirectTo = await openDoorSession(user.id);
+    await openDoorSession(user.id);
     void writeLog({
       level: "info",
       domain: "account",
       action: "account.claim",
       outcome: "success",
-      message: "Письмо открыло кабинет. Почта подтверждена.",
+      message: "Письмо открыло профиль. Почта подтверждена.",
       subject: email,
       actorUserId: user.id,
       target: row.slug,
     });
-    return { ok: true as const, redirectTo };
+    return { ok: true as const, slug: row.slug, needsPassword: user.needsPassword };
   });
 /** Password chosen in the cabinet after the magic-link mail. That step finishes the account. */
 export const setDoorPasswordFn = createServerFn({ method: "POST" })
@@ -962,7 +962,7 @@ export const setDoorPasswordFn = createServerFn({ method: "POST" })
           "Дальше работаем вместе: профиль, люди, которые вас ищут, и всё, что захочется поправить. Если появится вопрос, просто напишите нам.",
           "Спасибо!",
         ],
-        action: { href: `${requestOrigin()}/me`, label: "Открыть кабинет" },
+        action: { href: `${requestOrigin()}/trainers/${owned.slug}`, label: "Открыть профиль" },
       });
       await sendMail({
         to: [context.user.email],

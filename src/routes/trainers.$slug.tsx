@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound, redirect, useRouteContext, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect, useRouteContext, useRouter, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { PhotoImage } from "@/components/photo-image";
 import { UserAvatar } from "@/components/user-avatar";
@@ -44,8 +44,10 @@ import { trainerSeoHead } from "@/lib/seo/trainer";
 import { cityIn } from "@/lib/seo/text";
 import { getTrainerAddressFn } from "@/lib/geo/functions";
 import { pluralRu } from "@/lib/ru-plural";
+import { DoorPasswordDialog } from "@/components/auth/door-password-dialog";
 import { TrainerDoorMailDialog } from "@/components/trainer-door-editor";
-import { getMagicTrainerFn, loadVisibleTrainerFn, type MagicTrainerDraft } from "@/lib/catalog/trainer-magic";
+import { useAuthServerFn } from "@/lib/auth/use-auth-form";
+import { getMagicTrainerFn, loadVisibleTrainerFn, openTrainerMailFn, type MagicTrainerDraft } from "@/lib/catalog/trainer-magic";
 import { TRAINER_LEGACY_SLUGS } from "@/lib/catalog/trainer-slugs";
 
 type Trainer = {
@@ -742,16 +744,50 @@ function TrainerPage() {
         : null;
   const reviewLabel = t.reviews.length === 0 ? "Сделать первый отзыв" : "Добавить отзыв";
   const staff = Boolean(user && isStaff(user.roles));
-  const magicDoor = Boolean(editor?.magicDoor) && !isOwner;
+  const searchStr = useRouterState({ select: (state) => state.location.searchStr });
+  const openingMail = new URLSearchParams(searchStr).get("mail");
+  const magicDoor = Boolean(editor?.magicDoor) && !isOwner && !openingMail;
   const [mailOpen, setMailOpen] = useState(magicDoor);
+  const [mailError, setMailError] = useState("");
+  const openMail = useAuthServerFn(openTrainerMailFn);
   const [createdOpen, setCreatedOpen] = useState(false);
   const createdAudience = isOwner || access === "owner";
   useEffect(() => {
-    if (!createdAudience) return;
+    const params = new URLSearchParams(window.location.search);
+    const mail = params.get("mail") ?? "";
+    const door = params.get("door") ?? "";
+    if (!mail || !door) return;
+    const key = `trenio-door-mail:${door}:${mail.slice(0, 16)}`;
+    try {
+      if (sessionStorage.getItem(key) === "1") return;
+      sessionStorage.setItem(key, "1");
+    } catch {
+      /* a second open is refused by the spent link */
+    }
+    void openMail({ data: { code: door, token: mail } })
+      .then((result) => {
+        const slug = result?.slug ?? "";
+        if (!/^[a-z0-9._]{1,30}$/.test(slug)) {
+          setMailError("Ссылка уже не действует.");
+          return;
+        }
+        window.location.replace(result.needsPassword ? `/trainers/${slug}` : `/trainers/${slug}?created=1`);
+      })
+      .catch((error: unknown) => {
+        try {
+          sessionStorage.removeItem(key);
+        } catch {
+          /* the message stays on the page */
+        }
+        setMailError(authErrorMessage(error) || "Ссылка уже не действует.");
+      });
+  }, [openMail]);
+  useEffect(() => {
+    if (!createdAudience || user?.needsDoorPassword) return;
     const params = new URLSearchParams(window.location.search);
     if (params.get("created") !== "1") return;
     setCreatedOpen(true);
-  }, [createdAudience]);
+  }, [createdAudience, user?.needsDoorPassword]);
   function closeCreated() {
     setCreatedOpen(false);
     const params = new URLSearchParams(window.location.search);
@@ -817,6 +853,7 @@ function TrainerPage() {
 
       <main>
         <div className="layout-container trainer-page__inner">
+        {mailError ? <p className="profile-access" role="alert">{mailError}</p> : null}
         {access === "public" ? null : (
           <p className="profile-access" role="status">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1186,6 +1223,7 @@ function TrainerPage() {
       </div> : null}
 
       <SiteFooter />
+      {user?.needsDoorPassword && !user.needsCredentials ? <DoorPasswordDialog /> : null}
       {createdOpen ? <CabinetCreatedDialog trainer={t} onClose={closeCreated} /> : null}
       {mailOpen ? <TrainerDoorMailDialog onClose={() => setMailOpen(false)} /> : null}
       {reviewSent ? (

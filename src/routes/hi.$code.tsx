@@ -1,11 +1,9 @@
-import { createFileRoute, Link, redirect, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 
 import { AuthStyles } from "@/components/auth-styles";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { authErrorMessage } from "@/lib/auth/errors";
-import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
-import { enterTrainerDoorFn, openTrainerMailFn, peekTrainerMailFn } from "@/lib/catalog/trainer-magic";
+import { enterTrainerDoorFn, peekTrainerMailFn } from "@/lib/catalog/trainer-magic";
 
 export const Route = createFileRoute("/hi/$code")({
   head: () => ({
@@ -18,10 +16,14 @@ export const Route = createFileRoute("/hi/$code")({
     const mail = new URLSearchParams(location.searchStr).get("mail") ?? "";
     if (mail) {
       const peek = await peekTrainerMailFn({ data: { code: params.code, token: mail } });
-      return { mail, ready: Boolean(peek) };
+      if (!peek) return { ready: false };
+      const door = await enterTrainerDoorFn({ data: { code: params.code } });
+      if (!door) return { ready: false };
+      const query = new URLSearchParams({ mail, door: params.code });
+      throw redirect({ href: `/trainers/${door.slug}?${query.toString()}` });
     }
     const door = await enterTrainerDoorFn({ data: { code: params.code } });
-    if (!door) return { mail: "", ready: false };
+    if (!door) return { ready: false };
     throw redirect({ to: "/trainers/$slug", params: { slug: door.slug } });
   },
   component: DoorPage,
@@ -33,50 +35,9 @@ function DoorError({ error }: { error: unknown }) {
 }
 
 function DoorPage() {
-  const { mail, ready } = Route.useLoaderData();
-  const { code } = Route.useParams();
-  if (mail && ready) return <ConfirmMail code={code} mail={mail} />;
-  return <Missing text="Такой ссылки нет. Попросите новую в сообщении из Instagram." />;
-}
-
-function ConfirmMail({ code, mail }: { code: string; mail: string }) {
-  const router = useRouter();
-  const open = useAuthServerFn(openTrainerMailFn);
-  const { error, pending, run } = useAuthSubmit();
-  const [done, setDone] = useState(false);
-
-  return (
-    <div className="auth-page">
-      <AuthStyles />
-      <SiteHeader />
-      <main className="auth-main">
-        <div className="auth-card">
-          <h1 className="auth-title">Открыть кабинет</h1>
-          <p className="auth-sub">Ссылка действует час. Нажмите кнопку, чтобы войти.</p>
-          <AuthAlert message={error} />
-          <button
-            type="button"
-            className="auth-submit"
-            disabled={pending || done}
-            onClick={() => {
-              void run(
-                () => open({ data: { code, token: mail } }),
-                async (result) => {
-                  if (!result) return;
-                  setDone(true);
-                  await router.invalidate();
-                  window.location.assign(result.redirectTo);
-                },
-              );
-            }}
-          >
-            {pending ? "Открываем…" : "Открыть кабинет"}
-          </button>
-        </div>
-      </main>
-      <SiteFooter />
-    </div>
-  );
+  const { ready } = Route.useLoaderData();
+  if (!ready) return <Missing text="Такой ссылки нет. Попросите новую в сообщении из Instagram." />;
+  return <Missing text="Ссылка уже не действует." />;
 }
 
 function Missing({ text }: { text: string }) {

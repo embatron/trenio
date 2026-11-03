@@ -59,6 +59,8 @@ test("the cabinet stays closed until the missing factor is done", () => {
   );
   assert.equal(gateAllowsPath("/auth/confirm-email", "/auth/credentials"), true);
   assert.equal(gateAllowsPath("/account/settings", "/auth/credentials"), false);
+  assert.equal(gateAllowsPath("/trainers/test.nina.r6m", "/auth/password"), true);
+  assert.equal(gateAllowsPath("/trainers/test.nina.r6m", "/auth/credentials"), false);
 });
 
 test("the authenticator stays off for trainers, clients, and staff", () => {

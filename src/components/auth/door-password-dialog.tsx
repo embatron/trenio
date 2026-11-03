@@ -181,6 +181,16 @@ export function DoorPasswordDialog() {
         )}
       </div>
       <style>{`
+        .cabinet-modal.cabinet-modal--lock {
+          position: fixed; inset: 0; z-index: 400; display: grid; place-items: center;
+          padding: var(--layout-gutter); background: rgba(var(--dark-rgb), 0.45);
+        }
+        .cabinet-modal--lock .cabinet-modal__card {
+          width: min(440px, 100%); display: grid; gap: 12px; padding: 20px;
+          border-radius: var(--card-radius); background: var(--white);
+        }
+        .cabinet-modal--lock .cabinet-modal__card h2 { margin: 0; color: var(--dark); font-size: 22px; }
+        .cabinet-modal--lock .cabinet-modal__card p { margin: 0; color: var(--text); }
         .door-password { position: relative; }
         .door-password:has(.door-password__x) { padding-right: 64px; }
         .cabinet-modal__card .door-password__x {

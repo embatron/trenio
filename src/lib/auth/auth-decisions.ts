@@ -64,6 +64,7 @@ export function gateAllowsPath(pathname: string, gate: string): boolean {
   if (pathname.startsWith("/auth/set-password")) return true;
   if (pathname.startsWith("/auth/forgot-password")) return true;
   if (pathname.startsWith("/hi/")) return true;
+  if (gate === "/auth/password" && pathname.startsWith("/trainers/")) return true;
   if (pathname.startsWith("/offline")) return true;
   return false;
 }
