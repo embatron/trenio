@@ -4,17 +4,30 @@ import { createPortal } from "react-dom";
 
 import { AuthStyles } from "@/components/auth-styles";
 import { PasswordStrength } from "@/components/auth/password-strength";
-import { completeSignupCredentialsFn } from "@/lib/auth/functions";
+import {
+  completeSignupCredentialsFn,
+  confirmSignupCodeFn,
+  confirmSignupLinkFn,
+  logoutFn,
+  requestSignupLinkFn,
+} from "@/lib/auth/functions";
 import { validatePasswordStrength } from "@/lib/auth/password-policy";
 import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
 
 export function CredentialsRequiredDialog() {
   const router = useRouter();
   const save = useAuthServerFn(completeSignupCredentialsFn);
+  const confirmCode = useAuthServerFn(confirmSignupCodeFn);
+  const requestLink = useAuthServerFn(requestSignupLinkFn);
+  const confirmLink = useAuthServerFn(confirmSignupLinkFn);
+  const logout = useAuthServerFn(logoutFn);
   const { error, pending, run } = useAuthSubmit();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeat, setRepeat] = useState("");
+  const [code, setCode] = useState("");
+  const [phase, setPhase] = useState<"form" | "code" | "link">("form");
+  const [devCode, setDevCode] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [mismatch, setMismatch] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
@@ -79,6 +92,7 @@ export function CredentialsRequiredDialog() {
         <AuthAlert message={mismatch ?? error} />
         <form
           className="auth-form"
+          style={{ display: phase === "form" ? undefined : "none" }}
           onSubmit={(event) => {
             event.preventDefault();
             if (password !== repeat) {
@@ -95,6 +109,15 @@ export function CredentialsRequiredDialog() {
               () => save({ data: { email, password } }),
               async (result) => {
                 if (!result) return;
+                if ("linkAvailable" in result && result.linkAvailable) {
+                  setPhase("link");
+                  return;
+                }
+                if ("needsCode" in result && result.needsCode) {
+                  setDevCode(result.devCode ?? null);
+                  setPhase("code");
+                  return;
+                }
                 await router.invalidate();
               },
             );
@@ -152,6 +175,54 @@ export function CredentialsRequiredDialog() {
             {pending ? "Сохранение…" : "Сохранить"}
           </button>
         </form>
+        {phase !== "form" ? (
+          <form
+            className="auth-form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void run(async () => {
+                if (phase === "link" && !code.trim()) {
+                  const sent = await requestLink({ data: { email } });
+                  setDevCode(sent.devCode ?? null);
+                  return { ok: true as const };
+                }
+                if (phase === "link") {
+                  return confirmLink({ data: { email, code } });
+                }
+                await confirmCode({ data: { email, code } });
+                return { ok: true as const };
+              }, async (result) => {
+                if (!result) return;
+                if (result && "redirectTo" in result && result.redirectTo) {
+                  window.location.assign(result.redirectTo);
+                  return;
+                }
+                await router.invalidate();
+              });
+            }}
+          >
+            <p>{phase === "link" ? "Эта почта уже подтверждена. Введите код из письма, чтобы связать аккаунты." : "Введите код из письма. Почта станет входом только после кода."}</p>
+            {devCode ? <p className="auth-alert auth-alert--note">Dev-код: {devCode}</p> : null}
+            <label className="auth-field">
+              <span className="auth-field__label">Код</span>
+              <input inputMode="numeric" autoComplete="one-time-code" value={code} onChange={(event) => setCode(event.target.value)} required={phase !== "link"} />
+            </label>
+            <button type="submit" className="auth-submit" disabled={pending}>
+              {pending ? "Проверка…" : phase === "link" && !code.trim() ? "Прислать код" : "Подтвердить"}
+            </button>
+          </form>
+        ) : null}
+        <button
+          type="button"
+          className="auth-submit"
+          onClick={() => {
+            void logout().then(() => {
+              window.location.assign("/auth/login");
+            });
+          }}
+        >
+          Выйти
+        </button>
       </div>
     </div>,
     document.body,

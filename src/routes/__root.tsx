@@ -2,9 +2,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   createRootRouteWithContext,
-  useRouter,
   HeadContent,
+  redirect,
   Scripts,
+  useRouter,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
@@ -20,6 +21,7 @@ import { MessagesLive } from "@/components/messages/messages-live";
 import { CopyLinkToast } from "@/components/share-profile";
 import { Toaster } from "@/components/ui/sonner";
 import { isAuthorizationRequired } from "@/lib/auth/errors";
+import { accountGatePath, gateAllowsPath } from "@/lib/auth/auth-decisions";
 import { getSessionFn } from "@/lib/auth/functions";
 import { redirectToLogin } from "@/lib/auth/return-path";
 import { unreadCountFn } from "@/lib/messages/functions";
@@ -111,9 +113,14 @@ export const Route = createRootRouteWithContext<{
   user: PublicUser | null;
   messaging: MessagingSummary;
 }>()({
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
     const user = await getSessionFn();
     if (!user) return { user, messaging: EMPTY_MESSAGING };
+    const gate = accountGatePath(user);
+    if (gate && !gateAllowsPath(location.pathname, gate)) {
+      throw redirect({ to: gate });
+    }
+    if (gate) return { user, messaging: EMPTY_MESSAGING };
     try {
       const messaging = await unreadCountFn({ data: {} });
       return { user, messaging };

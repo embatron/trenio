@@ -13,7 +13,7 @@ export const reportClientLogsFn = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const request = getRequest();
     const ip = clientIpFromHeaders(request.headers.get("x-real-ip"));
-    const limit = consumeRateLimit(`client-log:${ip}`, 5 * 60_000, 20);
+    const limit = await consumeRateLimit(`client-log:${ip}`, 5 * 60_000, 20);
     if (!limit.ok) return { ok: true as const };
 
     for (const event of data.events) {

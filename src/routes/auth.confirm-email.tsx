@@ -1,9 +1,11 @@
-import { createFileRoute, isRedirect, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { useState } from "react";
 import { z } from "zod";
 
 import { AuthStyles } from "@/components/auth-styles";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
-import { confirmEmailChangeFn } from "@/lib/auth/functions";
+import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
+import { confirmSignupEmailFn } from "@/lib/auth/functions";
 import { NOINDEX_NOFOLLOW } from "@/lib/seo/head";
 
 const searchSchema = z.object({
@@ -12,31 +14,26 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/auth/confirm-email")({
   validateSearch: searchSchema,
-  loader: async ({ location }) => {
-    const token = new URLSearchParams(location.searchStr).get("token") ?? undefined;
-    if (!token) {
-      return { status: "missing" as const };
-    }
-    try {
-      await confirmEmailChangeFn({ data: { token } });
-      throw redirect({ to: "/account" });
-    } catch (error) {
-      if (isRedirect(error)) throw error;
-      return { status: "error" as const };
-    }
+  loader: ({ location }) => {
+    const token = new URLSearchParams(location.searchStr).get("token") ?? "";
+    return { token };
   },
   head: () => ({
     meta: [
-      { title: "Подтверждение e-mail — trenio.by" },
+      { title: "Подтверждение почты — trenio.by" },
       NOINDEX_NOFOLLOW,
-      { name: "description", content: "Подтвердите новый e-mail для аккаунта trenio.by." },
+      { name: "description", content: "Подтвердите почту trenio.by." },
     ],
   }),
   component: ConfirmEmailPage,
 });
 
 function ConfirmEmailPage() {
-  const { status } = Route.useLoaderData();
+  const { token } = Route.useLoaderData();
+  const router = useRouter();
+  const confirm = useAuthServerFn(confirmSignupEmailFn);
+  const { error, pending, run } = useAuthSubmit();
+  const [done, setDone] = useState(false);
 
   return (
     <div className="auth-page">
@@ -45,20 +42,39 @@ function ConfirmEmailPage() {
       <main className="auth-main">
         <div className="auth-card">
           <div className="auth-card__head">
-            <h1 className="auth-title">Ссылка недействительна</h1>
+            <h1 className="auth-title">{token ? "Подтвердите почту" : "Ссылка недействительна"}</h1>
             <p className="auth-sub">
-              {status === "missing"
-                ? "В ссылке нет токена. Запросите смену e-mail ещё раз в кабинете."
-                : "Ссылка устарела или уже использована."}
+              {token
+                ? "Нажмите кнопку, чтобы подтвердить адрес и войти."
+                : "В ссылке нет токена. Запросите письмо ещё раз."}
             </p>
           </div>
-          <Link
-            to="/account"
-            className="auth-submit"
-            style={{ display: "grid", placeItems: "center", textDecoration: "none" }}
-          >
-            В кабинет
-          </Link>
+          <AuthAlert message={error} />
+          {token && !done ? (
+            <button
+              type="button"
+              className="auth-submit"
+              disabled={pending}
+              onClick={() => {
+                void run(
+                  () => confirm({ data: { token } }),
+                  async (result) => {
+                    if (!result) return;
+                    setDone(true);
+                    const next = "totpRequired" in result && result.totpRequired ? "/auth/totp" : result.redirectTo;
+                    await router.invalidate();
+                    if (next) window.location.assign(next);
+                  },
+                );
+              }}
+            >
+              {pending ? "Проверка…" : "Подтвердить почту"}
+            </button>
+          ) : (
+            <Link to="/auth/login" className="auth-submit" style={{ display: "grid", placeItems: "center", textDecoration: "none" }}>
+              Ко входу
+            </Link>
+          )}
         </div>
       </main>
       <SiteFooter />

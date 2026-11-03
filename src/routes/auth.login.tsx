@@ -82,7 +82,12 @@ function LoginPage() {
           : null;
   const { error, pending, run, redirectTo, setError } = useAuthSubmit();
 
-  const goAfterLogin = async (result: { redirectTo?: string } | null) => {
+  const goAfterLogin = async (result: { redirectTo?: string; totpRequired?: boolean } | null) => {
+    if (result?.totpRequired) {
+      await router.invalidate();
+      redirectTo("/auth/totp");
+      return;
+    }
     const next = safeReturnPath(returnPath) ?? result?.redirectTo;
     if (!next) return;
     await router.invalidate();
@@ -176,7 +181,7 @@ function LoginPage() {
                       return;
                     }
                     setRestoreOffer(false);
-                    await goAfterLogin(result);
+                    await goAfterLogin(result && "redirectTo" in result ? result : null);
                   },
                 );
               }}

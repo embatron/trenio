@@ -10,6 +10,7 @@ import {
   primaryKey,
   bigint,
   boolean,
+  integer,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -61,8 +62,15 @@ export const users = pgTable(
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     telegramUserId: bigint("telegram_user_id", { mode: "number" }),
     telegramUsername: varchar("telegram_username", { length: 64 }),
+    /** Set when this chat has already written to the login bot, or confirmed Telegram inside the Mini App. */
+    telegramBotSeenAt: timestamp("telegram_bot_seen_at", { withTimezone: true }),
     /** Stable Google account id. Set when the person signs in with Google. */
     googleSub: varchar("google_sub", { length: 255 }),
+    /** AES-GCM blob. Empty until a staff account starts enrollment. */
+    totpSecret: text("totp_secret"),
+    totpEnabledAt: timestamp("totp_enabled_at", { withTimezone: true }),
+    /** JSON array of SHA-256 hashes. A used code is removed. */
+    totpRecoveryHashes: text("totp_recovery_hashes"),
     /** Letter when someone writes in Сообщения. */
     mailMessages: boolean("mail_messages").notNull().default(true),
     /** Letter when the person's review is published or rejected. */
@@ -146,6 +154,7 @@ export const emailVerificationTokens = pgTable(
     pendingEmail: varchar("pending_email", { length: 320 }),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     usedAt: timestamp("used_at", { withTimezone: true }),
+    attemptCount: integer("attempt_count").notNull().default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [index("email_verification_tokens_user_id_idx").on(table.userId)],

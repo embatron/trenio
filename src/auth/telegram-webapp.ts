@@ -2,7 +2,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 import { isTelegramLoginConfigured, loginBotToken } from "./telegram";
 
-const TELEGRAM_WEBAPP_AUTH_MAX_AGE_SECONDS = 24 * 60 * 60;
+const TELEGRAM_WEBAPP_AUTH_MAX_AGE_SECONDS = 15 * 60;
 
 export type TelegramWebAppUser = {
   id: number;

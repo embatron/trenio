@@ -8,6 +8,7 @@ import { z } from "zod";
 
 import { requireAuthMiddleware } from "@/auth/middleware";
 import { markLogged, writeLog } from "@/lib/log/logger";
+import { sendProfileStatusNotice } from "@/lib/mail/account-notices";
 import { listActorJournal, mergeJournal } from "@/lib/log/journal";
 import { normalizeEmail } from "@/auth/password";
 import { confirmAccountPhoneCode, requestAccountPhoneCode } from "@/auth/service";
@@ -541,6 +542,7 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
     let phone = trainerCardPhone(data.phone);
     let email = data.email.trim();
     let ownerEmailVerifiedAt: Date | null | undefined;
+    let ownerNotice: { email: string; emailVerifiedAt: Date | null } | null = null;
     if (existing?.ownerUserId) {
       const [owner] = await db
         .select({ phone: users.phone, email: users.email, emailVerifiedAt: users.emailVerifiedAt })
@@ -550,6 +552,7 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       if (owner?.phone) phone = formatBelarusPhone(owner.phone);
       email = owner?.email ?? "";
       ownerEmailVerifiedAt = owner?.emailVerifiedAt ?? null;
+      if (owner) ownerNotice = { email: owner.email, emailVerifiedAt: owner.emailVerifiedAt };
     }
     const values = {
       firstName,
@@ -669,6 +672,15 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       actorUserId: context.user.id,
       target: data.slug,
     });
+    if (existing && ownerNotice) {
+      void sendProfileStatusNotice({
+        email: ownerNotice.email,
+        emailVerifiedAt: ownerNotice.emailVerifiedAt,
+        slug: data.slug,
+        previous: existing.status,
+        next: data.status,
+      });
+    }
     return {
       ok: true as const,
       message: savedWithMapNotice("Профиль тренера сохранён.", places),
@@ -1153,7 +1165,7 @@ export const requestAdminTrainerPhoneCodeFn = createServerFn({ method: "POST" })
   .validator(trainerPhoneSchema)
   .handler(async ({ data, context }) => {
     const ownerId = await linkedOwnerId(data.slug, context.user.roles);
-    return requestAccountPhoneCode(ownerId, data.phone);
+    return requestAccountPhoneCode(ownerId, data.phone, null, { skipStepUp: true });
   });
 
 export const confirmAdminTrainerPhoneCodeFn = createServerFn({ method: "POST" })
@@ -1161,7 +1173,7 @@ export const confirmAdminTrainerPhoneCodeFn = createServerFn({ method: "POST" })
   .validator(trainerPhoneSchema.extend({ code: z.string().trim().min(4).max(8) }))
   .handler(async ({ data, context }) => {
     const ownerId = await linkedOwnerId(data.slug, context.user.roles);
-    return confirmAccountPhoneCode(ownerId, data.phone, data.code);
+    return confirmAccountPhoneCode(ownerId, data.phone, data.code, null);
   });
 
 const staffNoteSchema = z.object({

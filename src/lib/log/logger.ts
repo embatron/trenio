@@ -45,6 +45,20 @@ type Ambient = {
 let lastPurgeAt = 0;
 let persistFailureLogged = false;
 
+type RequestSnapshot = {
+  url: string;
+  method: string;
+  ipHeader: string | null;
+  userAgent: string | null;
+};
+
+let readRequest: (() => RequestSnapshot | null) | null = null;
+
+/** Registered from the server entry. The client bundle must not import the server request API. */
+export function setLogRequestReader(reader: () => RequestSnapshot | null) {
+  readRequest = reader;
+}
+
 export function markLogged(error: unknown): void {
   if (!error || typeof error !== "object") return;
   try {
@@ -61,20 +75,21 @@ export function wasLogged(error: unknown): boolean {
 
 async function ambient(): Promise<Ambient> {
   const requestId = crypto.randomUUID();
+  const empty = { requestId, route: null, method: null, ip: null, userAgent: null };
   try {
-    const { getRequest } = await import("@tanstack/react-start/server");
-    const request = getRequest();
+    const request = readRequest?.() ?? null;
+    if (!request) return empty;
     const url = new URL(request.url);
-    const ip = clientIpFromHeaders(request.headers.get("x-real-ip"));
+    const ip = clientIpFromHeaders(request.ipHeader);
     return {
       requestId,
       route: safeRoute(url.pathname),
       method: request.method.slice(0, 8),
       ip: ip === "unknown" ? null : ip,
-      userAgent: request.headers.get("user-agent")?.slice(0, 300) ?? null,
+      userAgent: request.userAgent?.slice(0, 300) ?? null,
     };
   } catch {
-    return { requestId, route: null, method: null, ip: null, userAgent: null };
+    return empty;
   }
 }
 

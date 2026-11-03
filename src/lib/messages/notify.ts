@@ -2,9 +2,11 @@ import { and, eq, gt, inArray, isNull } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { conversationReads, conversations, messages, trainerProfiles, userRoles, users } from "@/db/schema";
+import { isPendingSignupEmail } from "@/lib/auth/pending-email";
 import { reviewPlainText } from "@/lib/catalog/review-html";
 import { writeLog } from "@/lib/log/logger";
 import { renderLetter } from "@/lib/mail/letter";
+import { canReceiveMailbox, telegramThreadButton, trainerTelegramNoticeAllowed } from "@/lib/mail/notice-rules";
 import { recipientAllowsMail } from "@/lib/mail/preferences";
 import { mailAppUrl, sendMail } from "@/lib/mail/send.server";
 
@@ -53,8 +55,11 @@ async function deliver(input: { conversationId: string; messageId: number; recip
   const [row] = await db
     .select({
       email: users.email,
+      emailVerifiedAt: users.emailVerifiedAt,
       telegramUserId: users.telegramUserId,
+      telegramBotSeenAt: users.telegramBotSeenAt,
       ownerUserId: trainerProfiles.ownerUserId,
+      telegramVerifiedAt: trainerProfiles.telegramVerifiedAt,
       hostUserId: conversations.hostUserId,
       trainerFullName: trainerProfiles.fullName,
       trainerFirstName: trainerProfiles.firstName,
@@ -117,7 +122,17 @@ async function deliver(input: { conversationId: string; messageId: number; recip
     action: { href: url, label: "Открыть переписку" },
   });
 
-  if (await recipientAllowsMail(row.email, "messages")) {
+  if (!canReceiveMailbox(row.email, row.emailVerifiedAt) || isPendingSignupEmail(row.email)) {
+    void writeLog({
+      level: "info",
+      domain: "email",
+      action: "email.notice",
+      outcome: "skipped",
+      message: "Письмо о сообщении не отправлено: почта не подтверждена.",
+      subject: isPendingSignupEmail(row.email) ? null : row.email,
+      target: input.conversationId,
+    });
+  } else if (await recipientAllowsMail(row.email, "messages")) {
     await sendMail({
       to: [row.email],
       subject: `${writerName} написал вам на Trenio`,
@@ -137,12 +152,22 @@ async function deliver(input: { conversationId: string; messageId: number; recip
     });
   }
 
-  if (!trainerSide || !row.telegramUserId) return;
+  if (
+    !trainerTelegramNoticeAllowed({
+      isProfileOwner: row.ownerUserId === input.recipientId,
+      telegramUserId: row.telegramUserId,
+      telegramVerifiedAt: row.telegramVerifiedAt,
+      botSeenAt: row.telegramBotSeenAt,
+    })
+  ) {
+    return;
+  }
   const token = process.env.TELEGRAM_LOGIN_BOT_TOKEN?.trim();
-  const text = `Новое сообщение на Trenio\n${url}`;
+  const text = "Вам написали на Trenio";
+  const button = telegramThreadButton(url);
   if (!token) {
     if (process.env.AUTH_DEV_LOG_EMAILS === "true" || process.env.NODE_ENV !== "production") {
-      console.info(`[telegram] chat=${row.telegramUserId}\n${text}`);
+      console.info(`[telegram] chat=${row.telegramUserId}\n${text}\n${url}`);
     }
     return;
   }
@@ -154,6 +179,7 @@ async function deliver(input: { conversationId: string; messageId: number; recip
         chat_id: row.telegramUserId,
         text,
         disable_web_page_preview: true,
+        ...(button ? { reply_markup: button } : {}),
       }),
     });
     const { writeLog } = await import("@/lib/log/logger");

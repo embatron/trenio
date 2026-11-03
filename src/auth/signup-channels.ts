@@ -1,32 +1,33 @@
-import { randomBytes, randomUUID } from "node:crypto";
+import { randomBytes, randomInt, randomUUID } from "node:crypto";
 
-import { eq } from "drizzle-orm";
+import { and, desc, eq, isNull, sql } from "drizzle-orm";
 
 import { hashPassword, normalizeEmail, validatePasswordStrength } from "@/auth/password";
-import { issueOtp, verifyOtp, GENERIC_OTP_ERROR } from "@/auth/otp";
+import { authMac, authMacEqual, issueOtp, verifyOtp, GENERIC_OTP_ERROR } from "@/auth/otp";
 import { consumeRateLimit, RATE_LIMITED_MESSAGE, RATE_LIMITS } from "@/auth/rate-limit";
 import { isSmsByEnabled } from "@/auth/sms";
 import {
   assertUserCanAuthenticate,
-  createSession,
+  beginLogin,
   findUserByEmail,
   findUserById,
-  loginUser,
+  issueSignupEmailProof,
+  revokeAllUserSessions,
 } from "@/auth/service";
-import {
-  isTelegramLoginConfigured,
-  parseTelegramWidgetUser,
-  verifyTelegramWidgetUser,
-} from "@/auth/telegram";
-import { verifyTelegramWebAppInitData } from "@/auth/telegram-webapp";
+import { acceptTelegramWebApp, acceptTelegramWidget } from "@/auth/telegram-accept";
+import { isTelegramLoginConfigured } from "@/auth/telegram";
+import { addMinutes } from "@/auth/tokens";
 import { getDb } from "@/db";
-import { userRoles, users, type User } from "@/db/schema";
+import { emailVerificationTokens, userRoles, users, type User } from "@/db/schema";
+import { decideEmailSignup, decideSmsSignup } from "@/lib/auth/auth-decisions";
 import { AuthError } from "@/lib/auth/errors";
 import { isPendingSignupEmail, isReservedAccountEmail, pendingSignupEmail } from "@/lib/auth/pending-email";
 import { OTP_RESEND_SECONDS, storedBelarusPhone, validateBelarusMobile, normalizeBelarusMobile } from "@/lib/auth/phone";
 import { belarusPhoneEquals } from "@/lib/auth/phone-match";
+import { renderLetter } from "@/lib/mail/letter";
+import { sendMail } from "@/lib/mail/send.server";
 
-import { consumePasswordLoginLimit, type IssuedOtp, type LoginMeta } from "@/auth/login-channels";
+import { type IssuedOtp, type LoginMeta } from "@/auth/login-channels";
 
 const SIGNUP_SMS_SENT = "Мы отправили код в SMS.";
 const SMS_UNAVAILABLE = "Регистрация по SMS временно недоступна. Зарегистрируйтесь по e-mail.";
@@ -34,7 +35,7 @@ const TELEGRAM_FAILED = "Не удалось подтвердить Telegram. П
 const PLACEHOLDER_NAME = "Пользователь";
 
 export type SignupSession = {
-  session: { token: string };
+  session: { token: string } | { totpTicket: string };
   created: boolean;
 };
 
@@ -92,11 +93,13 @@ async function findUserByTelegramId(telegramUserId: number): Promise<User | null
 async function openSession(user: User, meta: LoginMeta) {
   await assertUserCanAuthenticate(user);
   const fresh = (await findUserById(user.id)) ?? user;
-  return createSession(fresh.id, {
+  const opened = await beginLogin(fresh, {
     ipAddress: meta.ipAddress,
     userAgent: meta.userAgent,
     remember: meta.remember ?? true,
   });
+  if ("totpTicket" in opened) return opened;
+  return { token: opened.token };
 }
 
 async function insertClient(input: {
@@ -161,78 +164,92 @@ function guardTelegram(meta: LoginMeta) {
   if (!isTelegramLoginConfigured()) {
     throw new AuthError("Регистрация через Telegram сейчас недоступна.", "VALIDATION");
   }
-  const ipLimit = consumeRateLimit(
+  return consumeRateLimit(
     `login:ip:${meta.clientKey}`,
     RATE_LIMITS.loginIp.windowMs,
     RATE_LIMITS.loginIp.max,
   );
-  if (!ipLimit.ok) throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
+}
+
+const SIGNUP_EMAIL_MESSAGE =
+  "Если этот адрес можно использовать, мы отправили письмо со ссылкой. Откройте его и подтвердите почту.";
+
+async function sendSignupLetter(email: string, url: string | null, notice: boolean) {
+  const letter = renderLetter({
+    service: true,
+    title: notice ? "Попытка регистрации" : "Подтвердите почту",
+    lead: notice
+      ? "Кто-то указал этот адрес при регистрации на trenio.by. Если это были не вы, ничего делать не нужно."
+      : "Остался один шаг, чтобы пользоваться trenio.by.",
+    action: url ? { href: url, label: "Подтвердить почту" } : undefined,
+    note: notice ? undefined : "Ссылка действует сутки. Если вы не регистрировались, не открывайте её.",
+  });
+  await sendMail({
+    to: [email],
+    subject: notice ? "Попытка регистрации на trenio.by" : "Подтвердите почту trenio.by",
+    text: letter.text,
+    html: letter.html,
+  });
 }
 
 export async function signupWithEmail(
   input: { email: string; password: string },
   meta: LoginMeta,
-): Promise<SignupSession | { restore: true }> {
-  if (honeypotTripped(meta)) {
-    throw new AuthError("Не удалось создать аккаунт. Проверьте почту и пароль.", "INVALID_CREDENTIALS");
-  }
+): Promise<{ message: string }> {
+  if (honeypotTripped(meta)) return { message: SIGNUP_EMAIL_MESSAGE };
   const email = normalizeEmail(input.email);
   if (!email.includes("@") || isReservedAccountEmail(email)) {
     throw new AuthError("Введите корректный e-mail.", "VALIDATION");
   }
-  consumePasswordLoginLimit(email, meta.clientKey);
-
-  const existing = await findUserByEmail(email);
-  if (existing) {
-    const session = await loginUser({
-      email,
-      password: input.password,
-      remember: true,
-      ipAddress: meta.ipAddress,
-      userAgent: meta.userAgent,
-    });
-    if ("restore" in session) return { restore: true };
-    return { session, created: false };
-  }
-
   const passwordError = validatePasswordStrength(input.password);
   if (passwordError) throw new AuthError(passwordError, "WEAK_PASSWORD");
+  const ipLimit = await consumeRateLimit(`signup:ip:${meta.clientKey}`, RATE_LIMITS.loginIp.windowMs, RATE_LIMITS.loginIp.max);
+  const emailLimit = await consumeRateLimit(`signup:email:${email}`, RATE_LIMITS.loginId.windowMs, RATE_LIMITS.loginId.max);
+  if (!ipLimit.ok || !emailLimit.ok) throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
 
-  const now = new Date();
+  const existing = await findUserByEmail(email);
+  const kind = !existing
+    ? "none"
+    : existing.emailVerifiedAt || existing.status === "suspended" || existing.status === "deleted"
+      ? existing.emailVerifiedAt
+        ? "verified"
+        : "blocked"
+      : "unverified";
+  const decision = decideEmailSignup(kind);
   const passwordHash = await hashPassword(input.password);
   const db = getDb();
-  let user: User;
-  try {
-    const [created] = await db
-      .insert(users)
-      .values({
-        email,
-        passwordHash,
-        emailVerifiedAt: now,
-        firstName: PLACEHOLDER_NAME,
-        lastName: null,
-        status: "active",
-        lastSignupIntent: "client_signup",
-      })
-      .returning();
-    user = created;
-    await db.insert(userRoles).values({ userId: user.id, role: "user" });
-  } catch (error) {
-    if (!isUniqueViolation(error)) throw error;
-    const raced = await findUserByEmail(email);
-    if (!raced) throw error;
-    const session = await loginUser({
-      email,
-      password: input.password,
-      remember: true,
-      ipAddress: meta.ipAddress,
-      userAgent: meta.userAgent,
-    });
-    if ("restore" in session) return { restore: true };
-    return { session, created: false };
-  }
 
-  return { session: await openSession(user, meta), created: true };
+  try {
+    if (decision === "create") {
+      const [created] = await db
+        .insert(users)
+        .values({
+          email,
+          passwordHash,
+          firstName: PLACEHOLDER_NAME,
+          lastName: null,
+          status: "pending_verification",
+          lastSignupIntent: "client_signup",
+        })
+        .returning();
+      await db.insert(userRoles).values({ userId: created.id, role: "user" });
+      const proof = await issueSignupEmailProof(created.id);
+      await sendSignupLetter(email, proof.url, false);
+    } else if (decision === "refresh" && existing) {
+      await db.update(users).set({ passwordHash, updatedAt: new Date() }).where(eq(users.id, existing.id));
+      const proof = await issueSignupEmailProof(existing.id);
+      await sendSignupLetter(email, proof.url, false);
+    } else {
+      await sendSignupLetter(email, null, true);
+    }
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      await sendSignupLetter(email, null, true).catch(() => undefined);
+      return { message: SIGNUP_EMAIL_MESSAGE };
+    }
+    throw new AuthError("Не удалось отправить письмо. Попробуйте ещё раз.", "VALIDATION");
+  }
+  return { message: SIGNUP_EMAIL_MESSAGE };
 }
 
 export async function requestSmsSignup(phoneRaw: string, meta: LoginMeta): Promise<IssuedOtp> {
@@ -248,8 +265,8 @@ export async function requestSmsSignup(phoneRaw: string, meta: LoginMeta): Promi
 
   assertSmsAvailable();
 
-  const ipLimit = consumeRateLimit(`otp:ip:${meta.clientKey}`, RATE_LIMITS.otpIp.windowMs, RATE_LIMITS.otpIp.max);
-  const phoneLimit = consumeRateLimit(`otp:phone:${phone}`, RATE_LIMITS.otpPhone.windowMs, RATE_LIMITS.otpPhone.max);
+  const ipLimit = await consumeRateLimit(`otp:ip:${meta.clientKey}`, RATE_LIMITS.otpIp.windowMs, RATE_LIMITS.otpIp.max);
+  const phoneLimit = await consumeRateLimit(`otp:phone:${phone}`, RATE_LIMITS.otpPhone.windowMs, RATE_LIMITS.otpPhone.max);
   if (!ipLimit.ok || !phoneLimit.ok) {
     const retryAfterSec = firstRetryAfter(phoneLimit, ipLimit);
     throw new AuthError(`Код можно отправить снова через ${retryAfterSec} с.`, "RATE_LIMITED");
@@ -285,7 +302,7 @@ export async function confirmSmsSignup(phoneRaw: string, code: string, meta: Log
   const phone = normalizeBelarusMobile(phoneRaw);
   if (!phone) throw new AuthError(GENERIC_OTP_ERROR, "INVALID_CREDENTIALS");
 
-  const ipLimit = consumeRateLimit(
+  const ipLimit = await consumeRateLimit(
     `login:ip:${meta.clientKey}`,
     RATE_LIMITS.loginIp.windowMs,
     RATE_LIMITS.loginIp.max,
@@ -298,22 +315,28 @@ export async function confirmSmsSignup(phoneRaw: string, code: string, meta: Log
   const stored = storedBelarusPhone(phone);
   if (!stored) throw new AuthError(GENERIC_OTP_ERROR, "INVALID_CREDENTIALS");
 
-  let user = verified.userId ? await findUserById(verified.userId) : await findUserByPhone(phone);
+  const current = await findUserByPhone(phone);
+  const owner = current && current.status !== "deleted" ? current : null;
+  const challenge = verified.userId ? await findUserById(verified.userId) : null;
+  const decision = decideSmsSignup({
+    challengeUserId: verified.userId,
+    ownerStillHasPhone: Boolean(challenge && owner && challenge.id === owner.id),
+    phoneIsFree: !owner,
+  });
+  if (decision === "refuse") throw new AuthError(GENERIC_OTP_ERROR, "INVALID_CREDENTIALS");
+
+  let user = decision === "login" ? owner : null;
   let created = false;
-  if (!user || user.status === "deleted") {
+  if (decision === "create") {
     try {
       user = await insertClient({ phone: stored, phoneVerified: true });
       created = true;
     } catch (error) {
       if (!isUniqueViolation(error)) throw error;
-      user = await findUserByPhone(phone);
-      if (!user || user.status === "deleted") throw new AuthError(GENERIC_OTP_ERROR, "INVALID_CREDENTIALS");
+      throw new AuthError(GENERIC_OTP_ERROR, "INVALID_CREDENTIALS");
     }
   }
-
-  if (!user || user.status === "deleted") {
-    throw new AuthError(GENERIC_OTP_ERROR, "INVALID_CREDENTIALS");
-  }
+  if (!user) throw new AuthError(GENERIC_OTP_ERROR, "INVALID_CREDENTIALS");
   if (!created) {
     try {
       user = await markPhoneVerified(user, phone);
@@ -359,19 +382,81 @@ async function finishTelegramSignup(
 }
 
 export async function signupWithTelegramWidget(raw: unknown, meta: LoginMeta): Promise<SignupSession> {
-  guardTelegram(meta);
-  const widget = parseTelegramWidgetUser(raw);
-  if (!widget || !verifyTelegramWidgetUser(widget)) {
-    throw new AuthError(TELEGRAM_FAILED, "INVALID_CREDENTIALS");
-  }
+  const limit = await guardTelegram(meta);
+  if (!limit.ok) throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
+  const widget = await acceptTelegramWidget(raw);
+  if (!widget) throw new AuthError(TELEGRAM_FAILED, "INVALID_CREDENTIALS");
   return finishTelegramSignup(widget, meta);
 }
 
 export async function signupWithTelegramWebApp(initData: string, meta: LoginMeta): Promise<SignupSession> {
-  guardTelegram(meta);
-  const user = verifyTelegramWebAppInitData(initData);
+  const limit = await guardTelegram(meta);
+  if (!limit.ok) throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
+  const user = await acceptTelegramWebApp(initData);
   if (!user) throw new AuthError(TELEGRAM_FAILED, "INVALID_CREDENTIALS");
   return finishTelegramSignup(user, meta);
+}
+
+async function sendMailboxCode(userId: string, email: string) {
+  const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
+  const now = new Date();
+  const db = getDb();
+  await db
+    .update(emailVerificationTokens)
+    .set({ usedAt: now })
+    .where(and(eq(emailVerificationTokens.userId, userId), isNull(emailVerificationTokens.usedAt)));
+  await db.insert(emailVerificationTokens).values({
+    userId,
+    pendingEmail: email,
+    tokenHash: authMac(`email:${userId}:${email}:${code}`),
+    expiresAt: addMinutes(now, 10),
+  });
+  const letter = renderLetter({
+    service: true,
+    title: "Код подтверждения почты",
+    code,
+    lines: ["Он действует 10 минут. Никому не сообщайте."],
+  });
+  await sendMail({
+    to: [email],
+    subject: "Код подтверждения trenio.by",
+    text: letter.text,
+    html: letter.html,
+  });
+  return process.env.NODE_ENV === "production" ? undefined : code;
+}
+
+async function takeMailboxCode(userId: string, email: string, code: string) {
+  const db = getDb();
+  const now = new Date();
+  const row = await db.transaction(async (tx) => {
+    const [locked] = await tx
+      .select()
+      .from(emailVerificationTokens)
+      .where(
+        and(
+          eq(emailVerificationTokens.userId, userId),
+          eq(emailVerificationTokens.pendingEmail, email),
+          isNull(emailVerificationTokens.usedAt),
+        ),
+      )
+      .orderBy(desc(emailVerificationTokens.createdAt))
+      .limit(1)
+      .for("update");
+    if (!locked || locked.expiresAt.getTime() <= now.getTime() || locked.attemptCount >= 5) return null;
+    await tx
+      .update(emailVerificationTokens)
+      .set({ attemptCount: sql`${emailVerificationTokens.attemptCount} + 1` })
+      .where(eq(emailVerificationTokens.id, locked.id));
+    return locked;
+  });
+  if (!row) throw new AuthError("Код неверный или устарел.", "INVALID_TOKEN");
+  const expected = authMac(`email:${userId}:${email}:${code.trim()}`);
+  if (!authMacEqual(expected, row.tokenHash)) throw new AuthError("Код неверный или устарел.", "INVALID_TOKEN");
+  await db
+    .update(emailVerificationTokens)
+    .set({ usedAt: now })
+    .where(and(eq(emailVerificationTokens.id, row.id), isNull(emailVerificationTokens.usedAt)));
 }
 
 export async function saveSignupCredentials(userId: string, emailRaw: string, password: string) {
@@ -392,18 +477,108 @@ export async function saveSignupCredentials(userId: string, emailRaw: string, pa
 
   const taken = await findUserByEmail(email);
   if (taken && taken.id !== userId) {
+    if (taken.emailVerifiedAt && taken.status !== "deleted" && taken.status !== "suspended") {
+      return { ok: true as const, linkAvailable: true as const };
+    }
     throw new AuthError("Эта почта уже используется.", "EMAIL_TAKEN");
   }
 
+  await getDb()
+    .update(users)
+    .set({ passwordHash: await hashPassword(password), updatedAt: new Date() })
+    .where(eq(users.id, userId));
+  const devCode = await sendMailboxCode(userId, email);
+  return { ok: true as const, needsCode: true as const, devCode };
+}
+
+export async function confirmSignupCredentials(userId: string, emailRaw: string, code: string) {
+  const user = await findUserById(userId);
+  if (!user || !isPendingSignupEmail(user.email)) {
+    throw new AuthError("Почта уже сохранена.", "VALIDATION");
+  }
+  const email = normalizeEmail(emailRaw);
+  await takeMailboxCode(userId, email, code);
+  const taken = await findUserByEmail(email);
+  if (taken && taken.id !== userId) throw new AuthError("Эта почта уже используется.", "EMAIL_TAKEN");
   const now = new Date();
   await getDb()
     .update(users)
-    .set({
-      email,
-      emailVerifiedAt: now,
-      passwordHash: await hashPassword(password),
-      status: "active",
-      updatedAt: now,
-    })
+    .set({ email, emailVerifiedAt: now, status: "active", updatedAt: now })
     .where(eq(users.id, userId));
+  return { ok: true as const };
+}
+
+export async function requestSignupLink(userId: string, emailRaw: string) {
+  const shell = await findUserById(userId);
+  if (!shell || !isPendingSignupEmail(shell.email)) {
+    throw new AuthError("Почта уже сохранена.", "VALIDATION");
+  }
+  const email = normalizeEmail(emailRaw);
+  const target = await findUserByEmail(email);
+  if (!target?.emailVerifiedAt || target.status === "deleted" || target.status === "suspended") {
+    throw new AuthError("Эта почта уже используется.", "EMAIL_TAKEN");
+  }
+  const devCode = await sendMailboxCode(userId, email);
+  return { ok: true as const, devCode };
+}
+
+export async function confirmSignupLink(
+  userId: string,
+  emailRaw: string,
+  code: string,
+  meta: LoginMeta,
+): Promise<SignupSession> {
+  const shell = await findUserById(userId);
+  if (!shell || !isPendingSignupEmail(shell.email)) {
+    throw new AuthError("Почта уже сохранена.", "VALIDATION");
+  }
+  const email = normalizeEmail(emailRaw);
+  await takeMailboxCode(userId, email, code);
+  const target = await findUserByEmail(email);
+  if (!target?.emailVerifiedAt || target.status === "deleted" || target.status === "suspended") {
+    throw new AuthError("Эта почта уже используется.", "EMAIL_TAKEN");
+  }
+  const shellPhone = shell.phoneVerifiedAt ? shell.phone : null;
+  const shellTelegram = shell.telegramUserId;
+  if (shellPhone && target.phoneVerifiedAt && target.phone !== shell.phone) {
+    throw new AuthError("На той почте уже указан другой телефон.", "VALIDATION");
+  }
+  if (shellTelegram && target.telegramUserId && target.telegramUserId !== shellTelegram) {
+    throw new AuthError("На той почте уже указан другой Telegram.", "VALIDATION");
+  }
+  if (shellPhone && !target.phone) {
+    /* moved below */
+  } else if (shellPhone && target.phone && target.phone !== shell.phone) {
+    throw new AuthError("На той почте уже указан другой телефон.", "VALIDATION");
+  }
+  const now = new Date();
+  const db = getDb();
+  await db.transaction(async (tx) => {
+    await tx
+      .update(users)
+      .set({
+        phone: null,
+        phoneVerifiedAt: null,
+        telegramUserId: null,
+        telegramUsername: null,
+        status: "deleted",
+        deletedAt: now,
+        updatedAt: now,
+      })
+      .where(eq(users.id, shell.id));
+    await tx
+      .update(users)
+      .set({
+        phone: shellPhone && !target.phone ? shell.phone : target.phone,
+        phoneVerifiedAt: shellPhone && !target.phone ? shell.phoneVerifiedAt : target.phoneVerifiedAt,
+        telegramUserId: shellTelegram && !target.telegramUserId ? shell.telegramUserId : target.telegramUserId,
+        telegramUsername:
+          shellTelegram && !target.telegramUserId ? shell.telegramUsername : target.telegramUsername,
+        updatedAt: now,
+      })
+      .where(eq(users.id, target.id));
+  });
+  await revokeAllUserSessions(shell.id);
+  const fresh = (await findUserById(target.id)) ?? target;
+  return { session: await openSession(fresh, meta), created: false };
 }

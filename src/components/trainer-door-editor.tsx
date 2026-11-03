@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
+import { GoogleLoginButton } from "@/components/auth/google-login-button";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { requestDoorEmailFn } from "@/lib/catalog/trainer-magic";
@@ -65,6 +66,10 @@ export function TrainerDoorMail({
         </>
       ) : (
         <>
+          <div className="door-google">
+            <GoogleLoginButton returnPath="/me" door />
+            <div className="auth-or" aria-hidden="true">или</div>
+          </div>
           <label>
             <span>Email</span>
             <input
@@ -85,6 +90,12 @@ export function TrainerDoorMail({
       {error ? <p className="door-mail__error" role="alert"><DoorMailNotice message={error} /></p> : null}
       <style>{`
         .door-mail { display: grid; gap: 12px; }
+        .door-google { display: grid; gap: 12px; }
+        .auth-or { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; margin: 0; color: var(--muted); font-size: 13px; }
+        .auth-or::before, .auth-or::after { content: ""; height: 1px; background: rgba(var(--dark-rgb), 0.12); }
+        .auth-google { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 50px; height: 50px; padding: 0; border-radius: var(--radius-control); border: 1px solid rgba(var(--dark-rgb), 0.14); background: #fff; color: var(--dark); font: inherit; font-size: 15px; font-weight: var(--fw-title); letter-spacing: -0.01em; text-decoration: none; cursor: pointer; }
+        .auth-google:hover { border-color: var(--primary); }
+        .auth-google svg { width: 18px; height: 18px; flex: 0 0 auto; }
         .door-mail label { display: grid; gap: 6px; }
         .door-mail label span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
         .door-mail input { box-sizing: border-box; width: 100%; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--text); font: inherit; font-size: 16px; }
@@ -128,7 +139,7 @@ export function TrainerDoorMailDialog({ onClose }: { onClose: () => void }) {
         {sent ? null : (
           <>
             <h2 id="door-mail-title">Создание аккаунта тренера</h2>
-            <p>Введите свой e-mail. На него придёт ссылка сразу с доступом в кабинет, и создание аккаунта будет завершено. Если письма нет, проверьте папку «Спам».</p>
+            <p>Введите свой e-mail или войдите через Google. На почту придёт ссылка сразу с доступом в кабинет, и создание аккаунта будет завершено. Google подтверждает адрес сразу, без письма. Если письма нет, проверьте папку «Спам».</p>
           </>
         )}
         <TrainerDoorMail autoFocus onSent={() => setSent(true)} onDone={onClose} />

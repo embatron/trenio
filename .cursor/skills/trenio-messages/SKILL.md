@@ -50,11 +50,11 @@ Message mutations log `domain: "message"` through `writeLog` in `src/lib/message
 2. `reviewTextLength` counts graphemes. First message from the initiator: `FIRST_MESSAGE_MAX_LENGTH` (1000). Every later message: `MESSAGE_MAX_LENGTH` (4000). Stored HTML: `MESSAGE_HTML_MAX_LENGTH` (12000). Attachments do not count toward that limit. An empty body is stored only when at least one attachment is linked.
 3. On Ctrl+Enter or ⌘+Enter, send `composerBody(editor.innerHTML, state)`. The visible field wins when React state is still empty. Plain Enter stays a line break.
 4. Insert and set `last_message_at` in one transaction. Do not hide or delete the conversation. A participant has no such action. The thread is removed for both sides only when an account is deleted.
-5. Notify the other party through `scheduleMessageNotification` (2 minute debounce). The HTML letter includes the sender name, a circular portrait, and the message text. Telegram stays a short link without the text. Skip when `last_read_at` is under 30 seconds and `last_read_message_id` already covers this id. Do not write the message text into `app_logs`.
+5. Notify the other party through `scheduleMessageNotification` (2 minute debounce). The HTML letter includes the sender name, a circular portrait, and the message text, and only when that mailbox is verified (`email_verified_at`) and «Сообщения» is on. A pending signup address is skipped. Telegram stays a short note without the text, with a button that opens the thread in the Mini App on https. It goes to the profile owner only when `telegram_verified_at`, `telegram_user_id`, and `telegram_bot_seen_at` are set. Skip when `last_read_at` is under 30 seconds and `last_read_message_id` already covers this id. Do not write the message text into `app_logs`.
 
 ## Receipts and unread
 
-- The message letter is skipped when the recipient turned off «Сообщения» in settings (`users.mail_messages`). Telegram still sends. Staff report mail is not part of that switch.
+- The message letter is skipped when the mailbox is not verified or the recipient turned off «Сообщения» in settings (`users.mail_messages`). Telegram still sends for a trainer whose card contact is confirmed and who has already opened the bot. Staff report mail is not part of that switch.
 - `conversation_reads.last_read_message_id` is a bigint with no foreign key.
 - For the sender, the other reader is the profile owner when the viewer is the initiator, and the initiator when the viewer is the owner. No owner means the receipt stays `delivered`.
 - `receipt` is `read` when that cursor is greater than or equal to the message id, otherwise `delivered`. The bubble copy is «Прочитано» or «Доставлено». Pending client sends show «Отправка…».

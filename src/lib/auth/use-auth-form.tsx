@@ -49,6 +49,6 @@ export function AuthAlert({ message }: { message: string | null }) {
   );
 }
 
-export function useAuthServerFn<T extends (...args: never[]) => Promise<unknown>>(fn: T) {
+export function useAuthServerFn<T extends (...args: any[]) => Promise<any>>(fn: T) {
   return useServerFn(fn);
 }

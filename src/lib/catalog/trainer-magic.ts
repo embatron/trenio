@@ -2,18 +2,18 @@ import { randomBytes } from "node:crypto";
 
 import { createServerFn } from "@tanstack/react-start";
 import { getCookie, getRequest, setCookie } from "@tanstack/react-start/server";
-import { and, desc, eq, gt, isNull, or } from "drizzle-orm";
+import { and, desc, eq, gt, isNull, ne, or } from "drizzle-orm";
 import { z } from "zod";
 
-import { optionalAuthMiddleware, requireAuthMiddleware } from "@/auth/middleware";
+import { optionalAuthMiddleware, requireAuthMiddleware, requireSessionMiddleware } from "@/auth/middleware";
 import { clientIpFromHeaders } from "@/auth/request-meta";
 import { consumeRateLimit, RATE_LIMITED_MESSAGE } from "@/auth/rate-limit";
 import { hashPassword, normalizeEmail, validatePasswordStrength } from "@/auth/password";
-import { setSessionCookie } from "@/auth/session";
-import { createSession, findUserByEmail } from "@/auth/service";
-import { addDays, generateSecureToken, hashToken } from "@/auth/tokens";
+import { setSessionCookie, setTotpTicketCookie } from "@/auth/session";
+import { beginLogin, findUserByEmail } from "@/auth/service";
+import { addMinutes, generateSecureToken, hashToken } from "@/auth/tokens";
 import { getDb } from "@/db";
-import { emailVerificationTokens, trainerProfiles, userRoles, users, type TrainerProfile } from "@/db/schema";
+import { authDoorClaims, trainerProfiles, userRoles, users, type TrainerProfile } from "@/db/schema";
 import { renderLetter } from "@/lib/mail/letter";
 import { mailTransportReady, sendMail } from "@/lib/mail/send.server";
 import { assertStaff } from "@/lib/admin/access";
@@ -325,10 +325,10 @@ export const openTrainerEditFn = createServerFn({ method: "POST" })
     return { slug: row.slug, published };
   });
 
-function noteMissingDoor() {
+async function noteMissingDoor() {
   try {
     const ip = clientIpFromHeaders(getRequest().headers.get("x-real-ip"));
-    const limit = consumeRateLimit(`invite-miss:${ip}`, 15 * 60_000, 20);
+    const limit = await consumeRateLimit(`invite-miss:${ip}`, 15 * 60_000, 20);
     if (!limit.ok) throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
   } catch (error) {
     if (error instanceof AuthError) throw error;
@@ -341,13 +341,15 @@ async function doorByCode(code: string) {
     slug: trainerProfiles.slug,
     status: trainerProfiles.status,
     firstName: trainerProfiles.firstName,
+    lastName: trainerProfiles.lastName,
     fullName: trainerProfiles.fullName,
     avatarPath: trainerProfiles.avatarPath,
     city: trainerProfiles.city,
     headline: trainerProfiles.headline,
+    ownerUserId: trainerProfiles.ownerUserId,
   }).from(trainerProfiles).where(eq(trainerProfiles.previewToken, code)).limit(1);
   if (!row) {
-    noteMissingDoor();
+    await noteMissingDoor();
     void writeLog({
       level: "warn",
       domain: "catalog",
@@ -592,57 +594,162 @@ const doorEmailSchema = z.object({
   email: z.string().trim().email("Введите корректный e-mail").max(320),
 });
 
-async function claimDoorAccount(profileId: string, userId: string, email: string) {
+async function attachDoorProfile(profileId: string, userId: string, email: string) {
   const now = new Date();
-  const db = getDb();
-  await db.transaction(async (tx) => {
-    await tx.update(users).set({
-      email,
-      emailVerifiedAt: now,
-      status: "active",
-      updatedAt: now,
-    }).where(eq(users.id, userId));
-    const updated = await tx.update(trainerProfiles).set({
+  const updated = await getDb()
+    .update(trainerProfiles)
+    .set({
       ownerUserId: userId,
       claimStatus: "claimed",
       claimedAt: now,
       email,
       emailVerifiedAt: now,
       updatedAt: now,
-    }).where(and(
-      eq(trainerProfiles.id, profileId),
-      or(isNull(trainerProfiles.ownerUserId), eq(trainerProfiles.ownerUserId, userId)),
-    )).returning({ id: trainerProfiles.id });
-    if (updated.length === 0) throw new AuthError("Этот профиль уже привязан. Войдите в аккаунт.", "VALIDATION");
-  });
-  const session = await createSession(userId, { remember: true });
-  setSessionCookie(session.token, true);
+    })
+    .where(and(eq(trainerProfiles.id, profileId), isNull(trainerProfiles.ownerUserId)))
+    .returning({ id: trainerProfiles.id });
+  if (updated.length === 0) throw new AuthError("Ссылка уже не действует.", "VALIDATION");
 }
 
-async function ensureDoorUser(email: string) {
-  const existing = await findUserByEmail(email);
-  if (existing) {
-    if (existing.status !== "pending_verification" || existing.lastSignupIntent !== "trainer_claim") {
-      throw new AuthError("Такая почта уже занята. Войдите в аккаунт.", "EMAIL_TAKEN");
-    }
-    const [owned] = await getDb().select({ id: trainerProfiles.id }).from(trainerProfiles).where(eq(trainerProfiles.ownerUserId, existing.id)).limit(1);
-    if (owned) throw new AuthError("Такая почта уже занята. Войдите в аккаунт.", "EMAIL_TAKEN");
-    return existing;
+const DOOR_PROFILE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const DOOR_SLUG = /^[a-z0-9._]{1,30}$/;
+
+export type DoorGoogleClaim = "claimed" | "own" | "missing" | "taken" | "busy";
+
+/** Google on the short link proves the mailbox and binds the imported card. No password step. */
+export async function claimDoorAfterGoogle(input: {
+  userId: string;
+  email: string;
+  created: boolean;
+  profileId: string;
+  previewSlug: string;
+}): Promise<DoorGoogleClaim> {
+  const profileId = input.profileId.trim();
+  const previewSlug = input.previewSlug.trim().toLowerCase();
+  if (!DOOR_PROFILE_ID.test(profileId) || !DOOR_SLUG.test(previewSlug)) {
+    void writeLog({
+      level: "warn",
+      domain: "account",
+      action: "account.claim",
+      outcome: "denied",
+      message: "Короткая ссылка не привязала профиль.",
+      subject: input.email,
+      actorUserId: input.userId,
+    });
+    return "missing";
   }
+
   const db = getDb();
-  const created = await db.transaction(async (tx) => {
-    const [user] = await tx.insert(users).values({
+  const [row] = await db.select().from(trainerProfiles).where(eq(trainerProfiles.id, profileId)).limit(1);
+  const open = Boolean(row?.previewToken) && row?.slug === previewSlug && row?.status !== "published";
+  if (!row || !open) {
+    void writeLog({
+      level: "warn",
+      domain: "account",
+      action: "account.claim",
+      outcome: "denied",
+      message: "Короткая ссылка не привязала профиль.",
+      subject: input.email,
+      actorUserId: input.userId,
+      target: previewSlug,
+    });
+    return "missing";
+  }
+  if (row.ownerUserId === input.userId) return "own";
+  if (row.ownerUserId) {
+    void writeLog({
+      level: "warn",
+      domain: "account",
+      action: "account.claim",
+      outcome: "denied",
+      message: "Этот профиль уже привязан.",
+      subject: input.email,
+      actorUserId: input.userId,
+      target: row.slug,
+    });
+    return "taken";
+  }
+
+  const [other] = await db
+    .select({ id: trainerProfiles.id })
+    .from(trainerProfiles)
+    .where(and(eq(trainerProfiles.ownerUserId, input.userId), ne(trainerProfiles.id, row.id)))
+    .limit(1);
+  if (other) {
+    void writeLog({
+      level: "warn",
+      domain: "account",
+      action: "account.claim",
+      outcome: "denied",
+      message: "У этого аккаунта уже есть другая карточка.",
+      subject: input.email,
+      actorUserId: input.userId,
+      target: row.slug,
+    });
+    return "busy";
+  }
+
+  const now = new Date();
+  const email = normalizeEmail(input.email);
+  const updated = await db
+    .update(trainerProfiles)
+    .set({
+      ownerUserId: input.userId,
+      claimStatus: "claimed",
+      claimedAt: now,
       email,
-      passwordHash: await hashPassword(randomBytes(32).toString("base64url")),
-      firstName: "Тренер",
-      status: "pending_verification",
+      emailVerifiedAt: now,
+      updatedAt: now,
+    })
+    .where(and(eq(trainerProfiles.id, row.id), isNull(trainerProfiles.ownerUserId)))
+    .returning({ id: trainerProfiles.id });
+  if (updated.length === 0) {
+    const [again] = await db
+      .select({ ownerUserId: trainerProfiles.ownerUserId })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.id, row.id))
+      .limit(1);
+    return again?.ownerUserId === input.userId ? "own" : "taken";
+  }
+
+  await db.insert(userRoles).values({ userId: input.userId, role: "trainer" }).onConflictDoNothing();
+  if (input.created) {
+    const firstName = row.firstName.trim();
+    const lastName = row.lastName.trim();
+    await db.update(users).set({
+      ...(firstName ? { firstName } : {}),
+      lastName: lastName || null,
       lastSignupIntent: "trainer_claim",
-      needsPassword: true,
-    }).returning();
-    await tx.insert(userRoles).values({ userId: user.id, role: "trainer" });
-    return user;
+      updatedAt: now,
+    }).where(eq(users.id, input.userId));
+  }
+
+  void writeLog({
+    level: "info",
+    domain: "account",
+    action: "account.claim",
+    outcome: "success",
+    message: "Google привязал импортированный профиль. Почта подтверждена.",
+    subject: email,
+    actorUserId: input.userId,
+    target: row.slug,
   });
-  return created;
+
+  const { sendTrainerWelcome } = await import("@/lib/messages/welcome");
+  await sendTrainerWelcome({ id: input.userId, firstName: row.firstName.trim() || "Тренер" });
+  return "claimed";
+}
+
+async function openDoorSession(userId: string) {
+  const [user] = await getDb().select().from(users).where(eq(users.id, userId)).limit(1);
+  if (!user) throw new AuthError("Ссылка уже не действует.", "VALIDATION");
+  const opened = await beginLogin(user, { remember: true });
+  if ("totpTicket" in opened) {
+    setTotpTicketCookie(opened.totpTicket);
+    return "/auth/totp";
+  }
+  setSessionCookie(opened.token, true);
+  return "/me";
 }
 
 export const requestDoorEmailFn = createServerFn({ method: "POST" })
@@ -658,26 +765,21 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
     }
     const email = normalizeEmail(data.email);
     const ip = clientIpFromHeaders(getRequest().headers.get("x-real-ip"));
-    const limit = consumeRateLimit(`door-email:${row.id}:${ip}`, 60_000, 1);
+    const limit = await consumeRateLimit(`door-email:${row.id}:${ip}`, 60_000, 1);
     if (!limit.ok) throw new AuthError(`Код можно отправить снова через ${limit.retryAfterSec} с.`, "RATE_LIMITED");
 
-    const user = await ensureDoorUser(email);
     const db = getDb();
     const now = new Date();
-    await db.update(users).set({
-      firstName: row.firstName || user.firstName || "Тренер",
-      lastName: row.lastName || null,
-      needsPassword: true,
-      updatedAt: now,
-    }).where(eq(users.id, user.id));
-    await db.update(emailVerificationTokens).set({ usedAt: now }).where(and(eq(emailVerificationTokens.userId, user.id), isNull(emailVerificationTokens.usedAt)));
-
     const linkToken = generateSecureToken();
-    await db.insert(emailVerificationTokens).values({
-      userId: user.id,
-      pendingEmail: email,
+    await db
+      .update(authDoorClaims)
+      .set({ usedAt: now })
+      .where(and(eq(authDoorClaims.profileId, row.id), isNull(authDoorClaims.usedAt)));
+    await db.insert(authDoorClaims).values({
+      profileId: row.id,
+      email,
       tokenHash: hashToken(`${row.id}:${linkToken}`),
-      expiresAt: addDays(now, 7),
+      expiresAt: addMinutes(now, 60),
     });
     const origin = requestOrigin();
     const link = `${origin}/hi/${row.previewToken}?mail=${encodeURIComponent(linkToken)}`;
@@ -690,7 +792,7 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
           avatarUrl: row.avatarPath,
           caption: "Ваш профиль",
         },
-        lines: ["Вот ваша ссылка для прямого входа в кабинет:"],
+        lines: ["Ссылка действует один час. На странице нажмите кнопку, чтобы открыть кабинет."],
         action: { href: link, label: "Открыть кабинет" },
         note: "Если вы не запрашивали это письмо, просто удалите его.",
       });
@@ -713,91 +815,97 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
       subject: email,
       target: row.slug,
     });
-    return {
-      ok: true as const,
-      message: mailTransportReady()
-        ? "Ссылка отправлена на почту. Откройте письмо — оно подтвердит почту и откроет кабинет."
-        : "Письмо записано в журнал сервера. Ссылка в нём открывает кабинет.",
-    };
+    return { ok: true as const, message: "Ссылка отправлена." };
   });
 
 export const confirmDoorEmailFn = createServerFn({ method: "POST" })
   .validator(doorEmailSchema.extend({ code: z.string().trim().min(4).max(12) }))
-  .handler(async ({ data }) => {
-    const row = await profileFromEditCookie();
-    if (!row) throw new AuthError("Ссылка на редактирование уже не действует.", "VALIDATION");
-    const email = normalizeEmail(data.email);
-    const code = data.code.replace(/\D/g, "");
-    const ip = clientIpFromHeaders(getRequest().headers.get("x-real-ip"));
-    const limit = consumeRateLimit(`door-email-try:${row.id}:${ip}`, 15 * 60_000, 5);
-    if (!limit.ok) throw new AuthError("Слишком много попыток. Подождите и попробуйте снова.", "RATE_LIMITED");
-    const user = await findUserByEmail(email);
-    if (!user) throw new AuthError("Неверный или устаревший код.", "INVALID_TOKEN");
-    const now = new Date();
-    const tokenRows = await getDb().select().from(emailVerificationTokens).where(and(
-      eq(emailVerificationTokens.userId, user.id),
-      eq(emailVerificationTokens.pendingEmail, email),
-      isNull(emailVerificationTokens.usedAt),
-      gt(emailVerificationTokens.expiresAt, now),
-    )).orderBy(desc(emailVerificationTokens.createdAt)).limit(8);
-    const tokenRow = tokenRows.find((item) => item.tokenHash === hashToken(`${row.id}:${user.id}:${code}`));
-    if (!tokenRow) throw new AuthError("Неверный или устаревший код.", "INVALID_TOKEN");
-    await claimDoorAccount(row.id, user.id, email);
-    await getDb().update(emailVerificationTokens).set({ usedAt: now }).where(eq(emailVerificationTokens.id, tokenRow.id));
-    void writeLog({
-      level: "info",
-      domain: "account",
-      action: "account.claim",
-      outcome: "success",
-      message: "Почта подтверждена, аккаунт активен.",
-      subject: email,
-      actorUserId: user.id,
-      target: row.slug,
-    });
-    return { ok: true as const, message: "Почта подтверждена. Аккаунт активен. Ссылка из письма открывает кабинет." };
+  .handler(async () => {
+    throw new AuthError("Ссылка недействительна или устарела.", "INVALID_TOKEN");
   });
 
-export const finishTrainerMailFn = createServerFn({ method: "GET" })
+async function freshDoorClaim(code: string, token: string) {
+  const row = await doorByCode(code);
+  if (!row) return null;
+  const now = new Date();
+  const [claim] = await getDb()
+    .select()
+    .from(authDoorClaims)
+    .where(
+      and(
+        eq(authDoorClaims.profileId, row.id),
+        eq(authDoorClaims.tokenHash, hashToken(`${row.id}:${token}`)),
+        isNull(authDoorClaims.usedAt),
+        gt(authDoorClaims.expiresAt, now),
+      ),
+    )
+    .limit(1);
+  if (!claim) return null;
+  return { row, claim };
+}
+
+export const peekTrainerMailFn = createServerFn({ method: "GET" })
   .validator(z.object({ code: doorCodeSchema, token: z.string().trim().min(20).max(200) }))
   .handler(async ({ data }) => {
-    const row = await doorByCode(data.code);
-    if (!row) return null;
+    const found = await freshDoorClaim(data.code, data.token);
+    return found ? { ok: true as const } : null;
+  });
+
+export const openTrainerMailFn = createServerFn({ method: "POST" })
+  .validator(z.object({ code: doorCodeSchema, token: z.string().trim().min(20).max(200) }))
+  .handler(async ({ data }) => {
+    const found = await freshDoorClaim(data.code, data.token);
+    if (!found) throw new AuthError("Ссылка уже не действует.", "INVALID_TOKEN");
+    const { row, claim } = found;
+    if (row.ownerUserId) throw new AuthError("Ссылка уже не действует.", "VALIDATION");
     const now = new Date();
-    const tokenHash = hashToken(`${row.id}:${data.token}`);
-    const [tokenRow] = await getDb().select().from(emailVerificationTokens).where(and(
-      eq(emailVerificationTokens.tokenHash, tokenHash),
-      isNull(emailVerificationTokens.usedAt),
-      gt(emailVerificationTokens.expiresAt, now),
-    )).limit(1);
-    if (!tokenRow?.pendingEmail) {
-      void writeLog({
-        level: "warn",
-        domain: "account",
-        action: "account.claim",
-        outcome: "denied",
-        message: "Ссылка из письма не действует.",
-        target: row.slug,
-      });
-      return null;
+    const [spent] = await getDb()
+      .update(authDoorClaims)
+      .set({ usedAt: now })
+      .where(and(eq(authDoorClaims.id, claim.id), isNull(authDoorClaims.usedAt)))
+      .returning({ id: authDoorClaims.id });
+    if (!spent) throw new AuthError("Ссылка уже не действует.", "INVALID_TOKEN");
+
+    const email = claim.email;
+    let user = await findUserByEmail(email);
+    if (user && (user.status === "deleted" || user.status === "suspended")) {
+      throw new AuthError("Ссылка уже не действует.", "VALIDATION");
     }
-    await claimDoorAccount(row.id, tokenRow.userId, tokenRow.pendingEmail);
-    await getDb().update(emailVerificationTokens).set({ usedAt: now }).where(eq(emailVerificationTokens.id, tokenRow.id));
+    if (!user) {
+      const passwordHash = await hashPassword(randomBytes(32).toString("base64url"));
+      const [created] = await getDb()
+        .insert(users)
+        .values({
+          email,
+          passwordHash,
+          emailVerifiedAt: now,
+          firstName: row.firstName || "Тренер",
+          lastName: row.lastName || null,
+          status: "active",
+          lastSignupIntent: "trainer_claim",
+          needsPassword: true,
+        })
+        .returning();
+      user = created;
+      await getDb().insert(userRoles).values({ userId: user.id, role: "trainer" });
+    }
+    await attachDoorProfile(row.id, user.id, email);
+    const redirectTo = await openDoorSession(user.id);
     void writeLog({
       level: "info",
       domain: "account",
       action: "account.claim",
       outcome: "success",
       message: "Письмо открыло кабинет. Почта подтверждена.",
-      subject: tokenRow.pendingEmail,
-      actorUserId: tokenRow.userId,
+      subject: email,
+      actorUserId: user.id,
       target: row.slug,
     });
-    return { ok: true as const };
+    return { ok: true as const, redirectTo };
   });
-
 /** Password chosen in the cabinet after the magic-link mail. That step finishes the account. */
 export const setDoorPasswordFn = createServerFn({ method: "POST" })
-  .middleware([requireAuthMiddleware])
+  .middleware([requireSessionMiddleware])
   .validator(z.object({
     password: z.string().min(1).max(128),
     passwordConfirm: z.string().min(1).max(128),

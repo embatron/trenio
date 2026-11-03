@@ -1,6 +1,7 @@
 import { useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
+import { useContactStepUp } from "@/components/auth/step-up-fields";
 import { CabinetNotice } from "@/components/cabinet";
 import { TrainerCardFields, type TrainerCardValues } from "@/components/trainer-card-fields";
 import { confirmAccountPhoneCodeFn, confirmTrainerContactEmailCodeFn, requestAccountPhoneCodeFn, requestTrainerContactEmailCodeFn } from "@/lib/auth/functions";
@@ -15,6 +16,7 @@ export function TrainerContactsForm({ profile }: { profile: OwnTrainerProfile })
   const confirmPhone = useAuthServerFn(confirmAccountPhoneCodeFn);
   const requestContactEmail = useAuthServerFn(requestTrainerContactEmailCodeFn);
   const confirmContactEmail = useAuthServerFn(confirmTrainerContactEmailCodeFn);
+  const step = useContactStepUp();
   const [form, setForm] = useState(profile);
   const [pending, setPending] = useState(false);
   const [popup, setPopup] = useState<{ title: string; message: string } | null>(null);
@@ -49,6 +51,7 @@ export function TrainerContactsForm({ profile }: { profile: OwnTrainerProfile })
             .finally(() => setPending(false));
         }}
       >
+        {step.fields}
         <TrainerCardFields
           mode="contacts"
           self
@@ -61,7 +64,12 @@ export function TrainerContactsForm({ profile }: { profile: OwnTrainerProfile })
             linked: true,
             value: form.phone,
             verified: form.phoneVerified,
-            onRequest: async (phone) => (await requestPhone({ data: { phone } })) as { message: string; already?: boolean; devCode?: string },
+            onRequest: async (phone) => {
+              const stepUpToken = await step.token();
+              const result = await requestPhone({ data: { phone, stepUpToken } });
+              step.spend();
+              return result as { message: string; already?: boolean; devCode?: string };
+            },
             onConfirm: async (phone, code) => (await confirmPhone({ data: { phone, code } })) as { message: string },
             onVerified: () => {
               void router.invalidate();
@@ -69,7 +77,12 @@ export function TrainerContactsForm({ profile }: { profile: OwnTrainerProfile })
           }}
           emailConfirm={{
             verified: form.emailVerified,
-            onRequest: async (email) => (await requestContactEmail({ data: { email } })) as { message: string; already?: boolean; devCode?: string },
+            onRequest: async (email) => {
+              const stepUpToken = await step.token();
+              const result = await requestContactEmail({ data: { email, stepUpToken } });
+              step.spend();
+              return result as { message: string; already?: boolean; devCode?: string };
+            },
             onConfirm: async (email, code) => (await confirmContactEmail({ data: { email, code } })) as { message: string },
             onVerified: () => {
               void router.invalidate();

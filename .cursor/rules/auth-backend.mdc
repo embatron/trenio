@@ -28,20 +28,20 @@ Mutations only via `createServerFn` + middleware. `beforeLoad` is UX, not the se
 ## Target flow
 
 1. Signup uses the same three channels as login: email + password, Belarus mobile + SMS, or Telegram (widget or Mini App). There is no role picker. The account is `user` with `client_signup`.
-2. The channel used to sign up is verified immediately: `email_verified_at`, `phone_verified_at`, or `telegram_user_id` from the bot check. Status is `active`. No confirmation letter.
-3. Phone and Telegram accounts get an internal mailbox `pending.{id}@users.trenio.invalid` and a random password hash. In the cabinet a dialog asks for a real email and a password. It has no close control, ignores Escape and the backdrop, and stays until save. That save sets `email_verified_at` and the chosen password. It does not replace the later email-change code.
-4. Login stays email + password, a verified Belarus mobile + SMS, or an already linked Telegram.
-5. One account, roles in `user_roles`. Do not add a second portal. Trainer and club roles come later (claim, staff), not from this form.
+2. Email signup stores `pending_verification` and does not set `email_verified_at` or a session. The form always returns one sentence. The letter opens `/auth/confirm-email`, and the button creates the session. Google is mailbox proof: an unverified password row is taken over, a verified row is entered only when `google_sub` is empty or the same.
+3. Phone and Telegram accounts get an internal mailbox `pending.{id}@users.trenio.invalid`. `/auth/credentials` asks for a real email and a password. The email is written only after the mailbox code. Linking into an existing verified mailbox moves phone or Telegram only into empty fields and does not replace that password.
+4. Login stays email + password, a verified Belarus mobile + SMS, or an already linked Telegram. A register SMS logs in only while the account that owned the number at issue still owns it.
+5. Staff (`admin`, `superadmin`) need TOTP before cabinet data. Contact changes need the current password or a code to an already verified channel, then other sessions are revoked. The trainer door link lasts 60 minutes and creates the user on POST.
+6. One account, roles in `user_roles`. Do not add a second portal. Trainer and club roles come later (claim, staff), not from this form.
 
 ## Non-negotiables
 
-- Ссылки в письмах только из `APP_URL`, не из `Host` / `getRequestUrl().origin`.
-- Rate limit по `X-Real-IP`, не по `X-Forwarded-For[0]`.
-- Одинаковые ответы: логин и forgot-password. Honeypot на регистрации не открывает сессию.
-- Занятая почта на регистрации и в окне почты/пароля называется прямо: сессия создаётся сразу, письмо-заглушка больше не скрывает факт.
-- Токены: CSPRNG ≥ 32 байта, SHA-256 в БД, одноразовые. Новый reset/email-change отзывает unused того же user.
-- Сброс и смена пароля: `revokeAllUserSessions`, затем новая сессия (таблица `sessions`, не cookie-only version).
-- Пароли: **scrypt**. Honeypot `company_url`. Dev-ссылки только при `AUTH_DEV_LOG_EMAILS` / non-production.
+- Letter links use `APP_URL`, not `Host` or `getRequestUrl().origin`.
+- Rate limits use `X-Real-IP` only, stored in `auth_rate_buckets`, with an in-process fallback if the table is down.
+- Login, forgot-password, and public email signup return one sentence. A honeypot does not open a session or send mail.
+- Tokens: CSPRNG of at least 32 bytes, SHA-256 in the database, single use. A new reset or email-change token closes unused tokens for that user. Email codes are HMAC and allow 5 attempts.
+- Email password reset revokes every session and does not sign the person in. SMS password reset revokes every session, then opens one new session.
+- Passwords stay scrypt. The honeypot field is `company_url`. Dev codes appear only outside production.
 - Public signup creates `user` only. `trainer` and `club` come from claim or staff. `admin` / `superadmin` stay seed/staff.
 
 Update `docs/TECH_SPEC.md` §4, `docs/ACCOUNT_MODEL.md`, and `docs/AUTH.md` when the model changes.

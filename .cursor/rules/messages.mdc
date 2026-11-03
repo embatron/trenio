@@ -35,7 +35,7 @@ The full file map and edit checklist are in `.cursor/skills/trenio-messages/SKIL
 
 Poll every 5 seconds while the tab is visible (`MESSAGE_SCAN_MS`). Pause when `document.visibilityState` is `hidden`. Do not add WebSocket or SSE. A later self-hosted PartyKit keeps this schema.
 
-The message email is skipped when that account turned off «Сообщения» in settings. The Telegram notice still sends. The staff report letter does not use that switch.
+The message email goes only to a verified mailbox, and only when «Сообщения» is on. Telegram goes to the profile owner when the card contact is confirmed and that person has already opened the bot. A client does not get the Telegram notice. The staff report letter does not use that switch.
 
 ```ts
 // wrong: raw HTML length, or the wide staff grid on a trainer page

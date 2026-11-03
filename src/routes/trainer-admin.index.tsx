@@ -125,7 +125,13 @@ function TrainerCabinetPage() {
       {tab === "settings" ? (
         <article className="cabinet-card">
           <h2>Настройки</h2>
-          <AccountProfileForm user={user} phone={cabinet.phone} phoneVerified={cabinet.phoneVerified} profilePhoto={profileFace} />
+          <AccountProfileForm
+            user={user}
+            phone={cabinet.phone}
+            phoneVerified={cabinet.phoneVerified}
+            profilePhoto={profileFace}
+            telegram={hasAnyRole(user.roles, ["trainer", "club"])}
+          />
         </article>
       ) : null}
       {tab === "card" && trainer ? (

@@ -1,6 +1,7 @@
 import { useRouter } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
+import { useContactStepUp } from "@/components/auth/step-up-fields";
 import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
 import { BelarusPhoneInput } from "@/components/belarus-phone-input";
@@ -147,6 +148,7 @@ function TelegramConfirm({ intent }: { intent: "add" | "confirm" }) {
   const [pending, setPending] = useState(false);
   const [status, setStatus] = useState("");
   const label = intent === "add" ? "Добавить" : "Подтвердить";
+  const step = useContactStepUp();
 
   function finish(task: Promise<{ message: string }>) {
     setPending(true);
@@ -163,30 +165,46 @@ function TelegramConfirm({ intent }: { intent: "add" | "confirm" }) {
   return (
     <>
       {initData ? (
-        <div className="cabinet-contact__actions">
-          <button
-            className="cabinet-form__ghost"
-            type="button"
-            disabled={pending}
-            onClick={() => {
-              finish(
-                requestTelegramContact().then((contact) =>
-                  confirmWebApp({ data: { initData, contact: contact ?? undefined } }) as Promise<{ message: string }>,
-                ),
-              );
-            }}
-          >
-            {pending ? "Проверяем…" : label}
-          </button>
-        </div>
+        <>
+          {step.fields}
+          <div className="cabinet-contact__actions">
+            <button
+              className="cabinet-form__ghost"
+              type="button"
+              disabled={pending}
+              onClick={() => {
+                finish(
+                  requestTelegramContact().then(async (contact) => {
+                    const stepUpToken = await step.token();
+                    const result = await (confirmWebApp({
+                      data: { initData, contact: contact ?? undefined, stepUpToken },
+                    }) as Promise<{ message: string }>);
+                    step.spend();
+                    return result;
+                  }),
+                );
+              }}
+            >
+              {pending ? "Проверяем…" : label}
+            </button>
+          </div>
+        </>
       ) : open ? (
-        <TelegramLoginButton
-          missing="Кнопка бота сейчас не открывается."
-          onAuth={(user: TelegramWidgetUser) => {
-            if (pending) return;
-            finish(confirm({ data: user }) as Promise<{ message: string }>);
-          }}
-        />
+        <>
+          {step.fields}
+          <TelegramLoginButton
+            missing="Кнопка бота сейчас не открывается."
+            onAuth={(user: TelegramWidgetUser) => {
+              if (pending) return;
+              finish((async () => {
+                const stepUpToken = await step.token();
+                const result = await (confirm({ data: { ...user, stepUpToken } }) as Promise<{ message: string }>);
+                step.spend();
+                return result;
+              })());
+            }}
+          />
+        </>
       ) : (
         <div className="cabinet-contact__actions">
           <button className="cabinet-form__ghost" type="button" onClick={() => setOpen(true)}>{label}</button>
@@ -201,12 +219,14 @@ function TelegramPhoneButton() {
   const router = useRouter();
   const confirm = useAuthServerFn(confirmTrainerPhoneFromTelegramFn);
   const initData = useTelegramMiniApp();
+  const step = useContactStepUp();
   const [pending, setPending] = useState(false);
   const [status, setStatus] = useState("");
   if (!initData) return null;
 
   return (
     <>
+      {step.fields}
       <button
         className="cabinet-form__ghost"
         type="button"
@@ -215,12 +235,15 @@ function TelegramPhoneButton() {
           setPending(true);
           setStatus("");
           void requestTelegramContact()
-            .then((contact) => {
+            .then(async (contact) => {
               if (!contact) {
                 setStatus("Номер не передан. Телефон и Telegram не изменены.");
                 return null;
               }
-              return confirm({ data: { initData, contact } }) as Promise<{ message: string }>;
+              const stepUpToken = await step.token();
+              const result = await confirm({ data: { initData, contact, stepUpToken } });
+              step.spend();
+              return result as { message: string };
             })
             .then(async (result) => {
               if (!result) return;
@@ -445,12 +468,14 @@ export function TrainerContactStatus({ profile }: { profile: OwnTrainerProfile }
   const requestEmail = useAuthServerFn(requestTrainerContactEmailCodeFn);
   const confirmEmail = useAuthServerFn(confirmTrainerContactEmailCodeFn);
   const phone = profile.phone.trim();
+  const step = useContactStepUp();
   const instagram = profile.instagram.trim();
   const telegram = profile.telegram.trim();
   const email = profile.email.trim();
 
   return (
     <div className="cabinet-contacts">
+      {step.fields}
       <Row
         icon={<LineIcon path={PHONE_PATH} />}
         label="Телефон"
@@ -460,14 +485,24 @@ export function TrainerContactStatus({ profile }: { profile: OwnTrainerProfile }
         gender="m"
         editor={(
           <PhoneEditor
-            onRequest={(next) => requestPhone({ data: { phone: next } }) as Promise<{ message: string; already?: boolean; devCode?: string }>}
+            onRequest={async (next) => {
+              const stepUpToken = await step.token();
+              const result = await requestPhone({ data: { phone: next, stepUpToken } });
+              step.spend();
+              return result as { message: string; already?: boolean; devCode?: string };
+            }}
           />
         )}
         confirm={(
           <PhoneSmsActions
             phone={phone}
             requestLabel="Подтвердить"
-            onRequest={(next) => requestPhone({ data: { phone: next } }) as Promise<{ message: string; already?: boolean; devCode?: string }>}
+            onRequest={async (next) => {
+              const stepUpToken = await step.token();
+              const result = await requestPhone({ data: { phone: next, stepUpToken } });
+              step.spend();
+              return result as { message: string; already?: boolean; devCode?: string };
+            }}
           />
         )}
       />
@@ -498,13 +533,23 @@ export function TrainerContactStatus({ profile }: { profile: OwnTrainerProfile }
         gender="f"
         editor={(
           <EmailEditor
-            onRequest={(next) => requestEmail({ data: { email: next } }) as Promise<{ message: string; already?: boolean; devCode?: string }>}
+            onRequest={async (next) => {
+              const stepUpToken = await step.token();
+              const result = await requestEmail({ data: { email: next, stepUpToken } });
+              step.spend();
+              return result as { message: string; already?: boolean; devCode?: string };
+            }}
           />
         )}
         confirm={email && !profile.emailVerified ? (
           <CodeConfirm
             codeLabel="Код из письма"
-            request={() => requestEmail({ data: { email } }) as Promise<{ message: string; already?: boolean; devCode?: string }>}
+            request={async () => {
+              const stepUpToken = await step.token();
+              const result = await requestEmail({ data: { email, stepUpToken } });
+              step.spend();
+              return result as { message: string; already?: boolean; devCode?: string };
+            }}
             confirm={(code) => confirmEmail({ data: { email, code } }) as Promise<{ message: string }>}
           />
         ) : null}

@@ -1,6 +1,7 @@
 import { useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
+import { useContactStepUp } from "@/components/auth/step-up-fields";
 import { CabinetNotice } from "@/components/cabinet";
 import { TrainerCardFields, type TrainerCardValues } from "@/components/trainer-card-fields";
 import { addAdminTrainerCertificateFn, addAdminTrainerPhotoFn, removeAdminTrainerCertificateFn, removeAdminTrainerPhotoFn, reorderAdminTrainerPhotosFn, updateAdminTrainerCertificateFn } from "@/lib/admin/trainers";
@@ -31,6 +32,7 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
   const requestContactEmail = useAuthServerFn(requestTrainerContactEmailCodeFn);
   const confirmContactEmail = useAuthServerFn(confirmTrainerContactEmailCodeFn);
   const requestNick = useAuthServerFn(requestNickSupportFn);
+  const step = useContactStepUp();
   const [form, setForm] = useState(profile);
   const [publication, setPublication] = useState<OwnProfileStatus>(profile.status);
   const [pending, setPending] = useState(false);
@@ -126,7 +128,12 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
             linked: true,
             value: form.phone,
             verified: form.phoneVerified,
-            onRequest: async (phone) => (await requestPhone({ data: { phone } })) as { message: string; already?: boolean; devCode?: string },
+            onRequest: async (phone) => {
+              const stepUpToken = await step.token();
+              const result = await requestPhone({ data: { phone, stepUpToken } });
+              step.spend();
+              return result as { message: string; already?: boolean; devCode?: string };
+            },
             onConfirm: async (phone, code) => (await confirmPhone({ data: { phone, code } })) as { message: string },
             onVerified: () => {
               void router.invalidate();
@@ -134,6 +141,8 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
           }}
           onNickSupport={() => setSupportOpen(true)}
           leading={(
+            <>
+            {step.fields}
             <fieldset className="publish-pick">
               <legend>Статус публикации</legend>
               <div className="publish-pick__row" role="group" aria-label="Статус публикации">
@@ -153,10 +162,16 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
                 })}
               </div>
             </fieldset>
+            </>
           )}
           emailConfirm={{
             verified: form.emailVerified,
-            onRequest: async (email) => (await requestContactEmail({ data: { email } })) as { message: string; already?: boolean; devCode?: string },
+            onRequest: async (email) => {
+              const stepUpToken = await step.token();
+              const result = await requestContactEmail({ data: { email, stepUpToken } });
+              step.spend();
+              return result as { message: string; already?: boolean; devCode?: string };
+            },
             onConfirm: async (email, code) => (await confirmContactEmail({ data: { email, code } })) as { message: string },
             onVerified: () => {
               void router.invalidate();

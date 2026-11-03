@@ -4,6 +4,7 @@ import { loginBotToken } from "@/auth/telegram";
 import { getDb } from "@/db";
 import { users } from "@/db/schema";
 import { logCaught, writeLog } from "@/lib/log/logger";
+import { markTelegramBotSeen } from "@/lib/telegram/bot-seen";
 
 import {
   resolveTelegramAction,
@@ -119,6 +120,12 @@ export async function handleTelegramMenuWebhook(request: Request): Promise<Respo
   const chatId = message?.chat?.id;
   const text = message?.text;
   if (!chatId || message?.chat?.type !== "private" || !text) return new Response("ok");
+
+  try {
+    await markTelegramBotSeen(chatId);
+  } catch (error) {
+    logCaught("api", "telegram.menu", error, { target: String(chatId) });
+  }
 
   const action = resolveTelegramAction(text);
   const origin = telegramPublicOrigin();

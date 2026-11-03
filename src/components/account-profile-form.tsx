@@ -2,6 +2,7 @@ import { useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { flushSync } from "react-dom";
 
+import { useContactStepUp } from "@/components/auth/step-up-fields";
 import { AvatarCrop } from "@/components/avatar-crop";
 import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
 import { TelegramWebAppAuthButton } from "@/components/auth/telegram-webapp-auth-button";
@@ -17,8 +18,10 @@ import {
   deleteAccountFn,
   linkAccountTelegramFn,
   linkAccountTelegramWebAppFn,
+  listSessionsFn,
   requestAccountEmailCodeFn,
   requestAccountPhoneCodeFn,
+  revokeSessionFn,
   setAccountAvatarFn,
   unlinkAccountTelegramFn,
   updateMailPreferenceFn,
@@ -101,6 +104,7 @@ function TelegramAccountLink({
   const linkWidget = useAuthServerFn(linkAccountTelegramFn);
   const linkWebApp = useAuthServerFn(linkAccountTelegramWebAppFn);
   const unlink = useAuthServerFn(unlinkAccountTelegramFn);
+  const step = useContactStepUp();
   const [pending, setPending] = useState(false);
 
   async function finish(message: string) {
@@ -111,12 +115,13 @@ function TelegramAccountLink({
   return (
     <section className="cabinet-form" id="telegram">
       <h3>Telegram</h3>
+      {step.fields}
       {user.telegramLinked ? (
         <>
           <p className="cabinet-note">
             {user.telegramUsername
-              ? `К аккаунту привязан @${user.telegramUsername}.`
-              : "К аккаунту привязан Telegram."}
+              ? `Контакт @${user.telegramUsername} подтверждён.`
+              : "Контакт Telegram подтверждён."}
           </p>
           <button
             className="cabinet-form__ghost"
@@ -124,8 +129,12 @@ function TelegramAccountLink({
             disabled={pending}
             onClick={() => {
               setPending(true);
-              void unlink()
-                .then((result) => finish((result as { message: string }).message))
+              void step.token()
+                .then((stepUpToken) => unlink({ data: { stepUpToken } }))
+                .then((result) => {
+                  step.spend();
+                  return finish((result as { message: string }).message);
+                })
                 .catch(onFail)
                 .finally(() => setPending(false));
             }}
@@ -136,14 +145,16 @@ function TelegramAccountLink({
       ) : (
         <>
           <p className="cabinet-note">
-            Привяжите Telegram к этому аккаунту. Второй аккаунт с ним не создаётся.
+            Подтвердите Telegram. Это контакт на вашей странице, второй аккаунт с ним не создаётся.
           </p>
           <TelegramWebAppAuthButton
-            label="Привязать Telegram"
+            label="Подтвердить Telegram"
             pendingLabel="Привязка…"
             onAuth={async (initData) => {
               try {
-                const result = await linkWebApp({ data: { initData } });
+                const stepUpToken = await step.token();
+                const result = await linkWebApp({ data: { initData, stepUpToken } });
+                step.spend();
                 await finish((result as { message: string }).message);
               } catch (error) {
                 onFail(error);
@@ -154,8 +165,12 @@ function TelegramAccountLink({
             missing="Привязка через Telegram сейчас недоступна."
             onAuth={(telegram: TelegramWidgetUser) => {
               setPending(true);
-              void linkWidget({ data: telegram })
-                .then((result) => finish((result as { message: string }).message))
+              void step.token()
+                .then((stepUpToken) => linkWidget({ data: { ...telegram, stepUpToken } }))
+                .then((result) => {
+                  step.spend();
+                  return finish((result as { message: string }).message);
+                })
                 .catch(onFail)
                 .finally(() => setPending(false));
             }}
@@ -171,11 +186,14 @@ export function AccountProfileForm({
   phone,
   phoneVerified,
   profilePhoto = null,
+  telegram = false,
 }: {
   user: PublicUser;
   phone: string | null;
   phoneVerified: boolean;
   profilePhoto?: string | null;
+  /** Trainer cabinet only. A client and an admin do not attach Telegram here. */
+  telegram?: boolean;
 }) {
   const router = useRouter();
   const updateProfile = useAuthServerFn(updateProfileFn);
@@ -185,6 +203,7 @@ export function AccountProfileForm({
   const confirmEmail = useAuthServerFn(confirmAccountEmailCodeFn);
   const requestPhone = useAuthServerFn(requestAccountPhoneCodeFn);
   const confirmPhone = useAuthServerFn(confirmAccountPhoneCodeFn);
+  const step = useContactStepUp();
   const uploadAvatar = useAuthServerFn(setAccountAvatarFn);
   const removeAccount = useAuthServerFn(deleteAccountFn);
   const requestTrainer = useAuthServerFn(requestBecomeTrainerFn);
@@ -343,6 +362,7 @@ export function AccountProfileForm({
             />
           </label>
         </div>
+        {step.fields}
         <label>
           <span className="cabinet-form__label-row">
             <span>
@@ -393,8 +413,10 @@ export function AccountProfileForm({
               disabled={pending}
               onClick={() => {
                 setPending(true);
-                void requestEmail({ data: { email: email.trim() } })
+                void step.token()
+                  .then((stepUpToken) => requestEmail({ data: { email: email.trim(), stepUpToken } }))
                   .then((result) => {
+                    step.spend();
                     const payload = result as {
                       message: string;
                       already?: boolean;
@@ -511,8 +533,10 @@ export function AccountProfileForm({
               disabled={pending}
               onClick={() => {
                 setPending(true);
-                void requestPhone({ data: { phone: phoneValue || BY_PHONE_COUNTRY_PREFIX } })
+                void step.token()
+                  .then((stepUpToken) => requestPhone({ data: { phone: phoneValue || BY_PHONE_COUNTRY_PREFIX, stepUpToken } }))
                   .then((result) => {
+                    step.spend();
                     const payload = result as {
                       message: string;
                       already?: boolean;
@@ -588,7 +612,7 @@ export function AccountProfileForm({
           </p>
         ) : null}
       </form>
-      <TelegramAccountLink user={user} onOk={ok} onFail={fail} />
+      {telegram ? <TelegramAccountLink user={user} onOk={ok} onFail={fail} /> : null}
       <form
         className="cabinet-form"
         onSubmit={(event) => {
@@ -768,6 +792,7 @@ export function AccountProfileForm({
           </div>
         </div>
       ) : null}
+      <AccountSessions />
       {popup ? (
         <CabinetNotice title={popup.title} message={popup.message} onClose={() => setPopup(null)} />
       ) : null}
@@ -853,5 +878,52 @@ function BecomeTrainerDialog({
         )}
       </div>
     </div>
+  );
+}
+
+function AccountSessions() {
+  const router = useRouter();
+  const list = useAuthServerFn(listSessionsFn);
+  const revoke = useAuthServerFn(revokeSessionFn);
+  const [rows, setRows] = useState<Array<{ id: string; createdAt: string; expiresAt: string; ip: string | null; userAgent: string | null; current: boolean }>>([]);
+  const [note, setNote] = useState("");
+
+  useEffect(() => {
+    void list().then(setRows).catch(() => setRows([]));
+  }, []);
+
+  return (
+    <section className="cabinet-form" id="sessions">
+      <h3>Сеансы</h3>
+      {rows.length === 0 ? <p className="cabinet-note">Открытых сеансов нет.</p> : null}
+      {rows.map((row) => (
+        <div key={row.id} className="cabinet-form__actions">
+          <p className="cabinet-note">
+            {row.current ? "Этот сеанс. " : ""}
+            {row.ip ?? "без адреса"} · {new Date(row.createdAt).toLocaleString("ru-BY")}
+            {row.userAgent ? ` · ${row.userAgent.slice(0, 80)}` : ""}
+          </p>
+          <button
+            className="cabinet-form__ghost"
+            type="button"
+            onClick={() => {
+              void revoke({ data: { sessionId: row.id } })
+                .then(async (result) => {
+                  if (result.current) {
+                    window.location.assign("/auth/login");
+                    return;
+                  }
+                  setRows((current) => current.filter((item) => item.id !== row.id));
+                  await router.invalidate();
+                })
+                .catch((error: unknown) => setNote(authErrorMessage(error)));
+            }}
+          >
+            Завершить
+          </button>
+        </div>
+      ))}
+      {note ? <p className="cabinet-form__error">{note}</p> : null}
+    </section>
   );
 }

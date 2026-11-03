@@ -213,13 +213,13 @@ function isUniqueViolation(error: unknown) {
   return false;
 }
 
-function assertSendRate(userId: string) {
+async function assertSendRate(userId: string) {
   if (isGodUser(userId)) return;
-  const minute = consumeRateLimit(`msg:min:${userId}`, 60_000, 10);
+  const minute = await consumeRateLimit(`msg:min:${userId}`, 60_000, 10);
   if (!minute.ok) {
     throw new AuthError(`Слишком много сообщений. Подождите ${minute.retryAfterSec} с.`, "RATE_LIMITED");
   }
-  const day = consumeRateLimit(`msg:day:${userId}`, 24 * 60 * 60_000, 300);
+  const day = await consumeRateLimit(`msg:day:${userId}`, 24 * 60 * 60_000, 300);
   if (!day.ok) throw new AuthError("Достигнут дневной лимит сообщений. Попробуйте завтра.", "RATE_LIMITED");
 }
 
@@ -534,7 +534,7 @@ export async function uploadMessageFile(
     .from(messageAttachments)
     .where(and(eq(messageAttachments.conversationId, input.conversationId), eq(messageAttachments.clientId, input.clientId)));
   if (Number(countRow?.count ?? 0) >= MESSAGE_ATTACHMENT_MAX_COUNT) throw new AuthError(ATTACHMENT_TOO_MANY, "VALIDATION");
-  const minute = consumeRateLimit(`msg:file:${actor.id}`, 60_000, 30);
+  const minute = await consumeRateLimit(`msg:file:${actor.id}`, 60_000, 30);
   if (!minute.ok) throw new AuthError(`Слишком много файлов. Подождите ${minute.retryAfterSec} с.`, "RATE_LIMITED");
   const byteSize = await writeMessageFile(input.conversationId, input.id, sniffed.file.ext, decoded.bytes);
   if (sniffed.file.kind === "image") {

@@ -28,7 +28,7 @@ export const suggestAddress = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
   .validator(suggestAddressSchema)
   .handler(async ({ data, context }): Promise<{ suggestions: AddressSuggestion[]; unavailable: boolean }> => {
-    const limit = consumeRateLimit(
+    const limit = await consumeRateLimit(
       `geo:suggest:${context.user.id}`,
       RATE_LIMITS.geocodeUser.windowMs,
       RATE_LIMITS.geocodeUser.max,
@@ -95,7 +95,7 @@ export const adminGeocodeTrainer = createServerFn({ method: "POST" })
   .validator(z.object({ id: z.string().uuid() }))
   .handler(async ({ data, context }): Promise<{ places: TrainerPlace[]; message: string }> => {
     assertStaff(context.user.roles);
-    const limit = consumeRateLimit(
+    const limit = await consumeRateLimit(
       `geo:admin:${context.user.id}`,
       RATE_LIMITS.geocodeUser.windowMs,
       RATE_LIMITS.geocodeUser.max,

@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
+import { z } from "zod";
 
 import { AuthError, isAuthError } from "@/lib/auth/errors";
-import { getPostLoginPath, hasAnyRole } from "@/lib/auth/roles";
+import { getPostLoginPath, hasAnyRole, isStaff } from "@/lib/auth/roles";
 import {
   forgotPasswordSchema,
   loginSchema,
@@ -26,11 +27,16 @@ import {
   mailPreferenceSchema,
   profileNameSchema,
   verifyEmailSchema,
+  signupCodeSchema,
+  sessionIdSchema,
+  stepUpProofSchema,
+  totpCodeSchema,
   type PublicUser,
 } from "@/lib/auth/schemas";
 import {
   optionalAuthMiddleware,
   requireAuthMiddleware,
+  requireSessionMiddleware,
 } from "@/auth/middleware";
 import {
   confirmPasswordResetByPhone,
@@ -43,8 +49,15 @@ import {
   requestSmsLogin,
 } from "@/auth/login-channels";
 import { getTelegramLoginConfig } from "@/auth/telegram";
+import { clientIpFromHeaders } from "@/auth/request-meta";
+import { consumeLoginTicket } from "@/auth/login-ticket";
+import { issueStepUpGrant, requestStepUpCode } from "@/auth/step-up";
+import { beginTotpEnrollment, confirmTotpEnrollment } from "@/auth/totp";
 import {
+  confirmSignupCredentials,
+  confirmSignupLink,
   confirmSmsSignup,
+  requestSignupLink,
   requestSmsSignup,
   saveSignupCredentials,
   signupWithEmail,
@@ -54,7 +67,9 @@ import {
 import { isPendingSignupEmail } from "@/lib/auth/pending-email";
 import {
   getSessionUserFromToken,
-  loginUser,
+  confirmSignupEmailToken,
+  createSession,
+  listAccountSessions,
   trainerHeaderFace,
   requestPasswordReset,
   changeAccountPassword,
@@ -74,14 +89,16 @@ import {
   resetPassword,
   setPasswordFromEmailLink,
   revokeSessionByToken,
+  revokeAccountSession,
   updateAccountName,
   updateMailPreference,
   verifyEmailToken,
+  loginUser,
   type SessionUser,
 } from "@/auth/service";
-import { deleteOwnAccount, restoreOwnAccount } from "@/lib/account/delete-account";
-import { clearSessionCookie, readSessionToken, setSessionCookie } from "@/auth/session";
 import { writeLog, maskPhone } from "@/lib/log/logger";
+import { deleteOwnAccount, restoreOwnAccount } from "@/lib/account/delete-account";
+import { clearSessionCookie, clearTotpTicketCookie, readSessionToken, readTotpTicket, setSessionCookie, setTotpTicketCookie } from "@/auth/session";
 import type { LogOutcome } from "@/lib/log/policy";
 
 function toPublicUser(user: SessionUser): PublicUser {
@@ -97,6 +114,7 @@ function toPublicUser(user: SessionUser): PublicUser {
     needsCredentials,
     needsDoorPassword: user.needsPassword && user.lastSignupIntent === "trainer_claim",
     roles: user.roles,
+    needsTotp: isStaff(user.roles) && !user.totpEnabled,
     status: user.status,
     lastSignupIntent: user.lastSignupIntent,
     mailMessages: user.mailMessages,
@@ -110,24 +128,24 @@ function toPublicUser(user: SessionUser): PublicUser {
 
 function getRequestMeta() {
   const request = getRequest();
-  const ipAddress =
-    request.headers.get("cf-connecting-ip") ??
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    null;
+  const ipAddress = clientIpFromHeaders(request.headers.get("x-real-ip"));
   return {
     ipAddress,
     userAgent: request.headers.get("user-agent"),
-    clientKey: ipAddress ?? "local",
+    clientKey: ipAddress,
   };
 }
 
 async function finishLogin(
-  session: { token: string },
+  session: { token: string } | { totpTicket: string },
   remember = true,
   action = "auth.login",
   message = "Вход выполнен.",
 ) {
-  setSessionCookie(session.token, remember);
+  if ("totpTicket" in session) {
+    setTotpTicketCookie(session.totpTicket);
+    return { ok: true as const, totpRequired: true as const, redirectTo: "/auth/totp" };
+  }
   const user = await getSessionUserFromToken(session.token);
   if (!user) {
     throw new AuthError("Не удалось создать сессию.", "VALIDATION");
@@ -208,6 +226,7 @@ export const loginFn = createServerFn({ method: "POST" })
       }
       const meta = getRequestMeta();
       consumePasswordLoginLimit(data.email, meta.clientKey);
+      await consumePasswordLoginLimit(data.email, meta.clientKey);
       const session = await loginUser({
         email: data.email,
         password: data.password,
@@ -328,23 +347,15 @@ export const signupFn = createServerFn({ method: "POST" })
         { email: data.email, password: data.password },
         { ...getRequestMeta(), honeypot: data.honeypot },
       );
-      if ("restore" in result) {
-        void writeLog({
-          level: "info",
-          domain: "auth",
-          action: "auth.signup",
-          outcome: "skipped",
-          message: "Аккаунт удалён. Предложено восстановление.",
-          subject: data.email,
-        });
-        return { ok: true as const, restore: true as const };
-      }
-      return finishLogin(
-        result.session,
-        true,
-        result.created ? "auth.signup" : "auth.login",
-        result.created ? "Аккаунт создан по почте." : "Вход выполнен.",
-      );
+      void writeLog({
+        level: "info",
+        domain: "auth",
+        action: "auth.signup",
+        outcome: "success",
+        message: "Запрошено письмо регистрации.",
+        subject: data.email,
+      });
+      return { ok: true as const, message: result.message };
     } catch (error) {
       rethrowAuth(error, "auth.signup", data.email, null, data.honeypot?.trim() ? "denied" : undefined);
     }
@@ -420,28 +431,28 @@ export const signupWithTelegramWebAppFn = createServerFn({ method: "POST" })
   });
 
 export const completeSignupCredentialsFn = createServerFn({ method: "POST" })
-  .middleware([requireAuthMiddleware])
+  .middleware([requireSessionMiddleware])
   .validator(signupCredentialsSchema)
   .handler(async ({ data, context }) => {
     try {
-      await saveSignupCredentials(context.user.id, data.email, data.password);
+      const saved = await saveSignupCredentials(context.user.id, data.email, data.password);
       void writeLog({
         level: "info",
         domain: "auth",
         action: "auth.signup.credentials",
         outcome: "success",
-        message: "Почта и пароль сохранены.",
+        message: "linkAvailable" in saved ? "Почта уже есть. Нужен код привязки." : "Код на почту отправлен.",
         subject: data.email,
         actorUserId: context.user.id,
       });
-      return { ok: true as const };
+      return saved;
     } catch (error) {
       rethrowAuth(error, "auth.signup.credentials", data.email, context.user.id);
     }
   });
 
 export const logoutFn = createServerFn({ method: "POST" })
-  .middleware([requireAuthMiddleware])
+  .middleware([requireSessionMiddleware])
   .handler(async ({ context }) => {
     const token = readSessionToken();
     if (token) {
@@ -476,7 +487,7 @@ export const forgotPasswordFn = createServerFn({ method: "POST" })
         });
         return { ok: true as const };
       }
-      consumeForgotEmailLimit(getRequestMeta().clientKey);
+      await consumeForgotEmailLimit(getRequestMeta().clientKey, data.email);
       await requestPasswordReset(data.email);
       void writeLog({
         level: "info",
@@ -557,7 +568,7 @@ export const requestAccountEmailCodeFn = createServerFn({ method: "POST" })
   .validator(accountEmailSchema)
   .handler(async ({ data, context }) => {
     try {
-      const result = await requestAccountEmailCode(context.user.id, data.email);
+      const result = await requestAccountEmailCode(context.user.id, data.email, data.stepUpToken);
       void writeLog({
         level: "info",
         domain: "account",
@@ -578,7 +589,7 @@ export const confirmAccountEmailCodeFn = createServerFn({ method: "POST" })
   .validator(accountEmailCodeSchema)
   .handler(async ({ data, context }) => {
     try {
-      const result = await confirmAccountEmailCode(context.user.id, data.email, data.code);
+      const result = await confirmAccountEmailCode(context.user.id, data.email, data.code, readSessionToken());
       void writeLog({
         level: "info",
         domain: "account",
@@ -599,7 +610,7 @@ export const requestTrainerContactEmailCodeFn = createServerFn({ method: "POST" 
   .validator(accountEmailSchema)
   .handler(async ({ data, context }) => {
     try {
-      const result = await requestTrainerContactEmailCode(context.user.id, data.email);
+      const result = await requestTrainerContactEmailCode(context.user.id, data.email, data.stepUpToken);
       void writeLog({
         level: "info",
         domain: "account",
@@ -620,7 +631,7 @@ export const confirmTrainerContactEmailCodeFn = createServerFn({ method: "POST" 
   .validator(accountEmailCodeSchema)
   .handler(async ({ data, context }) => {
     try {
-      const result = await confirmTrainerContactEmailCode(context.user.id, data.email, data.code);
+      const result = await confirmTrainerContactEmailCode(context.user.id, data.email, data.code, readSessionToken());
       void writeLog({
         level: "info",
         domain: "account",
@@ -642,10 +653,10 @@ function accountLogSubject(email: string): string | null {
 
 export const confirmTrainerTelegramFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
-  .validator(telegramWidgetSchema)
+  .validator(telegramWidgetSchema.extend({ stepUpToken: z.string().trim().min(20).max(200) }))
   .handler(async ({ data, context }) => {
     try {
-      const result = await confirmTrainerTelegram(context.user.id, data);
+      const result = await confirmTrainerTelegram(context.user.id, data, data.stepUpToken, readSessionToken());
       const subject = accountLogSubject(context.user.email);
       if (result.linkedAccount) {
         void writeLog({
@@ -677,10 +688,16 @@ export const confirmTrainerTelegramFn = createServerFn({ method: "POST" })
 
 export const confirmTrainerTelegramWebAppFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
-  .validator(trainerTelegramWebAppSchema)
+  .validator(trainerTelegramWebAppSchema.extend({ stepUpToken: z.string().trim().min(20).max(200) }))
   .handler(async ({ data, context }) => {
     try {
-      const result = await confirmTrainerTelegramWebApp(context.user.id, data.initData, data.contact);
+      const result = await confirmTrainerTelegramWebApp(
+        context.user.id,
+        data.initData,
+        data.stepUpToken,
+        readSessionToken(),
+        data.contact,
+      );
       const subject = accountLogSubject(context.user.email);
       if (result.linkedAccount) {
         void writeLog({
@@ -719,6 +736,8 @@ export const confirmTrainerPhoneFromTelegramFn = createServerFn({ method: "POST"
         context.user.id,
         { initData: data.initData, widget: data.widget },
         data.contact,
+        data.stepUpToken,
+        readSessionToken(),
       );
       void writeLog({
         level: "info",
@@ -735,12 +754,19 @@ export const confirmTrainerPhoneFromTelegramFn = createServerFn({ method: "POST"
     }
   });
 
+function assertTrainerTelegram(roles: Parameters<typeof hasAnyRole>[0]) {
+  if (!hasAnyRole(roles, ["trainer", "club"])) {
+    throw new AuthError("Telegram подтверждается в кабинете тренера.", "FORBIDDEN");
+  }
+}
+
 export const linkAccountTelegramFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
-  .validator(telegramWidgetSchema)
+  .validator(telegramWidgetSchema.extend({ stepUpToken: z.string().trim().min(20).max(200) }))
   .handler(async ({ data, context }) => {
     try {
-      const result = await linkAccountTelegram(context.user.id, data);
+      assertTrainerTelegram(context.user.roles);
+      const result = await linkAccountTelegram(context.user.id, data, data.stepUpToken, readSessionToken());
       void writeLog({
         level: "info",
         domain: "auth",
@@ -759,10 +785,11 @@ export const linkAccountTelegramFn = createServerFn({ method: "POST" })
 
 export const linkAccountTelegramWebAppFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
-  .validator(telegramWebAppSchema)
+  .validator(telegramWebAppSchema.extend({ stepUpToken: z.string().trim().min(20).max(200) }))
   .handler(async ({ data, context }) => {
     try {
-      const result = await linkAccountTelegramWebApp(context.user.id, data.initData);
+      assertTrainerTelegram(context.user.roles);
+      const result = await linkAccountTelegramWebApp(context.user.id, data.initData, data.stepUpToken, readSessionToken());
       void writeLog({
         level: "info",
         domain: "auth",
@@ -781,9 +808,11 @@ export const linkAccountTelegramWebAppFn = createServerFn({ method: "POST" })
 
 export const unlinkAccountTelegramFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
-  .handler(async ({ context }) => {
+  .validator(z.object({ stepUpToken: z.string().trim().min(20).max(200) }))
+  .handler(async ({ data, context }) => {
     try {
-      const result = await unlinkAccountTelegram(context.user.id);
+      assertTrainerTelegram(context.user.roles);
+      const result = await unlinkAccountTelegram(context.user.id, data.stepUpToken, readSessionToken());
       void writeLog({
         level: "info",
         domain: "auth",
@@ -804,7 +833,7 @@ export const requestAccountPhoneCodeFn = createServerFn({ method: "POST" })
   .validator(accountPhoneSchema)
   .handler(async ({ data, context }) => {
     try {
-      const result = await requestAccountPhoneCode(context.user.id, data.phone);
+      const result = await requestAccountPhoneCode(context.user.id, data.phone, data.stepUpToken);
       void writeLog({
         level: "info",
         domain: "account",
@@ -825,7 +854,7 @@ export const confirmAccountPhoneCodeFn = createServerFn({ method: "POST" })
   .validator(accountPhoneCodeSchema)
   .handler(async ({ data, context }) => {
     try {
-      const result = await confirmAccountPhoneCode(context.user.id, data.phone, data.code);
+      const result = await confirmAccountPhoneCode(context.user.id, data.phone, data.code, readSessionToken());
       void writeLog({
         level: "info",
         domain: "account",
@@ -939,7 +968,7 @@ export const restoreAccountFn = createServerFn({ method: "POST" })
         throw new AuthError("Неверный логин или пароль.", "INVALID_CREDENTIALS");
       }
       const meta = getRequestMeta();
-      consumePasswordLoginLimit(data.email, meta.clientKey);
+      await consumePasswordLoginLimit(data.email, meta.clientKey);
       const session = await restoreOwnAccount(data.email, data.password, meta);
       return finishLogin(session, data.remember, "account.restore", "Пользователь восстановил аккаунт.");
     } catch (error) {
@@ -957,6 +986,135 @@ export const deleteAccountFn = createServerFn({ method: "POST" })
       return { ok: true as const };
     } catch (error) {
       rethrowAuth(error, "account.delete", context.user.email, context.user.id);
+    }
+  });
+
+export const confirmSignupEmailFn = createServerFn({ method: "POST" })
+  .validator(verifyEmailSchema)
+  .handler(async ({ data }) => {
+    try {
+      const session = await confirmSignupEmailToken(data.token, getRequestMeta());
+      return finishLogin(session, true, "auth.signup.confirm", "Почта подтверждена.");
+    } catch (error) {
+      rethrowAuth(error, "auth.signup.confirm");
+    }
+  });
+
+export const confirmSignupCodeFn = createServerFn({ method: "POST" })
+  .middleware([requireSessionMiddleware])
+  .validator(signupCodeSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      await confirmSignupCredentials(context.user.id, data.email, data.code);
+      return { ok: true as const };
+    } catch (error) {
+      rethrowAuth(error, "auth.signup.credentials", data.email, context.user.id);
+    }
+  });
+
+export const requestSignupLinkFn = createServerFn({ method: "POST" })
+  .middleware([requireSessionMiddleware])
+  .validator(signupCodeSchema.pick({ email: true }))
+  .handler(async ({ data, context }) => {
+    try {
+      return await requestSignupLink(context.user.id, data.email);
+    } catch (error) {
+      rethrowAuth(error, "auth.signup.link", data.email, context.user.id);
+    }
+  });
+
+export const confirmSignupLinkFn = createServerFn({ method: "POST" })
+  .middleware([requireSessionMiddleware])
+  .validator(signupCodeSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      const result = await confirmSignupLink(context.user.id, data.email, data.code, {
+        ...getRequestMeta(),
+      });
+      clearSessionCookie();
+      return finishLogin(result.session, true, "auth.signup.link", "Аккаунт привязан к почте.");
+    } catch (error) {
+      rethrowAuth(error, "auth.signup.link", data.email, context.user.id);
+    }
+  });
+
+export const requestStepUpCodeFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .handler(async ({ context }) => {
+    try {
+      return await requestStepUpCode(context.user.id);
+    } catch (error) {
+      rethrowAuth(error, "auth.stepup.request", context.user.email, context.user.id);
+    }
+  });
+
+export const issueStepUpFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(stepUpProofSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      const stepUpToken = await issueStepUpGrant(context.user.id, { password: data.password, code: data.code });
+      return { ok: true as const, stepUpToken };
+    } catch (error) {
+      rethrowAuth(error, "auth.stepup", context.user.email, context.user.id);
+    }
+  });
+
+export const beginTotpFn = createServerFn({ method: "POST" })
+  .middleware([requireSessionMiddleware])
+  .handler(async ({ context }) => {
+    try {
+      if (!isStaff(context.user.roles)) throw new AuthError("Код приложения нужен только сотрудникам.", "FORBIDDEN");
+      return await beginTotpEnrollment(context.user.id, context.user.email);
+    } catch (error) {
+      rethrowAuth(error, "auth.totp.enroll", context.user.email, context.user.id);
+    }
+  });
+
+export const confirmTotpFn = createServerFn({ method: "POST" })
+  .middleware([requireSessionMiddleware])
+  .validator(totpCodeSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      if (!isStaff(context.user.roles)) throw new AuthError("Код приложения нужен только сотрудникам.", "FORBIDDEN");
+      const result = await confirmTotpEnrollment(context.user.id, data.code);
+      return { ok: true as const, codes: result.codes };
+    } catch (error) {
+      rethrowAuth(error, "auth.totp.enroll", context.user.email, context.user.id);
+    }
+  });
+
+export const confirmLoginTotpFn = createServerFn({ method: "POST" })
+  .validator(totpCodeSchema)
+  .handler(async ({ data }) => {
+    try {
+      const ticket = readTotpTicket();
+      if (!ticket) throw new AuthError("Код не подошёл. Войдите ещё раз.", "INVALID_TOKEN");
+      const userId = await consumeLoginTicket(ticket, data.code);
+      clearTotpTicketCookie();
+      const session = await createSession(userId, getRequestMeta());
+      return finishLogin(session, true, "auth.totp", "Вход подтверждён кодом.");
+    } catch (error) {
+      rethrowAuth(error, "auth.totp");
+    }
+  });
+
+export const listSessionsFn = createServerFn({ method: "GET" })
+  .middleware([requireAuthMiddleware])
+  .handler(async ({ context }) => {
+    return listAccountSessions(context.user.id, readSessionToken());
+  });
+
+export const revokeSessionFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(sessionIdSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      const result = await revokeAccountSession(context.user.id, data.sessionId, readSessionToken());
+      if (result.current) clearSessionCookie();
+      return result;
+    } catch (error) {
+      rethrowAuth(error, "auth.session.revoke", context.user.email, context.user.id);
     }
   });
 

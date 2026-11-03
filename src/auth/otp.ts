@@ -1,6 +1,6 @@
 import { createHmac, randomInt, timingSafeEqual } from "node:crypto";
 
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, gt, isNull, sql } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { authOtpChallenges, type AuthOtpPurpose } from "@/db/schema";
@@ -34,8 +34,23 @@ function otpPepper(): string {
   return "dev-only-trenio-otp-pepper-32chars!!";
 }
 
+/** HMAC for OTP, email codes, and step-up codes. The pepper is the session secret. */
+export function authMac(material: string): string {
+  return createHmac("sha256", otpPepper()).update(material).digest("hex");
+}
+
+export function authMacEqual(expectedHex: string, actualHex: string): boolean {
+  try {
+    const left = Buffer.from(expectedHex, "hex");
+    const right = Buffer.from(actualHex, "hex");
+    return left.length === right.length && left.length > 0 && timingSafeEqual(left, right);
+  } catch {
+    return false;
+  }
+}
+
 function hashOtpCode(phone: string, purpose: AuthOtpPurpose, code: string): string {
-  return createHmac("sha256", otpPepper()).update(`${purpose}:${phone}:${code}`).digest("hex");
+  return authMac(`${purpose}:${phone}:${code}`);
 }
 
 function generateOtpCode(): string {
@@ -172,37 +187,45 @@ export async function verifyOtp(input: {
   if (code.length !== OTP_CODE_LENGTH) return { ok: false };
 
   const db = getDb();
-  const [row] = await db
-    .select()
-    .from(authOtpChallenges)
-    .where(
-      and(
-        eq(authOtpChallenges.phone, input.phone),
-        eq(authOtpChallenges.purpose, input.purpose),
-        isNull(authOtpChallenges.consumedAt),
-      ),
-    )
-    .orderBy(desc(authOtpChallenges.createdAt))
-    .limit(1);
+  return db.transaction(async (tx) => {
+    const [row] = await tx
+      .select()
+      .from(authOtpChallenges)
+      .where(
+        and(
+          eq(authOtpChallenges.phone, input.phone),
+          eq(authOtpChallenges.purpose, input.purpose),
+          isNull(authOtpChallenges.consumedAt),
+        ),
+      )
+      .orderBy(desc(authOtpChallenges.createdAt))
+      .limit(1)
+      .for("update");
 
-  if (!row) return { ok: false };
-  if (row.expiresAt.getTime() < Date.now()) return { ok: false };
-  if (row.attemptCount >= OTP_MAX_ATTEMPTS) return { ok: false };
+    if (!row) return { ok: false as const };
+    if (row.expiresAt.getTime() < Date.now()) return { ok: false as const };
+    if (row.attemptCount >= OTP_MAX_ATTEMPTS) return { ok: false as const };
 
-  await db
-    .update(authOtpChallenges)
-    .set({ attemptCount: row.attemptCount + 1 })
-    .where(eq(authOtpChallenges.id, row.id));
+    await tx
+      .update(authOtpChallenges)
+      .set({ attemptCount: sql`${authOtpChallenges.attemptCount} + 1` })
+      .where(eq(authOtpChallenges.id, row.id));
 
-  const expected = hashOtpCode(input.phone, input.purpose, code);
-  const left = Buffer.from(expected, "hex");
-  const right = Buffer.from(row.codeHash, "hex");
-  if (left.length !== right.length || !timingSafeEqual(left, right)) return { ok: false };
+    const expected = hashOtpCode(input.phone, input.purpose, code);
+    if (!authMacEqual(expected, row.codeHash)) return { ok: false as const };
 
-  await db
-    .update(authOtpChallenges)
-    .set({ consumedAt: new Date() })
-    .where(eq(authOtpChallenges.id, row.id));
+    const [consumed] = await tx
+      .update(authOtpChallenges)
+      .set({ consumedAt: new Date() })
+      .where(and(eq(authOtpChallenges.id, row.id), isNull(authOtpChallenges.consumedAt)))
+      .returning({ id: authOtpChallenges.id });
+    if (!consumed) return { ok: false as const };
+    return { ok: true as const, userId: row.userId };
+  });
+}
 
-  return { ok: true, userId: row.userId };
+/** Keeps the unknown-number path from returning faster than a short fixed floor. */
+export async function matchAuthDelay(startedAt: number, floorMs = 600) {
+  const left = floorMs - (Date.now() - startedAt);
+  if (left > 0) await new Promise((resolve) => setTimeout(resolve, left));
 }

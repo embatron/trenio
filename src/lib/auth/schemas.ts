@@ -53,6 +53,7 @@ export const trainerTelegramPhoneSchema = z
     widget: telegramWidgetSchema.optional(),
     contact: z.string().min(8).max(4096),
     honeypot: honeypotSchema,
+    stepUpToken: z.string().trim().min(20).max(200),
   })
   .refine((data) => Boolean(data.initData?.trim() || data.widget), {
     message: "Не удалось подтвердить Telegram.",
@@ -68,6 +69,12 @@ export const signupCredentialsSchema = z.object({
   email: z.string().trim().email("Введите корректный e-mail"),
   password: z.string().min(1, "Введите пароль").max(128),
 });
+
+export const signupCodeSchema = signupCredentialsSchema.pick({ email: true }).extend({
+  code: z.string().trim().min(4).max(8),
+});
+
+const stepUpTokenField = z.string().trim().min(20).max(200);
 
 export const forgotPasswordSchema = z.object({
   email: z.string().email("Введите корректный e-mail"),
@@ -108,20 +115,36 @@ export const deleteAccountSchema = z.object({
 
 export const accountEmailSchema = z.object({
   email: z.string().trim().email("Введите корректный e-mail"),
+  stepUpToken: stepUpTokenField,
 });
 
-export const accountEmailCodeSchema = accountEmailSchema.extend({
+export const accountEmailCodeSchema = z.object({
+  email: z.string().trim().email("Введите корректный e-mail"),
   code: z.string().trim().min(4).max(8),
 });
 
 export const accountPhoneSchema = z.object({
   phone: z.string().trim().min(7).max(32),
+  stepUpToken: stepUpTokenField,
 });
 
-export const accountPhoneCodeSchema = accountPhoneSchema.extend({
+export const accountPhoneCodeSchema = z.object({
+  phone: z.string().trim().min(7).max(32),
   code: z.string().trim().min(4).max(8),
 });
 
+export const totpCodeSchema = z.object({
+  code: z.string().trim().min(6).max(16),
+});
+
+export const sessionIdSchema = z.object({
+  sessionId: z.string().uuid(),
+});
+
+export const stepUpProofSchema = z.object({
+  password: z.string().max(128).optional(),
+  code: z.string().trim().max(8).optional(),
+});
 export type LoginInput = z.infer<typeof loginSchema>;
 export type SignupInput = z.infer<typeof signupSchema>;
 
@@ -138,6 +161,8 @@ export type PublicUser = {
   needsCredentials: boolean;
   /** Magic-link trainer still has to choose a password in the cabinet. */
   needsDoorPassword: boolean;
+  /** Admin and superadmin must enroll an authenticator before the cabinet opens. */
+  needsTotp: boolean;
   roles: UserRole[];
   status: string;
   lastSignupIntent: string | null;

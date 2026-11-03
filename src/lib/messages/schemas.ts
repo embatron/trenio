@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { reviewPlainText } from "@/lib/catalog/review-html";
+import { reviewPlainText, reviewTextLength } from "@/lib/catalog/review-html";
 import { MESSAGE_ATTACHMENT_MAX_COUNT } from "@/lib/messages/attachments";
 
 export { MESSAGE_ATTACHMENT_MAX_COUNT };

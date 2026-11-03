@@ -1,13 +1,17 @@
 // upgrade path: PartyKit self-hosted, schema unchanged.
 import { createServerFn } from "@tanstack/react-start";
 
-import { requireAuthMiddleware } from "@/auth/middleware";
+import { requireAuthMiddleware, requireSessionMiddleware } from "@/auth/middleware";
+import { accountGatePath } from "@/lib/auth/auth-decisions";
+import { isPendingSignupEmail } from "@/lib/auth/pending-email";
+import { isStaff } from "@/lib/auth/roles";
 import { AuthError, isAuthError } from "@/lib/auth/errors";
 import { z } from "zod";
 
 import {
   conversationIdSchema,
   dismissReportSchema,
+  EMPTY_MESSAGING,
   ensureConversationSchema,
   listConversationsSchema,
   listMessagesSchema,
@@ -251,9 +255,15 @@ export const blockPairFn = createServerFn({ method: "POST" })
   });
 
 export const unreadCountFn = createServerFn({ method: "POST" })
-  .middleware([requireAuthMiddleware])
+  .middleware([requireSessionMiddleware])
   .validator(z.object({}))
   .handler(async ({ context }) => {
+    const gated = accountGatePath({
+      needsCredentials: isPendingSignupEmail(context.user.email),
+      needsDoorPassword: context.user.needsPassword && context.user.lastSignupIntent === "trainer_claim",
+      needsTotp: isStaff(context.user.roles) && !context.user.totpEnabled,
+    });
+    if (gated) return EMPTY_MESSAGING;
     try {
       return await unreadSummary(context.user.id);
     } catch (error) {

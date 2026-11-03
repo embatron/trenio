@@ -13,20 +13,17 @@ import {
   validateBelarusMobile,
 } from "@/lib/auth/phone";
 import { hashPassword } from "@/auth/password";
-import { GENERIC_OTP_ERROR, GENERIC_OTP_SENT, issueOtp, verifyOtp } from "@/auth/otp";
+import { GENERIC_OTP_ERROR, GENERIC_OTP_SENT, issueOtp, matchAuthDelay, verifyOtp } from "@/auth/otp";
 import { consumeRateLimit, RATE_LIMITED_MESSAGE, RATE_LIMITS } from "@/auth/rate-limit";
 import { isSmsByEnabled } from "@/auth/sms";
 import {
   assertUserCanAuthenticate,
-  createSession,
+  beginLogin,
   findUserById,
+  revokeAllUserSessions,
 } from "@/auth/service";
-import {
-  isTelegramLoginConfigured,
-  parseTelegramWidgetUser,
-  verifyTelegramWidgetUser,
-} from "@/auth/telegram";
-import { verifyTelegramWebAppInitData } from "@/auth/telegram-webapp";
+import { acceptTelegramWebApp, acceptTelegramWidget } from "@/auth/telegram-accept";
+import { isTelegramLoginConfigured } from "@/auth/telegram";
 
 const TELEGRAM_NOT_LINKED =
   "Этот Telegram ещё не привязан. Войдите по почте или телефону и привяжите его в настройках.";
@@ -79,7 +76,7 @@ async function findUserByTelegramId(telegramUserId: number): Promise<User | null
 
 async function openSession(user: User, meta: LoginMeta) {
   await assertUserCanAuthenticate(user);
-  return createSession(user.id, {
+  return beginLogin(user, {
     ipAddress: meta.ipAddress,
     userAgent: meta.userAgent,
     remember: meta.remember ?? true,
@@ -103,10 +100,10 @@ export async function requestSmsLogin(phoneRaw: string, meta: LoginMeta): Promis
     throw new AuthError(phoneError ?? "Некорректный номер", "VALIDATION");
   }
 
-  assertSmsAvailable();
+  const started = Date.now();
 
-  const ipLimit = consumeRateLimit(`otp:ip:${meta.clientKey}`, RATE_LIMITS.otpIp.windowMs, RATE_LIMITS.otpIp.max);
-  const phoneLimit = consumeRateLimit(`otp:phone:${phone}`, RATE_LIMITS.otpPhone.windowMs, RATE_LIMITS.otpPhone.max);
+  const ipLimit = await consumeRateLimit(`otp:ip:${meta.clientKey}`, RATE_LIMITS.otpIp.windowMs, RATE_LIMITS.otpIp.max);
+  const phoneLimit = await consumeRateLimit(`otp:phone:${phone}`, RATE_LIMITS.otpPhone.windowMs, RATE_LIMITS.otpPhone.max);
   if (!ipLimit.ok || !phoneLimit.ok) {
     const retryAfterSec = firstRetryAfter(phoneLimit, ipLimit);
     throw new AuthError(`Код можно отправить снова через ${retryAfterSec} с.`, "RATE_LIMITED");
@@ -114,6 +111,7 @@ export async function requestSmsLogin(phoneRaw: string, meta: LoginMeta): Promis
 
   const user = await findUserByVerifiedPhone(phone);
   if (!user || user.status === "deleted") {
+    await matchAuthDelay(started);
     return { message: GENERIC_OTP_SENT, retryAfterSec: OTP_RESEND_SECONDS };
   }
 
@@ -125,6 +123,8 @@ export async function requestSmsLogin(phoneRaw: string, meta: LoginMeta): Promis
       "VALIDATION",
     );
   }
+
+  await matchAuthDelay(started);
 
   return {
     message: GENERIC_OTP_SENT,
@@ -140,8 +140,7 @@ export async function confirmSmsLogin(phoneRaw: string, code: string, meta: Logi
 
   const phone = normalizeBelarusMobile(phoneRaw);
   if (!phone) throw new AuthError(GENERIC_OTP_ERROR, "INVALID_CREDENTIALS");
-
-  const ipLimit = consumeRateLimit(
+  const ipLimit = await consumeRateLimit(
     `login:ip:${meta.clientKey}`,
     RATE_LIMITS.loginIp.windowMs,
     RATE_LIMITS.loginIp.max,
@@ -172,12 +171,12 @@ export async function requestPasswordResetByPhone(phoneRaw: string, meta: LoginM
     throw new AuthError(SMS_RESET_UNAVAILABLE, "VALIDATION");
   }
 
-  const ipLimit = consumeRateLimit(
+  const ipLimit = await consumeRateLimit(
     `forgot:ip:${meta.clientKey}`,
     RATE_LIMITS.forgotIp.windowMs,
     RATE_LIMITS.forgotIp.max,
   );
-  const phoneLimit = consumeRateLimit(
+  const phoneLimit = await consumeRateLimit(
     `otp:reset:${phone}`,
     RATE_LIMITS.otpPhone.windowMs,
     RATE_LIMITS.otpPhone.max,
@@ -222,7 +221,7 @@ export async function confirmPasswordResetByPhone(
   const phone = normalizeBelarusMobile(input.phone);
   if (!phone) throw new AuthError(GENERIC_OTP_ERROR, "INVALID_CREDENTIALS");
 
-  const ipLimit = consumeRateLimit(
+  const ipLimit = await consumeRateLimit(
     `login:ip:${meta.clientKey}`,
     RATE_LIMITS.loginIp.windowMs,
     RATE_LIMITS.loginIp.max,
@@ -245,6 +244,7 @@ export async function confirmPasswordResetByPhone(
     .set({ passwordHash, updatedAt: new Date() })
     .where(eq(users.id, user.id));
 
+  await revokeAllUserSessions(user.id);
   const fresh = (await findUserById(user.id)) ?? user;
   return openSession(fresh, meta);
 }
@@ -271,14 +271,14 @@ async function completeTelegramLogin(
   return openSession(fresh, meta);
 }
 
-function guardTelegram(meta: LoginMeta) {
+async function guardTelegram(meta: LoginMeta) {
   if (honeypotTripped(meta)) {
     throw new AuthError("Неверный e-mail или пароль.", "INVALID_CREDENTIALS");
   }
   if (!isTelegramLoginConfigured()) {
     throw new AuthError("Вход через Telegram сейчас недоступен.", "VALIDATION");
   }
-  const ipLimit = consumeRateLimit(
+  const ipLimit = await consumeRateLimit(
     `login:ip:${meta.clientKey}`,
     RATE_LIMITS.loginIp.windowMs,
     RATE_LIMITS.loginIp.max,
@@ -287,28 +287,28 @@ function guardTelegram(meta: LoginMeta) {
 }
 
 export async function loginWithTelegramWidget(raw: unknown, meta: LoginMeta) {
-  guardTelegram(meta);
-  const widget = parseTelegramWidgetUser(raw);
-  if (!widget || !verifyTelegramWidgetUser(widget)) {
+  await guardTelegram(meta);
+  const widget = await acceptTelegramWidget(raw);
+  if (!widget) {
     throw new AuthError("Не удалось подтвердить Telegram. Попробуйте ещё раз.", "INVALID_CREDENTIALS");
   }
   return completeTelegramLogin(widget.id, widget.username, meta);
 }
 
 export async function loginWithTelegramWebApp(initData: string, meta: LoginMeta) {
-  guardTelegram(meta);
-  const user = verifyTelegramWebAppInitData(initData);
+  await guardTelegram(meta);
+  const user = await acceptTelegramWebApp(initData);
   if (!user) {
     throw new AuthError("Не удалось подтвердить Telegram. Попробуйте ещё раз.", "INVALID_CREDENTIALS");
   }
   return completeTelegramLogin(user.id, user.username, meta);
 }
 
-export function consumePasswordLoginLimit(email: string, clientKey: string) {
-  if (isGodLogin(email)) return;
-  const ipLimit = consumeRateLimit(`login:ip:${clientKey}`, RATE_LIMITS.loginIp.windowMs, RATE_LIMITS.loginIp.max);
-  const idLimit = consumeRateLimit(
-    `login:id:${email.trim().toLowerCase()}`,
+export async function consumePasswordLoginLimit(email: string, clientKey: string) {
+  const normalized = email.trim().toLowerCase();
+  const ipLimit = await consumeRateLimit(`login:ip:${clientKey}`, RATE_LIMITS.loginIp.windowMs, RATE_LIMITS.loginIp.max);
+  const idLimit = await consumeRateLimit(
+    `login:id:${normalized}`,
     RATE_LIMITS.loginId.windowMs,
     RATE_LIMITS.loginId.max,
   );
@@ -317,7 +317,14 @@ export function consumePasswordLoginLimit(email: string, clientKey: string) {
   }
 }
 
-export function consumeForgotEmailLimit(clientKey: string) {
-  const ipLimit = consumeRateLimit(`forgot:ip:${clientKey}`, RATE_LIMITS.forgotIp.windowMs, RATE_LIMITS.forgotIp.max);
+export async function consumeForgotEmailLimit(clientKey: string, email: string) {
+  const normalized = email.trim().toLowerCase();
+  const ipLimit = await consumeRateLimit(`forgot:ip:${clientKey}`, RATE_LIMITS.forgotIp.windowMs, RATE_LIMITS.forgotIp.max);
+  const emailLimit = await consumeRateLimit(
+    `forgot:email:${normalized}`,
+    RATE_LIMITS.forgotEmail.windowMs,
+    RATE_LIMITS.forgotEmail.max,
+  );
+  if (!ipLimit.ok || !emailLimit.ok) throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
   if (!ipLimit.ok) throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
 }

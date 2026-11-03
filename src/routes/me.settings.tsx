@@ -1,6 +1,7 @@
 import { createFileRoute, getRouteApi } from "@tanstack/react-router";
 
 import { AccountProfileForm } from "@/components/account-profile-form";
+import { hasAnyRole } from "@/lib/auth/roles";
 
 const meRoute = getRouteApi("/me");
 
@@ -24,7 +25,13 @@ function MeSettingsPage() {
   return (
     <article className="cabinet-card">
       <h2>Настройки</h2>
-      <AccountProfileForm user={user} phone={cabinet.phone} phoneVerified={cabinet.phoneVerified} profilePhoto={face} />
+      <AccountProfileForm
+        user={user}
+        phone={cabinet.phone}
+        phoneVerified={cabinet.phoneVerified}
+        profilePhoto={face}
+        telegram={hasAnyRole(user.roles, ["trainer", "club"])}
+      />
     </article>
   );
 }

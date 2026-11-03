@@ -48,12 +48,15 @@ import { Route as CitySlugRouteImport } from './routes/city.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
 import { Route as AuthVerifyEmailRouteImport } from './routes/auth.verify-email'
+import { Route as AuthTotpRouteImport } from './routes/auth.totp'
 import { Route as AuthSignupRouteImport } from './routes/auth.signup'
 import { Route as AuthSetPasswordRouteImport } from './routes/auth.set-password'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
+import { Route as AuthPasswordRouteImport } from './routes/auth.password'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
 import { Route as AuthGoogleRouteImport } from './routes/auth.google'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
+import { Route as AuthCredentialsRouteImport } from './routes/auth.credentials'
 import { Route as AuthConfirmEmailRouteImport } from './routes/auth.confirm-email'
 import { Route as AdminTrainersRouteImport } from './routes/admin.trainers'
 import { Route as AdminSiteRouteImport } from './routes/admin.site'
@@ -283,6 +286,11 @@ const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
   path: '/auth/verify-email',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthTotpRoute = AuthTotpRouteImport.update({
+  id: '/auth/totp',
+  path: '/auth/totp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthSignupRoute = AuthSignupRouteImport.update({
   id: '/auth/signup',
   path: '/auth/signup',
@@ -298,6 +306,11 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   path: '/auth/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthPasswordRoute = AuthPasswordRouteImport.update({
+  id: '/auth/password',
+  path: '/auth/password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/auth/login',
   path: '/auth/login',
@@ -311,6 +324,11 @@ const AuthGoogleRoute = AuthGoogleRouteImport.update({
 const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   id: '/auth/forgot-password',
   path: '/auth/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCredentialsRoute = AuthCredentialsRouteImport.update({
+  id: '/auth/credentials',
+  path: '/auth/credentials',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthConfirmEmailRoute = AuthConfirmEmailRouteImport.update({
@@ -515,12 +533,15 @@ export interface FileRoutesByFullPath {
   '/admin/site': typeof AdminSiteRoute
   '/admin/trainers': typeof AdminTrainersRouteWithChildren
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
+  '/auth/credentials': typeof AuthCredentialsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
+  '/auth/password': typeof AuthPasswordRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
   '/auth/signup': typeof AuthSignupRoute
+  '/auth/totp': typeof AuthTotpRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -589,12 +610,15 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/site': typeof AdminSiteRoute
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
+  '/auth/credentials': typeof AuthCredentialsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
+  '/auth/password': typeof AuthPasswordRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
   '/auth/signup': typeof AuthSignupRoute
+  '/auth/totp': typeof AuthTotpRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -668,12 +692,15 @@ export interface FileRoutesById {
   '/admin/site': typeof AdminSiteRoute
   '/admin/trainers': typeof AdminTrainersRouteWithChildren
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
+  '/auth/credentials': typeof AuthCredentialsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
+  '/auth/password': typeof AuthPasswordRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
   '/auth/signup': typeof AuthSignupRoute
+  '/auth/totp': typeof AuthTotpRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -750,12 +777,15 @@ export interface FileRouteTypes {
     | '/admin/site'
     | '/admin/trainers'
     | '/auth/confirm-email'
+    | '/auth/credentials'
     | '/auth/forgot-password'
     | '/auth/google'
     | '/auth/login'
+    | '/auth/password'
     | '/auth/reset-password'
     | '/auth/set-password'
     | '/auth/signup'
+    | '/auth/totp'
     | '/auth/verify-email'
     | '/categories/$slug'
     | '/category/$slug'
@@ -824,12 +854,15 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/site'
     | '/auth/confirm-email'
+    | '/auth/credentials'
     | '/auth/forgot-password'
     | '/auth/google'
     | '/auth/login'
+    | '/auth/password'
     | '/auth/reset-password'
     | '/auth/set-password'
     | '/auth/signup'
+    | '/auth/totp'
     | '/auth/verify-email'
     | '/categories/$slug'
     | '/category/$slug'
@@ -902,12 +935,15 @@ export interface FileRouteTypes {
     | '/admin/site'
     | '/admin/trainers'
     | '/auth/confirm-email'
+    | '/auth/credentials'
     | '/auth/forgot-password'
     | '/auth/google'
     | '/auth/login'
+    | '/auth/password'
     | '/auth/reset-password'
     | '/auth/set-password'
     | '/auth/signup'
+    | '/auth/totp'
     | '/auth/verify-email'
     | '/categories/$slug'
     | '/category/$slug'
@@ -971,12 +1007,15 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TrainerAdminRoute: typeof TrainerAdminRouteWithChildren
   AuthConfirmEmailRoute: typeof AuthConfirmEmailRoute
+  AuthCredentialsRoute: typeof AuthCredentialsRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthGoogleRoute: typeof AuthGoogleRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
+  AuthPasswordRoute: typeof AuthPasswordRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   AuthSetPasswordRoute: typeof AuthSetPasswordRoute
   AuthSignupRoute: typeof AuthSignupRoute
+  AuthTotpRoute: typeof AuthTotpRoute
   AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
   CategorySlugRoute: typeof CategorySlugRoute
@@ -1271,6 +1310,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthVerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/totp': {
+      id: '/auth/totp'
+      path: '/auth/totp'
+      fullPath: '/auth/totp'
+      preLoaderRoute: typeof AuthTotpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/signup': {
       id: '/auth/signup'
       path: '/auth/signup'
@@ -1292,6 +1338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/password': {
+      id: '/auth/password'
+      path: '/auth/password'
+      fullPath: '/auth/password'
+      preLoaderRoute: typeof AuthPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/login': {
       id: '/auth/login'
       path: '/auth/login'
@@ -1311,6 +1364,13 @@ declare module '@tanstack/react-router' {
       path: '/auth/forgot-password'
       fullPath: '/auth/forgot-password'
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/credentials': {
+      id: '/auth/credentials'
+      path: '/auth/credentials'
+      fullPath: '/auth/credentials'
+      preLoaderRoute: typeof AuthCredentialsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/confirm-email': {
@@ -1764,12 +1824,15 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TrainerAdminRoute: TrainerAdminRouteWithChildren,
   AuthConfirmEmailRoute: AuthConfirmEmailRoute,
+  AuthCredentialsRoute: AuthCredentialsRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthGoogleRoute: AuthGoogleRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
+  AuthPasswordRoute: AuthPasswordRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthSetPasswordRoute: AuthSetPasswordRoute,
   AuthSignupRoute: AuthSignupRoute,
+  AuthTotpRoute: AuthTotpRoute,
   AuthVerifyEmailRoute: AuthVerifyEmailRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
   CategorySlugRoute: CategorySlugRoute,

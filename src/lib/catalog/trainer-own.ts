@@ -415,8 +415,8 @@ export const requestNickSupportFn = createServerFn({ method: "POST" })
       throw new AuthError("Запрос не длиннее 1000 символов.", "VALIDATION");
     }
     const ip = clientIpFromHeaders(getRequest().headers.get("x-real-ip"));
-    const byUser = consumeRateLimit(`support:nick:${context.user.id}`, 60 * 60_000, 5);
-    const byIp = byUser.ok ? consumeRateLimit(`support:nick:ip:${ip}`, 60 * 60_000, 8) : byUser;
+    const byUser = await consumeRateLimit(`support:nick:${context.user.id}`, 60 * 60_000, 5);
+    const byIp = byUser.ok ? await consumeRateLimit(`support:nick:ip:${ip}`, 60 * 60_000, 8) : byUser;
     if (!byUser.ok || !byIp.ok) {
       void writeLog({
         level: "warn",

@@ -28,6 +28,7 @@
 | `account.restore` | The person confirmed restoration on the login page. A session starts |
 | `account.purge` | The six-month hold ended. Written with the old email before the account is anonymized. No message text |
 | `email.preference` | A message or review letter was not sent because that kind is off |
+| `email.notice` | A service notice was skipped or failed: unverified mailbox, new browser, password, closed account, card status. No letter body |
 | `account.claim` | Trainer claim |
 | `account.password` | Password chosen after the short Instagram link. The row has no password |
 | `email.send` / `email.dev` / `email.review` | Postfix or Resend, dev console, review mail. The letter is HTML. Do not store the body, a code, or a link |

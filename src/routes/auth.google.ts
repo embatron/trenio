@@ -30,9 +30,10 @@ export const Route = createFileRoute("/auth/google")({
       GET: async ({ request }) => {
         const url = new URL(request.url);
         const back = safeReturnPath(url.searchParams.get("redirect"));
+        const door = url.searchParams.get("door") === "1";
         if (!googleConfigured()) return loginRedirect("failed", back);
         const ip = clientIpFromHeaders(request.headers.get("x-real-ip"));
-        const limit = consumeRateLimit(`google:ip:${ip}`, 15 * 60_000, 12);
+        const limit = await consumeRateLimit(`google:ip:${ip}`, 15 * 60_000, 12);
         if (!limit.ok) {
           void writeLog({
             level: "warn",
@@ -44,7 +45,7 @@ export const Route = createFileRoute("/auth/google")({
           return loginRedirect("failed", back);
         }
         const state = newGoogleState();
-        const packed = Buffer.from(JSON.stringify({ state, redirect: back ?? "" })).toString("base64url");
+        const packed = Buffer.from(JSON.stringify({ state, redirect: back ?? "", door })).toString("base64url");
         return new Response(null, {
           status: 302,
           headers: {

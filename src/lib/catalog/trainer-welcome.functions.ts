@@ -49,7 +49,7 @@ export const submitTrainerWelcomeFn = createServerFn({ method: "POST" })
 
     const request = getRequest();
     const ip = clientIpFromHeaders(request.headers.get("x-real-ip"));
-    const limit = consumeRateLimit(`welcome:${ip}`, 15 * 60_000, 8);
+    const limit = await consumeRateLimit(`welcome:${ip}`, 15 * 60_000, 8);
     if (!limit.ok) return { ok: false, message: RATE_LIMITED_MESSAGE };
 
     try {

@@ -2,6 +2,8 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
+import { scriptEnv } from "./app-db";
+
 const execFileAsync = promisify(execFile);
 const root = fileURLToPath(new URL("..", import.meta.url));
 
@@ -21,7 +23,7 @@ export async function diagnose(args: string[]): Promise<JournalReport> {
   const { stdout } = await execFileAsync(
     process.execPath,
     ["--env-file=.env", "node_modules/tsx/dist/cli.mjs", "scripts/logs-diagnose.ts", ...args],
-    { cwd: root, timeout: 20_000 },
+    { cwd: root, timeout: 20_000, env: scriptEnv() },
   );
   const json = stdout.slice(stdout.indexOf("{"));
   return JSON.parse(json) as JournalReport;
@@ -31,7 +33,7 @@ export async function readWelcomePhones(phone: string): Promise<string[]> {
   const { stdout } = await execFileAsync(
     process.execPath,
     ["--env-file=.env", "node_modules/tsx/dist/cli.mjs", "scripts/read-welcome-phone.ts", phone],
-    { cwd: root, timeout: 20_000 },
+    { cwd: root, timeout: 20_000, env: scriptEnv() },
   );
   const json = stdout.slice(stdout.indexOf("{"));
   const parsed = JSON.parse(json) as { phones: Array<string | null> };
@@ -43,7 +45,7 @@ export async function deleteWelcome(handle: string, field: "instagram" | "telegr
   if (field === "telegram") args.push("--telegram");
   if (field === "phone") args.push("--phone");
   args.push(handle);
-  await execFileAsync(process.execPath, args, { cwd: root, timeout: 20_000 });
+  await execFileAsync(process.execPath, args, { cwd: root, timeout: 20_000, env: scriptEnv() });
 }
 
 export async function waitForJournal(args: string[], ready: (report: JournalReport) => boolean): Promise<JournalReport> {

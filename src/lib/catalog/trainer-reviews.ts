@@ -11,7 +11,7 @@ import { writeLog } from "@/lib/log/logger";
 import { isStaff } from "@/lib/auth/roles";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
 import { loadTrainerInterest } from "@/lib/catalog/trainer-interest";
-import { notifyAuthorAboutReview, notifyStaffAboutReview } from "@/lib/catalog/review-mail.server";
+import { notifyAuthorAboutReview, notifyReviewReply, notifyStaffAboutReview, notifyTrainerAboutPublishedReview } from "@/lib/catalog/review-mail.server";
 import { reviewPlainText, sanitizeReviewHtml } from "@/lib/catalog/review-html";
 import type { TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
 
@@ -308,6 +308,9 @@ export const setTrainerReviewStatusFn = createServerFn({ method: "POST" })
         id: trainerReviews.id,
         userId: trainerReviews.userId,
         trainerSlug: trainerReviews.trainerSlug,
+        authorName: trainerReviews.authorName,
+        rating: trainerReviews.rating,
+        body: trainerReviews.body,
       })
       .from(trainerReviews)
       .where(eq(trainerReviews.id, data.id))
@@ -337,6 +340,28 @@ export const setTrainerReviewStatusFn = createServerFn({ method: "POST" })
           action: "email.review",
           outcome: "failure",
           message: "Не удалось отправить письмо о решении по отзыву.",
+          actorUserId: context.user.id,
+          target: existing.trainerSlug,
+          error,
+        });
+      }
+    }
+    if (data.status === "published") {
+      try {
+        await notifyTrainerAboutPublishedReview({
+          trainerSlug: existing.trainerSlug,
+          authorName: existing.authorName,
+          authorUserId: existing.userId,
+          rating: existing.rating,
+          body: existing.body,
+        });
+      } catch (error) {
+        void writeLog({
+          level: "error",
+          domain: "email",
+          action: "email.review",
+          outcome: "failure",
+          message: "Не удалось отправить тренеру письмо о новом отзыве.",
           actorUserId: context.user.id,
           target: existing.trainerSlug,
           error,
@@ -450,5 +475,24 @@ export const replyToTrainerReviewFn = createServerFn({ method: "POST" })
       messages: next,
       ...(role === "trainer" && !review.reply ? { reply: data.reply, repliedAt: now } : {}),
     }).where(eq(trainerReviews.id, review.id));
+    try {
+      await notifyReviewReply({
+        role,
+        trainerSlug: review.trainerSlug,
+        authorUserId: review.userId,
+        reply: data.reply,
+      });
+    } catch (error) {
+      void writeLog({
+        level: "error",
+        domain: "email",
+        action: "email.review",
+        outcome: "failure",
+        message: "Не удалось отправить письмо об ответе на отзыв.",
+        actorUserId: context.user.id,
+        target: review.trainerSlug,
+        error,
+      });
+    }
     return { ok: true as const, message: "Ответ опубликован." };
   });

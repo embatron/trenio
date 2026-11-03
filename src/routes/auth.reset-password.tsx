@@ -67,7 +67,7 @@ function ResetPasswordPage() {
         <div className="auth-card">
           <div className="auth-card__head">
             <h1 className="auth-title">Новый пароль</h1>
-            <p className="auth-sub">Придумайте новый пароль для вашего аккаунта. После сохранения вы войдёте автоматически.</p>
+            <p className="auth-sub">Придумайте новый пароль для вашего аккаунта. После сохранения войдите с новым паролем.</p>
           </div>
 
           <AuthAlert message={error} />
@@ -87,11 +87,9 @@ function ResetPasswordPage() {
               }
               void run(
                 () => resetPassword({ data: { token, password } }),
-                async (result) => {
-                  if (result?.redirectTo) {
-                    await router.invalidate();
-                    redirectTo(result.redirectTo);
-                  }
+                async () => {
+                  await router.invalidate();
+                  redirectTo("/auth/login");
                 },
               );
             }}

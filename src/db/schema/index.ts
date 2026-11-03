@@ -1,5 +1,6 @@
 export * from "./users";
 export * from "./auth-otp";
+export * from "./auth-security";
 export * from "./trainer-profiles";
 export * from "./trainer-staff-notes";
 export * from "./trainer-profile-views";

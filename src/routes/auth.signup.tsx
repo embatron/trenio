@@ -60,6 +60,7 @@ function SignupPage() {
   const [phoneError, setPhoneError] = useState<string | undefined>();
   const [codeError, setCodeError] = useState<string | undefined>();
   const [devCode, setDevCode] = useState<string | null>(null);
+  const [emailNotice, setEmailNotice] = useState<string | null>(null);
   const [restoreOffer, setRestoreOffer] = useState(false);
   const countdown = useCountdown(0);
   const phoneFormRef = useRef<HTMLFormElement>(null);
@@ -158,6 +159,7 @@ function SignupPage() {
           </div>
 
           <AuthAlert message={error} />
+          {emailNotice ? <p className="auth-alert auth-alert--note">{emailNotice}</p> : null}
           {devCode && method === "phone" ? (
             <div className="auth-alert auth-alert--note" style={{ marginBottom: 16 }}>
               Dev-код: {devCode}
@@ -179,12 +181,10 @@ function SignupPage() {
                       },
                     }),
                   async (result) => {
-                    if (result && "restore" in result && result.restore) {
-                      setRestoreOffer(true);
-                      return;
+                    if (result && "message" in result) {
+                      setEmailNotice(result.message);
+                      setRestoreOffer(false);
                     }
-                    setRestoreOffer(false);
-                    await goAfterSignup(result);
                   },
                 );
               }}

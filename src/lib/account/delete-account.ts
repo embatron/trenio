@@ -25,6 +25,7 @@ import {
   type User,
 } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
+import { sendAccountClosedNotice } from "@/lib/mail/account-notices";
 import { GOD_USER_ID, isGodUser } from "@/lib/auth/god";
 import { normalizeBelarusMobile } from "@/lib/auth/phone";
 import { belarusPhoneEquals } from "@/lib/auth/phone-match";
@@ -164,7 +165,7 @@ export async function deleteOwnAccount(
     throw new AuthError("Удаление служебного аккаунта недоступно. Напишите в поддержку.", "FORBIDDEN");
   }
 
-  const limit = consumeRateLimit(`account-delete:${actor.id}`, 15 * 60_000, 8);
+  const limit = await consumeRateLimit(`account-delete:${actor.id}`, 15 * 60_000, 8);
   if (!limit.ok) throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
 
   const db = getDb();
@@ -215,6 +216,13 @@ export async function deleteOwnAccount(
   } catch (error) {
     logCaught("account", "account.delete", error, { actorUserId: user.id, subject: user.email });
   }
+  void sendAccountClosedNotice({
+    email: user.email,
+    emailVerifiedAt: user.emailVerifiedAt,
+    phone: user.phone,
+    phoneVerifiedAt: user.phoneVerifiedAt,
+    actorUserId: user.id,
+  });
 }
 
 async function purgeAccountRecord(user: User): Promise<void> {
@@ -400,6 +408,7 @@ async function purgeAccountRecord(user: User): Promise<void> {
         deletedAt: user.deletedAt,
         telegramUserId: null,
         telegramUsername: null,
+        telegramBotSeenAt: null,
         mailMessages: false,
         mailReviews: false,
         mailSite: false,
