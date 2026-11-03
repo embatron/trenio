@@ -476,6 +476,21 @@ html.is-staff-layout {
 .review-html a { color: var(--primary); }
 /* Current breadcrumb. Earlier crumbs stay muted. Do not recolor this in a route. */
 .is-current[aria-current="page"] { color: var(--primary); }
+/* Phone trails are one step smaller than the route size. Specificity beats a route font-size. */
+@media (max-width: 767px) {
+  ol.breadcrumbs,
+  nav.cat-hero__crumbs,
+  nav.about-crumbs,
+  nav.map-crumbs,
+  nav.welcome-crumbs,
+  nav.info-crumbs,
+  nav.categories-hero__crumbs,
+  div.clubs-hero__crumbs {
+    font-size: 12px;
+    gap: 6px;
+  }
+  ol.breadcrumbs li + li::before { margin-right: 6px; }
+}
 form :is(label, .auth-field):has(:is(input, textarea, select):required) > .auth-field__label:not(:has(a)) { justify-content: flex-start; }
 form :is(label, .auth-field):has(:is(input, textarea, select):required) > .auth-field__label:not(:has(a))::after,
 form :is(label, .auth-field):has(:is(input, textarea, select):required) > .auth-field__label > span:first-child::after,
