@@ -16,7 +16,17 @@ export function messageMailAllowed(input: {
 
 /**
  * Telegram notice for a direct message.
- * The profile owner, a confirmed card contact, a stored chat id, and a bot chat that already exists.
+ * Any participant who already opened the bot or the Mini App. The phone then shows Telegram's own notice.
+ */
+export function messageTelegramNoticeAllowed(input: {
+  telegramUserId: number | null;
+  botSeenAt: Date | null;
+}): boolean {
+  return input.telegramUserId != null && input.botSeenAt != null;
+}
+
+/**
+ * Older owner-only check. A confirmed card contact, a stored chat id, and a bot chat that already exists.
  */
 export function trainerTelegramNoticeAllowed(input: {
   isProfileOwner: boolean;

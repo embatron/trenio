@@ -12,6 +12,7 @@ import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { InstallBanner } from "@/components/install-banner";
+import { MessagePush } from "@/components/message-push";
 import { UserAvatar } from "@/components/user-avatar";
 import { TrainerName } from "@/components/trainer-name";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
@@ -973,6 +974,7 @@ export function SiteHeader({ middleSlot }: { middleSlot?: ReactNode }) {
       <div className={`mega-overlay${menuOpen ? " is-open" : ""}`} onClick={close} aria-hidden={!menuOpen} />
       <header className={`site-header${menuOpen ? " is-menu-open" : ""}`} id="site-header" ref={headerRef}>
         <InstallBanner />
+        <MessagePush />
         <div className="site-header__inner">
           <Logo />
           <div className="site-header__search">{middleSlot ?? <CatalogSearchForm variant="header" />}</div>

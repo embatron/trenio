@@ -8,6 +8,7 @@ export * from "./trainer-card-impressions";
 export * from "./trainer-reviews";
 export * from "./user-favorites";
 export * from "./messages";
+export * from "./push-subscriptions";
 export * from "./trainer-welcomes";
 export * from "./geo-cache";
 export * from "./app-logs";

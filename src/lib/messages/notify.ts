@@ -6,7 +6,8 @@ import { isPendingSignupEmail } from "@/lib/auth/pending-email";
 import { reviewPlainText } from "@/lib/catalog/review-html";
 import { writeLog } from "@/lib/log/logger";
 import { renderLetter } from "@/lib/mail/letter";
-import { canReceiveMailbox, telegramThreadButton, trainerTelegramNoticeAllowed } from "@/lib/mail/notice-rules";
+import { canReceiveMailbox, messageTelegramNoticeAllowed, telegramThreadButton } from "@/lib/mail/notice-rules";
+import { sendMessagePushes } from "@/lib/messages/push";
 import { recipientAllowsMail } from "@/lib/mail/preferences";
 import { mailAppUrl, sendMail } from "@/lib/mail/send.server";
 
@@ -59,7 +60,6 @@ async function deliver(input: { conversationId: string; messageId: number; recip
       telegramUserId: users.telegramUserId,
       telegramBotSeenAt: users.telegramBotSeenAt,
       ownerUserId: trainerProfiles.ownerUserId,
-      telegramVerifiedAt: trainerProfiles.telegramVerifiedAt,
       hostUserId: conversations.hostUserId,
       trainerFullName: trainerProfiles.fullName,
       trainerFirstName: trainerProfiles.firstName,
@@ -152,14 +152,17 @@ async function deliver(input: { conversationId: string; messageId: number; recip
     });
   }
 
-  if (
-    !trainerTelegramNoticeAllowed({
-      isProfileOwner: row.ownerUserId === input.recipientId,
-      telegramUserId: row.telegramUserId,
-      telegramVerifiedAt: row.telegramVerifiedAt,
-      botSeenAt: row.telegramBotSeenAt,
-    })
-  ) {
+  await sendMessagePushes(input.recipientId, {
+    title: writerName,
+    body: "Вам написали на Trenio",
+    url,
+    tag: input.conversationId,
+  });
+
+  if (!messageTelegramNoticeAllowed({
+    telegramUserId: row.telegramUserId,
+    botSeenAt: row.telegramBotSeenAt,
+  })) {
     return;
   }
   const token = process.env.TELEGRAM_LOGIN_BOT_TOKEN?.trim();

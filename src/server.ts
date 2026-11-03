@@ -4,6 +4,7 @@ import { getRequest } from "@tanstack/react-start/server";
 
 import { ensureAuthSchema } from "@/auth/auth-schema";
 import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
+import { ensurePushSchema } from "@/lib/messages/push-schema";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { logCaught, setLogRequestReader, wasLogged, writeLog } from "./lib/log/logger";
@@ -70,6 +71,7 @@ export default {
     try {
       await ensureAuthSchema();
       await ensureTrainerDoorSchema();
+      await ensurePushSchema();
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);

@@ -8,6 +8,7 @@ import {
   canReceiveMailbox,
   isNewBrowserLogin,
   messageMailAllowed,
+  messageTelegramNoticeAllowed,
   NEW_BROWSER_LETTER,
   profileStatusNotice,
   reviewReplyAudience,
@@ -33,6 +34,12 @@ test("a message letter needs a verified mailbox and the switch", () => {
     messageMailAllowed({ email: "person@example.com", emailVerifiedAt: null, allowsMessages: true }),
     false,
   );
+});
+
+test("a message telegram notice needs the chat id and a bot the person already opened", () => {
+  assert.equal(messageTelegramNoticeAllowed({ telegramUserId: 42, botSeenAt: verified }), true);
+  assert.equal(messageTelegramNoticeAllowed({ telegramUserId: null, botSeenAt: verified }), false);
+  assert.equal(messageTelegramNoticeAllowed({ telegramUserId: 42, botSeenAt: null }), false);
 });
 
 test("trainer telegram notice needs the card, the chat id, and a bot the person already opened", () => {

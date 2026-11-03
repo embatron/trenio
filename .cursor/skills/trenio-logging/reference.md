@@ -37,7 +37,7 @@
 | `map.area` | `listMapAreaFn` |
 | `map.locate` | Browser geolocation on `/map` and `/search`. Warn only. The visitor sees no note. The row has no coordinates. |
 | `geo.cache.read` / `geo.cache.write` / `geo.profile` / `geo.suggest` / `geo.visitor` | Geocoder, address suggestions, and visitor place. `geo.suggest` and `geo.profile` log a failure when the map service does not answer. The row does not store the address text |
-| `message.send` / `message.file` / `message.ensure` / `message.close` / `message.reopen` / `message.report` / `message.dismiss` / `message.block` / `message.notify` / `message.welcome` | Message mutations, attachment upload, and notices. `message.welcome` is the portal greeting to a new trainer. Log the size and extension, not the file name, the file body, or the welcome text. A download is logged only when it fails |
+| `message.send` / `message.file` / `message.ensure` / `message.close` / `message.reopen` / `message.report` / `message.dismiss` / `message.block` / `message.notify` / `message.push` / `message.welcome` | Message mutations, attachment upload, and notices. `message.welcome` is the portal greeting to a new trainer. Log the size and extension, not the file name, the file body, or the welcome text. A download is logged only when it fails |
 | `message.list` / `message.thread` / `message.read` / `message.unread` / `message.hide` | Failures only |
 | `admin.review` | Review publish or reject |
 | `admin.trainer_invite` | Staff copied the trainer message. The row stores the slug, not the links or the gap list. A published profile is `denied` |
