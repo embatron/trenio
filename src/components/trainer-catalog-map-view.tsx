@@ -527,7 +527,7 @@ const MAP_VIEW_CSS = `
   padding: 4px; border-radius: 12px; color: inherit; text-decoration: none;
 }
 .catalog-map__people a:hover { background: rgba(var(--primary-rgb), 0.08); }
-.catalog-map__photo { width: 48px; height: 64px; object-fit: cover; object-position: top center; border-radius: 10px; display: block; background: var(--light-bg); }
+.catalog-map__photo { width: 48px; height: 64px; object-fit: cover; object-position: center; border-radius: 10px; display: block; background: var(--light-bg); }
 .catalog-map__photo--empty { display: grid; place-items: center; color: var(--primary); font-weight: var(--fw-title); font-size: 18px; }
 .catalog-map__copy { min-width: 0; display: grid; gap: 1px; align-content: start; }
 .catalog-map__tip:has(.catalog-map__close) .catalog-map__copy { padding-right: 52px; }

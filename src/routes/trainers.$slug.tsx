@@ -416,7 +416,7 @@ const CSS = `
 .similar-trainers__track { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(220px, 1fr); gap: 14px; padding-bottom: 4px; }
 .similar-card { display: flex; flex-direction: column; min-width: 0; border: 1px solid rgba(var(--dark-rgb),0.06); border-radius: var(--card-radius); background: var(--white); color: inherit; text-decoration: none; overflow: hidden; cursor: pointer; }
 .similar-card__media { aspect-ratio: 4/5; background: linear-gradient(160deg, var(--neutral-bg), var(--line)); overflow: hidden; }
-.similar-card__photo { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+.similar-card__photo { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 .similar-card__body { padding: 14px 16px 16px; display: grid; gap: 4px; }
 .similar-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 .similar-card__name { margin: 0; min-width: 0; font-size: 15px; font-weight: var(--fw-title); color: var(--dark); letter-spacing: -0.02em; line-height: 1.2; transition: color 0.16s ease; }

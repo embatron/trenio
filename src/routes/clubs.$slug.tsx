@@ -156,7 +156,7 @@ const CSS = `
 .club-trainer-card { position: relative; display: flex; flex-direction: column; min-width: 0; border: 1px solid rgba(var(--dark-rgb),0.06); border-radius: var(--card-radius); background: var(--white); color: inherit; text-decoration: none; overflow: hidden; box-shadow: 0 8px 28px rgba(var(--dark-rgb),0.04); transition: border-color 0.16s, transform 0.16s; }
 .club-trainer-card:hover { border-color: rgba(var(--primary-rgb),0.22); transform: translateY(-1px); }
 .club-trainer-card__photo-wrap { aspect-ratio: 4/3; overflow: hidden; background: linear-gradient(160deg, var(--neutral-bg), var(--line)); }
-.club-trainer-card__photo { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+.club-trainer-card__photo { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 .club-trainer-card__body { display: grid; gap: 4px; padding: 12px 14px 14px; }
 .club-trainer-card__name { margin: 0; font-size: 15px; font-weight: var(--fw-title); color: var(--dark); letter-spacing: -0.02em; }
 .club-trainer-card__sport { margin: 0; font-size: 13px; font-weight: var(--fw-title); color: var(--primary-dark); }
