@@ -5,7 +5,6 @@ import { createPortal } from "react-dom";
 import { AuthStyles } from "@/components/auth-styles";
 import { PasswordStrength } from "@/components/auth/password-strength";
 import { authErrorMessage } from "@/lib/auth/errors";
-import { logoutFn } from "@/lib/auth/functions";
 import { validatePasswordStrength } from "@/lib/auth/password-policy";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { setDoorPasswordFn } from "@/lib/catalog/trainer-magic";
@@ -14,7 +13,6 @@ import { setDoorPasswordFn } from "@/lib/catalog/trainer-magic";
 export function DoorPasswordDialog() {
   const router = useRouter();
   const save = useAuthServerFn(setDoorPasswordFn);
-  const logout = useAuthServerFn(logoutFn);
   const [password, setPassword] = useState("");
   const [repeat, setRepeat] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -164,17 +162,6 @@ export function DoorPasswordDialog() {
               </label>
               <button type="submit" className="auth-submit" disabled={pending}>
                 {pending ? "Сохранение…" : "Сохранить пароль"}
-              </button>
-              <button
-                type="button"
-                className="auth-submit"
-                onClick={() => {
-                  void logout().then(() => {
-                    window.location.assign("/auth/login");
-                  });
-                }}
-              >
-                Выйти
               </button>
             </form>
           </>

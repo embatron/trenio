@@ -127,7 +127,7 @@ function toSessionUser(user: User, roles: UserRole[]): SessionUser {
     mailMarketing: user.mailMarketing,
     telegramLinked: user.telegramUserId != null,
     telegramUsername: user.telegramUsername,
-    needsPassword: user.needsPassword,
+    needsPassword: user.needsPassword && !user.googleSub,
     totpEnabled: user.totpEnabledAt != null,
   };
 }

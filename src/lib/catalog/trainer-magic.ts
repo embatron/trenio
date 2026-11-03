@@ -728,16 +728,14 @@ export async function claimDoorAfterGoogle(input: {
   }
 
   await db.insert(userRoles).values({ userId: input.userId, role: "trainer" }).onConflictDoNothing();
-  if (input.created) {
-    const firstName = row.firstName.trim();
-    const lastName = row.lastName.trim();
-    await db.update(users).set({
-      ...(firstName ? { firstName } : {}),
-      lastName: lastName || null,
-      lastSignupIntent: "trainer_claim",
-      updatedAt: now,
-    }).where(eq(users.id, input.userId));
-  }
+  const firstName = row.firstName.trim();
+  const lastName = row.lastName.trim();
+  await db.update(users).set({
+    ...(input.created && firstName ? { firstName } : {}),
+    ...(input.created ? { lastName: lastName || null, lastSignupIntent: "trainer_claim" as const } : {}),
+    needsPassword: false,
+    updatedAt: now,
+  }).where(eq(users.id, input.userId));
 
   void writeLog({
     level: "info",

@@ -134,6 +134,7 @@ async function stampGoogleMailbox(userId: string, email: string) {
       .set({ emailVerifiedAt: verifiedAt, status: "active", updatedAt: now })
       .where(eq(users.id, userId));
   }
+  await db.update(users).set({ needsPassword: false, updatedAt: now }).where(eq(users.id, userId));
   await db
     .update(trainerProfiles)
     .set({ email, emailVerifiedAt: verifiedAt, updatedAt: now })
@@ -153,6 +154,7 @@ async function takeoverUnverified(user: User, sub: string) {
       googleSub: sub,
       emailVerifiedAt: new Date(),
       status: "active",
+      needsPassword: false,
       updatedAt: new Date(),
     })
     .where(eq(users.id, user.id));
