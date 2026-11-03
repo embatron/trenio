@@ -4,7 +4,8 @@ import { z } from "zod";
 
 import { requireAuthMiddleware } from "@/auth/middleware";
 import { getDb } from "@/db";
-import { pushSubscriptions } from "@/db/schema";
+import { pushSubscriptions, users } from "@/db/schema";
+import { writeLog } from "@/lib/log/logger";
 import { ensurePushSchema } from "@/lib/messages/push-schema";
 import { pushPublicKey } from "@/lib/messages/push";
 
@@ -24,7 +25,14 @@ export const savePushSubscriptionFn = createServerFn({ method: "POST" })
   .validator(subscriptionSchema)
   .handler(async ({ data, context }) => {
     await ensurePushSchema();
-    await getDb()
+    const db = getDb();
+    const [person] = await db
+      .select({ pushMessages: users.pushMessages })
+      .from(users)
+      .where(eq(users.id, context.user.id))
+      .limit(1);
+    if (!person?.pushMessages) return { ok: true as const };
+    await db
       .insert(pushSubscriptions)
       .values({
         userId: context.user.id,
@@ -47,5 +55,32 @@ export const dropPushSubscriptionFn = createServerFn({ method: "POST" })
     await getDb()
       .delete(pushSubscriptions)
       .where(and(eq(pushSubscriptions.endpoint, data.endpoint), eq(pushSubscriptions.userId, context.user.id)));
+    return { ok: true as const };
+  });
+
+/** Cabinet switch. On by default. Off deletes every phone subscription for this account. */
+export const setPushMessagesFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(z.object({ enabled: z.boolean() }))
+  .handler(async ({ data, context }) => {
+    await ensurePushSchema();
+    const db = getDb();
+    await db
+      .update(users)
+      .set({ pushMessages: data.enabled, updatedAt: new Date() })
+      .where(eq(users.id, context.user.id));
+    if (!data.enabled) {
+      await db.delete(pushSubscriptions).where(eq(pushSubscriptions.userId, context.user.id));
+    }
+    void writeLog({
+      level: "info",
+      domain: "account",
+      action: "account.push",
+      outcome: "success",
+      message: data.enabled ? "Уведомления на телефон включены." : "Уведомления на телефон выключены.",
+      subject: context.user.email,
+      actorUserId: context.user.id,
+      context: { enabled: data.enabled },
+    });
     return { ok: true as const };
   });

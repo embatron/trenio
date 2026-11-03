@@ -67,6 +67,7 @@ async function deliver(input: { conversationId: string; messageId: number; recip
       trainerAvatar: trainerProfiles.avatarPath,
       userFirstName: users.firstName,
       userLastName: users.lastName,
+      pushMessages: users.pushMessages,
     })
     .from(conversations)
     .innerJoin(users, eq(users.id, input.recipientId))
@@ -152,12 +153,23 @@ async function deliver(input: { conversationId: string; messageId: number; recip
     });
   }
 
-  await sendMessagePushes(input.recipientId, {
-    title: writerName,
-    body: "Вам написали на Trenio",
-    url,
-    tag: input.conversationId,
-  });
+  if (row.pushMessages) {
+    await sendMessagePushes(input.recipientId, {
+      title: writerName,
+      body: "Вам написали на Trenio",
+      url,
+      tag: input.conversationId,
+    });
+  } else {
+    void writeLog({
+      level: "info",
+      domain: "message",
+      action: "message.push",
+      outcome: "skipped",
+      message: "Уведомление на телефон не отправлено: выключено в настройках.",
+      target: input.conversationId,
+    });
+  }
 
   if (!messageTelegramNoticeAllowed({
     telegramUserId: row.telegramUserId,

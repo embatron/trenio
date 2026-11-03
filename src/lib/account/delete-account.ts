@@ -416,6 +416,7 @@ async function purgeAccountRecord(user: User): Promise<void> {
         mailReviews: false,
         mailSite: false,
         mailMarketing: false,
+        pushMessages: false,
         updatedAt: new Date(),
       })
       .where(eq(users.id, user.id));

@@ -77,6 +77,7 @@ export type SessionUser = {
   mailReviews: boolean;
   mailSite: boolean;
   mailMarketing: boolean;
+  pushMessages: boolean;
   telegramLinked: boolean;
   telegramUsername: string | null;
   /** Short Instagram link created the account and the trainer has not chosen a password yet. */
@@ -127,6 +128,7 @@ function toSessionUser(user: User, roles: UserRole[]): SessionUser {
     mailReviews: user.mailReviews,
     mailSite: user.mailSite,
     mailMarketing: user.mailMarketing,
+    pushMessages: user.pushMessages,
     telegramLinked: user.telegramUserId != null,
     telegramUsername: user.telegramUsername,
     needsPassword: user.needsPassword && !user.googleSub,

@@ -30,6 +30,8 @@ import { variantImagePath } from "@/lib/images/variants";
 import { hasAnyRole, isStaff, ROLE_LABELS } from "@/lib/auth/roles";
 import type { PublicUser } from "@/lib/auth/schemas";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
+import { setPushMessagesFn, getPushPublicKeyFn, savePushSubscriptionFn } from "@/lib/messages/push-functions";
+import { canUsePush, clearPushAsked, disableDevicePush, enableDevicePush } from "@/lib/messages/push-client";
 
 /** The circle uses the 128px file. Wait for that response so the old cached face is not painted again. */
 function preloadAvatar(src: string): Promise<void> {
@@ -137,12 +139,27 @@ export function AccountProfileForm({
   const [pending, setPending] = useState(false);
   const [mail, setMail] = useState(() => mailFromUser(user));
   const [mailPending, setMailPending] = useState<MailKind | null>(null);
+  const setPushPref = useAuthServerFn(setPushMessagesFn);
+  const loadPushKey = useAuthServerFn(getPushPublicKeyFn);
+  const savePush = useAuthServerFn(savePushSubscriptionFn);
+  const [pushOn, setPushOn] = useState(user.pushMessages);
+  const [pushPending, setPushPending] = useState(false);
+  const [pushDenied, setPushDenied] = useState(false);
   const [popup, setPopup] = useState<{ title: string; message: string } | null>(null);
   const role = user.roles.map((item) => ROLE_LABELS[item]).join(", ");
 
   useEffect(() => {
     setMail(mailFromUser(user));
   }, [user.mailMessages, user.mailReviews, user.mailSite, user.mailMarketing]);
+
+  useEffect(() => {
+    setPushOn(user.pushMessages);
+  }, [user.pushMessages]);
+
+  useEffect(() => {
+    if (!canUsePush()) return;
+    setPushDenied(Notification.permission === "denied");
+  }, [pushOn]);
 
   useEffect(() => {
     if (!deleteOpen) return;
@@ -625,6 +642,57 @@ export function AccountProfileForm({
               </div>
             );
           })}
+        </section>
+        <section className="cabinet-section" id="notices">
+          <h3>Уведомления</h3>
+          <div className="mail-pref">
+            <div>
+              <p className="mail-pref__label">На телефон</p>
+              <p className="cabinet-note">Сообщение в уведомлениях, когда вам написали. Включено, пока не выключите здесь.</p>
+              {pushDenied && pushOn ? (
+                <p className="cabinet-note">Браузер запретил уведомления. Разрешите их в настройках телефона.</p>
+              ) : null}
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={pushOn}
+              aria-label="На телефон"
+              className={`mail-switch${pushOn ? " is-on" : ""}`}
+              disabled={pushPending}
+              onClick={() => {
+                const next = !pushOn;
+                setPushOn(next);
+                setPushPending(true);
+                clearPushAsked();
+                const permissionAsk = next && canUsePush() && Notification.permission === "default"
+                  ? Notification.requestPermission()
+                  : Promise.resolve<NotificationPermission>(
+                    next && canUsePush() ? Notification.permission : "default",
+                  );
+                void Promise.all([setPushPref({ data: { enabled: next } }), permissionAsk])
+                  .then(async ([, permission]) => {
+                    if (next && canUsePush()) {
+                      setPushDenied(permission === "denied");
+                      if (permission === "granted") {
+                        const result = await loadPushKey();
+                        if (result.publicKey) await enableDevicePush(result.publicKey, savePush);
+                      }
+                    } else if (!next) {
+                      void disableDevicePush();
+                    }
+                    await router.invalidate();
+                  })
+                  .catch((error) => {
+                    setPushOn(!next);
+                    fail(error);
+                  })
+                  .finally(() => setPushPending(false));
+              }}
+            >
+              <span className="mail-switch__thumb" />
+            </button>
+          </div>
         </section>
       </div>
       {deleteOpen ? (

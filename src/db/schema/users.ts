@@ -81,6 +81,8 @@ export const users = pgTable(
     mailSite: boolean("mail_site").notNull().default(true),
     /** News and picks. Off until the person turns it on. */
     mailMarketing: boolean("mail_marketing").notNull().default(false),
+    /** System notice on a phone when someone writes in Сообщения. On until the person turns it off. */
+    pushMessages: boolean("push_messages").notNull().default(true),
   },
   (table) => [
     uniqueIndex("users_email_unique").on(table.email),

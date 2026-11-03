@@ -33,4 +33,7 @@ async function apply() {
   await db.execute(sql.raw(
     "CREATE INDEX IF NOT EXISTS push_subscriptions_user_idx ON push_subscriptions (user_id)",
   ));
+  await db.execute(sql.raw(
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS push_messages boolean NOT NULL DEFAULT true",
+  ));
 }

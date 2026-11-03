@@ -705,6 +705,7 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-section { display: grid; gap: 12px; margin: 0; padding: 16px; border: 1px solid var(--line); border-radius: var(--card-radius); background: rgba(var(--dark-rgb), 0.025); scroll-margin-top: calc(var(--cabinet-sticky-top, 96px) + 16px); }
 .cabinet-section h3 { margin: 0; padding-bottom: 10px; border-bottom: 1px solid var(--line); font-size: 16px; font-weight: var(--fw-title); letter-spacing: -0.02em; color: var(--dark); }
 .mail-pref { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.mail-pref > div { min-width: 0; flex: 1; }
 .mail-pref__label { margin: 0; color: var(--dark); font-size: 15px; font-weight: var(--fw-title); }
 .mail-switch { flex: 0 0 auto; width: 52px; height: 44px; padding: 0; border: 0; background: transparent; display: inline-flex; align-items: center; justify-content: flex-start; cursor: pointer; }
 .mail-switch__thumb { width: 44px; height: 26px; border-radius: 999px; background: #d1d5db; position: relative; }
@@ -951,5 +952,7 @@ a.cabinet-icon-btn { text-decoration: none; }
   .cabinet-row { align-items: flex-start; flex-direction: column; }
   .cabinet-status-stack { align-items: center; align-self: flex-start; }
   .cabinet-form__row { grid-template-columns: 1fr; }
+  .cabinet-section { padding: 14px; }
+  .mail-pref { align-items: flex-start; gap: 12px; }
 }
 `;

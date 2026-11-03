@@ -170,6 +170,7 @@ export type PublicUser = {
   mailReviews: boolean;
   mailSite: boolean;
   mailMarketing: boolean;
+  pushMessages: boolean;
   telegramLinked: boolean;
   telegramUsername: string | null;
   /** False when the account has only a Google login or has never saved a password. */

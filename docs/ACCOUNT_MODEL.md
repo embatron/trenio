@@ -48,6 +48,7 @@ TrainerProfile ↔ TrainerBranchLink ↔ ClubBranch
 
 - `id`, `email`, `phone`, `password_hash`, `first_name`, `last_name`
 - письма: `mail_messages` и `mail_reviews` включены, пока человек их не выключит. `mail_site` всегда включена, переключатель в кабинете её не меняет. `mail_marketing` выключена, пока человек сам её не включит. Код, подтверждение почты и сброс пароля от этого не зависят
+- уведомление на телефон: `push_messages` включено. В настройках это «На телефон». Выключение снимает подписки и новые сообщения на телефон не приходят. Письмо и Telegram от этого переключателя не зависят
 - `status`: `pending_verification` | `active` | `suspended` | `deleted`
 - `last_signup_intent` — onboarding intent после регистрации
 - Сессии: HttpOnly cookie, таблица `sessions`
