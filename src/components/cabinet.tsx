@@ -257,13 +257,20 @@ export function CabinetShell({
             <div className="cabinet-id">
               <UserAvatar name={name} src={avatarUrl} size={44} />
               <div>
-                <strong>
+                <div className="cabinet-id__line">
+                  <strong>
+                    {publicSlug ? (
+                      <Link className="cabinet-id__name" to="/trainers/$slug" params={{ slug: publicSlug }}>
+                        {identity}
+                      </Link>
+                    ) : identity}
+                  </strong>
                   {publicSlug ? (
-                    <Link className="cabinet-id__name" to="/trainers/$slug" params={{ slug: publicSlug }}>
-                      {identity}
+                    <Link className="cabinet-id__edit" to="/me/profile" aria-label="Редактировать профиль" title="Редактировать профиль">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z" /></svg>
                     </Link>
-                  ) : identity}
-                </strong>
+                  ) : null}
+                </div>
                 <span>{role}</span>
               </div>
             </div>
@@ -362,7 +369,11 @@ const CABINET_CSS = `
 .cabinet-id { display: flex; align-items: center; gap: 12px; }
 .cabinet-id > div { min-width: 0; }
 .cabinet-id__mark { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgba(var(--primary-rgb), 0.12); color: var(--primary); font-weight: var(--fw-title); object-fit: cover; }
+.cabinet-id__line { display: flex; align-items: center; gap: 2px; min-width: 0; }
 .cabinet-id strong { display: block; min-width: 0; color: var(--dark); }
+.cabinet-id__edit { width: 44px; height: 44px; flex: 0 0 44px; display: grid; place-items: center; border-radius: 50%; color: var(--dark); text-decoration: none; }
+.cabinet-id__edit:hover { color: var(--primary); }
+.cabinet-id__edit svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .cabinet-id strong .trainer-name { flex-wrap: nowrap; }
 .cabinet-id strong .trainer-name__line { color: var(--dark); font-size: inherit; margin: 0; }
 .cabinet-id__name { display: block; margin: 0; padding: 0; color: inherit; line-height: 1.15; text-decoration: none; }

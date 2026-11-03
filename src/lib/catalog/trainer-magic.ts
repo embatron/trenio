@@ -714,6 +714,7 @@ export async function claimDoorAfterGoogle(input: {
       claimedAt: now,
       email,
       emailVerifiedAt: now,
+      ...(row.status === "draft" ? { status: "published" as const } : {}),
       updatedAt: now,
     })
     .where(and(eq(trainerProfiles.id, row.id), isNull(trainerProfiles.ownerUserId)))
@@ -938,11 +939,16 @@ export const setDoorPasswordFn = createServerFn({ method: "POST" })
     }).from(trainerProfiles).where(eq(trainerProfiles.ownerUserId, context.user.id)).limit(1);
     if (!owned) throw new AuthError("Пароль уже задан.", "VALIDATION");
 
+    const now = new Date();
     await getDb().update(users).set({
       passwordHash: await hashPassword(data.password),
       needsPassword: false,
-      updatedAt: new Date(),
+      updatedAt: now,
     }).where(eq(users.id, context.user.id));
+    await getDb().update(trainerProfiles).set({
+      status: "published",
+      updatedAt: now,
+    }).where(and(eq(trainerProfiles.slug, owned.slug), eq(trainerProfiles.status, "draft")));
     void writeLog({
       level: "info",
       domain: "account",

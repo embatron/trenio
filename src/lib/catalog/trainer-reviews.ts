@@ -1,4 +1,4 @@
-import { and, avg, count, desc, eq } from "drizzle-orm";
+import { avg, count, desc, eq } from "drizzle-orm";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
@@ -152,14 +152,6 @@ export const listTrainerReviewsFn = createServerFn({ method: "GET" })
   .middleware([optionalAuthMiddleware])
   .validator(z.object({ slug: slugSchema }))
   .handler(async ({ data, context }) => {
-    if (!getPublishedTrainer(data.slug)) {
-      return {
-        reviews: [] as PublicTrainerReview[],
-        summary: summarize([]),
-        isOwner: false,
-      };
-    }
-
     const db = getDb();
     const [rows, profile] = await Promise.all([
       db
@@ -179,6 +171,13 @@ export const listTrainerReviewsFn = createServerFn({ method: "GET" })
         .limit(1)
         .then((found) => found[0]),
     ]);
+    if (!profile && !getPublishedTrainer(data.slug)) {
+      return {
+        reviews: [] as PublicTrainerReview[],
+        summary: summarize([]),
+        isOwner: false,
+      };
+    }
 
     const trainerAvatar = profileFace(profile);
     const published = rows.filter((row) => row.review.status === "published");
@@ -218,15 +217,15 @@ export const createTrainerReviewFn = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ data, context }) => {
-    if (!getPublishedTrainer(data.slug)) {
+    const [card] = await getDb()
+      .select({ id: trainerProfiles.id, ownerUserId: trainerProfiles.ownerUserId, status: trainerProfiles.status })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.slug, data.slug))
+      .limit(1);
+    if (!getPublishedTrainer(data.slug) && card?.status !== "published") {
       throw new AuthError("Тренер не найден.", "VALIDATION");
     }
-    const [owned] = await getDb()
-      .select({ id: trainerProfiles.id })
-      .from(trainerProfiles)
-      .where(and(eq(trainerProfiles.slug, data.slug), eq(trainerProfiles.ownerUserId, context.user.id)))
-      .limit(1);
-    if (owned) {
+    if (card?.ownerUserId === context.user.id) {
       throw new AuthError("Нельзя оставить отзыв о своём профиле.", "VALIDATION");
     }
 
