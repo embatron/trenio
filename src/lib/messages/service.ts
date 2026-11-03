@@ -467,6 +467,15 @@ async function toMessageDto(row: {
   };
 }
 
+async function viewerReadUpTo(actorId: string, conversationId: string) {
+  const [read] = await getDb()
+    .select({ id: conversationReads.lastReadMessageId })
+    .from(conversationReads)
+    .where(and(eq(conversationReads.conversationId, conversationId), eq(conversationReads.userId, actorId)))
+    .limit(1);
+  return read?.id == null ? null : asNumber(read.id);
+}
+
 async function counterpartReadUpTo(actor: MessageActor, conversation: Conversation, ownerUserId: string | null) {
   const otherId = actor.id === conversation.userId
     ? ownerUserId
@@ -848,8 +857,12 @@ export async function listMessages(
     .where(eq(users.id, loaded.conversation.userId))
     .limit(1);
   const oldest = page[page.length - 1];
-  const readUpTo = await counterpartReadUpTo(actor, loaded.conversation, loaded.profile.ownerUserId);
-  const files = await attachmentDtos(page.map((row) => asNumber(row.id)));
+  const messageIds = page.map((row) => asNumber(row.id));
+  const [readUpTo, viewerReadMessageId, files] = await Promise.all([
+    counterpartReadUpTo(actor, loaded.conversation, loaded.profile.ownerUserId),
+    viewerReadUpTo(actor.id, loaded.conversation.id),
+    attachmentDtos(messageIds),
+  ]);
   return {
     conversationId: loaded.conversation.id,
     status: loaded.conversation.status,
@@ -875,6 +888,7 @@ export async function listMessages(
     canHide: false,
     canReport: isParticipant(actor.id, loaded.access),
     composeLimit,
+    viewerReadMessageId,
     messages: await Promise.all(page.map((row) => toMessageDto(row, actor, loaded.conversation.userId, staff, readUpTo, files.get(asNumber(row.id)) ?? []))),
     nextCursor: hasMore && oldest
       ? { createdAt: iso(oldest.createdAt) ?? new Date(0).toISOString(), id: asNumber(oldest.id) }

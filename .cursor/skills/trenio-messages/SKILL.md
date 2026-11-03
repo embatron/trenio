@@ -60,6 +60,7 @@ Message mutations log `domain: "message"` through `writeLog` in `src/lib/message
 - `receipt` is `read` when that cursor is greater than or equal to the message id, otherwise `delivered`. The bubble copy is «Прочитано» or «Доставлено». Pending client sends show «Отправка…».
 - `unreadSummary` is one SQL: `{ own, inbox, total, ownedSlugs }`. Root `beforeLoad` loads it. `MessagesLive` repeats `unreadCountFn` every `MESSAGE_SCAN_MS` while the tab is visible.
 - Opening a thread calls `markConversationRead` for the newest id, then `router.invalidate()` so the header count drops.
+- On open, pin the log to the bottom when the unread tail fits. When it is taller than the pane, scroll to the top of the oldest unread message (`viewerReadMessageId` from that first payload) so a long message starts at its first line. A message the viewer just sent still pins to the bottom. Someone who is not a participant stays at the bottom.
 
 ## UI
 

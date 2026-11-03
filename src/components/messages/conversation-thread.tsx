@@ -9,6 +9,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { reviewTextLength } from "@/lib/catalog/review-html";
 import { REPORT_COMMENT_MAX_LENGTH, REPORT_REASONS, type MessageDto, type ThreadResult } from "@/lib/messages/schemas";
+import { firstUnreadMessageId, messageScrollTop } from "@/lib/messages/thread-scroll";
 
 function dayKey(iso: string) {
   const date = new Date(iso);
@@ -81,18 +82,84 @@ export function ConversationThread({
   const [reporting, setReporting] = useState(false);
   const scroller = useRef<HTMLDivElement>(null);
   const stick = useRef(true);
-  const opened = useRef<string | null>(null);
+  const released = useRef(false);
+  const placedFor = useRef<string | null>(null);
+  const cursorFor = useRef<string | null>(null);
+  const readAtOpen = useRef<number | null>(null);
+  const followedId = useRef<number | null>(null);
+  const heightTries = useRef(0);
+  const [scrollEpoch, setScrollEpoch] = useState(0);
+  const messagesRef = useRef(messages);
+  messagesRef.current = messages;
+  const threadRef = useRef(thread);
+  threadRef.current = thread;
   const lastId = messages[messages.length - 1]?.id;
   const lastClient = messages[messages.length - 1]?.clientId;
   const lastMine = messages[messages.length - 1]?.mine ?? false;
+  const conversationId = thread?.conversationId ?? null;
+  const messageCount = messages.length;
 
   useLayoutEffect(() => {
     const el = scroller.current;
+    const current = threadRef.current;
+    if (!el || !current) return;
+    const rows = messagesRef.current;
+    if (rows.some((message) => message.conversationId !== current.conversationId)) return;
+    if (cursorFor.current !== current.conversationId) {
+      cursorFor.current = current.conversationId;
+      readAtOpen.current = current.viewerReadMessageId;
+      released.current = false;
+      heightTries.current = 0;
+    }
+    if (el.clientHeight < 1) {
+      if (heightTries.current >= 8) return;
+      heightTries.current += 1;
+      const frame = requestAnimationFrame(() => setScrollEpoch((value) => value + 1));
+      return () => cancelAnimationFrame(frame);
+    }
+    heightTries.current = 0;
+
+    const alreadyPlaced = placedFor.current === current.conversationId;
+    const ownSend = alreadyPlaced && lastMine && followedId.current !== (lastId ?? null);
+    if (ownSend) {
+      released.current = true;
+      el.scrollTop = el.scrollHeight;
+      stick.current = true;
+      followedId.current = lastId ?? null;
+      return;
+    }
+    if (released.current && !stick.current) {
+      followedId.current = lastId ?? null;
+      return;
+    }
+
+    const boundary = released.current ? followedId.current : readAtOpen.current;
+    const anchorId = firstUnreadMessageId(rows, boundary, current.canReport);
+    const anchor = anchorId == null ? null : el.querySelector(`[data-message-id="${anchorId}"]`);
+    const anchorTop = anchor instanceof HTMLElement
+      ? anchor.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop
+      : null;
+    const place = messageScrollTop({
+      anchorTop,
+      scrollHeight: el.scrollHeight,
+      clientHeight: el.clientHeight,
+    });
+    el.scrollTop = place.top;
+    stick.current = place.stick;
+    placedFor.current = current.conversationId;
+    followedId.current = lastId ?? null;
+  }, [conversationId, messageCount, lastId, lastClient, lastMine, scrollEpoch]);
+
+  useEffect(() => {
+    const el = scroller.current;
     if (!el) return;
-    const firstOpen = opened.current !== (thread?.conversationId ?? null);
-    if (firstOpen) opened.current = thread?.conversationId ?? null;
-    if (firstOpen || stick.current || lastMine) el.scrollTop = el.scrollHeight;
-  }, [thread?.conversationId, messages.length, lastId, lastClient, lastMine]);
+    const onLoad = (event: Event) => {
+      if (!(event.target instanceof HTMLImageElement) || released.current) return;
+      setScrollEpoch((value) => value + 1);
+    };
+    el.addEventListener("load", onLoad, true);
+    return () => el.removeEventListener("load", onLoad, true);
+  }, [conversationId]);
 
   useEffect(() => {
     if (!moreOpen) return;
@@ -238,7 +305,9 @@ export function ConversationThread({
             className="direct-log"
             ref={scroller}
             onScroll={(event) => {
+              if (!event.nativeEvent.isTrusted) return;
               const el = event.currentTarget;
+              released.current = true;
               stick.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
             }}
           >
@@ -252,7 +321,7 @@ export function ConversationThread({
               const previous = messages[index - 1];
               const split = !previous || dayKey(previous.createdAt) !== dayKey(message.createdAt);
               return (
-                <div key={message.clientId || message.id}>
+                <div key={message.clientId || message.id} data-message-id={message.id}>
                   {split ? <p className="direct-day">{dayLabel(message.createdAt)}</p> : null}
                   <MessageBubble message={message} onRetry={onRetry} />
                 </div>

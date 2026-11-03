@@ -177,6 +177,8 @@ export type ThreadResult = {
   canHide: boolean;
   canReport: boolean;
   composeLimit: number;
+  /** Viewer's own read cursor. Null when this account has never marked the thread. */
+  viewerReadMessageId: number | null;
   messages: MessageDto[];
   nextCursor: MessageCursor | null;
 };

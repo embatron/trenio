@@ -35,6 +35,8 @@ The full file map and edit checklist are in `.cursor/skills/trenio-messages/SKIL
 
 Poll every 5 seconds while the tab is visible (`MESSAGE_SCAN_MS`). Pause when `document.visibilityState` is `hidden`. Do not add WebSocket or SSE. A later self-hosted PartyKit keeps this schema.
 
+Opening a thread pins the log to the bottom when the unread tail fits in the pane. When that tail is taller than the pane, scroll to the top of the oldest unread message so a long message starts at its first line. A message the viewer just sent still pins to the bottom. A staff reader who is not a participant stays at the bottom.
+
 The message email goes only to a verified mailbox, and only when «Сообщения» is on. Telegram goes to the profile owner when the card contact is confirmed and that person has already opened the bot. A client does not get the Telegram notice. The staff report letter does not use that switch.
 
 ```ts
