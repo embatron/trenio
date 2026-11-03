@@ -3,6 +3,7 @@ import "./lib/error-capture";
 import { getRequest } from "@tanstack/react-start/server";
 
 import { ensureAuthSchema } from "@/auth/auth-schema";
+import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { logCaught, setLogRequestReader, wasLogged, writeLog } from "./lib/log/logger";
@@ -68,6 +69,7 @@ export default {
     }
     try {
       await ensureAuthSchema();
+      await ensureTrainerDoorSchema();
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);

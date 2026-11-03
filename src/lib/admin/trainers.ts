@@ -113,6 +113,8 @@ export type AdminTrainer = {
   staffNoteCount: number;
   /** When staff copied the Instagram message. Empty until that click. */
   inviteSentAt: string;
+  /** First open of the short link. Empty until that visit. */
+  doorEnteredAt: string;
 };
 
 const CYR: Record<string, string> = {
@@ -332,6 +334,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         createdAt: trainerProfiles.createdAt,
         offerAcceptedAt: trainerProfiles.offerAcceptedAt,
         inviteSentAt: trainerProfiles.inviteSentAt,
+        doorEnteredAt: trainerProfiles.doorEnteredAt,
         ownerId: users.id,
         email: users.email,
         ownerFirstName: users.firstName,
@@ -437,6 +440,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       staffNoteAt: latestNote.get(row.id)?.at ?? "",
       staffNoteCount: latestNote.get(row.id)?.count ?? 0,
       inviteSentAt: row.inviteSentAt?.toISOString() ?? "",
+      doorEnteredAt: row.doorEnteredAt?.toISOString() ?? "",
       account: row.ownerId && !hidden.has(row.ownerId)
         ? {
             id: row.ownerId,
@@ -498,6 +502,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       staffNoteAt: "",
       staffNoteCount: 0,
       inviteSentAt: "",
+      doorEnteredAt: "",
     }));
 
     return {
@@ -850,6 +855,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
       logs.push({ at: row.updatedAt.toISOString(), title: "Карточка изменена", detail: "" });
     }
     if (row.claimedAt) logs.push({ at: row.claimedAt.toISOString(), title: "Профиль забран", detail: CLAIM_LABEL[row.claimStatus] });
+    if (row.doorEnteredAt) logs.push({ at: row.doorEnteredAt.toISOString(), title: "Открыл короткую ссылку", detail: "" });
     for (const review of reviewRows) {
       if (hidden.has(review.userId)) continue;
       logs.push({
@@ -954,6 +960,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         staffNoteAt: latestNote?.createdAt.toISOString() ?? "",
         staffNoteCount: noteRowsForProfile.length,
         inviteSentAt: row.inviteSentAt?.toISOString() ?? "",
+        doorEnteredAt: row.doorEnteredAt?.toISOString() ?? "",
         account: owner
           ? {
               id: owner.id,

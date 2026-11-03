@@ -120,6 +120,8 @@ export const trainerProfiles = pgTable(
     editToken: varchar("edit_token", { length: 64 }),
     /** Set when staff copies the Instagram message. Stays after the profile is published. */
     inviteSentAt: timestamp("invite_sent_at", { withTimezone: true }),
+    /** First time someone opened the short link `/hi/{code}`. Stays after later visits. */
+    doorEnteredAt: timestamp("door_entered_at", { withTimezone: true }),
     claimedAt: timestamp("claimed_at", { withTimezone: true }),
     /** Set when the trainer accepts the public offer while claiming the profile. */
     offerAcceptedAt: timestamp("offer_accepted_at", { withTimezone: true }),

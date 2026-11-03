@@ -34,6 +34,23 @@ const EYE_OFF_ICON = "M3 4l18 16M9.9 6.2A11 11 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a
 const CLOCK_ICON = "M12 7.5V12l3 2";
 const ARCHIVE_ICON = "M3 5h18v4H3zM5 9v10h14V9M10 13h4";
 
+function DoorMark({ at }: { at: string }) {
+  if (at) {
+    const when = dateFormat.format(new Date(at));
+    const label = `Был по ссылке ${when}`;
+    return (
+      <span className="cabinet-mark is-sent" title={label} aria-label={label}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d={CHECK_ICON} /></svg>
+      </span>
+    );
+  }
+  return (
+    <span className="cabinet-mark is-unsent" title="Ещё не заходил" aria-label="Ещё не заходил">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d={CROSS_ICON} /></svg>
+    </span>
+  );
+}
+
 function PublishMark({ status }: { status: AdminTrainer["status"] }) {
   const label = TRAINER_PUBLISH_LABEL[status];
   const icon = status === "published"
@@ -249,6 +266,7 @@ function searchHaystack(trainer: AdminTrainer) {
     TRAINER_PUBLISH_LABEL[trainer.status],
     trainer.staffNote,
     trainer.inviteSentAt ? "отправлено" : "ожидает",
+    trainer.doorEnteredAt ? "был заходил" : "не заходил",
     trainer.createdAt ? addedOn(trainer.createdAt) : "",
     trainer.rating,
     String(trainer.reviews),
@@ -284,8 +302,9 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
   const [format, setFormat] = useState<"" | TrainerFormat>("");
   const [audience, setAudience] = useState<"" | TrainerAudience>("");
   const [message, setMessage] = useState<"" | "sent" | "unsent">("");
+  const [visit, setVisit] = useState<"" | "yes" | "no">("");
   const [note, setNote] = useState<"" | "yes" | "no">("");
-  const [sort, setSort] = useState<"date-desc" | "date-asc" | "reviews" | "rating" | "popularity" | "sent" | "note">("date-desc");
+  const [sort, setSort] = useState<"date-desc" | "date-asc" | "reviews" | "rating" | "popularity" | "sent" | "visit" | "note">("date-desc");
   const sportOptions = useMemo(
     () => listSecondLevelSports().filter((item) => !category || item.parentSlug === category),
     [category],
@@ -301,6 +320,8 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
       if (audience && !trainer.audiences.includes(audience)) return false;
       if (message === "sent" && !trainer.inviteSentAt) return false;
       if (message === "unsent" && trainer.inviteSentAt) return false;
+      if (visit === "yes" && !trainer.doorEnteredAt) return false;
+      if (visit === "no" && trainer.doorEnteredAt) return false;
       if (note === "yes" && trainer.staffNoteCount < 1) return false;
       if (note === "no" && trainer.staffNoteCount > 0) return false;
       if (tokens.length) {
@@ -319,6 +340,11 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
         const right = b.inviteSentAt ? Date.parse(b.inviteSentAt) : 0;
         return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
       }
+      if (sort === "visit") {
+        const left = a.doorEnteredAt ? Date.parse(a.doorEnteredAt) : 0;
+        const right = b.doorEnteredAt ? Date.parse(b.doorEnteredAt) : 0;
+        return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
+      }
       if (sort === "note") {
         const left = a.staffNoteAt ? Date.parse(a.staffNoteAt) : 0;
         const right = b.staffNoteAt ? Date.parse(b.staffNoteAt) : 0;
@@ -332,8 +358,8 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
       return sort === "date-asc" ? left - right : right - left;
     });
     return rows;
-  }, [listed, query, category, sport, city, format, audience, message, note, sort]);
-  const pager = useTablePage(visible, `${query}|${category}|${sport}|${city}|${format}|${audience}|${message}|${note}|${sort}`);
+  }, [listed, query, category, sport, city, format, audience, message, visit, note, sort]);
+  const pager = useTablePage(visible, `${query}|${category}|${sport}|${city}|${format}|${audience}|${message}|${visit}|${note}|${sort}`);
 
   if (listed.length === 0) {
     return <p className="cabinet-empty">Тренеров пока нет.</p>;
@@ -412,6 +438,14 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
           </select>
         </label>
         <label>
+          <span>Заход</span>
+          <select value={visit} onChange={(event) => setVisit(event.target.value as "" | "yes" | "no")}>
+            <option value="">Все</option>
+            <option value="yes">Был</option>
+            <option value="no">Не был</option>
+          </select>
+        </label>
+        <label>
           <span>Заметка</span>
           <select value={note} onChange={(event) => setNote(event.target.value as "" | "yes" | "no")}>
             <option value="">Все</option>
@@ -428,6 +462,7 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
             <option value="rating">По оценке</option>
             <option value="popularity">По рейтингу</option>
             <option value="sent">Сначала отправленные</option>
+            <option value="visit">Сначала зашедшие</option>
             <option value="note">Сначала с заметкой</option>
           </select>
         </label>
@@ -441,6 +476,7 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                 <th>Тренер</th>
                 <th>Действия</th>
                 <th>Сообщение</th>
+                <th>Заход</th>
                 <th>Телефон</th>
                 <th>Категория</th>
                 <th>С кем</th>
@@ -492,6 +528,7 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                       </span>
                     )}
                   </td>
+                  <td><DoorMark at={trainer.doorEnteredAt} /></td>
                   <td>{nationalPhone(trainer.phone) || "—"}</td>
                   <td>{categoryLabels(trainer.sportSlugs) || "—"}</td>
                   <td className="is-audience">{audienceLabels(trainer.audiences) || "—"}</td>

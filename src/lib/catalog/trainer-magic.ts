@@ -349,6 +349,7 @@ async function doorByCode(code: string) {
     city: trainerProfiles.city,
     headline: trainerProfiles.headline,
     ownerUserId: trainerProfiles.ownerUserId,
+    doorEnteredAt: trainerProfiles.doorEnteredAt,
   }).from(trainerProfiles).where(eq(trainerProfiles.previewToken, code)).limit(1);
   if (!row) {
     await noteMissingDoor();
@@ -384,6 +385,7 @@ export const openTrainerDoorFn = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const row = await doorByCode(data.code);
     if (!row) return null;
+    await markDoorEntered(row);
     const published = row.status === "published";
     if (!published && data.kind === "view") setCookie(PREVIEW_COOKIE, row.slug, cookieOptions());
     if (!published && data.kind === "edit") setCookie(EDIT_COOKIE, row.id, cookieOptions());
@@ -583,12 +585,25 @@ export const publishMagicTrainerFn = createServerFn({ method: "POST" })
   .validator(cardSchema)
   .handler(async ({ data }) => saveFromCookie(data, true));
 
+async function markDoorEntered(row: { id: string; slug: string; doorEnteredAt: Date | null }) {
+  if (row.doorEnteredAt) return;
+  try {
+    await getDb()
+      .update(trainerProfiles)
+      .set({ doorEnteredAt: new Date() })
+      .where(and(eq(trainerProfiles.id, row.id), isNull(trainerProfiles.doorEnteredAt)));
+  } catch (error) {
+    logCaught("catalog", "catalog.trainer_preview", error, { target: row.slug });
+  }
+}
+
 /** Short Instagram link: open the profile and keep the editor cookie. */
 export const enterTrainerDoorFn = createServerFn({ method: "GET" })
   .validator(z.object({ code: doorCodeSchema }))
   .handler(async ({ data }) => {
     const row = await doorByCode(data.code);
     if (!row) return null;
+    await markDoorEntered(row);
     const published = row.status === "published";
     if (!published) {
       setCookie(PREVIEW_COOKIE, row.slug, cookieOptions());
