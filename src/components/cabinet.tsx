@@ -934,6 +934,7 @@ a.cabinet-icon-btn { text-decoration: none; }
     border-radius: var(--radius-control); background: var(--white); color: var(--text);
     font: inherit; font-size: 16px;
   }
+  .cabinet-logout { display: none; }
 }
 .site-text { display: grid; gap: 8px; min-width: 0; }
 .site-text > p, .site-tokens p, .site-parts { margin: 6px 0 0; max-width: 62ch; color: var(--muted); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
