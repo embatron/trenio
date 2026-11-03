@@ -52,7 +52,7 @@ import { getTelegramLoginConfig } from "@/auth/telegram";
 import { clientIpFromHeaders } from "@/auth/request-meta";
 import { consumeLoginTicket } from "@/auth/login-ticket";
 import { issueStepUpGrant, requestStepUpCode } from "@/auth/step-up";
-import { beginTotpEnrollment, confirmTotpEnrollment } from "@/auth/totp";
+import { beginTotpEnrollment, confirmTotpEnrollment, pendingTotpSecret } from "@/auth/totp";
 import {
   confirmSignupCredentials,
   confirmSignupLink,
@@ -1058,6 +1058,13 @@ export const issueStepUpFn = createServerFn({ method: "POST" })
     } catch (error) {
       rethrowAuth(error, "auth.stepup", context.user.email, context.user.id);
     }
+  });
+
+export const pendingTotpFn = createServerFn({ method: "GET" })
+  .middleware([requireSessionMiddleware])
+  .handler(async ({ context }) => {
+    if (!isStaff(context.user.roles) || context.user.totpEnabled) return { secret: null as string | null };
+    return { secret: await pendingTotpSecret(context.user.id) };
   });
 
 export const beginTotpFn = createServerFn({ method: "POST" })

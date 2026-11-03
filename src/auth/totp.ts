@@ -129,6 +129,16 @@ export function totpUri(email: string, secretBase32: string): string {
   return `otpauth://totp/Trenio:${label}?secret=${secretBase32}&issuer=Trenio&algorithm=SHA1&digits=6&period=30`;
 }
 
+export async function pendingTotpSecret(userId: string): Promise<string | null> {
+  const [user] = await getDb()
+    .select({ totpSecret: users.totpSecret, totpEnabledAt: users.totpEnabledAt })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  if (!user?.totpSecret || user.totpEnabledAt) return null;
+  return openSecret(user.totpSecret);
+}
+
 export async function beginTotpEnrollment(userId: string, email: string) {
   const secret = randomBytes(20);
   const base32 = encodeBase32(secret);
