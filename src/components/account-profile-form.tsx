@@ -660,17 +660,19 @@ export function AccountProfileForm({
                   });
               }}
             >
-              <label>
-                <span>Пароль</span>
-                <input
-                  type="password"
-                  required
-                  autoFocus
-                  autoComplete="current-password"
-                  value={deletePassword}
-                  onChange={(event) => setDeletePassword(event.target.value)}
-                />
-              </label>
+              {user.hasPassword ? (
+                <label>
+                  <span>Пароль</span>
+                  <input
+                    type="password"
+                    required
+                    autoFocus
+                    autoComplete="current-password"
+                    value={deletePassword}
+                    onChange={(event) => setDeletePassword(event.target.value)}
+                  />
+                </label>
+              ) : null}
               {deleteError ? <p className="cabinet-form__error">{deleteError}</p> : null}
               <div className="cabinet-modal__actions">
                 <button type="button" className="cabinet-form__ghost" disabled={deletePending} onClick={() => setDeleteOpen(false)}>

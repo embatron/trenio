@@ -123,7 +123,8 @@ export function ConversationThread({
     const ownSend = alreadyPlaced && lastMine && followedId.current !== (lastId ?? null);
     if (ownSend) {
       released.current = true;
-      el.scrollTop = el.scrollHeight;
+      const top = Math.max(0, el.scrollHeight - el.clientHeight);
+      if (Math.abs(el.scrollTop - top) > 1) el.scrollTop = top;
       stick.current = true;
       followedId.current = lastId ?? null;
       return;
@@ -149,6 +150,20 @@ export function ConversationThread({
     placedFor.current = current.conversationId;
     followedId.current = lastId ?? null;
   }, [conversationId, messageCount, lastId, lastClient, lastMine, scrollEpoch]);
+
+  useEffect(() => {
+    const el = scroller.current;
+    const thread = el?.closest(".direct-thread");
+    if (!el || !(thread instanceof HTMLElement)) return;
+    const pin = () => {
+      if (!stick.current) return;
+      const top = Math.max(0, el.scrollHeight - el.clientHeight);
+      if (Math.abs(el.scrollTop - top) > 1) el.scrollTop = top;
+    };
+    const observer = new ResizeObserver(pin);
+    observer.observe(thread);
+    return () => observer.disconnect();
+  }, [conversationId]);
 
   useEffect(() => {
     const el = scroller.current;

@@ -77,13 +77,18 @@ export function MessageComposer({
     const body = sanitizeReviewHtml(raw);
     const plain = reviewPlainText(body);
     if ((!plain && files.length === 0) || disabled || busy || over) return;
+    const sentFiles = files;
+    setHtml("");
+    setFiles([]);
+    setFileError(null);
     setBusy(true);
     try {
-      await onSend(plain ? body : "", files);
-      for (const item of files) URL.revokeObjectURL(item.url);
-      setHtml("");
-      setFiles([]);
-      setFileError(null);
+      await onSend(plain ? body : "", sentFiles);
+      for (const item of sentFiles) URL.revokeObjectURL(item.url);
+    } catch (error) {
+      setHtml(body);
+      setFiles(sentFiles);
+      throw error;
     } finally {
       setBusy(false);
     }

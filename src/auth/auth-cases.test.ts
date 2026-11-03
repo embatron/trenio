@@ -653,6 +653,15 @@ describe("auth cases", { concurrency: false }, () => {
     assert.equal(await findValidSession(other.token), null);
   });
 
+  test("an account without a saved password skips the password step", async () => {
+    const open = await insertAccount({ name: "nopass", verified: true });
+    await getDb().update(users).set({ passwordSetAt: null }).where(eq(users.id, open.id));
+    const grant = await issueStepUpGrant(open.id, {});
+    await consumeStepUpGrant(open.id, grant);
+    const locked = await insertAccount({ name: "haspass", verified: true });
+    await expectAuth(() => issueStepUpGrant(locked.id, {}), "INVALID_CREDENTIALS");
+  });
+
   test("a pending shell links only into an empty verified mailbox", async () => {
     const phone = await freePhone();
     const shell = await insertAccount({ name: "shell", pendingShell: true, phone, phoneVerified: true });

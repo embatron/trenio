@@ -219,10 +219,9 @@ export function MessagesWorkspace({
         attachmentIds.push(saved.id);
       }
       await sendFn({ data: { conversationId, body, clientId: id, attachmentIds } });
-      setPending((current) => current.filter((item) => item.clientId !== id));
       await threadQuery.refetch();
+      setPending((current) => current.filter((item) => item.clientId !== id));
       await listQuery.refetch();
-      void router.invalidate();
     } catch (error) {
       const message = authErrorMessage(error);
       if (message === DAILY_TRAINER_LIMIT_MESSAGE) {
@@ -363,9 +362,9 @@ export const DIRECT_CSS = `
   min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-weight: var(--fw-title); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center;
 }
 .direct-back { margin-right: 4px; }
-.direct-log { flex: 1; min-height: 0; overflow: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.direct-log { flex: 1; min-height: 0; overflow: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; overflow-anchor: none; }
 .direct-day { align-self: center; margin: 8px 0; color: var(--muted); font-size: 12px; }
-.direct-row { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; max-width: 100%; }
+.direct-row { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; max-width: 100%; overflow-anchor: none; }
 .direct-row.is-mine { align-items: flex-end; }
 .direct-bubble { max-width: min(100%, 460px); padding: 10px 12px; border-radius: 16px; background: var(--neutral-bg); color: var(--dark); }
 .direct-bubble.is-user { background: #d7f4f1; }

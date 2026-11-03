@@ -116,14 +116,15 @@ async function codeMatches(userId: string, codeRaw: string): Promise<boolean> {
 
 export async function issueStepUpGrant(userId: string, proof: { password?: string; code?: string }): Promise<string> {
   const [user] = await getDb()
-    .select({ passwordHash: users.passwordHash })
+    .select({ passwordHash: users.passwordHash, passwordSetAt: users.passwordSetAt })
     .from(users)
     .where(eq(users.id, userId))
     .limit(1);
   if (!user) throw new AuthError("Требуется авторизация.", "UNAUTHORIZED");
   const passwordOk = proof.password ? await verifyPassword(proof.password, user.passwordHash) : false;
   const codeOk = !passwordOk && proof.code ? await codeMatches(userId, proof.code) : false;
-  if (!passwordOk && !codeOk) {
+  // A Google or magic-link account has no password the person chose. The open session is the proof.
+  if (user.passwordSetAt != null && !passwordOk && !codeOk) {
     throw new AuthError("Неверный пароль.", "INVALID_CREDENTIALS");
   }
   const raw = generateSecureToken();

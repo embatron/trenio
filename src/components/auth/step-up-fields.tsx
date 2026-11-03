@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useRouteContext } from "@tanstack/react-router";
 
 import { issueStepUpFn } from "@/lib/auth/functions";
 import { authErrorMessage } from "@/lib/auth/errors";
@@ -19,6 +20,8 @@ type Settle = {
 
 /** The current password, asked in a dialog only when a contact change needs it. */
 export function useContactStepUp() {
+  const { user } = useRouteContext({ from: "__root__" });
+  const hasPassword = user?.hasPassword ?? false;
   const issue = useAuthServerFn(issueStepUpFn);
   const [open, setOpen] = useState(false);
   const [password, setPassword] = useState("");
@@ -70,6 +73,16 @@ export function useContactStepUp() {
   function token() {
     if (tokenRef.current) return Promise.resolve(tokenRef.current);
     if (waitRef.current) return waitRef.current;
+    if (!hasPassword) {
+      const granted = issue({ data: {} }).then((result) => {
+        tokenRef.current = result.stepUpToken;
+        return result.stepUpToken;
+      });
+      waitRef.current = granted;
+      return granted.finally(() => {
+        waitRef.current = null;
+      });
+    }
     const pendingGrant = new Promise<string>((resolve, reject) => {
       settleRef.current = { resolve, reject };
       setOpen(true);

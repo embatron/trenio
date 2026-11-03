@@ -173,8 +173,11 @@ export async function deleteOwnAccount(
   if (!user || user.status === "deleted") {
     throw new AuthError("Неверный пароль.", "INVALID_CREDENTIALS");
   }
-  const matches = await verifyPassword(password, user.passwordHash);
-  if (!matches) throw new AuthError("Неверный пароль.", "INVALID_CREDENTIALS");
+  if (user.passwordSetAt != null) {
+    if (!password) throw new AuthError("Введите пароль.", "VALIDATION");
+    const matches = await verifyPassword(password, user.passwordHash);
+    if (!matches) throw new AuthError("Неверный пароль.", "INVALID_CREDENTIALS");
+  }
 
   const profiles = await db
     .select({ id: trainerProfiles.id, status: trainerProfiles.status, slug: trainerProfiles.slug })

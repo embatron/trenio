@@ -505,7 +505,7 @@ export function TrainerCardFields({
           autoComplete="username"
         />
       </label>
-      <p className="cabinet-note">
+      <p className="cabinet-note cabinet-note--oneline">
         Ник совпадает с Instagram: /trainers/{nick}. Сменить его можно только{" "}
         {onNickSupport ? (
           <button type="button" className="cabinet-text-link" onClick={onNickSupport}>

@@ -110,7 +110,7 @@ export const changePasswordSchema = z.object({
 });
 
 export const deleteAccountSchema = z.object({
-  password: z.string().min(1, "Введите пароль").max(128),
+  password: z.string().max(128).optional().default(""),
 });
 
 export const accountEmailSchema = z.object({

@@ -650,6 +650,10 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-save { position: static; width: 44px; height: 44px; flex: 0 0 auto; }
 .cabinet-empty { margin: 0; padding: 16px 18px; }
 .cabinet-note { margin: 6px 0 0; max-width: 62ch; color: var(--muted); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
+.cabinet-note--oneline { max-width: none; }
+@media (min-width: 960px) {
+  .cabinet-note--oneline { white-space: nowrap; }
+}
 .cabinet-form > .cabinet-note,
 .cabinet-section > .cabinet-note,
 .cabinet-form label > .cabinet-note,
