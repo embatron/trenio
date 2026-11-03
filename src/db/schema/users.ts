@@ -48,6 +48,8 @@ export const users = pgTable(
     phone: varchar("phone", { length: 32 }),
     phoneVerifiedAt: timestamp("phone_verified_at", { withTimezone: true }),
     passwordHash: text("password_hash").notNull(),
+    /** Set when the person types a password. Empty for a Google account and a magic-link trainer until then. */
+    passwordSetAt: timestamp("password_set_at", { withTimezone: true }),
     /** True only for a trainer created from the short Instagram link, until they choose a password. */
     needsPassword: boolean("needs_password").notNull().default(false),
     firstName: varchar("first_name", { length: 100 }).notNull(),

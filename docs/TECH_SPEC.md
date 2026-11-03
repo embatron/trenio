@@ -110,7 +110,7 @@ IP берётся из `CF-Connecting-IP` или `X-Real-IP`. Если в зап
 
 | Таблица                     | Назначение                                              |
 | --------------------------- | ------------------------------------------------------- |
-| `users`                     | email, phone (`+375 29 123-45-67`), password_hash, avatar_path, telegram_user_id, telegram_bot_seen_at, status, last_signup_intent. `telegram_bot_seen_at` ставится, когда человек написал боту или подтвердил Telegram в Mini App; колонку добавляет `ensureAuthSchema`. `needs_password` — только у тренера с короткой ссылки, пока он не задал пароль в кабинете. Письма: `mail_messages`, `mail_reviews` (включены), `mail_site` (всегда включена), `mail_marketing` (выключена). Колонки писем ставит `npm run mail:install`, не `db:push` |
+| `users`                     | email, phone (`+375 29 123-45-67`), password_hash, avatar_path, telegram_user_id, telegram_bot_seen_at, status, last_signup_intent. `telegram_bot_seen_at` ставится, когда человек написал боту или подтвердил Telegram в Mini App; колонку добавляет `ensureAuthSchema`. `needs_password` — только у тренера с короткой ссылки, пока он не задал пароль в кабинете. `password_set_at` пустой, пока человек сам не сохранил пароль: вход через Google и короткая ссылка до пароля. Колонку добавляет `ensureAuthSchema`. Письма: `mail_messages`, `mail_reviews` (включены), `mail_site` (всегда включена), `mail_marketing` (выключена). Колонки писем ставит `npm run mail:install`, не `db:push` |
 | `user_roles`                | RBAC: user, trainer, club, admin, superadmin            |
 | `sessions`                  | HttpOnly cookie, срок 3 недели (token hash)             |
 | `password_reset_tokens`     | Сброс пароля (30 мин)                                   |
@@ -138,7 +138,7 @@ IP берётся из `CF-Connecting-IP` или `X-Real-IP`. Если в зап
 - `loginWithTelegramFn`, `loginWithTelegramWebAppFn`, `getTelegramLoginConfigFn`
 - `forgotPasswordFn`, `requestPasswordResetSmsFn`, `confirmPasswordResetSmsFn`
 - `resetPasswordFn`, `verifyEmailFn`, `updateProfileFn` — имя и фамилия текущего аккаунта двумя полями; `setAccountAvatarFn` — фото в `public/avatars/`. Каталог создаётся с правами 755, иначе nginx не читает файл и кружок остаётся пустым. После сохранения кружок в форме, в шапке и в боковой карточке кабинета меняется сразу, без перезагрузки страницы. На сервере `/avatars/`, `/trainers/admin/` и `/trainers/self/` отдаёт nginx из `public/`, а не снимок сборки
-- `changePasswordFn` — смена пароля из кабинета по текущему паролю, текущая сессия сохраняется
+- `changePasswordFn` — смена пароля из кабинета. Текущий пароль нужен, только если `password_set_at` уже заполнен. Иначе человек задаёт пароль впервые, в том числе после входа через Google. Текущая сессия сохраняется
 - `requestAccountEmailCodeFn`, `confirmAccountEmailCodeFn` — смена почты кодом из письма
 - `requestAccountPhoneCodeFn`, `confirmAccountPhoneCodeFn` — привязка телефона SMS-кодом. Подтверждённый номер записывается и в карточку тренера, если она есть
 - `listTrainerReviewsFn`, `createTrainerReviewFn` — отзывы профиля тренера; создание только с сессией (`requireAuthMiddleware`). Новый отзыв уходит на модерацию

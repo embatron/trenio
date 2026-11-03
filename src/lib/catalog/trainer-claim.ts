@@ -120,6 +120,7 @@ export const claimTrainerProfileFn = createServerFn({ method: "POST" })
         .values({
           email,
           passwordHash: await hashPassword(data.password),
+          passwordSetAt: now,
           firstName: profile.firstName || profile.fullName || "Тренер",
           lastName: profile.lastName || null,
           status: "active",

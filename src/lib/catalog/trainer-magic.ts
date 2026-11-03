@@ -956,6 +956,7 @@ export const setDoorPasswordFn = createServerFn({ method: "POST" })
     const now = new Date();
     await getDb().update(users).set({
       passwordHash: await hashPassword(data.password),
+      passwordSetAt: now,
       needsPassword: false,
       updatedAt: now,
     }).where(eq(users.id, context.user.id));

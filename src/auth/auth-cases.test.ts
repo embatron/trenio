@@ -165,6 +165,7 @@ async function insertAccount(input: {
       id,
       email: input.pendingShell ? pendingSignupEmail(id) : email(input.name),
       passwordHash,
+      passwordSetAt: new Date(),
       firstName: "Проверка",
       lastName: "Кейс",
       status: input.status ?? "active",

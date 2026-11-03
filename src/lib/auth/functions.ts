@@ -124,6 +124,7 @@ function toPublicUser(user: SessionUser): PublicUser {
     mailMarketing: user.mailMarketing,
     telegramLinked: user.telegramLinked,
     telegramUsername: user.telegramUsername,
+    hasPassword: user.hasPassword,
   };
 }
 

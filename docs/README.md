@@ -155,7 +155,7 @@ AGENTS.md             # Entry point для агентов
 | `/me/favorites`         | `me.favorites.tsx`         | Избранные карточки |
 | `/me/profile`           | `me.profile.tsx`           | Публичная карточка. Имя и фамилия здесь не редактируются. Телефон, почта, Instagram и Telegram — в «Контактах» |
 | `/me/contacts`          | `me.contacts.tsx`          | Тот же блок «Что уже есть», что на обзоре |
-| `/me/settings`          | `me.settings.tsx`          | Имя, фамилия и телефон аккаунта. Тот же блок «Письма», что в настройках клиента |
+| `/me/settings`          | `me.settings.tsx`          | Имя, фамилия, телефон, пароль и сеансы. Подтверждение Telegram остаётся в контактах. Тот же блок «Письма», что в настройках клиента |
 | `/trainer-admin`        | `trainer-admin.tsx`        | Старый адрес кабинета: перенаправляет на `/me`, `?tab=settings` на `/me/settings`, `?tab=card` на `/me/profile`, `?tab=reviews` на `/me/reviews` |
 | `/about`                | `about.tsx`                | О сервисе: лендинг «Кто мы», «Что мы делаем», «Как это работает». У каждой главы обложка |
 | `/contacts`             | `contacts.tsx`             | Контакты: trenioby@gmail.com                                  |

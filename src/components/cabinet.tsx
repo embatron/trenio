@@ -703,6 +703,9 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-form .cabinet-avatar input { position: absolute; width: 1px; height: 1px; min-height: 0; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); }
 .cabinet-form__verified { color: #16a34a; font-style: normal; }
 .cabinet-form__actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.cabinet-session { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid var(--line); }
+.cabinet-session p { margin: 0; }
+.cabinet-session__face { color: var(--dark); font-weight: var(--fw-title); }
 .cabinet-form__ghost, label.cabinet-form__ghost { position: relative; display: inline-flex; align-items: center; justify-content: center; width: fit-content; min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-size: 15px; font-weight: var(--fw-title); cursor: pointer; text-decoration: none; }
 .cabinet-form__ghost:disabled { opacity: 0.6; cursor: default; }
 .cabinet-form input, .cabinet-form textarea, .cabinet-form select { width: 100%; min-height: 44px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--text); font: inherit; font-size: 15px; }

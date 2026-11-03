@@ -151,6 +151,7 @@ async function takeoverUnverified(user: User, sub: string) {
     .update(users)
     .set({
       passwordHash,
+      passwordSetAt: null,
       googleSub: sub,
       emailVerifiedAt: new Date(),
       status: "active",

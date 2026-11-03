@@ -81,6 +81,8 @@ export type SessionUser = {
   telegramUsername: string | null;
   /** Short Instagram link created the account and the trainer has not chosen a password yet. */
   needsPassword: boolean;
+  /** The person has typed a password. Google-only and unfinished magic-link accounts stay false. */
+  hasPassword: boolean;
   totpEnabled: boolean;
 };
 
@@ -128,6 +130,7 @@ function toSessionUser(user: User, roles: UserRole[]): SessionUser {
     telegramLinked: user.telegramUserId != null,
     telegramUsername: user.telegramUsername,
     needsPassword: user.needsPassword && !user.googleSub,
+    hasPassword: user.passwordSetAt != null,
     totpEnabled: user.totpEnabledAt != null,
   };
 }
@@ -337,18 +340,28 @@ export async function changeAccountPassword(
     throw new AuthError("Слишком много попыток. Подождите и попробуйте снова.", "RATE_LIMITED");
   }
 
-  const matches = await verifyPassword(currentPassword, user.passwordHash);
-  if (!matches) throw new AuthError("Неверный текущий пароль.", "INVALID_CREDENTIALS");
+  const chosen = user.passwordSetAt != null;
+  if (chosen) {
+    if (!currentPassword) throw new AuthError("Введите текущий пароль.", "VALIDATION");
+    const matches = await verifyPassword(currentPassword, user.passwordHash);
+    if (!matches) throw new AuthError("Неверный текущий пароль.", "INVALID_CREDENTIALS");
+    if (currentPassword === newPassword) {
+      throw new AuthError("Новый пароль должен отличаться от текущего.", "VALIDATION");
+    }
+  }
 
   const passwordError = validatePasswordStrength(newPassword);
   if (passwordError) throw new AuthError(passwordError, "WEAK_PASSWORD");
-  if (currentPassword === newPassword) {
-    throw new AuthError("Новый пароль должен отличаться от текущего.", "VALIDATION");
-  }
 
+  const now = new Date();
   await getDb()
     .update(users)
-    .set({ passwordHash: await hashPassword(newPassword), updatedAt: new Date() })
+    .set({
+      passwordHash: await hashPassword(newPassword),
+      passwordSetAt: now,
+      needsPassword: false,
+      updatedAt: now,
+    })
     .where(eq(users.id, userId));
 
   if (currentToken) {
@@ -516,6 +529,7 @@ export async function registerUser(input: {
       email,
       phone,
       passwordHash,
+      passwordSetAt: new Date(),
       firstName,
       lastName,
       status: "pending_verification",
@@ -686,6 +700,7 @@ export async function setPasswordFromEmailLink(
     .update(users)
     .set({
       passwordHash,
+      passwordSetAt: now,
       emailVerifiedAt: now,
       status: "active",
       updatedAt: now,
@@ -776,7 +791,7 @@ export async function resetPassword(rawToken: string, newPassword: string) {
     .set({ usedAt: now })
     .where(eq(passwordResetTokens.id, tokenRow.id));
 
-  await db.update(users).set({ passwordHash, updatedAt: now }).where(eq(users.id, tokenRow.userId));
+  await db.update(users).set({ passwordHash, passwordSetAt: now, needsPassword: false, updatedAt: now }).where(eq(users.id, tokenRow.userId));
 
   await revokeAllUserSessions(tokenRow.userId);
 
@@ -1108,7 +1123,7 @@ export async function bindTelegramLogin(
     throw new AuthError("Этот Telegram уже привязан к другому аккаунту.", "VALIDATION");
   }
   if (decision === "replace-blocked") {
-    throw new AuthError("К аккаунту уже привязан другой Telegram. Сначала отвяжите его в настройках.", "VALIDATION");
+    throw new AuthError("К аккаунту уже привязан другой Telegram.", "VALIDATION");
   }
 
   const username = cleanTelegramUsername(usernameRaw);

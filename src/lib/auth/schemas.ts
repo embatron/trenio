@@ -105,7 +105,7 @@ export const accountAvatarSchema = z.object({
 });
 
 export const changePasswordSchema = z.object({
-  currentPassword: z.string().min(1, "Введите текущий пароль"),
+  currentPassword: z.string().max(128).optional().default(""),
   newPassword: z.string().min(8, "Пароль должен содержать минимум 8 символов"),
 });
 
@@ -172,4 +172,6 @@ export type PublicUser = {
   mailMarketing: boolean;
   telegramLinked: boolean;
   telegramUsername: string | null;
+  /** False when the account has only a Google login or has never saved a password. */
+  hasPassword: boolean;
 };

@@ -241,7 +241,7 @@ export async function confirmPasswordResetByPhone(
   const db = getDb();
   await db
     .update(users)
-    .set({ passwordHash, updatedAt: new Date() })
+    .set({ passwordHash, passwordSetAt: new Date(), needsPassword: false, updatedAt: new Date() })
     .where(eq(users.id, user.id));
 
   await revokeAllUserSessions(user.id);

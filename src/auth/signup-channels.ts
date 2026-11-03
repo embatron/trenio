@@ -226,6 +226,7 @@ export async function signupWithEmail(
         .values({
           email,
           passwordHash,
+          passwordSetAt: new Date(),
           firstName: PLACEHOLDER_NAME,
           lastName: null,
           status: "pending_verification",
@@ -236,7 +237,7 @@ export async function signupWithEmail(
       const proof = await issueSignupEmailProof(created.id);
       await sendSignupLetter(email, proof.url, false);
     } else if (decision === "refresh" && existing) {
-      await db.update(users).set({ passwordHash, updatedAt: new Date() }).where(eq(users.id, existing.id));
+      await db.update(users).set({ passwordHash, passwordSetAt: new Date(), needsPassword: false, updatedAt: new Date() }).where(eq(users.id, existing.id));
       const proof = await issueSignupEmailProof(existing.id);
       await sendSignupLetter(email, proof.url, false);
     } else {
@@ -485,7 +486,7 @@ export async function saveSignupCredentials(userId: string, emailRaw: string, pa
 
   await getDb()
     .update(users)
-    .set({ passwordHash: await hashPassword(password), updatedAt: new Date() })
+    .set({ passwordHash: await hashPassword(password), passwordSetAt: new Date(), needsPassword: false, updatedAt: new Date() })
     .where(eq(users.id, userId));
   const devCode = await sendMailboxCode(userId, email);
   return { ok: true as const, needsCode: true as const, devCode };

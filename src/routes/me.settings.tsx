@@ -1,7 +1,6 @@
 import { createFileRoute, getRouteApi } from "@tanstack/react-router";
 
 import { AccountProfileForm } from "@/components/account-profile-form";
-import { hasAnyRole } from "@/lib/auth/roles";
 
 const meRoute = getRouteApi("/me");
 
@@ -30,7 +29,6 @@ function MeSettingsPage() {
         phone={cabinet.phone}
         phoneVerified={cabinet.phoneVerified}
         profilePhoto={face}
-        telegram={hasAnyRole(user.roles, ["trainer", "club"])}
       />
     </article>
   );

@@ -4,8 +4,6 @@ import { flushSync } from "react-dom";
 
 import { useContactStepUp } from "@/components/auth/step-up-fields";
 import { AvatarCrop } from "@/components/avatar-crop";
-import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
-import { TelegramWebAppAuthButton } from "@/components/auth/telegram-webapp-auth-button";
 import { BelarusPhoneInput } from "@/components/belarus-phone-input";
 import { CabinetNotice } from "@/components/cabinet";
 import { UserAvatar } from "@/components/user-avatar";
@@ -16,18 +14,14 @@ import {
   confirmAccountEmailCodeFn,
   confirmAccountPhoneCodeFn,
   deleteAccountFn,
-  linkAccountTelegramFn,
-  linkAccountTelegramWebAppFn,
   listSessionsFn,
   requestAccountEmailCodeFn,
   requestAccountPhoneCodeFn,
   revokeSessionFn,
   setAccountAvatarFn,
-  unlinkAccountTelegramFn,
   updateMailPreferenceFn,
   updateProfileFn,
 } from "@/lib/auth/functions";
-import type { TelegramWidgetUser } from "@/lib/auth/telegram-widget";
 import type { MailKind } from "@/lib/mail/kinds";
 import { BECOME_TRAINER_MAX, requestBecomeTrainerFn } from "@/lib/account/become-trainer";
 import { reviewTextLength } from "@/lib/catalog/review-html";
@@ -91,109 +85,16 @@ function mailFromUser(user: PublicUser) {
   };
 }
 
-function TelegramAccountLink({
-  user,
-  onOk,
-  onFail,
-}: {
-  user: PublicUser;
-  onOk: (message: string) => void;
-  onFail: (error: unknown) => void;
-}) {
-  const router = useRouter();
-  const linkWidget = useAuthServerFn(linkAccountTelegramFn);
-  const linkWebApp = useAuthServerFn(linkAccountTelegramWebAppFn);
-  const unlink = useAuthServerFn(unlinkAccountTelegramFn);
-  const step = useContactStepUp();
-  const [pending, setPending] = useState(false);
-
-  async function finish(message: string) {
-    onOk(message);
-    await router.invalidate();
-  }
-
-  return (
-    <section className="cabinet-form" id="telegram">
-      <h3>Telegram</h3>
-      {step.fields}
-      {user.telegramLinked ? (
-        <>
-          <p className="cabinet-note">
-            {user.telegramUsername
-              ? `Контакт @${user.telegramUsername} подтверждён.`
-              : "Контакт Telegram подтверждён."}
-          </p>
-          <button
-            className="cabinet-form__ghost"
-            type="button"
-            disabled={pending}
-            onClick={() => {
-              setPending(true);
-              void step.token()
-                .then((stepUpToken) => unlink({ data: { stepUpToken } }))
-                .then((result) => {
-                  step.spend();
-                  return finish((result as { message: string }).message);
-                })
-                .catch(onFail)
-                .finally(() => setPending(false));
-            }}
-          >
-            {pending ? "Отвязка…" : "Отвязать Telegram"}
-          </button>
-        </>
-      ) : (
-        <>
-          <p className="cabinet-note">
-            Подтвердите Telegram. Это контакт на вашей странице, второй аккаунт с ним не создаётся.
-          </p>
-          <TelegramWebAppAuthButton
-            label="Подтвердить Telegram"
-            pendingLabel="Привязка…"
-            onAuth={async (initData) => {
-              try {
-                const stepUpToken = await step.token();
-                const result = await linkWebApp({ data: { initData, stepUpToken } });
-                step.spend();
-                await finish((result as { message: string }).message);
-              } catch (error) {
-                onFail(error);
-              }
-            }}
-          />
-          <TelegramLoginButton
-            missing="Привязка через Telegram сейчас недоступна."
-            onAuth={(telegram: TelegramWidgetUser) => {
-              setPending(true);
-              void step.token()
-                .then((stepUpToken) => linkWidget({ data: { ...telegram, stepUpToken } }))
-                .then((result) => {
-                  step.spend();
-                  return finish((result as { message: string }).message);
-                })
-                .catch(onFail)
-                .finally(() => setPending(false));
-            }}
-          />
-        </>
-      )}
-    </section>
-  );
-}
-
 export function AccountProfileForm({
   user,
   phone,
   phoneVerified,
   profilePhoto = null,
-  telegram = false,
 }: {
   user: PublicUser;
   phone: string | null;
   phoneVerified: boolean;
   profilePhoto?: string | null;
-  /** Trainer cabinet only. A client and an admin do not attach Telegram here. */
-  telegram?: boolean;
 }) {
   const router = useRouter();
   const updateProfile = useAuthServerFn(updateProfileFn);
@@ -614,7 +515,6 @@ export function AccountProfileForm({
           </p>
         ) : null}
       </form>
-      {telegram ? <TelegramAccountLink user={user} onOk={ok} onFail={fail} /> : null}
       <form
         className="cabinet-form"
         onSubmit={(event) => {
@@ -624,28 +524,35 @@ export function AccountProfileForm({
             return;
           }
           setPending(true);
-          void changePassword({ data: { currentPassword, newPassword } })
-            .then((result) => {
+          void changePassword({ data: { currentPassword: user.hasPassword ? currentPassword : "", newPassword } })
+            .then(async (result) => {
               const payload = result as { message: string };
               ok(payload.message);
               setCurrentPassword("");
               setNewPassword("");
               setRepeatPassword("");
+              await router.invalidate();
             })
             .catch(fail)
             .finally(() => setPending(false));
         }}
       >
-        <label>
-          <span>Текущий пароль</span>
-          <input
-            type="password"
-            required
-            autoComplete="current-password"
-            value={currentPassword}
-            onChange={(event) => setCurrentPassword(event.target.value)}
-          />
-        </label>
+        {user.hasPassword ? (
+          <label>
+            <span>Текущий пароль</span>
+            <input
+              type="password"
+              required
+              autoComplete="current-password"
+              value={currentPassword}
+              onChange={(event) => setCurrentPassword(event.target.value)}
+            />
+          </label>
+        ) : (
+          <p className="cabinet-note">
+            Пароль для входа по почте ещё не задан. Сохраните новый — текущий спрашивать не будем. Следующая смена уже попросит его.
+          </p>
+        )}
         <label>
           <span>Новый пароль</span>
           <input
@@ -669,7 +576,7 @@ export function AccountProfileForm({
           />
         </label>
         <button className="cabinet-form__submit" type="submit" disabled={pending}>
-          {pending ? "Сохранение…" : "Сменить пароль"}
+          {pending ? "Сохранение…" : user.hasPassword ? "Сменить пароль" : "Задать пароль"}
         </button>
         <p className="cabinet-note">
           Нужны минимум 8 символов, цифра и заглавная буква. Эта сессия останется, остальные
@@ -883,6 +790,50 @@ function BecomeTrainerDialog({
   );
 }
 
+function sessionFace(userAgent: string | null): { browser: string; device: string } {
+  const ua = userAgent ?? "";
+  const browser = /YaBrowser/i.test(ua)
+    ? "Яндекс"
+    : /Edg\//i.test(ua)
+      ? "Edge"
+      : /OPR\/|Opera/i.test(ua)
+        ? "Opera"
+        : /SamsungBrowser/i.test(ua)
+          ? "Samsung"
+          : /FxiOS|Firefox\//i.test(ua)
+            ? "Firefox"
+            : /CriOS|Chrome\//i.test(ua)
+              ? "Chrome"
+              : /Safari\//i.test(ua)
+                ? "Safari"
+                : "Браузер";
+  const device = /iPhone/i.test(ua)
+    ? "iPhone"
+    : /iPad/i.test(ua)
+      ? "iPad"
+      : /Android/i.test(ua)
+        ? "Android"
+        : /Macintosh|Mac OS X/i.test(ua)
+          ? "Mac"
+          : /Windows/i.test(ua)
+            ? "Windows"
+            : /CrOS/i.test(ua)
+              ? "Chromebook"
+              : /Linux/i.test(ua)
+                ? "Linux"
+                : "Устройство";
+  return { browser, device };
+}
+
+function loginWhen(iso: string) {
+  return new Date(iso).toLocaleString("ru-BY", {
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 function AccountSessions() {
   const router = useRouter();
   const list = useAuthServerFn(listSessionsFn);
@@ -898,33 +849,40 @@ function AccountSessions() {
     <section className="cabinet-form" id="sessions">
       <h3>Сеансы</h3>
       {rows.length === 0 ? <p className="cabinet-note">Открытых сеансов нет.</p> : null}
-      {rows.map((row) => (
-        <div key={row.id} className="cabinet-form__actions">
-          <p className="cabinet-note">
-            {row.current ? "Этот сеанс. " : ""}
-            {row.ip ?? "без адреса"} · {new Date(row.createdAt).toLocaleString("ru-BY")}
-            {row.userAgent ? ` · ${row.userAgent.slice(0, 80)}` : ""}
-          </p>
-          <button
-            className="cabinet-form__ghost"
-            type="button"
-            onClick={() => {
-              void revoke({ data: { sessionId: row.id } })
-                .then(async (result) => {
-                  if (result.current) {
-                    window.location.assign("/auth/login");
-                    return;
-                  }
-                  setRows((current) => current.filter((item) => item.id !== row.id));
-                  await router.invalidate();
-                })
-                .catch((error: unknown) => setNote(authErrorMessage(error)));
-            }}
-          >
-            Завершить
-          </button>
-        </div>
-      ))}
+      {rows.map((row) => {
+        const face = sessionFace(row.userAgent);
+        return (
+          <div key={row.id} className="cabinet-session">
+            <div>
+              <p className="cabinet-session__face">
+                {face.browser} · {face.device}
+              </p>
+              <p className="cabinet-note">
+                {row.current ? "Этот сеанс. " : ""}
+                Вход {loginWhen(row.createdAt)}
+              </p>
+            </div>
+            <button
+              className="cabinet-form__ghost"
+              type="button"
+              onClick={() => {
+                void revoke({ data: { sessionId: row.id } })
+                  .then(async (result) => {
+                    if (result.current) {
+                      window.location.assign("/auth/login");
+                      return;
+                    }
+                    setRows((current) => current.filter((item) => item.id !== row.id));
+                    await router.invalidate();
+                  })
+                  .catch((error: unknown) => setNote(authErrorMessage(error)));
+              }}
+            >
+              Завершить
+            </button>
+          </div>
+        );
+      })}
       {note ? <p className="cabinet-form__error">{note}</p> : null}
     </section>
   );

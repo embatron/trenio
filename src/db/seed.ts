@@ -29,6 +29,7 @@ async function seed() {
         .update(users)
         .set({
           passwordHash,
+          passwordSetAt: existing.passwordSetAt ?? new Date(),
           firstName,
           status: "active",
           emailVerifiedAt: new Date(),
@@ -43,6 +44,7 @@ async function seed() {
         .values({
           email,
           passwordHash,
+          passwordSetAt: new Date(),
           firstName,
           status: "active",
           emailVerifiedAt: new Date(),
@@ -74,6 +76,7 @@ async function seed() {
       .update(users)
       .set({
         passwordHash: await hashPassword(clientPassword),
+        passwordSetAt: existingClient.passwordSetAt ?? new Date(),
         status: "active",
         emailVerifiedAt: existingClient.emailVerifiedAt ?? new Date(),
         updatedAt: new Date(),
@@ -86,6 +89,7 @@ async function seed() {
       .values({
         email: clientEmail,
         passwordHash: await hashPassword(clientPassword),
+        passwordSetAt: new Date(),
         firstName: "Анна",
         lastName: "Ковалёва",
         status: "active",
