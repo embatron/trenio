@@ -1,4 +1,4 @@
-import { Link, useRouteContext } from "@tanstack/react-router";
+import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 import { CredentialsRequiredDialog } from "@/components/auth/credentials-required-dialog";
@@ -146,10 +146,11 @@ export function CabinetShell({
   children: ReactNode;
 }) {
   const { user } = useRouteContext({ from: "__root__" });
+  const navigate = useNavigate();
   const name = joinTrainerName(firstName, lastName) || "Без имени";
   const publicSlug = profileSlug?.trim() || "";
   const identity = <TrainerName firstName={firstName} lastName={lastName} empty="Без имени" />;
-  const navRef = useRef<HTMLElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
   const sideRef = useRef<HTMLElement>(null);
   useEffect(() => {
     const header = document.getElementById("site-header");
@@ -279,6 +280,42 @@ export function CabinetShell({
               aria-label="Разделы кабинета"
               style={sectionKey ? { ["--nav-sub-row" as string]: String(items.findIndex((item) => item.id === active) + 2) } : undefined}
             >
+              <div className="cabinet-nav__pick">
+                <select
+                  aria-label="Раздел кабинета"
+                  value={active}
+                  onChange={(event) => {
+                    const item = items.find((entry) => entry.id === event.target.value);
+                    if (!item || item.id === active) return;
+                    if (item.to === "/trainer-admin") {
+                      void navigate({ to: "/trainer-admin", search: item.search ?? {} });
+                      return;
+                    }
+                    if (item.to) {
+                      void navigate({ to: item.to });
+                      return;
+                    }
+                    onSelect?.(item.id);
+                  }}
+                >
+                  {items.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {typeof item.badge === "number" ? `${item.label} (${item.badge > 99 ? "99+" : item.badge})` : item.label}
+                    </option>
+                  ))}
+                </select>
+                {sectionKey ? (
+                  <select
+                    aria-label="Раздел страницы"
+                    value={currentSection ?? ""}
+                    onChange={(event) => moveToSection(event.target.value)}
+                  >
+                    {items.find((item) => item.id === active)?.sections?.map((section) => (
+                      <option key={section.id} value={section.id}>{section.label}</option>
+                    ))}
+                  </select>
+                ) : null}
+              </div>
               <div className="cabinet-nav__items" ref={navRef}>
                 {items.map((item) => {
                   const className = item.id === active ? "is-active" : undefined;
@@ -386,6 +423,7 @@ a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
 .cabinet-id span { color: var(--muted); font-size: 13px; }
 .cabinet-id span.cabinet-id__open { color: var(--dark); font-size: 0; }
 .cabinet-nav { display: flex; flex-direction: column; gap: 4px; }
+.cabinet-nav__pick { display: none; }
 .cabinet-nav__items { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .cabinet-nav__sub { position: relative; display: grid; gap: 2px; margin: 0 0 4px 18px; padding-left: 10px; border-left: 2px solid rgba(var(--primary-rgb), 0.35); }
 .cabinet-nav__mark { position: absolute; left: 0; top: 0; border-radius: var(--radius-control); background: rgba(var(--primary-rgb), 0.1); pointer-events: none; z-index: 0; transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), width 0.42s cubic-bezier(0.22, 1, 0.36, 1), height 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
@@ -889,12 +927,13 @@ a.cabinet-icon-btn { text-decoration: none; }
   .layout-with-sidebar:has(> .cabinet-side) { display: flex; flex-direction: column; align-items: stretch; }
   .cabinet-side { width: 100%; }
   .cabinet-section { scroll-margin-top: calc(var(--cabinet-sticky-top, 96px) + var(--cabinet-side-h, 0px) + 16px); }
-  .cabinet-nav__items { flex-direction: row; overflow-x: auto; scroll-padding-inline: 8px; scrollbar-width: none; }
-  .cabinet-nav__items::-webkit-scrollbar { display: none; }
-  .cabinet-nav__items > button, .cabinet-nav__items > a { flex: 0 0 auto; }
-  .cabinet-nav__sub { display: flex; margin: 4px 0 0; padding-left: 0; border-left: 0; overflow-x: auto; scrollbar-width: none; }
-  .cabinet-nav__sub::-webkit-scrollbar { display: none; }
-  .cabinet-nav__sub a { flex: 0 0 auto; }
+  .cabinet-nav__items, .cabinet-nav__sub { display: none; }
+  .cabinet-nav__pick { display: grid; gap: 8px; }
+  .cabinet-nav__pick select {
+    width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--line);
+    border-radius: var(--radius-control); background: var(--white); color: var(--text);
+    font: inherit; font-size: 16px;
+  }
 }
 .site-text { display: grid; gap: 8px; min-width: 0; }
 .site-text > p, .site-tokens p, .site-parts { margin: 6px 0 0; max-width: 62ch; color: var(--muted); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }

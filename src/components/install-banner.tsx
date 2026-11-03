@@ -13,10 +13,30 @@ type BeforeInstallPromptEvent = Event & {
 };
 
 const PHONE = "(max-width: 767px)";
+const INSTALLED_KEY = "trenio-app-installed";
+const INSTALLED_MODES = ["standalone", "minimal-ui", "fullscreen", "window-controls-overlay"];
 
-function installedSite(): boolean {
+function rememberInstalled() {
+  try {
+    localStorage.setItem(INSTALLED_KEY, "1");
+  } catch {
+    /* private mode keeps the decision for this launch only */
+  }
+}
+
+function storedInstalled(): boolean {
+  try {
+    return localStorage.getItem(INSTALLED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function launchedInstalled(): boolean {
   const nav = navigator as Navigator & { standalone?: boolean };
-  return window.matchMedia("(display-mode: standalone)").matches || Boolean(nav.standalone);
+  if (nav.standalone) return true;
+  if (document.referrer.startsWith("android-app://")) return true;
+  return INSTALLED_MODES.some((mode) => window.matchMedia(`(display-mode: ${mode})`).matches);
 }
 
 export function InstallBanner() {
@@ -27,17 +47,39 @@ export function InstallBanner() {
   useEffect(() => {
     let cancelled = false;
     const phone = window.matchMedia(PHONE);
+    const hideInstalled = () => {
+      rememberInstalled();
+      setPlace(null);
+    };
     const showBrowser = () => {
-      if (cancelled || getTelegramWebApp()?.initData?.trim() || installedSite()) return;
+      if (cancelled || getTelegramWebApp()?.initData?.trim()) return;
+      if (launchedInstalled()) {
+        hideInstalled();
+        return;
+      }
+      if (storedInstalled()) return;
       setPlace(phone.matches ? "browser" : null);
     };
+    if (launchedInstalled()) hideInstalled();
     const timer = window.setTimeout(showBrowser, 800);
     const onPrompt = (event: Event) => {
+      if (storedInstalled() || launchedInstalled()) return;
       event.preventDefault();
       setPromptEvent(event as BeforeInstallPromptEvent);
     };
+    const onInstalled = () => hideInstalled();
+    const onMode = () => {
+      if (launchedInstalled()) hideInstalled();
+    };
+    const modes = INSTALLED_MODES.map((mode) => window.matchMedia(`(display-mode: ${mode})`));
     window.addEventListener("beforeinstallprompt", onPrompt);
+    window.addEventListener("appinstalled", onInstalled);
     phone.addEventListener("change", showBrowser);
+    for (const mode of modes) mode.addEventListener("change", onMode);
+    const related = navigator as Navigator & { getInstalledRelatedApps?: () => Promise<unknown[]> };
+    void related.getInstalledRelatedApps?.().then((apps) => {
+      if (!cancelled && apps.length > 0) hideInstalled();
+    }).catch(() => undefined);
 
     ensureTelegramWebApp(() => {
       if (cancelled) return;
@@ -56,14 +98,16 @@ export function InstallBanner() {
         if (cancelled) return;
         const status = homeScreenStatus(value);
         if (status === "added" || status === "unsupported") {
+          if (status === "added") rememberInstalled();
           setPlace(null);
           return;
         }
+        if (storedInstalled()) return;
         if (status) setPlace("telegram");
       };
       webApp.checkHomeScreenStatus(apply);
       const onAdded = () => {
-        if (!cancelled) setPlace(null);
+        if (!cancelled) hideInstalled();
       };
       webApp.onEvent?.("homeScreenAdded", onAdded);
     });
@@ -72,7 +116,9 @@ export function InstallBanner() {
       cancelled = true;
       window.clearTimeout(timer);
       window.removeEventListener("beforeinstallprompt", onPrompt);
+      window.removeEventListener("appinstalled", onInstalled);
       phone.removeEventListener("change", showBrowser);
+      for (const mode of modes) mode.removeEventListener("change", onMode);
     };
   }, []);
 
@@ -101,7 +147,10 @@ export function InstallBanner() {
               if (promptEvent) {
                 void promptEvent.prompt().then(() => {
                   void promptEvent.userChoice.then((choice) => {
-                    if (choice.outcome === "accepted") setPlace(null);
+                    if (choice.outcome === "accepted") {
+                      rememberInstalled();
+                      setPlace(null);
+                    }
                   });
                 });
                 return;
