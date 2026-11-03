@@ -96,19 +96,13 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Фитнес",
     titleGenitive: "фитнесу",
     iconKey: "gymFitness",
-    description: "Тренажёрный зал, ОФП, кроссфит, тяжёлая атлетика, пауэрлифтинг и бодибилдинг.",
-    aliases: ["фитнес", "тренажёрный зал", "персональный тренер", "тренировки 50+"],
+    description: "ОФП, кроссфит, тяжёлая атлетика, пауэрлифтинг и бодибилдинг.",
+    aliases: ["фитнес", "тренажёрный зал", "тренажерка", "спортзал", "персональный тренер", "силовые тренировки", "кардио", "тренировки 50+"],
     count: "",
     bg: "linear-gradient(135deg, #fff1d6 0%, #ffd08a 100%)",
     image: "/images/categories/fitnes-i-trenirovki-v-zale-card.webp",
     featuredImage: "/images/ideogram/fitness.png",
     children: [
-      {
-        slug: "trenazhernyj-zal",
-        label: "Тренажёрный зал",
-        titleGenitive: "тренажёрному залу",
-        aliases: ["тренажерный зал", "тренажерка", "спортзал", "силовые тренировки", "персональный тренер", "кардио"],
-      },
       {
         slug: "ofp",
         label: "ОФП",

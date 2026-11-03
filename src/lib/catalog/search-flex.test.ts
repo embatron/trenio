@@ -126,8 +126,8 @@ test("anti-patterns: noise, neighbours, and shared words do not pick a wrong nam
   assert.equal(catalogSportByName(",jrc")?.label, "Бокс");
   assert.equal(catalogSportByName("скет")?.label, "Скейт");
   assert.equal(catalogSportByName("лодки"), null);
-  assert.equal(catalogSportByName("персональный тренер"), null);
-  assert.ok(filterCatalogSports("персональный тренер", 8).length > 1);
+  assert.equal(catalogSportByName("персональный тренер")?.id, "fitnes");
+  assert.deepEqual(filterCatalogSports("персональный тренер", 8).map((sport) => sport.id), ["fitnes"]);
   assert.deepEqual(filterSportSuggestions("йога"), ["Йога", "Йога и растяжка"]);
   assert.deepEqual(filterSportSuggestions("qjuf"), ["Йога", "Йога и растяжка"]);
   assert.equal(filterSportSuggestions("бокс")[0], "Бокс");

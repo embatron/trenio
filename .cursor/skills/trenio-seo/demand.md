@@ -28,7 +28,7 @@ Minsk is the commercial center. Then the oblast centers: Gomel, Brest, Grodno, V
 
 Sports that carry the non-brand demand, in the order worth watching in Search Console:
 
-1. Fitness and the gym, including `персональный тренер`.
+1. Fitness, including the gym query and `персональный тренер`. Both stay on `/categories/fitnes`.
 2. Boxing, kickboxing, MMA, and the martial-arts parent.
 3. Swimming, especially for children.
 4. Yoga, pilates, stretching.
@@ -39,6 +39,7 @@ Every other published sport already has a page and a paragraph in `src/lib/catal
 
 ## Not a page
 
+- `тренажёрный зал` as its own URL. `/categories/fitnes/trenazhernyj-zal` opens `/categories/fitnes`.
 - `для похудения`, `набор массы`, and other goals.
 - `онлайн`, `в группе`, `индивидуально`.
 - `бесплатный тренер`. The free thing is the listing, and that query belongs on `/join/trainer`.
