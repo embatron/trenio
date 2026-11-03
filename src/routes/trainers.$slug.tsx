@@ -1112,7 +1112,11 @@ function TrainerPage() {
                     <p className="review-note">
                       {ownNote}{t.ownComment ? `. ${t.ownComment}` : null}
                     </p>
-                  ) : isOwner ? null : user ? (
+                  ) : isOwner ? null : magicDoor ? (
+                    <button type="button" className="review-add" onClick={() => setMailOpen(true)}>
+                      {reviewLabel}
+                    </button>
+                  ) : user ? (
                     reviewFormOpen ? null : (
                       <button type="button" className="review-add" onClick={() => setReviewFormOpen(true)}>
                         {reviewLabel}
