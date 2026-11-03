@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { createFileRoute, getRouteApi, useRouter } from "@tanstack/react-router";
 
 import { CabinetNotice } from "@/components/cabinet";
@@ -225,14 +225,30 @@ function PageStatusCard({ status }: { status: PageStatus }) {
   const router = useRouter();
   const saveStatus = useAuthServerFn(setOwnTrainerPageStatusFn);
   const [pending, setPending] = useState(false);
+  const [asked, setAsked] = useState<OwnProfileStatus | null>(null);
   const [error, setError] = useState("");
-  const live = status === "published";
-  function apply(next: OwnProfileStatus) {
+  useEffect(() => {
+    if (!asked) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !pending) setAsked(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [asked, pending]);
+  function ask(next: OwnProfileStatus) {
     if (pending || next === status) return;
+    setAsked(next);
+  }
+  function apply() {
+    if (!asked || pending) return;
+    const next = asked;
     setPending(true);
     setError("");
     void saveStatus({ data: { status: next } })
-      .then(() => router.invalidate())
+      .then(() => {
+        setAsked(null);
+        return router.invalidate();
+      })
       .catch((err: unknown) => setError(authErrorMessage(err) || "Не удалось сменить статус страницы."))
       .finally(() => setPending(false));
   }
@@ -240,19 +256,7 @@ function PageStatusCard({ status }: { status: PageStatus }) {
     <article className="cabinet-card">
       <div className="cabinet-page-status">
         <h2>Страница</h2>
-        <div className="cabinet-page-status__side">
-          <span className={`cabinet-status cabinet-status--${status}`}>{PAGE_STATUS_LABEL[status]}</span>
-          <button
-            type="button"
-            className={`mail-switch${live ? " is-on" : ""}`}
-            aria-pressed={live}
-            aria-label={live ? "Скрыть страницу из каталога" : "Показать страницу в каталоге"}
-            disabled={pending}
-            onClick={() => apply(live ? "hidden" : "published")}
-          >
-            <span className="mail-switch__thumb" />
-          </button>
-        </div>
+        <span className={`cabinet-status cabinet-status--${status}`}>{PAGE_STATUS_LABEL[status]}</span>
       </div>
       <fieldset className="publish-pick" disabled={pending}>
         <legend>Режим страницы</legend>
@@ -261,7 +265,7 @@ function PageStatusCard({ status }: { status: PageStatus }) {
             const on = status === mode;
             return (
               <label key={mode} className={`publish-pick__option is-${mode}${on ? " is-on" : ""}`}>
-                <input type="checkbox" checked={on} onChange={() => apply(mode)} />
+                <input type="checkbox" checked={on} onChange={() => ask(mode)} />
                 <span className="publish-pick__box" aria-hidden="true" />
                 <span>{PAGE_MODE_LABEL[mode]}</span>
               </label>
@@ -269,6 +273,18 @@ function PageStatusCard({ status }: { status: PageStatus }) {
           })}
         </div>
       </fieldset>
+      {asked ? (
+        <div className="cabinet-modal" onClick={() => { if (!pending) setAsked(null); }}>
+          <div className="cabinet-modal__card" role="dialog" aria-modal="true" aria-labelledby="page-status-title" onClick={(event) => event.stopPropagation()}>
+            <h2 id="page-status-title">Сохранить статус?</h2>
+            <p>Страница станет «{PAGE_MODE_LABEL[asked]}». В каталоге она {asked === "published" ? "будет видна" : "не будет видна"}.</p>
+            <div className="cabinet-modal__actions">
+              <button type="button" onClick={apply} disabled={pending}>{pending ? "Сохранение…" : "Сохранить"}</button>
+              <button type="button" className="cabinet-form__ghost" onClick={() => setAsked(null)} disabled={pending}>Отмена</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
       {error ? <CabinetNotice title="Не получилось" message={error} onClose={() => setError("")} /> : null}
     </article>
   );
@@ -287,7 +303,6 @@ function MeOverviewPage() {
 
   return (
     <>
-      {trainer ? <PageStatusCard status={trainer.pageStatus} /> : null}
       {hasProfile && views ? (
         <div className="cabinet-stats">
           <div className="cabinet-stat">
@@ -343,6 +358,7 @@ function MeOverviewPage() {
           <TrainerContactStatus profile={trainer} />
         </article>
       ) : null}
+      {trainer ? <PageStatusCard status={trainer.pageStatus} /> : null}
       <section className="cabinet-faq" aria-labelledby="me-faq">
         <h2 id="me-faq">Частые вопросы</h2>
         <SiteFaq

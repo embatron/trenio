@@ -257,25 +257,20 @@ export function CabinetShell({
             <div className="cabinet-id">
               <UserAvatar name={name} src={avatarUrl} size={44} />
               <div>
-                <div className="cabinet-id__line">
-                  <strong>{identity}</strong>
-                  {publicSlug ? (
-                    <a
-                      className="cabinet-id__open"
-                      href={`/trainers/${publicSlug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Открыть публичный профиль"
-                      title="Открыть публичный профиль"
-                    >
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                {publicSlug ? (
+                  <a className="cabinet-id__line" href={`/trainers/${publicSlug}`} target="_blank" rel="noopener noreferrer" title="Открыть публичный профиль">
+                    <strong>{identity}</strong>
+                    <span className="cabinet-id__open" aria-hidden="true">
+                      <svg viewBox="0 0 24 24">
                         <path d="M14 5h5v5" />
                         <path d="M13 11l6-6" />
                         <path d="M19 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5" />
                       </svg>
-                    </a>
-                  ) : null}
-                </div>
+                    </span>
+                  </a>
+                ) : (
+                  <div className="cabinet-id__line"><strong>{identity}</strong></div>
+                )}
                 <span>{role}</span>
               </div>
             </div>
@@ -374,7 +369,10 @@ const CABINET_CSS = `
 .cabinet-id { display: flex; align-items: center; gap: 12px; }
 .cabinet-id > div { display: grid; gap: 2px; min-width: 0; }
 .cabinet-id__mark { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgba(var(--primary-rgb), 0.12); color: var(--primary); font-weight: var(--fw-title); object-fit: cover; }
-.cabinet-id__line { display: flex; align-items: center; gap: 0; min-width: 0; }
+.cabinet-id__line { display: flex; align-items: center; gap: 0; min-width: 0; color: inherit; text-decoration: none; }
+a.cabinet-id__line:hover strong,
+a.cabinet-id__line:hover .cabinet-id__open { color: var(--primary); }
+a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
 .cabinet-id strong { display: block; min-width: 0; color: var(--dark); font-size: 16px; font-weight: var(--fw-title); line-height: 1.2; }
 .cabinet-id > div > span { margin: 0; line-height: 1.3; }
 .cabinet-id__open { position: relative; width: 28px; height: 28px; flex: 0 0 28px; margin-left: 2px; display: grid; place-items: center; border-radius: 50%; color: var(--dark); text-decoration: none; }
@@ -386,6 +384,7 @@ const CABINET_CSS = `
 .cabinet-id__name { display: block; margin: 0; padding: 0; color: inherit; line-height: 1.15; text-decoration: none; }
 .cabinet-id__name:hover .trainer-name__line { color: var(--primary); }
 .cabinet-id span { color: var(--muted); font-size: 13px; }
+.cabinet-id span.cabinet-id__open { color: var(--dark); font-size: 0; }
 .cabinet-nav { display: flex; flex-direction: column; gap: 4px; }
 .cabinet-nav__items { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .cabinet-nav__sub { position: relative; display: grid; gap: 2px; margin: 0 0 4px 18px; padding-left: 10px; border-left: 2px solid rgba(var(--primary-rgb), 0.35); }
@@ -721,9 +720,9 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-form input { padding-block: 0; }
 .publish-pick { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; min-width: 0; }
 .publish-pick legend { padding: 0; color: var(--muted); font-size: 13px; font-weight: var(--fw-title); line-height: 1.45; }
-.publish-pick__row { display: grid; gap: 8px; }
+.publish-pick__row { display: grid; gap: 6px; }
 label.publish-pick__option {
-  position: relative; display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 44px; margin: 0; padding: 4px 10px;
+  position: relative; display: flex; align-items: center; gap: 6px; min-width: 0; min-height: 44px; margin: 0; padding: 2px 8px;
   border: 1px solid transparent; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: var(--fw-title); line-height: 1.2;
   box-shadow: none;
 }
@@ -745,7 +744,8 @@ label.publish-pick__option.is-hidden { background: #f8f1e4; color: #7a5a28; bord
 label.publish-pick__option.is-hidden.is-on { background: #f0e4cc; color: #6a4a18; border-color: #dcc9a4; }
 label.publish-pick__option.is-archived { background: #f8eeee; color: #8a4a4e; border-color: #ead4d6; }
 label.publish-pick__option.is-archived.is-on { background: #f0e0e2; color: #7a3a3e; border-color: #e0c4c8; }
-.cabinet-card > .publish-pick { padding: 4px 18px 16px; }
+.cabinet-card > .publish-pick { padding: 2px 14px 12px; }
+.cabinet-page-status .cabinet-status--published { background: #39b165; }
 .cabinet-page-status__side { display: flex; align-items: center; gap: 4px; }
 .publish-pick__option:focus-within { outline: 2px solid rgba(var(--dark-rgb), 0.45); outline-offset: 2px; }
 button.cabinet-text-link {
@@ -772,6 +772,7 @@ html.is-credentials-locked .cabinet-modal--lock { pointer-events: auto; }
 .cabinet-modal__card h2 { margin: 0; font-size: 18px; color: var(--dark); }
 .cabinet-modal__card p { margin: 0; color: var(--text); }
 .cabinet-modal__card button { justify-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
+.cabinet-modal__actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .cabinet-modal__card input { width: 100%; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--text); font: inherit; font-size: 16px; }
 .cabinet-modal__card form { display: grid; gap: 12px; }
 .cabinet-modal__actions { display: flex; flex-wrap: wrap; gap: 8px; }
