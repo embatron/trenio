@@ -556,7 +556,12 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-table--trainers th:first-child, .cabinet-table--trainers td:first-child { padding-left: 12px; }
 .cabinet-table--trainers td.is-audience { white-space: normal; }
 .cabinet-table--trainers td.is-note,
-.cabinet-table--trainers td.is-actions { text-align: center; }
+.cabinet-table--trainers td.is-actions,
+.cabinet-table--trainers td.is-publish { text-align: center; }
+.cabinet-table--trainers .is-publish.is-published { color: #16a34a; }
+.cabinet-table--trainers .is-publish.is-draft { color: #f59e0b; }
+.cabinet-table--trainers .is-publish.is-hidden,
+.cabinet-table--trainers .is-publish.is-archived { color: #9ca3af; }
 .cabinet-table--trainers .trainer-note-link { color: var(--muted); text-decoration: none; }
 .cabinet-table--trainers .trainer-note-link.is-filled { color: var(--primary); }
 .trainer-note-dialog { position: relative; width: min(520px, calc(100vw - 32px)); max-height: min(80vh, 720px); margin: auto; overflow: auto; border: 0; border-radius: 16px; padding: 20px 64px 20px 20px; color: var(--text); background: var(--white); }

@@ -29,6 +29,26 @@ const CHECK_ICON = "M5 12l5 5L20 7";
 const CROSS_ICON = "M6 6l12 12M18 6L6 18";
 const EDIT_ICON = "M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z";
 const MESSAGE_ICON = "M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 6l8 6 8-6";
+const EYE_ICON = "M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12z";
+const EYE_OFF_ICON = "M3 4l18 16M9.9 6.2A11 11 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a18 18 0 0 1-3.1 4M6.2 7.1C4 8.6 2.5 11 2.5 12S6 18.5 12 18.5c1.4 0 2.7-.3 3.8-.8M9.5 9.6a3 3 0 0 0 4.2 4.1";
+const CLOCK_ICON = "M12 7.5V12l3 2";
+const ARCHIVE_ICON = "M3 5h18v4H3zM5 9v10h14V9M10 13h4";
+
+function PublishMark({ status }: { status: AdminTrainer["status"] }) {
+  const label = TRAINER_PUBLISH_LABEL[status];
+  const icon = status === "published"
+    ? <><path d={EYE_ICON} /><circle cx="12" cy="12" r="3" /></>
+    : status === "draft"
+      ? <><circle cx="12" cy="12" r="8" /><path d={CLOCK_ICON} /></>
+      : status === "hidden"
+        ? <path d={EYE_OFF_ICON} />
+        : <path d={ARCHIVE_ICON} />;
+  return (
+    <span className={`cabinet-mark is-publish is-${status}`} title={label} aria-label={label}>
+      <svg viewBox="0 0 24 24" aria-hidden="true">{icon}</svg>
+    </span>
+  );
+}
 
 function addedOn(iso: string) {
   return addedFormat.format(new Date(iso));
@@ -479,7 +499,7 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                   <td>{trainer.createdAt ? addedOn(trainer.createdAt) : "—"}</td>
                   <td><TrainerStars rating={trainer.rating} reviews={trainer.reviews} /></td>
                   <td title={`Рейтинг ${trainer.popularity} из 100`}>{Number.isInteger(trainer.popularity) ? trainer.popularity : trainer.popularity.toFixed(1)}</td>
-                  <td><span className={`cabinet-status cabinet-status--${trainer.status}`}>{TRAINER_PUBLISH_LABEL[trainer.status]}</span></td>
+                  <td className="is-publish"><PublishMark status={trainer.status} /></td>
                   <td><TrainerSocial instagram={trainer.instagram} telegram={trainer.telegram} /></td>
                   <td title={trainer.account ? "Аккаунт создан и привязан к карточке" : "В каталоге есть карточка, но пользователь ещё не зарегистрировался и не забрал профиль"}>
                     {trainer.account ? displayAccountLogin(trainer.account.email) : "Аккаунт не создан"}
