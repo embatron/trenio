@@ -419,6 +419,7 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
             <thead>
               <tr>
                 <th>Тренер</th>
+                <th>Действия</th>
                 <th>Сообщение</th>
                 <th>Телефон</th>
                 <th>Категория</th>
@@ -431,7 +432,6 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                 <th>Контакты</th>
                 <th>Аккаунт</th>
                 <th>Заметка</th>
-                <th>Действия</th>
               </tr>
             </thead>
             <tbody>
@@ -446,6 +446,19 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                         </strong>
                         <span className="cabinet-person__meta">{trainer.sports || "вид спорта не указан"}</span>
                       </div>
+                    </div>
+                  </td>
+                  <td className="is-actions">
+                    <div className="cabinet-row-actions">
+                      <InviteCopy
+                        slug={trainer.slug}
+                        ready={Boolean(trainer.id)}
+                        published={trainer.status === "published"}
+                        onSent={(at) => setSentPatch((current) => ({ ...current, [trainer.slug]: at }))}
+                      />
+                      <a className="cabinet-icon-btn" href={`/admin/trainers/${trainer.slug}`} aria-label="Редактировать" title="Редактировать">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
+                      </a>
                     </div>
                   </td>
                   <td>
@@ -481,19 +494,6 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                         onSaved={(body, at, count) => setNotePatch((current) => ({ ...current, [trainer.slug]: { body, at, count } }))}
                       />
                     ) : "—"}
-                  </td>
-                  <td className="is-actions">
-                    <div className="cabinet-row-actions">
-                      <InviteCopy
-                        slug={trainer.slug}
-                        ready={Boolean(trainer.id)}
-                        published={trainer.status === "published"}
-                        onSent={(at) => setSentPatch((current) => ({ ...current, [trainer.slug]: at }))}
-                      />
-                      <a className="cabinet-icon-btn" href={`/admin/trainers/${trainer.slug}`} aria-label="Редактировать" title="Редактировать">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
-                      </a>
-                    </div>
                   </td>
                 </tr>
               ))}
