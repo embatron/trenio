@@ -280,7 +280,9 @@ function Row({
   confirm?: ReactNode;
   editor?: ReactNode;
 }) {
-  const missingLabel = gender === "f" ? "Не добавлена" : "Не добавлен";
+  const missingLabel = gender === "f"
+    ? "Не добавлена (не видно пользователям)"
+    : "Не добавлен (не видно пользователям)";
   const verifiedLabel = gender === "f" ? "Подтверждена" : "Подтверждён";
   const waitingLabel = gender === "f" ? "Не подтверждена" : "Не подтверждён";
   return (

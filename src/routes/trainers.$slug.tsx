@@ -392,6 +392,13 @@ const CSS = `
 .trainer-page .cabinet-modal__card h2 { margin: 0; padding: 0; border: 0; font-size: 18px; color: var(--dark); }
 .trainer-page .cabinet-modal__card p { margin: 0; color: var(--text); }
 .trainer-page .cabinet-modal__card button { justify-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
+.profile-created__row { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.profile-created__row > div { min-width: 0; display: grid; gap: 2px; flex: 1; }
+.profile-created__row strong { color: var(--dark); font-size: 16px; }
+.profile-created__row span { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.profile-created__edit { width: 44px; height: 44px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 50%; color: var(--dark); text-decoration: none; }
+.profile-created__edit:hover { color: var(--primary); }
+.profile-created__edit svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .review-form__hint { margin: 6px 0 0; color: var(--muted); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
 
 
@@ -677,13 +684,42 @@ function ReviewReply({ id }: { id: string }) {
   );
 }
 
+function CabinetCreatedDialog({ trainer, onClose }: { trainer: Trainer; onClose: () => void }) {
+  const caption = trainer.sportLabel || trainer.city.label || "Страница профиля";
+  return (
+    <div className="cabinet-modal" onClick={onClose}>
+      <div
+        className="cabinet-modal__card profile-created"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="profile-created-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <h2 id="profile-created-title">Кабинет создан</h2>
+        <p>Профиль можно править.</p>
+        <div className="profile-created__row">
+          <UserAvatar name={trainer.name} src={trainer.photo || null} size={44} />
+          <div>
+            <strong>{trainer.name}</strong>
+            <span>{caption}</span>
+          </div>
+          <Link className="profile-created__edit" to="/me/profile" aria-label="Редактировать профиль" title="Редактировать профиль">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
+          </Link>
+        </div>
+        <button type="button" onClick={onClose}>Понятно</button>
+      </div>
+    </div>
+  );
+}
+
 function TrainerPage() {
   const { trainer: t, isOwner, photos: storedPhotos, contacts, access, editor } = Route.useLoaderData() as {
     trainer: Trainer;
     isOwner: boolean;
     photos: string[];
     contacts: PublicTrainerContacts;
-    access: "public" | "staff" | "preview";
+    access: "public" | "staff" | "preview" | "owner";
     editor: MagicTrainerDraft | null;
   };
   useEffect(() => {
@@ -708,6 +744,22 @@ function TrainerPage() {
   const staff = Boolean(user && isStaff(user.roles));
   const magicDoor = Boolean(editor?.magicDoor) && !isOwner;
   const [mailOpen, setMailOpen] = useState(magicDoor);
+  const [createdOpen, setCreatedOpen] = useState(false);
+  const createdAudience = isOwner || access === "owner";
+  useEffect(() => {
+    if (!createdAudience) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("created") !== "1") return;
+    setCreatedOpen(true);
+  }, [createdAudience]);
+  function closeCreated() {
+    setCreatedOpen(false);
+    const params = new URLSearchParams(window.location.search);
+    params.delete("created");
+    const query = params.toString();
+    const next = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+    window.history.replaceState(window.history.state, "", next);
+  }
 
   const photos = storedPhotos.length > 0 ? storedPhotos : [t.photo].filter(Boolean);
   const photoMove = useRef(0);
@@ -773,9 +825,12 @@ function TrainerPage() {
               <circle cx="12" cy="16" r="0.9" fill="currentColor" stroke="none" />
             </svg>
             <span>
-              {access === "preview" ? (
+              {access === "preview" || access === "owner" ? (
                 <>
-                  Профиль пока не опубликован и в каталоге его нет. Страница открыта по уникальной ссылке и видна только вам.
+                  Профиль пока не опубликован и в каталоге его нет.{" "}
+                  {access === "owner"
+                    ? "Страница видна только вам."
+                    : "Страница открыта по уникальной ссылке и видна только вам."}
                   {magicDoor ? (
                     <>
                       {" "}
@@ -1131,6 +1186,7 @@ function TrainerPage() {
       </div> : null}
 
       <SiteFooter />
+      {createdOpen ? <CabinetCreatedDialog trainer={t} onClose={closeCreated} /> : null}
       {mailOpen ? <TrainerDoorMailDialog onClose={() => setMailOpen(false)} /> : null}
       {reviewSent ? (
         <CabinetNotice

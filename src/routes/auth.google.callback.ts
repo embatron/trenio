@@ -110,8 +110,11 @@ export const Route = createFileRoute("/auth/google/callback")({
           } else {
             headers.append("set-cookie", sessionCookieHeader(result.token));
             headers.append("set-cookie", clearCookie());
-            const freshCabinet = doorClaim === "claimed" ? "/me?welcome=1" : "/me";
-            headers.set("location", doorHome ? freshCabinet : result.redirectTo);
+            const doorSlug = cookieValue(request.headers.get("cookie"), "trenio_trainer_preview").trim().toLowerCase();
+            const doorPage = doorClaim === "claimed" && /^[a-z0-9._]{1,30}$/.test(doorSlug)
+              ? `/trainers/${doorSlug}?created=1`
+              : "/me";
+            headers.set("location", doorHome ? doorPage : result.redirectTo);
           }
           headers.set("cache-control", "private, no-store");
           return new Response(null, { status: 302, headers });

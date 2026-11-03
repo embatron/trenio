@@ -441,6 +441,7 @@ const CABINET_CSS = `
 .cabinet-contact__value { min-width: 0; color: var(--muted); font-size: 13px; line-height: 1.35; overflow-wrap: anywhere; }
 .cabinet-contact__value:empty { display: none; }
 .cabinet-contact__marks { grid-area: marks; display: flex; justify-content: flex-end; align-items: center; }
+.cabinet-contact__marks .cabinet-mark--off { height: auto; min-height: 28px; max-width: 11rem; padding: 6px 10px; white-space: normal; text-align: right; line-height: 1.25; }
 .cabinet-contact__panel { grid-area: panel; display: grid; gap: 8px; }
 .cabinet-contact__panel label { display: grid; gap: 6px; }
 .cabinet-contact__panel label span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
@@ -450,17 +451,6 @@ const CABINET_CSS = `
 .cabinet-contact__phone .cabinet-contact__actions { flex: 0 0 auto; flex-wrap: nowrap; align-items: center; }
 .cabinet-contact__phone .cabinet-form__ghost { height: 44px; min-height: 44px; white-space: nowrap; }
 .cabinet-contact__field { display: grid; gap: 6px; min-width: 0; }
-.cabinet-welcome__body { display: grid; gap: 12px; padding: 16px 18px; }
-.cabinet-welcome__body p { margin: 0; color: var(--text); font-size: 15px; line-height: 1.45; }
-.cabinet-welcome__body a { color: var(--primary); font-weight: var(--fw-title); }
-.cabinet-welcome__profile { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.cabinet-welcome__profile > div { min-width: 0; display: grid; gap: 2px; flex: 1; }
-.cabinet-welcome__profile strong { color: var(--dark); font-size: 16px; }
-.cabinet-welcome__profile span { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cabinet-welcome__edit { width: 44px; height: 44px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 50%; color: var(--dark); text-decoration: none; }
-.cabinet-welcome__edit:hover { color: var(--primary); }
-.cabinet-welcome__edit svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
-.cabinet-welcome__ok { justify-self: start; }
 .cabinet-contact__field span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
 .cabinet-contact__panel input, .cabinet-contact__field input { width: 100%; min-width: 0; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); color: var(--dark); font: inherit; font-size: 16px; }
 .cabinet-contact__panel .cabinet-contact__phone > input { width: auto; flex: 1 1 auto; height: 44px; }

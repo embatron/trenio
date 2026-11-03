@@ -1,8 +1,5 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { createFileRoute, getRouteApi, Link } from "@tanstack/react-router";
-
-import { UserAvatar } from "@/components/user-avatar";
-import { joinTrainerName } from "@/lib/catalog/trainer-name";
+import { useState, type ReactNode } from "react";
+import { createFileRoute, getRouteApi } from "@tanstack/react-router";
 
 import { SiteFaq } from "@/components/site-faq";
 import { TrainerContactStatus } from "@/components/trainer-contact-status";
@@ -22,9 +19,9 @@ import { countRu, pluralRu } from "@/lib/ru-plural";
 type PulseMode = "day" | "week" | "month";
 
 const PERIOD_COPY: Record<PulseMode, { link: string; visit: string; saved: string; shown: string; same: string; against: string }> = {
-  day: { link: "сутки", visit: "Посещения за сутки", saved: "Добавили за сутки", shown: "Показы за сутки", same: "как вчера", against: "к вчерашнему" },
-  week: { link: "неделя", visit: "За неделю", saved: "Добавили за неделю", shown: "За неделю", same: "как на прошлой неделе", against: "к прошлой неделе" },
-  month: { link: "месяц", visit: "За месяц", saved: "Добавили за месяц", shown: "За месяц", same: "как в прошлом месяце", against: "к прошлому месяцу" },
+  day: { link: "сутки", visit: "Посещения за сутки", saved: "В избранное за сутки", shown: "Показы за сутки", same: "как вчера", against: "к вчерашнему" },
+  week: { link: "неделя", visit: "За неделю", saved: "В избранное за неделю", shown: "За неделю", same: "как на прошлой неделе", against: "к прошлой неделе" },
+  month: { link: "месяц", visit: "За месяц", saved: "В избранное за месяц", shown: "За месяц", same: "как в прошлом месяце", against: "к прошлому месяцу" },
 };
 
 const meRoute = getRouteApi("/me");
@@ -107,7 +104,7 @@ function visitsAnswer(): ReactNode {
   return (
     <>
       <p>Посещение — это когда человек открыл вашу публичную страницу. Один и тот же человек за сутки считается один раз, сутки идут по минскому времени. Если страницу открыли вы сами, этот заход в счётчик не попадает.</p>
-      <p>На одной плашке с посещениями видно, сколько человек добавили карточку в избранное за тот же срок. «Сейчас» — сколько людей держат её в избранном на этот момент. Ссылки «сутки», «неделя» и «месяц» меняют оба числа и сравнение под ними.</p>
+      <p>На той же плашке строка «В избранное» — сколько человек сохранили карточку за тот же срок. «В избранном сейчас» — сколько людей держат её на этот момент. Ссылки «сутки», «неделя» и «месяц» меняют оба числа и сравнение под ними.</p>
       <p>«За сутки» мы сравниваем со вчера. «За неделю» — с прошлой полной неделей: неделя начинается в понедельник, а эта ещё не закончилась. «За месяц» — с прошлым календарным месяцем.</p>
       <p>Плюс рядом с числом значит, что сейчас людей больше, чем в прошлый раз. Минус — меньше. Если написано «как вчера» или похожая фраза, число то же самое.</p>
     </>
@@ -198,76 +195,6 @@ function popularityAnswer(
   );
 }
 
-function CabinetWelcome({ trainer }: { trainer: OwnTrainerProfile }) {
-  const { user } = meRoute.useRouteContext();
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    if (!user || !trainer.slug) return;
-    const key = `trenio-cabinet-welcome:${user.id}`;
-    let seen = false;
-    try {
-      seen = localStorage.getItem(key) === "1";
-    } catch {
-      seen = true;
-    }
-    const params = new URLSearchParams(window.location.search);
-    const fromUrl = params.get("welcome") === "1";
-    let fromSession = false;
-    try {
-      fromSession = sessionStorage.getItem("trenio-cabinet-welcome") === "1";
-      sessionStorage.removeItem("trenio-cabinet-welcome");
-    } catch {
-      fromSession = false;
-    }
-    if (fromUrl) {
-      params.delete("welcome");
-      const query = params.toString();
-      const next = query ? `${window.location.pathname}?${query}` : window.location.pathname;
-      window.history.replaceState(window.history.state, "", next);
-    }
-    if (!seen && (fromUrl || fromSession || user.lastSignupIntent === "trainer_claim")) setOpen(true);
-  }, [trainer.slug, user]);
-
-  if (!open || !trainer.slug) return null;
-  const name = joinTrainerName(trainer.firstName, trainer.lastName) || "Ваш профиль";
-  const face = trainer.photos[0] || trainer.avatarPath || null;
-
-  function dismiss() {
-    if (user) {
-      try {
-        localStorage.setItem(`trenio-cabinet-welcome:${user.id}`, "1");
-      } catch {
-        /* the banner can return in a private window */
-      }
-    }
-    setOpen(false);
-  }
-
-  return (
-    <article className="cabinet-card cabinet-welcome">
-      <div className="cabinet-welcome__body">
-        <p>
-          Кабинет создан.{" "}
-          <Link to="/trainers/$slug" params={{ slug: trainer.slug }}>Профиль</Link>
-          {" "}можно править.
-        </p>
-        <div className="cabinet-welcome__profile">
-          <UserAvatar name={name} src={face} size={44} />
-          <div>
-            <strong>{name}</strong>
-            <span>{trainer.headline || trainer.city || "Страница профиля"}</span>
-          </div>
-          <Link className="cabinet-welcome__edit" to="/me/profile" aria-label="Редактировать профиль" title="Редактировать профиль">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z" /></svg>
-          </Link>
-        </div>
-        <button type="button" className="cabinet-form__ghost cabinet-welcome__ok" onClick={dismiss}>Понятно</button>
-      </div>
-    </article>
-  );
-}
-
 function showsAnswer(): ReactNode {
   return (
     <>
@@ -309,7 +236,6 @@ function MeOverviewPage() {
 
   return (
     <>
-      {trainer?.slug ? <CabinetWelcome trainer={trainer} /> : null}
       {trainer ? <PageStatusCard status={trainer.pageStatus} /> : null}
       {hasProfile && views ? (
         <div className="cabinet-stats">
@@ -332,7 +258,7 @@ function MeOverviewPage() {
               period={views.favorites[visitMode]}
               same={PERIOD_COPY[visitMode].same}
               against={PERIOD_COPY[visitMode].against}
-              note={`сейчас ${countRu(views.favorites.total, "человек", "человека", "человек")}`}
+              note={`в избранном сейчас ${countRu(views.favorites.total, "человек", "человека", "человек")}`}
             />
           </div>
           <div className="cabinet-stat">

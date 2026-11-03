@@ -132,7 +132,9 @@ export const loadVisibleTrainerFn = createServerFn({ method: "GET" })
     if (!row) return null;
     const staff = isStaff(context.user?.roles ?? []);
     const preview = getCookie(PREVIEW_COOKIE) === data.slug;
+    const owner = Boolean(context.user && row.ownerUserId === context.user.id);
     if (row.status === "published") return { trainer: profileToPublished(row), access: "public" as const };
+    if (owner) return { trainer: profileToPublished(row), access: "owner" as const };
     if (preview) return { trainer: profileToPublished(row), access: "preview" as const };
     if (staff) return { trainer: profileToPublished(row), access: "staff" as const };
     return null;
@@ -985,6 +987,7 @@ export const setDoorPasswordFn = createServerFn({ method: "POST" })
     return {
       ok: true as const,
       mailed,
+      slug: owned.slug,
       message: "Дальше можно работать со своим аккаунтом.",
     };
   });

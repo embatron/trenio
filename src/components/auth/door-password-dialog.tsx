@@ -119,12 +119,12 @@ export function DoorPasswordDialog() {
                 setError(null);
                 void save({ data: { password, passwordConfirm: repeat } })
                   .then((result) => {
-                    const message = (result as { message?: string }).message ?? "Дальше можно работать со своим аккаунтом.";
-                    try {
-                      sessionStorage.setItem("trenio-cabinet-welcome", "1");
-                    } catch {
-                      /* the cabinet still opens */
+                    const slug = (result as { slug?: string }).slug;
+                    if (slug && /^[a-z0-9._]{1,30}$/.test(slug)) {
+                      window.location.assign(`/trainers/${slug}?created=1`);
+                      return;
                     }
+                    const message = (result as { message?: string }).message ?? "Дальше можно работать со своим аккаунтом.";
                     setDone(message);
                   })
                   .catch((err: unknown) => {
