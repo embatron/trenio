@@ -664,7 +664,7 @@ function AccountButton() {
               setPending(true);
               void logout()
                 .then(() => {
-                  window.location.href = "/auth/login";
+                  window.location.href = "/";
                 })
                 .finally(() => setPending(false));
             }}

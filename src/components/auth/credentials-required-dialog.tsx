@@ -217,7 +217,7 @@ export function CredentialsRequiredDialog() {
           className="auth-submit"
           onClick={() => {
             void logout().then(() => {
-              window.location.assign("/auth/login");
+              window.location.assign("/");
             });
           }}
         >

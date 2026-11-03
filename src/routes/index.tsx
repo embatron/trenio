@@ -358,9 +358,11 @@ const CSS = `
 .trenio-root {
   font-family: Inter, Manrope, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
-  background: var(--light-bg);
+  background: var(--white);
   min-height: 100vh;
 }
+html:has(.trenio-root),
+body:has(.trenio-root) { background: var(--white); }
 .trenio-root > .site-header {
   position: sticky; top: 0; z-index: 300;
   background: transparent;

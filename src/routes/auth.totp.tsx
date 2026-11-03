@@ -129,7 +129,7 @@ function TotpPage() {
               className="auth-resend"
               onClick={() => {
                 void logout().then(() => {
-                  window.location.assign("/auth/login");
+                  window.location.assign("/");
                 });
               }}
             >
