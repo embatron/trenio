@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 import { MessageBubble } from "@/components/messages/message-bubble";
 import { MessageComposer, type ComposerFile } from "@/components/messages/message-composer";
@@ -30,6 +30,27 @@ function dayLabel(iso: string) {
   }).format(date);
 }
 
+function OpenProfile({ href, className, children }: { href: string; className?: string; children: ReactNode }) {
+  return (
+    <a
+      className={`cabinet-id__line${className ? ` ${className}` : ""}`}
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      title="Открыть публичный профиль"
+    >
+      <strong>{children}</strong>
+      <span className="cabinet-id__open" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M14 5h5v5" />
+          <path d="M13 11l6-6" />
+          <path d="M19 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5" />
+        </svg>
+      </span>
+    </a>
+  );
+}
+
 export type ThreadMessage = MessageDto & {
   status?: "sending" | "failed";
   pendingNames?: string[];
@@ -48,11 +69,10 @@ export function ConversationThread({
   onSend,
   onRetry,
   onReport,
-  onClose,
-  onReopen,
   onBlock,
   busy,
   onBack,
+  onDismiss,
   onPrevious,
   onNext,
 }: {
@@ -67,11 +87,10 @@ export function ConversationThread({
   onSend: (body: string, files: ComposerFile[]) => Promise<void>;
   onRetry: (message: ThreadMessage) => void;
   onReport: (reason: (typeof REPORT_REASONS)[number]["id"], comment: string) => Promise<void>;
-  onClose: () => void;
-  onReopen: () => void;
   onBlock: () => void;
   busy: boolean;
   onBack?: () => void;
+  onDismiss?: () => void;
   onPrevious?: () => void;
   onNext?: () => void;
 }) {
@@ -272,14 +291,7 @@ export function ConversationThread({
 
   const profileHref = thread?.counterpart.href ?? null;
   const trainerCardHref = thread?.counterpart.kind === "user" ? thread.trainerHref : null;
-  const showMenu = Boolean(
-    thread && (
-      (thread.canClose && thread.status === "open")
-      || (thread.canReopen && thread.status === "closed")
-      || thread.canBlock
-      || thread.canReport
-    ),
-  );
+  const showMenu = Boolean(thread && (thread.canBlock || thread.canReport));
   const name = thread ? (
     <TrainerName firstName={thread.counterpart.firstName} lastName={thread.counterpart.lastName} empty={thread.counterpart.name} />
   ) : null;
@@ -318,14 +330,14 @@ export function ConversationThread({
               )}
               <div className="direct-thread__who">
                 {profileHref ? (
-                  <a href={profileHref} target="_blank" rel="noopener noreferrer">{name}</a>
+                  <OpenProfile href={profileHref}>{name}</OpenProfile>
                 ) : (
                   <strong>{name}</strong>
                 )}
                 {trainerCardHref ? (
-                  <a className="direct-thread__trainer" href={trainerCardHref} target="_blank" rel="noopener noreferrer">
+                  <OpenProfile className="direct-thread__trainer" href={trainerCardHref}>
                     Тренер: {thread.trainerName}
-                  </a>
+                  </OpenProfile>
                 ) : null}
               </div>
             </div>
@@ -358,16 +370,6 @@ export function ConversationThread({
                   </button>
                   {moreOpen ? (
                     <div className="direct-menu__list" role="menu">
-                      {thread.canClose && thread.status === "open" ? (
-                        <button type="button" role="menuitem" disabled={busy} onClick={() => { setMoreOpen(false); onClose(); }}>
-                          Закрыть переписку
-                        </button>
-                      ) : null}
-                      {thread.canReopen && thread.status === "closed" ? (
-                        <button type="button" role="menuitem" disabled={busy} onClick={() => { setMoreOpen(false); onReopen(); }}>
-                          Открыть переписку
-                        </button>
-                      ) : null}
                       {thread.canBlock ? (
                         <button type="button" role="menuitem" disabled={busy} onClick={() => { setMoreOpen(false); onBlock(); }}>
                           Заблокировать
@@ -381,6 +383,13 @@ export function ConversationThread({
                     </div>
                   ) : null}
                 </div>
+              ) : null}
+              {!mobile && onDismiss ? (
+                <button type="button" className="direct-icon" aria-label="Закрыть" title="Закрыть" onClick={onDismiss}>
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                    <path d="M6 6l12 12M18 6L6 18" style={{ fill: "none", stroke: "currentColor", strokeWidth: "var(--icon-stroke)", strokeLinecap: "round", strokeLinejoin: "round" }} />
+                  </svg>
+                </button>
               ) : null}
             </div>
           </header>

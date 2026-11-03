@@ -20,7 +20,6 @@ import {
   listMessagesFn,
   listReportsFn,
   markConversationReadFn,
-  reopenConversationFn,
   sendMessageFn,
   uploadMessageFileFn,
 } from "@/lib/messages/functions";
@@ -95,10 +94,9 @@ function StaffThreads() {
   const sendFn = useServerFn(sendMessageFn);
   const uploadFn = useServerFn(uploadMessageFileFn);
   const markFn = useServerFn(markConversationReadFn);
-  const closeFn = useServerFn(closeConversationFn);
-  const reopenFn = useServerFn(reopenConversationFn);
   const blockFn = useServerFn(blockPairFn);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [quiet, setQuiet] = useState(false);
   const [extra, setExtra] = useState<ConversationListItem[]>([]);
   const [cursor, setCursor] = useState<ConversationCursor | null | undefined>(undefined);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -124,9 +122,9 @@ function StaffThreads() {
   }, [list.data?.items, extra]);
   const latestId = items[0]?.id ?? null;
   useEffect(() => {
-    if (mobile || openId || list.isPending || !latestId) return;
+    if (quiet || mobile || openId || list.isPending || !latestId) return;
     setOpenId(latestId);
-  }, [mobile, openId, list.isPending, latestId]);
+  }, [quiet, mobile, openId, list.isPending, latestId]);
   const newestId = thread.data?.messages[0]?.id ?? 0;
   useEffect(() => {
     if (!openId || !newestId || !thread.data?.canReport) return;
@@ -177,7 +175,7 @@ function StaffThreads() {
   }
 
   return (
-    <div className={`direct${mobile ? " is-mobile" : ""}${mobile && openId ? " is-thread" : ""}`}>
+    <div className={`direct${mobile ? " is-mobile" : ""}${openId ? " is-open" : ""}${mobile && openId ? " is-thread" : ""}`}>
       <ConversationList
         view="staff"
         items={items}
@@ -211,11 +209,13 @@ function StaffThreads() {
         onSend={send}
         onRetry={() => undefined}
         onReport={async () => undefined}
-        onClose={() => void act(() => closeFn({ data: { conversationId: openId! } }))}
-        onReopen={() => void act(() => reopenFn({ data: { conversationId: openId! } }))}
         onBlock={() => void act(() => blockFn({ data: { conversationId: openId! } }), "Пара заблокирована, диалог закрыт")}
         busy={busy}
         onBack={() => setOpenId(null)}
+        onDismiss={() => {
+          setQuiet(true);
+          setOpenId(null);
+        }}
         onPrevious={openIndex > 0 ? () => setOpenId(items[openIndex - 1]?.id ?? null) : undefined}
         onNext={openIndex >= 0 && openIndex < items.length - 1 ? () => setOpenId(items[openIndex + 1]?.id ?? null) : undefined}
       />
@@ -237,7 +237,6 @@ function ReportQueue({
   const dismissFn = useServerFn(dismissReportFn);
   const blockFn = useServerFn(blockPairFn);
   const closeFn = useServerFn(closeConversationFn);
-  const reopenFn = useServerFn(reopenConversationFn);
   const [status, setStatus] = useState<"" | ReportRow["status"]>("");
   const [openId, setOpenId] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -354,8 +353,6 @@ function ReportQueue({
             onSend={async () => undefined}
             onRetry={() => undefined}
             onReport={async () => undefined}
-            onClose={() => void act(opened.id, () => closeFn({ data: { conversationId: opened.conversationId } }))}
-            onReopen={() => void act(opened.id, () => reopenFn({ data: { conversationId: opened.conversationId } }))}
             onBlock={() => void act(opened.id, () => blockFn({ data: { conversationId: opened.conversationId } }), "Пара заблокирована, диалог закрыт")}
             busy={busy === opened.id}
           />

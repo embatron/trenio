@@ -12,11 +12,9 @@ import type { ComposerFile } from "@/components/messages/message-composer";
 import { authErrorMessage } from "@/lib/auth/errors";
 import {
   blockPairFn,
-  closeConversationFn,
   listConversationsFn,
   listMessagesFn,
   markConversationReadFn,
-  reopenConversationFn,
   reportMessageFn,
   sendMessageFn,
   uploadMessageFileFn,
@@ -25,6 +23,8 @@ import { CONVERSATION_POLL_MS, THREAD_POLL_MS, visiblePollInterval } from "@/lib
 import { newMessageClientId } from "@/lib/messages/attachments";
 import { DAILY_TRAINER_LIMIT_MESSAGE, type ConversationCursor, type ConversationListItem, type MessageCursor, type MessageDto } from "@/lib/messages/schemas";
 import { useIsMobile } from "@/hooks/use-mobile";
+
+const quietLists = new Set<string>();
 
 function mergeById<T extends { id: string | number }>(first: T[], extra: T[]) {
   const seen = new Set(first.map((item) => item.id));
@@ -65,8 +65,6 @@ export function MessagesWorkspace({
   const sendFn = useServerFn(sendMessageFn);
   const uploadFn = useServerFn(uploadMessageFileFn);
   const markFn = useServerFn(markConversationReadFn);
-  const closeFn = useServerFn(closeConversationFn);
-  const reopenFn = useServerFn(reopenConversationFn);
   const blockFn = useServerFn(blockPairFn);
   const reportFn = useServerFn(reportMessageFn);
   const [extraItems, setExtraItems] = useState<ConversationListItem[]>([]);
@@ -147,7 +145,7 @@ export function MessagesWorkspace({
   );
   const latestId = items[0]?.id ?? null;
   useEffect(() => {
-    if (mobile || conversationId || openError || trainerHold || listQuery.isPending || !latestId) return;
+    if (quietLists.has(view) || mobile || conversationId || openError || trainerHold || listQuery.isPending || !latestId) return;
     if (window.matchMedia("(max-width: 767px)").matches) return;
     void navigate({
       to: view === "own" ? "/account/messages/$conversationId" : "/me/messages/$conversationId",
@@ -272,7 +270,7 @@ export function MessagesWorkspace({
   const listError = listQuery.error ? authErrorMessage(listQuery.error) : null;
 
   return (
-    <div className={`direct${mobile ? " is-mobile" : ""}${conversationId ? " is-thread" : ""}`}>
+    <div className={`direct${mobile ? " is-mobile" : ""}${conversationId ? " is-thread is-open" : ""}`}>
       <ConversationList
         view={view}
         items={items}
@@ -319,11 +317,13 @@ export function MessagesWorkspace({
           const result = await reportFn({ data: { conversationId, reason, comment } });
           toast(result.duplicate ? "Вы уже жаловались на эту переписку." : "Жалоба отправлена. Администратор получит письмо.");
         }}
-        onClose={() => void run(() => closeFn({ data: { conversationId: conversationId! } }), "Переписка закрыта")}
-        onReopen={() => void run(() => reopenFn({ data: { conversationId: conversationId! } }))}
         onBlock={() => void run(() => blockFn({ data: { conversationId: conversationId! } }), "Пара заблокирована, диалог закрыт")}
         busy={busy}
         onBack={mobile ? () => void navigate({ to: listPath }) : undefined}
+        onDismiss={() => {
+          quietLists.add(view);
+          void navigate({ to: listPath });
+        }}
         onPrevious={previousId ? () => openAt(previousId) : undefined}
         onNext={nextId ? () => openAt(nextId) : undefined}
       />
@@ -341,6 +341,8 @@ export function MessagesWorkspace({
 
 export const DIRECT_CSS = `
 .direct { display: grid; grid-template-columns: 1fr; grid-template-rows: minmax(180px, 34vh) minmax(320px, 1fr); min-height: 70vh; border: 1px solid var(--line); border-radius: var(--card-radius); background: var(--white); overflow: hidden; }
+.cabinet-card:has(> .direct) { overflow: hidden; }
+.cabinet-card > .direct { border: 0; border-radius: 0; background: transparent; }
 .direct-list, .direct-thread { min-width: 0; min-height: 0; }
 .direct-list { display: flex; flex-direction: column; border-bottom: 1px solid var(--line); }
 .direct-list h2 { margin: 0; padding: 14px 16px; font-size: 16px; color: var(--dark); }
@@ -367,11 +369,18 @@ export const DIRECT_CSS = `
 .direct-thread__identity { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
 .direct-person__face { display: flex; flex: 0 0 auto; border-radius: 50%; }
 .direct-thread__head strong, .direct-thread__head a { color: var(--dark); font-weight: var(--fw-title); text-decoration: none; }
-.direct-thread__head span:not(.trainer-name):not(.trainer-name__line):not(.user-avatar):not(.direct-back__label) { display: block; color: var(--muted); font-size: 13px; }
+.direct-thread__head span:not(.trainer-name):not(.trainer-name__line):not(.user-avatar):not(.direct-back__label):not(.cabinet-id__open) { display: block; color: var(--muted); font-size: 13px; }
+.direct-thread__who a.cabinet-id__line { min-height: 0; gap: 0; }
+.direct-thread__who a.direct-thread__trainer,
+.direct-thread__who a.direct-thread__trainer strong { color: var(--muted); font-size: 13px; font-weight: var(--fw-ui); }
+.direct-thread__who a.cabinet-id__line:hover,
+.direct-thread__who a.cabinet-id__line:hover strong,
+.direct-thread__who a.cabinet-id__line:hover .trainer-name__line,
+.direct-thread__who a.cabinet-id__line:hover .cabinet-id__open { color: var(--primary); }
 .direct-thread__head .trainer-name__line { color: var(--dark); font-size: inherit; }
 .direct-thread__who { min-width: 0; flex: 1; display: grid; }
-.direct-thread__who a { display: inline-flex; align-items: center; min-height: 44px; max-width: 100%; }
-.direct-thread__who a.direct-thread__trainer { min-height: 28px; color: var(--muted); font-size: 13px; font-weight: var(--fw-ui); }
+.direct-thread__who a { display: inline-flex; align-items: center; max-width: 100%; }
+.direct-thread__who a.direct-thread__trainer { min-height: 28px; }
 .direct-switch { display: flex; flex: 0 0 auto; }
 .direct-back svg { display: block; }
 .direct-thread__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
@@ -469,8 +478,11 @@ export const DIRECT_CSS = `
 .direct-report-form button.direct-report-form__send:disabled { opacity: 0.55; cursor: default; }
 .direct-more { margin: 8px auto; }
 @media (min-width: 768px) {
-  .direct:not(.is-mobile) { grid-template-columns: minmax(240px, 320px) minmax(0, 1fr); grid-template-rows: minmax(560px, 70vh); }
-  .direct:not(.is-mobile) .direct-list { border-bottom: 0; border-right: 1px solid var(--line); }
+  .direct:not(.is-mobile) { grid-template-rows: minmax(560px, 70vh); }
+  .direct:not(.is-mobile) .direct-list { border-bottom: 0; }
+  .direct:not(.is-mobile).is-open { grid-template-columns: minmax(240px, 320px) minmax(0, 1fr); }
+  .direct:not(.is-mobile).is-open .direct-list { border-right: 1px solid var(--line); }
+  .direct:not(.is-mobile):not(.is-open) .direct-thread { display: none; }
 }
 .direct.is-mobile { display: flex; flex-direction: column; min-height: 60vh; }
 .direct.is-mobile:not(.is-thread) .direct-thread { display: none; }
