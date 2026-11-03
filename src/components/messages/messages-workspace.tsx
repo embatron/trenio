@@ -259,6 +259,14 @@ export function MessagesWorkspace({
   useEffect(() => {
     if (limitMessage) setLimitOpen(true);
   }, [limitMessage]);
+  const threadPath = view === "own" ? "/account/messages/$conversationId" : "/me/messages/$conversationId";
+  const listPath = view === "own" ? "/account/messages" : "/me/messages";
+  const openAt = (id: string) => {
+    void navigate({ to: threadPath, params: { conversationId: id } });
+  };
+  const openIndex = conversationId ? items.findIndex((item) => item.id === conversationId) : -1;
+  const previousId = openIndex > 0 ? items[openIndex - 1]?.id ?? null : null;
+  const nextId = openIndex >= 0 && openIndex < items.length - 1 ? items[openIndex + 1]?.id ?? null : null;
   const shown = (message: string | null | undefined) => message === DAILY_TRAINER_LIMIT_MESSAGE ? null : message ?? null;
   const threadError = shown(openError) || shown(actionError) || (threadQuery.error ? shown(authErrorMessage(threadQuery.error)) : null);
   const listError = listQuery.error ? authErrorMessage(listQuery.error) : null;
@@ -315,6 +323,9 @@ export function MessagesWorkspace({
         onReopen={() => void run(() => reopenFn({ data: { conversationId: conversationId! } }))}
         onBlock={() => void run(() => blockFn({ data: { conversationId: conversationId! } }), "Пара заблокирована, диалог закрыт")}
         busy={busy}
+        onBack={mobile ? () => void navigate({ to: listPath }) : undefined}
+        onPrevious={previousId ? () => openAt(previousId) : undefined}
+        onNext={nextId ? () => openAt(nextId) : undefined}
       />
       {limitOpen && limitMessage ? (
         <CabinetNotice
@@ -351,17 +362,23 @@ export const DIRECT_CSS = `
 .direct-list__meta { display: grid; justify-items: end; gap: 4px; color: var(--muted); font-size: 12px; }
 .direct-unread { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--primary); color: #fff; font-size: 11px; font-weight: var(--fw-title); line-height: 20px; text-align: center; }
 .direct-thread { display: flex; flex-direction: column; }
-.direct-thread__head { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.direct-thread__pane { display: flex; flex-direction: column; flex: 1; min-height: 0; animation: direct-switch 0.24s ease; }
+.direct-thread__head { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+.direct-thread__identity { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+.direct-person__face { display: flex; flex: 0 0 auto; border-radius: 50%; }
 .direct-thread__head strong, .direct-thread__head a { color: var(--dark); font-weight: var(--fw-title); text-decoration: none; }
-.direct-thread__head span:not(.trainer-name):not(.trainer-name__line) { display: block; color: var(--muted); font-size: 13px; }
+.direct-thread__head span:not(.trainer-name):not(.trainer-name__line):not(.user-avatar):not(.direct-back__label) { display: block; color: var(--muted); font-size: 13px; }
 .direct-thread__head .trainer-name__line { color: var(--dark); font-size: inherit; }
-.direct-thread__who { min-width: 0; flex: 1; }
-.direct-thread__who a { display: inline-flex; align-items: center; min-height: 44px; }
+.direct-thread__who { min-width: 0; flex: 1; display: grid; }
+.direct-thread__who a { display: inline-flex; align-items: center; min-height: 44px; max-width: 100%; }
+.direct-thread__who a.direct-thread__trainer { min-height: 28px; color: var(--muted); font-size: 13px; font-weight: var(--fw-ui); }
+.direct-switch { display: flex; flex: 0 0 auto; }
+.direct-back svg { display: block; }
 .direct-thread__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
 .direct-thread__actions button, .direct-back, .direct-more, .direct-composer__send, .direct-bubble__retry, .direct-report-form button {
   min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-weight: var(--fw-title); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center;
 }
-.direct-back { margin-right: 4px; }
+.direct-back { position: relative; margin-right: 0; gap: 2px; padding: 0 10px 0 8px; flex: 0 0 auto; }
 .direct-log { flex: 1; min-height: 0; overflow: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; overflow-anchor: none; }
 .direct-day { align-self: center; margin: 8px 0; color: var(--muted); font-size: 12px; }
 .direct-row { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; max-width: 100%; overflow-anchor: none; }
@@ -458,17 +475,27 @@ export const DIRECT_CSS = `
 .direct.is-mobile { display: flex; flex-direction: column; min-height: 60vh; }
 .direct.is-mobile:not(.is-thread) .direct-thread { display: none; }
 .direct.is-mobile:not(.is-thread) .direct-list { flex: 1; min-height: 50vh; border-bottom: 0; }
-.direct.is-mobile.is-thread { position: fixed; z-index: 280; left: 0; right: 0; top: var(--direct-top, 72px); bottom: 0; display: flex; min-height: 0; border: 0; border-radius: 0; padding-bottom: env(safe-area-inset-bottom); }
+.direct.is-mobile.is-thread { position: fixed; z-index: 280; left: 0; right: 0; top: var(--direct-top, 72px); bottom: var(--keyboard-inset, 0px); display: flex; min-height: 0; border: 0; border-radius: 0; padding-bottom: var(--keyboard-pad, env(safe-area-inset-bottom)); transition: bottom 0.2s ease, padding-bottom 0.2s ease; animation: direct-sheet 0.32s cubic-bezier(0.22, 0.8, 0.28, 1); }
 .direct.is-mobile.is-thread .direct-list { display: none; }
 .direct.is-mobile.is-thread .direct-thread { flex: 1; min-height: 0; height: 100%; }
-.direct.is-mobile.is-thread .direct-thread__head { flex-wrap: wrap; align-items: center; padding-inline: var(--layout-gutter); }
+.direct.is-mobile.is-thread .direct-thread__head { flex-wrap: nowrap; align-items: center; padding-inline: var(--layout-gutter); }
 .direct.is-mobile.is-thread .direct-thread__who .trainer-name { max-width: 100%; }
 .direct.is-mobile.is-thread .direct-thread__who .trainer-name__line { overflow: hidden; text-overflow: ellipsis; }
-.direct.is-mobile.is-thread .direct-thread__actions { flex: 1 0 100%; margin-left: 0; }
+.direct.is-mobile.is-thread .direct-thread__actions { flex: 0 0 auto; margin-left: 0; flex-wrap: nowrap; }
+.direct.is-mobile .direct-editor .rsw-ce { font-size: 16px; }
 .direct.is-mobile.is-thread .direct-log,
 .direct.is-mobile.is-thread .direct-composer__bar,
 .direct.is-mobile.is-thread .direct-draft,
 .direct.is-mobile.is-thread .direct-composer__hint { padding-inline: var(--layout-gutter); }
 .direct.is-mobile .direct-editor .rsw-ce { min-height: 56px; max-height: 120px; }
 body:has(.direct.is-mobile.is-thread) { overflow: hidden; }
+@keyframes direct-switch { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes direct-sheet { from { transform: translateX(100%); } to { transform: none; } }
+@media (max-width: 480px) {
+  .direct-back { width: 44px; padding: 0; justify-content: center; }
+  .direct-back__label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .direct-thread__pane, .direct.is-mobile.is-thread { animation: none; transition: none; }
+}
 `;

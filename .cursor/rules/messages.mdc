@@ -28,7 +28,9 @@ The full file map and edit checklist are in `.cursor/skills/trenio-messages/SKIL
 - The sender sees «Доставлено» after the server stores the message, and «Прочитано» when the other participant's `last_read_message_id` is at least that id. An unowned profile stays «Доставлено».
 - The messages icon is an envelope. The reviews icon stays a speech bubble. Sidebar counts for favorites, reviews, and messages are small numbers. The header envelope always shows its number.
 - The list is ordered by latest activity. With no conversation in the URL, open the first row. A row highlights on hover, and the open row stays highlighted. Leave `?trainer=` alone until that thread is ready.
-- In a dialog the given name and surname are one line. Do not label the thread «Открыта» or «Закрыта». The composer uses 14px text.
+- In a dialog the given name and surname are one line. Do not label the thread «Открыта» or «Закрыта». The composer uses 14px text on a wide screen and 16px on a phone, so the system keyboard does not zoom the page.
+- The portrait is the published card photo when that account has one, otherwise the account photo. A published name opens `/trainers/{slug}` in a new tab. A plain account name stays text. When the header shows the client, «Тренер: …» opens that thread's card in a new tab.
+- On a phone the thread slides in under the header. «К списку» and a swipe from the left edge return to the list. Up and down in the header switch to the neighboring thread. The composer rises above the keyboard. Close, reopen, and block stay in the «…» menu.
 - Admin and superadmin cabinets use `.layout-staff` (1680px). Trainer and account cabinets stay on 1240px.
 
 ## Live updates

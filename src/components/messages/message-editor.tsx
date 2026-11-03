@@ -223,6 +223,10 @@ export function MessageEditor({
           disabled={disabled}
           placeholder={disabled ? "Сообщения закрыты" : "Напишите сообщение"}
           onChange={(event) => onChange(event.target.value)}
+          onFocus={(event) => {
+            const field = event.currentTarget;
+            window.setTimeout(() => field.scrollIntoView({ block: "end", behavior: "smooth" }), 80);
+          }}
           onPaste={(event) => {
             const files = filesFromClipboard(event.clipboardData);
             if (files.length === 0) return;

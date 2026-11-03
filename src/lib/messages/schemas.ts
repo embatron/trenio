@@ -118,6 +118,8 @@ export type CounterpartDto = {
   lastName: string;
   avatarPath: string;
   slug: string | null;
+  /** Published card. Empty when this person has no public page. */
+  href: string | null;
   kind: "user" | "trainer";
 };
 
@@ -170,6 +172,8 @@ export type ThreadResult = {
   counterpart: CounterpartDto;
   trainerName: string;
   trainerSlug: string;
+  /** Published card of the profile this thread is about. */
+  trainerHref: string | null;
   canWrite: boolean;
   canClose: boolean;
   canReopen: boolean;

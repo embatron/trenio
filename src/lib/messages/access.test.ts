@@ -3,7 +3,7 @@ import test from "node:test";
 
 import { AuthError } from "@/lib/auth/errors";
 import { GOD_USER_ID } from "@/lib/auth/god";
-import { assertConversationAccess, canMessage, getCounterparty, type ConversationAccess, type MessageActor } from "@/lib/messages/service";
+import { assertConversationAccess, canMessage, cardPortrait, getCounterparty, portraitPath, publicTrainerHref, type ConversationAccess, type MessageActor } from "@/lib/messages/service";
 
 const userId = "11111111-1111-4111-8111-111111111111";
 const ownerId = "22222222-2222-4222-8222-222222222222";
@@ -92,9 +92,22 @@ test("getCounterparty shows the trainer to the initiator and the user to everyon
     trainerLastName: "",
     trainerAvatarPath: "/trainers/i.jpg",
     trainerSlug: "ivan",
+    trainerHref: "/trainers/ivan",
+    userHref: null,
   };
   assert.equal(getCounterparty({ ...base, viewerId: userId }).kind, "trainer");
   assert.equal(getCounterparty({ ...base, viewerId: userId }).slug, "ivan");
+  assert.equal(getCounterparty({ ...base, viewerId: userId }).href, "/trainers/ivan");
   assert.equal(getCounterparty({ ...base, viewerId: ownerId }).kind, "user");
+  assert.equal(getCounterparty({ ...base, viewerId: ownerId }).href, null);
   assert.equal(getCounterparty({ ...base, viewerId: staffId }).name, "Анна");
+  assert.equal(
+    getCounterparty({ ...base, viewerId: staffId, userHref: "/trainers/anna", userAvatarPath: "/trainers/anna.jpg" }).href,
+    "/trainers/anna",
+  );
+  assert.equal(publicTrainerHref("ivan", "published"), "/trainers/ivan");
+  assert.equal(publicTrainerHref("ivan", "draft"), null);
+  assert.equal(cardPortrait("/a.jpg?v=1", []), "/a.jpg");
+  assert.equal(portraitPath("/card.jpg", "/account.jpg"), "/card.jpg");
+  assert.equal(portraitPath("", "/account.jpg"), "/account.jpg");
 });

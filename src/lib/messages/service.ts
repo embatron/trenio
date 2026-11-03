@@ -111,6 +111,20 @@ export function canMessage(input: {
   return { ok: true };
 }
 
+export function cardPortrait(avatarPath: string, photos: readonly string[] | null | undefined) {
+  const raw = photos?.find((item) => item.trim()) || avatarPath || "";
+  return raw.split("?")[0].trim();
+}
+
+export function publicTrainerHref(slug: string, status: string) {
+  if (status !== "published" || !slug) return null;
+  return `/trainers/${slug}`;
+}
+
+export function portraitPath(cardPath: string, accountPath: string) {
+  return cardPath.trim() || accountPath.trim();
+}
+
 export function getCounterparty(input: {
   viewerId: string;
   conversationUserId: string;
@@ -118,11 +132,13 @@ export function getCounterparty(input: {
   userFirstName: string;
   userLastName: string;
   userAvatarPath: string;
+  userHref: string | null;
   trainerName: string;
   trainerFirstName: string;
   trainerLastName: string;
   trainerAvatarPath: string;
   trainerSlug: string;
+  trainerHref: string | null;
 }): CounterpartDto {
   if (input.viewerId === input.conversationUserId) {
     return {
@@ -131,6 +147,7 @@ export function getCounterparty(input: {
       lastName: input.trainerLastName,
       avatarPath: input.trainerAvatarPath,
       slug: input.trainerSlug || null,
+      href: input.trainerHref,
       kind: "trainer",
     };
   }
@@ -140,8 +157,48 @@ export function getCounterparty(input: {
     lastName: input.userLastName,
     avatarPath: input.userAvatarPath,
     slug: null,
+    href: input.userHref,
     kind: "user",
   };
+}
+
+type OwnedFace = { avatarPath: string; href: string | null };
+
+async function facesByOwner(userIds: string[]) {
+  const ids = [...new Set(userIds.filter(Boolean))];
+  const faces = new Map<string, OwnedFace>();
+  if (ids.length === 0) return faces;
+  const rows = await getDb()
+    .select({
+      ownerUserId: trainerProfiles.ownerUserId,
+      slug: trainerProfiles.slug,
+      status: trainerProfiles.status,
+      avatarPath: trainerProfiles.avatarPath,
+      photos: trainerProfiles.photos,
+      updatedAt: trainerProfiles.updatedAt,
+    })
+    .from(trainerProfiles)
+    .where(inArray(trainerProfiles.ownerUserId, ids));
+  const best = new Map<string, (typeof rows)[number]>();
+  const rank = (status: string) => (status === "published" ? 2 : status === "archived" ? -1 : 1);
+  for (const row of rows) {
+    if (!row.ownerUserId || rank(row.status) < 0) continue;
+    const current = best.get(row.ownerUserId);
+    if (
+      !current
+      || rank(row.status) > rank(current.status)
+      || (rank(row.status) === rank(current.status) && row.updatedAt > current.updatedAt)
+    ) {
+      best.set(row.ownerUserId, row);
+    }
+  }
+  for (const [id, row] of best) {
+    faces.set(id, {
+      avatarPath: cardPortrait(row.avatarPath, row.photos),
+      href: publicTrainerHref(row.slug, row.status),
+    });
+  }
+  return faces;
 }
 
 function allows(actor: MessageActor, row: ConversationAccess, mode: AccessMode) {
@@ -725,6 +782,7 @@ export async function listConversations(
       trainerFirstName: trainerProfiles.firstName,
       trainerLastName: trainerProfiles.lastName,
       trainerAvatar: trainerProfiles.avatarPath,
+      trainerStatus: trainerProfiles.status,
       ownerUserId: trainerProfiles.ownerUserId,
       hostUserId: conversations.hostUserId,
       hostAvatar: hostUsers.avatarPath,
@@ -778,22 +836,27 @@ export async function listConversations(
     total = Number(counted?.n ?? 0);
   }
 
+  const faces = await facesByOwner(page.map((row) => row.userId));
   const items = page.map((row) => {
     const activity = iso(row.activityAt) ?? new Date(0).toISOString();
     const clientName = personName(row.userFirstName, row.userLastName);
     const trainer = listedTrainer(row);
+    const face = faces.get(row.userId);
+    const trainerHref = publicTrainerHref(trainer.slug, row.trainerStatus ?? "");
     const counterpart = getCounterparty({
       viewerId: actor.id,
       conversationUserId: row.userId,
       userName: clientName,
       userFirstName: row.userFirstName,
       userLastName: row.userLastName ?? "",
-      userAvatarPath: row.userAvatar,
+      userAvatarPath: portraitPath(face?.avatarPath ?? "", row.userAvatar),
+      userHref: face?.href ?? null,
       trainerName: trainer.name,
       trainerFirstName: trainer.firstName,
       trainerLastName: trainer.lastName,
       trainerAvatarPath: trainer.avatarPath,
       trainerSlug: trainer.slug,
+      trainerHref,
     });
     const involved = row.userId === actor.id || row.ownerUserId === actor.id || row.hostUserId === actor.id;
     return {
@@ -856,6 +919,8 @@ export async function listMessages(
     .from(users)
     .where(eq(users.id, loaded.conversation.userId))
     .limit(1);
+  const face = (await facesByOwner([loaded.conversation.userId])).get(loaded.conversation.userId);
+  const trainerHref = publicTrainerHref(loaded.profile.slug, loaded.profile.status);
   const oldest = page[page.length - 1];
   const messageIds = page.map((row) => asNumber(row.id));
   const [readUpTo, viewerReadMessageId, files] = await Promise.all([
@@ -868,18 +933,21 @@ export async function listMessages(
     status: loaded.conversation.status,
     trainerName: trainerLabel(loaded.profile.fullName, loaded.profile.firstName, loaded.profile.lastName),
     trainerSlug: loaded.profile.slug,
+    trainerHref,
     counterpart: getCounterparty({
       viewerId: actor.id,
       conversationUserId: loaded.conversation.userId,
       userName: personName(user?.firstName ?? "", user?.lastName),
       userFirstName: user?.firstName ?? "",
       userLastName: user?.lastName ?? "",
-      userAvatarPath: user?.avatarPath ?? "",
+      userAvatarPath: portraitPath(face?.avatarPath ?? "", user?.avatarPath ?? ""),
+      userHref: face?.href ?? null,
       trainerName: trainerLabel(loaded.profile.fullName, loaded.profile.firstName, loaded.profile.lastName),
       trainerFirstName: loaded.profile.firstName,
       trainerLastName: loaded.profile.lastName,
       trainerAvatarPath: loaded.profile.avatarPath,
       trainerSlug: loaded.profile.slug,
+      trainerHref,
     }),
     canWrite,
     canClose: allows(actor, loaded.access, "close"),

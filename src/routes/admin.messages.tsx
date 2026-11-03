@@ -134,6 +134,7 @@ function StaffThreads() {
   }, [openId, newestId, thread.data?.canReport, markFn]);
   const next = cursor === undefined ? list.data?.nextCursor ?? null : cursor;
   const messages: ThreadMessage[] = (thread.data?.messages ?? []).slice().reverse();
+  const openIndex = openId ? items.findIndex((item) => item.id === openId) : -1;
 
   async function send(body: string, files: ComposerFile[] = []) {
     if (!openId || !thread.data?.canWrite) return;
@@ -215,6 +216,8 @@ function StaffThreads() {
         onBlock={() => void act(() => blockFn({ data: { conversationId: openId! } }), "Пара заблокирована, диалог закрыт")}
         busy={busy}
         onBack={() => setOpenId(null)}
+        onPrevious={openIndex > 0 ? () => setOpenId(items[openIndex - 1]?.id ?? null) : undefined}
+        onNext={openIndex >= 0 && openIndex < items.length - 1 ? () => setOpenId(items[openIndex + 1]?.id ?? null) : undefined}
       />
     </div>
   );

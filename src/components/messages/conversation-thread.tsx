@@ -53,6 +53,8 @@ export function ConversationThread({
   onBlock,
   busy,
   onBack,
+  onPrevious,
+  onNext,
 }: {
   view: "own" | "inbox";
   thread: ThreadResult | null;
@@ -70,8 +72,11 @@ export function ConversationThread({
   onBlock: () => void;
   busy: boolean;
   onBack?: () => void;
+  onPrevious?: () => void;
+  onNext?: () => void;
 }) {
   const mobile = useIsMobile();
+  const threadRoot = useRef<HTMLDivElement>(null);
   const [reportOpen, setReportOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
@@ -177,6 +182,72 @@ export function ConversationThread({
   }, [conversationId]);
 
   useEffect(() => {
+    if (!mobile || !conversationId) return;
+    const root = document.documentElement;
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+    let frame = 0;
+    const apply = () => {
+      const raw = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop);
+      const inset = raw > 80 ? Math.round(raw) : 0;
+      if (inset > 0) {
+        root.style.setProperty("--keyboard-inset", `${inset}px`);
+        root.style.setProperty("--keyboard-pad", "0px");
+      } else {
+        root.style.removeProperty("--keyboard-inset");
+        root.style.removeProperty("--keyboard-pad");
+      }
+    };
+    const schedule = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(apply);
+    };
+    viewport.addEventListener("resize", schedule);
+    viewport.addEventListener("scroll", schedule);
+    apply();
+    return () => {
+      cancelAnimationFrame(frame);
+      viewport.removeEventListener("resize", schedule);
+      viewport.removeEventListener("scroll", schedule);
+      root.style.removeProperty("--keyboard-inset");
+      root.style.removeProperty("--keyboard-pad");
+    };
+  }, [mobile, conversationId]);
+
+  useEffect(() => {
+    if (!mobile || !onBack) return;
+    const el = threadRoot.current;
+    if (!el) return;
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+    const down = (event: PointerEvent) => {
+      if (event.clientX > 28) return;
+      tracking = true;
+      startX = event.clientX;
+      startY = event.clientY;
+    };
+    const up = (event: PointerEvent) => {
+      if (!tracking) return;
+      tracking = false;
+      const dx = event.clientX - startX;
+      const dy = Math.abs(event.clientY - startY);
+      if (dx > 72 && dy < 48) onBack();
+    };
+    const cancel = () => {
+      tracking = false;
+    };
+    el.addEventListener("pointerdown", down);
+    el.addEventListener("pointerup", up);
+    el.addEventListener("pointercancel", cancel);
+    return () => {
+      el.removeEventListener("pointerdown", down);
+      el.removeEventListener("pointerup", up);
+      el.removeEventListener("pointercancel", cancel);
+    };
+  }, [mobile, onBack, conversationId]);
+
+  useEffect(() => {
     if (!moreOpen) return;
     const onPointer = (event: PointerEvent) => {
       if (!moreRef.current?.contains(event.target as Node)) setMoreOpen(false);
@@ -199,8 +270,22 @@ export function ConversationThread({
         : "Сейчас нельзя отправить сообщение."
       : null;
 
+  const profileHref = thread?.counterpart.href ?? null;
+  const trainerCardHref = thread?.counterpart.kind === "user" ? thread.trainerHref : null;
+  const showMenu = Boolean(
+    thread && (
+      (thread.canClose && thread.status === "open")
+      || (thread.canReopen && thread.status === "closed")
+      || thread.canBlock
+      || thread.canReport
+    ),
+  );
+  const name = thread ? (
+    <TrainerName firstName={thread.counterpart.firstName} lastName={thread.counterpart.lastName} empty={thread.counterpart.name} />
+  ) : null;
+
   return (
-    <div className="direct-thread">
+    <div className="direct-thread" ref={threadRoot}>
       {!thread && loading ? (
         <div className="direct-skeletons" aria-hidden="true"><span /><span /><span /></div>
       ) : error ? (
@@ -209,34 +294,57 @@ export function ConversationThread({
         <>
           <header className="direct-thread__head">
             {mobile && onBack ? (
-              <button type="button" className="direct-back" onClick={onBack}>К списку</button>
+              <button type="button" className="direct-back" onClick={onBack} aria-label="К списку">
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                  <path d="M15 6l-6 6 6 6" style={{ fill: "none", stroke: "currentColor", strokeWidth: "var(--icon-stroke)", strokeLinecap: "round", strokeLinejoin: "round" }} />
+                </svg>
+                <span className="direct-back__label">К списку</span>
+              </button>
             ) : mobile ? (
-              <Link to={listPath} className="direct-back">К списку</Link>
+              <Link to={listPath} className="direct-back" aria-label="К списку">
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                  <path d="M15 6l-6 6 6 6" style={{ fill: "none", stroke: "currentColor", strokeWidth: "var(--icon-stroke)", strokeLinecap: "round", strokeLinejoin: "round" }} />
+                </svg>
+                <span className="direct-back__label">К списку</span>
+              </Link>
             ) : null}
-            <UserAvatar name={thread.counterpart.name} src={thread.counterpart.avatarPath || null} size={44} />
-            <div className="direct-thread__who">
-              {thread.counterpart.slug ? (
-                <Link to="/trainers/$slug" params={{ slug: thread.counterpart.slug }}>
-                  <TrainerName firstName={thread.counterpart.firstName} lastName={thread.counterpart.lastName} empty={thread.counterpart.name} />
-                </Link>
+            <div className="direct-thread__identity">
+              {profileHref ? (
+                <a className="direct-person__face" href={profileHref} target="_blank" rel="noopener noreferrer" aria-label={thread.counterpart.name}>
+                  <UserAvatar name={thread.counterpart.name} src={thread.counterpart.avatarPath || null} size={44} />
+                </a>
               ) : (
-                <strong>
-                  <TrainerName firstName={thread.counterpart.firstName} lastName={thread.counterpart.lastName} empty={thread.counterpart.name} />
-                </strong>
+                <UserAvatar name={thread.counterpart.name} src={thread.counterpart.avatarPath || null} size={44} />
               )}
-              {thread.counterpart.kind === "user" ? <span>Тренер: {thread.trainerName}</span> : null}
+              <div className="direct-thread__who">
+                {profileHref ? (
+                  <a href={profileHref} target="_blank" rel="noopener noreferrer">{name}</a>
+                ) : (
+                  <strong>{name}</strong>
+                )}
+                {trainerCardHref ? (
+                  <a className="direct-thread__trainer" href={trainerCardHref} target="_blank" rel="noopener noreferrer">
+                    Тренер: {thread.trainerName}
+                  </a>
+                ) : null}
+              </div>
             </div>
             <div className="direct-thread__actions">
-              {thread.canClose && thread.status === "open" ? (
-                <button type="button" className="direct-icon" onClick={onClose} disabled={busy} aria-label="Закрыть переписку" title="Закрыть переписку">
-                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                    <path d="M6 6l12 12M18 6L6 18" style={{ fill: "none", stroke: "currentColor", strokeWidth: "var(--icon-stroke)", strokeLinecap: "round", strokeLinejoin: "round" }} />
-                  </svg>
-                </button>
+              {onPrevious || onNext ? (
+                <div className="direct-switch" role="group" aria-label="Соседние диалоги">
+                  <button type="button" className="direct-icon" aria-label="Предыдущий диалог" disabled={!onPrevious || busy} onClick={onPrevious}>
+                    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                      <path d="M6 14l6-6 6 6" style={{ fill: "none", stroke: "currentColor", strokeWidth: "var(--icon-stroke)", strokeLinecap: "round", strokeLinejoin: "round" }} />
+                    </svg>
+                  </button>
+                  <button type="button" className="direct-icon" aria-label="Следующий диалог" disabled={!onNext || busy} onClick={onNext}>
+                    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                      <path d="M6 10l6 6 6-6" style={{ fill: "none", stroke: "currentColor", strokeWidth: "var(--icon-stroke)", strokeLinecap: "round", strokeLinejoin: "round" }} />
+                    </svg>
+                  </button>
+                </div>
               ) : null}
-              {thread.canReopen && thread.status === "closed" ? <button type="button" onClick={onReopen} disabled={busy}>Открыть</button> : null}
-              {thread.canBlock ? <button type="button" onClick={onBlock} disabled={busy}>Заблокировать</button> : null}
-              {thread.canReport ? (
+              {showMenu ? (
                 <div className="direct-menu" ref={moreRef}>
                   <button
                     type="button"
@@ -250,16 +358,26 @@ export function ConversationThread({
                   </button>
                   {moreOpen ? (
                     <div className="direct-menu__list" role="menu">
-                      <button
-                        type="button"
-                        role="menuitem"
-                        onClick={() => {
-                          setMoreOpen(false);
-                          setReportOpen(true);
-                        }}
-                      >
-                        Пожаловаться
-                      </button>
+                      {thread.canClose && thread.status === "open" ? (
+                        <button type="button" role="menuitem" disabled={busy} onClick={() => { setMoreOpen(false); onClose(); }}>
+                          Закрыть переписку
+                        </button>
+                      ) : null}
+                      {thread.canReopen && thread.status === "closed" ? (
+                        <button type="button" role="menuitem" disabled={busy} onClick={() => { setMoreOpen(false); onReopen(); }}>
+                          Открыть переписку
+                        </button>
+                      ) : null}
+                      {thread.canBlock ? (
+                        <button type="button" role="menuitem" disabled={busy} onClick={() => { setMoreOpen(false); onBlock(); }}>
+                          Заблокировать
+                        </button>
+                      ) : null}
+                      {thread.canReport ? (
+                        <button type="button" role="menuitem" onClick={() => { setMoreOpen(false); setReportOpen(true); }}>
+                          Пожаловаться
+                        </button>
+                      ) : null}
                     </div>
                   ) : null}
                 </div>
@@ -316,6 +434,7 @@ export function ConversationThread({
               </form>
             </DialogContent>
           </Dialog>
+          <div key={thread.conversationId} className="direct-thread__pane">
           <div
             className="direct-log"
             ref={scroller}
@@ -349,6 +468,7 @@ export function ConversationThread({
             hint={hint}
             onSend={onSend}
           />
+          </div>
         </>
       )}
     </div>
