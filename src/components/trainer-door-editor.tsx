@@ -110,7 +110,7 @@ export function TrainerDoorMail({
   );
 }
 
-function DoorMailSent({ email }: { email: string }) {
+function DoorMailSent({ email, onClose }: { email: string; onClose: () => void }) {
   return (
     <>
       <h2 id="door-mail-sent">Ссылка отправлена</h2>
@@ -119,6 +119,7 @@ function DoorMailSent({ email }: { email: string }) {
         Если вы не видите ссылку, напишите в директ Instagram:{" "}
         <a href={SITE_INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">{SITE_INSTAGRAM_URL}</a>
       </p>
+      <button type="button" className="door-mail-modal__ok" autoFocus onClick={onClose}>Ок, понял</button>
     </>
   );
 }
@@ -160,7 +161,7 @@ export function TrainerDoorMailDialog({
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </button>
         {sent ? (
-          <DoorMailSent email={sent} />
+          <DoorMailSent email={sent} onClose={onClose} />
         ) : (
           <>
             <h2 id="door-mail-title">Создание аккаунта тренера</h2>
@@ -185,6 +186,7 @@ export function TrainerDoorMailDialog({
         .door-mail-modal__x { position: absolute; top: 8px; right: 8px; width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; }
         .door-mail-modal__x svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
         .door-mail-modal__x:hover { color: var(--dark); }
+        .door-mail-modal__ok { justify-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
       `}</style>
     </div>
   );
