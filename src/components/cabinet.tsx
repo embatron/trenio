@@ -703,6 +703,11 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-form .cabinet-avatar input { position: absolute; width: 1px; height: 1px; min-height: 0; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); }
 .cabinet-form__verified { color: #16a34a; font-style: normal; }
 .cabinet-form__actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.cabinet-sessions > summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; margin: 0; padding: 0; list-style: none; cursor: pointer; color: var(--dark); font-size: 16px; font-weight: var(--fw-title); letter-spacing: -0.02em; }
+.cabinet-sessions > summary::-webkit-details-marker { display: none; }
+.cabinet-sessions > summary::marker { content: ""; }
+.cabinet-sessions__chevron { width: 18px; height: 18px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.cabinet-sessions[open] > summary .cabinet-sessions__chevron { transform: rotate(180deg); }
 .cabinet-session { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid var(--line); }
 .cabinet-session p { margin: 0; }
 .cabinet-session__face { color: var(--dark); font-weight: var(--fw-title); }

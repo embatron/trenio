@@ -627,23 +627,6 @@ export function AccountProfileForm({
           })}
         </section>
       </div>
-      {canDelete ? (
-        <div className="cabinet-form">
-          <p className="cabinet-delete">
-            <button
-              type="button"
-              className="cabinet-delete__link"
-              onClick={() => {
-                setDeleteError("");
-                setDeletePassword("");
-                setDeleteOpen(true);
-              }}
-            >
-              Удалить аккаунт
-            </button>
-          </p>
-        </div>
-      ) : null}
       {deleteOpen ? (
         <div
           className="cabinet-modal"
@@ -702,6 +685,23 @@ export function AccountProfileForm({
         </div>
       ) : null}
       <AccountSessions />
+      {canDelete ? (
+        <div className="cabinet-form">
+          <p className="cabinet-delete">
+            <button
+              type="button"
+              className="cabinet-delete__link"
+              onClick={() => {
+                setDeleteError("");
+                setDeletePassword("");
+                setDeleteOpen(true);
+              }}
+            >
+              Удалить аккаунт
+            </button>
+          </p>
+        </div>
+      ) : null}
       {popup ? (
         <CabinetNotice title={popup.title} message={popup.message} onClose={() => setPopup(null)} />
       ) : null}
@@ -846,8 +846,13 @@ function AccountSessions() {
   }, []);
 
   return (
-    <section className="cabinet-form" id="sessions">
-      <h3>Сеансы</h3>
+    <details className="cabinet-form cabinet-sessions" id="sessions">
+      <summary>
+        Сеансы
+        <svg className="cabinet-sessions__chevron" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </summary>
       {rows.length === 0 ? <p className="cabinet-note">Открытых сеансов нет.</p> : null}
       {rows.map((row) => {
         const face = sessionFace(row.userAgent);
@@ -884,6 +889,6 @@ function AccountSessions() {
         );
       })}
       {note ? <p className="cabinet-form__error">{note}</p> : null}
-    </section>
+    </details>
   );
 }
