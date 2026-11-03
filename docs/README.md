@@ -58,7 +58,7 @@ npm run site:install # тексты писем и Instagram в site_texts, бе�
 
 Публичная регистрация создаёт только `user`. Роли `trainer` и `club` появляются при привязке карточки или назначении staff. `admin` / `superadmin` — только через seed или назначение staff.
 
-Маршруты auth: `/auth/login` и `/auth/signup` (e-mail, Google, SMS), `/auth/google` и `/auth/google/callback` (вход через Google), `/auth/forgot-password` (e-mail или SMS), `/auth/reset-password`, `/auth/confirm-email` (кнопка письма регистрации), `/auth/verify-email`, `/auth/credentials`, `/auth/password`, `/auth/totp`. Telegram на этих формах скрыт; серверные функции и привязка остаются.
+Маршруты auth: `/auth/login` и `/auth/signup` (e-mail, Google, SMS), `/auth/google` и `/auth/google/callback` (вход через Google), `/auth/forgot-password` (e-mail или SMS), `/auth/reset-password`, `/auth/confirm-email` (кнопка письма регистрации), `/auth/verify-email`, `/auth/credentials`, `/auth/password`. `/auth/totp` в этот вход не входит. Telegram на этих формах скрыт; серверные функции и привязка остаются.
 
 Подробнее о доменной модели — [ACCOUNT_MODEL.md](./ACCOUNT_MODEL.md).
 
@@ -134,7 +134,7 @@ AGENTS.md             # Entry point для агентов
 | `/auth/confirm-email`   | `auth.confirm-email.tsx`   | Кнопка подтверждения почты из письма регистрации |
 | `/auth/credentials`     | `auth.credentials.tsx`     | Почта и пароль после телефона или Telegram |
 | `/auth/password`        | `auth.password.tsx`        | Пароль после ссылки в кабинет тренера |
-| `/auth/totp`            | `auth.totp.tsx`            | Код приложения для сотрудника |
+| `/auth/totp`            | `auth.totp.tsx`            | Запас на потом. Сейчас вход туда возвращает в кабинет, код из приложения не спрашивается |
 | `/auth/forgot-password` | `auth.forgot-password.tsx` | Сброс пароля по e-mail или SMS                                |
 | `/auth/reset-password`  | `auth.reset-password.tsx`  | Новый пароль по токену                                        |
 | `/auth/verify-email`    | `auth.verify-email.tsx`    | Подтверждение e-mail                                          |

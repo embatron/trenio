@@ -57,8 +57,9 @@ import { loadSiteText } from "@/lib/site-texts/store";
 import { renderLetter } from "@/lib/mail/letter";
 import type { MailKind } from "@/lib/mail/kinds";
 import { mailTransportReady, sendMail } from "@/lib/mail/send.server";
-import { signupRoleToIntent, isStaff, type PublicSignupRole } from "@/lib/auth/roles";
+import { signupRoleToIntent, type PublicSignupRole } from "@/lib/auth/roles";
 import { isPendingSignupEmail } from "@/lib/auth/pending-email";
+import { staffTotpAtLogin } from "@/lib/auth/staff-totp";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import { writeLog, logCaught } from "@/lib/log/logger";
 
@@ -259,7 +260,7 @@ export async function beginLogin(
   meta?: { ipAddress?: string | null; userAgent?: string | null; remember?: boolean },
 ): Promise<{ token: string } | { totpTicket: string }> {
   const roles = await getUserRoles(user.id);
-  if (isStaff(roles) && user.totpEnabledAt) {
+  if (staffTotpAtLogin(roles, user.totpEnabledAt != null)) {
     return { totpTicket: await issueLoginTicket(user.id) };
   }
   const session = await createSession(user.id, meta);

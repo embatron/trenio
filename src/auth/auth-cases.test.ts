@@ -14,7 +14,7 @@ import {
   requestSmsLogin,
   type LoginMeta,
 } from "@/auth/login-channels";
-import { consumeLoginTicket } from "@/auth/login-ticket";
+import { consumeLoginTicket, issueLoginTicket } from "@/auth/login-ticket";
 import { authMac, authMacEqual, issueOtp, verifyOtp } from "@/auth/otp";
 import { hashPassword, verifyPassword } from "@/auth/password";
 import { clientIpFromHeaders } from "@/auth/request-meta";
@@ -707,13 +707,13 @@ describe("auth cases", { concurrency: false }, () => {
     const fresh = await findUserById(user.id);
     assert.ok(fresh);
     const opened = await beginLogin(fresh);
-    assert.ok("totpTicket" in opened);
-    assert.equal("token" in opened, false);
-    await expectAuth(() => consumeLoginTicket(opened.totpTicket, "000000"), "INVALID_TOKEN");
-    const userId = await consumeLoginTicket(opened.totpTicket, totpCode(Buffer.from("12345678901234567890")));
+    assert.ok("token" in opened);
+    const ticket = await issueLoginTicket(user.id);
+    await expectAuth(() => consumeLoginTicket(ticket, "000000"), "INVALID_TOKEN");
+    const userId = await consumeLoginTicket(ticket, totpCode(Buffer.from("12345678901234567890")));
     assert.equal(userId, user.id);
     await expectAuth(
-      () => consumeLoginTicket(opened.totpTicket, totpCode(Buffer.from("12345678901234567890"))),
+      () => consumeLoginTicket(ticket, totpCode(Buffer.from("12345678901234567890"))),
       "INVALID_TOKEN",
     );
 

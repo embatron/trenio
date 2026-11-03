@@ -8,6 +8,7 @@ import {
   decideSmsSignup,
   gateAllowsPath,
 } from "./auth-decisions";
+import { STAFF_TOTP_REQUIRED, staffNeedsTotp, staffTotpAtLogin } from "./staff-totp";
 
 test("email signup does not enter an existing mailbox", () => {
   assert.equal(decideEmailSignup("none"), "create");
@@ -58,4 +59,13 @@ test("the cabinet stays closed until the missing factor is done", () => {
   );
   assert.equal(gateAllowsPath("/auth/confirm-email", "/auth/credentials"), true);
   assert.equal(gateAllowsPath("/account/settings", "/auth/credentials"), false);
+});
+
+test("the authenticator stays off for trainers, clients, and staff", () => {
+  assert.equal(STAFF_TOTP_REQUIRED, false);
+  assert.equal(staffNeedsTotp(["trainer"], false), false);
+  assert.equal(staffNeedsTotp(["user"], false), false);
+  assert.equal(staffNeedsTotp(["admin"], false), false);
+  assert.equal(staffTotpAtLogin(["admin"], true), false);
+  assert.equal(staffTotpAtLogin(["superadmin"], true), false);
 });

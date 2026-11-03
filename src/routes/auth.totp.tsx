@@ -1,13 +1,19 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { AuthStyles } from "@/components/auth-styles";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { beginTotpFn, confirmLoginTotpFn, confirmTotpFn, logoutFn, pendingTotpFn } from "@/lib/auth/functions";
+import { getPostLoginPath } from "@/lib/auth/roles";
+import { STAFF_TOTP_REQUIRED } from "@/lib/auth/staff-totp";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
 export const Route = createFileRoute("/auth/totp")({
+  beforeLoad: ({ context }) => {
+    if (STAFF_TOTP_REQUIRED) return;
+    throw redirect({ to: context.user ? getPostLoginPath(context.user.roles) : "/auth/login" });
+  },
   head: () => ({
     meta: [
       { title: "Код для кабинета — trenio.by" },

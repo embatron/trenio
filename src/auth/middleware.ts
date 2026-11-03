@@ -5,7 +5,7 @@ import type { SessionUser } from "@/auth/service";
 import { readSessionToken } from "@/auth/session";
 import { AuthError } from "@/lib/auth/errors";
 import { isPendingSignupEmail } from "@/lib/auth/pending-email";
-import { isStaff } from "@/lib/auth/roles";
+import { staffNeedsTotp } from "@/lib/auth/staff-totp";
 
 function assertAccountReady(user: SessionUser) {
   if (isPendingSignupEmail(user.email)) {
@@ -14,7 +14,7 @@ function assertAccountReady(user: SessionUser) {
   if (user.needsPassword && user.lastSignupIntent === "trainer_claim") {
     throw new AuthError("Сначала задайте пароль.", "FORBIDDEN");
   }
-  if (isStaff(user.roles) && !user.totpEnabled) {
+  if (staffNeedsTotp(user.roles, user.totpEnabled)) {
     throw new AuthError("Сначала подключите код подтверждения.", "FORBIDDEN");
   }
 }

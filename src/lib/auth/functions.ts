@@ -65,6 +65,7 @@ import {
   signupWithTelegramWidget,
 } from "@/auth/signup-channels";
 import { isPendingSignupEmail } from "@/lib/auth/pending-email";
+import { staffNeedsTotp } from "@/lib/auth/staff-totp";
 import {
   getSessionUserFromToken,
   confirmSignupEmailToken,
@@ -114,7 +115,7 @@ function toPublicUser(user: SessionUser): PublicUser {
     needsCredentials,
     needsDoorPassword: user.needsPassword && user.lastSignupIntent === "trainer_claim",
     roles: user.roles,
-    needsTotp: isStaff(user.roles) && !user.totpEnabled,
+    needsTotp: staffNeedsTotp(user.roles, user.totpEnabled),
     status: user.status,
     lastSignupIntent: user.lastSignupIntent,
     mailMessages: user.mailMessages,

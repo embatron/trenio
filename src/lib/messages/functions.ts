@@ -3,8 +3,8 @@ import { createServerFn } from "@tanstack/react-start";
 
 import { requireAuthMiddleware, requireSessionMiddleware } from "@/auth/middleware";
 import { accountGatePath } from "@/lib/auth/auth-decisions";
+import { staffNeedsTotp } from "@/lib/auth/staff-totp";
 import { isPendingSignupEmail } from "@/lib/auth/pending-email";
-import { isStaff } from "@/lib/auth/roles";
 import { AuthError, isAuthError } from "@/lib/auth/errors";
 import { z } from "zod";
 
@@ -261,7 +261,7 @@ export const unreadCountFn = createServerFn({ method: "POST" })
     const gated = accountGatePath({
       needsCredentials: isPendingSignupEmail(context.user.email),
       needsDoorPassword: context.user.needsPassword && context.user.lastSignupIntent === "trainer_claim",
-      needsTotp: isStaff(context.user.roles) && !context.user.totpEnabled,
+      needsTotp: staffNeedsTotp(context.user.roles, context.user.totpEnabled),
     });
     if (gated) return EMPTY_MESSAGING;
     try {
