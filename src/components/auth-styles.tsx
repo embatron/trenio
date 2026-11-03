@@ -101,6 +101,23 @@ const AUTH_CSS = `
 .auth-field__error { margin: 0; color: var(--primary); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
 .auth-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
 
+.auth-card--expired { text-align: center; padding: clamp(32px, 6vw, 48px) clamp(22px, 5vw, 40px) clamp(28px, 5vw, 36px); }
+.auth-expired__mark {
+  width: 72px; height: 72px; margin: 0 auto 18px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: rgba(var(--primary-rgb), 0.1); color: var(--primary);
+}
+.auth-expired__mark svg {
+  width: 30px; height: 30px; fill: none; stroke: currentColor;
+  stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round;
+}
+.auth-card--expired .auth-title { margin: 0 0 10px; text-wrap: balance; }
+.auth-card--expired .auth-sub { max-width: 36ch; margin-inline: auto; }
+.auth-expired__home {
+  display: grid; place-items: center; width: 100%; margin-top: 24px;
+  min-height: 50px; text-decoration: none;
+}
+
 /* Mini App shortcut sits above the method tabs and covers them on a phone. */
 @media (max-width: 767px) {
   .auth-webapp-slot { display: none; }

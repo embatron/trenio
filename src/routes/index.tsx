@@ -417,15 +417,15 @@ body.is-search-docked .site-header__search {
 }
 .intent-dropdown__trigger svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; color: var(--muted); flex: 0 0 auto; }
 .search-block--header .search-shell {
-  width: 100%; max-width: 100%; min-width: 0; min-height: 40px; padding: 2px 3px;
+  width: 100%; max-width: 100%; min-width: 0; min-height: 48px; padding: 2px 3px;
   box-shadow: 0 4px 18px rgba(var(--dark-rgb), 0.06);
-  grid-template-columns: minmax(0, 160fr) minmax(0, 240fr) minmax(0, 180fr) 36px;
+  grid-template-columns: minmax(0, 160fr) minmax(0, 240fr) minmax(0, 180fr) 44px;
 }
 .search-block--header .search-field.intent-select { position: relative; display: flex; align-items: center; }
-.search-block--header .search-field { height: 36px; padding: 0 8px; gap: 5px; }
+.search-block--header .search-field { height: 44px; padding: 0 8px; gap: 5px; }
 .search-block--header .combo-input { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .search-block--header .search-icon svg, .search-block--header .chevron-icon svg { width: 16px; height: 16px; }
-.search-block--header .search-submit { width: 36px; height: 36px; }
+.search-block--header .search-submit { width: 44px; height: 44px; }
 .search-block--header .search-submit svg { width: 17px; height: 17px; }
 .hero-title { margin: 0 0 36px; font-size: var(--fs-display); line-height: 1.12; letter-spacing: -0.04em; font-weight: var(--fw-heading); color: var(--dark); }
 .search-block--hero .search-intent { margin-bottom: 16px; }

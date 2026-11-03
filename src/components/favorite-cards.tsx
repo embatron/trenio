@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
 import { FavoriteButton } from "@/components/favorite-button";
 import { TablePager, useTablePage } from "@/components/table-pager";
+import { favoriteTrainerFacesFn, type FavoriteTrainerFace } from "@/lib/catalog/favorites";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
 import { ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
 import { priceForCard, type TrainerPriceMap } from "@/lib/catalog/trainer-price";
@@ -25,13 +27,56 @@ type FavoriteCard = {
   missing: boolean;
 };
 
-function toCard(key: string, ratings: Record<string, TrainerRatingSnapshot>, prices: TrainerPriceMap): FavoriteCard {
+function toCard(
+  key: string,
+  ratings: Record<string, TrainerRatingSnapshot>,
+  prices: TrainerPriceMap,
+  faces: Record<string, FavoriteTrainerFace>,
+  facesReady: boolean,
+): FavoriteCard {
   const splitAt = key.indexOf(":");
   const type = key.slice(0, splitAt) === "club" ? "club" : "trainer";
   const slug = key.slice(splitAt + 1);
   if (type === "trainer") {
     const trainer = getPublishedTrainer(slug);
+    const face = faces[slug];
     const rating = ratingFor(slug, ratings);
+    if (!trainer && !face) {
+      return {
+        type,
+        slug,
+        name: slug,
+        firstName: slug,
+        lastName: "",
+        photo: "",
+        line: facesReady ? "Тренер снят с каталога" : "Загрузка…",
+        desc: "",
+        city: "",
+        rating: "0",
+        reviews: 0,
+        missing: true,
+      };
+    }
+    if (face && !trainer) {
+      return {
+        type,
+        slug,
+        name: face.name,
+        firstName: face.firstName,
+        lastName: face.lastName,
+        photo: face.photo,
+        line: face.line,
+        desc: face.desc,
+        city: face.city,
+        district: face.district,
+        tags: face.tags,
+        experience: face.experience,
+        price: priceForCard(face.slug, face.price ?? 0, prices),
+        rating: rating.rating,
+        reviews: rating.reviews,
+        missing: false,
+      };
+    }
     if (!trainer) {
       return { type, slug, name: slug, firstName: slug, lastName: "", photo: "", line: "Тренер снят с каталога", desc: "", city: "", rating: "0", reviews: 0, missing: true };
     }
@@ -66,7 +111,38 @@ export function FavoriteCards({
   ratings: Record<string, TrainerRatingSnapshot>;
   prices?: TrainerPriceMap;
 }) {
-  const cards = keys.map((key) => toCard(key, ratings, prices));
+  const wanted = keys
+    .map((key) => {
+      const splitAt = key.indexOf(":");
+      return { type: key.slice(0, splitAt), slug: key.slice(splitAt + 1) };
+    })
+    .filter((item) => item.type === "trainer" && !getPublishedTrainer(item.slug))
+    .map((item) => item.slug);
+  const wantedKey = wanted.join("|");
+  const [faces, setFaces] = useState<Record<string, FavoriteTrainerFace>>({});
+  const [facesReady, setFacesReady] = useState(wanted.length === 0);
+  useEffect(() => {
+    if (!wantedKey) {
+      setFaces({});
+      setFacesReady(true);
+      return;
+    }
+    let cancelled = false;
+    setFacesReady(false);
+    void favoriteTrainerFacesFn({ data: { slugs: wantedKey.split("|") } })
+      .then((rows) => {
+        if (cancelled) return;
+        setFaces(Object.fromEntries(rows.map((row) => [row.slug, row])));
+        setFacesReady(true);
+      })
+      .catch(() => {
+        if (!cancelled) setFacesReady(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [wantedKey]);
+  const cards = keys.map((key) => toCard(key, ratings, prices, faces, facesReady));
   const pager = useTablePage(cards);
   const pageCards = pager.rows;
   const trainers = pageCards.filter((card) => card.type === "trainer" && !card.missing);

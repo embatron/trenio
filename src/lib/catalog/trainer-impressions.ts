@@ -1,55 +1,17 @@
 import { createServerFn } from "@tanstack/react-start";
-import { and, count, eq, gte, inArray, sql } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 import { z } from "zod";
 
 import { getSessionUserFromToken } from "@/auth/service";
 import { readSessionToken } from "@/auth/session";
 import { getDb } from "@/db";
 import { trainerCardImpressions, trainerProfiles } from "@/db/schema";
+import { ensureTrainerImpressionTable } from "@/lib/catalog/trainer-impression-store";
 import { minskToday } from "@/lib/catalog/trainer-periods";
 import { visitorId } from "@/lib/catalog/trainer-visitor";
 import { logCaught } from "@/lib/log/logger";
 
 const slugSchema = z.string().trim().regex(/^[a-z0-9._-]{1,30}$/);
-
-let tableReady = false;
-let tableFailedAt = 0;
-
-export async function ensureTrainerImpressionTable() {
-  if (tableReady) return true;
-  if (tableFailedAt && Date.now() - tableFailedAt < 60_000) return false;
-  try {
-    const db = getDb();
-    await db.execute(sql`CREATE TABLE IF NOT EXISTS trainer_card_impressions (
-      profile_id uuid NOT NULL REFERENCES trainer_profiles(id) ON DELETE CASCADE,
-      visitor_id varchar(36) NOT NULL,
-      day date NOT NULL,
-      PRIMARY KEY (profile_id, visitor_id, day)
-    )`);
-    await db.execute(sql`CREATE INDEX IF NOT EXISTS trainer_card_impressions_profile_day_idx ON trainer_card_impressions (profile_id, day)`);
-    tableReady = true;
-    return true;
-  } catch (error) {
-    tableFailedAt = Date.now();
-    logCaught("catalog", "catalog.impression", error, { target: "trainer_card_impressions" });
-    return false;
-  }
-}
-
-export async function impressionDailyCounts(profileId: string, since: string) {
-  if (!(await ensureTrainerImpressionTable())) return [];
-  try {
-    const rows = await getDb()
-      .select({ day: trainerCardImpressions.day, total: count() })
-      .from(trainerCardImpressions)
-      .where(and(eq(trainerCardImpressions.profileId, profileId), gte(trainerCardImpressions.day, since)))
-      .groupBy(trainerCardImpressions.day);
-    return rows.map((row) => ({ day: row.day, total: Number(row.total) }));
-  } catch (error) {
-    logCaught("catalog", "catalog.impression", error, { target: profileId });
-    return [];
-  }
-}
 
 /** One catalog impression per browser per Minsk day. The profile owner is not counted. */
 export const recordTrainerCardImpressionsFn = createServerFn({ method: "POST" })

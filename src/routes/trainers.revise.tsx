@@ -1,7 +1,8 @@
-import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { AuthStyles } from "@/components/auth-styles";
+import { ExpiredLink } from "@/components/expired-link";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { TrainerDoorMail } from "@/components/trainer-door-editor";
 import { getMagicTrainerFn } from "@/lib/catalog/trainer-magic";
@@ -28,35 +29,26 @@ function RevisePage() {
   const loaded = Route.useLoaderData();
   const navigate = useNavigate();
   const [sent, setSent] = useState(false);
+  if (!loaded) return <ExpiredLink text="Такой ссылки нет. Попросите новую в сообщении от trenio.by." />;
   return (
     <div className="auth-page">
       <AuthStyles />
       <SiteHeader />
       <main className="auth-main">
         <div className="auth-card">
-          {loaded ? (
+          {sent ? null : (
             <>
-              {sent ? null : (
-                <>
-                  <h1 className="auth-title">Создание аккаунта тренера</h1>
-                  <p className="auth-sub">Введите свой e-mail или войдите через Google. На почту придёт ссылка сразу с доступом в кабинет, и создание аккаунта будет завершено. Google подтверждает адрес сразу, без письма. Если письма нет, проверьте папку «Спам».</p>
-                </>
-              )}
-              <TrainerDoorMail
-                autoFocus
-                onSent={() => setSent(true)}
-                onDone={() => {
-                  void navigate({ to: "/trainers/$slug", params: { slug: loaded.slug } });
-                }}
-              />
-            </>
-          ) : (
-            <>
-              <h1 className="auth-title">Ссылка уже не действует</h1>
-              <p className="auth-sub">Такой ссылки нет. Попросите новую в сообщении от trenio.by.</p>
-              <Link to="/" className="auth-submit" style={{ display: "grid", placeItems: "center", textDecoration: "none" }}>На главную</Link>
+              <h1 className="auth-title">Создание аккаунта тренера</h1>
+              <p className="auth-sub">Введите свой e-mail или войдите через Google. На почту придёт ссылка сразу с доступом в кабинет, и создание аккаунта будет завершено. Google подтверждает адрес сразу, без письма. Если письма нет, проверьте папку «Спам».</p>
             </>
           )}
+          <TrainerDoorMail
+            autoFocus
+            onSent={() => setSent(true)}
+            onDone={() => {
+              void navigate({ to: "/trainers/$slug", params: { slug: loaded.slug } });
+            }}
+          />
         </div>
       </main>
       <SiteFooter />

@@ -58,16 +58,16 @@ const FORM_CSS = `
 .catalog-search .search-submit { width: 48px; height: 48px; border: 0; border-radius: 50%; background: var(--primary); color: #fff; cursor: pointer; display: grid; place-items: center; }
 .catalog-search .search-submit svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .catalog-search.search-block--header .search-shell {
-  min-height: 40px; padding: 2px 3px; box-shadow: 0 4px 18px rgba(var(--dark-rgb), 0.06);
-  grid-template-columns: minmax(0, 160fr) minmax(0, 240fr) minmax(0, 180fr) 36px;
+  min-height: 48px; padding: 2px 3px; box-shadow: 0 4px 18px rgba(var(--dark-rgb), 0.06);
+  grid-template-columns: minmax(0, 160fr) minmax(0, 240fr) minmax(0, 180fr) 44px;
 }
-.catalog-search.search-block--header .search-field { height: 36px; padding: 0 8px; gap: 5px; }
-.catalog-search.search-block--header .intent-dropdown__trigger { min-height: 36px; height: 100%; }
+.catalog-search.search-block--header .search-field { height: 44px; padding: 0 8px; gap: 5px; }
+.catalog-search.search-block--header .intent-dropdown__trigger { min-height: 44px; height: 100%; }
 .catalog-search.search-block--header .combo-input { font-size: 14px; }
 .catalog-search.search-block--header .combo-menu { top: calc(100% + 6px); padding: 4px; }
 .catalog-search.search-block--header .combo-option { min-height: 32px; padding: 0 8px; font-size: 14px; }
 .catalog-search.search-block--header .search-icon svg, .catalog-search.search-block--header .intent-dropdown__trigger svg { width: 16px; height: 16px; }
-.catalog-search.search-block--header .search-submit { width: 36px; height: 36px; }
+.catalog-search.search-block--header .search-submit { width: 44px; height: 44px; }
 .catalog-search.search-block--header .search-submit svg { width: 17px; height: 17px; }
 .catalog-search .intent-dropdown__trigger {
   display: inline-flex; align-items: center; justify-content: space-between; gap: 7px;

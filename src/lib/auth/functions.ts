@@ -148,6 +148,7 @@ async function finishLogin(
     setTotpTicketCookie(session.totpTicket);
     return { ok: true as const, totpRequired: true as const, redirectTo: "/auth/totp" };
   }
+  setSessionCookie(session.token, remember);
   const user = await getSessionUserFromToken(session.token);
   if (!user) {
     throw new AuthError("Не удалось создать сессию.", "VALIDATION");
@@ -227,7 +228,6 @@ export const loginFn = createServerFn({ method: "POST" })
         throw new AuthError("Неверный логин или пароль.", "INVALID_CREDENTIALS");
       }
       const meta = getRequestMeta();
-      consumePasswordLoginLimit(data.email, meta.clientKey);
       await consumePasswordLoginLimit(data.email, meta.clientKey);
       const session = await loginUser({
         email: data.email,

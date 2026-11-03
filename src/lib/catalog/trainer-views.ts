@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { and, count, eq, gte } from "drizzle-orm";
+import { and, count, eq, gte, ne } from "drizzle-orm";
 import { z } from "zod";
 
 import { getSessionUserFromToken } from "@/auth/service";
@@ -7,7 +7,7 @@ import { readSessionToken } from "@/auth/session";
 import { requireAuthMiddleware } from "@/auth/middleware";
 import { getDb } from "@/db";
 import { trainerProfileViews, trainerProfiles, userFavorites } from "@/db/schema";
-import { impressionDailyCounts } from "@/lib/catalog/trainer-impressions";
+import { impressionDailyCounts } from "@/lib/catalog/trainer-impression-store";
 import {
   emptyFavoriteStats,
   emptyViewStats,
@@ -66,7 +66,7 @@ export const getOwnTrainerViewStatsFn = createServerFn({ method: "GET" })
   .handler(async ({ context }): Promise<TrainerCabinetPulse> => {
     const db = getDb();
     const [profile] = await db
-      .select({ id: trainerProfiles.id, slug: trainerProfiles.slug })
+      .select({ id: trainerProfiles.id, slug: trainerProfiles.slug, ownerUserId: trainerProfiles.ownerUserId })
       .from(trainerProfiles)
       .where(eq(trainerProfiles.ownerUserId, context.user.id))
       .limit(1);
@@ -83,7 +83,11 @@ export const getOwnTrainerViewStatsFn = createServerFn({ method: "GET" })
       db
         .select({ createdAt: userFavorites.createdAt })
         .from(userFavorites)
-        .where(and(eq(userFavorites.targetType, "trainer"), eq(userFavorites.targetSlug, profile.slug))),
+        .where(and(
+          eq(userFavorites.targetType, "trainer"),
+          eq(userFavorites.targetSlug, profile.slug),
+          ...(profile.ownerUserId ? [ne(userFavorites.userId, profile.ownerUserId)] : []),
+        )),
       impressionDailyCounts(profile.id, earliest),
     ]);
 

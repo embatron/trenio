@@ -5,7 +5,7 @@ import { googleIdentityFromCode } from "@/auth/google";
 import { clientIpFromHeaders } from "@/auth/request-meta";
 import { sessionCookieHeader } from "@/auth/session";
 import { safeReturnPath } from "@/lib/auth/return-path";
-import { claimDoorAfterGoogle } from "@/lib/catalog/trainer-magic";
+import { claimDoorAfterGoogle } from "@/lib/catalog/trainer-door-claim";
 import { logCaught, writeLog } from "@/lib/log/logger";
 
 const COOKIE = "trenio_google_oauth";

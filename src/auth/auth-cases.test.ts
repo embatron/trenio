@@ -5,7 +5,7 @@ import { after, before, describe, test } from "node:test";
 import { eq, like, or } from "drizzle-orm";
 
 import { openGoogleAccount } from "@/auth/google-account";
-import { claimDoorAfterGoogle } from "@/lib/catalog/trainer-magic";
+import { claimDoorAfterGoogle } from "@/lib/catalog/trainer-door-claim";
 import {
   confirmPasswordResetByPhone,
   confirmSmsLogin,

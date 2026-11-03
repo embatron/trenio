@@ -1,7 +1,6 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { AuthStyles } from "@/components/auth-styles";
-import { SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { ExpiredLink } from "@/components/expired-link";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { enterTrainerDoorFn, peekTrainerMailFn } from "@/lib/catalog/trainer-magic";
 
@@ -31,28 +30,13 @@ export const Route = createFileRoute("/hi/$code")({
 });
 
 function DoorError({ error }: { error: unknown }) {
-  return <Missing text={authErrorMessage(error)} />;
+  const text = authErrorMessage(error);
+  const friendly = !text || text === "Invalid" || text.startsWith("Произошла ошибка");
+  return <ExpiredLink text={friendly ? "Такой ссылки нет. Попросите новую в сообщении из Instagram." : text} />;
 }
 
 function DoorPage() {
   const { ready } = Route.useLoaderData();
-  if (!ready) return <Missing text="Такой ссылки нет. Попросите новую в сообщении из Instagram." />;
-  return <Missing text="Ссылка уже не действует." />;
-}
-
-function Missing({ text }: { text: string }) {
-  return (
-    <div className="auth-page">
-      <AuthStyles />
-      <SiteHeader />
-      <main className="auth-main">
-        <div className="auth-card">
-          <h1 className="auth-title">Ссылка уже не действует</h1>
-          <p className="auth-sub">{text}</p>
-          <Link to="/" className="auth-submit" style={{ display: "grid", placeItems: "center", textDecoration: "none" }}>На главную</Link>
-        </div>
-      </main>
-      <SiteFooter />
-    </div>
-  );
+  if (!ready) return <ExpiredLink text="Такой ссылки нет. Попросите новую в сообщении из Instagram." />;
+  return <ExpiredLink text="Ссылка уже не действует." />;
 }

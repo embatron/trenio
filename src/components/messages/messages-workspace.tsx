@@ -357,6 +357,7 @@ export const DIRECT_CSS = `
 .direct-thread__head span:not(.trainer-name):not(.trainer-name__line) { display: block; color: var(--muted); font-size: 13px; }
 .direct-thread__head .trainer-name__line { color: var(--dark); font-size: inherit; }
 .direct-thread__who { min-width: 0; flex: 1; }
+.direct-thread__who a { display: inline-flex; align-items: center; min-height: 44px; }
 .direct-thread__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
 .direct-thread__actions button, .direct-back, .direct-more, .direct-composer__send, .direct-bubble__retry, .direct-report-form button {
   min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-weight: var(--fw-title); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center;
