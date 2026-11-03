@@ -233,6 +233,7 @@ const CSS = `
 .breadcrumbs li + li::before { content: "›"; margin-right: 8px; color: var(--line); }
 .profile-access { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 16px; padding: 12px 14px; border: 1px solid rgba(var(--primary-rgb), 0.22); border-radius: 12px; background: rgba(var(--primary-rgb), 0.08); color: var(--dark); font-size: 14px; line-height: 1.45; }
 .profile-access svg { width: 20px; height: 20px; flex: 0 0 auto; margin-top: 1px; color: var(--primary); fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.profile-access__open { display: inline-flex; align-items: center; min-height: 44px; margin: 0; padding: 0; border: 0; background: none; color: var(--primary); font: inherit; font-weight: var(--fw-title); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 
 .profile-layout { display: grid; grid-template-columns: var(--aside-w) minmax(0, 1fr); gap: 32px; align-items: start; }
 .profile-main { position: relative; display: grid; gap: 22px; min-width: 0; }
@@ -772,9 +773,19 @@ function TrainerPage() {
               <circle cx="12" cy="16" r="0.9" fill="currentColor" stroke="none" />
             </svg>
             <span>
-              {access === "preview"
-                ? "Профиль пока не опубликован и в каталоге его нет. Страница открыта по уникальной ссылке и видна только вам."
-                : "Профиль не опубликован. В каталоге его нет. Статус меняет тренер в настройках профиля: при входе туда он по умолчанию опубликован."}
+              {access === "preview" ? (
+                <>
+                  Профиль пока не опубликован и в каталоге его нет. Страница открыта по уникальной ссылке и видна только вам.
+                  {magicDoor ? (
+                    <>
+                      {" "}
+                      <button type="button" className="profile-access__open" onClick={() => setMailOpen(true)}>
+                        Завершить создание кабинета
+                      </button>
+                    </>
+                  ) : null}
+                </>
+              ) : "Профиль не опубликован. В каталоге его нет. Статус меняет тренер в настройках профиля: при входе туда он по умолчанию опубликован."}
             </span>
           </p>
         )}

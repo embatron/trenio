@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 import { FavoriteButton } from "@/components/favorite-button";
 import { ShareProfileButton } from "@/components/share-profile";
@@ -6,6 +7,7 @@ import { TrainerContactIcons } from "@/components/messages/trainer-contact-icons
 import { PhotoImage } from "@/components/photo-image";
 import { TrainerName } from "@/components/trainer-name";
 import { TrainerRating } from "@/components/trainer-rating";
+import { noteTrainerCardImpression } from "@/lib/catalog/trainer-impression-client";
 import { NEGOTIABLE_PRICE_LABEL, statedTrainerPrice } from "@/lib/catalog/trainer-price";
 
 export type CatalogTrainerCardData = {
@@ -29,13 +31,20 @@ export function CatalogTrainerCard({
   trainer,
   marked = false,
   showContacts = true,
+  countImpression = true,
   onHover,
 }: {
   trainer: CatalogTrainerCardData;
   marked?: boolean;
   showContacts?: boolean;
+  countImpression?: boolean;
   onHover?: (slug: string | null) => void;
 }) {
+  useEffect(() => {
+    if (!countImpression) return;
+    noteTrainerCardImpression(trainer.slug);
+  }, [countImpression, trainer.slug]);
+
   const price = statedTrainerPrice(trainer.price);
   return (
     <article

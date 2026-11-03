@@ -110,7 +110,8 @@ export const Route = createFileRoute("/auth/google/callback")({
           } else {
             headers.append("set-cookie", sessionCookieHeader(result.token));
             headers.append("set-cookie", clearCookie());
-            headers.set("location", doorHome ? "/me" : result.redirectTo);
+            const freshCabinet = doorClaim === "claimed" ? "/me?welcome=1" : "/me";
+            headers.set("location", doorHome ? freshCabinet : result.redirectTo);
           }
           headers.set("cache-control", "private, no-store");
           return new Response(null, { status: 302, headers });

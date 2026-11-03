@@ -71,10 +71,20 @@ export type OwnTrainerProfile = {
   offerAccepted: boolean;
   privacyAccepted: boolean;
   status: OwnProfileStatus;
+  /** Stored page status, including a draft that is not in the catalog yet. */
+  pageStatus: PageStatus;
 };
 
 export const OWN_PROFILE_STATUSES = ["published", "hidden", "archived"] as const;
 export type OwnProfileStatus = (typeof OWN_PROFILE_STATUSES)[number];
+export const PAGE_STATUSES = ["draft", "published", "hidden", "archived"] as const;
+export type PageStatus = (typeof PAGE_STATUSES)[number];
+
+/** The status stored on the card. Anything outside the four values reads as unpublished. */
+export function pageStatusOf(status: string | null | undefined): PageStatus {
+  if (status === "published" || status === "hidden" || status === "archived" || status === "draft") return status;
+  return "draft";
+}
 export const NICK_SUPPORT_MAX = 1000;
 
 /** Draft has no trainer-facing box. The first save can publish it. */
@@ -117,6 +127,7 @@ const emptyProfile: OwnTrainerProfile = {
   offerAccepted: false,
   privacyAccepted: false,
   status: "published",
+  pageStatus: "draft",
 };
 
 const saveSchema = z.object({
@@ -209,6 +220,7 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
       offerAccepted: row.offerAcceptedAt != null,
       privacyAccepted: row.privacyAcceptedAt != null,
       status: ownFacingStatus(row.status),
+      pageStatus: pageStatusOf(row.status),
     };
   });
 

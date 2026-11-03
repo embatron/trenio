@@ -1,5 +1,8 @@
-import type { ReactNode } from "react";
-import { createFileRoute, getRouteApi } from "@tanstack/react-router";
+import { useEffect, useState, type ReactNode } from "react";
+import { createFileRoute, getRouteApi, Link } from "@tanstack/react-router";
+
+import { UserAvatar } from "@/components/user-avatar";
+import { joinTrainerName } from "@/lib/catalog/trainer-name";
 
 import { SiteFaq } from "@/components/site-faq";
 import { TrainerContactStatus } from "@/components/trainer-contact-status";
@@ -12,9 +15,17 @@ import {
   ratingFor,
   type TrainerRatingSnapshot,
 } from "@/lib/catalog/trainer-popularity";
-import type { OwnTrainerProfile } from "@/lib/catalog/trainer-own";
+import type { OwnTrainerProfile, PageStatus } from "@/lib/catalog/trainer-own";
 import type { TrainerViewPeriod } from "@/lib/catalog/trainer-views";
 import { countRu, pluralRu } from "@/lib/ru-plural";
+
+type PulseMode = "day" | "week" | "month";
+
+const PERIOD_COPY: Record<PulseMode, { link: string; visit: string; saved: string; shown: string; same: string; against: string }> = {
+  day: { link: "сутки", visit: "Посещения за сутки", saved: "Добавили за сутки", shown: "Показы за сутки", same: "как вчера", against: "к вчерашнему" },
+  week: { link: "неделя", visit: "За неделю", saved: "Добавили за неделю", shown: "За неделю", same: "как на прошлой неделе", against: "к прошлой неделе" },
+  month: { link: "месяц", visit: "За месяц", saved: "Добавили за месяц", shown: "За месяц", same: "как в прошлом месяце", against: "к прошлому месяцу" },
+};
 
 const meRoute = getRouteApi("/me");
 
@@ -40,28 +51,54 @@ function StatMark({ children }: { children: ReactNode }) {
   return <span className="cabinet-stat__mark" aria-hidden="true"><svg viewBox="0 0 24 24">{children}</svg></span>;
 }
 
-function ViewStat({
+function PeriodSwitch({
+  value,
+  label,
+  onChange,
+}: {
+  value: PulseMode;
+  label: string;
+  onChange: (mode: PulseMode) => void;
+}) {
+  return (
+    <div className="cabinet-stat__switch" role="group" aria-label={label}>
+      {(Object.keys(PERIOD_COPY) as PulseMode[]).map((mode) => (
+        <button
+          key={mode}
+          type="button"
+          aria-pressed={value === mode}
+          className={value === mode ? "is-current" : undefined}
+          onClick={() => onChange(mode)}
+        >
+          {PERIOD_COPY[mode].link}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function Figure({
   value,
   label,
   period,
   same,
   against,
-  icon,
+  note,
 }: {
   value: number;
   label: string;
   period: TrainerViewPeriod;
   same: string;
   against: string;
-  icon: ReactNode;
+  note?: string;
 }) {
   const delta = periodDelta(period, same, against);
   return (
-    <div className="cabinet-stat">
-      <StatMark>{icon}</StatMark>
+    <div className="cabinet-stat__figure">
       <strong>{value}</strong>
       <span>{label}</span>
       <span className={`cabinet-stat__delta ${delta.className}`}>{delta.text}</span>
+      {note ? <span className="cabinet-stat__note">{note}</span> : null}
     </div>
   );
 }
@@ -70,6 +107,7 @@ function visitsAnswer(): ReactNode {
   return (
     <>
       <p>Посещение — это когда человек открыл вашу публичную страницу. Один и тот же человек за сутки считается один раз, сутки идут по минскому времени. Если страницу открыли вы сами, этот заход в счётчик не попадает.</p>
+      <p>На одной плашке с посещениями видно, сколько человек добавили карточку в избранное за тот же срок. «Сейчас» — сколько людей держат её в избранном на этот момент. Ссылки «сутки», «неделя» и «месяц» меняют оба числа и сравнение под ними.</p>
       <p>«За сутки» мы сравниваем со вчера. «За неделю» — с прошлой полной неделей: неделя начинается в понедельник, а эта ещё не закончилась. «За месяц» — с прошлым календарным месяцем.</p>
       <p>Плюс рядом с числом значит, что сейчас людей больше, чем в прошлый раз. Минус — меньше. Если написано «как вчера» или похожая фраза, число то же самое.</p>
     </>
@@ -160,8 +198,108 @@ function popularityAnswer(
   );
 }
 
+function CabinetWelcome({ trainer }: { trainer: OwnTrainerProfile }) {
+  const { user } = meRoute.useRouteContext();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!user || !trainer.slug) return;
+    const key = `trenio-cabinet-welcome:${user.id}`;
+    let seen = false;
+    try {
+      seen = localStorage.getItem(key) === "1";
+    } catch {
+      seen = true;
+    }
+    const params = new URLSearchParams(window.location.search);
+    const fromUrl = params.get("welcome") === "1";
+    let fromSession = false;
+    try {
+      fromSession = sessionStorage.getItem("trenio-cabinet-welcome") === "1";
+      sessionStorage.removeItem("trenio-cabinet-welcome");
+    } catch {
+      fromSession = false;
+    }
+    if (fromUrl) {
+      params.delete("welcome");
+      const query = params.toString();
+      const next = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+      window.history.replaceState(window.history.state, "", next);
+    }
+    if (!seen && (fromUrl || fromSession || user.lastSignupIntent === "trainer_claim")) setOpen(true);
+  }, [trainer.slug, user]);
+
+  if (!open || !trainer.slug) return null;
+  const name = joinTrainerName(trainer.firstName, trainer.lastName) || "Ваш профиль";
+  const face = trainer.photos[0] || trainer.avatarPath || null;
+
+  function dismiss() {
+    if (user) {
+      try {
+        localStorage.setItem(`trenio-cabinet-welcome:${user.id}`, "1");
+      } catch {
+        /* the banner can return in a private window */
+      }
+    }
+    setOpen(false);
+  }
+
+  return (
+    <article className="cabinet-card cabinet-welcome">
+      <div className="cabinet-welcome__body">
+        <p>
+          Кабинет создан.{" "}
+          <Link to="/trainers/$slug" params={{ slug: trainer.slug }}>Профиль</Link>
+          {" "}можно править.
+        </p>
+        <div className="cabinet-welcome__profile">
+          <UserAvatar name={name} src={face} size={44} />
+          <div>
+            <strong>{name}</strong>
+            <span>{trainer.headline || trainer.city || "Страница профиля"}</span>
+          </div>
+          <Link className="cabinet-welcome__edit" to="/me/profile" aria-label="Редактировать профиль" title="Редактировать профиль">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z" /></svg>
+          </Link>
+        </div>
+        <button type="button" className="cabinet-form__ghost cabinet-welcome__ok" onClick={dismiss}>Понятно</button>
+      </div>
+    </article>
+  );
+}
+
+function showsAnswer(): ReactNode {
+  return (
+    <>
+      <p>Показ — это когда ваша карточка появилась в каталоге: на главной, в категории, в городе, в поиске или на карте. Человек мог не открывать страницу. Открытие считается отдельно, как посещение.</p>
+      <p>Один человек за сутки даёт один показ, даже если карточка встретилась несколько раз. Ваш собственный просмотр не считается. Список избранного в кабинете показом не является.</p>
+      <p>Ссылки на плашке те же: сутки, неделя и месяц. Сравнение считается так же, как у посещений.</p>
+    </>
+  );
+}
+
+const PAGE_STATUS_LABEL: Record<PageStatus, string> = {
+  draft: "Не опубликован",
+  published: "Опубликован",
+  hidden: "Скрыт",
+  archived: "Снят с публикации",
+};
+
+function PageStatusCard({ status }: { status: PageStatus }) {
+  return (
+    <article className="cabinet-card">
+      <div className="cabinet-page-status">
+        <h2>Страница</h2>
+        <span className={`cabinet-status cabinet-status--${status}`}>{PAGE_STATUS_LABEL[status]}</span>
+      </div>
+    </article>
+  );
+}
+
 function MeOverviewPage() {
   const { trainer, views, ratings } = meRoute.useLoaderData();
+  const [visitMode, setVisitMode] = useState<PulseMode>("day");
+  const [showMode, setShowMode] = useState<PulseMode>("day");
   const hasProfile = Boolean(trainer?.slug);
   const rating = hasProfile && trainer ? ratingFor(trainer.slug, ratings) : null;
   const checklist = checklistFor(trainer);
@@ -171,42 +309,46 @@ function MeOverviewPage() {
 
   return (
     <>
+      {trainer?.slug ? <CabinetWelcome trainer={trainer} /> : null}
+      {trainer ? <PageStatusCard status={trainer.pageStatus} /> : null}
       {hasProfile && views ? (
         <div className="cabinet-stats">
-          <ViewStat
-            value={views.day.current}
-            label="Посещения за сутки"
-            period={views.day}
-            same="как вчера"
-            against="к вчерашнему"
-            icon={(
-              <>
-                <circle cx="12" cy="12" r="4" />
-                <path d="M12 3v2M12 19v2M4.2 4.2l1.5 1.5M18.3 18.3l1.5 1.5M3 12h2M19 12h2M4.2 19.8l1.5-1.5M18.3 5.7l1.5-1.5" />
-              </>
-            )}
-          />
-          <ViewStat
-            value={views.week.current}
-            label="За неделю"
-            period={views.week}
-            same="как на прошлой неделе"
-            against="к прошлой неделе"
-            icon={<path d="M2.5 9v6M5.7 9v6M8.9 9v6M12.1 9v6M15.3 9v6M18.5 9v6M21.7 9v6" />}
-          />
-          <ViewStat
-            value={views.month.current}
-            label="За месяц"
-            period={views.month}
-            same="как в прошлом месяце"
-            against="к прошлому месяцу"
-            icon={(
-              <>
-                <rect x="3" y="5" width="18" height="16" rx="2" />
-                <path d="M8 3v4M16 3v4M3 10h18M7 14h2M11 14h2M15 14h2M7 17.5h2M11 17.5h2M15 17.5h2" />
-              </>
-            )}
-          />
+          <div className="cabinet-stat">
+            <StatMark>
+              <circle cx="12" cy="12" r="3.2" />
+              <path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12z" />
+            </StatMark>
+            <PeriodSwitch value={visitMode} label="Период посещений" onChange={setVisitMode} />
+            <Figure
+              value={views.visits[visitMode].current}
+              label={PERIOD_COPY[visitMode].visit}
+              period={views.visits[visitMode]}
+              same={PERIOD_COPY[visitMode].same}
+              against={PERIOD_COPY[visitMode].against}
+            />
+            <Figure
+              value={views.favorites[visitMode].current}
+              label={PERIOD_COPY[visitMode].saved}
+              period={views.favorites[visitMode]}
+              same={PERIOD_COPY[visitMode].same}
+              against={PERIOD_COPY[visitMode].against}
+              note={`сейчас ${countRu(views.favorites.total, "человек", "человека", "человек")}`}
+            />
+          </div>
+          <div className="cabinet-stat">
+            <StatMark>
+              <rect x="7" y="3" width="14" height="12" rx="2" />
+              <path d="M3 7v12a2 2 0 0 0 2 2h12" />
+            </StatMark>
+            <PeriodSwitch value={showMode} label="Период показов" onChange={setShowMode} />
+            <Figure
+              value={views.impressions[showMode].current}
+              label={PERIOD_COPY[showMode].shown}
+              period={views.impressions[showMode]}
+              same={PERIOD_COPY[showMode].same}
+              against={PERIOD_COPY[showMode].against}
+            />
+          </div>
           <div className="cabinet-stat cabinet-stat--brand">
             <StatMark>
               <path d="M4 16l5-5 4 3 7-7" />
@@ -229,6 +371,7 @@ function MeOverviewPage() {
         <SiteFaq
           items={[
             { q: "Как считаются посещения?", a: visitsAnswer() },
+            { q: "Что такое показ?", a: showsAnswer() },
             { q: "Как считается рейтинг?", a: popularityAnswer(parts, rating, checklist) },
             {
               q: "Когда способ связи виден клиенту?",

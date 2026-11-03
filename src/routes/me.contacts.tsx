@@ -1,6 +1,6 @@
 import { createFileRoute, getRouteApi } from "@tanstack/react-router";
 
-import { TrainerContactsForm } from "@/components/trainer-contacts-form";
+import { TrainerContactStatus } from "@/components/trainer-contact-status";
 
 const meRoute = getRouteApi("/me");
 
@@ -28,8 +28,8 @@ function MeContactsPage() {
 
   return (
     <article className="cabinet-card">
-      <h2>Контакты</h2>
-      <TrainerContactsForm profile={trainer} />
+      <h2>Что уже есть</h2>
+      <TrainerContactStatus profile={trainer} />
     </article>
   );
 }

@@ -55,6 +55,7 @@ export function isAuthorizationRequired(error: unknown): boolean {
 }
 
 export function authErrorMessage(error: unknown): string {
+  if (error instanceof Error && error.name === "StepUpCancelled") return "";
   if (isAuthorizationRequired(error)) {
     if (redirectToLogin()) return "";
     return AUTHORIZATION_REQUIRED;

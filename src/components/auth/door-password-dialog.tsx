@@ -120,6 +120,11 @@ export function DoorPasswordDialog() {
                 void save({ data: { password, passwordConfirm: repeat } })
                   .then((result) => {
                     const message = (result as { message?: string }).message ?? "Дальше можно работать со своим аккаунтом.";
+                    try {
+                      sessionStorage.setItem("trenio-cabinet-welcome", "1");
+                    } catch {
+                      /* the cabinet still opens */
+                    }
                     setDone(message);
                   })
                   .catch((err: unknown) => {

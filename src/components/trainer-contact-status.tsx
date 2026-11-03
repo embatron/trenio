@@ -310,10 +310,12 @@ function PhoneSmsActions({
   phone,
   requestLabel,
   onRequest,
+  field,
 }: {
   phone: string;
   requestLabel: string;
   onRequest: (phone: string) => Promise<{ message: string; already?: boolean; devCode?: string }>;
+  field?: ReactNode;
 }) {
   const router = useRouter();
   const confirmPhone = useAuthServerFn(confirmAccountPhoneCodeFn);
@@ -329,31 +331,40 @@ function PhoneSmsActions({
     codeDialog.reset();
   }, [phone, codeDialog.reset]);
 
+  const actions = (
+    <div className="cabinet-contact__actions">
+      <button
+        className="cabinet-form__ghost"
+        type="button"
+        disabled={pending}
+        onClick={() => {
+          setPending(true);
+          setStatus("");
+          void onRequest(phone)
+            .then((result) => {
+              codeDialog.openFromRequest(result);
+            })
+            .catch((err: unknown) => setStatus(authErrorMessage(err)))
+            .finally(() => setPending(false));
+        }}
+      >
+        {requestLabel}
+      </button>
+      {codeDialog.issued && codeDialog.phase === "closed" ? (
+        <button className="cabinet-form__ghost" type="button" onClick={codeDialog.reopen}>Ввести код</button>
+      ) : null}
+      <TelegramPhoneButton />
+    </div>
+  );
+
   return (
     <>
-      <div className="cabinet-contact__actions">
-        <button
-          className="cabinet-form__ghost"
-          type="button"
-          disabled={pending}
-          onClick={() => {
-            setPending(true);
-            setStatus("");
-            void onRequest(phone)
-              .then((result) => {
-                codeDialog.openFromRequest(result);
-              })
-              .catch((err: unknown) => setStatus(authErrorMessage(err)))
-              .finally(() => setPending(false));
-          }}
-        >
-          {requestLabel}
-        </button>
-        {codeDialog.issued && codeDialog.phase === "closed" ? (
-          <button className="cabinet-form__ghost" type="button" onClick={codeDialog.reopen}>Ввести код</button>
-        ) : null}
-        <TelegramPhoneButton />
-      </div>
+      {field ? (
+        <div className="cabinet-contact__phone">
+          {field}
+          {actions}
+        </div>
+      ) : actions}
       {status ? <p className="cabinet-note" role="status">{status}</p> : null}
       <PhoneCodeDialogs
         phase={codeDialog.phase}
@@ -383,15 +394,19 @@ function PhoneEditor({
   const [value, setValue] = useState(BY_PHONE_COUNTRY_PREFIX);
 
   return (
-    <div className="cabinet-contact__field">
-      <BelarusPhoneInput
-        value={value}
-        onValue={setValue}
-        aria-label="Телефон"
-        autoComplete="tel"
-      />
-      <PhoneSmsActions phone={value} requestLabel="Подтвердить по SMS" onRequest={onRequest} />
-    </div>
+    <PhoneSmsActions
+      phone={value}
+      requestLabel="Подтвердить по SMS"
+      onRequest={onRequest}
+      field={(
+        <BelarusPhoneInput
+          value={value}
+          onValue={setValue}
+          aria-label="Телефон"
+          autoComplete="tel"
+        />
+      )}
+    />
   );
 }
 

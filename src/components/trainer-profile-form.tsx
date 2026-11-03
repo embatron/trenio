@@ -100,14 +100,17 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
           }
           setBioInvalid(false);
           setPending(true);
-          const { avatarPath: _avatarPath, slug: _slug, certificates: _certificates, photos: _photos, phoneVerified: _phoneVerified, emailVerified: _emailVerified, telegramVerified: _telegramVerified, phone: _phone, offerAccepted: _offerAccepted, privacyAccepted: _privacyAccepted, firstName: _firstName, lastName: _lastName, ...fields } = form;
+          const { avatarPath: _avatarPath, slug: _slug, certificates: _certificates, photos: _photos, phoneVerified: _phoneVerified, emailVerified: _emailVerified, telegramVerified: _telegramVerified, phone: _phone, offerAccepted: _offerAccepted, privacyAccepted: _privacyAccepted, firstName: _firstName, lastName: _lastName, pageStatus: _pageStatus, ...fields } = form;
           void save({ data: { ...fields, status: publication } })
             .then(async (result) => {
               const payload = result as { message: string };
               setPopup({ title: "Готово", message: payload.message });
               await router.invalidate();
             })
-            .catch((err: unknown) => setPopup({ title: "Не получилось", message: authErrorMessage(err) }))
+            .catch((err: unknown) => {
+              const message = authErrorMessage(err);
+              if (message) setPopup({ title: "Не получилось", message });
+            })
             .finally(() => setPending(false));
         }}
       >

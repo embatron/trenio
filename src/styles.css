@@ -199,6 +199,7 @@
   --tracking-heading: -0.028em;
 }
 
+html { scrollbar-gutter: stable; }
 html, body {
   font-family: Inter, Manrope, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 15px;

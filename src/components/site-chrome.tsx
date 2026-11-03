@@ -29,7 +29,7 @@ const CHROME_CSS = `
   --form-location-w-header: 147px;
   background: transparent;
   backdrop-filter: none; -webkit-backdrop-filter: none;
-  transition: background-color 0.45s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.45s ease, box-shadow 0.45s ease, border-color 0.45s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   border-bottom: 1px solid transparent;
 }
 body.is-search-docked .site-header,
@@ -51,16 +51,14 @@ body.is-search-docked .site-header.is-menu-open {
 .site-header__inner {
   width: 100%; max-width: var(--layout-max); margin: 0 auto; padding: 24px var(--layout-gutter);
   display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 28px;
-  transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-body.is-search-docked .site-header__inner { padding: 12px var(--layout-gutter); column-gap: 10px; }
 .site-header__search {
-  min-width: 0; overflow: hidden; opacity: 0; max-height: 0; pointer-events: none;
+  min-width: 0; max-width: none; max-height: none; overflow: hidden; opacity: 0; visibility: hidden; pointer-events: none;
   display: flex; align-items: center; justify-content: flex-start;
-  transition: opacity 0.35s ease, max-height 0.4s ease;
+  transition: opacity 0.2s ease;
 }
 body.is-search-docked .site-header__search {
-  opacity: 1; max-height: 48px; overflow: visible; pointer-events: auto;
+  max-width: none; max-height: none; opacity: 1; visibility: visible; overflow: visible; pointer-events: auto;
 }
 .search-block--header { width: min(100%, 700px); max-width: 100%; min-width: 0; }
 .search-block--header .search-shell {
@@ -357,17 +355,6 @@ body.is-search-docked .site-header__search {
 .site-footer__bottom a:hover { color: #fff; }
 
 @media (max-width: 1000px) {
-  body.is-search-docked .site-header__inner {
-    grid-template-columns: auto minmax(0, 1fr);
-    row-gap: 8px;
-  }
-  body.is-search-docked .site-header__inner > .logo { grid-column: 1; grid-row: 1; }
-  body.is-search-docked .site-header__nav { grid-column: 2; grid-row: 1; justify-self: end; }
-  body.is-search-docked .site-header__search {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    max-height: 48px;
-  }
   .search-block--header { width: min(100%, 700px); }
 }
 @media (max-width: 1100px) {
@@ -375,7 +362,6 @@ body.is-search-docked .site-header__search {
 }
 @media (max-width: 960px) {
   .site-header__inner { padding: 20px var(--layout-gutter); column-gap: 10px; }
-  body.is-search-docked .site-header__inner { padding: 10px var(--layout-gutter); column-gap: 8px; }
   .burger-btn__label { display: none; }
   .burger-btn { min-width: 0; width: 44px; padding: 0; }
   .mega-panel > .mega-sheet { padding-top: 22px; }
@@ -396,7 +382,6 @@ body.is-search-docked .site-header__search {
   .site-footer__brand { grid-column: 1 / -1; }
 }
 @media (max-width: 720px) {
-  body.is-search-docked .site-header__search { max-height: 48px; }
   .search-block--header, .search-block--header .search-shell { width: 100%; }
 }
 @media (max-width: 767px) {
@@ -930,39 +915,37 @@ export function SiteHeader({ middleSlot }: { middleSlot?: ReactNode }) {
   useEffect(() => {
     const el = headerRef.current;
     if (!el) return;
-    const sentinel = document.getElementById("search-dock-sentinel");
-    let observer: IntersectionObserver | null = null;
-
+    let frame = 0;
+    let docked = document.body.classList.contains("is-search-docked");
+    const measure = () => {
+      frame = 0;
+      const sentinel = document.getElementById("search-dock-sentinel");
+      const y = window.scrollY;
+      if (sentinel) {
+        const top = sentinel.getBoundingClientRect().top;
+        docked = docked ? top < 128 : top < 72;
+      } else {
+        docked = docked ? y > 8 : y > 48;
+      }
+      el.classList.toggle("is-scrolled", y > 8);
+      document.body.classList.toggle("is-search-docked", docked);
+      const height = Math.ceil(el.getBoundingClientRect().height);
+      if (el.style.getPropertyValue("--header-h") !== `${height}px`) {
+        el.style.setProperty("--header-h", `${height}px`);
+      }
+    };
     const onScroll = () => {
-      const scrolled = window.scrollY > 8;
-      el.classList.toggle("is-scrolled", scrolled);
-      if (!sentinel) document.body.classList.toggle("is-search-docked", scrolled);
+      if (frame) return;
+      frame = window.requestAnimationFrame(measure);
     };
-
-    if (sentinel) {
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          document.body.classList.toggle("is-search-docked", !entry.isIntersecting);
-        },
-        { root: null, rootMargin: `-${el.getBoundingClientRect().height}px 0px 0px 0px`, threshold: 0 },
-      );
-      observer.observe(sentinel);
-    }
-
-    const syncHeaderHeight = () => {
-      el.style.setProperty("--header-h", `${el.getBoundingClientRect().height}px`);
-    };
-    syncHeaderHeight();
-    const headerObserver = new ResizeObserver(syncHeaderHeight);
-    headerObserver.observe(el);
-
-    onScroll();
+    measure();
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
     return () => {
       window.removeEventListener("scroll", onScroll);
-      observer?.disconnect();
-      headerObserver.disconnect();
-      if (!sentinel) document.body.classList.remove("is-search-docked");
+      window.removeEventListener("resize", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+      if (!document.getElementById("search-dock-sentinel")) document.body.classList.remove("is-search-docked");
     };
   }, []);
 

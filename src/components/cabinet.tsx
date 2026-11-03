@@ -417,6 +417,12 @@ const CABINET_CSS = `
 .cabinet-stat__delta.is-up { color: #15803d; }
 .cabinet-stat__delta.is-down { color: var(--primary); }
 .cabinet-stat__delta.is-flat { color: var(--muted); font-weight: var(--fw-ui); }
+.cabinet-stat__switch { display: flex; flex-wrap: wrap; align-items: center; gap: 0 14px; margin: 0 36px 4px 0; }
+.cabinet-stat__switch button { min-width: 44px; min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 13px; line-height: 1; cursor: pointer; }
+.cabinet-stat__switch button.is-current { color: var(--primary); font-weight: var(--fw-title); }
+.cabinet-stat__switch button:hover { color: var(--primary-dark); }
+.cabinet-stat__figure + .cabinet-stat__figure { margin-top: 12px; }
+.cabinet-stat__note { display: block; margin-top: 2px; }
 .cabinet-stat--brand { background: var(--primary); border-color: transparent; }
 .cabinet-stat--brand strong,
 .cabinet-stat--brand span,
@@ -439,9 +445,25 @@ const CABINET_CSS = `
 .cabinet-contact__panel label { display: grid; gap: 6px; }
 .cabinet-contact__panel label span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
 .cabinet-contact__panel:empty { display: none; }
+.cabinet-contact__phone { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.cabinet-contact__phone > input { flex: 1 1 auto; width: auto; min-width: 0; height: 44px; min-height: 44px; }
+.cabinet-contact__phone .cabinet-contact__actions { flex: 0 0 auto; flex-wrap: nowrap; align-items: center; }
+.cabinet-contact__phone .cabinet-form__ghost { height: 44px; min-height: 44px; white-space: nowrap; }
 .cabinet-contact__field { display: grid; gap: 6px; min-width: 0; }
+.cabinet-welcome__body { display: grid; gap: 12px; padding: 16px 18px; }
+.cabinet-welcome__body p { margin: 0; color: var(--text); font-size: 15px; line-height: 1.45; }
+.cabinet-welcome__body a { color: var(--primary); font-weight: var(--fw-title); }
+.cabinet-welcome__profile { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.cabinet-welcome__profile > div { min-width: 0; display: grid; gap: 2px; flex: 1; }
+.cabinet-welcome__profile strong { color: var(--dark); font-size: 16px; }
+.cabinet-welcome__profile span { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cabinet-welcome__edit { width: 44px; height: 44px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 50%; color: var(--dark); text-decoration: none; }
+.cabinet-welcome__edit:hover { color: var(--primary); }
+.cabinet-welcome__edit svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.cabinet-welcome__ok { justify-self: start; }
 .cabinet-contact__field span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
 .cabinet-contact__panel input, .cabinet-contact__field input { width: 100%; min-width: 0; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); color: var(--dark); font: inherit; font-size: 16px; }
+.cabinet-contact__panel .cabinet-contact__phone > input { width: auto; flex: 1 1 auto; height: 44px; }
 .cabinet-contact__actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .cabinet-contact .cabinet-form__ghost { min-height: 44px; }
 .cabinet-mark { display: inline-grid; place-items: center; height: 28px; padding: 0 12px; border-radius: 999px; border: 1px solid transparent; font-size: 12px; font-weight: var(--fw-title); line-height: 1; white-space: nowrap; }
@@ -454,6 +476,8 @@ const CABINET_CSS = `
 .cabinet-faq { display: grid; gap: 12px; }
 .cabinet-faq > h2 { margin: 0; font-size: 16px; font-weight: var(--fw-heading); color: var(--dark); }
 .cabinet-card h2 { margin: 0; padding: 16px 18px; border-bottom: 1px solid var(--line); font-size: 16px; color: var(--dark); }
+.cabinet-page-status { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 12px 18px; }
+.cabinet-card .cabinet-page-status h2 { margin: 0; padding: 0; border: 0; }
 .cabinet-row { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none; }
 .cabinet-row:last-child { border-bottom: 0; }
 .cabinet-row strong { display: block; color: var(--dark); }

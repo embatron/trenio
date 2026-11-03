@@ -92,6 +92,7 @@ export function FavoriteCards({
           {trainers.map((card) => (
             <CatalogTrainerCard
               key={`${card.type}:${card.slug}`}
+              countImpression={false}
               trainer={{
                 slug: card.slug,
                 name: card.name,

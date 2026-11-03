@@ -124,7 +124,7 @@ export async function issueStepUpGrant(userId: string, proof: { password?: strin
   const passwordOk = proof.password ? await verifyPassword(proof.password, user.passwordHash) : false;
   const codeOk = !passwordOk && proof.code ? await codeMatches(userId, proof.code) : false;
   if (!passwordOk && !codeOk) {
-    throw new AuthError("Неверный пароль или код.", "INVALID_CREDENTIALS");
+    throw new AuthError("Неверный пароль.", "INVALID_CREDENTIALS");
   }
   const raw = generateSecureToken();
   await getDb().insert(authStepUpGrants).values({

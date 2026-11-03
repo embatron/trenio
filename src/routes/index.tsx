@@ -366,7 +366,7 @@ const CSS = `
   background: transparent;
   backdrop-filter: none; -webkit-backdrop-filter: none;
   box-shadow: none;
-  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s ease, backdrop-filter 0.4s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   border-bottom: 1px solid transparent;
 }
 body.is-search-docked .trenio-root > .site-header,
@@ -379,15 +379,13 @@ body.is-search-docked .trenio-root > .site-header,
 .site-header__inner {
   width: 100%; max-width: var(--layout-max); margin: 0 auto; padding: 28px var(--layout-gutter);
   display: flex; align-items: center; justify-content: space-between; gap: 20px;
-  transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-body.is-search-docked .site-header__inner { padding: 12px var(--layout-gutter); gap: 10px; }
 .site-header__search {
-  flex: 1; min-width: 0; max-width: 0; opacity: 0; overflow: hidden; pointer-events: none;
-  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  flex: 1; min-width: 0; max-width: none; max-height: none; opacity: 0; visibility: hidden; overflow: hidden; pointer-events: none;
+  transition: opacity 0.2s ease;
 }
 body.is-search-docked .site-header__search {
-  max-width: 100%; opacity: 1; overflow: visible; pointer-events: auto;
+  max-width: none; max-height: none; opacity: 1; visibility: visible; overflow: visible; pointer-events: auto;
   display: flex; align-items: center; justify-content: flex-start;
 }
 .hero-top {
@@ -597,15 +595,10 @@ body.is-search-docked .site-header__search {
 .content-section + .content-section { margin-top: 48px; }
 
 @media (max-width: 1000px) {
-  body.is-search-docked .site-header__inner { flex-wrap: wrap; row-gap: 8px; }
-  body.is-search-docked .site-header .logo { order: 1; }
-  body.is-search-docked .site-header__nav { order: 2; }
-  body.is-search-docked .site-header__search { order: 3; flex: 1 0 100%; max-height: 64px; }
   .search-block--header { width: min(100%, 700px); }
 }
 @media (max-width: 960px) {
   .site-header__inner { padding: 24px var(--layout-gutter); }
-  body.is-search-docked .site-header__inner { padding: 10px var(--layout-gutter); gap: 8px; }
   .hero-top { min-height: 60vh; padding: var(--header-clearance) 0 32px; }
   .nav-links { gap: 24px; font-size: 14px; }
   .search-block { max-width: 100%; }
@@ -613,7 +606,6 @@ body.is-search-docked .site-header__search {
   .category-slider-nav { display: none !important; }
 }
 @media (max-width: 720px) {
-  body.is-search-docked .site-header__search { max-height: 48px; }
   .search-block--header, .search-block--header .search-shell { width: 100%; }
 }
 @media (max-width: 767px) {
@@ -748,40 +740,14 @@ function Index() {
   }).sort(compareByPopularity);
   useEffect(() => {
     const siteHeader = document.querySelector<HTMLElement>("#site-header");
-    const sentinel = document.querySelector<HTMLElement>("#search-dock-sentinel");
-    if (!siteHeader || !sentinel) return;
-
+    if (!siteHeader) return;
     const syncHeaderClearance = () => {
-      document.documentElement.style.setProperty(
-        "--header-clearance",
-        `${siteHeader.offsetHeight}px`,
-      );
+      document.documentElement.style.setProperty("--header-clearance", `${siteHeader.offsetHeight}px`);
     };
     syncHeaderClearance();
-
-    const getHeaderOffset = () => siteHeader.getBoundingClientRect().height;
-
-    let dockObserver: IntersectionObserver | null = null;
-    const bindDockObserver = () => {
-      if (dockObserver) dockObserver.disconnect();
-      dockObserver = new IntersectionObserver(
-        ([entry]) => {
-          document.body.classList.toggle("is-search-docked", !entry.isIntersecting);
-        },
-        { root: null, rootMargin: `-${getHeaderOffset()}px 0px 0px 0px`, threshold: 0 },
-      );
-      dockObserver.observe(sentinel);
-    };
-    bindDockObserver();
-    const onResize = () => {
-      syncHeaderClearance();
-      bindDockObserver();
-    };
-    window.addEventListener("resize", onResize);
-
+    window.addEventListener("resize", syncHeaderClearance);
     return () => {
-      window.removeEventListener("resize", onResize);
-      dockObserver?.disconnect();
+      window.removeEventListener("resize", syncHeaderClearance);
       document.body.classList.remove("is-search-docked");
     };
   }, []);

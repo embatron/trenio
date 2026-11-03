@@ -256,7 +256,9 @@ export function AccountProfileForm({
     setPopup({ title: "Готово", message });
   }
   function fail(err: unknown) {
-    setPopup({ title: "Не получилось", message: authErrorMessage(err) });
+    const message = authErrorMessage(err);
+    if (!message) return;
+    setPopup({ title: "Не получилось", message });
   }
 
   return (
