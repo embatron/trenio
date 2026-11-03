@@ -2,7 +2,7 @@ import { randomBytes } from "node:crypto";
 
 import { createServerFn } from "@tanstack/react-start";
 import { getCookie, getRequest, setCookie } from "@tanstack/react-start/server";
-import { and, desc, eq, gt, isNull, ne, or } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, isNull, ne, or } from "drizzle-orm";
 import { z } from "zod";
 
 import { optionalAuthMiddleware, requireAuthMiddleware, requireSessionMiddleware } from "@/auth/middleware";
@@ -785,16 +785,26 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
     const db = getDb();
     const now = new Date();
     const linkToken = generateSecureToken();
-    await db
-      .update(authDoorClaims)
-      .set({ usedAt: now })
+    const retired = await db
+      .select({ id: authDoorClaims.id })
+      .from(authDoorClaims)
       .where(and(eq(authDoorClaims.profileId, row.id), isNull(authDoorClaims.usedAt)));
-    await db.insert(authDoorClaims).values({
+    const retiredIds = retired.map((item) => item.id);
+    if (retiredIds.length > 0) {
+      await db.update(authDoorClaims).set({ usedAt: now }).where(inArray(authDoorClaims.id, retiredIds));
+    }
+    const [created] = await db.insert(authDoorClaims).values({
       profileId: row.id,
       email,
       tokenHash: hashToken(`${row.id}:${linkToken}`),
       expiresAt: addMinutes(now, 60),
-    });
+    }).returning({ id: authDoorClaims.id });
+    if (!created) {
+      if (retiredIds.length > 0) {
+        await db.update(authDoorClaims).set({ usedAt: null }).where(inArray(authDoorClaims.id, retiredIds));
+      }
+      throw new AuthError("Письмо не отправилось. Попробуйте ещё раз.", "VALIDATION");
+    }
     const origin = requestOrigin();
     const link = `${origin}/hi/${row.previewToken}?mail=${encodeURIComponent(linkToken)}`;
     try {
@@ -817,6 +827,10 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
         html: letter.html,
       });
     } catch (error) {
+      await db.delete(authDoorClaims).where(eq(authDoorClaims.id, created.id));
+      if (retiredIds.length > 0) {
+        await db.update(authDoorClaims).set({ usedAt: null }).where(inArray(authDoorClaims.id, retiredIds));
+      }
       logCaught("email", "email.send", error, { subject: email, target: row.slug });
       throw new AuthError("Письмо не отправилось. Попробуйте ещё раз.", "VALIDATION");
     }
@@ -829,7 +843,7 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
       subject: email,
       target: row.slug,
     });
-    return { ok: true as const, message: "Ссылка отправлена." };
+    return { ok: true as const, message: "Ссылка уже отправлена.", email };
   });
 
 export const confirmDoorEmailFn = createServerFn({ method: "POST" })

@@ -42,9 +42,9 @@ export function TrainerDoorMail({
     setError(null);
     void requestEmail({ data: { email: email.trim() } })
       .then((result) => {
-        const message = (result as { message: string }).message;
-        setSent(message);
-        onSent?.(email.trim());
+        const sent = result as { message: string; email?: string };
+        setSent(sent.message);
+        onSent?.(sent.email || email.trim());
       })
       .catch((err: unknown) => setError(authErrorMessage(err)))
       .finally(() => setPending(false));
@@ -113,7 +113,7 @@ export function TrainerDoorMail({
 function DoorMailSent({ email, onClose }: { email: string; onClose: () => void }) {
   return (
     <>
-      <h2 id="door-mail-sent">Ссылка отправлена</h2>
+      <h2 id="door-mail-sent">Ссылка уже отправлена</h2>
       <p>Ссылка на {email} уже отправлена. Проверьте почту, в том числе папку «Спам».</p>
       <p>
         Если вы не видите ссылку, напишите в директ Instagram:{" "}
@@ -135,6 +135,9 @@ export function TrainerDoorMailDialog({
 }) {
   const router = useRouter();
   const [sent, setSent] = useState(sentTo);
+  useEffect(() => {
+    if (sentTo) setSent(sentTo);
+  }, [sentTo]);
   useEffect(() => {
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";

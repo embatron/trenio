@@ -265,7 +265,7 @@ export function CabinetShell({
                       </Link>
                     ) : identity}
                   </strong>
-                  {publicSlug ? (
+                  {publicSlug && active !== "profile" ? (
                     <Link className="cabinet-id__edit" to="/me/profile" aria-label="Редактировать профиль" title="Редактировать профиль">
                       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z" /></svg>
                     </Link>
@@ -367,15 +367,17 @@ const CABINET_CSS = `
   padding: 16px; border: 1px solid var(--line); border-radius: var(--card-radius); background: var(--white);
 }
 .cabinet-id { display: flex; align-items: center; gap: 12px; }
-.cabinet-id > div { min-width: 0; }
+.cabinet-id > div { display: grid; gap: 2px; min-width: 0; }
 .cabinet-id__mark { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgba(var(--primary-rgb), 0.12); color: var(--primary); font-weight: var(--fw-title); object-fit: cover; }
-.cabinet-id__line { display: flex; align-items: center; gap: 2px; min-width: 0; }
-.cabinet-id strong { display: block; min-width: 0; color: var(--dark); }
-.cabinet-id__edit { width: 44px; height: 44px; flex: 0 0 44px; display: grid; place-items: center; border-radius: 50%; color: var(--dark); text-decoration: none; }
+.cabinet-id__line { display: flex; align-items: center; gap: 0; min-width: 0; }
+.cabinet-id strong { display: block; min-width: 0; color: var(--dark); font-size: 16px; font-weight: var(--fw-title); line-height: 1.2; }
+.cabinet-id > div > span { margin: 0; line-height: 1.3; }
+.cabinet-id__edit { position: relative; width: 28px; height: 28px; flex: 0 0 28px; margin-left: 2px; display: grid; place-items: center; border-radius: 50%; color: var(--dark); text-decoration: none; }
+.cabinet-id__edit::after { content: ""; position: absolute; inset: -8px; }
 .cabinet-id__edit:hover { color: var(--primary); }
 .cabinet-id__edit svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
-.cabinet-id strong .trainer-name { flex-wrap: nowrap; }
-.cabinet-id strong .trainer-name__line { color: var(--dark); font-size: inherit; margin: 0; }
+.cabinet-id strong .trainer-name { flex-wrap: nowrap; font-size: inherit; color: inherit; }
+.cabinet-id strong .trainer-name__line { color: var(--dark); font-size: inherit; margin: 0; line-height: 1.2; }
 .cabinet-id__name { display: block; margin: 0; padding: 0; color: inherit; line-height: 1.15; text-decoration: none; }
 .cabinet-id__name:hover .trainer-name__line { color: var(--primary); }
 .cabinet-id span { color: var(--muted); font-size: 13px; }

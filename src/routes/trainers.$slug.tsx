@@ -751,10 +751,34 @@ function TrainerPage() {
   const openingMail = new URLSearchParams(searchStr).get("mail");
   const magicDoor = Boolean(editor?.magicDoor) && !isOwner && !openingMail;
   const [mailOpen, setMailOpen] = useState(magicDoor);
+  const doorMailKey = `trenio-door-mail-to:${t.slug}`;
   const [mailSentTo, setMailSentTo] = useState<string | null>(editor?.mailSentTo ?? null);
+  const [mailChecked, setMailChecked] = useState(Boolean(editor?.mailSentTo));
+  function rememberMail(email: string) {
+    setMailSentTo(email);
+    try { sessionStorage.setItem(doorMailKey, email); } catch { /* the open window already shows the address */ }
+  }
   useEffect(() => {
-    if (editor?.mailSentTo) setMailSentTo(editor.mailSentTo);
-  }, [editor?.mailSentTo]);
+    if (editor?.mailSentTo) {
+      setMailSentTo(editor.mailSentTo);
+      try { sessionStorage.setItem(doorMailKey, editor.mailSentTo); } catch { /* the server value stays on the page */ }
+      setMailChecked(true);
+      return;
+    }
+    if (editor?.magicDoor) {
+      setMailSentTo((current) => {
+        if (current) return current;
+        try { sessionStorage.removeItem(doorMailKey); } catch { /* the form is shown from the server */ }
+        return null;
+      });
+      setMailChecked(true);
+      return;
+    }
+    let stored: string | null = null;
+    try { stored = sessionStorage.getItem(doorMailKey); } catch { stored = null; }
+    if (stored) setMailSentTo(stored);
+    setMailChecked(true);
+  }, [doorMailKey, editor]);
   const [mailError, setMailError] = useState("");
   const openMail = useAuthServerFn(openTrainerMailFn);
   const [createdOpen, setCreatedOpen] = useState(false);
@@ -1238,10 +1262,10 @@ function TrainerPage() {
       <SiteFooter />
       {user?.needsDoorPassword && !user.needsCredentials ? <DoorPasswordDialog /> : null}
       {createdOpen ? <CabinetCreatedDialog trainer={t} onClose={closeCreated} /> : null}
-      {mailOpen ? (
+      {mailOpen && (mailSentTo || mailChecked) ? (
         <TrainerDoorMailDialog
           sentTo={mailSentTo}
-          onRemember={setMailSentTo}
+          onRemember={rememberMail}
           onClose={() => setMailOpen(false)}
         />
       ) : null}
