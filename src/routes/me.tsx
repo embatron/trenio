@@ -17,7 +17,7 @@ import { getOwnTrainerViewStatsFn } from "@/lib/catalog/trainer-views";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
 const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: MeSectionPath; sections?: typeof TRAINER_PROFILE_SECTIONS }> = [
-  { id: "overview", label: "Обзор", icon: "overview", to: "/me" },
+  { id: "overview", label: "Общая панель", icon: "overview", to: "/me" },
   { id: "messages", label: "Мои сообщения", icon: "messages", to: "/me/messages" },
   { id: "profile", label: "Мой профиль", icon: "trainers", to: "/me/profile", sections: TRAINER_PROFILE_SECTIONS },
   { id: "contacts", label: "Мои контакты", icon: "contacts", to: "/me/contacts" },

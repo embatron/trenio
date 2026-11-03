@@ -87,6 +87,36 @@ export function pageStatusOf(status: string | null | undefined): PageStatus {
 }
 export const NICK_SUPPORT_MAX = 1000;
 
+export const setOwnTrainerPageStatusFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(z.object({ status: z.enum(OWN_PROFILE_STATUSES) }))
+  .handler(async ({ data, context }) => {
+    assertTrainer(context.user.roles);
+    const [row] = await getDb()
+      .select({ id: trainerProfiles.id, slug: trainerProfiles.slug, status: trainerProfiles.status })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.ownerUserId, context.user.id))
+      .limit(1);
+    if (!row) throw new AuthError("Карточка ещё не создана.", "VALIDATION");
+    if (row.status !== data.status) {
+      await getDb().update(trainerProfiles).set({
+        status: data.status,
+        updatedAt: new Date(),
+      }).where(eq(trainerProfiles.id, row.id));
+    }
+    void writeLog({
+      level: "info",
+      domain: "form",
+      action: "form.trainer_profile",
+      outcome: "success",
+      message: ownStatusMessage(data.status),
+      actorUserId: context.user.id,
+      subject: context.user.email,
+      target: row.slug,
+    });
+    return { ok: true as const, status: data.status };
+  });
+
 /** Draft has no trainer-facing box. The first save can publish it. */
 export function ownFacingStatus(status: string | null | undefined): OwnProfileStatus {
   if (status === "hidden" || status === "archived" || status === "published") return status;

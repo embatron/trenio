@@ -258,17 +258,22 @@ export function CabinetShell({
               <UserAvatar name={name} src={avatarUrl} size={44} />
               <div>
                 <div className="cabinet-id__line">
-                  <strong>
-                    {publicSlug ? (
-                      <Link className="cabinet-id__name" to="/trainers/$slug" params={{ slug: publicSlug }}>
-                        {identity}
-                      </Link>
-                    ) : identity}
-                  </strong>
-                  {publicSlug && active !== "profile" ? (
-                    <Link className="cabinet-id__edit" to="/me/profile" aria-label="Редактировать профиль" title="Редактировать профиль">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z" /></svg>
-                    </Link>
+                  <strong>{identity}</strong>
+                  {publicSlug ? (
+                    <a
+                      className="cabinet-id__open"
+                      href={`/trainers/${publicSlug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Открыть публичный профиль"
+                      title="Открыть публичный профиль"
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M14 5h5v5" />
+                        <path d="M13 11l6-6" />
+                        <path d="M19 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5" />
+                      </svg>
+                    </a>
                   ) : null}
                 </div>
                 <span>{role}</span>
@@ -372,10 +377,10 @@ const CABINET_CSS = `
 .cabinet-id__line { display: flex; align-items: center; gap: 0; min-width: 0; }
 .cabinet-id strong { display: block; min-width: 0; color: var(--dark); font-size: 16px; font-weight: var(--fw-title); line-height: 1.2; }
 .cabinet-id > div > span { margin: 0; line-height: 1.3; }
-.cabinet-id__edit { position: relative; width: 28px; height: 28px; flex: 0 0 28px; margin-left: 2px; display: grid; place-items: center; border-radius: 50%; color: var(--dark); text-decoration: none; }
-.cabinet-id__edit::after { content: ""; position: absolute; inset: -8px; }
-.cabinet-id__edit:hover { color: var(--primary); }
-.cabinet-id__edit svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.cabinet-id__open { position: relative; width: 28px; height: 28px; flex: 0 0 28px; margin-left: 2px; display: grid; place-items: center; border-radius: 50%; color: var(--dark); text-decoration: none; }
+.cabinet-id__open::after { content: ""; position: absolute; inset: -8px; }
+.cabinet-id__open:hover { color: var(--primary); }
+.cabinet-id__open svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .cabinet-id strong .trainer-name { flex-wrap: nowrap; font-size: inherit; color: inherit; }
 .cabinet-id strong .trainer-name__line { color: var(--dark); font-size: inherit; margin: 0; line-height: 1.2; }
 .cabinet-id__name { display: block; margin: 0; padding: 0; color: inherit; line-height: 1.15; text-decoration: none; }
@@ -717,13 +722,13 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .publish-pick { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; min-width: 0; }
 .publish-pick legend { padding: 0; color: var(--muted); font-size: 13px; font-weight: var(--fw-title); line-height: 1.45; }
 .publish-pick__row { display: grid; gap: 8px; }
-.cabinet-form label.publish-pick__option {
-  display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 44px; margin: 0; padding: 4px 10px;
+label.publish-pick__option {
+  position: relative; display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 44px; margin: 0; padding: 4px 10px;
   border: 1px solid transparent; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: var(--fw-title); line-height: 1.2;
   box-shadow: none;
 }
-.cabinet-form .publish-pick__option span { color: inherit; font-size: inherit; font-weight: inherit; }
-.cabinet-form .publish-pick__option input {
+.publish-pick__option span { color: inherit; font-size: inherit; font-weight: inherit; }
+.publish-pick__option input {
   position: absolute; width: 1px; height: 1px; min-height: 0; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0);
 }
 .publish-pick__box {
@@ -734,12 +739,14 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .publish-pick__option.is-on .publish-pick__box::after {
   content: ""; width: 5px; height: 9px; margin-top: -1px; border: solid currentColor; border-width: 0 2px 2px 0; transform: rotate(45deg);
 }
-.cabinet-form label.publish-pick__option.is-published { background: #e7f3ec; color: #3d6b52; border-color: #c5dfd0; }
-.cabinet-form label.publish-pick__option.is-published.is-on { background: #d5eadf; color: #245c40; border-color: #b7d4c4; }
-.cabinet-form label.publish-pick__option.is-hidden { background: #f8f1e4; color: #7a5a28; border-color: #e6d7bc; }
-.cabinet-form label.publish-pick__option.is-hidden.is-on { background: #f0e4cc; color: #6a4a18; border-color: #dcc9a4; }
-.cabinet-form label.publish-pick__option.is-archived { background: #f8eeee; color: #8a4a4e; border-color: #ead4d6; }
-.cabinet-form label.publish-pick__option.is-archived.is-on { background: #f0e0e2; color: #7a3a3e; border-color: #e0c4c8; }
+label.publish-pick__option.is-published { background: #e7f3ec; color: #3d6b52; border-color: #c5dfd0; }
+label.publish-pick__option.is-published.is-on { background: #d5eadf; color: #245c40; border-color: #b7d4c4; }
+label.publish-pick__option.is-hidden { background: #f8f1e4; color: #7a5a28; border-color: #e6d7bc; }
+label.publish-pick__option.is-hidden.is-on { background: #f0e4cc; color: #6a4a18; border-color: #dcc9a4; }
+label.publish-pick__option.is-archived { background: #f8eeee; color: #8a4a4e; border-color: #ead4d6; }
+label.publish-pick__option.is-archived.is-on { background: #f0e0e2; color: #7a3a3e; border-color: #e0c4c8; }
+.cabinet-card > .publish-pick { padding: 4px 18px 16px; }
+.cabinet-page-status__side { display: flex; align-items: center; gap: 4px; }
 .publish-pick__option:focus-within { outline: 2px solid rgba(var(--dark-rgb), 0.45); outline-offset: 2px; }
 button.cabinet-text-link {
   display: inline; position: relative; min-height: 0; margin: 0; padding: 0; border: 0; background: none;

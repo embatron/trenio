@@ -461,6 +461,7 @@ export function TrainerCardFields({
   emailConfirm,
   leading,
   nick,
+  nickFirst = false,
   onNickSupport,
   afterAddress,
   priceLabel = "Цена от, BYN",
@@ -477,6 +478,7 @@ export function TrainerCardFields({
   emailConfirm?: TrainerEmailControl;
   leading?: ReactNode;
   nick?: string;
+  nickFirst?: boolean;
   onNickSupport?: () => void;
   afterAddress?: ReactNode;
   priceLabel?: string;
@@ -490,9 +492,36 @@ export function TrainerCardFields({
   }
   const showProfile = mode !== "contacts";
   const showContacts = mode !== "profile";
+  const nickBlock = nick ? (
+    <div>
+      <label>
+        <span>Ник</span>
+        <input
+          className="is-locked"
+          value={nick}
+          readOnly
+          required
+          aria-readonly="true"
+          autoComplete="username"
+        />
+      </label>
+      <p className="cabinet-note">
+        Ник совпадает с Instagram: /trainers/{nick}. Сменить его можно только{" "}
+        {onNickSupport ? (
+          <button type="button" className="cabinet-text-link" onClick={onNickSupport}>
+            по запросу в поддержку
+          </button>
+        ) : (
+          "по запросу в поддержку"
+        )}
+        .
+      </p>
+    </div>
+  ) : null;
 
   return (
     <>
+      {nickFirst ? nickBlock : null}
       {showProfile ? (
       <>
       <ProfileSection id="trainer-photos" title="Фото">
@@ -513,32 +542,7 @@ export function TrainerCardFields({
       </ProfileSection>
       <ProfileSection id="trainer-main" title="Основное">
         {leading}
-        {nick ? (
-          <div>
-            <label>
-              <span>Ник</span>
-              <input
-                className="is-locked"
-                value={nick}
-                readOnly
-                required
-                aria-readonly="true"
-                autoComplete="username"
-              />
-            </label>
-            <p className="cabinet-note">
-              Ник совпадает с Instagram: /trainers/{nick}. Сменить его можно только{" "}
-              {onNickSupport ? (
-                <button type="button" className="cabinet-text-link" onClick={onNickSupport}>
-                  по запросу в поддержку
-                </button>
-              ) : (
-                "по запросу в поддержку"
-              )}
-              .
-            </p>
-          </div>
-        ) : null}
+        {nickFirst ? null : nickBlock}
         {self ? null : (
           <div className="cabinet-form__row">
             <label>

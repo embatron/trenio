@@ -485,7 +485,7 @@ const ACCOUNT_MENU: HeaderMenuItem[] = [
 ];
 
 const TRAINER_MENU: HeaderMenuItem[] = [
-  { id: "overview", label: "Обзор", kind: "me", to: "/me" },
+  { id: "overview", label: "Общая панель", kind: "me", to: "/me" },
   { id: "messages", label: "Мои сообщения", kind: "me", to: "/me/messages" },
   { id: "profile", label: "Мой профиль", kind: "me", to: "/me/profile" },
   { id: "reviews", label: "Мои отзывы", kind: "me", to: "/me/reviews" },

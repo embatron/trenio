@@ -9,14 +9,8 @@ import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { confirmAccountPhoneCodeFn, confirmTrainerContactEmailCodeFn, requestAccountPhoneCodeFn, requestTrainerContactEmailCodeFn } from "@/lib/auth/functions";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { reviewPlainText, reviewTextLength } from "@/lib/catalog/review-html";
-import { NICK_SUPPORT_MAX, OWN_PROFILE_STATUSES, requestNickSupportFn, saveOwnTrainerProfileFn, type OwnProfileStatus, type OwnTrainerProfile } from "@/lib/catalog/trainer-own";
+import { NICK_SUPPORT_MAX, requestNickSupportFn, saveOwnTrainerProfileFn, type OwnTrainerProfile } from "@/lib/catalog/trainer-own";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
-
-const PUBLICATION_LABEL: Record<OwnProfileStatus, string> = {
-  published: "Опубликован",
-  hidden: "Скрыт",
-  archived: "Снят с публикации",
-};
 
 export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) {
   const router = useRouter();
@@ -34,7 +28,6 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
   const requestNick = useAuthServerFn(requestNickSupportFn);
   const step = useContactStepUp();
   const [form, setForm] = useState(profile);
-  const [publication, setPublication] = useState<OwnProfileStatus>(profile.status);
   const [pending, setPending] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
   useEffect(() => {
@@ -101,7 +94,7 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
           setBioInvalid(false);
           setPending(true);
           const { avatarPath: _avatarPath, slug: _slug, certificates: _certificates, photos: _photos, phoneVerified: _phoneVerified, emailVerified: _emailVerified, telegramVerified: _telegramVerified, phone: _phone, offerAccepted: _offerAccepted, privacyAccepted: _privacyAccepted, firstName: _firstName, lastName: _lastName, pageStatus: _pageStatus, ...fields } = form;
-          void save({ data: { ...fields, status: publication } })
+          void save({ data: { ...fields, status: profile.status } })
             .then(async (result) => {
               const payload = result as { message: string };
               setPopup({ title: "Готово", message: payload.message });
@@ -116,6 +109,7 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
       >
         <TrainerCardFields
           nick={profile.slug}
+          nickFirst
           self
           priceLabel="Сколько у меня стоит разовое занятие (персональная тренировка), BYN?"
           values={form}
@@ -143,30 +137,7 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
             },
           }}
           onNickSupport={() => setSupportOpen(true)}
-          leading={(
-            <>
-            {step.fields}
-            <fieldset className="publish-pick">
-              <legend>Статус публикации</legend>
-              <div className="publish-pick__row" role="group" aria-label="Статус публикации">
-                {OWN_PROFILE_STATUSES.map((status) => {
-                  const on = publication === status;
-                  return (
-                    <label key={status} className={`publish-pick__option is-${status}${on ? " is-on" : ""}`}>
-                      <input
-                        type="checkbox"
-                        checked={on}
-                        onChange={() => setPublication(status)}
-                      />
-                      <span className="publish-pick__box" aria-hidden="true" />
-                      <span>{PUBLICATION_LABEL[status]}</span>
-                    </label>
-                  );
-                })}
-              </div>
-            </fieldset>
-            </>
-          )}
+          leading={step.fields}
           emailConfirm={{
             verified: form.emailVerified,
             onRequest: async (email) => {

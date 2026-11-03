@@ -1,8 +1,12 @@
 import { useState, type ReactNode } from "react";
-import { createFileRoute, getRouteApi } from "@tanstack/react-router";
+import { createFileRoute, getRouteApi, useRouter } from "@tanstack/react-router";
 
+import { CabinetNotice } from "@/components/cabinet";
 import { SiteFaq } from "@/components/site-faq";
 import { TrainerContactStatus } from "@/components/trainer-contact-status";
+import { authErrorMessage } from "@/lib/auth/errors";
+import { useAuthServerFn } from "@/lib/auth/use-auth-form";
+import { OWN_PROFILE_STATUSES, setOwnTrainerPageStatusFn, type OwnProfileStatus, type OwnTrainerProfile, type PageStatus } from "@/lib/catalog/trainer-own";
 import {
   POPULARITY_LIMITS,
   popularityChecklist,
@@ -12,7 +16,6 @@ import {
   ratingFor,
   type TrainerRatingSnapshot,
 } from "@/lib/catalog/trainer-popularity";
-import type { OwnTrainerProfile, PageStatus } from "@/lib/catalog/trainer-own";
 import type { TrainerViewPeriod } from "@/lib/catalog/trainer-views";
 import { countRu, pluralRu } from "@/lib/ru-plural";
 
@@ -29,8 +32,8 @@ const meRoute = getRouteApi("/me");
 export const Route = createFileRoute("/me/")({
   head: () => ({
     meta: [
-      { title: "Личный кабинет тренера · trenio.by" },
-      { name: "description", content: "Личный кабинет: профиль, отзывы и сообщения." },
+      { title: "Общая панель · личный кабинет тренера · trenio.by" },
+      { name: "description", content: "Общая панель: статус страницы, посещения и рейтинг." },
       { name: "robots", content: "noindex,follow" },
     ],
   }),
@@ -206,19 +209,67 @@ function showsAnswer(): ReactNode {
 }
 
 const PAGE_STATUS_LABEL: Record<PageStatus, string> = {
-  draft: "Не опубликован",
-  published: "Опубликован",
-  hidden: "Скрыт",
-  archived: "Снят с публикации",
+  draft: "Не опубликована",
+  published: "Опубликована",
+  hidden: "Скрыта",
+  archived: "Снята с публикации",
+};
+
+const PAGE_MODE_LABEL: Record<OwnProfileStatus, string> = {
+  published: "Опубликована",
+  hidden: "Скрыта",
+  archived: "Снята с публикации",
 };
 
 function PageStatusCard({ status }: { status: PageStatus }) {
+  const router = useRouter();
+  const saveStatus = useAuthServerFn(setOwnTrainerPageStatusFn);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+  const live = status === "published";
+  function apply(next: OwnProfileStatus) {
+    if (pending || next === status) return;
+    setPending(true);
+    setError("");
+    void saveStatus({ data: { status: next } })
+      .then(() => router.invalidate())
+      .catch((err: unknown) => setError(authErrorMessage(err) || "Не удалось сменить статус страницы."))
+      .finally(() => setPending(false));
+  }
   return (
     <article className="cabinet-card">
       <div className="cabinet-page-status">
         <h2>Страница</h2>
-        <span className={`cabinet-status cabinet-status--${status}`}>{PAGE_STATUS_LABEL[status]}</span>
+        <div className="cabinet-page-status__side">
+          <span className={`cabinet-status cabinet-status--${status}`}>{PAGE_STATUS_LABEL[status]}</span>
+          <button
+            type="button"
+            className={`mail-switch${live ? " is-on" : ""}`}
+            aria-pressed={live}
+            aria-label={live ? "Скрыть страницу из каталога" : "Показать страницу в каталоге"}
+            disabled={pending}
+            onClick={() => apply(live ? "hidden" : "published")}
+          >
+            <span className="mail-switch__thumb" />
+          </button>
+        </div>
       </div>
+      <fieldset className="publish-pick" disabled={pending}>
+        <legend>Режим страницы</legend>
+        <div className="publish-pick__row" role="group" aria-label="Режим страницы">
+          {OWN_PROFILE_STATUSES.map((mode) => {
+            const on = status === mode;
+            return (
+              <label key={mode} className={`publish-pick__option is-${mode}${on ? " is-on" : ""}`}>
+                <input type="checkbox" checked={on} onChange={() => apply(mode)} />
+                <span className="publish-pick__box" aria-hidden="true" />
+                <span>{PAGE_MODE_LABEL[mode]}</span>
+              </label>
+            );
+          })}
+        </div>
+      </fieldset>
+      {error ? <CabinetNotice title="Не получилось" message={error} onClose={() => setError("")} /> : null}
     </article>
   );
 }
