@@ -46,10 +46,14 @@ export function getPublishedTrainer(slug: string): PublishedTrainer | undefined 
   return PUBLISHED_TRAINERS.find((trainer) => trainer.slug === slug);
 }
 
-export function trainersForCategory(categorySlug: string): PublishedTrainer[] {
-  return PUBLISHED_TRAINERS.filter((trainer) =>
+export function trainersMatchingCategory(trainers: readonly PublishedTrainer[], categorySlug: string): PublishedTrainer[] {
+  return trainers.filter((trainer) =>
     trainer.sports.some((sport) => sport.slug === categorySlug || sport.parentSlug === categorySlug),
   );
+}
+
+export function trainersForCategory(categorySlug: string): PublishedTrainer[] {
+  return trainersMatchingCategory(PUBLISHED_TRAINERS, categorySlug);
 }
 
 export function trainersForCity(citySlug: string): PublishedTrainer[] {

@@ -4,7 +4,7 @@ import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { SportIcon } from "@/components/sport-icon";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
-import { PUBLISHED_TRAINERS } from "@/lib/catalog/published-trainers";
+import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
 import { compareByPopularity, popularityChecklist, ratingFor } from "@/lib/catalog/trainer-popularity";
 import { getHomeStatsFn } from "@/lib/catalog/home-stats";
 import { listTrainerPricesFn, priceForCard } from "@/lib/catalog/trainer-price";
@@ -327,8 +327,13 @@ function PopularSlider() {
 export const Route = createFileRoute("/")({
   head: () => homePageHead(HOME_FAQ),
   loader: async () => {
-    const [ratings, prices, stats] = await Promise.all([listTrainerRatingSummariesFn(), listTrainerPricesFn(), getHomeStatsFn()]);
-    return { ratings, prices, stats };
+    const [ratings, prices, stats, trainers] = await Promise.all([
+      listTrainerRatingSummariesFn(),
+      listTrainerPricesFn(),
+      getHomeStatsFn(),
+      listCatalogTrainersFn(),
+    ]);
+    return { ratings, prices, stats, trainers };
   },
   component: Index,
 });
@@ -704,8 +709,11 @@ function experienceLabel(years: number | null): string {
 }
 
 function Index() {
-  const { ratings, prices, stats } = Route.useLoaderData();
-  const trainers = PUBLISHED_TRAINERS.map((trainer) => {
+  const { ratings, prices, stats, trainers: published } = Route.useLoaderData();
+  const trainers = published.filter((trainer) => {
+    const label = trainer.city.label.trim().toLowerCase().replaceAll("ё", "е");
+    return trainer.city.slug === "minsk" || label === "минск";
+  }).map((trainer) => {
     const rating = ratingFor(trainer.slug, ratings);
     const fill = popularityChecklist({
       photo: trainer.photo,
@@ -738,6 +746,10 @@ function Index() {
       city: trainer.city.label,
       district: trainer.district,
       experience: trainer.experience,
+      phone: trainer.phone,
+      instagram: trainer.instagram,
+      telegram: trainer.telegram,
+      email: trainer.email,
     };
   }).sort(compareByPopularity);
   useEffect(() => {

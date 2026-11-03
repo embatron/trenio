@@ -25,6 +25,10 @@ export type CatalogTrainerCardData = {
   experience?: number;
   price?: number | null;
   badge?: string;
+  phone?: string;
+  instagram?: string;
+  telegram?: string;
+  email?: string;
 };
 
 export function CatalogTrainerCard({
@@ -86,7 +90,15 @@ export function CatalogTrainerCard({
             </svg>
             <span>{trainer.city}</span>
           </span>
-          {showContacts ? <TrainerContactIcons slug={trainer.slug} /> : null}
+          {showContacts ? (
+            <TrainerContactIcons
+              slug={trainer.slug}
+              phone={trainer.phone}
+              instagram={trainer.instagram}
+              telegram={trainer.telegram}
+              email={trainer.email}
+            />
+          ) : null}
         </div>
       </div>
     </article>

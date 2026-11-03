@@ -2,6 +2,7 @@ import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { catalogSportLocation, catalogSportsFromQuery } from "@/lib/catalog/catalog-sports";
 import { catalogPageHead } from "@/lib/seo/catalog";
 import { cityCatalogBySlug } from "@/lib/catalog/city-pages";
+import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
 import { listTrainerPricesFn } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { CategoryCatalogPage } from "@/routes/categories.$slug";
@@ -23,8 +24,12 @@ export const Route = createFileRoute("/city/$slug/")({
     return catalogPageHead(city, null, sports.length > 1);
   },
   loader: async () => {
-    const [ratings, prices] = await Promise.all([listTrainerRatingSummariesFn(), listTrainerPricesFn()]);
-    return { ratings, prices };
+    const [ratings, prices, trainers] = await Promise.all([
+      listTrainerRatingSummariesFn(),
+      listTrainerPricesFn(),
+      listCatalogTrainersFn(),
+    ]);
+    return { ratings, prices, trainers };
   },
   component: CityCatalogRoute,
 });
@@ -32,7 +37,7 @@ export const Route = createFileRoute("/city/$slug/")({
 function CityCatalogRoute() {
   const { slug } = Route.useParams();
   const { sports: sportsQuery } = Route.useSearch();
-  const { ratings, prices } = Route.useLoaderData();
+  const { ratings, prices, trainers } = Route.useLoaderData();
   const city = cityCatalogBySlug(slug);
   if (!city) return null;
   const sportSelection = catalogSportsFromQuery(sportsQuery);
@@ -42,6 +47,7 @@ function CityCatalogRoute() {
       key={`${slug}:${sportSelection.map((sport) => sport.id).join("|")}`}
       ratings={ratings}
       prices={prices}
+      trainers={trainers}
       cityCatalog={city}
       sportSelection={sportSelection}
       place={{ cities: [city.name], query: "", source: "none", lookupOnClient: false }}

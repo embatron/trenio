@@ -7,10 +7,10 @@ import { authErrorMessage } from "@/lib/auth/errors";
 import { isStaff } from "@/lib/auth/roles";
 import { formatBelarusPhone } from "@/lib/auth/phone";
 import { trainerSportDatives } from "@/lib/catalog/sport-taxonomy";
+import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
 import {
   audienceLabels,
   getPublishedTrainer,
-  PUBLISHED_TRAINERS,
   sportLine,
   TRAINER_FORMAT_OPTIONS,
   type PublishedTrainer,
@@ -94,6 +94,7 @@ function toTrainer(
   ownStatus: Trainer["ownStatus"],
   ownComment: string | null,
   certificates: TrainerCertificate[],
+  catalog: PublishedTrainer[],
 ): Trainer {
   const formatLabel = (format: PublishedTrainer["formats"][number]) =>
     TRAINER_FORMAT_OPTIONS.find((option) => option.id === format)?.label ?? format;
@@ -137,7 +138,7 @@ function toTrainer(
     certificates,
     ownStatus,
     ownComment,
-    similar: PUBLISHED_TRAINERS.filter((item) => item.slug !== trainer.slug).map((item) => {
+    similar: catalog.filter((item) => item.slug !== trainer.slug).map((item) => {
       const rating = ratingFor(item.slug, ratings);
       return {
         slug: item.slug,
@@ -171,15 +172,16 @@ export const Route = createFileRoute("/trainers/$slug")({
     const published = visible?.trainer ?? (params.slug ? getPublishedTrainer(params.slug) : undefined);
     if (!published) throw notFound();
     const access = visible?.access ?? "public";
-    const [{ reviews, summary, ownStatus, ownComment, isOwner }, ratings, prices, media, place, contacts] = await Promise.all([
+    const [{ reviews, summary, ownStatus, ownComment, isOwner }, ratings, prices, media, place, contacts, catalog] = await Promise.all([
       listTrainerReviewsFn({ data: { slug: published.slug } }),
       listTrainerRatingSummariesFn(),
       listTrainerPricesFn(),
       getTrainerCertificatesFn({ data: { slug: published.slug } }),
       getTrainerAddressFn({ data: { slug: published.slug } }),
       getPublicTrainerContactsFn({ data: { slug: published.slug } }),
+      listCatalogTrainersFn(),
     ]);
-    const trainer = toTrainer(published, summary, reviews, ratings, prices, ownStatus ?? null, ownComment ?? null, media.certificates);
+    const trainer = toTrainer(published, summary, reviews, ratings, prices, ownStatus ?? null, ownComment ?? null, media.certificates, catalog);
     return {
       trainer: {
         ...trainer,

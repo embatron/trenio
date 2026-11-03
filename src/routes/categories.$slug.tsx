@@ -17,7 +17,8 @@ import { TRAINER_INVITE_LINE } from "@/lib/catalog/trainer-welcome";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
-import { matchesCatalogAudience, PUBLISHED_TRAINERS, TRAINER_FORMAT_OPTIONS, trainersForCategory, type PublishedTrainer } from "@/lib/catalog/published-trainers";
+import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
+import { matchesCatalogAudience, TRAINER_FORMAT_OPTIONS, trainersMatchingCategory, type PublishedTrainer } from "@/lib/catalog/published-trainers";
 import { compareByPopularity, compareByRating, compareByReviews, popularityChecklist, ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
 import { compareTrainerPrice, listTrainerPricesFn, priceForCard, type TrainerPriceMap } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
@@ -104,12 +105,13 @@ export const Route = createFileRoute("/categories/$slug")({
     });
   },
   loader: async () => {
-    const [ratings, prices, place] = await Promise.all([
+    const [ratings, prices, place, trainers] = await Promise.all([
       listTrainerRatingSummariesFn(),
       listTrainerPricesFn(),
       resolveVisitorPlaceFn(),
+      listCatalogTrainersFn(),
     ]);
-    return { ratings, prices, place };
+    return { ratings, prices, place, trainers };
   },
   component: CategoryPage,
 });
@@ -492,6 +494,10 @@ type TrainerCard = {
   formats: Array<"individual" | "group">;
   sportSlugs: string[];
   sportParents: string[];
+  phone: string;
+  instagram: string;
+  telegram: string;
+  email: string;
 };
 
 function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, TrainerRatingSnapshot>, prices: TrainerPriceMap): TrainerCard {
@@ -532,11 +538,20 @@ function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, Train
     formats: trainer.formats,
     sportSlugs: trainer.sports.map((sport) => sport.slug),
     sportParents: trainer.sports.map((sport) => sport.parentSlug),
+    phone: trainer.phone,
+    instagram: trainer.instagram,
+    telegram: trainer.telegram,
+    email: trainer.email,
   };
 }
 
-function generateTrainers(category: Category, ratings: Record<string, TrainerRatingSnapshot>, prices: TrainerPriceMap): TrainerCard[] {
-  return trainersForCategory(category.slug).map((trainer) => toCategoryCard(trainer, ratings, prices));
+function generateTrainers(
+  category: Category,
+  trainers: PublishedTrainer[],
+  ratings: Record<string, TrainerRatingSnapshot>,
+  prices: TrainerPriceMap,
+): TrainerCard[] {
+  return trainersMatchingCategory(trainers, category.slug).map((trainer) => toCategoryCard(trainer, ratings, prices));
 }
 
 const PAGE_CSS = `
@@ -777,9 +792,9 @@ a.cat-pill { text-decoration: none; }
 
 function CategoryPage() {
   const { slug } = Route.useParams();
-  const { ratings, prices, place } = Route.useLoaderData();
+  const { ratings, prices, place, trainers } = Route.useLoaderData();
   const category = resolveParentCategory(slug);
-  return <CategoryCatalogPage key={slug} category={category} ratings={ratings} prices={prices} place={place} />;
+  return <CategoryCatalogPage key={slug} category={category} ratings={ratings} prices={prices} place={place} trainers={trainers} />;
 }
 
 type CityCatalog = { slug: string; name: string; locative: string };
@@ -793,6 +808,7 @@ type CategoryCatalogPageProps = {
   cityCatalog?: CityCatalog;
   pageSport?: CatalogSport | null;
   sportSelection?: CatalogSport[];
+  trainers?: PublishedTrainer[];
 };
 
 export function CategoryCatalogPage({
@@ -804,15 +820,16 @@ export function CategoryCatalogPage({
   cityCatalog,
   pageSport = null,
   sportSelection = [],
+  trainers = [],
 }: CategoryCatalogPageProps) {
   const navigate = useNavigate();
   const allTrainers = useMemo(
     () => cityCatalog
-      ? PUBLISHED_TRAINERS.map((trainer) => toCategoryCard(trainer, ratings, prices))
+      ? trainers.map((trainer) => toCategoryCard(trainer, ratings, prices))
       : category
-        ? generateTrainers(category, ratings, prices)
+        ? generateTrainers(category, trainers, ratings, prices)
         : [],
-    [category, cityCatalog, ratings, prices],
+    [category, cityCatalog, ratings, prices, trainers],
   );
   const parentSlug = parentCategory?.slug ?? category?.slug ?? "";
   const keyword = category ? categoryKeyword(category, parentCategory?.slug) : "";

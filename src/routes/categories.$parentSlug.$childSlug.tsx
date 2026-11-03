@@ -2,6 +2,7 @@ import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { canonicalCategoryPath } from "@/lib/catalog/slug-policy";
 import { categorySearchDescription, getParentCategoryFeaturedImage, getTopLevelSportCategory, getSportTaxonomyChildInCategory, isPublishedSportCategory } from "@/lib/catalog/sport-taxonomy";
 import { categoryRouteHead } from "@/lib/seo/catalog";
+import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
 import { listTrainerPricesFn } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { resolveVisitorPlaceFn } from "@/lib/catalog/visitor-place";
@@ -71,19 +72,20 @@ export const Route = createFileRoute("/categories/$parentSlug/$childSlug")({
     });
   },
   loader: async () => {
-    const [ratings, prices, place] = await Promise.all([
+    const [ratings, prices, place, trainers] = await Promise.all([
       listTrainerRatingSummariesFn(),
       listTrainerPricesFn(),
       resolveVisitorPlaceFn(),
+      listCatalogTrainersFn(),
     ]);
-    return { ratings, prices, place };
+    return { ratings, prices, place, trainers };
   },
   component: ChildCategoryPage,
 });
 
 function ChildCategoryPage() {
   const { parentSlug, childSlug } = Route.useParams();
-  const { ratings, prices, place } = Route.useLoaderData();
+  const { ratings, prices, place, trainers } = Route.useLoaderData();
   const category = resolveChildCategory(parentSlug, childSlug);
 
   if (!category) return null;
@@ -101,6 +103,7 @@ function ChildCategoryPage() {
       ratings={ratings}
       prices={prices}
       place={place}
+      trainers={trainers}
     />
   );
 }

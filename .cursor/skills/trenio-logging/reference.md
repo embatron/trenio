@@ -45,6 +45,7 @@
 | `admin.trainer_note` | Staff saved a trainer note. The row stores the slug, not the note text |
 | `admin.trainer_remove` | A trainer profile was removed from the portal. The row stores the slug |
 | `catalog.trainer_preview` / `catalog.trainer_edit` / `catalog.trainer_save` / `catalog.trainer_publish` | Profile preview and edit links. They stay valid until the profile is published, then open the public trainer URL. A missing link is `denied`. Tokens and URLs stay out of the row |
+| `catalog.list` | Published catalog list failed. Success is not stored |
 | `catalog.claim` | Welcome-link side effect failed |
 | `system.ready` / `system.unhandled` / `system.ssr` / `system.purge` / `system.probe` | Process and unhandled errors |
 | `system.image` | TinyPNG failed while storing an upload. The original sharp file is kept. The API key is not stored |
