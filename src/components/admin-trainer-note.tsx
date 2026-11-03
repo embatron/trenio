@@ -5,6 +5,8 @@ import { authErrorMessage } from "@/lib/auth/errors";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 
 const CLOSE_ICON = "M6 6l12 12M18 6L6 18";
+const NOTE_PAGE = "M15.5 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2V8.5L15.5 3z";
+const NOTE_FOLD = "M15 3v6h6";
 
 const dateTime = new Intl.DateTimeFormat("ru-RU", {
   day: "numeric",
@@ -30,9 +32,21 @@ export function TrainerNoteCell({
   const [shown, setShown] = useState(count);
   useEffect(() => setShown(count), [count]);
   const [open, setOpen] = useState(false);
+  const label = shown > 0 ? `Заметка, записей: ${shown}` : "Заметка";
   return (
     <>
-      <button type="button" className="trainer-note-link" onClick={() => setOpen(true)}>Заметка ({shown})</button>
+      <button
+        type="button"
+        className={shown > 0 ? "cabinet-icon-btn trainer-note-link is-filled" : "cabinet-icon-btn trainer-note-link"}
+        aria-label={label}
+        title={label}
+        onClick={() => setOpen(true)}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d={NOTE_PAGE} />
+          <path d={NOTE_FOLD} />
+        </svg>
+      </button>
       {open ? (
         <TrainerNoteDialog
           slug={slug}

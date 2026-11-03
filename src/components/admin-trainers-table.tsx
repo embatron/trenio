@@ -17,11 +17,31 @@ import { getSportTaxonomyChild, getTopLevelSportCategory, listPublishedSportCate
 import { placeLine } from "@/lib/geo/schemas";
 
 const dateFormat = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short", year: "numeric" });
+const addedFormat = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Europe/Minsk",
+  day: "2-digit",
+  month: "2-digit",
+  year: "2-digit",
+});
 const STAR_PATH = "M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z";
 
 const CHECK_ICON = "M5 12l5 5L20 7";
+const CROSS_ICON = "M6 6l12 12M18 6L6 18";
 const EDIT_ICON = "M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z";
 const MESSAGE_ICON = "M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 6l8 6 8-6";
+
+function addedOn(iso: string) {
+  return addedFormat.format(new Date(iso));
+}
+
+/** National digits only, for this table: `445326333`. */
+function nationalPhone(raw: string) {
+  const digits = raw.replace(/\D/g, "");
+  if (!digits) return "";
+  if (digits.startsWith("375")) return digits.slice(3);
+  if (digits.startsWith("80") && digits.length === 11) return digits.slice(2);
+  return digits;
+}
 
 function categoryLabels(slugs: string[]) {
   const labels: string[] = [];
@@ -209,7 +229,7 @@ function searchHaystack(trainer: AdminTrainer) {
     TRAINER_PUBLISH_LABEL[trainer.status],
     trainer.staffNote,
     trainer.inviteSentAt ? "отправлено" : "ожидает",
-    trainer.createdAt ? dateFormat.format(new Date(trainer.createdAt)) : "",
+    trainer.createdAt ? addedOn(trainer.createdAt) : "",
     trainer.rating,
     String(trainer.reviews),
     String(trainer.popularity),
@@ -405,12 +425,13 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                 <th>С кем</th>
                 <th>Город</th>
                 <th>Добавлен</th>
-                <th>Рейтинг</th>
+                <th>Оценка</th>
                 <th>Рейтинг</th>
                 <th>Публикация</th>
                 <th>Контакты</th>
                 <th>Аккаунт</th>
                 <th>Заметка</th>
+                <th>Действия</th>
               </tr>
             </thead>
             <tbody>
@@ -425,33 +446,26 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                         </strong>
                         <span className="cabinet-person__meta">{trainer.sports || "вид спорта не указан"}</span>
                       </div>
-                      <div className="cabinet-row-actions">
-                        <InviteCopy
-                          slug={trainer.slug}
-                          ready={Boolean(trainer.id)}
-                          published={trainer.status === "published"}
-                          onSent={(at) => setSentPatch((current) => ({ ...current, [trainer.slug]: at }))}
-                        />
-                        <a className="cabinet-icon-btn" href={`/admin/trainers/${trainer.slug}`} aria-label="Редактировать" title="Редактировать">
-                          <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
-                        </a>
-                      </div>
                     </div>
                   </td>
                   <td>
                     {trainer.inviteSentAt ? (
-                      <span className="is-sent" title={dateFormat.format(new Date(trainer.inviteSentAt))}>Отправлено</span>
+                      <span className="cabinet-mark is-sent" title={dateFormat.format(new Date(trainer.inviteSentAt))} aria-label="Отправлено">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d={CHECK_ICON} /></svg>
+                      </span>
                     ) : (
-                      <span className="is-unsent">Не отправлено</span>
+                      <span className="cabinet-mark is-unsent" aria-label="Не отправлено">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d={CROSS_ICON} /></svg>
+                      </span>
                     )}
                   </td>
-                  <td>{trainer.phone || "—"}</td>
+                  <td>{nationalPhone(trainer.phone) || "—"}</td>
                   <td>{categoryLabels(trainer.sportSlugs) || "—"}</td>
                   <td className="is-audience">{audienceLabels(trainer.audiences) || "—"}</td>
                   <td>{trainer.city || "—"}</td>
-                  <td>{trainer.createdAt ? dateFormat.format(new Date(trainer.createdAt)) : "—"}</td>
+                  <td>{trainer.createdAt ? addedOn(trainer.createdAt) : "—"}</td>
                   <td><TrainerStars rating={trainer.rating} reviews={trainer.reviews} /></td>
-                  <td>{Number.isInteger(trainer.popularity) ? trainer.popularity : trainer.popularity.toFixed(1)}</td>
+                  <td title={`Рейтинг ${trainer.popularity} из 100`}>{Number.isInteger(trainer.popularity) ? trainer.popularity : trainer.popularity.toFixed(1)}</td>
                   <td><span className={`cabinet-status cabinet-status--${trainer.status}`}>{TRAINER_PUBLISH_LABEL[trainer.status]}</span></td>
                   <td><TrainerSocial instagram={trainer.instagram} telegram={trainer.telegram} /></td>
                   <td title={trainer.account ? "Аккаунт создан и привязан к карточке" : "В каталоге есть карточка, но пользователь ещё не зарегистрировался и не забрал профиль"}>
@@ -467,6 +481,19 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                         onSaved={(body, at, count) => setNotePatch((current) => ({ ...current, [trainer.slug]: { body, at, count } }))}
                       />
                     ) : "—"}
+                  </td>
+                  <td className="is-actions">
+                    <div className="cabinet-row-actions">
+                      <InviteCopy
+                        slug={trainer.slug}
+                        ready={Boolean(trainer.id)}
+                        published={trainer.status === "published"}
+                        onSent={(at) => setSentPatch((current) => ({ ...current, [trainer.slug]: at }))}
+                      />
+                      <a className="cabinet-icon-btn" href={`/admin/trainers/${trainer.slug}`} aria-label="Редактировать" title="Редактировать">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
+                      </a>
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -140,7 +140,6 @@ export const listTrainerRatingSummariesFn = createServerFn({ method: "GET" }).ha
   };
   for (const slug of Object.keys(interest)) summaries[slug] = blank(slug);
   for (const row of rows) {
-    if (!getPublishedTrainer(row.slug)) continue;
     const reviews = Number(row.reviews);
     const average = Number(row.average);
     if (!Number.isFinite(reviews) || reviews <= 0 || !Number.isFinite(average)) continue;
