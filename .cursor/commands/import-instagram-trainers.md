@@ -7,7 +7,7 @@ Read public Instagram profiles into Trenio draft trainer records. One link or a 
 - Follow `.cursor/skills/trenio-instagram-trainers/SKILL.md` for the whole run.
 - Field rules, card text, and photo decisions are in `.cursor/skills/trenio-instagram-trainers/fields.md`.
 - Read the public profile in the `user-playwright` MCP. Do not call the Instagram Graph API, Business Discovery, `web_profile_info`, or a private API.
-- Do not ask for, type, or store an Instagram password.
+- On a login wall, sign in with the gitignored `.cursor/skills/trenio-instagram-trainers/LOGIN.md`. Do not print the password and do not commit that file.
 - Drafts land in `data/instagram-trainers/`. They stay unpublished.
 
 ## Input

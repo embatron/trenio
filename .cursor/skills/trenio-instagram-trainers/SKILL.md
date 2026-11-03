@@ -29,7 +29,7 @@ Every profile gets its own photo search and its own card text. Do not reuse a se
 ## Do not
 
 - Call the Instagram Graph API, Business Discovery, `web_profile_info`, or a private API. The source is the public profile page.
-- Ask for, type, or store an Instagram password.
+- Ask the user for an Instagram password, or commit one. The import login is the gitignored `.cursor/skills/trenio-instagram-trainers/LOGIN.md`. Read it and sign in when the page is a login wall. Do not print the password.
 - Save an `s100`, `s150`, or `s206` thumbnail as a photo, or edit a thumbnail URL (delete `stp`, or replace `s150` with `s1080`).
 - Read Instagram from any browser profile except the import profile named below.
 - Choose a given name from the handle, from a previous trainer, or from an example in this skill.
@@ -74,7 +74,7 @@ Accept one URL or many. Keep only `instagram.com/{handle}` profile URLs. Reject 
 `browser_navigate`, then `browser_snapshot`.
 
 - Cookie dialog: reject optional cookies, or allow all if that is the only choice. Do not click Follow, Message, or Log in.
-- Login wall and no profile header: stop this profile and ask the user to sign in once in the Playwright window. Do not type credentials.
+- Login wall: read `.cursor/skills/trenio-instagram-trainers/LOGIN.md` and sign in. Do not print the password. If that login fails, stop and say so.
 - Checkpoint: stop the batch.
 - Unavailable profile: record the failure and continue.
 
@@ -97,9 +97,9 @@ A Belarus mobile in the biography, the about highlight, a pinned caption, or a `
 Use only this browser and this account:
 
 - Chrome user data dir: `/home/embatron/.cache/trenio-instagram-login`
-- Instagram account signed in there: `embratron.eth`
+- Instagram account signed in there: `trenioby`. The password is in the gitignored `LOGIN.md` next to this skill.
 
-Do not use the everyday Chrome profile and do not copy its cookies. Do not type or store the password. If that window shows a login wall, stop and ask the user to sign in once there.
+Do not use the everyday Chrome profile and do not copy its cookies. On a login wall, sign in with that note. Do not print the password and do not commit `LOGIN.md`.
 
 The face photo is the profile-picture image whose alt is `{handle}'s profile picture`. Click that picture, then let the page load. `extract-profile.fn.js` reads the image id from the `src` filename and downloads every URL the page itself already loaded for that id. It keeps the file with the greatest width and height. The URL is not rewritten: do not delete `stp`, and do not replace `s150` with `s1080`. The CDN answers `URL signature mismatch` or returns the thumbnail.
 

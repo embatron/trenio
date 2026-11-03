@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-31T15:44:41.689Z",
+  "updatedAt": "2026-11-03T16:12:35.873Z",
   "profiles": [
     {
       "handle": "embatron.eth",
@@ -67,21 +67,6 @@
       "file": "data/instagram-trainers/ar.boxing.by.json"
     },
     {
-      "handle": "farkhad_akhmejanau",
-      "slug": "farkhad_akhmejanau",
-      "fullName": "Farkhad Akhmejanau",
-      "primarySport": "Кикбоксинг",
-      "city": "Минск",
-      "status": "published",
-      "missing": [
-        "price",
-        "phone",
-        "email",
-        "telegram"
-      ],
-      "file": "data/instagram-trainers/farkhad_akhmejanau.json"
-    },
-    {
       "handle": "shum_ann",
       "slug": "shum_ann",
       "fullName": "Шумилова",
@@ -113,6 +98,21 @@
         "telegram"
       ],
       "file": "data/instagram-trainers/levsha_team.json"
+    },
+    {
+      "handle": "farkhad_akhmejanau",
+      "slug": "farkhad_akhmejanau",
+      "fullName": "Farkhad Akhmejanau",
+      "primarySport": "Кикбоксинг",
+      "city": "Минск",
+      "status": "published",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/farkhad_akhmejanau.json"
     }
   ]
 }

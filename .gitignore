@@ -41,6 +41,10 @@ public/trainers/admin/
 .cursor/skills/trenio-vps/
 .cursor/rules/trenio-vps.mdc
 
+# Instagram import login. Never commit.
+.cursor/skills/trenio-instagram-trainers/LOGIN.md
+.cursor/rules/instagram-login.mdc
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

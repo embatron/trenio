@@ -14,9 +14,9 @@
     "Farkhad Akhmejanau"
   ],
   "headline": "Тренер по кикбоксингу",
-  "sourceBio": "Тренер по кикбоксингу / Минск",
+  "sourceBio": "Тренер по кикбоксингу / Минск - Групповые/персональные занятия",
   "sourceAbout": [],
-  "bio": "Я Farkhad Akhmejanau, тренер по кикбоксингу в Минске.",
+  "bio": "Я Farkhad, тренер по кикбоксингу в Минске.",
   "about": [
     "Занятия групповые и персональные."
   ],
@@ -41,7 +41,7 @@
     "label": "Кикбоксинг"
   },
   "city": "Минск",
-  "address": "Prospekt Pushkina 68A",
+  "address": "Prospekt Pushkina 68A, Minsk, Belarus 220002",
   "cityCandidates": [
     "Минск"
   ],
@@ -57,17 +57,16 @@
   "photos": [
     "/trainers/instagram/farkhad_akhmejanau.jpg",
     "/trainers/instagram/farkhad_akhmejanau-g2.jpg",
-    "/trainers/instagram/farkhad_akhmejanau-g3.jpg",
-    "/trainers/instagram/farkhad_akhmejanau-g4.jpg"
+    "/trainers/instagram/farkhad_akhmejanau-g3.jpg"
   ],
   "certificates": [],
   "photoSearch": {
     "face": true,
     "pinned": 1,
-    "candidates": 2,
-    "gallery": 3,
+    "candidates": 0,
+    "gallery": 2,
     "certificates": 0,
-    "skipped": 3
+    "skipped": 0
   },
   "contacts": {
     "instagram": "https://www.instagram.com/farkhad_akhmejanau/",

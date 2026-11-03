@@ -59,8 +59,10 @@ function importedCity(draft: DraftFile): string {
 }
 
 async function sync() {
+  const only = (process.argv[2] || "").replace(/\.json$/, "");
   const files = readdirSync(DRAFT_DIR).filter((name) => name.endsWith(".json") && name !== "index.json");
   for (const file of files) {
+    if (only && file !== `${only}.json`) continue;
     const draft = JSON.parse(readFileSync(join(DRAFT_DIR, file), "utf8")) as DraftFile;
     const instagramUrl = draft.contacts?.instagram || draft.sourceUrl;
     const published = publishedExtras(instagramUrl);
@@ -100,8 +102,9 @@ async function sync() {
       instagramUrl,
       experienceYears: draft.experienceYears || published?.experience || 0,
     });
-    console.info(`${saved.created ? "created" : "updated"} ${draft.handle} ${saved.claimPath}`);
+    console.info(`${saved.created ? "created" : "updated"} ${draft.handle}`);
   }
+  if (only && !files.includes(`${only}.json`)) throw new Error(`No draft named ${only}.`);
 }
 
 sync()
