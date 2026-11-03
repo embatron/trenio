@@ -234,8 +234,11 @@ const CSS = `
 .breadcrumbs a:hover { color: var(--primary-dark); }
 .breadcrumbs li + li::before { content: "›"; margin-right: 8px; color: var(--line); }
 .profile-access { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 16px; padding: 12px 14px; border: 1px solid rgba(var(--primary-rgb), 0.22); border-radius: 12px; background: rgba(var(--primary-rgb), 0.08); color: var(--dark); font-size: 14px; line-height: 1.45; }
-.profile-access svg { width: 20px; height: 20px; flex: 0 0 auto; margin-top: 1px; color: var(--primary); fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
-.profile-access__open { display: inline-flex; align-items: center; min-height: 44px; margin: 0; padding: 0; border: 0; background: none; color: var(--primary); font: inherit; font-weight: var(--fw-title); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.profile-access__icon { width: 20px; height: 20px; flex: 0 0 20px; margin-top: 0; color: var(--primary); }
+.profile-access__icon svg { display: block; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.profile-access__text { margin: 0; min-width: 0; }
+.profile-access__open { display: inline; position: relative; margin: 0; padding: 0; border: 0; background: none; color: var(--primary); font: inherit; font-weight: var(--fw-title); line-height: inherit; text-decoration: underline; text-underline-offset: 3px; vertical-align: baseline; cursor: pointer; }
+.profile-access__open::after { content: ""; position: absolute; left: -6px; right: -6px; top: 50%; height: 44px; transform: translateY(-50%); }
 
 .profile-layout { display: grid; grid-template-columns: var(--aside-w) minmax(0, 1fr); gap: 32px; align-items: start; }
 .profile-main { position: relative; display: grid; gap: 22px; min-width: 0; }
@@ -748,6 +751,10 @@ function TrainerPage() {
   const openingMail = new URLSearchParams(searchStr).get("mail");
   const magicDoor = Boolean(editor?.magicDoor) && !isOwner && !openingMail;
   const [mailOpen, setMailOpen] = useState(magicDoor);
+  const [mailSentTo, setMailSentTo] = useState<string | null>(editor?.mailSentTo ?? null);
+  useEffect(() => {
+    if (editor?.mailSentTo) setMailSentTo(editor.mailSentTo);
+  }, [editor?.mailSentTo]);
   const [mailError, setMailError] = useState("");
   const openMail = useAuthServerFn(openTrainerMailFn);
   const [createdOpen, setCreatedOpen] = useState(false);
@@ -856,12 +863,14 @@ function TrainerPage() {
         {mailError ? <p className="profile-access" role="alert">{mailError}</p> : null}
         {access === "public" ? null : (
           <p className="profile-access" role="status">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M12 8v4" />
-              <circle cx="12" cy="16" r="0.9" fill="currentColor" stroke="none" />
-            </svg>
-            <span>
+            <span className="profile-access__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M10.3 3.9 1.8 18.2A2 2 0 0 0 3.6 21h16.8a2 2 0 0 0 1.8-2.8L13.7 3.9a2 2 0 0 0-3.4 0z" />
+                <path d="M12 9v4" />
+                <path d="M12 17h.01" />
+              </svg>
+            </span>
+            <span className="profile-access__text">
               {access === "preview" || access === "owner" ? (
                 <>
                   Профиль пока не опубликован и в каталоге его нет.{" "}
@@ -1225,7 +1234,13 @@ function TrainerPage() {
       <SiteFooter />
       {user?.needsDoorPassword && !user.needsCredentials ? <DoorPasswordDialog /> : null}
       {createdOpen ? <CabinetCreatedDialog trainer={t} onClose={closeCreated} /> : null}
-      {mailOpen ? <TrainerDoorMailDialog onClose={() => setMailOpen(false)} /> : null}
+      {mailOpen ? (
+        <TrainerDoorMailDialog
+          sentTo={mailSentTo}
+          onRemember={setMailSentTo}
+          onClose={() => setMailOpen(false)}
+        />
+      ) : null}
       {reviewSent ? (
         <CabinetNotice
           title="Ваш отзыв на модерации"

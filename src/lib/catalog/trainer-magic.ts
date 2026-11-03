@@ -458,6 +458,8 @@ export type MagicTrainerDraft = {
   phoneLocked: boolean;
   /** Short Instagram link is open and the profile is still unclaimed. */
   magicDoor: boolean;
+  /** Mailbox that still has an unused profile link. Empty when none is waiting. */
+  mailSentTo: string | null;
   photos: string[];
   certificates: ReturnType<typeof readCertificates>;
 };
@@ -467,6 +469,16 @@ export const getMagicTrainerFn = createServerFn({ method: "GET" })
     const row = await profileFromEditCookie();
     if (!row) return null;
     const sports = trainerSportsFromSlugs((row.sports ?? []).map((sport) => sport.slug)).slugs;
+    const [pendingMail] = await getDb()
+      .select({ email: authDoorClaims.email })
+      .from(authDoorClaims)
+      .where(and(
+        eq(authDoorClaims.profileId, row.id),
+        isNull(authDoorClaims.usedAt),
+        gt(authDoorClaims.expiresAt, new Date()),
+      ))
+      .orderBy(desc(authDoorClaims.createdAt))
+      .limit(1);
     return {
       slug: row.slug,
       status: row.status,
@@ -490,6 +502,7 @@ export const getMagicTrainerFn = createServerFn({ method: "GET" })
       phone: row.phone,
       phoneLocked: Boolean(row.ownerUserId),
       magicDoor: getCookie(PREVIEW_COOKIE) === row.slug && Boolean(row.previewToken) && !row.ownerUserId && row.status !== "published",
+      mailSentTo: pendingMail?.email ?? null,
       photos: (row.photos?.length ? row.photos : row.avatarPath ? [row.avatarPath] : []).slice(0, 9),
       certificates: readCertificates(row.certificates),
     };

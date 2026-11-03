@@ -1,10 +1,11 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { requestDoorEmailFn } from "@/lib/catalog/trainer-magic";
+import { SITE_INSTAGRAM_URL } from "@/lib/seo/site";
 
 const LOGIN_PHRASE = "Войдите в аккаунт";
 
@@ -27,7 +28,7 @@ export function TrainerDoorMail({
   onDone,
 }: {
   autoFocus?: boolean;
-  onSent?: () => void;
+  onSent?: (email: string) => void;
   onDone?: () => void;
 }) {
   const requestEmail = useAuthServerFn(requestDoorEmailFn);
@@ -43,7 +44,7 @@ export function TrainerDoorMail({
       .then((result) => {
         const message = (result as { message: string }).message;
         setSent(message);
-        onSent?.();
+        onSent?.(email.trim());
       })
       .catch((err: unknown) => setError(authErrorMessage(err)))
       .finally(() => setPending(false));
@@ -109,8 +110,30 @@ export function TrainerDoorMail({
   );
 }
 
-export function TrainerDoorMailDialog({ onClose }: { onClose: () => void }) {
-  const [sent, setSent] = useState(false);
+function DoorMailSent({ email }: { email: string }) {
+  return (
+    <>
+      <h2 id="door-mail-sent">Ссылка отправлена</h2>
+      <p>Ссылка на {email} уже отправлена. Проверьте почту, в том числе папку «Спам».</p>
+      <p>
+        Если вы не видите ссылку, напишите в директ Instagram:{" "}
+        <a href={SITE_INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">{SITE_INSTAGRAM_URL}</a>
+      </p>
+    </>
+  );
+}
+
+export function TrainerDoorMailDialog({
+  onClose,
+  sentTo,
+  onRemember,
+}: {
+  onClose: () => void;
+  sentTo: string | null;
+  onRemember?: (email: string) => void;
+}) {
+  const router = useRouter();
+  const [sent, setSent] = useState(sentTo);
   useEffect(() => {
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -136,19 +159,29 @@ export function TrainerDoorMailDialog({ onClose }: { onClose: () => void }) {
         <button type="button" className="door-mail-modal__x" aria-label="Закрыть" onClick={onClose}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </button>
-        {sent ? null : (
+        {sent ? (
+          <DoorMailSent email={sent} />
+        ) : (
           <>
             <h2 id="door-mail-title">Создание аккаунта тренера</h2>
-            <p>Введите свой e-mail или войдите через Google. На почту придёт ссылка сразу с доступом в кабинет, и создание аккаунта будет завершено. Google подтверждает адрес сразу, без письма. Если письма нет, проверьте папку «Спам».</p>
+            <p>Введите свой e-mail или войдите через Google. На почту придёт ссылка сразу на страницу профиля, и создание аккаунта будет завершено. Google подтверждает адрес сразу, без письма.</p>
+            <TrainerDoorMail
+              autoFocus
+              onSent={(email) => {
+                setSent(email);
+                onRemember?.(email);
+                void router.invalidate();
+              }}
+            />
           </>
         )}
-        <TrainerDoorMail autoFocus onSent={() => setSent(true)} onDone={onClose} />
       </div>
       <style>{`
         .door-mail-modal { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: rgba(var(--dark-rgb), 0.45); }
         .door-mail-modal__card { position: relative; box-sizing: border-box; width: min(440px, 100%); display: grid; gap: 12px; padding: 20px 64px 20px 20px; border-radius: var(--card-radius); background: var(--white); color: var(--text); }
         .door-mail-modal__card h2 { margin: 0; font-size: 18px; color: var(--dark); }
         .door-mail-modal__card > p { margin: 0; }
+        .door-mail-modal__card a { color: var(--primary); font-weight: var(--fw-title); overflow-wrap: anywhere; }
         .door-mail-modal__x { position: absolute; top: 8px; right: 8px; width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; }
         .door-mail-modal__x svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
         .door-mail-modal__x:hover { color: var(--dark); }
