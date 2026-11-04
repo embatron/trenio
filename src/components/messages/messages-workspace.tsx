@@ -472,12 +472,26 @@ export const DIRECT_CSS = `
 .direct.is-mobile { display: flex; flex-direction: column; min-height: 60vh; }
 .direct.is-mobile:not(.is-thread) .direct-thread { display: none; }
 .direct.is-mobile:not(.is-thread) .direct-list { flex: 1; min-height: 50vh; border-bottom: 0; }
-.direct.is-mobile.is-thread { position: fixed; z-index: 280; left: 0; right: 0; top: var(--direct-top, var(--header-clearance)); bottom: var(--keyboard-inset, 0px); display: flex; min-height: 0; border: 0; border-radius: 0; background: var(--light-bg); padding-bottom: var(--keyboard-pad, env(safe-area-inset-bottom)); transition: bottom 0.2s ease, padding-bottom 0.2s ease; animation: direct-sheet 0.32s cubic-bezier(0.22, 0.8, 0.28, 1); }
+.direct.is-mobile.is-thread { position: fixed; z-index: 280; left: 0; right: 0; top: var(--direct-top, var(--header-clearance)); bottom: var(--keyboard-inset, 0px); display: flex; min-height: 0; border: 0; border-radius: 0; background: var(--white); padding-bottom: var(--keyboard-pad, env(safe-area-inset-bottom)); transition: bottom 0.2s ease, padding-bottom 0.2s ease; animation: direct-sheet 0.32s cubic-bezier(0.22, 0.8, 0.28, 1); }
 .direct.is-mobile.is-thread .direct-list { display: none; }
 .direct.is-mobile.is-thread .direct-thread { flex: 1; min-height: 0; height: 100%; }
 .direct.is-mobile.is-thread .direct-thread__head { flex-wrap: nowrap; align-items: center; padding-inline: var(--layout-gutter); }
-.direct.is-mobile.is-thread .direct-thread__who .trainer-name { max-width: 100%; }
-.direct.is-mobile.is-thread .direct-thread__who .trainer-name__line { overflow: hidden; text-overflow: ellipsis; }
+.direct.is-mobile.is-thread .direct-thread__who { overflow: hidden; }
+.direct.is-mobile.is-thread .direct-thread__who > * { min-width: 0; max-width: 100%; }
+.direct.is-mobile.is-thread .direct-thread__who a.cabinet-id__line { display: flex; min-width: 0; max-width: 100%; }
+.direct.is-mobile.is-thread .direct-thread__who a.cabinet-id__line > strong { flex: 1 1 0; width: 0; min-width: 0; overflow: hidden; }
+.direct.is-mobile.is-thread .direct-thread__who > strong { display: block; min-width: 0; max-width: 100%; overflow: hidden; }
+.direct.is-mobile.is-thread .direct-thread__who .trainer-name { width: 100%; min-width: 0; max-width: 100%; overflow: hidden; }
+.direct.is-mobile.is-thread .direct-thread__who .trainer-name__line { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.direct.is-mobile.is-thread .direct-thread__who a.direct-thread__trainer { min-width: 0; max-width: 100%; }
+.direct.is-mobile.is-thread .direct-thread__who a.direct-thread__trainer > strong { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.direct.is-mobile.is-thread .direct-composer,
+.direct.is-mobile.is-thread .direct-composer__box,
+.direct.is-mobile.is-thread .direct-composer__bar,
+.direct.is-mobile.is-thread .direct-log { background: var(--white); }
+@media (max-width: 767px) {
+  .direct-switch { display: none; }
+}
 .direct.is-mobile.is-thread .direct-thread__actions { flex: 0 0 auto; margin-left: 0; flex-wrap: nowrap; }
 .direct.is-mobile .direct-editor .rsw-ce { font-size: 16px; }
 .direct.is-mobile.is-thread .direct-log,
