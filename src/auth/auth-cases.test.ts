@@ -376,6 +376,7 @@ describe("auth cases", { concurrency: false }, () => {
     const [card] = await db.select().from(trainerProfiles).where(eq(trainerProfiles.id, profile.id)).limit(1);
     assert.equal(card?.ownerUserId, opened.userId);
     assert.equal(card?.claimStatus, "claimed");
+    assert.equal(card?.status, "draft");
     assert.equal(card?.email, address);
     assert.ok(card?.emailVerifiedAt);
     const owner = await findUserById(opened.userId);

@@ -3,14 +3,8 @@ import test from "node:test";
 
 import { acceptClientEvent, clientLogEventSchema } from "@/lib/log/client-schema";
 import { fileHasLoggingGap, isLoggingGapPath } from "@/lib/log/gaps";
-import { LOG_RETENTION_DAYS, logExpiresAt, passesLevel } from "@/lib/log/policy";
+import { passesLevel } from "@/lib/log/policy";
 import { maskPhone, normalizeSubject, redactContext, safeRoute } from "@/lib/log/redact";
-
-test("journal retention is 30 days", () => {
-  assert.equal(LOG_RETENTION_DAYS, 30);
-  const from = new Date("2026-01-01T00:00:00.000Z");
-  assert.equal(logExpiresAt(from).toISOString(), "2026-01-31T00:00:00.000Z");
-});
 
 test("info threshold keeps warnings and drops debug", () => {
   assert.equal(passesLevel("debug", "info"), false);

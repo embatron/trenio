@@ -5,7 +5,6 @@ import { isAuthError } from "@/lib/auth/errors";
 import {
   currentLogThreshold,
   isLogDomain,
-  logExpiresAt,
   passesLevel,
   type LogDomain,
   type LogLevel,
@@ -154,7 +153,7 @@ export async function writeLog(event: LogEvent): Promise<void> {
     await getDb()
       .insert(appLogs)
       .values({
-        expiresAt: logExpiresAt(),
+        expiresAt: null,
         level,
         domain,
         action: event.action.slice(0, 80),
@@ -176,6 +175,19 @@ export async function writeLog(event: LogEvent): Promise<void> {
         context,
       });
     persistFailureLogged = false;
+    void import("@/lib/log/trainer-journal").then(({ keepTrainerJournal }) =>
+      keepTrainerJournal({
+        level,
+        domain,
+        action: event.action,
+        outcome: event.outcome ?? null,
+        message: redactText(event.message, 500),
+        actorUserId: event.actorUserId ?? null,
+        subject,
+        target: safeTarget(event.target),
+        context,
+      }),
+    );
     void maybePurge();
   } catch (error) {
     if (!persistFailureLogged) {
@@ -189,22 +201,6 @@ async function maybePurge(): Promise<void> {
   const now = Date.now();
   if (now - lastPurgeAt < 60 * 60 * 1000) return;
   lastPurgeAt = now;
-  try {
-    const { purgeExpiredLogs } = await import("@/lib/log/purge");
-    const deleted = await purgeExpiredLogs();
-    if (deleted > 0) {
-      await writeLog({
-        level: "info",
-        domain: "system",
-        action: "system.purge",
-        outcome: "success",
-        message: "Удалены записи старше 30 дней.",
-        context: { deleted },
-      });
-    }
-  } catch (error) {
-    console.error("[log] purge failed", error instanceof Error ? error.message : "unknown");
-  }
   try {
     const { purgeExpiredAccounts } = await import("@/lib/account/delete-account");
     await purgeExpiredAccounts();

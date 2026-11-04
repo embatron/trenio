@@ -35,6 +35,7 @@
 9. **Visitor city** — resolve the city with local GeoLite2 (`ip-location-api`). Do not call a hosted geo API. The `trenio_place` cookie stores the city name, not the IP. Catalog search shows that city, or `Минск` when none is known. See `.cursor/rules/visitor-place.mdc`.
 10. **Breadcrumbs** — the current page crumb uses `is-current` and `aria-current="page"`. Its color is `var(--primary)`. See `.cursor/rules/breadcrumbs.mdc`.
 11. **Site mail** — the public address is `trenioby@gmail.com` (`SITE_EMAIL`). Service mail uses local Postfix `sendmail` with `From: Trenio <noreply@trenio.by>` and greets as `trenio.by`. Mail for `bronxgym.by` stays on its own Postfix client. See `.cursor/rules/site-mail.mdc`.
+12. **Trainer publish** — only the trainer publishes the profile, from the cabinet after the magic link. An import and a copy to the server leave `status` as `draft`. See `.cursor/rules/trainer-publish.mdc`.
 
 ## Stack quick reference
 
@@ -51,9 +52,9 @@
 | `.cursor/skills/trenio-pwa-audit/` | PWA-related work or before finishing UI |
 | `.cursor/skills/trenio-mobile-audit/` | UI/layout/responsive changes. Command: `/mobile-adapt` |
 | `.cursor/skills/trenio-docs-sync/` | After tasks — sync documentation |
-| `.cursor/skills/trenio-instagram-trainers/` | Import public Instagram trainer profiles into drafts, including pinned photos and readable card text. Command: `/import-instagram-trainers` |
+| `.cursor/skills/trenio-instagram-trainers/` | Import public Instagram trainer profiles into drafts, copy each draft to the server, and leave it unpublished. Command: `/import-instagram-trainers` |
 | `.cursor/skills/trenio-messages/` | Direct messages: who can write, composer, receipts, polling. Rule: `.cursor/rules/messages.mdc` |
-| `.cursor/skills/trenio-logging/` | Operational journal in `app_logs` (30 days). Command: `/logging`. Rule: `.cursor/rules/logging.mdc` |
+| `.cursor/skills/trenio-logging/` | Operational journal in `app_logs` and `trainer_journal`. Rows are kept. Command: `/logging`. Rule: `.cursor/rules/logging.mdc` |
 | `.cursor/skills/trenio-diagnosis/` | Diagnose a failure from `app_logs`. Command: `/diagnosis` |
 | `.cursor/skills/trenio-tests/` | Unit tests plus Playwright, then recommendations. Command: `/tests` |
 | `.cursor/skills/trenio-seo/` | Public-page SEO for Belarus: titles, canonical, robots, sitemap, schema.org. Subagent: `seo` |

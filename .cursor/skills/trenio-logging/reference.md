@@ -24,7 +24,7 @@
 | `account.phone.request` / `account.phone.confirm` | Account phone. A signed Telegram contact uses `account.phone.confirm` and does not store the contact string, initData, or a widget payload. That path does not write Telegram |
 | `trainer.email.confirm` / `trainer.telegram.confirm` | Overview confirms the login email (same address on the card) and Telegram. A Belarus mobile inside the signed Telegram payload can be stored with the confirm. The log has no phone digits. A phone-only share does not use this action |
 | `account.password.change` / `account.avatar` / `account.name` / `account.mail` / `account.push` | Cabinet settings. `account.mail` stores the kind and whether it is on, not a letter. `account.push` stores only whether phone notices are on |
-| `account.delete` | The person deleted their own account. Data stays for six months. Subject, IP, and user-agent on that person's rows are kept, and those rows last until the hold ends. No message text |
+| `account.delete` | The person deleted their own account. Account data stays for six months. The journal rows stay, including subject, IP, and user-agent. No message text |
 | `account.restore` | The person confirmed restoration on the login page. A session starts |
 | `account.purge` | The six-month hold ended. Written with the old email before the account is anonymized. No message text |
 | `email.preference` | A message or review letter was not sent because that kind is off |
@@ -44,6 +44,8 @@
 | `admin.trainer_invite_sent` | The copied message was marked sent. The row stores the slug, not the text |
 | `admin.trainer_note` | Staff saved a trainer note. The row stores the slug, not the note text |
 | `admin.trainer_remove` | A trainer profile was removed from the portal. The row stores the slug |
+| `trainer.add` / `trainer.sync` | A trainer card was inserted, or an import updated an existing card. The row stores the slug, status, and source. Card text stays out |
+| `trainer.appear` / `trainer.withdraw` | The card entered or left the public catalog. Timestamp is `created_at` |
 | `catalog.trainer_preview` / `catalog.trainer_edit` / `catalog.trainer_save` / `catalog.trainer_publish` | Profile preview and edit links. They stay valid until the profile is published, then open the public trainer URL. A missing link is `denied`. Tokens and URLs stay out of the row |
 | `catalog.list` | Published catalog list failed. Success is not stored |
 | `catalog.claim` | Welcome-link side effect failed |
@@ -68,4 +70,6 @@
 
 ## Redaction
 
-`redactContext` replaces values whose keys match password, token, secret, otp, cookie, session, body, text, html, or `code`. `safeRoute` drops the query string. Stacks are truncated to 4000 characters and bearer tokens are stripped. `LOG_RETENTION_DAYS` is 30.
+`redactContext` replaces values whose keys match password, token, secret, otp, cookie, session, body, text, html, or `code`. `safeRoute` drops the query string. Stacks are truncated to 4000 characters and bearer tokens are stripped. Journal rows have no expiry.
+
+`trainer_journal` keeps the trainer copy. Copied actions are `trainer.*`, `catalog.trainer*`, `admin.trainer*`, `form.trainer*`, `form.become_trainer`, `form.nick_support`, `form.welcome`, `account.claim`, `account.password`, and `message.welcome`. Auth, account, SMS, and service-mail actions are copied only when the actor is a trainer or a club, or owns the card. Map frames, polls, and message bodies are not copied. The row stores the timestamp, slug, actor, and redacted message. It does not store a stack, IP, or letter.

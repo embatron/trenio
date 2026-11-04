@@ -36,6 +36,7 @@ Every implementation must consider:
 6. **Docs sync** — update `docs/` when routes, auth, schema, or architecture change
 7. **Direct messages** — user to one published profile only. See `.cursor/rules/messages.mdc` and `.cursor/skills/trenio-messages/`
 8. **Journal** — write actions and failures to `app_logs` with `writeLog`. See `.cursor/rules/logging.mdc`
+9. **Trainer publish** — only the trainer publishes the profile, from the cabinet. Import and the magic link leave it a draft. See `.cursor/rules/trainer-publish.mdc`
 
 ## Auth
 

@@ -1,5 +1,3 @@
-export const LOG_RETENTION_DAYS = 30;
-
 export const LOG_LEVELS = ["debug", "info", "warn", "error", "fatal"] as const;
 export type LogLevel = (typeof LOG_LEVELS)[number];
 
@@ -40,12 +38,6 @@ export function currentLogThreshold(): LogLevel {
 
 export function passesLevel(level: LogLevel, threshold = currentLogThreshold()): boolean {
   return RANK[level] >= RANK[threshold];
-}
-
-export function logExpiresAt(from = new Date()): Date {
-  const expires = new Date(from.getTime());
-  expires.setUTCDate(expires.getUTCDate() + LOG_RETENTION_DAYS);
-  return expires;
 }
 
 export function isLogLevel(value: string): value is LogLevel {

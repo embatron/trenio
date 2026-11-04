@@ -8,7 +8,6 @@ import { getDummyPasswordHash, hashPassword, verifyPassword } from "@/auth/passw
 import { createSession, findUserByLogin } from "@/auth/service";
 import { getDb } from "@/db";
 import {
-  appLogs,
   authOtpChallenges,
   blockedPairs,
   conversations,
@@ -36,7 +35,6 @@ import { parseInstagramHandle, parseTelegramHandle } from "@/lib/catalog/trainer
 import { removeImageSet } from "@/lib/images/store";
 import { masterImagePath } from "@/lib/images/variants";
 import { logCaught, writeLog } from "@/lib/log/logger";
-import { maskPhone } from "@/lib/log/redact";
 import { removeConversationFiles } from "@/lib/messages/attachment-store";
 import { SITE_ORIGIN } from "@/lib/seo/site";
 
@@ -145,18 +143,6 @@ function welcomeMatches(contact: { instagrams: string[]; telegrams: string[]; ph
   return matches;
 }
 
-async function retainAccountJournal(userId: string, email: string, phone: string | null, now = new Date()) {
-  const until = accountHoldUntil(now);
-  const subjects = [email.trim().toLowerCase(), maskPhone(phone)].filter((value): value is string => Boolean(value));
-  const match = subjects.length
-    ? or(eq(appLogs.actorUserId, userId), inArray(appLogs.subject, subjects))
-    : eq(appLogs.actorUserId, userId);
-  await getDb()
-    .update(appLogs)
-    .set({ expiresAt: sql`GREATEST(${appLogs.expiresAt}, ${until.toISOString()}::timestamptz)` })
-    .where(match);
-}
-
 export async function deleteOwnAccount(
   actor: { id: string; roles: UserRole[] },
   password: string,
@@ -214,11 +200,6 @@ export async function deleteOwnAccount(
     target: profiles[0]?.slug ?? null,
     context: { profiles: profiles.length, holdMonths: ACCOUNT_HOLD_MONTHS },
   });
-  try {
-    await retainAccountJournal(user.id, user.email, user.phone, now);
-  } catch (error) {
-    logCaught("account", "account.delete", error, { actorUserId: user.id, subject: user.email });
-  }
   void sendAccountClosedNotice({
     email: user.email,
     emailVerifiedAt: user.emailVerifiedAt,

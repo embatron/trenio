@@ -8,6 +8,7 @@ import { z } from "zod";
 
 import { requireAuthMiddleware } from "@/auth/middleware";
 import { markLogged, writeLog } from "@/lib/log/logger";
+import { logTrainerPresence } from "@/lib/log/trainer-journal";
 import { sendProfileStatusNotice } from "@/lib/mail/account-notices";
 import { listActorJournal, mergeJournal } from "@/lib/log/journal";
 import { normalizeEmail } from "@/auth/password";
@@ -668,6 +669,16 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       throw failure;
     }
 
+    logTrainerPresence({
+      created: !existing,
+      previous: existing?.status ?? null,
+      next: data.status,
+      slug: data.slug,
+      actorUserId: context.user.id,
+      subject: context.user.email,
+      source: existing ? null : "admin_created",
+      mode: "save",
+    });
     void writeLog({
       level: "info",
       domain: "form",

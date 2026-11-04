@@ -13,6 +13,7 @@ import { getDb } from "@/db";
 import { trainerProfiles, users } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
 import { markLogged, writeLog } from "@/lib/log/logger";
+import { logTrainerPresence } from "@/lib/log/trainer-journal";
 import { renderLetter } from "@/lib/mail/letter";
 import { sendMail } from "@/lib/mail/send.server";
 import { SITE_EMAIL } from "@/lib/seo/site";
@@ -104,6 +105,15 @@ export const setOwnTrainerPageStatusFn = createServerFn({ method: "POST" })
         updatedAt: new Date(),
       }).where(eq(trainerProfiles.id, row.id));
     }
+    logTrainerPresence({
+      created: false,
+      previous: row.status,
+      next: data.status,
+      slug: row.slug,
+      actorUserId: context.user.id,
+      subject: context.user.email,
+      mode: "save",
+    });
     void writeLog({
       level: "info",
       domain: "form",
@@ -378,6 +388,16 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       });
     }
 
+    logTrainerPresence({
+      created: !existing,
+      previous: existing?.status ?? null,
+      next: data.status,
+      slug: profileSlug,
+      actorUserId: context.user.id,
+      subject: context.user.email,
+      source: "self",
+      mode: "save",
+    });
     void writeLog({
       level: "info",
       domain: "form",

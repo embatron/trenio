@@ -55,9 +55,7 @@ async function probe(): Promise<void> {
   const context = row.context as { password?: string; email?: string } | null;
   if (context?.password !== "[redacted]") throw new Error("password was stored in context");
   if (context?.email !== "probe@example.com") throw new Error("email was dropped from context");
-  if (row.expiresAt.getTime() - row.createdAt.getTime() < 29 * 24 * 60 * 60 * 1000) {
-    throw new Error("expiry is shorter than 30 days");
-  }
+  if (row.expiresAt != null) throw new Error("journal row has an expiry");
   await getDb().delete(appLogs).where(eq(appLogs.id, row.id));
   console.info(`probe ok (domains: ${LOG_DOMAINS.join(", ")})`);
 }

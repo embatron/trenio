@@ -4,6 +4,7 @@ description: >-
   Imports public Instagram trainer profiles into Trenio draft records with the
   Playwright MCP and a per-trainer sequential-thinking pass. For every trainer
   it runs photo search (face plus pinned photos) and writes readable card text.
+  Each saved draft is copied to the production server and stays unpublished.
   Use when the user pastes instagram.com profile links, asks to parse or import
   trainers from Instagram, or runs /import-instagram-trainers, including a bulk list.
 ---
@@ -12,7 +13,7 @@ description: >-
 
 Read a public Instagram profile the user supplied, run photo search, open up to three pinned posts, then decide the trainer fields in sequential thinking. The save script checks those decisions against the page text. It does not choose the name. Taxonomy, card text, and photos: [fields.md](fields.md).
 
-This skill governs `data/instagram-trainers/` and `public/trainers/instagram/`. It does not publish catalog routes.
+This skill governs `data/instagram-trainers/` and `public/trainers/instagram/`. It does not publish a profile. `status` stays `draft`. The trainer publishes it in the cabinet after the magic link.
 
 Every profile gets its own photo search and its own card text. Do not reuse a sentence or a photo decision from the previous trainer.
 
@@ -42,6 +43,7 @@ Every profile gets its own photo search and its own card text. Do not reuse a se
 - Save a text card, logo, or flyer as a gallery photo. Save a diploma as a gallery photo.
 - Reply, like, or otherwise react to a story. Open the about highlight only to read it.
 - Write the draft into `src/routes/trainers.$slug.tsx`. Geocode an address during import.
+- Set `status` to `published`. A request to put the account on the server still leaves the row a draft.
 
 Wrong: the header shows only a surname, so the given name is left empty even though a pinned caption states it.
 Wrong: two pinned captions use two different given names, and one of them is picked.
@@ -62,6 +64,7 @@ Import progress:
 - [ ] Photo search: keep or skip every stored pinned image
 - [ ] Sequential thinking, thoughts 1–10, for this trainer only
 - [ ] Write resolved into the raw file and run save-draft
+- [ ] Carry that draft to the production server, still unpublished
 - [ ] Report filled and missing fields
 ```
 
@@ -187,9 +190,19 @@ Write `data/instagram-trainers/_raw/{handle}.json` with the extract, the `pinned
 
 If the script rejects the file, revise the thought it names and run it again. Do not edit the draft JSON by hand. The script refuses a given name that is not in the quotes, a given name that contradicts the name written next to the surname, a pasted caption, a card sentence that adds a city, number, or sport, and a city or price that the text does not state. When the text names no settlement and no street, leave `city` empty: the script stores Минск. Do not write that default into the card text. The profile crumb is then «Тренеры в Минске».
 
-### 6. Report
+`save-draft.ts` keeps `status: draft` unless the previous draft file was already `published`, `hidden`, or `archived`. Do not flip a new import to `published` so the sync will show it.
 
-One line per link: handle, full name, primary sport, practiced sports, city, phone, email, telegram, pinned count, face side in pixels, gallery count, certificate count, whether the training text was written, and fields still empty. Drafts stay unpublished. Call `browser_close` when the batch ends.
+### 6. Server
+
+After the draft is accepted, carry that one account to production. This is the default. Do not wait for another request.
+
+The row stays `draft`. Do not set `published`. A guest does not see `/trainers/{handle}`. The trainer opens the magic link, enters the cabinet, and publishes the profile there. A request to put the account on the server means this transfer.
+
+Read `.cursor/skills/trenio-vps/SKILL.md`. Copy `data/instagram-trainers/{handle}.json` and `public/trainers/instagram/{handle}*` into the app directory. Run `src/db/sync-instagram-trainers.ts` with that handle only. Do not run it without a handle. Rebuild and restart the app service so the photo files are served. Do not print secrets. Do not deploy unrelated changes.
+
+### 7. Report
+
+One line per link: handle, full name, primary sport, practiced sports, city, phone, email, telegram, pinned count, face side in pixels, gallery count, certificate count, whether the training text was written, and fields still empty. Drafts stay unpublished. Say that the draft is on the server. Call `browser_close` when the batch ends.
 
 ## Bulk
 

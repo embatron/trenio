@@ -2,8 +2,8 @@ import { sql } from "drizzle-orm";
 import { bigint, index, integer, jsonb, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 /**
- * Operational journal. No foreign key on actor_user_id: a deleted account must
- * not erase the row before the 30-day expiry. Install with `npm run logs:install`.
+ * Operational journal. Rows are kept. No foreign key on actor_user_id: deleting
+ * an account must not erase the row. Install with `npm run logs:install`.
  * Do not use `db:push` — the live `otp_purpose` enum does not match Drizzle.
  */
 export const appLogs = pgTable(
@@ -11,9 +11,7 @@ export const appLogs = pgTable(
   {
     id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    expiresAt: timestamp("expires_at", { withTimezone: true })
-      .notNull()
-      .default(sql`now() + interval '30 days'`),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
     level: varchar("level", { length: 8 }).notNull(),
     domain: varchar("domain", { length: 16 }).notNull(),
     action: varchar("action", { length: 80 }).notNull(),

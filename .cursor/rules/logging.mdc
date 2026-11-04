@@ -1,11 +1,11 @@
 ---
-description: Structured journal in app_logs for actions, errors, and exceptions. 30-day retention.
+description: Structured journal in app_logs and trainer_journal. Rows are kept.
 alwaysApply: true
 ---
 
 # Journal
 
-Every server failure and every auth, account, email, SMS, form, map, geo, admin, and message mutation is one row in `app_logs`. The row lives 30 days. Search it with `/diagnosis`. Check the wiring with `/logging`.
+Every server failure and every auth, account, email, SMS, form, map, geo, admin, and message mutation is one row in `app_logs`. The row is kept. Search it with `/diagnosis`. Check the wiring with `/logging`.
 
 ## Write
 
@@ -29,6 +29,10 @@ Passwords, session tokens, reset links, OTP and email codes, `initData`, cookies
 
 ## Retention
 
-`expires_at` is 30 days. The process deletes expired rows at most once an hour. `npm run logs:purge` does the same. Install the table with `npm run logs:install`. Do not use `db:push` for this table.
+Neither journal expires. Do not delete rows by age. `npm run logs:purge` does not remove them. Install the tables with `npm run logs:install`. Do not use `db:push` for them.
+
+## Trainer journal
+
+`writeLog` also copies a trainer row into `trainer_journal`: addition (`trainer.add`), an import update (`trainer.sync`), catalog appearance (`trainer.appear`), leaving the catalog (`trainer.withdraw`), profile and claim actions, and auth or account actions when the actor is a trainer or a club. The same redaction rules apply. The staff «Логи» tab reads both tables.
 
 Skill: `.cursor/skills/trenio-logging/SKILL.md`. Product contract: `docs/TECH_SPEC.md` §4.8.

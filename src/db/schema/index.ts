@@ -12,4 +12,5 @@ export * from "./push-subscriptions";
 export * from "./trainer-welcomes";
 export * from "./geo-cache";
 export * from "./app-logs";
+export * from "./trainer-journal";
 export * from "./site-texts";

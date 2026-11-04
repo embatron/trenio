@@ -1,22 +1,17 @@
 import postgres from "postgres";
-import { lt } from "drizzle-orm";
 
-import { getDb } from "@/db";
-import { appLogs } from "@/db/schema";
+import { TRAINER_JOURNAL_DDL } from "@/lib/log/trainer-journal";
 
-export async function purgeExpiredLogs(now = new Date()): Promise<number> {
-  const deleted = await getDb()
-    .delete(appLogs)
-    .where(lt(appLogs.expiresAt, now))
-    .returning({ id: appLogs.id });
-  return deleted.length;
+/** The journal is kept. This does not delete rows. */
+export async function purgeExpiredLogs(): Promise<number> {
+  return 0;
 }
 
 export const APP_LOGS_DDL = `
 CREATE TABLE IF NOT EXISTS app_logs (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   created_at timestamptz NOT NULL DEFAULT now(),
-  expires_at timestamptz NOT NULL DEFAULT (now() + interval '30 days'),
+  expires_at timestamptz,
   level varchar(8) NOT NULL,
   domain varchar(16) NOT NULL,
   action varchar(80) NOT NULL,
@@ -54,8 +49,14 @@ export async function installAppLogs(): Promise<void> {
   if (!url) throw new Error("DATABASE_URL is not set");
   const sql = postgres(url, { max: 1, onnotice: () => {} });
   try {
-    const statements = APP_LOGS_DDL.split(";").map((statement) => statement.trim()).filter(Boolean);
+    const statements = `${APP_LOGS_DDL};\n${TRAINER_JOURNAL_DDL}`
+      .split(";")
+      .map((statement) => statement.trim())
+      .filter(Boolean);
     for (const statement of statements) await sql.unsafe(statement);
+    await sql.unsafe("ALTER TABLE app_logs ALTER COLUMN expires_at DROP NOT NULL");
+    await sql.unsafe("ALTER TABLE app_logs ALTER COLUMN expires_at DROP DEFAULT");
+    await sql.unsafe("UPDATE app_logs SET expires_at = NULL WHERE expires_at IS NOT NULL");
   } finally {
     await sql.end({ timeout: 5 });
   }

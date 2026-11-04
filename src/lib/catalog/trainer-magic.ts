@@ -818,7 +818,7 @@ export const openTrainerMailFn = createServerFn({ method: "POST" })
     });
     return { ok: true as const, slug: row.slug, needsPassword: user.needsPassword };
   });
-/** Password chosen in the cabinet after the magic-link mail. That step finishes the account. */
+/** Password chosen in the cabinet after the magic-link mail. The profile stays a draft until the trainer publishes it. */
 export const setDoorPasswordFn = createServerFn({ method: "POST" })
   .middleware([requireSessionMiddleware])
   .validator(z.object({
@@ -847,10 +847,6 @@ export const setDoorPasswordFn = createServerFn({ method: "POST" })
       needsPassword: false,
       updatedAt: now,
     }).where(eq(users.id, context.user.id));
-    await getDb().update(trainerProfiles).set({
-      status: "published",
-      updatedAt: now,
-    }).where(and(eq(trainerProfiles.slug, owned.slug), eq(trainerProfiles.status, "draft")));
     void writeLog({
       level: "info",
       domain: "account",

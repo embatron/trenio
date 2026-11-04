@@ -3,6 +3,8 @@ import { randomBytes } from "node:crypto";
 import { and, eq, ne } from "drizzle-orm";
 
 import { formatBelarusPhone } from "@/lib/auth/phone";
+import { logTrainerPresence } from "@/lib/log/trainer-journal";
+import { writeLog } from "@/lib/log/logger";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { inferTrainerGender, type TrainerGender } from "@/lib/catalog/trainer-gender";
 import { instagramProfileSlug } from "@/lib/catalog/trainer-slugs";
@@ -112,6 +114,14 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
       .where(eq(users.id, existing.ownerUserId))
       .limit(1);
     if (owner?.status === "deleted") {
+      void writeLog({
+        level: "info",
+        domain: "catalog",
+        action: "trainer.sync",
+        outcome: "skipped",
+        message: "Карточка не обновлялась: аккаунт удалён.",
+        target: slug,
+      });
       return { id: existing.id, claimPath: existing.claimPath, created: false as const };
     }
   }
@@ -162,6 +172,14 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
 
   if (existing) {
     await db.update(trainerProfiles).set(values).where(eq(trainerProfiles.id, existing.id));
+    logTrainerPresence({
+      created: false,
+      previous: existing.status,
+      next: values.status,
+      slug,
+      source: values.createdSource,
+      mode: "import",
+    });
     return { id: existing.id, claimPath, created: false };
   }
 
@@ -169,5 +187,13 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
     .insert(trainerProfiles)
     .values(values)
     .returning({ id: trainerProfiles.id, claimPath: trainerProfiles.claimPath });
+  logTrainerPresence({
+    created: true,
+    previous: null,
+    next: values.status,
+    slug,
+    source: values.createdSource,
+    mode: "import",
+  });
   return { id: created.id, claimPath: created.claimPath, created: true };
 }

@@ -125,7 +125,8 @@ IP берётся из `CF-Connecting-IP` или `X-Real-IP`. Если в зап
 | `trainer_profile_views`     | Посещение опубликованного профиля: один посетитель и один день Europe/Minsk. Владелец не пишется. На `/me` сутки, неделя и месяц переключаются ссылками на одной плашке с избранным |
 | `trainer_card_impressions`  | Показ опубликованной карточки в каталоге: главная, категория, город, поиск и карта. Один посетитель и один день Europe/Minsk, владелец не пишется. Список избранного показом не считается. Таблица создаётся при первой записи (`CREATE TABLE IF NOT EXISTS`), не через `db:push`. На `/me` отдельная плашка с теми же ссылками суток, недели и месяца |
 | `geocode_cache`             | Кеш ответов Nominatim: координаты, город, район, улица и код страны. Ключ — нормализованный запрос. См. §4.7 |
-| `app_logs`                  | Операционный журнал: входы, почта, SMS, аккаунт, формы, карта, гео, сообщения, AJAX и необработанные ошибки. Хранится 30 дней. См. §4.8 |
+| `app_logs`                  | Операционный журнал: входы, почта, SMS, аккаунт, формы, карта, гео, сообщения, AJAX и необработанные ошибки. Без срока хранения. См. §4.8 |
+| `trainer_journal`           | Постоянный журнал тренера: добавление, обновление импорта, появление в каталоге и снятие, действия с карточкой и с аккаунтом тренера или клуба. Строка не удаляется. Ставит `npm run logs:install`, не `db:push`. См. §4.8 |
 | `site_texts`                | Тексты кабинета «Настройки сайта» (`/admin/site`): приветствие тренеру, письмо пользователю, сообщение для Instagram. Ставит `npm run site:install`, не `db:push`. Пустая или отсутствующая строка — текст из кода |
 
 ### 4.3 Server functions
@@ -248,13 +249,13 @@ IP берётся из `CF-Connecting-IP` или `X-Real-IP`. Если в зап
 
 Контракт для агентов: [.cursor/rules/logging.mdc](../.cursor/rules/logging.mdc), навык [.cursor/skills/trenio-logging/SKILL.md](../.cursor/skills/trenio-logging/SKILL.md). Диагностика — команда `/diagnosis`.
 
-Одна таблица `app_logs`. Строка живёт 30 дней (`expires_at`), затем удаляется процессом не чаще раза в час или командой `npm run logs:purge`. Таблицу создаёт `npm run logs:install`. `db:push` для неё не использовать: живой enum `otp_purpose` не совпадает с Drizzle.
+Две таблицы, обе без срока хранения. `app_logs` — входы, почта, формы, карта и ошибки. `trainer_journal` — добавление карточки (`trainer.add`), обновление импорта (`trainer.sync`), появление в каталоге (`trainer.appear`), снятие с каталога (`trainer.withdraw`), действия с карточкой, привязка и пароль по короткой ссылке, а также вход и действия аккаунта, если их делает тренер или клуб. Время — `created_at`. Пароль, код, ссылка и текст переписки туда не пишутся. Строки не удаляются по давности. Обе таблицы создаёт `npm run logs:install`. `db:push` для них не использовать: живой enum `otp_purpose` не совпадает с Drizzle.
 
 Пишется домен и действие (`auth.login`, `email.send`, `form.review`, `map.area`, `message.send`, `ajax.http`, `system.unhandled` и остальные из навыка), итог (`success`, `failure`, `denied`, `skipped`), короткое сообщение, почта или маска телефона, id аккаунта, цель (slug или id переписки), маршрут, код ошибки и обрезанный stack. IP берётся только из `X-Real-IP`.
 
 В журнал не попадают пароль, токен сессии, ссылка сброса, код из SMS или письма, `initData`, cookie и HTML переписки. Текст письма в консоль разработки по-прежнему пишет `AUTH_DEV_LOG_EMAILS`, в базу уходит только факт и тема. Опрос списка и непрочитанного пишется только при сбое. Браузер сообщает свои ошибки и ответы 500 через `reportClientLogsFn`, не больше 20 событий за 5 минут с одного IP.
 
-Вкладки «Логи» на `/admin/accounts/$id` и `/admin/trainers/$slug` смешивают этот журнал с прежней историей из сессий, токенов и отзывов. Stack и context в кабинете не показываются. Порог записи — `LOG_LEVEL`, по умолчанию `info`. Удаление своего аккаунта пишет `account.delete` («Пользователь удалил аккаунт») и не стирает почту, маску телефона, IP и user-agent. Срок этих строк продлевается до конца шести месяцев хранения. Восстановление пишет `account.restore`. По истечении срока `account.purge` фиксирует анонимизацию.
+Вкладки «Логи» на `/admin/accounts/$id` и `/admin/trainers/$slug` смешивают этот журнал с прежней историей из сессий, токенов и отзывов. Stack и context в кабинете не показываются. Порог записи — `LOG_LEVEL`, по умолчанию `info`. Удаление своего аккаунта пишет `account.delete` («Пользователь удалил аккаунт») и не стирает почту, маску телефона, IP и user-agent. Эти строки остаются. Восстановление пишет `account.restore`. По истечении шести месяцев `account.purge` фиксирует анонимизацию аккаунта, а журнал не чистится.
 
 ---
 
@@ -453,11 +454,11 @@ npm run build
 npm run lint
 npm run test         # node:test: журнал, гео, доступ к переписке
 npm run test:e2e     # Playwright. Сервер можно не гасить: конфиг его переиспользует
-npm run logs:install # таблица app_logs, без db:push
+npm run logs:install # app_logs и trainer_journal, без срока и без db:push
 npm run mail:install # mail_messages, mail_reviews, mail_site, mail_marketing в users, без db:push
 npm run logs:check   # дыры console.error и пробная запись
 npm run logs:diagnose -- --level error --hours 24
-npm run logs:purge   # строки старше 30 дней
+npm run logs:purge   # журнал не удаляет
 npm run format
 ```
 
@@ -521,7 +522,7 @@ npm run format
 | `.cursor/rules/visitor-place.mdc` | Город посетителя только через локальную GeoLite2; в поиске — этот город или «Минск»; виды спорта из таксономии |
 | `.cursor/rules/breadcrumbs.mdc` | Последний пункт хлебных крошек — `var(--primary)`; класс `is-current` и `aria-current="page"` |
 | `.cursor/rules/`            | Persistent rules (layout grid, icons, PWA, mobile, stack)             |
-| `.cursor/rules/logging.mdc` | Журнал `app_logs`: что писать, чего не писать, 30 дней (`alwaysApply`) |
+| `.cursor/rules/logging.mdc` | Журналы `app_logs` и `trainer_journal` без срока хранения (`alwaysApply`) |
 | `.cursor/skills/`           | Workflows: feature dev, PWA audit, mobile audit, docs sync, импорт тренеров из Instagram, журнал, диагностика, тесты, SEO |
 | `.cursor/skills/trenio-logging/` | Запись в `app_logs` и проверка `npm run logs:check` |
 | `.cursor/skills/trenio-diagnosis/` | Разбор сбоя по строкам журнала. Команда `/diagnosis` |

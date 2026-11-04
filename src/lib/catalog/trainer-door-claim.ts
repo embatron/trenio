@@ -93,7 +93,6 @@ export async function claimDoorAfterGoogle(input: {
       claimedAt: now,
       email,
       emailVerifiedAt: now,
-      ...(row.status === "draft" ? { status: "published" as const } : {}),
       updatedAt: now,
     })
     .where(and(eq(trainerProfiles.id, row.id), isNull(trainerProfiles.ownerUserId)))

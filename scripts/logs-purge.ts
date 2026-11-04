@@ -1,9 +1,7 @@
 import { closeDb } from "../src/db/index";
-import { purgeExpiredLogs } from "../src/lib/log/purge";
 
 async function main() {
-  const deleted = await purgeExpiredLogs();
-  console.info(`deleted ${deleted} expired log row(s)`);
+  console.info("journal rows are kept");
   await closeDb();
 }
 

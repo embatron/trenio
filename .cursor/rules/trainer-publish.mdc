@@ -1,0 +1,24 @@
+---
+description: Only the trainer publishes their own profile, from the cabinet
+alwaysApply: true
+---
+
+# Trainer publish
+
+A trainer profile stays `draft` until that trainer publishes it in the cabinet. Import, a server copy, a magic link, a password, and a Google sign-in do not publish it.
+
+## Do
+
+- Save and sync an imported profile as `draft`.
+- Let the trainer open the magic link, enter the cabinet, and set the page to published there.
+- A guest who opens `/trainers/{slug}` does not see a draft.
+
+## Do not
+
+```ts
+// wrong: the import or the password step opens the public page
+await db.update(trainerProfiles).set({ status: "published" }).where(eq(trainerProfiles.slug, slug));
+
+// right: the row stays a draft; the cabinet action is the only publish
+await db.update(trainerProfiles).set({ claimStatus: "claimed" }).where(eq(trainerProfiles.id, id));
+```

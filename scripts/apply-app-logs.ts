@@ -3,7 +3,7 @@ import { installAppLogs } from "../src/lib/log/purge";
 
 async function main() {
   await installAppLogs();
-  console.info("app_logs is ready. Rows expire after 30 days.");
+  console.info("app_logs and trainer_journal are kept.");
   await closeDb();
 }
 

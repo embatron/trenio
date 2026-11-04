@@ -3,14 +3,14 @@ name: trenio-logging
 description: >-
   Writes and reviews the Trenio.by operational journal (app_logs): auth, email,
   SMS, accounts, forms, maps, geo, API, system, messages, and browser AJAX
-  errors, with redaction and 30-day retention. Use when adding server functions,
+  errors, with redaction and no retention period. Use when adding server functions,
   catch blocks, mail, login, forms, the map, messages, error handling, or when
   the user mentions logging, logs, exceptions, or /logging.
 ---
 
 # Journal
 
-The table is `app_logs`. Rows expire after 30 days. The writer is `writeLog` / `logCaught` in `src/lib/log/logger.ts`. Full action list: [reference.md](reference.md).
+The operational table is `app_logs`. Trainer addition, catalog appearance, and trainer or club account actions are also copied into `trainer_journal`. Neither table is purged. The writer is `writeLog` / `logCaught` in `src/lib/log/logger.ts`. Full action list: [reference.md](reference.md).
 
 ## Add a log
 
@@ -26,10 +26,10 @@ A new `console.error` or `console.warn` in `src/` must sit in a file that import
 
 | Script | Purpose |
 | --- | --- |
-| `npm run logs:install` | `CREATE TABLE IF NOT EXISTS app_logs`. Not `db:push`. |
+| `npm run logs:install` | `CREATE TABLE IF NOT EXISTS` for `app_logs` and `trainer_journal`. Not `db:push`. |
 | `npm run logs:check` | Gap scan, then a probe row that must redact `password` and keep `email`. |
 | `npm run logs:diagnose` | Grouped rows. Flags: `--hours --domain --level --email --user --action --target --request --q`. |
-| `npm run logs:purge` | Delete rows whose `expires_at` has passed. |
+| `npm run logs:purge` | Does not delete journal rows. |
 
 ## Client
 
@@ -37,7 +37,7 @@ A new `console.error` or `console.warn` in `src/` must sit in a file that import
 
 ## Cabinet
 
-`/admin/accounts/$id` and `/admin/trainers/$slug` merge these rows into the «Логи» tab (`listActorJournal`). The tab does not show `stack` or `context`. `/diagnosis` does.
+`/admin/accounts/$id` and `/admin/trainers/$slug` merge these rows and `trainer_journal` into the «Логи» tab (`listActorJournal`). The tab does not show `stack` or `context`. `/diagnosis` reads `app_logs`.
 
 ## After a schema or domain change
 
