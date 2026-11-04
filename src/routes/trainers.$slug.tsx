@@ -1207,7 +1207,6 @@ function TrainerPage() {
                 phone={contacts.phone}
                 telegram={contacts.telegram}
                 instagram={contacts.instagram}
-                email={contacts.email}
                 heading="Как со мной связаться"
               />
             </div>

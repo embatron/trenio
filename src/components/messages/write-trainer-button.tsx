@@ -4,14 +4,12 @@ import { TrainerContactIcons } from "@/components/messages/trainer-contact-icons
 export function WriteTrainerButton({
   slug,
   telegram,
-  email,
   instagram,
 }: {
   slug: string;
   className?: string;
   telegram?: string;
-  email?: string;
   instagram?: string;
 }) {
-  return <TrainerContactIcons slug={slug} telegram={telegram} email={email} instagram={instagram} />;
+  return <TrainerContactIcons slug={slug} telegram={telegram} instagram={instagram} />;
 }

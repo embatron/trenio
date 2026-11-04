@@ -96,7 +96,6 @@ export function CatalogTrainerCard({
               phone={trainer.phone}
               instagram={trainer.instagram}
               telegram={trainer.telegram}
-              email={trainer.email}
             />
           ) : null}
         </div>

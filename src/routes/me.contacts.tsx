@@ -8,7 +8,7 @@ export const Route = createFileRoute("/me/contacts")({
   head: () => ({
     meta: [
       { title: "Контакты · trenio.by" },
-      { name: "description", content: "Телефон, почта, Instagram и Telegram на странице тренера." },
+      { name: "description", content: "Телефон, Instagram и Telegram на странице тренера." },
       { name: "robots", content: "noindex,follow" },
     ],
   }),
