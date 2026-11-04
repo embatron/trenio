@@ -570,6 +570,52 @@ input.is-locked {
     gap: 0;
   }
 }
+/* Two trainer cards on a phone: a smaller name and tighter contact row leave room for the sport, price, and city. */
+@media (max-width: 767px) and (min-width: 360px) {
+  .trainer-grid .trainer-card__name,
+  .cat-grid .trainer-card__name,
+  .favorites-grid .trainer-card__name,
+  .sr-grid .trainer-card__name {
+    font-size: 14px;
+    line-height: 1.15;
+  }
+  .trainer-grid .trainer-card__footer .trainer-contacts__link,
+  .cat-grid .trainer-card__footer .trainer-contacts__link,
+  .favorites-grid .trainer-card__footer .trainer-contacts__link,
+  .sr-grid .trainer-card__footer .trainer-contacts__link {
+    width: 30px;
+    height: 30px;
+  }
+  .trainer-grid .trainer-card__footer .trainer-contacts__link svg,
+  .cat-grid .trainer-card__footer .trainer-contacts__link svg,
+  .favorites-grid .trainer-card__footer .trainer-contacts__link svg,
+  .sr-grid .trainer-card__footer .trainer-contacts__link svg {
+    width: 15px;
+    height: 15px;
+  }
+  .trainer-grid .trainer-card__save,
+  .trainer-grid .trainer-card__share,
+  .cat-grid .trainer-card__save,
+  .cat-grid .trainer-card__share,
+  .favorites-grid .trainer-card__save,
+  .favorites-grid .trainer-card__share,
+  .sr-grid .trainer-card__save,
+  .sr-grid .trainer-card__share {
+    width: 28px;
+    height: 28px;
+  }
+  .trainer-grid .trainer-card__save svg,
+  .trainer-grid .trainer-card__share svg,
+  .cat-grid .trainer-card__save svg,
+  .cat-grid .trainer-card__share svg,
+  .favorites-grid .trainer-card__save svg,
+  .favorites-grid .trainer-card__share svg,
+  .sr-grid .trainer-card__save svg,
+  .sr-grid .trainer-card__share svg {
+    width: 12px;
+    height: 12px;
+  }
+}
 /* Trainer catalogs stay two-up on a phone. One column only on the narrowest screens. */
 @media (max-width: 359px) {
   .trainer-grid,
