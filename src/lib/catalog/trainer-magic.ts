@@ -17,6 +17,7 @@ import { authDoorClaims, trainerProfiles, userRoles, users, type TrainerProfile 
 import { renderLetter } from "@/lib/mail/letter";
 import { mailTransportReady, sendMail } from "@/lib/mail/send.server";
 import { assertStaff } from "@/lib/admin/access";
+import { copyCardFaceToAccount } from "@/lib/catalog/account-face";
 import { AuthError } from "@/lib/auth/errors";
 import { formatBelarusPhone, validateBelarusMobile } from "@/lib/auth/phone";
 import { isStaff } from "@/lib/auth/roles";
@@ -637,8 +638,14 @@ async function attachDoorProfile(profileId: string, userId: string, email: strin
       updatedAt: now,
     })
     .where(and(eq(trainerProfiles.id, profileId), isNull(trainerProfiles.ownerUserId)))
-    .returning({ id: trainerProfiles.id });
+    .returning({
+      id: trainerProfiles.id,
+      avatarPath: trainerProfiles.avatarPath,
+      photos: trainerProfiles.photos,
+    });
   if (updated.length === 0) throw new AuthError("Ссылка уже не действует.", "VALIDATION");
+  const card = updated[0];
+  await copyCardFaceToAccount(userId, card.avatarPath, card.photos);
 }
 
 async function openDoorSession(userId: string) {

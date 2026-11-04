@@ -6,6 +6,7 @@ import { requireAuthMiddleware } from "@/auth/middleware";
 import { getDb } from "@/db";
 import { trainerProfiles, userRoles, users } from "@/db/schema";
 import { assertStaff, hiddenStaffIds } from "@/lib/admin/access";
+import { accountFace, cardFace } from "@/lib/catalog/account-face";
 import { buildAdminUserLogs, loadAdminUserActivity, type AdminUserLogin, type AdminUserLog } from "@/lib/admin/user-activity";
 import { listActorJournal, mergeJournal } from "@/lib/log/journal";
 import type { UserRole } from "@/lib/auth/types";
@@ -55,7 +56,7 @@ export const getAdminAccountsFn = createServerFn({ method: "GET" })
   .handler(async ({ context }): Promise<AdminAccount[]> => {
     assertStaff(context.user.roles);
     const db = getDb();
-    const [accountRows, roleRows] = await Promise.all([
+    const [accountRows, roleRows, cards] = await Promise.all([
       db
         .select({
           id: users.id,
@@ -81,6 +82,14 @@ export const getAdminAccountsFn = createServerFn({ method: "GET" })
         )
         .orderBy(desc(users.createdAt)),
       db.select({ userId: userRoles.userId, role: userRoles.role }).from(userRoles),
+      db
+        .select({
+          ownerUserId: trainerProfiles.ownerUserId,
+          avatarPath: trainerProfiles.avatarPath,
+          photos: trainerProfiles.photos,
+        })
+        .from(trainerProfiles)
+        .where(isNotNull(trainerProfiles.ownerUserId)),
     ]);
 
     const rolesByUser = new Map<string, UserRole[]>();
@@ -88,6 +97,13 @@ export const getAdminAccountsFn = createServerFn({ method: "GET" })
       const list = rolesByUser.get(row.userId) ?? [];
       list.push(row.role);
       rolesByUser.set(row.userId, list);
+    }
+
+    const cardByOwner = new Map<string, string>();
+    for (const card of cards) {
+      if (!card.ownerUserId || cardByOwner.has(card.ownerUserId)) continue;
+      const face = cardFace(card.avatarPath, card.photos);
+      if (face) cardByOwner.set(card.ownerUserId, face);
     }
 
     const hidden = await hiddenStaffIds(context.user.roles);
@@ -104,7 +120,7 @@ export const getAdminAccountsFn = createServerFn({ method: "GET" })
         roles: rolesByUser.get(row.id) ?? [],
         createdAt: row.createdAt.toISOString(),
         lastLoginAt: row.lastLoginAt ? row.lastLoginAt.toISOString() : "",
-        avatarPath: row.avatarPath,
+        avatarPath: accountFace(row.avatarPath, cardByOwner.get(row.id) ?? ""),
       }];
     });
   });
@@ -148,6 +164,8 @@ export const getAdminAccountFn = createServerFn({ method: "GET" })
           lastName: trainerProfiles.lastName,
           fullName: trainerProfiles.fullName,
           status: trainerProfiles.status,
+          avatarPath: trainerProfiles.avatarPath,
+          photos: trainerProfiles.photos,
         })
         .from(trainerProfiles)
         .where(eq(trainerProfiles.ownerUserId, data.id)),
@@ -179,7 +197,10 @@ export const getAdminAccountFn = createServerFn({ method: "GET" })
       roles: roleRows.map((item) => item.role),
       createdAt: row.createdAt.toISOString(),
       lastLoginAt: row.lastLoginAt ? row.lastLoginAt.toISOString() : "",
-      avatarPath: row.avatarPath,
+      avatarPath: accountFace(
+        row.avatarPath,
+        trainerRows.map((item) => cardFace(item.avatarPath, item.photos)).find(Boolean) ?? "",
+      ),
       emailVerifiedAt: row.emailVerifiedAt ? row.emailVerifiedAt.toISOString() : "",
       phoneVerifiedAt: row.phoneVerifiedAt ? row.phoneVerifiedAt.toISOString() : "",
       lastSignupIntent: row.lastSignupIntent,

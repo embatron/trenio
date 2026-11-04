@@ -9,6 +9,7 @@ import { getDb } from "@/db";
 import { trainerProfiles, userRoles, users } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
 import { logCaught, writeLog } from "@/lib/log/logger";
+import { cardFace } from "@/lib/catalog/account-face";
 import { OFFER_VERSION } from "@/lib/catalog/offer";
 import { genderAddress, inferTrainerGender } from "@/lib/catalog/trainer-gender";
 import { instagramProfileSlug } from "@/lib/catalog/trainer-slugs";
@@ -123,6 +124,7 @@ export const claimTrainerProfileFn = createServerFn({ method: "POST" })
           passwordSetAt: now,
           firstName: profile.firstName || profile.fullName || "Тренер",
           lastName: profile.lastName || null,
+          avatarPath: cardFace(profile.avatarPath, profile.photos),
           status: "active",
           lastSignupIntent: "trainer_claim",
         })

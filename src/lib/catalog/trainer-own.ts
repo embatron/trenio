@@ -12,6 +12,7 @@ import { consumeRateLimit, RATE_LIMITED_MESSAGE } from "@/auth/rate-limit";
 import { getDb } from "@/db";
 import { trainerProfiles, users } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
+import { copyCardFaceToAccount } from "@/lib/catalog/account-face";
 import { markLogged, writeLog } from "@/lib/log/logger";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
 import { renderLetter } from "@/lib/mail/letter";
@@ -388,6 +389,7 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       });
     }
 
+    await copyCardFaceToAccount(context.user.id, storedAvatar, photos ?? existing?.photos);
     logTrainerPresence({
       created: !existing,
       previous: existing?.status ?? null,
