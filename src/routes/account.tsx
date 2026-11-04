@@ -30,7 +30,7 @@ export const Route = createFileRoute("/account")({
     const away = deniedCabinetTarget("account", context.user.roles, location.pathname, location.searchStr);
     if (away) throw redirect({ href: away });
   },
-  head: () => ({ meta: [{ title: "Кабинет — trenio.by" }, NOINDEX_FOLLOW] }),
+  head: () => ({ meta: [{ title: "Кабинет — Я ищу тренера на trenio.by" }, NOINDEX_FOLLOW] }),
   loader: async () => {
     const [cabinet, ratings, prices] = await Promise.all([getUserCabinetFn(), listTrainerRatingSummariesFn(), listTrainerPricesFn()]);
     return { cabinet, ratings, prices };

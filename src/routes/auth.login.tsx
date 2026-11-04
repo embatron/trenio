@@ -37,7 +37,7 @@ export const Route = createFileRoute("/auth/login")({
   },
   head: () => ({
     meta: [
-      { title: "Вход — trenio.by" },
+      { title: "Вход — Я ищу тренера на trenio.by" },
       NOINDEX_FOLLOW,
       {
         name: "description",

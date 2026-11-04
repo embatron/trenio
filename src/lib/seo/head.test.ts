@@ -74,7 +74,7 @@ test("the default share image is the wide wordmark card", () => {
 
 test("public head uses an absolute canonical and a clipped description", () => {
   const head = seoHead({
-    title: "Найти тренера по боксу | trenio.by",
+    title: "Найти тренера по боксу | Я ищу тренера на trenio.by",
     description: "А".repeat(240),
     path: "/categories/edinoborstva/boks",
     image: "/images/categories/edinoborstva.webp",
@@ -132,8 +132,12 @@ test("a trainer title lists every sport and the city", () => {
     { slug: "ofp", label: "ОФП" },
   ]);
   assert.equal(
-    trainerDocumentPhrase(datives, { slug: "minsk", label: "Минск" }),
-    "Тренер по боксу, кикбоксингу и общефизической подготовке в Минске",
+    trainerDocumentPhrase(datives, { slug: "minsk", label: "Минск" }, "Владимир Антипенко"),
+    "Тренер по боксу, кикбоксингу и общефизической подготовке Владимир Антипенко в Минске",
+  );
+  assert.equal(
+    trainerDocumentPhrase(["боксу"], { slug: "minsk", label: "Минск" }, "Артём Романович"),
+    "Тренер по боксу Артём Романович в Минске",
   );
   assert.equal(
     trainerDocumentPhrase(trainerSportDatives([
@@ -165,16 +169,16 @@ test("a trainer document names the person, the sport, and the city", () => {
     priceLines: ["35 BYN"],
   });
   const title = head.meta.find((item) => "title" in item && item.title);
-  assert.equal(title && "title" in title ? title.title : "", "Тренер по кикбоксингу в Минске | trenio.by");
+  assert.equal(title && "title" in title ? title.title : "", "Тренер по кикбоксингу Владимир Антипенко в Минске | Я ищу тренера на trenio.by");
   const description = head.meta.find((item) => "name" in item && item.name === "description");
   assert.equal(
     description && "content" in description ? description.content : "",
-    "Тренер по кикбоксингу в Минске. Владимир Антипенко. Зал в Минске.",
+    "Тренер по кикбоксингу Владимир Антипенко в Минске. Зал в Минске.",
   );
   const alt = head.meta.find((item) => "property" in item && item.property === "og:image:alt");
   assert.equal(
     alt && "content" in alt ? alt.content : "",
-    "Владимир Антипенко — Тренер по кикбоксингу в Минске",
+    "Тренер по кикбоксингу Владимир Антипенко в Минске",
   );
   const graph = head.scripts?.map((script) => JSON.parse(script.children) as {
     "@type"?: string;
@@ -182,9 +186,9 @@ test("a trainer document names the person, the sport, and the city", () => {
     mainEntity?: { telephone?: string; jobTitle?: string; mainEntityOfPage?: string; makesOffer?: { price: string } };
   }).find((node) => node["@type"] === "ProfilePage");
   assert.ok(graph);
-  assert.equal(graph.name, "Тренер по кикбоксингу в Минске");
+  assert.equal(graph.name, "Тренер по кикбоксингу Владимир Антипенко в Минске");
   assert.equal(graph.mainEntity?.telephone, undefined);
-  assert.equal(graph.mainEntity?.jobTitle, "Тренер по кикбоксингу в Минске");
+  assert.equal(graph.mainEntity?.jobTitle, "Тренер по кикбоксингу Владимир Антипенко в Минске");
   assert.equal(graph.mainEntity?.mainEntityOfPage, "https://trenio.by/trainers/antipenko.training");
   assert.equal(graph.mainEntity?.makesOffer?.price, "35");
   assert.equal(graphTypes(head).has("AggregateRating"), false);
@@ -206,7 +210,7 @@ test("a trainer document names the person, the sport, and the city", () => {
   });
   const longDescription = long.meta.find((item) => "name" in item && item.name === "description");
   const longText = longDescription && "content" in longDescription ? longDescription.content : "";
-  assert.match(longText, /^Тренер по кикбоксингу, боксу и общефизической подготовке в Минске\. Владимир Антипенко\./);
+  assert.match(longText, /^Тренер по кикбоксингу, боксу и общефизической подготовке Владимир Антипенко в Минске\./);
   assert.match(longText, /Кикбоксинг и бокс/);
   assert.equal(/\p{Emoji_Modifier}/u.test(longText), false);
   assert.ok(longText.length <= 170);
@@ -226,7 +230,7 @@ test("each indexable page kind emits its schema types", () => {
 
   assertKind("categories", categoriesIndexHead());
   assertKind("category", categoryRouteHead({
-    title: "Найти тренера по единоборствам | trenio.by",
+    title: "Найти тренера по единоборствам | Я ищу тренера на trenio.by",
     description: "Тренер по единоборствам в Беларуси.",
     path: "/categories/edinoborstva",
     faq,
@@ -237,7 +241,7 @@ test("each indexable page kind emits its schema types", () => {
     ],
   }));
   assertKind("sport", categoryRouteHead({
-    title: "Найти тренера по боксу | trenio.by",
+    title: "Найти тренера по боксу | Я ищу тренера на trenio.by",
     description: "Тренер по боксу в Беларуси.",
     path: "/categories/edinoborstva/boks",
     faq,
@@ -278,7 +282,7 @@ test("each indexable page kind emits its schema types", () => {
   const person = trainer.scripts
     ?.map((script) => JSON.parse(script.children) as { "@type"?: string; mainEntity?: { jobTitle?: string; sameAs?: string[]; aggregateRating?: { reviewCount: number } } })
     .find((node) => node["@type"] === "ProfilePage")?.mainEntity;
-  assert.equal(person?.jobTitle, "Тренер по кикбоксингу в Минске");
+  assert.equal(person?.jobTitle, "Тренер по кикбоксингу Владимир Антипенко в Минске");
   assert.deepEqual(person?.sameAs, [
     "https://www.instagram.com/antipenko.training/",
     "https://t.me/antipenko",
@@ -340,7 +344,7 @@ test("each indexable page kind emits its schema types", () => {
   const about = infoPageHead("about");
   assert.equal(graphTypes(about).has("FAQPage"), false);
   assert.equal(about.links[0]?.href, "https://trenio.by/about");
-  assert.equal(about.meta.some((item) => "title" in item && item.title === "О сервисе | trenio.by"), true);
+  assert.equal(about.meta.some((item) => "title" in item && item.title === "О сервисе | Я ищу тренера на trenio.by"), true);
   assert.equal(
     about.meta.some(
       (item) =>
@@ -392,7 +396,7 @@ test("a noindex page emits no JSON-LD", () => {
 
 test("a category without a visible FAQ block does not emit FAQPage", () => {
   const head = categoryRouteHead({
-    title: "Найти тренера по боксу | trenio.by",
+    title: "Найти тренера по боксу | Я ищу тренера на trenio.by",
     description: "Тренер по боксу в Беларуси.",
     path: "/categories/edinoborstva/boks",
     faq: [],

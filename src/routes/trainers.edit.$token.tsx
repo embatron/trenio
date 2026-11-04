@@ -6,7 +6,7 @@ import { openTrainerEditFn } from "@/lib/catalog/trainer-magic";
 export const Route = createFileRoute("/trainers/edit/$token")({
   head: () => ({
     meta: [
-      { title: "Редактирование профиля · trenio.by" },
+      { title: "Редактирование профиля · Я ищу тренера на trenio.by" },
       { name: "robots", content: "noindex,follow" },
     ],
   }),

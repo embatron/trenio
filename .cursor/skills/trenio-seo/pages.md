@@ -6,20 +6,20 @@ JSON-LD for each row comes from the helper in [markup.md](markup.md). A `noindex
 
 | Template | URL | Index | Title |
 | --- | --- | --- | --- |
-| Home | `/` | yes | `Найти тренера в Беларуси \| trenio.by` |
-| Categories | `/categories` | yes | `Категории спорта — тренеры в Беларуси \| trenio.by` |
-| Category | `/categories/{parent}` | yes | `Найти тренера по {titleGenitive} \| trenio.by` |
+| Home | `/` | yes | `Найти тренера в Беларуси \| Я ищу тренера на trenio.by` |
+| Categories | `/categories` | yes | `Категории спорта — тренеры в Беларуси \| Я ищу тренера на trenio.by` |
+| Category | `/categories/{parent}` | yes | `Найти тренера по {titleGenitive} \| Я ищу тренера на trenio.by` |
 | Sport | `/categories/{parent}/{child}` | yes | same pattern, child dative |
-| City | `/city/{city}` | yes | `Найти тренера в {locative} \| trenio.by` |
-| City + sport | `/city/{city}/{sport}` | yes | `Найти тренера по {dative} в {locative} \| trenio.by` |
+| City | `/city/{city}` | yes | `Найти тренера в {locative} \| Я ищу тренера на trenio.by` |
+| City + sport | `/city/{city}/{sport}` | yes | `Найти тренера по {dative} в {locative} \| Я ищу тренера на trenio.by` |
 | Nested sport | `/city/minsk/yoga/yoga` | yes | same, when the sport slug equals its parent |
-| Trainer | `/trainers/{slug}` | yes | `Тренер по {все виды в дательном, через «и»} в {предложный город} \| trenio.by`. ОФП, ЛФК and ОФК expand. Example: `Тренер по боксу, кикбоксингу и общефизической подготовке в Минске \| trenio.by`. A town outside the twenty uses `в городе {name}`. The name stays in the H1 and the description. |
-| Map | `/map` | yes | `Тренеры на карте Беларуси \| trenio.by` |
+| Trainer | `/trainers/{slug}` | yes | `Тренер по {все виды в дательном, через «и»} {имя фамилия} в {предложный город} \| Я ищу тренера на trenio.by`. Example: `Тренер по боксу Артём Романович в Минске \| Я ищу тренера на trenio.by`. ОФП, ЛФК and ОФК expand. A town outside the twenty uses `в городе {name}`. The H1 stays the person's name. |
+| Map | `/map` | yes | `Тренеры на карте Беларуси \| Я ищу тренера на trenio.by` |
 | Map with query | `/map?sports=` or `?city=` | no | canonical stays `/map` |
-| Join | `/join/trainer` | yes | `Стать тренером — бесплатная карточка \| trenio.by`. H1 stays `Привет!` |
-| About, contacts, offer, privacy | those paths | yes | the H1, then `\| trenio.by` |
+| Join | `/join/trainer` | yes | `Стать тренером — бесплатная карточка \| Я ищу тренера на trenio.by`. H1 stays `Привет!` |
+| About, contacts, offer, privacy | those paths | yes | the H1, then `\| Я ищу тренера на trenio.by` |
 | Clubs index | `/clubs` | no, until a club is published | — |
-| Club | `/clubs/{slug}` | yes, when the record exists | `{name} — клуб в {city} \| trenio.by` |
+| Club | `/clubs/{slug}` | yes, when the record exists | `{name} — клуб в {city} \| Я ищу тренера на trenio.by` |
 | Search | `/search` | no | any query |
 | City with several sports | `/city/{city}?sports=` | no | canonical is the city path |
 | Auth | `/auth/*` | no. Token pages are `nofollow` | — |

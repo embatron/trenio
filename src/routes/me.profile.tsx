@@ -8,7 +8,7 @@ const meRoute = getRouteApi("/me");
 export const Route = createFileRoute("/me/profile")({
   head: () => ({
     meta: [
-      { title: "Мой профиль · trenio.by" },
+      { title: "Мой профиль · Я ищу тренера на trenio.by" },
       { name: "description", content: "Публичная карточка тренера." },
       { name: "robots", content: "noindex,follow" },
     ],

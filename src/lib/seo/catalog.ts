@@ -4,6 +4,7 @@ import type { CityCatalogPage } from "@/lib/catalog/city-pages";
 import { getParentCategoryFeaturedImage, pickSearchAlias } from "@/lib/catalog/sport-taxonomy";
 import { seoHead } from "@/lib/seo/head";
 import { breadcrumbList, collectionPage, faqPage, type SeoCrumb } from "@/lib/seo/schema";
+import { documentLead, siteTitle } from "@/lib/seo/site";
 import { clipMeta } from "@/lib/seo/text";
 
 function sentenceAlias(alias: string | undefined) {
@@ -19,7 +20,7 @@ export function categoryRouteHead(input: {
   faq: Array<{ q: string; a: string }>;
   image?: string;
 }) {
-  const name = input.title.replace(/\s*\|\s*trenio\.by\s*$/i, "").trim();
+  const name = documentLead(input.title);
   return seoHead({
     title: input.title,
     description: input.description,
@@ -53,7 +54,7 @@ export function catalogPageHead(city: CityCatalogPage, sport: CatalogSport | nul
   if (sport) crumbs.push({ name: sport.label, path });
   const description = cityCatalogDescription(city, sport);
   return seoHead({
-    title: `${phrase} | trenio.by`,
+    title: siteTitle(phrase),
     description,
     path,
     index: !noindex,

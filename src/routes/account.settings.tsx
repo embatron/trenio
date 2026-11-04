@@ -7,7 +7,7 @@ const accountRoute = getRouteApi("/account");
 export const Route = createFileRoute("/account/settings")({
   head: () => ({
     meta: [
-      { title: "Настройки · trenio.by" },
+      { title: "Настройки · Я ищу тренера на trenio.by" },
       { name: "description", content: "Имя и фамилия аккаунта." },
       { name: "robots", content: "noindex,follow" },
     ],

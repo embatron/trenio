@@ -14,7 +14,7 @@ export const Route = createFileRoute("/admin/trainers/$slug")({
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: `${loaderData?.trainer.fullName || "Тренер"} · trenio.by` },
+      { title: `${loaderData?.trainer.fullName || "Тренер"} · Я ищу тренера на trenio.by` },
       { name: "description", content: "Карточка тренера: поля профиля, входы и события." },
       { name: "robots", content: "noindex,follow" },
     ],

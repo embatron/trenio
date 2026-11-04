@@ -20,7 +20,7 @@ export const Route = createFileRoute("/auth/confirm-email")({
   },
   head: () => ({
     meta: [
-      { title: "Подтверждение почты — trenio.by" },
+      { title: "Подтверждение почты — Я ищу тренера на trenio.by" },
       NOINDEX_NOFOLLOW,
       { name: "description", content: "Подтвердите почту trenio.by." },
     ],

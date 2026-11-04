@@ -11,7 +11,7 @@ import { claimTrainerProfileFn, getTrainerClaimFn } from "@/lib/catalog/trainer-
 export const Route = createFileRoute("/trainers/claim/$token")({
   head: () => ({
     meta: [
-      { title: "Привязать профиль тренера · trenio.by" },
+      { title: "Привязать профиль тренера · Я ищу тренера на trenio.by" },
       { name: "robots", content: "noindex,follow" },
     ],
   }),

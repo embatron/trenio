@@ -3,7 +3,20 @@ import { CATALOG_ORIGIN } from "@/lib/catalog/catalog-sports";
 /** Public origin. Canonical, Open Graph, sitemap, and JSON-LD use this host. */
 export const SITE_ORIGIN = CATALOG_ORIGIN;
 
-export const SITE_NAME = "trenio.by";
+/** Name of the site in titles, Open Graph, and schema.org. The domain stays trenio.by. */
+export const SITE_NAME = "Я ищу тренера на trenio.by";
+
+export function siteTitle(lead: string) {
+  return `${lead.trim()} | ${SITE_NAME}`;
+}
+
+/** The phrase before the site name. A leftover `| trenio.by` suffix is stripped too. */
+export function documentLead(title: string) {
+  const value = title.trim();
+  const suffix = ` | ${SITE_NAME}`;
+  const bare = value.endsWith(suffix) ? value.slice(0, -suffix.length) : value;
+  return bare.replace(/\s*\|\s*trenio\.by\s*$/i, "").trim();
+}
 
 /** Document language. The catalog is Russian for Belarus, not a Belarusian mirror. */
 export const SITE_LOCALE = "ru-BY";

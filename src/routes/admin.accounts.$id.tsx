@@ -13,7 +13,7 @@ export const Route = createFileRoute("/admin/accounts/$id")({
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: `${loaderData?.name || "Аккаунт"} · кабинет администратора · trenio.by` },
+      { title: `${loaderData?.name || "Аккаунт"} · кабинет администратора · Я ищу тренера на trenio.by` },
       { name: "description", content: "Профиль аккаунта, входы и журнал действий." },
       { name: "robots", content: "noindex,follow" },
     ],

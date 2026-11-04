@@ -22,7 +22,7 @@ import { validatePasswordStrength } from "@/lib/auth/password-policy";
 export const Route = createFileRoute("/auth/forgot-password")({
   head: () => ({
     meta: [
-      { title: "Восстановление пароля — trenio.by" },
+      { title: "Восстановление пароля — Я ищу тренера на trenio.by" },
       NOINDEX_FOLLOW,
       {
         name: "description",

@@ -16,7 +16,7 @@ export const Route = createFileRoute("/auth/totp")({
   },
   head: () => ({
     meta: [
-      { title: "Код для кабинета — trenio.by" },
+      { title: "Код для кабинета — Я ищу тренера на trenio.by" },
       NOINDEX_FOLLOW,
     ],
   }),

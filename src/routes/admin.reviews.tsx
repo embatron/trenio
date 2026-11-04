@@ -19,7 +19,7 @@ export const Route = createFileRoute("/admin/reviews")({
   loader: () => getAdminReviewsFn(),
   head: () => ({
     meta: [
-      { title: "Отзывы · кабинет администратора · trenio.by" },
+      { title: "Отзывы · кабинет администратора · Я ищу тренера на trenio.by" },
       { name: "description", content: "Модерация отзывов." },
       { name: "robots", content: "noindex,follow" },
     ],

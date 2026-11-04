@@ -9,7 +9,7 @@ export const Route = createFileRoute("/admin/site")({
   loader: () => getSiteTextsFn(),
   head: () => ({
     meta: [
-      { title: "Настройки сайта · кабинет администратора · trenio.by" },
+      { title: "Настройки сайта · кабинет администратора · Я ищу тренера на trenio.by" },
       { name: "description", content: "Тексты приветствия тренеру и письма пользователю." },
       { name: "robots", content: "noindex,follow" },
     ],

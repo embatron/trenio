@@ -22,7 +22,7 @@ export const Route = createFileRoute("/account/messages")({
   },
   head: () => ({
     meta: [
-      { title: "Сообщения · trenio.by" },
+      { title: "Сообщения · Я ищу тренера на trenio.by" },
       { name: "description", content: "Сообщения тренерам и клубам." },
       { name: "robots", content: "noindex,follow" },
     ],

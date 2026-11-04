@@ -8,7 +8,7 @@ import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 export const Route = createFileRoute("/auth/credentials")({
   head: () => ({
     meta: [
-      { title: "Почта и пароль — trenio.by" },
+      { title: "Почта и пароль — Я ищу тренера на trenio.by" },
       NOINDEX_FOLLOW,
     ],
   }),

@@ -207,7 +207,7 @@ export const Route = createFileRoute("/trainers/$slug")({
   },
   head: ({ loaderData }) => {
     const t = loaderData?.trainer;
-    if (!t) return { meta: [{ title: "Тренер · trenio.by" }, { name: "robots", content: "noindex, follow" }] };
+    if (!t) return { meta: [{ title: "Тренер · Я ищу тренера на trenio.by" }, { name: "robots", content: "noindex, follow" }] };
     const seo = trainerSeoHead({
       slug: t.slug,
       name: t.name,
@@ -727,7 +727,7 @@ function TrainerPage() {
     if (access !== "public") return;
     void recordTrainerProfileViewFn({ data: { slug: t.slug } });
   }, [access, t.slug]);
-  const documentPhrase = trainerDocumentPhrase(t.sportDatives, t.city);
+  const documentPhrase = trainerDocumentPhrase(t.sportDatives, t.city, t.name);
   const { user } = useRouteContext({ from: "__root__" });
   const [photoIdx, setPhotoIdx] = useState(0);
   const viewportRef = useRef<HTMLDivElement>(null);

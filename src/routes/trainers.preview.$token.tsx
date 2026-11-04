@@ -6,7 +6,7 @@ import { openTrainerPreviewFn } from "@/lib/catalog/trainer-magic";
 export const Route = createFileRoute("/trainers/preview/$token")({
   head: () => ({
     meta: [
-      { title: "Профиль тренера · trenio.by" },
+      { title: "Профиль тренера · Я ищу тренера на trenio.by" },
       { name: "robots", content: "noindex,follow" },
     ],
   }),

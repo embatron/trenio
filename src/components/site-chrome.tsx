@@ -478,7 +478,7 @@ function ChromeStyles() {
 export function Logo({ className }: { className?: string }) {
   const frame = { width: 503, height: 128, alt: "", decoding: "async" as const };
   return (
-    <Link to="/" className={className ?? "logo"} aria-label="trenio.by">
+    <Link to="/" className={className ?? "logo"} aria-label="Я ищу тренера на trenio.by">
       <img {...frame} className="logo__img logo__img--color" src="/logo.webp" />
       <img {...frame} className="logo__img logo__img--on-dark" src="/logo-on-dark.webp" />
       <img {...frame} className="logo__img logo__img--knockout" src="/logo-knockout.webp" />

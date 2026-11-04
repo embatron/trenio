@@ -7,7 +7,7 @@ import { enterTrainerDoorFn, peekTrainerMailFn } from "@/lib/catalog/trainer-mag
 export const Route = createFileRoute("/hi/$code")({
   head: () => ({
     meta: [
-      { title: "Ссылка · trenio.by" },
+      { title: "Ссылка · Я ищу тренера на trenio.by" },
       { name: "robots", content: "noindex,follow" },
     ],
   }),

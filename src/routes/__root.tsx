@@ -10,6 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import { GA_MEASUREMENT_ID, googleAnalyticsSnippet } from "@/lib/seo/analytics";
+import { SITE_NAME, siteTitle } from "@/lib/seo/site";
 import appCss from "../styles.css?url";
 import type { PublicUser } from "@/lib/auth/schemas";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -134,18 +135,18 @@ export const Route = createRootRouteWithContext<{
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" },
       { name: "theme-color", content: "#f04b50" },
-      { title: "Найти тренера в Беларуси | trenio.by" },
+      { title: siteTitle("Найти тренера в Беларуси") },
       { name: "description", content: "Тренеры в Беларуси по виду спорта и городу. Цена, формат и контакты." },
-      { name: "author", content: "trenio.by" },
-      { property: "og:title", content: "Найти тренера в Беларуси | trenio.by" },
+      { name: "author", content: SITE_NAME },
+      { property: "og:title", content: siteTitle("Найти тренера в Беларуси") },
       { property: "og:description", content: "Тренеры в Беларуси по виду спорта и городу." },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "ru_BY" },
-      { property: "og:site_name", content: "trenio.by" },
+      { property: "og:site_name", content: SITE_NAME },
       { property: "og:image", content: "https://trenio.by/og.png" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: "trenio.by" },
+      { property: "og:image:alt", content: SITE_NAME },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [

@@ -2,6 +2,7 @@ import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { canonicalCategoryPath } from "@/lib/catalog/slug-policy";
 import { categorySearchDescription, getParentCategoryFeaturedImage, getTopLevelSportCategory, getSportTaxonomyChildInCategory, isPublishedSportCategory } from "@/lib/catalog/sport-taxonomy";
 import { categoryRouteHead } from "@/lib/seo/catalog";
+import { documentLead, siteTitle } from "@/lib/seo/site";
 import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
 import { listTrainerPricesFn } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
@@ -44,14 +45,14 @@ export const Route = createFileRoute("/categories/$parentSlug/$childSlug")({
   head: ({ params }) => {
     const category = resolveChildCategory(params.parentSlug, params.childSlug);
     if (!category) {
-      return { meta: [{ title: "Категория | trenio.by" }] };
+      return { meta: [{ title: siteTitle("Категория") }] };
     }
 
     const keyword = categoryKeyword(category, params.parentSlug);
     const title = categoryPageTitle(keyword);
     const aliases = getSportTaxonomyChildInCategory(params.parentSlug, params.childSlug)?.aliases;
     const desc = categorySearchDescription(
-      title.replace(" | trenio.by", ""),
+      documentLead(title),
       categoryHeroLead(keyword, [], aliases),
       aliases,
     );

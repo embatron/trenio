@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/account/bookings")({
   head: () => ({
     meta: [
-      { title: "Мои записи · trenio.by" },
+      { title: "Мои записи · Я ищу тренера на trenio.by" },
       { name: "description", content: "Записи на тренировки. Раздел в разработке." },
       { name: "robots", content: "noindex,follow" },
     ],

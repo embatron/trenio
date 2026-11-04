@@ -23,6 +23,7 @@ import { compareByPopularity, compareByRating, compareByReviews, popularityCheck
 import { compareTrainerPrice, listTrainerPricesFn, priceForCard, type TrainerPriceMap } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { categoryRouteHead } from "@/lib/seo/catalog";
+import { documentLead, siteTitle } from "@/lib/seo/site";
 import { pluralRu } from "@/lib/ru-plural";
 import { toggleFilterValue } from "@/lib/catalog/belarus-settlements";
 import { filterBelarusCities, resolveBelarusCity } from "@/lib/catalog/city-taxonomy";
@@ -87,7 +88,7 @@ export const Route = createFileRoute("/categories/$slug")({
     const title = categoryPageTitle(keyword);
     const path = `/categories/${params.slug}`;
     const desc = categorySearchDescription(
-      title.replace(" | trenio.by", ""),
+      documentLead(title),
       categoryHeroLead(keyword, categoryTopicLabels(c)),
       getTopLevelSportCategory(params.slug)?.aliases,
     );
@@ -304,7 +305,7 @@ export function categoryKeyword(category: Pick<Category, "slug" | "titleGenitive
 }
 
 export function categoryPageTitle(keyword: string) {
-  return `Найти тренера по ${keyword} | trenio.by`;
+  return siteTitle(`Найти тренера по ${keyword}`);
 }
 
 export function categoryTopicLabels(category: Pick<Category, "slug" | "subSports">, parentSlug?: string) {

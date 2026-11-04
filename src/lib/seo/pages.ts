@@ -1,7 +1,7 @@
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 import { seoHead } from "@/lib/seo/head";
 import { aboutPage, breadcrumbList, collectionPage, contactPage, homeGraph, webPage, type SeoCrumb } from "@/lib/seo/schema";
-import { absoluteUrl, SITE_EMAIL } from "@/lib/seo/site";
+import { absoluteUrl, SITE_EMAIL, siteTitle } from "@/lib/seo/site";
 
 /**
  * `@type` values each live template emits. An empty list is noindex and has no JSON-LD.
@@ -32,53 +32,53 @@ export const SEO_PAGE_TYPES = {
 
 export type SeoPageKind = keyof typeof SEO_PAGE_TYPES;
 
-const HOME_TITLE = "Найти тренера в Беларуси | trenio.by";
+const HOME_TITLE = siteTitle("Найти тренера в Беларуси");
 const HOME_DESCRIPTION =
   "Тренеры в Беларуси по виду спорта и городу. Цена, формат и контакты: индивидуально или в группе, для себя или для ребёнка.";
 
 export const CATEGORIES_CRUMB = "Категории спорта";
-const CATEGORIES_TITLE = "Категории спорта — тренеры в Беларуси | trenio.by";
+const CATEGORIES_TITLE = siteTitle("Категории спорта — тренеры в Беларуси");
 const CATEGORIES_DESCRIPTION =
   "Категории спорта в каталоге тренеров Беларуси: единоборства, фитнес, йога, плавание, командные игры и другие направления.";
 
 export const MAP_CRUMB = "Карта";
-const MAP_TITLE = "Тренеры на карте Беларуси | trenio.by";
+const MAP_TITLE = siteTitle("Тренеры на карте Беларуси");
 const MAP_DESCRIPTION = "Карта мест тренировок в Беларуси. Направление и город — фильтры, карточки рядом с картой.";
 
 export const CLUBS_CRUMB = "Клубы";
-const CLUBS_TITLE = "Спортивные клубы и залы Беларуси | trenio.by";
+const CLUBS_TITLE = siteTitle("Спортивные клубы и залы Беларуси");
 const CLUBS_DESCRIPTION = "Каталог клубов, студий и залов Беларуси. Карточки появятся здесь после публикации.";
 
 const INFO_PAGES = {
   about: {
     path: "/about",
     crumb: "О сервисе",
-    title: "О сервисе | trenio.by",
+    title: siteTitle("О сервисе"),
     description:
       "Каталог тренеров в Беларуси: город, вид спорта и цена. Клиент пишет напрямую, страницу публикует сам тренер, размещение бесплатное.",
   },
   contacts: {
     path: "/contacts",
     crumb: "Контакты",
-    title: "Контакты | trenio.by",
+    title: siteTitle("Контакты"),
     description: `Написать trenio.by: ${SITE_EMAIL}. Вопросы по карточке, оферте и персональным данным.`,
   },
   offer: {
     path: "/offer",
     crumb: "Договор оферты",
-    title: "Договор оферты | trenio.by",
+    title: siteTitle("Договор оферты"),
     description: "Публичная оферта на бесплатное размещение профиля тренера в каталоге trenio.by.",
   },
   privacy: {
     path: "/privacy",
     crumb: "Политика конфиденциальности",
-    title: "Политика конфиденциальности | trenio.by",
+    title: siteTitle("Политика конфиденциальности"),
     description: "Какие данные обрабатывает trenio.by: аккаунт, карточка тренера, сообщения, отзывы и cookie города.",
   },
   join: {
     path: "/join/trainer",
     crumb: "Тренерам",
-    title: "Стать тренером — бесплатная карточка | trenio.by",
+    title: siteTitle("Стать тренером — бесплатная карточка"),
     description:
       "Скинь свой Instagram — профиль заполним мы. Бесплатная карточка в каталоге Беларуси. Не опубликуем, пока ты её не увидишь.",
   },
@@ -180,11 +180,11 @@ export function clubBreadcrumbs(club: ClubSeoSource): SeoCrumb[] {
 
 export function clubPageHead(club: ClubSeoSource | null | undefined) {
   if (!club) {
-    return { meta: [{ title: "Клуб · trenio.by" }, { name: "robots", content: "noindex, follow" }] };
+    return { meta: [{ title: siteTitle("Клуб") }, { name: "robots", content: "noindex, follow" }] };
   }
   const path = `/clubs/${club.slug}`;
   return seoHead({
-    title: `${club.name} — клуб в ${club.city.label} | trenio.by`,
+    title: siteTitle(`${club.name} — клуб в ${club.city.label}`),
     description: `${club.name}: направления, тренеры и контакты. ${club.address}.`,
     path,
     type: "profile",
@@ -238,7 +238,7 @@ export function clubsIndexHead(clubs: Array<{ slug: string; name: string }>) {
 export function searchPageHead(query: string) {
   const q = query.trim() || "Поиск тренера";
   return seoHead({
-    title: `${q} — trenio.by`,
+    title: siteTitle(q),
     description: `Результаты поиска тренеров: ${q}. Карта и карточки рядом.`,
     path: "/search",
     index: false,

@@ -10,7 +10,7 @@ const accountRoute = getRouteApi("/account");
 export const Route = createFileRoute("/account/reviews")({
   head: () => ({
     meta: [
-      { title: "Мои отзывы · trenio.by" },
+      { title: "Мои отзывы · Я ищу тренера на trenio.by" },
       { name: "description", content: "Отзывы и их статус: на модерации, опубликован или отклонён." },
       { name: "robots", content: "noindex,follow" },
     ],

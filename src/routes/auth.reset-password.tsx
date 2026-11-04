@@ -17,7 +17,7 @@ export const Route = createFileRoute("/auth/reset-password")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Новый пароль — trenio.by" },
+      { title: "Новый пароль — Я ищу тренера на trenio.by" },
       NOINDEX_NOFOLLOW,
       { name: "description", content: "Задайте новый пароль для аккаунта trenio.by." },
     ],

@@ -33,7 +33,7 @@ export const Route = createFileRoute("/admin")({
   loader: () => getAdminShellFn(),
   head: () => ({
     meta: [
-      { title: "Кабинет администратора · trenio.by" },
+      { title: "Кабинет администратора · Я ищу тренера на trenio.by" },
       { name: "description", content: "Каталог, отзывы и аккаунты trenio.by." },
       { name: "robots", content: "noindex,follow" },
     ],

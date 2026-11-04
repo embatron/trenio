@@ -17,7 +17,7 @@ export const Route = createFileRoute("/trainers/revise")({
   },
   head: () => ({
     meta: [
-      { title: "Создание аккаунта тренера · trenio.by" },
+      { title: "Создание аккаунта тренера · Я ищу тренера на trenio.by" },
       { name: "description", content: "Ссылка из письма открывает кабинет." },
       { name: "robots", content: "noindex,follow" },
     ],

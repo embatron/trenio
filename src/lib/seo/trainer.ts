@@ -1,7 +1,7 @@
 import { cityCatalogBySlug } from "@/lib/catalog/city-pages";
 import { trainerByPhrase } from "@/lib/catalog/sport-taxonomy";
 import { seoHead } from "@/lib/seo/head";
-import { absoluteUrl, SITE_NAME, SITE_ORIGIN } from "@/lib/seo/site";
+import { absoluteUrl, SITE_NAME, SITE_ORIGIN, siteTitle } from "@/lib/seo/site";
 import { breadcrumbList } from "@/lib/seo/schema";
 import { bynAmount, cityIn, clipMeta, plainText } from "@/lib/seo/text";
 
@@ -26,13 +26,16 @@ export type TrainerSeoSource = {
   index?: boolean;
 };
 
-/** Document phrase, without the brand: «Тренер по боксу и кикбоксингу в Минске». */
+/** Document phrase, without the site name: «Тренер по боксу Артём Романович в Минске». */
 export function trainerDocumentPhrase(
   datives: string[],
   city: { slug: string; label: string },
+  name = "",
 ) {
   const place = city.label.trim() ? cityIn(city.slug, city.label) : "Беларуси";
-  return `${trainerByPhrase(datives)} в ${place}`;
+  const person = name.trim();
+  const sports = trainerByPhrase(datives);
+  return person ? `${sports} ${person} в ${place}` : `${sports} в ${place}`;
 }
 
 function isoStamp(value: string | undefined) {
@@ -48,9 +51,9 @@ function profileImage(photo: string) {
   return absoluteUrl(value);
 }
 
-/** Query, then the name, then as much of the biography as fits. A long sport list must not eat the name. */
-function trainerMetaDescription(phrase: string, name: string, detail: string) {
-  const lead = `${phrase}. ${name}.`;
+/** The title phrase already names the person. Then as much of the biography as fits. */
+function trainerMetaDescription(phrase: string, detail: string) {
+  const lead = `${phrase}.`;
   const extra = detail.replace(/\s+/g, " ").trim();
   if (!extra) return clipMeta(lead);
   const combined = `${lead} ${extra}`;
@@ -78,7 +81,7 @@ function sameAs(trainer: TrainerSeoSource) {
 }
 
 export function trainerSeoHead(trainer: TrainerSeoSource) {
-  const phrase = trainerDocumentPhrase(trainer.sportDatives, trainer.city);
+  const phrase = trainerDocumentPhrase(trainer.sportDatives, trainer.city, trainer.name);
   const place = trainer.city.label.trim()
     ? cityIn(trainer.city.slug, trainer.city.label)
     : "Беларуси";
@@ -87,7 +90,7 @@ export function trainerSeoHead(trainer: TrainerSeoSource) {
   const about = trainer.about.map((item) => plainText(item)).find(Boolean) ?? "";
   const price = trainer.priceLines.map(bynAmount).find((amount) => amount != null) ?? null;
   const detail = about || (price != null ? `Одно занятие — ${price} BYN.` : "Цена, формат и контакты.");
-  const description = trainerMetaDescription(phrase, trainer.name, detail);
+  const description = trainerMetaDescription(phrase, detail);
   const image = profileImage(trainer.photo);
   const createdAt = isoStamp(trainer.createdAt);
   const updatedAt = isoStamp(trainer.updatedAt);
@@ -123,12 +126,12 @@ export function trainerSeoHead(trainer: TrainerSeoSource) {
   const knowsAbout = trainer.sports.map((item) => item.trim()).filter(Boolean);
 
   return seoHead({
-    title: `${phrase} | trenio.by`,
+    title: siteTitle(phrase),
     description,
     path,
     type: "profile",
     image: image ?? null,
-    imageAlt: image ? `${trainer.name} — ${phrase}` : undefined,
+    imageAlt: image ? phrase : undefined,
     index: trainer.index !== false,
     jsonLd: [
       breadcrumbList(crumbs),

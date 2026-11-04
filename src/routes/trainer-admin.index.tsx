@@ -28,7 +28,7 @@ export const Route = createFileRoute("/trainer-admin/")({
   },
   head: () => ({
     meta: [
-      { title: "Кабинет тренера · trenio.by" },
+      { title: "Кабинет тренера · Я ищу тренера на trenio.by" },
       { name: "description", content: "Личный кабинет тренера: профиль и отзывы." },
       { name: "robots", content: "noindex,follow" },
     ],

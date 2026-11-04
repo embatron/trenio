@@ -641,7 +641,8 @@ export function pickSearchAlias(keyword: string, aliases?: string[]) {
 
 /** Snippet for a category document. One extra query, then the selection facts. */
 export function categorySearchDescription(title: string, _lead: string, aliases?: string[]) {
-  const phrase = title.replace(/\s*\|\s*trenio\.by\s*$/i, "").trim();
+  const pipe = title.lastIndexOf(" | ");
+  const phrase = (pipe === -1 ? title : title.slice(0, pipe)).trim();
   const keyword = phrase.replace(/^Найти тренера по\s+/i, "");
   const extra = pickSearchAlias(keyword, aliases);
   const middle = extra ? ` ${extra.charAt(0).toUpperCase()}${extra.slice(1)}.` : "";

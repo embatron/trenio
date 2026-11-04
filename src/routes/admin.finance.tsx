@@ -6,7 +6,7 @@ export const Route = createFileRoute("/admin/finance")({
   loader: () => getAdminFinanceFn(),
   head: () => ({
     meta: [
-      { title: "Бухгалтерия · кабинет администратора · trenio.by" },
+      { title: "Бухгалтерия · кабинет администратора · Я ищу тренера на trenio.by" },
       { name: "robots", content: "noindex,follow" },
     ],
   }),

@@ -14,7 +14,7 @@ import { useState } from "react";
 export const Route = createFileRoute("/trainer-admin/messages")({
   head: () => ({
     meta: [
-      { title: "Сообщения · кабинет тренера · trenio.by" },
+      { title: "Сообщения · кабинет тренера · Я ищу тренера на trenio.by" },
       { name: "description", content: "Сообщения клиентов." },
       { name: "robots", content: "noindex,follow" },
     ],

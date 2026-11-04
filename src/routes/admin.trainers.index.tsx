@@ -7,7 +7,7 @@ export const Route = createFileRoute("/admin/trainers/")({
   loader: () => getAdminTrainersFn(),
   head: () => ({
     meta: [
-      { title: "Тренеры · кабинет администратора · trenio.by" },
+      { title: "Тренеры · кабинет администратора · Я ищу тренера на trenio.by" },
       { name: "description", content: "Профили тренеров, статус публикации и привязанный аккаунт." },
       { name: "robots", content: "noindex,follow" },
     ],

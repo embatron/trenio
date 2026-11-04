@@ -4,7 +4,7 @@ import { CatalogMiss } from "@/components/catalog-miss";
 export const Route = createFileRoute("/403")({
   head: () => ({
     meta: [
-      { title: "Нет доступа | trenio.by" },
+      { title: "Нет доступа | Я ищу тренера на trenio.by" },
       { name: "description", content: "Эта страница закрыта. Каталог и поиск остаются открытыми." },
       { name: "robots", content: "noindex, follow" },
     ],

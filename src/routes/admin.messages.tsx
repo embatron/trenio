@@ -35,7 +35,7 @@ const STATUS_LABEL = {
 export const Route = createFileRoute("/admin/messages")({
   head: () => ({
     meta: [
-      { title: "Сообщения · кабинет администратора · trenio.by" },
+      { title: "Сообщения · кабинет администратора · Я ищу тренера на trenio.by" },
       { name: "description", content: "Переписки и жалобы на них." },
       { name: "robots", content: "noindex,follow" },
     ],

@@ -11,7 +11,7 @@ export const Route = createFileRoute("/city/$slug/$sport/")({
   head: ({ params }) => {
     const city = cityCatalogBySlug(params.slug);
     const sport = catalogSportById(params.sport);
-    if (!city || !sport) return { meta: [{ title: "Город | trenio.by" }] };
+    if (!city || !sport) return { meta: [{ title: "Город | Я ищу тренера на trenio.by" }] };
     return catalogPageHead(city, sport);
   },
   loader: async () => {

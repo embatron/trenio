@@ -42,17 +42,17 @@ export async function listPublishedTrainerSitemapEntries(): Promise<SitemapTrain
         const name = sport?.label?.trim() ?? "";
         return slug && name ? [{ slug, label: name }] : [];
       });
+      const name = joinTrainerName(row.firstName, row.lastName) || row.fullName || row.slug;
       const phrase = trainerDocumentPhrase(trainerSportDatives(sports), {
         slug: cityCatalogSlug(label) || row.citySlug || "",
         label,
-      });
-      const name = joinTrainerName(row.firstName, row.lastName) || row.fullName || row.slug;
+      }, name);
       const image = publicAssetUrl(row.photos?.[0] || row.avatarPath || "");
       const lastmod = sitemapDay(row.updatedAt);
       entries.push({
         path,
         ...(lastmod ? { lastmod } : {}),
-        ...(image ? { image, imageTitle: `${name} — ${phrase}` } : {}),
+        ...(image ? { image, imageTitle: phrase } : {}),
       });
     }
     entries.sort((a, b) => a.path.localeCompare(b.path));

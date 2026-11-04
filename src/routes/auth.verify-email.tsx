@@ -11,7 +11,7 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/auth/verify-email")({
   validateSearch: searchSchema,
   head: () => ({
-    meta: [{ title: "Подтверждение e-mail — trenio.by" }, NOINDEX_NOFOLLOW],
+    meta: [{ title: "Подтверждение e-mail — Я ищу тренера на trenio.by" }, NOINDEX_NOFOLLOW],
   }),
   beforeLoad: ({ search }) => {
     throw redirect({

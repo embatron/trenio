@@ -19,7 +19,7 @@ export const Route = createFileRoute("/city/$slug/")({
   },
   head: ({ params, match }) => {
     const city = cityCatalogBySlug(params.slug);
-    if (!city) return { meta: [{ title: "Город | trenio.by" }] };
+    if (!city) return { meta: [{ title: "Город | Я ищу тренера на trenio.by" }] };
     const sports = catalogSportsFromQuery(match.search.sports);
     return catalogPageHead(city, null, sports.length > 1);
   },

@@ -156,7 +156,7 @@ export function telegramHomeText(account: { firstName: string } | null): string 
     ? `Этот Telegram привязан к аккаунту ${escapeHtml(account.firstName)}. Кнопка «Войти через Telegram» на сайте откроет его.`
     : "Этот Telegram ещё не привязан. Новый аккаунт создаётся на регистрации. Если почта уже есть, войдите и привяжите Telegram в настройках: второй аккаунт с ним не создаётся.";
   return [
-    "<b>trenio.by</b>",
+    "<b>Я ищу тренера на trenio.by</b>",
     "",
     "Поиск тренеров и спортивных занятий в Беларуси.",
     "",
@@ -169,7 +169,7 @@ export function telegramHomeText(account: { firstName: string } | null): string 
 
 export function telegramUnknownText(): string {
   return [
-    "Я открываю разделы trenio.by.",
+    "Я открываю разделы сайта «Я ищу тренера на trenio.by».",
     "",
     "Напишите /start или нажмите кнопку внизу.",
     "Привязать вход можно в настройках аккаунта на сайте.",
