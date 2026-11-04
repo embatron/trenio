@@ -222,7 +222,7 @@ export function TrainerMediaField({
               onPointerDown={(event) => {
                 if (!onReorder || busy || slot.pending || slots.some((item) => item.pending) || event.button !== 0) return;
                 if ((event.target as HTMLElement).closest("button")) return;
-                event.preventDefault();
+                if (event.pointerType === "mouse") event.preventDefault();
                 const rect = event.currentTarget.getBoundingClientRect();
                 const startX = event.clientX;
                 const startY = event.clientY;
@@ -288,7 +288,8 @@ export function TrainerMediaField({
                 className="cabinet-icon-btn cabinet-photo__remove"
                 aria-label="Удалить"
                 disabled={busy || slot.pending}
-                onClick={() => {
+                onClick={(event) => {
+                  event.stopPropagation();
                   setBusy(true);
                   if (!counter) setStatus("Удаление…");
                   void onRemove(slot.path)
