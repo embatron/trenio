@@ -1,24 +1,29 @@
 ---
-description: Only the trainer publishes their own profile, from the cabinet
+description: The sent short link publishes a draft; the trainer can hide it
 alwaysApply: true
 ---
 
 # Trainer publish
 
-A trainer profile stays `draft` until that trainer publishes it in the cabinet. Import, a server copy, a magic link, a password, and a Google sign-in do not publish it.
+An imported profile stays `draft` until a visitor opens the short link `/hi/{code}` that staff sent. That visit publishes the card. A logged-in staff visit does not. The trainer can hide the page again from the cabinet. A later visit does not publish a hidden or archived card.
+
+Import, a server copy, a password, and a Google sign-in do not publish it. The link visit does. The account window stays on that visit until the card has an owner.
 
 ## Do
 
 - Save and sync an imported profile as `draft`.
-- Let the trainer open the magic link, enter the cabinet, and set the page to published there.
-- A guest who opens `/trainers/{slug}` does not see a draft.
+- Publish the draft when a non-staff visitor opens `/hi/{code}`.
+- Keep the account window until the card has an owner, including after that publish.
+- Let the trainer set the page to hidden in the cabinet.
 
 ## Do not
 
 ```ts
-// wrong: the import or the password step opens the public page
+// wrong: the import publishes, or a hidden card is published again
 await db.update(trainerProfiles).set({ status: "published" }).where(eq(trainerProfiles.slug, slug));
 
-// right: the row stays a draft; the cabinet action is the only publish
-await db.update(trainerProfiles).set({ claimStatus: "claimed" }).where(eq(trainerProfiles.id, id));
+// right: only a draft, and only when the sent link is opened by someone who is not staff
+if (!staff && row.status === "draft") {
+  await db.update(trainerProfiles).set({ status: "published" }).where(eq(trainerProfiles.id, row.id));
+}
 ```

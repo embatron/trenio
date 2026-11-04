@@ -35,7 +35,10 @@ export async function claimDoorAfterGoogle(input: {
 
   const db = getDb();
   const [row] = await db.select().from(trainerProfiles).where(eq(trainerProfiles.id, profileId)).limit(1);
-  const open = Boolean(row?.previewToken) && row?.slug === previewSlug && row?.status !== "published";
+  const open = Boolean(row?.previewToken)
+    && row?.slug === previewSlug
+    && !row?.ownerUserId
+    && (row?.status === "draft" || row?.status === "published");
   if (!row || !open) {
     void writeLog({
       level: "warn",
