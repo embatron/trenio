@@ -1,13 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { SportIcon } from "@/components/sport-icon";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
 import { compareByPopularity, popularityChecklist, ratingFor } from "@/lib/catalog/trainer-popularity";
-import { homeStatLabels } from "@/lib/catalog/home-stat-labels";
-import { getHomeStatsFn } from "@/lib/catalog/home-stats";
+import { homeStatFrame, homeStatLabels } from "@/lib/catalog/home-stat-labels";
+import { getHomeStatsFn, type HomeStats } from "@/lib/catalog/home-stats";
 import { listTrainerPricesFn, priceForCard } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { CatalogEmpty } from "@/components/catalog-empty";
@@ -653,11 +653,12 @@ body.is-search-docked .site-header__search {
 /* Stats band */
 .section-title--logo { display: flex; align-items: center; gap: 0.4em; flex-wrap: wrap; }
 .section-title__logo { display: block; height: 1em; width: auto; }
-.stats-band { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; padding: 34px 28px; border-radius: var(--card-radius); background: linear-gradient(135deg, var(--dark) 0%, #1f2937 60%, #2a1416 100%); color: #fff; position: relative; overflow: hidden; }
+.stats-band { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; padding: 34px 28px; border-radius: var(--card-radius); background: linear-gradient(135deg, var(--dark) 0%, #1f2937 60%, #2a1416 100%); color: #fff; position: relative; overflow: hidden; cursor: pointer; }
 .stats-band::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 85% 15%, rgba(var(--primary-rgb), 0.35), transparent 55%), radial-gradient(circle at 10% 90%, rgba(75, 240, 235, 0.18), transparent 50%); pointer-events: none; }
-.stat-item { position: relative; text-align: center; padding: 4px 8px; }
+.stats-band:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+.stat-item { position: relative; text-align: center; padding: 4px 8px; transition: transform 180ms ease; }
 .stat-item + .stat-item { border-left: 1px solid rgba(255, 255, 255, 0.08); }
-.stat-item__num { display: block; font-size: clamp(28px, 3.2vw, 36px); font-weight: var(--fw-heading); letter-spacing: -0.05em; line-height: 1; background: linear-gradient(180deg, #fff 0%, #ffd9da 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.stat-item__num { display: block; font-size: clamp(28px, 3.2vw, 36px); font-weight: var(--fw-heading); letter-spacing: -0.05em; line-height: 1; font-variant-numeric: tabular-nums; background: linear-gradient(180deg, #fff 0%, #ffd9da 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .stat-item__label { display: block; margin-top: 8px; color: rgba(255, 255, 255, 0.66); font-size: 13px; font-weight: var(--fw-title); letter-spacing: 0.02em; }
 
 /* Reviews */
@@ -699,7 +700,109 @@ body.is-search-docked .site-header__search {
   .stats-band { grid-template-columns: 1fr; }
   .stat-item + .stat-item { border-left: 0; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 18px; }
 }
+@media (hover: hover) and (pointer: fine) {
+  .stat-item:hover { transform: translateY(-3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stats-band { cursor: default; }
+  .stat-item { transition: none; }
+}
 `;
+
+function HomeStatsBand({ stats }: { stats: HomeStats }) {
+  const bandRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<number | null>(null);
+  const statsRef = useRef(stats);
+  statsRef.current = stats;
+  const [shown, setShown] = useState(stats);
+  const totals = { trainers: stats.trainers, sports: stats.sports, cities: stats.cities, experience: stats.experience };
+
+  const play = useCallback(() => {
+    const target = statsRef.current;
+    if (frameRef.current != null) cancelAnimationFrame(frameRef.current);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      setShown(target);
+      frameRef.current = null;
+      return;
+    }
+    const start = performance.now();
+    const largest = Math.max(target.trainers, target.sports, target.cities, target.experience ?? 0);
+    const duration = Math.min(1600, Math.max(700, largest * 70));
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - start) / duration);
+      setShown(homeStatFrame(target, progress));
+      if (progress < 1) {
+        frameRef.current = requestAnimationFrame(tick);
+        return;
+      }
+      setShown(target);
+      frameRef.current = null;
+    };
+    setShown(homeStatFrame(target, 0));
+    frameRef.current = requestAnimationFrame(tick);
+  }, []);
+
+  useLayoutEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      setShown(totals);
+      return;
+    }
+    setShown(homeStatFrame(totals, 0));
+  }, [totals.trainers, totals.sports, totals.cities, totals.experience]);
+
+  useEffect(() => {
+    const band = bandRef.current;
+    if (!band) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+    let played = false;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (played || !entries.some((entry) => entry.isIntersecting)) return;
+        played = true;
+        play();
+        observer.disconnect();
+      },
+      { threshold: 0.45 },
+    );
+    observer.observe(band);
+    return () => {
+      observer.disconnect();
+      if (frameRef.current != null) cancelAnimationFrame(frameRef.current);
+    };
+  }, [play, totals.trainers, totals.sports, totals.cities, totals.experience]);
+
+  const recount = (event: { key: string; preventDefault: () => void }) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    play();
+  };
+
+  return (
+    <div
+      ref={bandRef}
+      className="stats-band"
+      role="group"
+      tabIndex={0}
+      aria-label="Цифры каталога. Нажмите, чтобы посчитать снова"
+      onClick={play}
+      onKeyDown={recount}
+    >
+      {homeStatLabels(shown).map((item, index) => {
+        const final = homeStatLabels(totals)[index];
+        return (
+          <div key={item.id} className="stat-item">
+            <span className="sr-only">{final ? `${final.n} ${final.l}` : item.l}</span>
+            <span className="stat-item__num" aria-hidden="true">{item.n}</span>
+            <span className="stat-item__label" aria-hidden="true">{item.l}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 function Index() {
   const { ratings, prices, stats, trainers: published } = Route.useLoaderData();
@@ -891,14 +994,7 @@ function Index() {
                 <span>в цифрах</span>
               </h2>
             </div>
-            <div className="stats-band">
-              {homeStatLabels(stats).map((s) => (
-                <div key={s.l} className="stat-item">
-                  <span className="stat-item__num">{s.n}</span>
-                  <span className="stat-item__label">{s.l}</span>
-                </div>
-              ))}
-            </div>
+            <HomeStatsBand stats={stats} />
           </section>
 
           <section className="content-section" aria-labelledby="reviews-heading">
