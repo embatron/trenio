@@ -40,7 +40,7 @@ Do not put `@type` or `jsonLd` in a route file. A new indexable info page uses `
 
 The home `Organization` says the catalog does not check qualifications. `SearchAction` targets `/search?sport={search_term_string}`. Leave `/search` `noindex`.
 
-Trainer `jobTitle` is the same phrase as the document title, from `trainerByPhrase()`. `sameAs` is only an `http://` or `https://` Instagram or Telegram URL. `makesOffer` only for an `N BYN` price. `aggregateRating` only when `reviewCount` is greater than 0.
+Trainer `jobTitle` is the same phrase as the document title, without the brand: `trainerDocumentPhrase()` — every sport in the dative, then the locative city (`Тренер по боксу в Минске`). `sameAs` is only an `http://` or `https://` Instagram or Telegram URL. `makesOffer` only for an `N BYN` price. `aggregateRating` only when `reviewCount` is greater than 0. `dateCreated` and `dateModified` come from the profile row. `alternateName` is the public slug when it is not the person's name. `mainEntityOfPage` is the trainer URL on trenio.by. There is no image in the graph when the profile has no photo. A draft, a preview, and a staff view pass `index: false` and emit no graph.
 
 `SportsActivityLocation` only when a club record exists. Address only. The clubs index emits `ItemList` only for clubs that list can render. While `CLUBS_LIST` is empty the index is `noindex` and has no graph.
 
@@ -56,4 +56,4 @@ Never emit a telephone, an `AggregateRating` with no reviews, a graph on a `noin
 
 ## Sitemap
 
-`/sitemap.xml` lists catalog paths from `listCatalogSitemapPaths`, plus `/about`, `/contacts`, `/offer`, `/privacy`, and `/join/trainer`. `/clubs` stays off the list while it is empty. There is no blog.
+`/sitemap.xml` lists catalog paths from `listCatalogSitemapPaths`, the static info pages, and every `published` trainer profile (`/trainers/{slug}`, with `lastmod` and the card photo when that file is a public URL). Drafts, hidden profiles, and archived profiles stay out. `/clubs` stays off the list while it is empty. There is no blog.

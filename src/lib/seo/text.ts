@@ -8,7 +8,7 @@ export function cityIn(slug: string, label: string) {
 export function plainText(value: string) {
   return value
     .replace(/<[^>]+>/g, " ")
-    .replace(/[\p{Extended_Pictographic}\uFE0F]/gu, "")
+    .replace(/[\p{Extended_Pictographic}\p{Emoji_Modifier}\u200D\uFE0E\uFE0F]/gu, "")
     .replace(/\s+/g, " ")
     .trim();
 }

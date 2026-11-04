@@ -38,6 +38,9 @@ export type PublishedTrainer = {
   /** Price of one session, BYN. Two or three digits. */
   priceFrom: number;
   district: string;
+  /** ISO timestamps. Present on a row loaded from the database. */
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export const PUBLISHED_TRAINERS: PublishedTrainer[] = [];

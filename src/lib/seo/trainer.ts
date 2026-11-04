@@ -1,7 +1,7 @@
 import { cityCatalogBySlug } from "@/lib/catalog/city-pages";
 import { trainerByPhrase } from "@/lib/catalog/sport-taxonomy";
 import { seoHead } from "@/lib/seo/head";
-import { absoluteUrl } from "@/lib/seo/site";
+import { absoluteUrl, SITE_NAME, SITE_ORIGIN } from "@/lib/seo/site";
 import { breadcrumbList } from "@/lib/seo/schema";
 import { bynAmount, cityIn, clipMeta, plainText } from "@/lib/seo/text";
 
@@ -19,7 +19,51 @@ export type TrainerSeoSource = {
   telegram?: string;
   places: Array<{ city: string; address: string; lat: number | null; lng: number | null }>;
   priceLines: string[];
+  /** ISO timestamps from the profile row. Omitted on a fixture that has no clock. */
+  createdAt?: string;
+  updatedAt?: string;
+  /** Public catalog page. A draft, a preview, and a staff look stay out of the index and emit no graph. */
+  index?: boolean;
 };
+
+/** Document phrase, without the brand: «Тренер по боксу и кикбоксингу в Минске». */
+export function trainerDocumentPhrase(
+  datives: string[],
+  city: { slug: string; label: string },
+) {
+  const place = city.label.trim() ? cityIn(city.slug, city.label) : "Беларуси";
+  return `${trainerByPhrase(datives)} в ${place}`;
+}
+
+function isoStamp(value: string | undefined) {
+  if (!value) return undefined;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return undefined;
+  return date.toISOString();
+}
+
+function profileImage(photo: string) {
+  const value = photo.trim();
+  if (!value) return undefined;
+  return absoluteUrl(value);
+}
+
+/** Query, then the name, then as much of the biography as fits. A long sport list must not eat the name. */
+function trainerMetaDescription(phrase: string, name: string, detail: string) {
+  const lead = `${phrase}. ${name}.`;
+  const extra = detail.replace(/\s+/g, " ").trim();
+  if (!extra) return clipMeta(lead);
+  const combined = `${lead} ${extra}`;
+  if (combined.length <= 170) return combined;
+  const room = 169 - lead.length - 1;
+  if (room < 24) return clipMeta(lead);
+  const slice = extra.slice(0, room);
+  const sentence = slice.lastIndexOf(". ");
+  const space = slice.lastIndexOf(" ");
+  const cutAt = sentence >= 24 ? sentence + 1 : space > 24 ? space : slice.length;
+  const cut = slice.slice(0, cutAt).replace(/[.,;: ]+$/g, "");
+  return `${lead} ${cut}…`;
+}
 
 function sportPath(sport: TrainerSeoSource["primarySport"]) {
   if (!sport.slug) return "/categories";
@@ -34,19 +78,22 @@ function sameAs(trainer: TrainerSeoSource) {
 }
 
 export function trainerSeoHead(trainer: TrainerSeoSource) {
+  const phrase = trainerDocumentPhrase(trainer.sportDatives, trainer.city);
   const place = trainer.city.label.trim()
     ? cityIn(trainer.city.slug, trainer.city.label)
     : "Беларуси";
-  const phrase = trainerByPhrase(trainer.sportDatives);
   const path = `/trainers/${trainer.slug}`;
   const url = absoluteUrl(path);
-  const about = plainText(trainer.about[0] ?? "");
+  const about = trainer.about.map((item) => plainText(item)).find(Boolean) ?? "";
   const price = trainer.priceLines.map(bynAmount).find((amount) => amount != null) ?? null;
-  const description = clipMeta(
-    about
-      ? `${trainer.name}, ${phrase.charAt(0).toLowerCase()}${phrase.slice(1)} в ${place}. ${about}`
-      : `${trainer.name} — ${phrase.charAt(0).toLowerCase()}${phrase.slice(1)} в ${place}. Цена, формат и контакты.`,
-  );
+  const detail = about || (price != null ? `Одно занятие — ${price} BYN.` : "Цена, формат и контакты.");
+  const description = trainerMetaDescription(phrase, trainer.name, detail);
+  const image = profileImage(trainer.photo);
+  const createdAt = isoStamp(trainer.createdAt);
+  const updatedAt = isoStamp(trainer.updatedAt);
+  const alternateName = trainer.slug.trim().toLowerCase() !== trainer.name.trim().toLowerCase()
+    ? trainer.slug.trim()
+    : "";
   const rating = Number(trainer.rating.value);
   const cityPage = cityCatalogBySlug(trainer.city.slug);
   const crumbs = [
@@ -73,31 +120,50 @@ export function trainerSeoHead(trainer: TrainerSeoSource) {
         : {}),
     }));
 
+  const knowsAbout = trainer.sports.map((item) => item.trim()).filter(Boolean);
+
   return seoHead({
     title: `${phrase} | trenio.by`,
     description,
     path,
     type: "profile",
-    image: trainer.photo || null,
+    image: image ?? null,
+    imageAlt: image ? `${trainer.name} — ${phrase}` : undefined,
+    index: trainer.index !== false,
     jsonLd: [
       breadcrumbList(crumbs),
       {
         "@context": "https://schema.org",
         "@type": "ProfilePage",
         url,
+        name: phrase,
+        description,
         inLanguage: "ru-BY",
+        isPartOf: { "@type": "WebSite", name: SITE_NAME, url: SITE_ORIGIN },
+        ...(createdAt ? { dateCreated: createdAt } : {}),
+        ...(updatedAt ? { dateModified: updatedAt } : {}),
+        ...(image ? { primaryImageOfPage: image } : {}),
         mainEntity: {
           "@type": "Person",
+          "@id": `${url}#person`,
           name: trainer.name,
+          ...(alternateName ? { alternateName } : {}),
           url,
+          mainEntityOfPage: url,
           jobTitle: phrase,
-          image: trainer.photo ? absoluteUrl(trainer.photo) : undefined,
-          knowsAbout: trainer.sports,
-          address: {
-            "@type": "PostalAddress",
-            addressLocality: trainer.city.label,
-            addressCountry: "BY",
-          },
+          description,
+          ...(image ? { image } : {}),
+          ...(knowsAbout.length ? { knowsAbout } : {}),
+          ...(trainer.city.label.trim()
+            ? {
+                address: {
+                  "@type": "PostalAddress",
+                  addressLocality: trainer.city.label,
+                  addressCountry: "BY",
+                },
+                areaServed: { "@type": "City", name: trainer.city.label },
+              }
+            : {}),
           ...(locations.length ? { workLocation: locations } : {}),
           ...(sameAs(trainer).length ? { sameAs: sameAs(trainer) } : {}),
           ...(trainer.rating.reviewCount > 0 && rating > 0

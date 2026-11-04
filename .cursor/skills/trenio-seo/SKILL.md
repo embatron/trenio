@@ -24,7 +24,7 @@ Product copy and the URL rules stay in `docs/PRODUCT.md` §6 and `.cursor/rules/
 3. H1 stays the product sentence already on the page (`Найти тренера по …`, `Я ищу тренера`, `Привет!`). The title carries the same query. Do not rewrite the H1 to stuff a keyword.
 4. Description is one or two sentences: the query, then city, price, and format. One extra alias from `pickSearchAlias`. Never a comma list of aliases.
 5. Call the helper for that page kind (`homePageHead`, `categoryRouteHead`, `catalogPageHead`, `trainerSeoHead`, `mapPageHead`, `infoPageHead`, `clubPageHead`, `clubsIndexHead`, `searchPageHead`). The helper attaches the graph. Do not write a JSON-LD object in the route. Breadcrumbs match the crumbs on the page. FAQ matches the questions on the page. No `AggregateRating` when `reviewCount` is 0. No telephone in the graph. A `noindex` page emits no graph.
-6. New indexable URLs go into `listCatalogSitemapPaths` or the static list in `src/routes/sitemap[.]xml.ts`. `noindex` URLs stay out of the sitemap.
+6. New indexable URLs go into `listCatalogSitemapPaths` or the static list in `src/routes/sitemap[.]xml.ts`. A published trainer profile is added by `listPublishedTrainerSitemapEntries`, not by that static list. `noindex` URLs stay out of the sitemap.
 7. Run `npm test` so `src/lib/seo/head.test.ts` still passes.
 
 ```ts

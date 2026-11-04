@@ -35,12 +35,13 @@ import { recordTrainerProfileViewFn } from "@/lib/catalog/trainer-views";
 import { ReviewEditor } from "@/components/review-editor";
 import { ReviewHtml } from "@/components/review-html";
 import { reviewPlainText } from "@/lib/catalog/review-html";
+import { CatalogTrainerCard, type CatalogTrainerCardData } from "@/components/catalog-trainer-card";
 import { TrainerName } from "@/components/trainer-name";
 import { TrainerRating } from "@/components/trainer-rating";
 import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { getTrainerCertificatesFn } from "@/lib/catalog/trainer-certificates";
 import { cityCatalogBySlug } from "@/lib/catalog/city-pages";
-import { trainerSeoHead } from "@/lib/seo/trainer";
+import { trainerDocumentPhrase, trainerSeoHead } from "@/lib/seo/trainer";
 import { cityIn } from "@/lib/seo/text";
 import { getTrainerAddressFn } from "@/lib/geo/functions";
 import { pluralRu } from "@/lib/ru-plural";
@@ -82,7 +83,9 @@ type Trainer = {
   certificates: TrainerCertificate[];
   ownStatus: "pending" | "published" | "rejected" | null;
   ownComment: string | null;
-  similar: Array<{ slug: string; name: string; firstName: string; lastName: string; sport: string; city: string; price: string; photo: string; rating: string; reviews: number }>;
+  similar: CatalogTrainerCardData[];
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 function toTrainer(
@@ -138,6 +141,8 @@ function toTrainer(
     certificates,
     ownStatus,
     ownComment,
+    createdAt: trainer.createdAt,
+    updatedAt: trainer.updatedAt,
     similar: catalog.filter((item) => item.slug !== trainer.slug).slice(0, 3).map((item) => {
       const rating = ratingFor(item.slug, ratings);
       return {
@@ -145,15 +150,18 @@ function toTrainer(
         name: item.name,
         firstName: item.firstName,
         lastName: item.lastName,
-        sport: sportLine(item),
-        city: item.city.label,
-        price: (() => {
-          const price = priceForCard(item.slug, item.priceFrom, prices);
-          return price != null ? `От ${price} BYN` : NEGOTIABLE_PRICE_LABEL;
-        })(),
         photo: item.photo,
+        desc: item.bio,
+        tags: item.sports.map((sport) => sport.label),
         rating: rating.rating,
         reviews: rating.reviews,
+        city: item.city.label,
+        district: item.district,
+        experience: item.experience,
+        price: priceForCard(item.slug, item.priceFrom, prices),
+        phone: item.phone,
+        instagram: item.instagram,
+        telegram: item.telegram,
       };
     }),
   };
@@ -207,22 +215,18 @@ export const Route = createFileRoute("/trainers/$slug")({
       sportDatives: t.sportDatives,
       primarySport: t.primarySport,
       city: t.city,
-      about: t.about,
+      about: [t.about[0] ?? "", t.sessions],
       rating: t.rating,
       photo: loaderData?.photos?.[0] || t.photo,
       instagram: t.instagram,
       telegram: loaderData?.contacts?.telegram,
       places: t.places,
       priceLines: t.taxonomy.groups.flatMap((group) => group.items),
+      createdAt: t.createdAt,
+      updatedAt: t.updatedAt,
+      index: (loaderData?.access ?? "public") === "public",
     });
-    if ((loaderData?.access ?? "public") === "public") return seo;
-    return {
-      ...seo,
-      meta: [
-        ...seo.meta.filter((item) => !("name" in item) || item.name !== "robots"),
-        { name: "robots", content: "noindex,follow" },
-      ],
-    };
+    return seo;
   },
   component: TrainerPage,
 });
@@ -409,20 +413,9 @@ const CSS = `
 .review-form__hint { margin: 6px 0 0; color: var(--muted); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
 
 
-.similar-trainers { min-width: 0; padding-top: 8px; }
+.similar-trainers { min-width: 0; margin-top: 32px; }
 .similar-trainers__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
 .similar-trainers__track { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--layout-gap); }
-.similar-card { display: flex; flex-direction: column; min-width: 0; border: 1px solid rgba(var(--dark-rgb),0.06); border-radius: var(--card-radius); background: var(--white); color: inherit; text-decoration: none; overflow: hidden; cursor: pointer; }
-.similar-card__media { aspect-ratio: 4/5; background: linear-gradient(160deg, var(--neutral-bg), var(--line)); overflow: hidden; }
-.similar-card__photo { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
-.similar-card__body { padding: 14px 16px 16px; display: grid; gap: 4px; }
-.similar-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-.similar-card__name { margin: 0; min-width: 0; font-size: 15px; font-weight: var(--fw-title); color: var(--dark); letter-spacing: -0.02em; line-height: 1.2; transition: color 0.16s ease; }
-.similar-card:hover .similar-card__name,
-.similar-card:focus-visible .similar-card__name { color: var(--primary); }
-.similar-card__sport { margin: 0; color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
-.similar-card__meta { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--muted); font-weight: var(--fw-title); margin-top: 4px; }
-.similar-card__price { color: var(--dark); font-weight: var(--fw-title); }
 
 .mobile-contact-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 200; padding: 10px var(--layout-gutter) calc(10px + env(safe-area-inset-bottom, 0px)); background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); border-top: 1px solid var(--line); display: none; }
 .mobile-contact-bar__inner { max-width: 600px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -437,6 +430,8 @@ const CSS = `
   .profile-aside { position: static; }
   .mobile-contact-bar { display: block; }
   .trainer-page__inner { padding-block: clamp(16px, 3vw, 20px) clamp(72px, 12vw, 110px); }
+  .similar-trainers .trainer-card__footer .trainer-contacts__link { width: 30px; height: 30px; }
+  .similar-trainers .trainer-card__footer .trainer-contacts__link svg { width: 15px; height: 15px; }
 }
 @media (max-width: 640px) {
   .profile-identity__name { font-size: 24px; }
@@ -732,6 +727,7 @@ function TrainerPage() {
     if (access !== "public") return;
     void recordTrainerProfileViewFn({ data: { slug: t.slug } });
   }, [access, t.slug]);
+  const documentPhrase = trainerDocumentPhrase(t.sportDatives, t.city);
   const { user } = useRouteContext({ from: "__root__" });
   const [photoIdx, setPhotoIdx] = useState(0);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -953,7 +949,7 @@ function TrainerPage() {
                   >
                     {photos.map((src, i) => (
                       <div key={src} className="photo-slider__slide">
-                        <PhotoImage src={src} alt={`${t.name} — фото ${i + 1}`} preset="profile" width={680} height={850} loading={i === 0 ? "eager" : "lazy"} />
+                        <PhotoImage src={src} alt={i === 0 ? `${t.name} — ${documentPhrase}` : `${t.name} — фото ${i + 1}`} preset="profile" width={680} height={850} loading={i === 0 ? "eager" : "lazy"} />
                       </div>
                     ))}
                   </div>
@@ -1211,37 +1207,20 @@ function TrainerPage() {
             </div>
 
 
-            {t.similar.length > 0 ? (
-            <section className="similar-trainers" aria-labelledby="similar-heading">
-              <div className="similar-trainers__head">
-                <h2 className="profile-heading" id="similar-heading">Похожие тренеры</h2>
-              </div>
-              <div className="similar-trainers__track">
-                {t.similar.map((s) => (
-                  <Link key={s.slug} className="similar-card" to="/trainers/$slug" params={{ slug: s.slug }}>
-                    <div className="similar-card__media">
-                      <PhotoImage className="similar-card__photo" src={s.photo} alt={s.name} preset="card" width={420} height={525} loading="lazy" />
-                    </div>
-                    <div className="similar-card__body">
-                      <div className="similar-card__head">
-                        <h3 className="similar-card__name">
-                          <TrainerName firstName={s.firstName} lastName={s.lastName} />
-                        </h3>
-                        <TrainerRating rating={s.rating} reviews={s.reviews} />
-                      </div>
-                      <p className="similar-card__sport">{s.sport}</p>
-                      <div className="similar-card__meta">
-                        <span>{s.city}</span>
-                        {s.price ? <span className="similar-card__price">{s.price}</span> : null}
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </section>
-            ) : null}
           </div>
         </article>
+        {t.similar.length > 0 ? (
+          <section className="similar-trainers" aria-labelledby="similar-heading">
+            <div className="similar-trainers__head">
+              <h2 className="profile-heading" id="similar-heading">Похожие тренеры</h2>
+            </div>
+            <div className="similar-trainers__track">
+              {t.similar.map((trainer) => (
+                <CatalogTrainerCard key={trainer.slug} trainer={trainer} countImpression={false} />
+              ))}
+            </div>
+          </section>
+        ) : null}
         </div>
       </main>
 

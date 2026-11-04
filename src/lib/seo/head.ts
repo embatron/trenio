@@ -15,6 +15,8 @@ export type SeoHeadInput = {
   follow?: boolean;
   /** Site-relative or absolute image. Omit to use the 1200×630 wordmark card. */
   image?: string | null;
+  /** Alt for a page photo. The wordmark card keeps its own alt. */
+  imageAlt?: string;
   type?: "website" | "profile" | "article";
   jsonLd?: Array<JsonLd | null | undefined>;
 };
@@ -43,7 +45,9 @@ export function seoHead(input: SeoHeadInput) {
       { property: "og:url", content: canonical },
       { property: "og:image", content: image },
       ...(input.image
-        ? []
+        ? input.imageAlt
+          ? [{ property: "og:image:alt", content: input.imageAlt }]
+          : []
         : [
             { property: "og:image:width", content: "1200" },
             { property: "og:image:height", content: "630" },

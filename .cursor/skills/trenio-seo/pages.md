@@ -13,7 +13,7 @@ JSON-LD for each row comes from the helper in [markup.md](markup.md). A `noindex
 | City | `/city/{city}` | yes | `Найти тренера в {locative} \| trenio.by` |
 | City + sport | `/city/{city}/{sport}` | yes | `Найти тренера по {dative} в {locative} \| trenio.by` |
 | Nested sport | `/city/minsk/yoga/yoga` | yes | same, when the sport slug equals its parent |
-| Trainer | `/trainers/{slug}` | yes | `Тренер по {все виды в дательном, через «и»} \| trenio.by`. ОФП, ЛФК and ОФК expand. The name and city stay in the description. |
+| Trainer | `/trainers/{slug}` | yes | `Тренер по {все виды в дательном, через «и»} в {предложный город} \| trenio.by`. ОФП, ЛФК and ОФК expand. Example: `Тренер по боксу, кикбоксингу и общефизической подготовке в Минске \| trenio.by`. A town outside the twenty uses `в городе {name}`. The name stays in the H1 and the description. |
 | Map | `/map` | yes | `Тренеры на карте Беларуси \| trenio.by` |
 | Map with query | `/map?sports=` or `?city=` | no | canonical stays `/map` |
 | Join | `/join/trainer` | yes | `Стать тренером — бесплатная карточка \| trenio.by`. H1 stays `Привет!` |

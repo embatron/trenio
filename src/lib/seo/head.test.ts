@@ -23,7 +23,8 @@ import {
 } from "@/lib/seo/pages";
 import { robotsTxt } from "@/lib/seo/robots";
 import { cityIn, clipMeta } from "@/lib/seo/text";
-import { trainerSeoHead } from "@/lib/seo/trainer";
+import { publicAssetUrl, renderSitemapXml, trainerSitemapPath } from "@/lib/seo/sitemap";
+import { trainerDocumentPhrase, trainerSeoHead } from "@/lib/seo/trainer";
 
 const routesDir = join(dirname(fileURLToPath(import.meta.url)), "../../routes");
 
@@ -124,21 +125,28 @@ test("city and category snippets use the Belarus query, not an alias dump", () =
   assert.ok(clipMeta("Коротко.").length < 20);
 });
 
-test("a trainer title lists every sport the way the profile line does", () => {
+test("a trainer title lists every sport and the city", () => {
   const datives = trainerSportDatives([
     { slug: "boks", label: "Бокс" },
     { slug: "kikboksing", label: "Кикбоксинг" },
     { slug: "ofp", label: "ОФП" },
   ]);
-  assert.equal(trainerByPhrase(datives), "Тренер по боксу, кикбоксингу и общефизической подготовке");
   assert.equal(
-    trainerByPhrase(trainerSportDatives([
+    trainerDocumentPhrase(datives, { slug: "minsk", label: "Минск" }),
+    "Тренер по боксу, кикбоксингу и общефизической подготовке в Минске",
+  );
+  assert.equal(
+    trainerDocumentPhrase(trainerSportDatives([
       { slug: "ofk", label: "ОФК" },
       { slug: "lfk", label: "ЛФК" },
-    ])),
-    "Тренер по оздоровительной физической культуре и лечебной физической культуре",
+    ]), { slug: "gomel", label: "Гомель" }),
+    "Тренер по оздоровительной физической культуре и лечебной физической культуре в Гомеле",
   );
   assert.equal(trainerByPhrase(["боксу"]), "Тренер по боксу");
+  assert.equal(
+    trainerDocumentPhrase(["боксу"], { slug: "slutsk", label: "Слуцк" }),
+    "Тренер по боксу в городе Слуцк",
+  );
 });
 
 test("a trainer document names the person, the sport, and the city", () => {
@@ -157,13 +165,51 @@ test("a trainer document names the person, the sport, and the city", () => {
     priceLines: ["35 BYN"],
   });
   const title = head.meta.find((item) => "title" in item && item.title);
-  assert.equal(title && "title" in title ? title.title : "", "Тренер по кикбоксингу | trenio.by");
-  const graph = head.scripts?.map((script) => JSON.parse(script.children) as { "@type"?: string; mainEntity?: { telephone?: string; makesOffer?: { price: string } } })
-    .find((node) => node["@type"] === "ProfilePage");
+  assert.equal(title && "title" in title ? title.title : "", "Тренер по кикбоксингу в Минске | trenio.by");
+  const description = head.meta.find((item) => "name" in item && item.name === "description");
+  assert.equal(
+    description && "content" in description ? description.content : "",
+    "Тренер по кикбоксингу в Минске. Владимир Антипенко. Зал в Минске.",
+  );
+  const alt = head.meta.find((item) => "property" in item && item.property === "og:image:alt");
+  assert.equal(
+    alt && "content" in alt ? alt.content : "",
+    "Владимир Антипенко — Тренер по кикбоксингу в Минске",
+  );
+  const graph = head.scripts?.map((script) => JSON.parse(script.children) as {
+    "@type"?: string;
+    name?: string;
+    mainEntity?: { telephone?: string; jobTitle?: string; mainEntityOfPage?: string; makesOffer?: { price: string } };
+  }).find((node) => node["@type"] === "ProfilePage");
   assert.ok(graph);
+  assert.equal(graph.name, "Тренер по кикбоксингу в Минске");
   assert.equal(graph.mainEntity?.telephone, undefined);
+  assert.equal(graph.mainEntity?.jobTitle, "Тренер по кикбоксингу в Минске");
+  assert.equal(graph.mainEntity?.mainEntityOfPage, "https://trenio.by/trainers/antipenko.training");
   assert.equal(graph.mainEntity?.makesOffer?.price, "35");
   assert.equal(graphTypes(head).has("AggregateRating"), false);
+  assert.equal(JSON.stringify(head.scripts).includes("og.png"), false);
+
+  const long = trainerSeoHead({
+    slug: "antipenko.training",
+    name: "Владимир Антипенко",
+    sports: ["Кикбоксинг", "Бокс", "ОФП"],
+    sportDatives: ["кикбоксингу", "боксу", "общефизической подготовке"],
+    primarySport: { slug: "kikboksing", parentSlug: "edinoborstva", label: "Кикбоксинг" },
+    city: { slug: "minsk", label: "Минск" },
+    about: ["🙋🏻‍♂️Владимир Минск Кикбоксинг и бокс. ОФП для любого уровня подготовки. Вопросы в личные сообщения."],
+    rating: { value: "0", reviewCount: 0 },
+    photo: "/trainers/instagram/antipenko.training.jpg",
+    instagram: "https://www.instagram.com/antipenko.training/",
+    places: [],
+    priceLines: ["35 BYN"],
+  });
+  const longDescription = long.meta.find((item) => "name" in item && item.name === "description");
+  const longText = longDescription && "content" in longDescription ? longDescription.content : "";
+  assert.match(longText, /^Тренер по кикбоксингу, боксу и общефизической подготовке в Минске\. Владимир Антипенко\./);
+  assert.match(longText, /Кикбоксинг и бокс/);
+  assert.equal(/\p{Emoji_Modifier}/u.test(longText), false);
+  assert.ok(longText.length <= 170);
 });
 
 test("each indexable page kind emits its schema types", () => {
@@ -225,17 +271,31 @@ test("each indexable page kind emits its schema types", () => {
     telegram: "https://t.me/antipenko",
     places: [],
     priceLines: ["35 BYN"],
+    createdAt: "2026-10-01T08:00:00.000Z",
+    updatedAt: "2026-11-04T12:00:00.000Z",
   });
   assertKind("trainer", trainer);
   const person = trainer.scripts
     ?.map((script) => JSON.parse(script.children) as { "@type"?: string; mainEntity?: { jobTitle?: string; sameAs?: string[]; aggregateRating?: { reviewCount: number } } })
     .find((node) => node["@type"] === "ProfilePage")?.mainEntity;
-  assert.equal(person?.jobTitle, "Тренер по кикбоксингу");
+  assert.equal(person?.jobTitle, "Тренер по кикбоксингу в Минске");
   assert.deepEqual(person?.sameAs, [
     "https://www.instagram.com/antipenko.training/",
     "https://t.me/antipenko",
   ]);
   assert.equal(person?.aggregateRating?.reviewCount, 3);
+  const profile = trainer.scripts
+    ?.map((script) => JSON.parse(script.children) as {
+      "@type"?: string;
+      dateCreated?: string;
+      dateModified?: string;
+      mainEntity?: { alternateName?: string; image?: string };
+    })
+    .find((node) => node["@type"] === "ProfilePage");
+  assert.equal(profile?.dateCreated, "2026-10-01T08:00:00.000Z");
+  assert.equal(profile?.dateModified, "2026-11-04T12:00:00.000Z");
+  assert.equal(profile?.mainEntity?.alternateName, "antipenko.training");
+  assert.equal(profile?.mainEntity?.image, "https://trenio.by/trainers/instagram/antipenko.training.jpg");
 
   const hidden = trainerSeoHead({
     slug: "hidden",
@@ -255,6 +315,25 @@ test("each indexable page kind emits its schema types", () => {
   assert.equal(graphTypes(hidden).has("Offer"), false);
   assert.equal(graphTypes(hidden).has("AggregateRating"), false);
   assert.equal(JSON.stringify(hidden.scripts).includes("sameAs"), false);
+  assert.equal(JSON.stringify(hidden.scripts).includes("og.png"), false);
+  const preview = trainerSeoHead({
+    slug: "hidden",
+    name: "Без цены",
+    sports: ["Бокс"],
+    sportDatives: ["боксу"],
+    primarySport: { slug: "boks", parentSlug: "edinoborstva", label: "Бокс" },
+    city: { slug: "minsk", label: "Минск" },
+    about: [],
+    rating: { value: "0", reviewCount: 0 },
+    photo: "",
+    instagram: "antipenko",
+    telegram: "@antipenko",
+    places: [],
+    priceLines: ["договорная"],
+    index: false,
+  });
+  assert.equal(preview.scripts.length, 0);
+  assert.equal(preview.meta.some((item) => "content" in item && item.content === "noindex, follow"), true);
 
   assertKind("map", mapPageHead(false));
   for (const kind of ["about", "contacts", "offer", "privacy", "join"] as const) assertKind(kind, infoPageHead(kind));
@@ -341,4 +420,26 @@ test("a published club list is a collection, and a route does not hand-write the
     assert.equal(source.includes("jsonLd"), false, name);
     assert.equal(source.includes("ld+json"), false, name);
   }
+});
+
+test("a published trainer is a sitemap url and a draft slug is not", () => {
+  assert.equal(trainerSitemapPath("antipenko.training"), "/trainers/antipenko.training");
+  assert.equal(trainerSitemapPath("../admin"), null);
+  assert.equal(trainerSitemapPath("a."), null);
+  assert.equal(
+    publicAssetUrl("/trainers/instagram/antipenko.training.jpg"),
+    "https://trenio.by/trainers/instagram/antipenko.training.jpg",
+  );
+  assert.equal(publicAssetUrl("data/secret.jpg"), null);
+  const xml = renderSitemapXml(["/"], [{
+    path: "/trainers/antipenko.training",
+    lastmod: "2026-11-04",
+    image: "https://trenio.by/trainers/instagram/antipenko.training.jpg",
+    imageTitle: "Владимир Антипенко — Тренер по кикбоксингу в Минске",
+  }]);
+  assert.match(xml, /<loc>https:\/\/trenio\.by\/trainers\/antipenko\.training<\/loc>/);
+  assert.match(xml, /<lastmod>2026-11-04<\/lastmod>/);
+  assert.match(xml, /Владимир Антипенко — Тренер по кикбоксингу в Минске/);
+  assert.match(xml, /<loc>https:\/\/trenio\.by\/about<\/loc>/);
+  assert.equal(xml.includes("/trainers/draft"), false);
 });

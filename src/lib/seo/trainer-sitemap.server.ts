@@ -1,0 +1,64 @@
+import { eq } from "drizzle-orm";
+
+import { cityCatalogSlug } from "@/lib/catalog/city-pages";
+import { trainerSportDatives } from "@/lib/catalog/sport-taxonomy";
+import { joinTrainerName } from "@/lib/catalog/trainer-name";
+import { publicTrainerCityLabel } from "@/lib/catalog/trainer-city";
+import { getDb } from "@/db";
+import { trainerProfiles } from "@/db/schema/trainer-profiles";
+import { logCaught } from "@/lib/log/logger";
+import { trainerDocumentPhrase } from "@/lib/seo/trainer";
+import { publicAssetUrl, sitemapDay, trainerSitemapPath, type SitemapTrainer } from "@/lib/seo/sitemap";
+
+/** Published `/trainers/{slug}` rows. A database failure leaves the rest of the sitemap intact. */
+export async function listPublishedTrainerSitemapEntries(): Promise<SitemapTrainer[]> {
+  try {
+    const rows = await getDb()
+      .select({
+        slug: trainerProfiles.slug,
+        updatedAt: trainerProfiles.updatedAt,
+        avatarPath: trainerProfiles.avatarPath,
+        photos: trainerProfiles.photos,
+        firstName: trainerProfiles.firstName,
+        lastName: trainerProfiles.lastName,
+        fullName: trainerProfiles.fullName,
+        city: trainerProfiles.city,
+        citySlug: trainerProfiles.citySlug,
+        createdSource: trainerProfiles.createdSource,
+        address: trainerProfiles.address,
+        trainingPlaces: trainerProfiles.trainingPlaces,
+        sports: trainerProfiles.sports,
+      })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.status, "published"));
+
+    const entries: SitemapTrainer[] = [];
+    for (const row of rows) {
+      const path = trainerSitemapPath(row.slug);
+      if (!path) continue;
+      const label = publicTrainerCityLabel(row);
+      const sports = (row.sports ?? []).flatMap((sport) => {
+        const slug = sport?.slug?.trim() ?? "";
+        const name = sport?.label?.trim() ?? "";
+        return slug && name ? [{ slug, label: name }] : [];
+      });
+      const phrase = trainerDocumentPhrase(trainerSportDatives(sports), {
+        slug: cityCatalogSlug(label) || row.citySlug || "",
+        label,
+      });
+      const name = joinTrainerName(row.firstName, row.lastName) || row.fullName || row.slug;
+      const image = publicAssetUrl(row.photos?.[0] || row.avatarPath || "");
+      const lastmod = sitemapDay(row.updatedAt);
+      entries.push({
+        path,
+        ...(lastmod ? { lastmod } : {}),
+        ...(image ? { image, imageTitle: `${name} — ${phrase}` } : {}),
+      });
+    }
+    entries.sort((a, b) => a.path.localeCompare(b.path));
+    return entries;
+  } catch (error) {
+    logCaught("catalog", "catalog.sitemap", error);
+    return [];
+  }
+}

@@ -80,12 +80,12 @@ export function TrainerContactIcons({
         </a>
       ) : null}
       {instagramUrl ? (
-        <a className="trainer-contacts__link" href={instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+        <a className="trainer-contacts__link" href={instagramUrl} target="_blank" rel="ugc noopener noreferrer" aria-label="Instagram" title="Instagram">
           <InstagramIcon />
         </a>
       ) : null}
       {telegramUrl ? (
-        <a className="trainer-contacts__link" href={telegramUrl} target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram">
+        <a className="trainer-contacts__link" href={telegramUrl} target="_blank" rel="ugc noopener noreferrer" aria-label="Telegram" title="Telegram">
           <TelegramIcon />
         </a>
       ) : null}
