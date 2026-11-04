@@ -550,16 +550,32 @@ input.is-locked {
 
 @media (max-width: 640px) {
   .card-grid,
-  .trainer-grid,
-  .cat-grid,
   .city-grid,
   .clubs-grid,
   .categories-grid,
-  .sr-grid,
   .card-grid--4,
   .cat-clubs-row,
-  .city-districts,
-  .favorites-grid {
+  .city-districts {
+    grid-template-columns: 1fr;
+  }
+  .favorites-grid { padding: 12px; }
+}
+@media (max-width: 640px) and (min-width: 360px) {
+  .trainer-grid .trainer-name,
+  .cat-grid .trainer-name,
+  .favorites-grid .trainer-name,
+  .sr-grid .trainer-name {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+}
+/* Trainer catalogs stay two-up on a phone. One column only on the narrowest screens. */
+@media (max-width: 359px) {
+  .trainer-grid,
+  .cat-grid,
+  .favorites-grid,
+  .sr-grid {
     grid-template-columns: 1fr;
   }
 }

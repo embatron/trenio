@@ -381,8 +381,10 @@ src/routes/offline.tsx
 | `--layout-sidebar-w` | `280px` — колонка фильтров |
 | `.layout-container` | центрированный контейнер с gutter |
 | `.layout-with-sidebar` | фильтры 280px + контент, один контейнер с шапкой |
-| `.card-grid`, `.clubs-grid`, `.categories-grid`, `.trainer-grid`, `.cat-grid`, `.favorites-grid` | каталог, клубы, категории и избранное: 4 колонки, с 960px — 2, с 640px — 1 |
-| `.city-grid`, `.sr-grid`, `.card-grid--4` | города, поиск и широкие ряды: 4 колонки, с 960px — 2, с 640px — 1 |
+| `.trainer-grid`, `.cat-grid`, `.favorites-grid`, `.sr-grid` | карточки тренеров (главная, каталог, избранное, поиск): 4 колонки, с 960px — 2, одна колонка только ниже 360px |
+| `.card-grid`, `.clubs-grid`, `.categories-grid` | клубы и плитки категорий: 4 колонки, с 960px — 2, с 640px — 1 |
+| `.city-grid`, `.card-grid--4` | города и широкие ряды: 4 колонки, с 960px — 2, с 640px — 1 |
+| `.map-people` | список тренеров на карте и в поиске: 2 колонки на телефоне, 1 ниже 360px, 3 с 720px |
 | `.section-head`, `.section-title` | заголовки секций, размер `--fs-section`, вес `--fw-heading` |
 
 Контейнер один: фон на всю ширину, содержимое `max-width: var(--layout-max)` и `padding-inline: var(--layout-gutter)`. Кабинет администратора и суперадминистратора шире: оболочка `/admin` носит класс `.layout-staff` и читает `--layout-staff-max`. Каталог, `/account` и `/me` остаются на `--layout-max`. Горизонтальный padding не ставится и на внешний блок, и на внутренний сразу. Горизонтальные ленты (иконки, карточки) используют `.layout-rail` и не доходят до края экрана. `--layout-gutter` включает `safe-area-inset`, viewport — `viewport-fit=cover`. Карточки тренеров описаны в `styles.css` и одинаковы на главной, в категориях и в городах.

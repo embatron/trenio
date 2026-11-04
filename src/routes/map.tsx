@@ -883,7 +883,7 @@ const PAGE_CSS = `
 .map-stage__map, .map-stage__list { min-width: 0; }
 .map-count { margin: 0 0 12px; font-size: 15px; color: var(--muted); font-weight: var(--fw-ui); }
 .map-count b { color: var(--dark); font-weight: var(--fw-title); }
-.map-people { display: grid; grid-template-columns: 1fr; gap: var(--layout-gap); }
+.map-people { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--layout-gap); }
 .map-people.is-pending { opacity: 0.72; }
 .map-person { min-width: 0; animation: map-card-in 0.34s ease both; }
 @keyframes map-card-in { from { opacity: 0; } to { opacity: 1; } }
@@ -929,6 +929,9 @@ const PAGE_CSS = `
   .map-more__applied button { width: 32px; height: 32px; }
   .map-more__pill, .map-tax__btn { min-height: 32px; padding: 4px 10px; font-size: 13px; line-height: 1.25; }
   .map-tax__btn { padding-left: 6px; }
+}
+@media (max-width: 359px) {
+  .map-people { grid-template-columns: 1fr; }
 }
 @media (min-width: 720px) {
   .map-people { grid-template-columns: repeat(3, minmax(0, 1fr)); }
