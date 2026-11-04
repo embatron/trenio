@@ -138,7 +138,7 @@ function toTrainer(
     certificates,
     ownStatus,
     ownComment,
-    similar: catalog.filter((item) => item.slug !== trainer.slug).map((item) => {
+    similar: catalog.filter((item) => item.slug !== trainer.slug).slice(0, 3).map((item) => {
       const rating = ratingFor(item.slug, ratings);
       return {
         slug: item.slug,
@@ -411,9 +411,7 @@ const CSS = `
 
 .similar-trainers { min-width: 0; padding-top: 8px; }
 .similar-trainers__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-.similar-trainers__viewport { overflow-x: auto; scrollbar-width: none; }
-.similar-trainers__viewport::-webkit-scrollbar { display: none; }
-.similar-trainers__track { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(220px, 1fr); gap: 14px; padding-bottom: 4px; }
+.similar-trainers__track { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--layout-gap); }
 .similar-card { display: flex; flex-direction: column; min-width: 0; border: 1px solid rgba(var(--dark-rgb),0.06); border-radius: var(--card-radius); background: var(--white); color: inherit; text-decoration: none; overflow: hidden; cursor: pointer; }
 .similar-card__media { aspect-ratio: 4/5; background: linear-gradient(160deg, var(--neutral-bg), var(--line)); overflow: hidden; }
 .similar-card__photo { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
@@ -442,6 +440,7 @@ const CSS = `
 }
 @media (max-width: 640px) {
   .profile-identity__name { font-size: 24px; }
+  .similar-trainers__track { grid-template-columns: 1fr; }
 }
 
 `;
@@ -1217,29 +1216,27 @@ function TrainerPage() {
               <div className="similar-trainers__head">
                 <h2 className="profile-heading" id="similar-heading">Похожие тренеры</h2>
               </div>
-              <div className="similar-trainers__viewport">
-                <div className="similar-trainers__track">
-                  {t.similar.map((s) => (
-                    <Link key={s.slug} className="similar-card" to="/trainers/$slug" params={{ slug: s.slug }}>
-                      <div className="similar-card__media">
-                        <PhotoImage className="similar-card__photo" src={s.photo} alt={s.name} preset="card" width={420} height={525} loading="lazy" />
+              <div className="similar-trainers__track">
+                {t.similar.map((s) => (
+                  <Link key={s.slug} className="similar-card" to="/trainers/$slug" params={{ slug: s.slug }}>
+                    <div className="similar-card__media">
+                      <PhotoImage className="similar-card__photo" src={s.photo} alt={s.name} preset="card" width={420} height={525} loading="lazy" />
+                    </div>
+                    <div className="similar-card__body">
+                      <div className="similar-card__head">
+                        <h3 className="similar-card__name">
+                          <TrainerName firstName={s.firstName} lastName={s.lastName} />
+                        </h3>
+                        <TrainerRating rating={s.rating} reviews={s.reviews} />
                       </div>
-                      <div className="similar-card__body">
-                        <div className="similar-card__head">
-                          <h3 className="similar-card__name">
-                            <TrainerName firstName={s.firstName} lastName={s.lastName} />
-                          </h3>
-                          <TrainerRating rating={s.rating} reviews={s.reviews} />
-                        </div>
-                        <p className="similar-card__sport">{s.sport}</p>
-                        <div className="similar-card__meta">
-                          <span>{s.city}</span>
-                          {s.price ? <span className="similar-card__price">{s.price}</span> : null}
-                        </div>
+                      <p className="similar-card__sport">{s.sport}</p>
+                      <div className="similar-card__meta">
+                        <span>{s.city}</span>
+                        {s.price ? <span className="similar-card__price">{s.price}</span> : null}
                       </div>
-                    </Link>
-                  ))}
-                </div>
+                    </div>
+                  </Link>
+                ))}
               </div>
             </section>
             ) : null}
