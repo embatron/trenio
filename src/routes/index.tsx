@@ -6,6 +6,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
 import { compareByPopularity, popularityChecklist, ratingFor } from "@/lib/catalog/trainer-popularity";
+import { homeStatLabels } from "@/lib/catalog/home-stat-labels";
 import { getHomeStatsFn } from "@/lib/catalog/home-stats";
 import { listTrainerPricesFn, priceForCard } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
@@ -700,14 +701,6 @@ body.is-search-docked .site-header__search {
 }
 `;
 
-function experienceLabel(years: number | null): string {
-  if (years == null) return "средний стаж";
-  const mod10 = years % 10;
-  const mod100 = years % 100;
-  const word = mod10 === 1 && mod100 !== 11 ? "год" : mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14) ? "года" : "лет";
-  return `средний стаж, ${word}`;
-}
-
 function Index() {
   const { ratings, prices, stats, trainers: published } = Route.useLoaderData();
   const trainers = published.filter((trainer) => {
@@ -899,12 +892,7 @@ function Index() {
               </h2>
             </div>
             <div className="stats-band">
-              {[
-                { n: String(stats.trainers), l: "тренеров на платформе" },
-                { n: String(stats.sports), l: "видов спорта" },
-                { n: String(stats.cities), l: "городов Беларуси" },
-                { n: stats.experience == null ? "—" : String(stats.experience), l: experienceLabel(stats.experience) },
-              ].map((s) => (
+              {homeStatLabels(stats).map((s) => (
                 <div key={s.l} className="stat-item">
                   <span className="stat-item__num">{s.n}</span>
                   <span className="stat-item__label">{s.l}</span>
