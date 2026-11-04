@@ -3,7 +3,7 @@ import { sanitizeReviewHtml } from "@/lib/catalog/review-html";
 /** Telegram bot that opens the Mini App. `{telegram}` in the trainer letter becomes this link. */
 export const PORTAL_TELEGRAM_URL = "https://t.me/TrenioByBot";
 
-export const SITE_TEXT_KEYS = ["trainer_welcome", "user_welcome", "instagram_message"] as const;
+export const SITE_TEXT_KEYS = ["trainer_welcome", "user_welcome"] as const;
 export type SiteTextKey = (typeof SITE_TEXT_KEYS)[number];
 
 export const DEFAULT_TRAINER_WELCOME = [
@@ -27,21 +27,9 @@ export const DEFAULT_USER_WELCOME = [
   "Ссылка действует сутки. Никому её не пересылайте.",
 ].join("\n");
 
-export const DEFAULT_INSTAGRAM_MESSAGE = [
-  "{hello}",
-  "",
-  "Мы собрали trenio.by и заполнили твой профиль всем, что смогли взять из открытых данных. В каталог его не ставили. Опубликовать страницу можешь только ты.",
-  "",
-  "{gaps}",
-  "",
-  "Вот короткая ссылка. Она только для тебя и сразу открывает страницу. Там создаётся аккаунт: почта, затем пароль в кабинете. Пока профиль не в каталоге, ссылку можно открыть снова. После публикации она открывает саму страницу:",
-  "{doorUrl}",
-].join("\n");
-
 export const SITE_TEXT_DEFAULTS: Record<SiteTextKey, string> = {
   trainer_welcome: DEFAULT_TRAINER_WELCOME,
   user_welcome: DEFAULT_USER_WELCOME,
-  instagram_message: DEFAULT_INSTAGRAM_MESSAGE,
 };
 
 function escapeText(value: string) {
@@ -95,23 +83,4 @@ export function parseUserWelcome(template = DEFAULT_USER_WELCOME): UserWelcomeLe
 
 export function userWelcomePartCount(template: string) {
   return template.replace(/\r\n/g, "\n").split("\n---\n").map((part) => part.trim()).filter(Boolean).length;
-}
-
-export function instagramGaps(missing: string[]) {
-  if (missing.length === 0) return "Открой страницу и глянь, всё ли на месте.";
-  return ["Сверь на странице то, чего не было в открытых данных:", ...missing.map((line) => `— ${line}`)].join("\n");
-}
-
-/** Text copied into an Instagram direct message. Tokens are filled for that trainer. */
-export function renderInstagramMessage(input: {
-  template?: string;
-  hello: string;
-  gaps: string;
-  doorUrl: string;
-}) {
-  const source = input.template?.trim() || DEFAULT_INSTAGRAM_MESSAGE;
-  return source
-    .replaceAll("{hello}", input.hello)
-    .replaceAll("{gaps}", input.gaps)
-    .replaceAll("{doorUrl}", input.doorUrl);
 }

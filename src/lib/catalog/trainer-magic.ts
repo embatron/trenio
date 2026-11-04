@@ -25,8 +25,7 @@ import { assertBelarusCity } from "@/lib/catalog/belarus-city.server";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { readCertificates } from "@/lib/catalog/certificate-file";
 import { sanitizeReviewHtml, reviewPlainText } from "@/lib/catalog/review-html";
-import { trainerInviteMessage, inviteMissingLines } from "@/lib/catalog/trainer-invite";
-import { loadSiteText } from "@/lib/site-texts/store";
+import { publicTrainerCityLabel } from "@/lib/catalog/trainer-city";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import {
   effectiveAudiences,
@@ -73,18 +72,6 @@ function cookieOptions() {
   };
 }
 
-/** An imported card with no street and no settlement is shown in Minsk. */
-function importedCityLabel(row: TrainerProfile): string {
-  const stored = row.city.trim();
-  if (stored) return stored;
-  if (row.createdSource !== "import") return "";
-  if ((row.address ?? "").trim()) return "";
-  const placed = (row.trainingPlaces ?? []).some((place) =>
-    (place.city ?? "").trim() || (place.address ?? "").trim() || (place.district ?? "").trim(),
-  );
-  return placed ? "" : "Минск";
-}
-
 function profileToPublished(row: TrainerProfile): PublishedTrainer {
   const sports = (row.sports ?? []).flatMap((sport) => {
     const slug = sport?.slug?.trim() ?? "";
@@ -102,7 +89,7 @@ function profileToPublished(row: TrainerProfile): PublishedTrainer {
         label: row.primarySport.label || row.primarySport.slug,
       }
     : sports[0] ?? { slug: "", parentSlug: "", label: "" };
-  const cityLabel = importedCityLabel(row);
+  const cityLabel = publicTrainerCityLabel(row);
   return {
     slug: row.slug,
     name: joinTrainerName(row.firstName, row.lastName) || row.fullName || row.slug,
@@ -122,6 +109,8 @@ function profileToPublished(row: TrainerProfile): PublishedTrainer {
     experience: row.experienceYears,
     priceFrom: row.priceFrom ?? 0,
     district: row.district,
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
   };
 }
 
@@ -150,23 +139,7 @@ export const issueTrainerInviteFn = createServerFn({ method: "POST" })
     const [row] = await db.select({
       id: trainerProfiles.id,
       slug: trainerProfiles.slug,
-      firstName: trainerProfiles.firstName,
-      lastName: trainerProfiles.lastName,
-      fullName: trainerProfiles.fullName,
       status: trainerProfiles.status,
-      city: trainerProfiles.city,
-      trainingPlaces: trainerProfiles.trainingPlaces,
-      address: trainerProfiles.address,
-      priceFrom: trainerProfiles.priceFrom,
-      avatarPath: trainerProfiles.avatarPath,
-      photos: trainerProfiles.photos,
-      sports: trainerProfiles.sports,
-      phone: trainerProfiles.phone,
-      about: trainerProfiles.about,
-      bio: trainerProfiles.bio,
-      experienceYears: trainerProfiles.experienceYears,
-      formats: trainerProfiles.formats,
-      audiences: trainerProfiles.audiences,
     }).from(trainerProfiles).where(eq(trainerProfiles.slug, data.slug)).limit(1);
     if (!row) {
       void writeLog({
@@ -186,11 +159,11 @@ export const issueTrainerInviteFn = createServerFn({ method: "POST" })
         domain: "admin",
         action: "admin.trainer_invite",
         outcome: "denied",
-        message: "Профиль уже опубликован. Сообщение не отправляется.",
+        message: "Профиль уже опубликован. Ссылка не копируется.",
         actorUserId: context.user.id,
         target: data.slug,
       });
-      throw new AuthError("Профиль уже опубликован. Сообщение больше не отправляется.", "VALIDATION");
+      throw new AuthError("Профиль уже опубликован. Ссылка больше не копируется.", "VALIDATION");
     }
     let code = shortCode();
     for (let attempt = 0; attempt < 5; attempt += 1) {
@@ -203,39 +176,17 @@ export const issueTrainerInviteFn = createServerFn({ method: "POST" })
       editToken: null,
       updatedAt: new Date(),
     }).where(eq(trainerProfiles.id, row.id));
-    const origin = requestOrigin();
-    const text = trainerInviteMessage({
-      name: row.firstName.trim() || row.fullName.trim(),
-      doorUrl: `${origin}/hi/${code}`,
-      publicUrl: `${origin}/trainers/${row.slug}`,
-      published: false,
-      template: await loadSiteText("instagram_message"),
-      missing: inviteMissingLines({
-        city: row.city,
-        places: row.trainingPlaces ?? [],
-        address: row.address,
-        priceFrom: row.priceFrom,
-        photo: row.avatarPath || (row.photos ?? [])[0] || "",
-        sports: (row.sports ?? []).filter((sport) => sport?.slug?.trim()).length,
-        phone: row.phone,
-        about: (row.about ?? []).join(" "),
-        bio: row.bio,
-        experienceYears: row.experienceYears,
-        formats: (row.formats ?? []).length,
-        audiences: (row.audiences ?? []).length,
-        lastName: row.lastName,
-      }),
-    });
+    const url = `${requestOrigin()}/hi/${code}`;
     void writeLog({
       level: "info",
       domain: "admin",
       action: "admin.trainer_invite",
       outcome: "success",
-      message: "Скопирован текст со ссылками на профиль.",
+      message: "Скопирована короткая ссылка на профиль.",
       actorUserId: context.user.id,
       target: row.slug,
     });
-    return { text };
+    return { url };
   });
 
 export const markTrainerInviteSentFn = createServerFn({ method: "POST" })
@@ -251,7 +202,7 @@ export const markTrainerInviteSentFn = createServerFn({ method: "POST" })
       .limit(1);
     if (!row) throw new AuthError("Профиль тренера не найден.", "VALIDATION");
     if (row.status === "published") {
-      throw new AuthError("Профиль уже опубликован. Сообщение больше не отправляется.", "VALIDATION");
+      throw new AuthError("Профиль уже опубликован. Ссылка больше не копируется.", "VALIDATION");
     }
     const sentAt = new Date();
     await db.update(trainerProfiles).set({ inviteSentAt: sentAt }).where(eq(trainerProfiles.id, row.id));

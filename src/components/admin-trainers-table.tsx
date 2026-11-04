@@ -28,7 +28,8 @@ const STAR_PATH = "M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L
 const CHECK_ICON = "M5 12l5 5L20 7";
 const CROSS_ICON = "M6 6l12 12M18 6L6 18";
 const EDIT_ICON = "M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z";
-const MESSAGE_ICON = "M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 6l8 6 8-6";
+const LINK_LEFT = "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71";
+const LINK_RIGHT = "M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71";
 const EYE_ICON = "M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12z";
 const EYE_OFF_ICON = "M3 4l18 16M9.9 6.2A11 11 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a18 18 0 0 1-3.1 4M6.2 7.1C4 8.6 2.5 11 2.5 12S6 18.5 12 18.5c1.4 0 2.7-.3 3.8-.8M9.5 9.6a3 3 0 0 0 4.2 4.1";
 const CLOCK_ICON = "M12 7.5V12l3 2";
@@ -195,14 +196,14 @@ function InviteCopy({
   const [error, setError] = useState<string | null>(null);
   const locked = !ready || published;
   const label = published
-    ? "Профиль опубликован, сообщение не отправляется"
+    ? "Профиль опубликован, ссылка не копируется"
     : !ready
       ? "Нет карточки в базе"
       : copied
-        ? "Текст скопирован и отмечен отправленным"
+        ? "Ссылка скопирована и отмечена отправленной"
         : error
           ? error
-          : "Скопировать текст и отметить отправленным";
+          : "Скопировать ссылку и отметить отправленной";
   return (
     <button
       type="button"
@@ -215,7 +216,7 @@ function InviteCopy({
         setError(null);
         void issue({ data: { slug } })
           .then(async (result) => {
-            const ok = await copyText((result as { text: string }).text);
+            const ok = await copyText((result as { url: string }).url);
             if (!ok) {
               setCopied(false);
               setError("Не удалось скопировать");
@@ -230,7 +231,9 @@ function InviteCopy({
           .finally(() => setPending(false));
       }}
     >
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d={copied ? CHECK_ICON : MESSAGE_ICON} /></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        {copied ? <path d={CHECK_ICON} /> : <><path d={LINK_LEFT} /><path d={LINK_RIGHT} /></>}
+      </svg>
     </button>
   );
 }

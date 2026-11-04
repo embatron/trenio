@@ -3,11 +3,8 @@ import test from "node:test";
 
 import { reviewTextLength } from "@/lib/catalog/review-html";
 import {
-  DEFAULT_INSTAGRAM_MESSAGE,
   DEFAULT_USER_WELCOME,
-  instagramGaps,
   parseUserWelcome,
-  renderInstagramMessage,
   renderTrainerWelcome,
   userWelcomePartCount,
 } from "./defaults";
@@ -29,17 +26,4 @@ test("the user letter is the confirmation mail, in four parts", () => {
   assert.match(letter.note, /сутки/);
   assert.equal(letter.subject, "Подтвердите почту trenio.by");
   assert.equal(userWelcomePartCount("один\n---\nдва"), 2);
-});
-
-test("a changed instagram text is what gets copied, with the door link", () => {
-  const text = renderInstagramMessage({
-    template: "Привет, {hello}\n{gaps}\n{doorUrl}",
-    hello: "Анна, привет!",
-    gaps: instagramGaps(["фото"]),
-    doorUrl: "https://trenio.by/hi/k4n8pq2w",
-  });
-  assert.match(text, /Привет, Анна, привет!/);
-  assert.match(text, /— фото/);
-  assert.match(text, /https:\/\/trenio\.by\/hi\/k4n8pq2w/);
-  assert.match(DEFAULT_INSTAGRAM_MESSAGE, /\{doorUrl\}/);
 });

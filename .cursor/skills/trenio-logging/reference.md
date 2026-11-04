@@ -40,7 +40,7 @@
 | `message.send` / `message.file` / `message.ensure` / `message.close` / `message.reopen` / `message.report` / `message.dismiss` / `message.block` / `message.notify` / `message.push` / `message.welcome` | Message mutations, attachment upload, and notices. `message.welcome` is the portal greeting to a new trainer. Log the size and extension, not the file name, the file body, or the welcome text. A download is logged only when it fails |
 | `message.list` / `message.thread` / `message.read` / `message.unread` / `message.hide` | Failures only |
 | `admin.review` | Review publish or reject |
-| `admin.trainer_invite` | Staff copied the trainer message. The row stores the slug, not the links or the gap list. A published profile is `denied` |
+| `admin.trainer_invite` | Staff copied the trainer's short link. The row stores the slug, not the link. A published profile is `denied` |
 | `admin.trainer_invite_sent` | The copied message was marked sent. The row stores the slug, not the text |
 | `admin.trainer_note` | Staff saved a trainer note. The row stores the slug, not the note text |
 | `admin.trainer_remove` | A trainer profile was removed from the portal. The row stores the slug |
@@ -48,6 +48,7 @@
 | `trainer.appear` / `trainer.withdraw` | The card entered or left the public catalog. Timestamp is `created_at` |
 | `catalog.trainer_preview` / `catalog.trainer_edit` / `catalog.trainer_save` / `catalog.trainer_publish` | Profile preview and edit links. They stay valid until the profile is published, then open the public trainer URL. A missing link is `denied`. Tokens and URLs stay out of the row |
 | `catalog.list` | Published catalog list failed. Success is not stored |
+| `catalog.sitemap` | The sitemap could not read published trainer profiles. The rest of the file is still served. Success is not stored |
 | `catalog.claim` | Welcome-link side effect failed |
 | `system.ready` / `system.unhandled` / `system.ssr` / `system.purge` / `system.probe` | Process and unhandled errors |
 | `system.image` | TinyPNG failed while storing an upload. The original sharp file is kept. The API key is not stored |
