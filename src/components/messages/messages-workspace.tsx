@@ -153,21 +153,6 @@ export function MessagesWorkspace({
       replace: true,
     });
   }, [mobile, conversationId, openError, trainerHold, listQuery.isPending, latestId, view, navigate]);
-  useEffect(() => {
-    if (!mobile || !conversationId) return;
-    const header = document.querySelector(".site-header");
-    if (!(header instanceof HTMLElement)) return;
-    const apply = () => {
-      document.documentElement.style.setProperty("--direct-top", `${Math.ceil(header.getBoundingClientRect().height)}px`);
-    };
-    apply();
-    const observer = new ResizeObserver(apply);
-    observer.observe(header);
-    return () => {
-      observer.disconnect();
-      document.documentElement.style.removeProperty("--direct-top");
-    };
-  }, [mobile, conversationId]);
   const nextListCursor = listCursor === undefined ? listQuery.data?.nextCursor ?? null : listCursor;
   const serverMessages = threadQuery.data?.messages ?? [];
   const confirmed = new Set(serverMessages.map((message) => message.clientId));
@@ -487,7 +472,7 @@ export const DIRECT_CSS = `
 .direct.is-mobile { display: flex; flex-direction: column; min-height: 60vh; }
 .direct.is-mobile:not(.is-thread) .direct-thread { display: none; }
 .direct.is-mobile:not(.is-thread) .direct-list { flex: 1; min-height: 50vh; border-bottom: 0; }
-.direct.is-mobile.is-thread { position: fixed; z-index: 280; left: 0; right: 0; top: var(--direct-top, 72px); bottom: var(--keyboard-inset, 0px); display: flex; min-height: 0; border: 0; border-radius: 0; padding-bottom: var(--keyboard-pad, env(safe-area-inset-bottom)); transition: bottom 0.2s ease, padding-bottom 0.2s ease; animation: direct-sheet 0.32s cubic-bezier(0.22, 0.8, 0.28, 1); }
+.direct.is-mobile.is-thread { position: fixed; z-index: 280; left: 0; right: 0; top: var(--direct-top, var(--header-clearance)); bottom: var(--keyboard-inset, 0px); display: flex; min-height: 0; border: 0; border-radius: 0; background: var(--light-bg); padding-bottom: var(--keyboard-pad, env(safe-area-inset-bottom)); transition: bottom 0.2s ease, padding-bottom 0.2s ease; animation: direct-sheet 0.32s cubic-bezier(0.22, 0.8, 0.28, 1); }
 .direct.is-mobile.is-thread .direct-list { display: none; }
 .direct.is-mobile.is-thread .direct-thread { flex: 1; min-height: 0; height: 100%; }
 .direct.is-mobile.is-thread .direct-thread__head { flex-wrap: nowrap; align-items: center; padding-inline: var(--layout-gutter); }

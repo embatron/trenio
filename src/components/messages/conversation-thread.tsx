@@ -124,6 +124,22 @@ export function ConversationThread({
   const messageCount = messages.length;
 
   useLayoutEffect(() => {
+    if (!mobile) return;
+    const header = document.querySelector(".site-header");
+    if (!(header instanceof HTMLElement)) return;
+    const apply = () => {
+      document.documentElement.style.setProperty("--direct-top", `${Math.ceil(header.getBoundingClientRect().height)}px`);
+    };
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(header);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty("--direct-top");
+    };
+  }, [mobile]);
+
+  useLayoutEffect(() => {
     const el = scroller.current;
     const current = threadRef.current;
     if (!el || !current) return;
