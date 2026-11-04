@@ -26,6 +26,7 @@ import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { readCertificates } from "@/lib/catalog/certificate-file";
 import { sanitizeReviewHtml, reviewPlainText } from "@/lib/catalog/review-html";
 import { publicTrainerCityLabel } from "@/lib/catalog/trainer-city";
+import { publishConfirmedDraft } from "@/lib/catalog/trainer-door-claim";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import {
   effectiveAudiences,
@@ -37,7 +38,6 @@ import { MAX_TRAINER_SPORTS, trainerSportsFromSlugs } from "@/lib/catalog/sport-
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
 import { placesFromProfile, placesShape, savedWithMapNotice } from "@/lib/geo/schemas";
 import { logCaught, writeLog } from "@/lib/log/logger";
-import { logTrainerPresence } from "@/lib/log/trainer-journal";
 
 const PREVIEW_COOKIE = "trenio_trainer_preview";
 const EDIT_COOKIE = "trenio_trainer_edit";
@@ -334,18 +334,14 @@ export const getTrainerDoorFn = createServerFn({ method: "GET" })
   });
 
 export const openTrainerDoorFn = createServerFn({ method: "POST" })
-  .middleware([optionalAuthMiddleware])
   .validator(z.object({ code: doorCodeSchema, kind: z.enum(["view", "edit"]) }))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data }) => {
     const row = await doorByCode(data.code);
     if (!row) return null;
     await markDoorEntered(row);
-    const staff = isStaff(context.user?.roles ?? []);
-    const published = await publishDraftFromDoor(row, staff);
-    if (!published || !row.ownerUserId) {
-      if (data.kind === "view") setCookie(PREVIEW_COOKIE, row.slug, cookieOptions());
-      if (data.kind === "edit") setCookie(EDIT_COOKIE, row.id, cookieOptions());
-    }
+    const published = row.status === "published";
+    if (!published && data.kind === "view") setCookie(PREVIEW_COOKIE, row.slug, cookieOptions());
+    if (!published && data.kind === "edit") setCookie(EDIT_COOKIE, row.id, cookieOptions());
     void writeLog({
       level: "info",
       domain: "catalog",
@@ -460,7 +456,7 @@ export const getMagicTrainerFn = createServerFn({ method: "GET" })
       audiences: row.audiences,
       phone: row.phone,
       phoneLocked: Boolean(row.ownerUserId),
-      magicDoor: getCookie(PREVIEW_COOKIE) === row.slug && Boolean(row.previewToken) && !row.ownerUserId,
+      magicDoor: getCookie(PREVIEW_COOKIE) === row.slug && Boolean(row.previewToken) && !row.ownerUserId && row.status !== "published",
       mailSentTo: pendingMail?.email ?? null,
       photos: (row.photos?.length ? row.photos : row.avatarPath ? [row.avatarPath] : []).slice(0, 9),
       certificates: readCertificates(row.certificates),
@@ -542,25 +538,6 @@ export const publishMagicTrainerFn = createServerFn({ method: "POST" })
   .validator(cardSchema)
   .handler(async ({ data }) => saveFromCookie(data, true));
 
-/** A guest opening the sent short link puts a draft into the catalog. Staff do not. A hidden card stays hidden. */
-async function publishDraftFromDoor(row: { id: string; slug: string; status: string }, staff: boolean) {
-  if (staff || row.status !== "draft") return row.status === "published";
-  const updated = await getDb()
-    .update(trainerProfiles)
-    .set({ status: "published", updatedAt: new Date() })
-    .where(and(eq(trainerProfiles.id, row.id), eq(trainerProfiles.status, "draft")))
-    .returning({ id: trainerProfiles.id });
-  if (updated.length === 0) return false;
-  logTrainerPresence({
-    created: false,
-    previous: "draft",
-    next: "published",
-    slug: row.slug,
-    mode: "save",
-  });
-  return true;
-}
-
 async function markDoorEntered(row: { id: string; slug: string; doorEnteredAt: Date | null }) {
   if (row.doorEnteredAt) return;
   try {
@@ -574,16 +551,15 @@ async function markDoorEntered(row: { id: string; slug: string; doorEnteredAt: D
 }
 
 /** Short Instagram link: open the profile and keep the editor cookie. */
+/** Short Instagram link: open the profile and keep the editor cookie. The visit does not publish the card. */
 export const enterTrainerDoorFn = createServerFn({ method: "GET" })
-  .middleware([optionalAuthMiddleware])
   .validator(z.object({ code: doorCodeSchema }))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data }) => {
     const row = await doorByCode(data.code);
     if (!row) return null;
     await markDoorEntered(row);
-    const staff = isStaff(context.user?.roles ?? []);
-    const published = await publishDraftFromDoor(row, staff);
-    if (!published || !row.ownerUserId) {
+    const published = row.status === "published";
+    if (!published) {
       setCookie(PREVIEW_COOKIE, row.slug, cookieOptions());
       setCookie(EDIT_COOKIE, row.id, cookieOptions());
     }
@@ -592,7 +568,7 @@ export const enterTrainerDoorFn = createServerFn({ method: "GET" })
       domain: "catalog",
       action: "catalog.trainer_preview",
       outcome: "success",
-      message: published ? "Короткая ссылка открыла профиль в каталоге." : "Короткая ссылка открыла профиль.",
+      message: published ? "Короткая ссылка ведёт в каталог." : "Короткая ссылка открыла профиль.",
       target: row.slug,
     });
     return { slug: row.slug, published };
@@ -641,7 +617,7 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
   .validator(doorEmailSchema)
   .handler(async ({ data }) => {
     const row = await profileFromEditCookie();
-    if (!row || (row.status !== "draft" && row.status !== "published")) {
+    if (!row || row.status === "published") {
       throw new AuthError("Ссылка на редактирование уже не действует.", "VALIDATION");
     }
     if (row.ownerUserId) throw new AuthError("Этот профиль уже привязан. Войдите в аккаунт.", "VALIDATION");
@@ -789,6 +765,7 @@ export const openTrainerMailFn = createServerFn({ method: "POST" })
       await getDb().insert(userRoles).values({ userId: user.id, role: "trainer" });
     }
     await attachDoorProfile(row.id, user.id, email);
+    await publishConfirmedDraft(row);
     await openDoorSession(user.id);
     void writeLog({
       level: "info",
@@ -802,7 +779,7 @@ export const openTrainerMailFn = createServerFn({ method: "POST" })
     });
     return { ok: true as const, slug: row.slug, needsPassword: user.needsPassword };
   });
-/** Password chosen in the cabinet after the magic-link mail. The short-link visit already published the card. */
+/** Password chosen after the confirmation letter. The letter already published the card. */
 export const setDoorPasswordFn = createServerFn({ method: "POST" })
   .middleware([requireSessionMiddleware])
   .validator(z.object({

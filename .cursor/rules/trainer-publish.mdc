@@ -1,29 +1,31 @@
 ---
-description: The sent short link publishes a draft; the trainer can hide it
+description: Email confirmation publishes a draft; the trainer can hide it
 alwaysApply: true
 ---
 
 # Trainer publish
 
-An imported profile stays `draft` until a visitor opens the short link `/hi/{code}` that staff sent. That visit publishes the card. A logged-in staff visit does not. The trainer can hide the page again from the cabinet. A later visit does not publish a hidden or archived card.
+An imported profile stays `draft` until the trainer confirms the mailbox. That confirmation is the letter sent to the address they typed, or Google on the same short link. Opening `/hi/{code}` alone does not publish the card. The trainer can hide the page from the cabinet. A later confirmation does not publish a hidden or archived card.
 
-Import, a server copy, a password, and a Google sign-in do not publish it. The link visit does. The account window stays on that visit until the card has an owner.
+Import, a server copy, the short-link visit, and the password step do not publish it. The confirmed mailbox does.
 
 ## Do
 
 - Save and sync an imported profile as `draft`.
-- Publish the draft when a non-staff visitor opens `/hi/{code}`.
-- Keep the account window until the card has an owner, including after that publish.
+- Publish the draft when the confirmation letter is opened or Google binds the card.
+- Leave the account window on the short link until the card has an owner.
 - Let the trainer set the page to hidden in the cabinet.
 
 ## Do not
 
 ```ts
-// wrong: the import publishes, or a hidden card is published again
-await db.update(trainerProfiles).set({ status: "published" }).where(eq(trainerProfiles.slug, slug));
-
-// right: only a draft, and only when the sent link is opened by someone who is not staff
+// wrong: the short-link visit publishes the draft
 if (!staff && row.status === "draft") {
+  await db.update(trainerProfiles).set({ status: "published" }).where(eq(trainerProfiles.id, row.id));
+}
+
+// right: the mailbox confirmation publishes a draft, and a hidden card stays hidden
+if (row.status === "draft") {
   await db.update(trainerProfiles).set({ status: "published" }).where(eq(trainerProfiles.id, row.id));
 }
 ```

@@ -4,11 +4,30 @@ import { normalizeEmail } from "@/auth/password";
 import { getDb } from "@/db";
 import { trainerProfiles, userRoles, users } from "@/db/schema";
 import { writeLog } from "@/lib/log/logger";
+import { logTrainerPresence } from "@/lib/log/trainer-journal";
 
 const DOOR_PROFILE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DOOR_SLUG = /^[a-z0-9._]{1,30}$/;
 
 export type DoorGoogleClaim = "claimed" | "own" | "missing" | "taken" | "busy";
+
+/** The mailbox is confirmed by the letter or by Google. A draft then enters the catalog. A hidden card stays hidden. */
+export async function publishConfirmedDraft(row: { id: string; slug: string; status: string }) {
+  if (row.status !== "draft") return;
+  const updated = await getDb()
+    .update(trainerProfiles)
+    .set({ status: "published", updatedAt: new Date() })
+    .where(and(eq(trainerProfiles.id, row.id), eq(trainerProfiles.status, "draft")))
+    .returning({ id: trainerProfiles.id });
+  if (updated.length === 0) return;
+  logTrainerPresence({
+    created: false,
+    previous: "draft",
+    next: "published",
+    slug: row.slug,
+    mode: "save",
+  });
+}
 
 /** Google on the short link proves the mailbox and binds the imported card. No password step. */
 export async function claimDoorAfterGoogle(input: {
@@ -38,7 +57,7 @@ export async function claimDoorAfterGoogle(input: {
   const open = Boolean(row?.previewToken)
     && row?.slug === previewSlug
     && !row?.ownerUserId
-    && (row?.status === "draft" || row?.status === "published");
+    && row?.status !== "published";
   if (!row || !open) {
     void writeLog({
       level: "warn",
@@ -109,6 +128,7 @@ export async function claimDoorAfterGoogle(input: {
     return again?.ownerUserId === input.userId ? "own" : "taken";
   }
 
+  await publishConfirmedDraft(row);
   await db.insert(userRoles).values({ userId: input.userId, role: "trainer" }).onConflictDoNothing();
   const firstName = row.firstName.trim();
   const lastName = row.lastName.trim();
