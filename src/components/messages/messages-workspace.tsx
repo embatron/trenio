@@ -347,6 +347,11 @@ export const DIRECT_CSS = `
 .direct-thread__head .trainer-name__line { display: inline; width: auto; overflow: visible; text-overflow: clip; white-space: nowrap; }
 .direct-list__text em { color: var(--muted); font-style: normal; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .direct-list__meta { display: grid; justify-items: end; gap: 4px; color: var(--muted); font-size: 12px; }
+.direct-list__when { display: inline-flex; align-items: center; justify-content: flex-end; gap: 3px; }
+.direct-receipt { display: inline-flex; color: var(--muted); }
+.direct-receipt svg { width: 18px; height: 14px; display: block; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.direct-receipt.is-read { color: var(--primary); }
+.direct-receipt__label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .direct-unread { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--primary); color: #fff; font-size: 11px; font-weight: var(--fw-title); line-height: 20px; text-align: center; }
 .direct-thread { display: flex; flex-direction: column; }
 .direct-thread__pane { display: flex; flex-direction: column; flex: 1; min-height: 0; animation: direct-switch 0.24s ease; }

@@ -129,6 +129,8 @@ export type ConversationListItem = {
   activityAt: string;
   preview: string;
   unread: number;
+  /** Last message: stored on the server, or already read by the person it was sent to. */
+  receipt: "delivered" | "read" | null;
   counterpart: CounterpartDto;
   trainerSlug: string;
   /** The other person in a staff row: trainer when the title is the client, and the reverse. */

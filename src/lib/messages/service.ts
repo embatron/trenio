@@ -745,6 +745,20 @@ export async function sendMessage(
   };
 }
 
+function lastMessageReceipt(
+  last: { id: number; senderId: string } | undefined,
+  conversation: { id: string; userId: string; ownerUserId: string | null; hostUserId: string | null },
+  readCursor: Map<string, number>,
+): "delivered" | "read" | null {
+  if (!last) return null;
+  const addresseeId = last.senderId === conversation.userId
+    ? conversation.ownerUserId ?? conversation.hostUserId
+    : conversation.userId;
+  if (!addresseeId) return "delivered";
+  const cursor = readCursor.get(`${conversation.id}:${addresseeId}`);
+  return cursor != null && last.id <= cursor ? "read" : "delivered";
+}
+
 const activityAt = sql<Date>`COALESCE(${conversations.lastMessageAt}, ${conversations.createdAt})`;
 
 export async function listConversations(
@@ -802,11 +816,15 @@ export async function listConversations(
   const page = hasMore ? rows.slice(0, CONVERSATION_PAGE_SIZE) : rows;
   const ids = page.map((row) => row.id);
   const previews = new Map<string, string>();
+  const lastMessages = new Map<string, { id: number; senderId: string }>();
+  const readCursor = new Map<string, number>();
   const unread = new Map<string, number>();
   if (ids.length > 0) {
-    const previewRows = await getDb().execute<{ conversationId: string; body: string; files: number }>(sql`
+    const previewRows = await getDb().execute<{ conversationId: string; messageId: number | string; senderId: string; body: string; files: number }>(sql`
       SELECT DISTINCT ON (m.conversation_id)
         m.conversation_id AS "conversationId",
+        m.id AS "messageId",
+        m.sender_id AS "senderId",
         m.body,
         (SELECT count(*)::int FROM message_attachments a WHERE a.message_id = m.id) AS files
       FROM messages m
@@ -814,7 +832,20 @@ export async function listConversations(
         AND m.deleted_at IS NULL
       ORDER BY m.conversation_id, m.created_at DESC, m.id DESC
     `);
-    for (const row of previewRows) previews.set(row.conversationId, messageListPreview(row.body, asNumber(row.files)));
+    for (const row of previewRows) {
+      previews.set(row.conversationId, messageListPreview(row.body, asNumber(row.files)));
+      lastMessages.set(row.conversationId, { id: asNumber(row.messageId), senderId: row.senderId });
+    }
+
+    const readRows = await getDb().execute<{ conversationId: string; userId: string; messageId: number | string }>(sql`
+      SELECT
+        conversation_id AS "conversationId",
+        user_id AS "userId",
+        last_read_message_id AS "messageId"
+      FROM conversation_reads
+      WHERE conversation_id IN (${sql.join(ids.map((id) => sql`${id}::uuid`), sql`, `)})
+    `);
+    for (const row of readRows) readCursor.set(`${row.conversationId}:${row.userId}`, asNumber(row.messageId));
 
     const unreadRows = await getDb().execute<{ conversationId: string; count: number }>(sql`
       SELECT m.conversation_id AS "conversationId", count(*)::int AS count
@@ -865,6 +896,7 @@ export async function listConversations(
       activityAt: activity,
       preview: previews.get(row.id) ?? "",
       unread: input.view === "staff" && !involved ? 0 : unread.get(row.id) ?? 0,
+      receipt: lastMessageReceipt(lastMessages.get(row.id), row, readCursor),
       trainerSlug: trainer.slug,
       counterpart,
       aside: input.view === "staff" ? (counterpart.kind === "user" ? trainer.name : clientName) : undefined,
