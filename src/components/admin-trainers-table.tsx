@@ -11,6 +11,7 @@ import { issueTrainerInviteFn, markTrainerInviteSentFn } from "@/lib/catalog/tra
 import { authErrorMessage } from "@/lib/auth/errors";
 import { displayAccountLogin } from "@/lib/auth/login-name";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
+import { formatBelarusPhone } from "@/lib/auth/phone";
 import { BELARUS_CITIES } from "@/lib/catalog/city-taxonomy";
 import { TRAINER_AUDIENCE_OPTIONS, TRAINER_FORMAT_OPTIONS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { getSportTaxonomyChild, getTopLevelSportCategory, listPublishedSportCategories, listSecondLevelSports } from "@/lib/catalog/sport-taxonomy";
@@ -34,6 +35,7 @@ const EYE_ICON = "M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.
 const EYE_OFF_ICON = "M3 4l18 16M9.9 6.2A11 11 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a18 18 0 0 1-3.1 4M6.2 7.1C4 8.6 2.5 11 2.5 12S6 18.5 12 18.5c1.4 0 2.7-.3 3.8-.8M9.5 9.6a3 3 0 0 0 4.2 4.1";
 const CLOCK_ICON = "M12 7.5V12l3 2";
 const ARCHIVE_ICON = "M3 5h18v4H3zM5 9v10h14V9M10 13h4";
+const PHONE_PATH = "M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.5 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.5c.9.2 1.8.4 2.7.5A2 2 0 0 1 22 16.9z";
 
 function DoorMark({ at }: { at: string }) {
   if (at) {
@@ -72,13 +74,11 @@ function addedOn(iso: string) {
   return addedFormat.format(new Date(iso));
 }
 
-/** National digits only, for this table: `445326333`. */
-function nationalPhone(raw: string) {
-  const digits = raw.replace(/\D/g, "");
-  if (!digits) return "";
-  if (digits.startsWith("375")) return digits.slice(3);
-  if (digits.startsWith("80") && digits.length === 11) return digits.slice(2);
-  return digits;
+/** Cabinet phone that the owner added and confirmed. The digits stay off the row. */
+function confirmedCabinetPhone(trainer: AdminTrainer) {
+  const account = trainer.account;
+  if (!account?.phone || !account.phoneVerified) return "";
+  return formatBelarusPhone(account.phone);
 }
 
 function categoryLabels(slugs: string[]) {
@@ -140,12 +140,18 @@ function TrainerProfileLink({ trainer }: { trainer: AdminTrainer }) {
   );
 }
 
-function TrainerSocial({ instagram, telegram }: { instagram: string; telegram: string }) {
+function TrainerSocial({ instagram, telegram, phone }: { instagram: string; telegram: string; phone: string }) {
   const ig = socialHref("instagram", instagram);
   const tg = socialHref("telegram", telegram);
-  if (!ig && !tg) return <>—</>;
+  const tel = phone ? `tel:+${phone.replace(/\D/g, "")}` : "";
+  if (!ig && !tg && !tel) return <>—</>;
   return (
     <div className="cabinet-social">
+      {tel ? (
+        <a className="cabinet-social__link cabinet-social__link--line" href={tel} aria-label="Телефон подтверждён" title="Телефон подтверждён">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d={PHONE_PATH} /></svg>
+        </a>
+      ) : null}
       {ig ? (
         <a className="cabinet-social__link" href={ig} target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
           <InstagramIcon />
@@ -480,14 +486,13 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                 <th>Действия</th>
                 <th>Сообщение</th>
                 <th>Заход</th>
-                <th>Телефон</th>
+                <th>Публикация</th>
                 <th>Категория</th>
                 <th>С кем</th>
                 <th>Город</th>
                 <th>Добавлен</th>
                 <th>Оценка</th>
                 <th>Рейтинг</th>
-                <th>Публикация</th>
                 <th>Контакты</th>
                 <th>Аккаунт</th>
                 <th>Заметка</th>
@@ -532,15 +537,14 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                     )}
                   </td>
                   <td><DoorMark at={trainer.doorEnteredAt} /></td>
-                  <td>{nationalPhone(trainer.phone) || "—"}</td>
+                  <td className="is-publish"><PublishMark status={trainer.status} /></td>
                   <td>{categoryLabels(trainer.sportSlugs) || "—"}</td>
                   <td className="is-audience">{audienceLabels(trainer.audiences) || "—"}</td>
                   <td>{trainer.city || "—"}</td>
                   <td>{trainer.createdAt ? addedOn(trainer.createdAt) : "—"}</td>
                   <td><TrainerStars rating={trainer.rating} reviews={trainer.reviews} /></td>
                   <td title={`Рейтинг ${trainer.popularity} из 100`}>{Number.isInteger(trainer.popularity) ? trainer.popularity : trainer.popularity.toFixed(1)}</td>
-                  <td className="is-publish"><PublishMark status={trainer.status} /></td>
-                  <td><TrainerSocial instagram={trainer.instagram} telegram={trainer.telegram} /></td>
+                  <td><TrainerSocial instagram={trainer.instagram} telegram={trainer.telegram} phone={confirmedCabinetPhone(trainer)} /></td>
                   <td title={trainer.account ? "Аккаунт создан и привязан к карточке" : "В каталоге есть карточка, но пользователь ещё не зарегистрировался и не забрал профиль"}>
                     {trainer.account ? displayAccountLogin(trainer.account.email) : "Аккаунт не создан"}
                   </td>

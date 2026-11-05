@@ -646,6 +646,7 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-table--trainers .cabinet-social { display: inline-flex; align-items: center; justify-content: center; }
 .cabinet-table--trainers .cabinet-social__link { width: 44px; height: 44px; display: grid; place-items: center; color: inherit; }
 .cabinet-table--trainers .cabinet-social__link svg { width: 22px; height: 22px; overflow: visible; }
+.cabinet-table--trainers .cabinet-social__link--line svg { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .cabinet-filters { display: flex; flex-wrap: wrap; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
 .cabinet-filters label { display: grid; gap: 6px; flex: 1 1 180px; min-width: min(100%, 180px); }
 .cabinet-filters label span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
