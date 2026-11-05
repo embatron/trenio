@@ -3,6 +3,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
 import { CabinetShell, type AdminSectionPath, type CabinetIcon } from "@/components/cabinet";
+import { useMessaging } from "@/components/messages/messages-live";
 import { getAdminShellFn } from "@/lib/admin/shell";
 import { MESSAGE_SCAN_MS } from "@/lib/messages/polling";
 import { logoutFn } from "@/lib/auth/functions";
@@ -52,6 +53,7 @@ function AdminLayout() {
   shellRef.current = shell;
   const logout = useAuthServerFn(logoutFn);
   const face = useLiveAvatar(user?.id, user?.avatarPath);
+  const messaging = useMessaging();
   useLayoutEffect(() => {
     document.documentElement.classList.add("is-staff-layout");
     return () => document.documentElement.classList.remove("is-staff-layout");
@@ -96,7 +98,7 @@ function AdminLayout() {
     ?? "overview";
   const items = SECTIONS.map((item) => {
     if (item.id === "reviews") return { ...item, badge: counts.reviewsPending };
-    if (item.id === "messages") return { ...item, badge: counts.messageReportsNew };
+    if (item.id === "messages") return { ...item, badge: messaging.staffThreads };
     return item;
   });
 

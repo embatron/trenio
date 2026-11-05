@@ -54,7 +54,7 @@ function TrainerMessagesPage() {
           { id: "overview", label: "Обзор", icon: "overview", to: "/trainer-admin" },
           { id: "reviews", label: "Отзывы", icon: "reviews", to: "/trainer-admin", search: { tab: "reviews" }, badge: reviewCount },
           { id: "favorites", label: "Избранное", icon: "favorites", to: "/account/favorites", badge: ready ? keys.length : undefined },
-          { id: "messages", label: "Сообщения", icon: "messages", to: "/trainer-admin/messages", badge: messaging.inbox },
+          { id: "messages", label: "Мои сообщения", icon: "messages", to: "/trainer-admin/messages", badge: messaging.total },
         ]}
         active="messages"
         logoutPending={pending}

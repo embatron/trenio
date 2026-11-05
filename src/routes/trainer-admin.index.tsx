@@ -90,7 +90,7 @@ function TrainerCabinetPage() {
           item.id === "reviews" ? { ...item, badge: reviews.length } : item
         )),
         { id: "favorites", label: "Избранное", icon: "favorites" as const, to: "/account/favorites" as const, badge: ready ? keys.length : undefined },
-        { id: "messages", label: "Сообщения", icon: "messages" as const, to: "/trainer-admin/messages" as const, badge: messaging.inbox },
+        { id: "messages", label: "Мои сообщения", icon: "messages" as const, to: "/trainer-admin/messages" as const, badge: messaging.total },
       ]}
       active={tab}
       onSelect={(id) => {

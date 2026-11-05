@@ -70,7 +70,7 @@ function MeLayout() {
       : SECTIONS.find((item) => pathname === item.to)?.id ?? "overview";
   const face = trainer?.photos[0] || trainer?.avatarPath || accountFace || null;
   const items = SECTIONS.filter((item) => (item.id !== "profile" && item.id !== "contacts") || trainer).map((item) => {
-    if (item.id === "messages") return { ...item, badge: messaging.inbox + messaging.own };
+    if (item.id === "messages") return { ...item, badge: messaging.total };
     if (item.id === "reviews") return { ...item, badge: reviews.length };
     if (item.id === "favorites") return { ...item, badge: ready ? keys.length : undefined };
     if (item.id !== "profile") return item;

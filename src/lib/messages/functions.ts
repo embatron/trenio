@@ -265,7 +265,7 @@ export const unreadCountFn = createServerFn({ method: "POST" })
     });
     if (gated) return EMPTY_MESSAGING;
     try {
-      return await unreadSummary(context.user.id);
+      return await unreadSummary(context.user.id, context.user.roles);
     } catch (error) {
       rethrowMessage(error, "message.unread", context.user.id);
     }

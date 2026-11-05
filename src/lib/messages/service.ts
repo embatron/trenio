@@ -1149,7 +1149,7 @@ export async function blockPair(actor: MessageActor, conversationId: string) {
   return { ok: true as const };
 }
 
-export async function unreadSummary(userId: string): Promise<MessagingSummary> {
+export async function unreadSummary(userId: string, roles: UserRole[] = []): Promise<MessagingSummary> {
   const [row] = await getDb().execute<{ own: number; inbox: number; owned: string[] | null }>(sql`
     SELECT
       (
@@ -1181,5 +1181,10 @@ export async function unreadSummary(userId: string): Promise<MessagingSummary> {
   const own = asNumber(row?.own ?? 0);
   const inbox = asNumber(row?.inbox ?? 0);
   const owned = Array.isArray(row?.owned) ? row.owned.filter((slug) => typeof slug === "string") : [];
-  return { own, inbox, total: own + inbox, ownedSlugs: owned };
+  let staffThreads = 0;
+  if (isStaff(roles)) {
+    const [counted] = await getDb().select({ n: sql<number>`count(*)::int` }).from(conversations);
+    staffThreads = Number(counted?.n ?? 0);
+  }
+  return { own, inbox, total: own + inbox, staffThreads, ownedSlugs: owned };
 }
