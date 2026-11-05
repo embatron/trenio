@@ -43,7 +43,8 @@ const CATEGORIES_DESCRIPTION =
 
 export const MAP_CRUMB = "Карта";
 const MAP_TITLE = siteTitle("Тренеры на карте Беларуси");
-const MAP_DESCRIPTION = "Карта мест тренировок в Беларуси. Направление и город — фильтры, карточки рядом с картой.";
+export const MAP_DESCRIPTION =
+  "Тренеры на карте Беларуси. Вид спорта и город — фильтры, цена занятия — на карточке.";
 
 export const CLUBS_CRUMB = "Клубы";
 const CLUBS_TITLE = siteTitle("Спортивные клубы и залы Беларуси");

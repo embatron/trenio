@@ -17,7 +17,7 @@ import {
 } from "@/lib/catalog/catalog-sports";
 import { cityCatalogByName, cityCatalogBySlug } from "@/lib/catalog/city-pages";
 import { resolveBelarusCity } from "@/lib/catalog/city-taxonomy";
-import { MAP_CRUMB, mapPageHead } from "@/lib/seo/pages";
+import { MAP_CRUMB, MAP_DESCRIPTION, mapPageHead } from "@/lib/seo/pages";
 import { TRAINER_FORMAT_OPTIONS } from "@/lib/catalog/published-trainers";
 import { listMapAreaFn, type MapAreaFeature, type MapTrainer } from "@/lib/catalog/map-trainers";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
@@ -498,7 +498,7 @@ export function CatalogMapScreen({
                 ? "Карта и карточки по этому запросу. Наведите на метку — подсказка, на карточку — его метки. Если точек много, они собираются в группы."
                 : cityPage
                 ? `Места в ${cityPage.locative}. Наведите на метку — подсказка, на карточку — его метки. Если точек много, они собираются в группы.`
-                : "Наведите на метку — подсказка со ссылкой. Наведите на карточку — подсветятся его метки. Если точек много, они собираются в группы. Карта сама не прокручивается."}
+                : MAP_DESCRIPTION}
             </p>
             {mode === "search" ? (
               <div className="map-hero__search">

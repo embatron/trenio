@@ -17,6 +17,7 @@ import {
   clubsIndexHead,
   homePageHead,
   infoPageHead,
+  MAP_DESCRIPTION,
   mapPageHead,
   searchPageHead,
   type SeoPageKind,
@@ -339,7 +340,13 @@ test("each indexable page kind emits its schema types", () => {
   assert.equal(preview.scripts.length, 0);
   assert.equal(preview.meta.some((item) => "content" in item && item.content === "noindex, follow"), true);
 
-  assertKind("map", mapPageHead(false));
+  const map = mapPageHead(false);
+  assertKind("map", map);
+  assert.equal(
+    map.meta.some((item) => "name" in item && item.name === "description" && item.content === MAP_DESCRIPTION),
+    true,
+  );
+  assert.equal(JSON.stringify(map.scripts).includes(MAP_DESCRIPTION), true);
   for (const kind of ["about", "contacts", "offer", "privacy", "join"] as const) assertKind(kind, infoPageHead(kind));
   const about = infoPageHead("about");
   assert.equal(graphTypes(about).has("FAQPage"), false);
