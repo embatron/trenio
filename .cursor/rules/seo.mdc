@@ -70,6 +70,6 @@ The public origin is `https://trenio.by` (`SITE_ORIGIN`). HTTP and `www.trenio.b
 
 `https://trenio.by/sitemap.xml` lists the indexable catalog and info pages. `robots.txt` names that sitemap and `Host: trenio.by`. Submit the sitemap in Google Search Console for the URL-prefix property `https://trenio.by`. Do not commit a verification token.
 
-Google Analytics is one GA4 tag, `GA_MEASUREMENT_ID` in `src/lib/seo/analytics.ts`, loaded from the root document. Do not add a second tracker or Google Tag Manager.
+Google Analytics is one GA4 tag, `GA_MEASUREMENT_ID` in `src/lib/seo/analytics.ts`, loaded from the root document. Yandex Metrika is one counter, `YM_COUNTER_ID` in the same file, loaded from that same document. Webvisor stays off. Do not add a second tag, a second Metrika counter, or Google Tag Manager. Cabinet details are in `.cursor/skills/trenio-seo/cabinets.md`.
 
 `PUBLISHED_TRAINERS` stays empty until a real profile is published. Do not put the old Instagram fixtures back into that list.

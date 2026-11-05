@@ -14,6 +14,7 @@ Search for this catalog is Russian, local, and split between Google and Yandex. 
 | Which URL is indexable, and what its title is | [pages.md](pages.md) |
 | Why that query, and what not to add | [demand.md](demand.md) |
 | Head tags and JSON-LD | [markup.md](markup.md) |
+| Analytics, Search Console, Webmaster, Metrika | [cabinets.md](cabinets.md) |
 
 Product copy and the URL rules stay in `docs/PRODUCT.md` §6 and `.cursor/rules/url-slugs.mdc`. Do not invent a second URL map.
 
@@ -65,7 +66,7 @@ These are the live gaps. Repeat one only when the task touches it.
 - There is no blog. Do not add `/blog` until an article is actually published.
 - `/clubs` is `noindex` while `CLUBS_LIST` is empty. Index it when a published club exists, and use the `SportsActivityLocation` graph already on `/clubs/$slug`.
 - City and category pages do not emit `ItemList` of trainers. Add it only from the trainers the page actually renders.
-- Yandex Webmaster is not connected. Google Search Console uses the URL-prefix property `https://trenio.by`. The sitemap is `https://trenio.by/sitemap.xml`. Do not commit verification tokens.
-- Google Analytics is the one GA4 tag in `src/lib/seo/analytics.ts`, loaded from the root document. Do not add a second tracker or Tag Manager. `PUBLISHED_TRAINERS` stays empty until a real profile is published.
+- Search cabinets and the two counters are in [cabinets.md](cabinets.md). Do not add a second GA tag, a second Metrika counter, Tag Manager, a Yandex Business card, or a site move. Do not commit verification tokens.
+- `PUBLISHED_TRAINERS` stays empty until a real profile is published.
 - `/search` is disallowed and `noindex`. The `SearchAction` still points at `?sport=`. Do not open `/search` to crawlers to chase a sitelinks box.
 - The SSR crash page in `src/lib/error-page.ts` is English. It is `noindex`. Translating it is a product-language fix, not a ranking project.

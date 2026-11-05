@@ -531,7 +531,7 @@ npm run format
 | `.cursor/skills/trenio-tests/` | Unit и Playwright, затем рекомендации. Команда `/tests` |
 | `.cursor/skills/trenio-seo/` | Заголовки, canonical, robots, sitemap и schema.org для страниц Беларуси. Субагент `seo` |
 | `.cursor/agents/seo.md` | Субагент SEO: правит публичные страницы и рекомендует только то, что меняет индекс, запрос или доверие |
-| `.cursor/rules/seo.mdc` | Публичный документ через `seoHead`; канонический адрес `https://trenio.by`; один счётчик GA4 |
+| `.cursor/rules/seo.mdc` | Публичный документ через `seoHead`; канонический адрес `https://trenio.by`; один GA4 и одна Метрика |
 | `.cursor/rules/site-mail.mdc` | Публичная почта `trenioby@gmail.com` (`SITE_EMAIL`). Служебные письма — Postfix, From `Trenio <noreply@trenio.by>`, приветствие `trenio.by`. Почта `bronxgym.by` идёт своим клиентом |
 | `.cursor/commands/hooks.md` | Slash-команда `/hooks` — сетка, иконки, PWA, mobile, docs             |
 | `.cursor/commands/logging.md` | Slash-команда `/logging` — проверка логгеров и пробная запись |

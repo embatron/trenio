@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
-import { GA_MEASUREMENT_ID, googleAnalyticsSnippet } from "@/lib/seo/analytics";
+import { GA_MEASUREMENT_ID, YM_COUNTER_ID, googleAnalyticsSnippet, yandexMetrikaSnippet } from "@/lib/seo/analytics";
 import { SITE_NAME, siteTitle } from "@/lib/seo/site";
 import appCss from "../styles.css?url";
 import type { PublicUser } from "@/lib/auth/schemas";
@@ -170,9 +170,19 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} />
         <script dangerouslySetInnerHTML={{ __html: googleAnalyticsSnippet() }} />
+        <script dangerouslySetInnerHTML={{ __html: yandexMetrikaSnippet() }} />
         <HeadContent />
       </head>
       <body>
+        <noscript>
+          <div>
+            <img
+              src={`https://mc.yandex.ru/watch/${YM_COUNTER_ID}`}
+              style={{ position: "absolute", left: "-9999px" }}
+              alt=""
+            />
+          </div>
+        </noscript>
         {children}
         <Scripts />
       </body>
