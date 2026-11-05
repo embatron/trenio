@@ -211,14 +211,38 @@ body.is-search-docked .site-header__search {
 }
 .mega-cats .mega-sheet { padding-top: 16px; padding-bottom: 14px; }
 .mega-sports__toggle { display: none; }
-.mega-cats__row {
-  display: grid; grid-template-columns: repeat(8, minmax(112px, 1fr));
-  gap: 16px 12px; margin: 0; padding: 0; list-style: none;
+.mega-account, .mega-cities { display: none; }
+.mega-cats__slider { position: relative; width: 100%; display: flex; align-items: center; }
+.mega-cats__nav {
+  position: absolute; top: 18px; z-index: 2; width: 44px; height: 44px;
+  border: 0; border-radius: 50%; background: var(--white); color: var(--text);
+  cursor: pointer; display: none; place-items: center; flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(var(--dark-rgb), 0.08);
 }
+.mega-cats__nav--prev { left: 0; }
+.mega-cats__nav--next { right: 0; }
+.mega-cats__nav.is-visible { display: grid; }
+.mega-cats__nav:hover { box-shadow: 0 8px 20px rgba(var(--dark-rgb), 0.1); }
+.mega-cats__nav:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.mega-cats__nav svg {
+  width: 18px; height: 18px; stroke: currentColor; fill: none;
+  stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round;
+}
+.mega-cats__viewport {
+  flex: 1; min-width: 0; overflow-x: auto; overflow-y: hidden;
+  scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; overscroll-behavior-x: contain;
+}
+.mega-cats__viewport::-webkit-scrollbar { display: none; }
+.mega-cats__row {
+  display: flex; width: max-content; align-items: flex-start; gap: 14px;
+  margin: 0; padding: 6px 0 8px; list-style: none;
+}
+.mega-cats__row > li { flex: 0 0 96px; width: 96px; min-width: 96px; }
 .mega-cat {
   display: grid; justify-items: center; align-content: start; gap: 8px;
-  box-sizing: border-box; width: 100%; max-width: 148px; justify-self: center;
-  min-width: 0; min-height: 44px; padding: 0 8px;
+  box-sizing: border-box; width: 100%; max-width: none; justify-self: center;
+  min-width: 0; min-height: 88px; padding: 0;
   color: var(--text); text-decoration: none; text-align: center;
   font-size: 11px; font-weight: var(--fw-title); letter-spacing: -0.01em; line-height: 1.25;
 }
@@ -338,7 +362,8 @@ body.is-search-docked .site-header__search {
 .mega-footer .portal-social { margin-top: 0; flex: 0 0 auto; }
 .mega-footer .portal-social a:hover { background: var(--white); color: inherit; }
 @media (prefers-reduced-motion: reduce) {
-  .mega-overlay, .mega-panel, .mega-sports__toggle svg { transition: none; }
+  .mega-overlay, .mega-panel, .mega-sports__toggle svg, .mega-account__chevron { transition: none; }
+  .mega-cats__viewport { scroll-behavior: auto; }
 }
 
 .site-footer { background: var(--dark); color: #f2f2f2; padding: var(--layout-section-y) 0 28px; }
@@ -376,17 +401,13 @@ body.is-search-docked .site-header__search {
   body.is-search-docked .search-block--header,
   body.is-search-docked .search-block--header .search-shell { width: 100%; }
 }
-@media (max-width: 1100px) {
-  .mega-cats__row { grid-template-columns: repeat(4, minmax(112px, 1fr)); }
-}
 @media (max-width: 960px) {
+  .mega-cats__nav { display: none !important; }
   .site-header__inner { padding: 20px var(--layout-gutter); column-gap: 10px; }
   .burger-btn__label { display: none; }
   .burger-btn { min-width: 0; width: 44px; padding: 0; }
   .mega-panel > .mega-sheet { padding-top: 22px; }
   .mega-cats { position: static; }
-  .mega-cats__row { grid-template-columns: repeat(4, minmax(112px, 1fr)); }
-  .mega-cat__icon, .mega-cat__icon img { width: 56px; height: 56px; }
   .mega-grid { grid-template-columns: 1fr 1fr; gap: 22px 28px; }
   .mega-col__hero {
     grid-column: 1 / -1;
@@ -433,18 +454,54 @@ body.is-search-docked .site-header__search {
     transform: rotate(90deg); transition: transform 0.2s ease;
   }
   .mega-cats.is-open .mega-sports__toggle svg { transform: rotate(-90deg); }
-  .mega-cats__row { display: none; }
-  .mega-cats.is-open .mega-cats__row { display: grid; margin-top: 12px; }
+  .mega-cats__viewport { overflow: visible; }
+  .mega-cats__row { display: none; width: auto; padding: 0; }
+  .mega-cats.is-open .mega-cats__row {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%; gap: 16px 12px; margin-top: 12px;
+  }
+  .mega-cats__row > li { flex: none; width: auto; min-width: 0; }
+  .mega-cat { min-height: 44px; padding: 0 8px; }
+  .mega-cat__icon, .mega-cat__icon img { width: 56px; height: 56px; }
   .mega-cats.is-open .mega-sheet { padding-bottom: 18px; }
   .account-face { max-width: 44px; padding-right: 0; }
   .account-face__nick { display: none; }
+  .account-menu.is-open .account-menu__panel { display: none; }
+  .mega-account, .mega-cities { display: block; }
+  .mega-col--cities { display: none; }
+  .mega-account {
+    border-bottom: 1px solid var(--line); background: var(--white);
+  }
+  .mega-account .mega-sheet, .mega-cities .mega-sheet { padding-top: 8px; padding-bottom: 8px; }
+  .mega-account__toggle {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    width: 100%; min-height: 44px; margin: 0; padding: 0 4px;
+    border: 0; border-radius: var(--radius-control); background: transparent;
+    color: var(--dark); font: inherit; font-size: 15px; font-weight: var(--fw-title);
+    letter-spacing: -0.01em; text-align: left; cursor: pointer;
+  }
+  .mega-account__toggle:hover { color: var(--primary-dark); }
+  .mega-account__toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .mega-account__who { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .mega-account__nick { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mega-account__chevron {
+    width: 18px; height: 18px; flex: 0 0 auto;
+    stroke: currentColor; fill: none; stroke-width: var(--icon-stroke);
+    stroke-linecap: round; stroke-linejoin: round;
+    transform: rotate(90deg); transition: transform 0.2s ease;
+  }
+  .mega-account.is-open .mega-account__chevron { transform: rotate(-90deg); }
+  .mega-account__list { display: none; margin-top: 4px; }
+  .mega-account.is-open .mega-account__list { display: grid; }
+  .mega-account__list .account-menu__item { white-space: normal; }
+  .mega-account__list .account-menu__item > span:first-child { min-width: 0; }
 }
 @media (max-width: 560px) {
-  .mega-cats__row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .mega-cat { max-width: none; padding-inline: 6px; }
+  .mega-cats.is-open .mega-cats__row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .mega-cat { padding-inline: 6px; }
 }
 @media (max-width: 360px) {
-  .mega-cats__row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mega-cats.is-open .mega-cats__row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .mega-cat { padding-inline: 8px; }
 }
 @media (max-width: 620px) {
@@ -534,9 +591,10 @@ function MenuCount({ count }: { count?: number }) {
 }
 
 function menuCounts(roles: UserRole[], own: number, inbox: number, favorites: number | undefined): Record<string, number | undefined> {
-  if (isStaff(roles)) return {};
-  if (hasAnyRole(roles, ["trainer", "club"])) return { messages: inbox, favorites };
-  return { messages: own, bookings: 0, favorites };
+  const messages = own + inbox;
+  if (isStaff(roles)) return { messages };
+  if (hasAnyRole(roles, ["trainer", "club"])) return { messages, favorites };
+  return { messages, bookings: 0, favorites };
 }
 
 function HeaderMenuLink({ item, count, onNavigate }: { item: HeaderMenuItem; count?: number; onNavigate: () => void }) {
@@ -644,6 +702,8 @@ function AccountButton() {
           pointerType.current = event.pointerType;
         }}
         onClick={(event) => {
+          const narrow = window.matchMedia("(max-width: 767px)").matches;
+          if (narrow) return;
           const touch = pointerType.current !== "mouse" || window.matchMedia("(hover: none)").matches;
           if (!touch) return;
           event.preventDefault();
@@ -680,6 +740,159 @@ function AccountButton() {
 }
 
 const MEGA_CATEGORIES = listPublishedSportCategories();
+
+function MegaCategoryRail({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
+
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el || !open) return;
+    const update = () => {
+      setCanPrev(el.scrollLeft > 4);
+      setCanNext(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+    };
+    const frame = window.requestAnimationFrame(update);
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      el.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [open]);
+
+  const scrollByDir = (dir: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const amount = Math.max(220, el.clientWidth * 0.55);
+    el.scrollBy({ left: dir * amount, behavior: "smooth" });
+  };
+
+  return (
+    <div className="mega-cats__slider">
+      <button
+        className={`mega-cats__nav mega-cats__nav--prev${canPrev ? " is-visible" : ""}`}
+        type="button"
+        aria-label="Назад"
+        hidden={!canPrev}
+        onClick={() => scrollByDir(-1)}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6l-6 6 6 6" /></svg>
+      </button>
+      <div className="mega-cats__viewport" ref={trackRef}>
+        <ul className="mega-cats__row" id="mega-sports">
+          {MEGA_CATEGORIES.map((category) => (
+            <li key={category.slug}>
+              <Link className="mega-cat" to="/categories/$slug" params={{ slug: category.slug }} onClick={onClose}>
+                <span className="mega-cat__icon" aria-hidden="true">
+                  {category.featuredImage ? (
+                    <img src={category.featuredImage} alt="" width={64} height={64} />
+                  ) : null}
+                </span>
+                <span className="mega-cat__label">{category.label}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <button
+        className={`mega-cats__nav mega-cats__nav--next${canNext ? " is-visible" : ""}`}
+        type="button"
+        aria-label="Вперёд"
+        hidden={!canNext}
+        onClick={() => scrollByDir(1)}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6" /></svg>
+      </button>
+    </div>
+  );
+}
+
+function MegaCities({ onClose }: { onClose: () => void }) {
+  return (
+    <ul>
+      {BELARUS_OBLAST_CENTERS.map((city) => {
+        const slug = cityCatalogSlug(city);
+        return (
+          <li key={city}>
+            {slug ? (
+              <Link className="mega-link" to="/city/$slug" params={{ slug }} onClick={onClose}>
+                <span className="mega-mark"><MegaPin /></span>
+                <span>{city}</span>
+              </Link>
+            ) : (
+              <Link className="mega-link" to="/" onClick={onClose}>
+                <span className="mega-mark"><MegaPin /></span>
+                <span>{city}</span>
+              </Link>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function MegaAccount({ menuOpen, onClose }: { menuOpen: boolean; onClose: () => void }) {
+  const { user } = useRouteContext({ from: "__root__" });
+  const [open, setOpen] = useState(false);
+  const [pending, setPending] = useState(false);
+  const logout = useAuthServerFn(logoutFn);
+  const messaging = useMessaging();
+  const { keys, ready } = useFavorites();
+  const face = useLiveAvatar(user?.id, user?.avatarPath);
+  useEffect(() => {
+    if (!menuOpen) setOpen(false);
+  }, [menuOpen]);
+  if (!user) return null;
+
+  const name = [user.firstName, user.lastName].filter(Boolean).join(" ");
+  const label = user.nick || name || "Кабинет";
+  const items = headerMenuFor(user.roles);
+  const counts = menuCounts(user.roles, messaging.own, messaging.inbox, ready ? keys.length : undefined);
+
+  return (
+    <div className={`mega-account${open ? " is-open" : ""}`}>
+      <div className="mega-sheet">
+        <button
+          type="button"
+          className="mega-account__toggle"
+          aria-expanded={open}
+          aria-controls="mega-account"
+          onClick={() => setOpen((value) => !value)}
+        >
+          <span className="mega-account__who">
+            <UserAvatar name={name} src={face} size={32} />
+            <span className="mega-account__nick">{label}</span>
+          </span>
+          <svg className="mega-account__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6" /></svg>
+        </button>
+        <div className="mega-account__list" id="mega-account">
+          {items.map((item) => <HeaderMenuLink key={item.id} item={item} count={counts[item.id]} onNavigate={onClose} />)}
+          <div className="account-menu__rule" />
+          <button
+            type="button"
+            className="account-menu__item account-menu__logout"
+            disabled={pending}
+            onClick={() => {
+              setPending(true);
+              void logout()
+                .then(() => {
+                  window.location.href = "/";
+                })
+                .finally(() => setPending(false));
+            }}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M14 6l-6 6 6 6"/><path d="M8 12h7"/></svg>
+            {pending ? "Выход…" : "Выйти"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function MegaPin() {
   return (
@@ -729,20 +942,16 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             Выбрать спорт
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6" /></svg>
           </button>
-          <ul className="mega-cats__row" id="mega-sports">
-            {MEGA_CATEGORIES.map((category) => (
-              <li key={category.slug}>
-                <Link className="mega-cat" to="/categories/$slug" params={{ slug: category.slug }} onClick={onClose}>
-                  <span className="mega-cat__icon" aria-hidden="true">
-                    {category.featuredImage ? (
-                      <img src={category.featuredImage} alt="" width={64} height={64} />
-                    ) : null}
-                  </span>
-                  <span className="mega-cat__label">{category.label}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <MegaCategoryRail open={open} onClose={onClose} />
+        </div>
+      </div>
+      <MegaAccount menuOpen={open} onClose={onClose} />
+      <div className="mega-cities">
+        <div className="mega-sheet">
+          <div className="mega-col">
+            <h5>Города</h5>
+            <MegaCities onClose={onClose} />
+          </div>
         </div>
       </div>
       <div className="mega-sheet">
@@ -756,28 +965,9 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6" /></svg>
             </Link>
           </div>
-          <div className="mega-col">
+          <div className="mega-col mega-col--cities">
             <h5>Города</h5>
-            <ul>
-              {BELARUS_OBLAST_CENTERS.map((city) => {
-                const slug = cityCatalogSlug(city);
-                return (
-                  <li key={city}>
-                    {slug ? (
-                      <Link className="mega-link" to="/city/$slug" params={{ slug }} onClick={onClose}>
-                        <span className="mega-mark"><MegaPin /></span>
-                        <span>{city}</span>
-                      </Link>
-                    ) : (
-                      <Link className="mega-link" to="/" onClick={onClose}>
-                        <span className="mega-mark"><MegaPin /></span>
-                        <span>{city}</span>
-                      </Link>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
+            <MegaCities onClose={onClose} />
           </div>
           <div className="mega-col">
             <h5>Клиентам</h5>
