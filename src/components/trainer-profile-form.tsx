@@ -2,7 +2,7 @@ import { useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { useContactStepUp } from "@/components/auth/step-up-fields";
-import { CabinetNotice } from "@/components/cabinet";
+import { CabinetModal, CabinetNotice } from "@/components/cabinet";
 import { TrainerCardFields, type TrainerCardValues } from "@/components/trainer-card-fields";
 import { addAdminTrainerCertificateFn, addAdminTrainerPhotoFn, removeAdminTrainerCertificateFn, removeAdminTrainerPhotoFn, reorderAdminTrainerPhotosFn, updateAdminTrainerCertificateFn } from "@/lib/admin/trainers";
 import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
@@ -190,7 +190,7 @@ function NickSupportDialog({
   }, [onClose]);
 
   return (
-    <div className="cabinet-modal" onClick={onClose}>
+    <CabinetModal onClick={onClose}>
       <div
         className="cabinet-modal__card"
         role="dialog"
@@ -239,6 +239,6 @@ function NickSupportDialog({
           </form>
         )}
       </div>
-    </div>
+    </CabinetModal>
   );
 }

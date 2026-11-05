@@ -7,7 +7,7 @@ import { writeLog } from "@/lib/log/logger";
 
 /** Profile lifecycle is always kept. Account actions are kept when the actor is a trainer or a club. */
 const ALWAYS =
-  /^(trainer\.|catalog\.trainer|admin\.trainer|form\.trainer|form\.become_trainer|form\.nick_support|form\.welcome|account\.claim|account\.password$|message\.welcome)/;
+  /^(trainer\.|catalog\.trainer|admin\.trainer|form\.trainer|form\.nick_support|form\.welcome|account\.claim|account\.password$|message\.welcome)/;
 
 const ACCOUNT = /^(auth\.|account\.|sms\.|email\.notice|email\.preference)/;
 

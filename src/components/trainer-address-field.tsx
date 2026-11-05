@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 
+import { CabinetModal } from "@/components/cabinet";
 import { CityEntityInput } from "@/components/city-entity-input";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
@@ -433,7 +434,7 @@ export function TrainerPlacesField({
         До трех адресов
       </p>
       {confirmIndex != null ? (
-        <div className="cabinet-modal" onClick={() => setConfirmIndex(null)}>
+        <CabinetModal onClick={() => setConfirmIndex(null)}>
           <div
             className="cabinet-modal__card"
             role="dialog"
@@ -462,7 +463,7 @@ export function TrainerPlacesField({
               </button>
             </div>
           </div>
-        </div>
+        </CabinetModal>
       ) : null}
     </fieldset>
   );

@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { createFileRoute, getRouteApi, useRouter } from "@tanstack/react-router";
 
-import { CabinetNotice } from "@/components/cabinet";
+import { CabinetModal, CabinetNotice } from "@/components/cabinet";
 import { SiteFaq } from "@/components/site-faq";
 import { TrainerContactStatus } from "@/components/trainer-contact-status";
 import { authErrorMessage } from "@/lib/auth/errors";
@@ -274,7 +274,7 @@ function PageStatusCard({ status }: { status: PageStatus }) {
         </div>
       </fieldset>
       {asked ? (
-        <div className="cabinet-modal" onClick={() => { if (!pending) setAsked(null); }}>
+        <CabinetModal onClick={() => { if (!pending) setAsked(null); }}>
           <div className="cabinet-modal__card" role="dialog" aria-modal="true" aria-labelledby="page-status-title" onClick={(event) => event.stopPropagation()}>
             <h2 id="page-status-title">Сохранить статус?</h2>
             <p>Страница станет «{PAGE_MODE_LABEL[asked]}». В каталоге она {asked === "published" ? "будет видна" : "не будет видна"}.</p>
@@ -283,7 +283,7 @@ function PageStatusCard({ status }: { status: PageStatus }) {
               <button type="button" className="cabinet-form__ghost" onClick={() => setAsked(null)} disabled={pending}>Отмена</button>
             </div>
           </div>
-        </div>
+        </CabinetModal>
       ) : null}
       {error ? <CabinetNotice title="Не получилось" message={error} onClose={() => setError("")} /> : null}
     </article>

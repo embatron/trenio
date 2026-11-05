@@ -1,7 +1,7 @@
 import { createFileRoute, getRouteApi, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
-import { ReviewStatus } from "@/components/cabinet";
+import { CabinetModal, ReviewStatus } from "@/components/cabinet";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { ReviewHtml } from "@/components/review-html";
 
@@ -79,7 +79,7 @@ function RejectionDialog({ note, onClose }: { note: string; onClose: () => void 
   }, [onClose]);
 
   return (
-    <div className="cabinet-modal" onClick={onClose}>
+    <CabinetModal onClick={onClose}>
       <div
         className="cabinet-modal__card"
         role="dialog"
@@ -91,6 +91,6 @@ function RejectionDialog({ note, onClose }: { note: string; onClose: () => void 
         <p>{note}</p>
         <button type="button" onClick={onClose}>Закрыть</button>
       </div>
-    </div>
+    </CabinetModal>
   );
 }

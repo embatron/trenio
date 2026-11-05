@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound, redirect, useRouteContext, useRouter, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { CabinetModal } from "@/components/cabinet";
 import { PhotoImage } from "@/components/photo-image";
 import { UserAvatar } from "@/components/user-avatar";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
@@ -398,11 +399,6 @@ const CSS = `
 .review-note { margin: 0; color: var(--muted); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
 .review-note a { color: var(--primary); font-weight: var(--fw-title); text-decoration: none; }
 .review-note a:hover { text-decoration: underline; }
-.trainer-page .cabinet-modal { position: fixed; inset: 0; z-index: 400; display: grid; place-items: center; padding: var(--layout-gutter); background: rgba(var(--dark-rgb), 0.45); }
-.trainer-page .cabinet-modal__card { width: min(440px, 100%); display: grid; gap: 12px; padding: 20px; border-radius: var(--card-radius); background: var(--white); }
-.trainer-page .cabinet-modal__card h2 { margin: 0; padding: 0; border: 0; font-size: 18px; color: var(--dark); }
-.trainer-page .cabinet-modal__card p { margin: 0; color: var(--text); }
-.trainer-page .cabinet-modal__card button { justify-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
 .profile-created__row { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .profile-created__row > div { min-width: 0; display: grid; gap: 2px; flex: 1; }
 .profile-created__row strong { color: var(--dark); font-size: 16px; }
@@ -689,7 +685,7 @@ function ReviewReply({ id }: { id: string }) {
 function CabinetCreatedDialog({ trainer, onClose }: { trainer: Trainer; onClose: () => void }) {
   const caption = trainer.sportLabel || trainer.city.label || "Страница профиля";
   return (
-    <div className="cabinet-modal" onClick={onClose}>
+    <CabinetModal onClick={onClose}>
       <div
         className="cabinet-modal__card profile-created"
         role="dialog"
@@ -711,7 +707,7 @@ function CabinetCreatedDialog({ trainer, onClose }: { trainer: Trainer; onClose:
         </div>
         <button type="button" onClick={onClose}>Понятно</button>
       </div>
-    </div>
+    </CabinetModal>
   );
 }
 

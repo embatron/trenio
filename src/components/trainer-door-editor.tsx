@@ -1,5 +1,6 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
 import { authErrorMessage } from "@/lib/auth/errors";
@@ -151,7 +152,9 @@ export function TrainerDoorMailDialog({
     };
   }, [onClose]);
 
-  return (
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <div className="door-mail-modal" onClick={onClose}>
       <div
         className="door-mail-modal__card"
@@ -181,8 +184,8 @@ export function TrainerDoorMailDialog({
         )}
       </div>
       <style>{`
-        .door-mail-modal { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: rgba(var(--dark-rgb), 0.45); }
-        .door-mail-modal__card { position: relative; box-sizing: border-box; width: min(440px, 100%); display: grid; gap: 12px; padding: 20px 64px 20px 20px; border-radius: var(--card-radius); background: var(--white); color: var(--text); }
+        .door-mail-modal { position: fixed; inset: 0; z-index: 420; display: grid; place-items: center; overflow: auto; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: rgba(var(--dark-rgb), 0.45); }
+        .door-mail-modal__card { position: relative; box-sizing: border-box; width: min(440px, 100%); max-height: 100%; overflow: auto; display: grid; gap: 12px; padding: 20px 64px 20px 20px; border-radius: var(--card-radius); background: var(--white); color: var(--text); }
         .door-mail-modal__card h2 { margin: 0; font-size: 18px; color: var(--dark); }
         .door-mail-modal__card > p { margin: 0; }
         .door-mail-modal__card a { color: var(--primary); font-weight: var(--fw-title); overflow-wrap: anywhere; }
@@ -191,6 +194,7 @@ export function TrainerDoorMailDialog({
         .door-mail-modal__x:hover { color: var(--dark); }
         .door-mail-modal__ok { justify-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
       `}</style>
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -1,5 +1,6 @@
 import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 import { CredentialsRequiredDialog } from "@/components/auth/credentials-required-dialog";
 import { DoorPasswordDialog } from "@/components/auth/door-password-dialog";
@@ -46,6 +47,33 @@ export function ReviewStatus({
   );
 }
 
+export function CabinetModal({
+  children,
+  className,
+  onClick,
+}: {
+  children: ReactNode;
+  className?: string;
+  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
+}) {
+  useEffect(() => {
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, []);
+
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
+    <div className={className ? `cabinet-modal ${className}` : "cabinet-modal"} onClick={onClick}>
+      {children}
+    </div>,
+    document.body,
+  );
+}
+
 export function CabinetNotice({
   title,
   message,
@@ -64,13 +92,13 @@ export function CabinetNotice({
   }, [onClose]);
 
   return (
-    <div className="cabinet-modal" onClick={onClose}>
+    <CabinetModal onClick={onClose}>
       <div className="cabinet-modal__card" role="dialog" aria-modal="true" aria-labelledby="cabinet-notice-title" onClick={(event) => event.stopPropagation()}>
         <h2 id="cabinet-notice-title">{title}</h2>
         <p>{message}</p>
         <button type="button" onClick={onClose}>Закрыть</button>
       </div>
-    </div>
+    </CabinetModal>
   );
 }
 
@@ -800,13 +828,13 @@ label.publish-pick__option.is-archived.is-on { background: #f0e0e2; color: #7a3a
 .cabinet-page-status .cabinet-status--published { background: #39b165; }
 .cabinet-page-status__side { display: flex; align-items: center; gap: 4px; }
 .publish-pick__option:focus-within { outline: 2px solid rgba(var(--dark-rgb), 0.45); outline-offset: 2px; }
-button.cabinet-text-link {
+a.cabinet-text-link, button.cabinet-text-link {
   display: inline; position: relative; min-height: 0; margin: 0; padding: 0; border: 0; background: none;
   color: var(--primary); font: inherit; font-size: inherit; font-weight: var(--fw-title); line-height: inherit; vertical-align: baseline;
   text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
 }
-button.cabinet-text-link::after { content: ""; position: absolute; left: -4px; right: -4px; top: 50%; height: 44px; transform: translateY(-50%); }
-button.cabinet-text-link:hover { color: var(--primary-dark); }
+a.cabinet-text-link::after, button.cabinet-text-link::after { content: ""; position: absolute; left: -4px; right: -4px; top: 50%; height: 44px; transform: translateY(-50%); }
+a.cabinet-text-link:hover, button.cabinet-text-link:hover { color: var(--primary-dark); }
 @media (min-width: 720px) {
   .publish-pick__row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
@@ -814,13 +842,13 @@ button.cabinet-text-link:hover { color: var(--primary-dark); }
 .cabinet-form__submit:disabled { opacity: 0.6; cursor: default; }
 .cabinet-form__ok { margin: 0; color: #157a3a; font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
 .cabinet-form__error { margin: 0; color: var(--primary-dark); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
-.cabinet-modal { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: var(--layout-gutter); background: rgba(var(--dark-rgb), 0.45); }
+.cabinet-modal { position: fixed; inset: 0; z-index: 420; display: grid; place-items: center; overflow: auto; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: rgba(var(--dark-rgb), 0.45); }
 .cabinet-modal--lock { z-index: 500; }
 html.is-credentials-locked body > *:not(.cabinet-modal--lock) { pointer-events: none !important; }
 html.is-credentials-locked .cabinet-modal--lock { pointer-events: auto; }
 .cabinet-modal--lock .auth-field__toggle { background: transparent; color: var(--muted); border-radius: 0; min-height: 44px; padding: 0 10px; justify-self: auto; width: auto; }
 .cabinet-modal--lock .auth-submit { width: 100%; justify-self: stretch; height: 50px; border-radius: var(--radius-control); }
-.cabinet-modal__card { width: min(440px, 100%); display: grid; gap: 12px; padding: 20px; border-radius: var(--card-radius); background: var(--white); }
+.cabinet-modal__card { width: min(440px, 100%); max-height: 100%; overflow: auto; display: grid; gap: 12px; padding: 20px; border-radius: var(--card-radius); background: var(--white); }
 .cabinet-modal__card h2 { margin: 0; font-size: 18px; color: var(--dark); }
 .cabinet-modal__card p { margin: 0; color: var(--text); }
 .cabinet-modal__card button { justify-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
@@ -833,7 +861,7 @@ html.is-credentials-locked .cabinet-modal--lock { pointer-events: auto; }
 .cabinet-delete { margin: 0; }
 .cabinet-delete__link { justify-self: start; min-height: 44px; padding: 0; border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .cabinet-delete__link:hover { color: var(--primary-dark); }
-.cabinet-modal__card--form { width: min(640px, 100%); max-height: min(92vh, 920px); overflow: auto; display: grid; gap: 12px; align-content: start; }
+.cabinet-modal__card--form { width: min(640px, 100%); max-height: 100%; overflow: auto; display: grid; gap: 12px; align-content: start; }
 .cabinet-modal__card--form label { display: grid; gap: 6px; }
 .cabinet-modal__card--form label > span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
 .cabinet-modal__card--form input, .cabinet-modal__card--form textarea, .cabinet-modal__card--form select { width: 100%; min-height: 44px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--text); font: inherit; font-size: 15px; }

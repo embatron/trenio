@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 
-import { REVIEW_STATUS_LABEL, ReviewStatus } from "@/components/cabinet";
+import { CabinetModal, REVIEW_STATUS_LABEL, ReviewStatus } from "@/components/cabinet";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { ReviewHtml } from "@/components/review-html";
 import { UserAvatar } from "@/components/user-avatar";
@@ -233,7 +233,7 @@ function AdminReviewsPage() {
         </>
       )}
       {rejecting ? (
-        <div className="cabinet-modal" onClick={() => setRejectingId(null)}>
+        <CabinetModal onClick={() => setRejectingId(null)}>
           <form
             className="cabinet-modal__card"
             role="dialog"
@@ -261,7 +261,7 @@ function AdminReviewsPage() {
               <IconButton label="Закрыть" path={CROSS} onClick={() => setRejectingId(null)} />
             </div>
           </form>
-        </div>
+        </CabinetModal>
       ) : null}
     </article>
   );
