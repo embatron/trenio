@@ -362,7 +362,7 @@ body.is-search-docked .site-header__search {
 .mega-footer .portal-social { margin-top: 0; flex: 0 0 auto; }
 .mega-footer .portal-social a:hover { background: var(--white); color: inherit; }
 @media (prefers-reduced-motion: reduce) {
-  .mega-overlay, .mega-panel, .mega-sports__toggle svg, .mega-account__chevron { transition: none; }
+  .mega-overlay, .mega-panel, .mega-sports__toggle svg, .mega-account__chevron, .mega-cities__toggle svg { transition: none; }
   .mega-cats__viewport { scroll-behavior: auto; }
 }
 
@@ -469,10 +469,28 @@ body.is-search-docked .site-header__search {
   .account-menu.is-open .account-menu__panel { display: none; }
   .mega-account, .mega-cities { display: block; }
   .mega-col--cities { display: none; }
-  .mega-account {
+  .mega-account, .mega-cities {
     border-bottom: 1px solid var(--line); background: var(--white);
   }
   .mega-account .mega-sheet, .mega-cities .mega-sheet { padding-top: 8px; padding-bottom: 8px; }
+  .mega-cities__toggle {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    width: 100%; min-height: 44px; margin: 0; padding: 0 4px;
+    border: 0; border-radius: var(--radius-control); background: transparent;
+    color: var(--dark); font: inherit; font-size: 15px; font-weight: var(--fw-title);
+    letter-spacing: -0.01em; text-align: left; cursor: pointer;
+  }
+  .mega-cities__toggle:hover { color: var(--primary-dark); }
+  .mega-cities__toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .mega-cities__toggle svg {
+    width: 18px; height: 18px; flex: 0 0 auto;
+    stroke: currentColor; fill: none; stroke-width: var(--icon-stroke);
+    stroke-linecap: round; stroke-linejoin: round;
+    transform: rotate(90deg); transition: transform 0.2s ease;
+  }
+  .mega-cities.is-open .mega-cities__toggle svg { transform: rotate(-90deg); }
+  .mega-cities__list { display: none; margin-top: 4px; }
+  .mega-cities.is-open .mega-cities__list { display: block; }
   .mega-account__toggle {
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     width: 100%; min-height: 44px; margin: 0; padding: 0 4px;
@@ -906,9 +924,11 @@ function MegaPin() {
 function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { user } = useRouteContext({ from: "__root__" });
   const [sportsOpen, setSportsOpen] = useState(false);
+  const [citiesOpen, setCitiesOpen] = useState(false);
   useEffect(() => {
     if (!open) {
       setSportsOpen(false);
+      setCitiesOpen(false);
       return;
     }
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -946,11 +966,22 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
         </div>
       </div>
       <MegaAccount menuOpen={open} onClose={onClose} />
-      <div className="mega-cities">
+      <div className={`mega-cities${citiesOpen ? " is-open" : ""}`}>
         <div className="mega-sheet">
-          <div className="mega-col">
-            <h5>Города</h5>
-            <MegaCities onClose={onClose} />
+          <button
+            type="button"
+            className="mega-cities__toggle"
+            aria-expanded={citiesOpen}
+            aria-controls="mega-cities-list"
+            onClick={() => setCitiesOpen((value) => !value)}
+          >
+            Города
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6" /></svg>
+          </button>
+          <div className="mega-cities__list" id="mega-cities-list">
+            <div className="mega-col">
+              <MegaCities onClose={onClose} />
+            </div>
           </div>
         </div>
       </div>
