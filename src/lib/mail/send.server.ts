@@ -152,19 +152,20 @@ async function sendViaResend(message: OutboundMail, to: string[], from: string, 
   }
 }
 
-/** Local Postfix when mail is enabled. Resend only if that path is off and a key is set. */
-export async function sendMail(message: OutboundMail): Promise<void> {
+/** Local Postfix when mail is enabled. Resend only if that path is off and a key is set. False when nothing accepted the letter. */
+export async function sendMail(message: OutboundMail): Promise<boolean> {
   const to = [...new Set(message.to.map((item) => item.trim()).filter(Boolean))];
-  if (to.length === 0) return;
+  if (to.length === 0) return false;
 
   if (mailSendmailEnabled()) {
     try {
       await sendViaSendmail(message, to);
       logMail("success", "Письмо отдано Postfix.", to, message.subject);
+      return true;
     } catch (error) {
       logMail("failure", "Postfix не принял письмо.", to, message.subject, error);
+      return false;
     }
-    return;
   }
 
   const apiKey = process.env.RESEND_API_KEY?.trim();
@@ -173,14 +174,17 @@ export async function sendMail(message: OutboundMail): Promise<void> {
     try {
       await sendViaResend(message, to, mailFromAddress(), apiKey);
       logMail("success", "Письмо отправлено.", to, message.subject);
+      return true;
     } catch (error) {
       logMail("failure", "Почтовый сервис отклонил письмо.", to, message.subject, error);
+      return false;
     }
-    return;
   }
 
   if (process.env.AUTH_DEV_LOG_EMAILS === "true" || process.env.NODE_ENV !== "production") {
     console.info(`[mail] to=${to.join(", ")} subject=${message.subject}\n${message.text}`);
     logMail("skipped", "Письмо оставлено в консоли разработки.", to, message.subject);
+    return true;
   }
+  return false;
 }

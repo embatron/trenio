@@ -529,14 +529,13 @@ export const requestNickSupportFn = createServerFn({ method: "POST" })
       ],
       quote: request,
     });
-    try {
-      await sendMail({
-        to: [SITE_EMAIL],
-        subject: "[SUPPORT REQUEST]",
-        text: letter.text,
-        html: letter.html,
-      });
-    } catch (error) {
+    const sent = await sendMail({
+      to: [SITE_EMAIL],
+      subject: "[SUPPORT REQUEST]",
+      text: letter.text,
+      html: letter.html,
+    });
+    if (!sent) {
       void writeLog({
         level: "error",
         domain: "form",
@@ -546,7 +545,6 @@ export const requestNickSupportFn = createServerFn({ method: "POST" })
         actorUserId: context.user.id,
         subject: context.user.email,
         target: profile.slug,
-        error,
       });
       const failure = new AuthError("Не удалось отправить запрос. Попробуйте ещё раз.", "VALIDATION");
       markLogged(failure);

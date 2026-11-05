@@ -8,6 +8,9 @@ import { consumeRateLimit, RATE_LIMITED_MESSAGE } from "@/auth/rate-limit";
 import { getDb } from "@/db";
 import { trainerWelcomes } from "@/db/schema";
 import { optionalBelarusPhone, parseInstagramHandle, parseTelegramHandle } from "@/lib/catalog/trainer-welcome";
+import { renderLetter } from "@/lib/mail/letter";
+import { sendMail } from "@/lib/mail/send.server";
+import { SITE_EMAIL } from "@/lib/seo/site";
 
 const welcomeSchema = z.object({
   channel: z.enum(["instagram", "other"]),
@@ -22,6 +25,29 @@ export type TrainerWelcomeChannel = "instagram" | "other";
 export type TrainerWelcomeResult =
   | { ok: true; channel: TrainerWelcomeChannel }
   | { ok: false; message: string };
+
+const WELCOME_MAIL_FAILED = "Не получилось отправить. Попробуйте ещё раз.";
+
+/** Service letter to the public mailbox. The journal does not store this text. */
+async function mailWelcome(input: { instagram: string | null; telegram: string | null; phone: string | null }) {
+  const lines = [
+    input.instagram ? `Instagram: ${input.instagram}` : "",
+    input.telegram ? `Telegram: @${input.telegram}` : "",
+    input.phone ? `Телефон: ${input.phone}` : "",
+  ].filter(Boolean);
+  const letter = renderLetter({
+    title: "Заявка тренера",
+    lead: "Стать тренером",
+    service: true,
+    lines,
+  });
+  return sendMail({
+    to: [SITE_EMAIL],
+    subject: "Заявка со страницы «Стать тренером»",
+    text: letter.text,
+    html: letter.html,
+  });
+}
 
 function readTelegram(raw: string): { telegram: string | null } | { message: string } {
   const value = raw.trim();
@@ -62,6 +88,21 @@ export const submitTrainerWelcomeFn = createServerFn({ method: "POST" })
         if (!telegram.telegram && !phone.phone) {
           return { ok: false, message: "Оставь Telegram или номер телефона." };
         }
+        const mailed = await mailWelcome({ instagram: null, telegram: telegram.telegram, phone: phone.phone });
+        if (!mailed) {
+          await writeLog({
+            level: "error",
+            domain: "form",
+            action: "form.welcome",
+            outcome: "failure",
+            message: "Письмо заявки не ушло.",
+            subject: maskPhone(phone.phone),
+            target: telegram.telegram,
+            route: "/join/trainer",
+            context: { channel: "other" },
+          });
+          return { ok: false, message: WELCOME_MAIL_FAILED };
+        }
         await getDb().insert(trainerWelcomes).values({
           channel: "other",
           instagram: null,
@@ -85,6 +126,21 @@ export const submitTrainerWelcomeFn = createServerFn({ method: "POST" })
       const instagram = parseInstagramHandle(data.instagram);
       if (!instagram) {
         return { ok: false, message: "Укажи имя в Instagram или ссылку на профиль." };
+      }
+      const mailed = await mailWelcome({ instagram, telegram: telegram.telegram, phone: phone.phone });
+      if (!mailed) {
+        await writeLog({
+          level: "error",
+          domain: "form",
+          action: "form.welcome",
+          outcome: "failure",
+          message: "Письмо заявки не ушло.",
+          subject: maskPhone(phone.phone),
+          target: instagram,
+          route: "/join/trainer",
+          context: { channel: "instagram" },
+        });
+        return { ok: false, message: WELCOME_MAIL_FAILED };
       }
       await getDb().insert(trainerWelcomes).values({
         channel: "instagram",
