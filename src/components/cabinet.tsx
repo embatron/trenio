@@ -250,11 +250,11 @@ export function CabinetShell({
       <SiteHeader />
       <main>
         <div className="layout-with-sidebar">
-          <header className="cabinet-head">
-            <h1>{title}</h1>
-            {lede ? <p>{lede}</p> : null}
-          </header>
           <aside className="cabinet-side" ref={sideRef}>
+            <div className="cabinet-title">
+              <h1>{title}</h1>
+              {lede ? <p>{lede}</p> : null}
+            </div>
             <div className="cabinet-id">
               <UserAvatar name={name} src={avatarUrl} size={44} />
               <div>
@@ -394,9 +394,9 @@ export function CabinetShell({
 }
 
 const CABINET_CSS = `
-.cabinet-head { grid-column: 1 / -1; }
-.cabinet-head h1 { margin: 0 0 6px; font-size: var(--fs-page); letter-spacing: var(--tracking-heading); font-weight: var(--fw-heading); color: var(--dark); }
-.cabinet-head p { margin: 0; color: var(--muted); font-size: 15px; }
+.cabinet-title { display: grid; gap: 4px; }
+.cabinet-title h1 { margin: 0; font-size: 18px; letter-spacing: var(--tracking-heading); font-weight: var(--fw-heading); color: var(--dark); line-height: 1.25; }
+.cabinet-title p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.35; }
 .cabinet-side {
   display: grid; gap: 14px; align-content: start; align-self: start;
   position: sticky; top: var(--cabinet-sticky-top, 96px); z-index: 20;
