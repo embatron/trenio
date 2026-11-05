@@ -608,8 +608,8 @@ function MenuCount({ count }: { count?: number }) {
   return <span className={`account-menu__count${count > 0 ? " is-hot" : ""}`}>{count > 99 ? "99+" : count}</span>;
 }
 
-function menuCounts(roles: UserRole[], own: number, inbox: number, staffUnread: number, favorites: number | undefined): Record<string, number | undefined> {
-  const messages = isStaff(roles) ? staffUnread : own + inbox;
+function menuCounts(roles: UserRole[], own: number, inbox: number, favorites: number | undefined): Record<string, number | undefined> {
+  const messages = own + inbox;
   if (isStaff(roles)) return { messages };
   if (hasAnyRole(roles, ["trainer", "club"])) return { messages, favorites };
   return { messages, bookings: 0, favorites };
@@ -674,7 +674,7 @@ function AccountButton() {
 
   const name = [user.firstName, user.lastName].filter(Boolean).join(" ");
   const items = headerMenuFor(user.roles);
-  const counts = menuCounts(user.roles, messaging.own, messaging.inbox, messaging.staffUnread, ready ? keys.length : undefined);
+  const counts = menuCounts(user.roles, messaging.own, messaging.inbox, ready ? keys.length : undefined);
   const show = () => {
     if (holdClosed.current) return;
     window.clearTimeout(closeTimer.current);
@@ -869,7 +869,7 @@ function MegaAccount({ menuOpen, onClose }: { menuOpen: boolean; onClose: () => 
   const name = [user.firstName, user.lastName].filter(Boolean).join(" ");
   const label = user.nick || name || "Кабинет";
   const items = headerMenuFor(user.roles);
-  const counts = menuCounts(user.roles, messaging.own, messaging.inbox, messaging.staffUnread, ready ? keys.length : undefined);
+  const counts = menuCounts(user.roles, messaging.own, messaging.inbox, ready ? keys.length : undefined);
 
   return (
     <div className={`mega-account${open ? " is-open" : ""}`}>
@@ -1094,7 +1094,7 @@ function MessageCount() {
   if (!user) return null;
   const staff = hasAnyRole(user.roles, ["admin", "superadmin"]);
   const trainer = hasAnyRole(user.roles, ["trainer", "club"]);
-  const shown = staff ? messaging.staffUnread : messaging.total;
+  const shown = messaging.total;
   const label = `Сообщения, ${shown}`;
   const className = `icon-btn favorite-count message-count${shown > 0 ? " has-items" : ""}`;
   const icon = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 6l8 6 8-6" /></svg>;
