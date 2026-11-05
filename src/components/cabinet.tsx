@@ -395,7 +395,7 @@ export function CabinetShell({
 
 const CABINET_CSS = `
 .cabinet-title { display: grid; gap: 4px; }
-.cabinet-title h1 { margin: 0; font-size: 18px; letter-spacing: var(--tracking-heading); font-weight: var(--fw-heading); color: var(--dark); line-height: 1.25; }
+.cabinet-title h1 { margin: 0; font-size: 18px; letter-spacing: var(--tracking-heading); font-weight: var(--fw-heading); color: color-mix(in srgb, var(--dark) 35%, var(--muted)); line-height: 1.25; }
 .cabinet-title p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.35; }
 .cabinet-side {
   display: grid; gap: 14px; align-content: start; align-self: start;

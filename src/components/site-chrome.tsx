@@ -950,6 +950,7 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
       aria-hidden={!open}
       inert={!open}
     >
+      <MegaAccount menuOpen={open} onClose={onClose} />
       <div className={`mega-cats${sportsOpen ? " is-open" : ""}`}>
         <div className="mega-sheet">
           <button
@@ -965,7 +966,6 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           <MegaCategoryRail open={open} onClose={onClose} />
         </div>
       </div>
-      <MegaAccount menuOpen={open} onClose={onClose} />
       <div className={`mega-cities${citiesOpen ? " is-open" : ""}`}>
         <div className="mega-sheet">
           <button
