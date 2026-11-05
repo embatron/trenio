@@ -816,17 +816,23 @@ export async function listConversations(
     `);
     for (const row of previewRows) previews.set(row.conversationId, messageListPreview(row.body, asNumber(row.files)));
 
-    const unreadRows = await getDb().execute<{ conversationId: string; count: number }>(sql`
-      SELECT m.conversation_id AS "conversationId", count(*)::int AS count
-      FROM messages m
-      LEFT JOIN conversation_reads r
-        ON r.conversation_id = m.conversation_id AND r.user_id = ${actor.id}::uuid
-      WHERE m.conversation_id IN (${sql.join(ids.map((id) => sql`${id}::uuid`), sql`, `)})
-        AND m.deleted_at IS NULL
-        AND m.sender_id <> ${actor.id}::uuid
-        AND (r.last_read_message_id IS NULL OR m.id > r.last_read_message_id)
-      GROUP BY m.conversation_id
-    `);
+    const unreadRows = input.view === "staff"
+      ? await getDb().execute<{ conversationId: string; count: number }>(sql`
+          SELECT m.conversation_id AS "conversationId", count(*)::int AS count
+          ${unreadByRecipientSql(ids)}
+          GROUP BY m.conversation_id
+        `)
+      : await getDb().execute<{ conversationId: string; count: number }>(sql`
+          SELECT m.conversation_id AS "conversationId", count(*)::int AS count
+          FROM messages m
+          LEFT JOIN conversation_reads r
+            ON r.conversation_id = m.conversation_id AND r.user_id = ${actor.id}::uuid
+          WHERE m.conversation_id IN (${sql.join(ids.map((id) => sql`${id}::uuid`), sql`, `)})
+            AND m.deleted_at IS NULL
+            AND m.sender_id <> ${actor.id}::uuid
+            AND (r.last_read_message_id IS NULL OR m.id > r.last_read_message_id)
+          GROUP BY m.conversation_id
+        `);
     for (const row of unreadRows) unread.set(row.conversationId, asNumber(row.count));
   }
 
@@ -858,13 +864,12 @@ export async function listConversations(
       trainerSlug: trainer.slug,
       trainerHref,
     });
-    const involved = row.userId === actor.id || row.ownerUserId === actor.id || row.hostUserId === actor.id;
     return {
       id: row.id,
       status: row.status,
       activityAt: activity,
       preview: previews.get(row.id) ?? "",
-      unread: input.view === "staff" && !involved ? 0 : unread.get(row.id) ?? 0,
+      unread: unread.get(row.id) ?? 0,
       trainerSlug: trainer.slug,
       counterpart,
       aside: input.view === "staff" ? (counterpart.kind === "user" ? trainer.name : clientName) : undefined,
@@ -1181,10 +1186,43 @@ export async function unreadSummary(userId: string, roles: UserRole[] = []): Pro
   const own = asNumber(row?.own ?? 0);
   const inbox = asNumber(row?.inbox ?? 0);
   const owned = Array.isArray(row?.owned) ? row.owned.filter((slug) => typeof slug === "string") : [];
-  let staffThreads = 0;
+  let staffUnread = 0;
   if (isStaff(roles)) {
-    const [counted] = await getDb().select({ n: sql<number>`count(*)::int` }).from(conversations);
-    staffThreads = Number(counted?.n ?? 0);
+    const [counted] = await getDb().execute<{ n: number }>(sql`
+      SELECT count(*)::int AS n
+      ${unreadByRecipientSql()}
+    `);
+    staffUnread = asNumber(counted?.n ?? 0);
   }
-  return { own, inbox, total: own + inbox, staffThreads, ownedSlugs: owned };
+  return { own, inbox, total: own + inbox, staffUnread, ownedSlugs: owned };
+}
+
+/** Messages the client or the profile owner has not read. One message counts once. */
+function unreadByRecipientSql(conversationIds?: string[]) {
+  const ids = conversationIds && conversationIds.length > 0
+    ? sql`AND m.conversation_id IN (${sql.join(conversationIds.map((id) => sql`${id}::uuid`), sql`, `)})`
+    : sql``;
+  return sql`
+    FROM messages m
+    INNER JOIN conversations c ON c.id = m.conversation_id
+    LEFT JOIN trainer_profiles p ON p.id = c.trainer_profile_id
+    LEFT JOIN conversation_reads client_read
+      ON client_read.conversation_id = c.id AND client_read.user_id = c.user_id
+    LEFT JOIN conversation_reads owner_read
+      ON owner_read.conversation_id = c.id
+     AND owner_read.user_id = COALESCE(p.owner_user_id, c.host_user_id)
+    WHERE m.deleted_at IS NULL
+      ${ids}
+      AND (
+        (
+          m.sender_id <> c.user_id
+          AND (client_read.last_read_message_id IS NULL OR m.id > client_read.last_read_message_id)
+        )
+        OR (
+          COALESCE(p.owner_user_id, c.host_user_id) IS NOT NULL
+          AND m.sender_id <> COALESCE(p.owner_user_id, c.host_user_id)
+          AND (owner_read.last_read_message_id IS NULL OR m.id > owner_read.last_read_message_id)
+        )
+      )
+  `;
 }

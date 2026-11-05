@@ -98,7 +98,7 @@ function AdminLayout() {
     ?? "overview";
   const items = SECTIONS.map((item) => {
     if (item.id === "reviews") return { ...item, badge: counts.reviewsPending };
-    if (item.id === "messages") return { ...item, badge: messaging.staffThreads };
+    if (item.id === "messages") return { ...item, badge: messaging.staffUnread };
     return item;
   });
 

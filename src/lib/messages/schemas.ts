@@ -191,8 +191,8 @@ export type MessagingSummary = {
   total: number;
   own: number;
   inbox: number;
-  /** Every conversation on the site. Zero for anyone who is not staff. */
-  staffThreads: number;
+  /** Unread messages across every conversation, for the person who has not read them. Zero for anyone who is not staff. */
+  staffUnread: number;
   ownedSlugs: string[];
 };
 
@@ -200,7 +200,7 @@ export const EMPTY_MESSAGING: MessagingSummary = {
   total: 0,
   own: 0,
   inbox: 0,
-  staffThreads: 0,
+  staffUnread: 0,
   ownedSlugs: [],
 };
 
