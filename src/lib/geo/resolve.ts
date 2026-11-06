@@ -2,7 +2,7 @@ import { AuthError } from "@/lib/auth/errors";
 import { logCaught, writeLog } from "@/lib/log/logger";
 import { readGeocodeCache, writeGeocodeCache, type CachedGeocode } from "@/lib/geo/cache";
 import { probeAddressCountry, searchNominatim, type GeocodeHit } from "@/lib/geo/nominatim";
-import { normalizeQuery, sanitizeQuery } from "@/lib/geo/normalize";
+import { expandStreetQuery, normalizeQuery, sanitizeQuery } from "@/lib/geo/normalize";
 import {
   FOREIGN_ADDRESS_MESSAGE,
   MAP_TEMPORARILY_UNAVAILABLE,
@@ -59,7 +59,8 @@ async function lookup(query: string, bypassCache: boolean): Promise<
   | { kind: "foreign" }
   | { kind: "unavailable" }
 > {
-  const norm = normalizeQuery(query);
+  const expanded = expandStreetQuery(query);
+  const norm = normalizeQuery(expanded);
   if (!norm) return { kind: "not_found" };
   if (!bypassCache) {
     const cached = await readCache(norm);
@@ -68,11 +69,11 @@ async function lookup(query: string, bypassCache: boolean): Promise<
       return cached.hit ? { kind: "ok", hit: cached.hit } : { kind: "not_found" };
     }
   }
-  const remote = await searchNominatim(query, { limit: 1, countrycodes: "by", belarusOnly: true });
+  const remote = await searchNominatim(expanded, { limit: 1, countrycodes: "by", belarusOnly: true });
   if (remote.kind === "unavailable") return remote;
   const hit = remote.kind === "ok" ? remote.hits[0] : undefined;
   if (!hit || hit.countryCode !== "by") {
-    const probe = await probeAddressCountry(query);
+    const probe = await probeAddressCountry(expanded);
     if (probe === "foreign") {
       await writeCache(norm, null, "other");
       return { kind: "foreign" };
@@ -180,7 +181,8 @@ export async function suggestCachedOrRemote(
   query: string,
   allowRemote: () => boolean,
 ): Promise<SuggestLookup> {
-  const norm = normalizeQuery(query);
+  const expanded = expandStreetQuery(query);
+  const norm = normalizeQuery(expanded);
   if (!norm) return { kind: "ok", hits: [] };
   const cached = await readCache(norm);
   if (cached !== "miss") {
@@ -189,7 +191,7 @@ export async function suggestCachedOrRemote(
   }
   if (!allowRemote()) return { kind: "limited" };
 
-  const remote = await searchNominatim(query, { limit: 5, countrycodes: "by", belarusOnly: true });
+  const remote = await searchNominatim(expanded, { limit: 5, countrycodes: "by", belarusOnly: true });
   if (remote.kind === "unavailable") return { kind: "unavailable" };
   if (remote.kind !== "ok") return { kind: "ok", hits: [] };
   await writeCache(norm, remote.hits[0] ?? null);

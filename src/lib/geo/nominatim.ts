@@ -1,4 +1,4 @@
-import { normalizeQuery, sanitizeQuery } from "@/lib/geo/normalize";
+import { expandStreetQuery, normalizeQuery, sanitizeQuery } from "@/lib/geo/normalize";
 
 /**
  * Public Nominatim usage policy (https://operations.osmfoundation.org/policies/nominatim/):
@@ -89,7 +89,7 @@ export type NominatimSearchOptions = {
 
 /** Low-level search. Network and HTTP failures resolve to `unavailable` and do not throw. */
 export async function searchNominatim(query: string, options: NominatimSearchOptions = {}): Promise<GeocodeFetchResult> {
-  const sanitized = sanitizeQuery(query);
+  const sanitized = sanitizeQuery(expandStreetQuery(query));
   if (!sanitized || !normalizeQuery(sanitized)) return { kind: "not_found" };
   const limit = Math.min(5, Math.max(1, options.limit ?? 1));
   const belarusOnly = options.belarusOnly !== false;
