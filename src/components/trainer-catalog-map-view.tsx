@@ -20,6 +20,13 @@ import type { MapAreaFeature } from "@/lib/catalog/map-trainers";
 import { countRu } from "@/lib/ru-plural";
 
 const MINSK: [number, number] = [53.9006, 27.559];
+const DESKTOP_OPEN_ZOOM = 12;
+const PHONE_OPEN_ZOOM = 11;
+
+/** The phone map is shorter, so the same zoom leaves nearby trainers outside the frame. */
+function openingZoom() {
+  return window.matchMedia("(max-width: 959px)").matches ? PHONE_OPEN_ZOOM : DESKTOP_OPEN_ZOOM;
+}
 const PIN = `<svg viewBox="0 0 24 24" width="36" height="36" aria-hidden="true"><path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" fill="currentColor" stroke="#fff" stroke-width="1.2"/><circle cx="12" cy="9" r="2.4" fill="#fff"/></svg>`;
 
 export type CatalogMapUser = { lat: number; lng: number };
@@ -180,7 +187,7 @@ export function TrainerCatalogMapView({
       attributionControl: false,
       zoomControl: true,
       keyboard: false,
-    }).setView([start.lat, start.lng], 12);
+    }).setView([start.lat, start.lng], openingZoom());
     map.getContainer().tabIndex = -1;
     for (const link of map.getContainer().querySelectorAll<HTMLAnchorElement>(".leaflet-control a")) {
       link.addEventListener("click", (event) => event.preventDefault());
@@ -336,11 +343,12 @@ export function TrainerCatalogMapView({
     if (!map || !ready) return;
     const next = focusRef.current ?? MINSK_POINT;
     const center = map.getCenter();
+    const zoom = openingZoom();
     const same = Math.abs(center.lat - next.lat) < 0.0001
       && Math.abs(center.lng - next.lng) < 0.0001
-      && map.getZoom() === 12;
+      && map.getZoom() === zoom;
     if (same) return;
-    showPoint(map, next, 12, programmaticRef);
+    showPoint(map, next, zoom, programmaticRef);
   }, [ready, focusKey]);
 
   useEffect(() => {

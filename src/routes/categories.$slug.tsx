@@ -775,10 +775,26 @@ a.cat-pill { text-decoration: none; }
 .cat-cta p { margin: 0; color: rgba(255,255,255,0.85); font-size: 15px; max-width: 56ch; }
 .cat-cta a { display: inline-flex; align-items: center; min-height: 44px; padding: 12px 22px; border-radius: 999px; background: #fff; color: var(--primary-dark); font-weight: var(--fw-title); text-decoration: none; white-space: nowrap; }
 
+.cat-filter-dock { display: contents; }
+.cat-filter-bar { display: none; }
+.cat-filter-bar__row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.cat-filter-bar__applied { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; min-width: 0; }
+.cat-filter-bar__applied li { display: inline-flex; align-items: center; min-height: 44px; padding-left: 12px; border-radius: 999px; background: rgba(var(--primary-rgb), 0.1); color: var(--primary); }
+.cat-filter-bar__applied li span { font-size: 13px; font-weight: var(--fw-title); line-height: 1.2; }
+.cat-filter-bar__applied button { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: inherit; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.cat-filter-bar__applied button svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; }
+.cat-filter-bar__applied button:hover { color: var(--primary-dark); }
+.cat-filter-bar__toggle { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-size: 14px; font-weight: var(--fw-ui); cursor: pointer; }
+.cat-filter-bar__toggle:hover, .cat-filter-bar__toggle.is-open { border-color: var(--primary); color: var(--primary); }
+.cat-filter-bar__toggle svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.16s ease; }
+.cat-filter-bar__toggle.is-open svg { transform: rotate(180deg); }
+.cat-filter-bar__count { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--primary); color: #fff; font-size: 12px; font-weight: var(--fw-title); line-height: 22px; text-align: center; }
 @media (max-width: 960px) {
   .cat-hero .layout-container:has(.cat-hero__photo) { grid-template-columns: minmax(0, 1fr) 176px; }
   .cat-article { grid-template-columns: 1fr; }
-  .cat-filters { position: static; }
+  .cat-filter-bar { display: block; }
+  .cat-filters { display: none; position: static; }
+  .cat-filters.is-open { display: block; max-height: min(70vh, 720px); overflow: auto; border-color: rgba(var(--primary-rgb), 0.22); box-shadow: 0 16px 36px rgba(var(--primary-rgb), 0.16); }
   .cat-cta { grid-template-columns: 1fr; padding: var(--layout-block-gap) var(--layout-gap); }
 }
 @media (max-width: 767px) {
@@ -902,6 +918,23 @@ export function CategoryCatalogPage({
     };
   }, []);
 
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filterDockRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!filtersOpen) return;
+    const onPointer = (event: PointerEvent) => {
+      if (!filterDockRef.current?.contains(event.target as Node)) setFiltersOpen(false);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setFiltersOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [filtersOpen]);
   const [audience, setAudience] = useState<"self" | "child" | null>(null);
   const [formats, setFormats] = useState<Array<"individual" | "group">>([]);
   const [minExperience, setMinExperience] = useState<number | null>(null);
@@ -1086,6 +1119,70 @@ export function CategoryCatalogPage({
       ? selectedSports.filter((item) => item.id !== sport.id)
       : [...selectedSports, sport];
     commitSports(next);
+  };
+
+  const priceNarrowed = priceMin > priceBounds.min || priceMax < priceBounds.max;
+  const experiencePills = [
+    { years: 1, label: "от 1 года" },
+    { years: 3, label: "от 3 лет" },
+    { years: 5, label: "от 5 лет" },
+    { years: 10, label: "от 10 лет" },
+  ];
+  const typedCity = cityQuery.trim();
+  const appliedFilters = [
+    ...selectedSports
+      .filter((sport) => cityCatalog || sport.id !== categorySport?.id)
+      .map((sport) => ({ key: `sport:${sport.id}`, label: sport.label })),
+    ...selectedCities.map((city) => ({ key: `city:${city}`, label: city })),
+    ...(typedCity && !selectedCities.some((city) => city.toLowerCase().replaceAll("ё", "е") === typedCity.toLowerCase().replaceAll("ё", "е"))
+      ? [{ key: "city:query", label: typedCity }]
+      : []),
+    ...(audience === "self" ? [{ key: "audience", label: "для себя" }] : []),
+    ...(audience === "child" ? [{ key: "audience", label: "для ребёнка" }] : []),
+    ...formats.flatMap((id) => {
+      const label = TRAINER_FORMAT_OPTIONS.find((option) => option.id === id)?.label;
+      return label ? [{ key: `format:${id}`, label }] : [];
+    }),
+    ...(minExperience == null ? [] : experiencePills.flatMap((option) => (
+      option.years === minExperience ? [{ key: `exp:${option.years}`, label: option.label }] : []
+    ))),
+    ...(priceNarrowed ? [{ key: "price", label: `от ${priceMin} до ${priceMax} BYN` }] : []),
+  ];
+  const removeApplied = (key: string) => {
+    if (key.startsWith("sport:")) {
+      const sport = selectedSports.find((item) => item.id === key.slice("sport:".length));
+      if (sport) toggleSport(sport);
+      return;
+    }
+    if (key === "city:query") {
+      applyPlace(selectedCities, "");
+      return;
+    }
+    if (key.startsWith("city:")) {
+      const city = key.slice("city:".length);
+      applyPlace(selectedCities.filter((item) => item !== city), cityQuery);
+      return;
+    }
+    if (key === "audience") {
+      setAudience(null);
+      rememberFilters({ audience: null });
+      return;
+    }
+    if (key === "price") {
+      commitPrice(priceBounds.min, priceBounds.max);
+      return;
+    }
+    if (key.startsWith("exp:")) {
+      setMinExperience(null);
+      rememberFilters({ experience: null });
+      return;
+    }
+    if (key.startsWith("format:")) {
+      const id = key.slice("format:".length);
+      const next = formats.filter((item) => item !== id);
+      setFormats(next);
+      rememberFilters({ formats: next });
+    }
   };
 
   const reset = () => {
@@ -1279,7 +1376,38 @@ export function CategoryCatalogPage({
         </section>
 
         <div className="layout-with-sidebar cat-body">
-          <aside className="cat-filters">
+          <div className="cat-filter-dock" ref={filterDockRef}>
+          <div className="cat-filter-bar">
+            <div className="cat-filter-bar__row">
+              <button
+                type="button"
+                className={`cat-filter-bar__toggle${filtersOpen ? " is-open" : ""}`}
+                aria-expanded={filtersOpen}
+                onClick={() => setFiltersOpen((open) => !open)}
+              >
+                Фильтры
+                {appliedFilters.length > 0 ? <span className="cat-filter-bar__count">{appliedFilters.length}</span> : null}
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              {appliedFilters.length > 0 ? (
+                <ul className="cat-filter-bar__applied" aria-label="Отмеченные фильтры">
+                  {appliedFilters.map((item) => (
+                    <li key={item.key}>
+                      <span>{item.label}</span>
+                      <button type="button" aria-label={`Убрать ${item.label}`} onClick={() => removeApplied(item.key)}>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M6 6l12 12M18 6L6 18" />
+                        </svg>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          </div>
+          <aside className={`cat-filters${filtersOpen ? " is-open" : ""}`}>
             <div className="cat-filter">
               <h2 className="cat-filter__title">Ищу тренера</h2>
               <div className="cat-filter__opts">
@@ -1610,12 +1738,7 @@ export function CategoryCatalogPage({
             <div className="cat-filter">
               <h2 className="cat-filter__title">Опыт</h2>
               <div className="cat-filter__opts">
-                {[
-                  { years: 1, label: "от 1 года" },
-                  { years: 3, label: "от 3 лет" },
-                  { years: 5, label: "от 5 лет" },
-                  { years: 10, label: "от 10 лет" },
-                ].map((option) => (
+                {experiencePills.map((option) => (
                   <button
                     key={option.years}
                     type="button"
@@ -1636,6 +1759,7 @@ export function CategoryCatalogPage({
               Сбросить
             </button>
           </aside>
+          </div>
 
           <div>
             <div className="cat-results__head">

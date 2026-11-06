@@ -765,11 +765,6 @@ export function CatalogMapScreen({
                       <h3>Не удалось загрузить тренеров</h3>
                       <p>Проверьте сеть и подвиньте карту ещё раз.</p>
                     </div>
-                  ) : matched != null && matched > 0 ? (
-                    <div className="cat-empty">
-                      <h3>{emptyTitle}</h3>
-                      <p>Отдалите карту или сдвиньте её — тренеры за краем кадра появятся здесь.</p>
-                    </div>
                   ) : (
                     <CatalogEmpty title={emptyTitle} />
                   )
