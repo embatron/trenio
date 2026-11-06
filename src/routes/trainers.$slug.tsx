@@ -34,7 +34,7 @@ import { TrainerContactIcons } from "@/components/messages/trainer-contact-icons
 import { getPublicTrainerContactsFn, type PublicTrainerContacts } from "@/lib/catalog/trainer-contacts";
 import { recordTrainerProfileViewFn } from "@/lib/catalog/trainer-views";
 import { ReviewEditor } from "@/components/review-editor";
-import { ReviewHtml } from "@/components/review-html";
+import { ReviewExcerpt, ReviewHtml } from "@/components/review-html";
 import { reviewPlainText } from "@/lib/catalog/review-html";
 import { CatalogTrainerCard, type CatalogTrainerCardData } from "@/components/catalog-trainer-card";
 import { TrainerName } from "@/components/trainer-name";
@@ -365,8 +365,14 @@ const CSS = `
 .review-item__stars { display: inline-flex; align-items: center; justify-content: center; gap: 2px; height: 40px; flex: 0 0 auto; }
 .review-item__stars svg { width: 22px; height: 22px; display: block; fill: #ffb400; }
 .review-item__stars svg.is-empty { fill: var(--line); }
-.review-item__text { position: relative; margin: 0; padding: 2px 0 0 28px; color: var(--text); font-size: 16px; line-height: 1.6; font-weight: 500; }
+.review-item__text { position: relative; margin: 0; padding: 2px 0 0 28px; color: var(--text); font-size: 15px; line-height: 1.6; font-weight: 500; }
 .review-item__text::before { content: "«"; position: absolute; left: 0; top: -8px; color: var(--primary); font-size: 34px; font-weight: var(--fw-heading); line-height: 1; }
+.review-excerpt { display: grid; justify-items: start; min-width: 0; }
+.review-excerpt__more { display: inline-flex; align-items: center; min-height: 44px; margin-left: 28px; padding: 0; border: 0; background: transparent; color: var(--primary-dark); font: inherit; font-size: 14px; font-weight: var(--fw-title); cursor: pointer; }
+.review-excerpt__more:hover { text-decoration: underline; }
+.review-item__text.review-html p { margin: 0; }
+.review-item__text.review-html p + p { margin-top: 0.35em; }
+.review-item__text.review-html :is(ul, ol) { margin: 0.2em 0 0; }
 .review-reply { display: grid; gap: 4px; padding: 12px; border-radius: var(--radius-control); background: var(--neutral-bg); }
 .review-reply__who { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; font-weight: var(--fw-title); }
 .review-reply p { margin: 0; color: var(--text); font-size: 14px; line-height: 1.55; }
@@ -1163,7 +1169,7 @@ function TrainerPage() {
                         </span>
                         <span className="review-item__date">{r.date}</span>
                       </div>
-                      <ReviewHtml className="review-item__text" html={r.text} />
+                      <ReviewExcerpt className="review-item__text" html={r.text} />
                       {r.messages.map((message, index) => (
                         <div key={`${r.id}-${index}`} className="review-reply">
                           <span className="review-reply__who">

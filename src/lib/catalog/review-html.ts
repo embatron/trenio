@@ -38,6 +38,38 @@ export function editorHtml(parts: string[]) {
 
 const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 
+/** Public review cards show this many characters, then the rest opens below. */
+export const REVIEW_PREVIEW_CHARS = 200;
+
+/** Drop blank paragraphs and repeated spaces. Paragraph breaks stay. */
+export function compactReviewHtml(raw: string): string {
+  return sanitizeReviewHtml(raw)
+    .replace(/&nbsp;/gi, " ")
+    .replace(/<p>\s*(?:<br\s*\/?>\s*)*<\/p>/gi, "")
+    .replace(/(?:<br\s*\/?>\s*){2,}/gi, "<br>")
+    .replace(/[ \t]{2,}/g, " ")
+    .replace(/\s+(<\/(?:p|li)>)/gi, "$1")
+    .replace(/(<(?:p|li)>)\s+/gi, "$1")
+    .trim();
+}
+
+/** One line of visible review text, after blank lines and extra spaces are gone. */
+export function reviewVisibleText(raw: string): string {
+  return reviewPlainText(compactReviewHtml(raw)).replace(/\s+/g, " ").trim();
+}
+
+/** Cut on a word near the limit and mark the rest with an ellipsis. */
+export function reviewExcerpt(raw: string, limit = REVIEW_PREVIEW_CHARS): string {
+  const plain = reviewVisibleText(raw);
+  const chars = [...graphemes.segment(plain)];
+  if (chars.length <= limit) return plain;
+  const head = chars.slice(0, limit).map((part) => part.segment).join("");
+  const windowStart = Math.max(0, limit - 40);
+  const space = head.slice(windowStart).lastIndexOf(" ");
+  const cut = space > 0 ? windowStart + space : limit;
+  return chars.slice(0, cut).map((part) => part.segment).join("").trimEnd() + "…";
+}
+
 /** Visible characters, after markup is removed. One emoji is one character. */
 export function reviewTextLength(html: string): number {
   return [...graphemes.segment(reviewPlainText(html))].length;
