@@ -5,6 +5,7 @@ import { reviewTextLength } from "@/lib/catalog/review-html";
 import {
   DEFAULT_INSTAGRAM_MESSAGE,
   DEFAULT_USER_WELCOME,
+  outreachHello,
   instagramGaps,
   outreachTemplate,
   parseUserWelcome,
@@ -45,6 +46,9 @@ test("a changed instagram text is what gets copied, with the door link", () => {
 });
 
 test("the first outreach message does not carry the short link", () => {
+  assert.match(DEFAULT_INSTAGRAM_MESSAGE, /^\{hello\}/);
+  assert.equal(outreachHello("Анна"), "Анна, добрый день!");
+  assert.equal(outreachHello("  "), "Добрый день!");
   assert.match(DEFAULT_INSTAGRAM_MESSAGE, /https:\/\/trenio\.by/);
   assert.equal(DEFAULT_INSTAGRAM_MESSAGE.includes("{doorUrl}"), false);
   assert.equal(outreachTemplate("{hello}\n{doorUrl}"), DEFAULT_INSTAGRAM_MESSAGE);

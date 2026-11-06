@@ -1,10 +1,11 @@
 import { randomBytes } from "node:crypto";
 
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { trainerProfiles } from "@/db/schema";
 import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
+import { instagramProfileSlug } from "@/lib/catalog/trainer-slugs";
 import { SITE_ORIGIN } from "@/lib/seo/site";
 import { writeLog } from "@/lib/log/logger";
 import { relayDoorMark } from "@/lib/sync/relay";
@@ -83,6 +84,48 @@ export type OutreachCandidate = {
   handle: string;
   name: string;
 };
+
+export type OutreachScopeRow = OutreachCandidate & {
+  send: boolean;
+  reason: "unsent" | "sent" | "not-draft" | "missing";
+};
+
+function outreachHandle(value: string) {
+  const trimmed = value.trim().replace(/^@/, "");
+  const fromUrl = trimmed.match(/instagram\.com\/([^/?#]+)/i)?.[1] ?? trimmed;
+  return instagramProfileSlug(fromUrl.replace(/\/+$/, ""));
+}
+
+/** The handles written with the command, in that order. Anyone else stays out. */
+export async function resolveOutreachScope(rawHandles: string[]): Promise<OutreachScopeRow[]> {
+  await ensureTrainerDoorSchema();
+  const handles = rawHandles.map(outreachHandle).filter(Boolean);
+  if (!handles.length) return [];
+  const rows = await getDb()
+    .select({
+      slug: trainerProfiles.slug,
+      handle: trainerProfiles.instagramHandle,
+      status: trainerProfiles.status,
+      firstName: trainerProfiles.firstName,
+      fullName: trainerProfiles.fullName,
+      outreachSentAt: trainerProfiles.outreachSentAt,
+    })
+    .from(trainerProfiles)
+    .where(inArray(trainerProfiles.instagramHandle, [...new Set(handles)]));
+  const byHandle = new Map(rows.map((row) => [row.handle, row]));
+  return handles.map((handle) => {
+    const row = byHandle.get(handle);
+    if (!row) return { slug: "", handle, name: handle, send: false, reason: "missing" as const };
+    const name = row.fullName.trim() || row.firstName.trim() || row.slug;
+    if (row.status !== "draft") {
+      return { slug: row.slug, handle, name, send: false, reason: "not-draft" as const };
+    }
+    if (row.outreachSentAt) {
+      return { slug: row.slug, handle, name, send: false, reason: "sent" as const };
+    }
+    return { slug: row.slug, handle, name, send: true, reason: "unsent" as const };
+  });
+}
 
 /** Drafts that still need the first Instagram message. */
 export async function listUnsentOutreach(): Promise<OutreachCandidate[]> {

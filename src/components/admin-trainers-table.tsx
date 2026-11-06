@@ -17,6 +17,7 @@ import { BELARUS_CITIES } from "@/lib/catalog/city-taxonomy";
 import { TRAINER_AUDIENCE_OPTIONS, TRAINER_FORMAT_OPTIONS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { getSportTaxonomyChild, getTopLevelSportCategory, listPublishedSportCategories, listSecondLevelSports } from "@/lib/catalog/sport-taxonomy";
 import { placeLine } from "@/lib/geo/schemas";
+import { outreachHello } from "@/lib/site-texts/defaults";
 
 const dateFormat = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short", year: "numeric" });
 const addedFormat = new Intl.DateTimeFormat("en-GB", {
@@ -248,17 +249,21 @@ function InviteCopy({
 }
 
 function fillHello(template: string, firstName: string) {
-  const name = firstName.trim();
-  return template.replaceAll("{hello}", name ? `${name}, привет!` : "Привет!");
+  return template.replaceAll("{hello}", outreachHello(firstName));
 }
 
-function TextCopy({ template, firstName }: { template: string; firstName: string }) {
+function TextCopy({ template, firstName, sent }: { template: string; firstName: string; sent: boolean }) {
   const [copied, setCopied] = useState(false);
-  const label = copied ? "Текст скопирован" : "Скопировать текст первого сообщения";
+  const label = sent
+    ? "Приветствие уже отправлено"
+    : copied
+      ? "Текст скопирован"
+      : "Скопировать текст первого сообщения";
   return (
     <button
       type="button"
-      className="cabinet-icon-btn"
+      className={sent ? "cabinet-icon-btn is-inactive" : "cabinet-icon-btn"}
+      disabled={sent}
       aria-label={label}
       title={label}
       onClick={() => {
@@ -566,7 +571,7 @@ export function AdminTrainersTable({ trainers, outreachText }: { trainers: Admin
                   </td>
                   <td className="is-actions">
                     <div className="cabinet-row-actions">
-                      <TextCopy template={outreachText} firstName={trainer.firstName} />
+                      <TextCopy template={outreachText} firstName={trainer.firstName} sent={Boolean(trainer.outreachSentAt)} />
                       <InviteCopy
                         slug={trainer.slug}
                         ready={Boolean(trainer.id)}

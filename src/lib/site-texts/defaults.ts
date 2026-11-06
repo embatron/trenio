@@ -29,7 +29,7 @@ export const DEFAULT_USER_WELCOME = [
 
 /** First Instagram direct message. The short link is copied separately and sent later. */
 export const DEFAULT_INSTAGRAM_MESSAGE = [
-  "Добрый день!)",
+  "{hello}",
   "",
   "Мы развиваем https://trenio.by – единую базу тренеров Беларуси, которая помогает людям находить подходящих специалистов в разных спортивных направлениях.",
   "Нам очень понравился ваш профиль, поэтому хотели бы пригласить вас присоединиться к нашему каталогу! Будем рады, если вы станете его частью.",
@@ -58,6 +58,12 @@ function escapeText(value: string) {
 export function welcomeHello(firstName: string) {
   const name = firstName.trim();
   return name ? `${name}, привет!` : "Привет!";
+}
+
+/** Opening line of the first Instagram message. */
+export function outreachHello(firstName: string) {
+  const name = firstName.trim();
+  return name ? `${name}, добрый день!` : "Добрый день!";
 }
 
 /** The in-app letter a new trainer receives. `{hello}` and `{telegram}` come from the saved text. */

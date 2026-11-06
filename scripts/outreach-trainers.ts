@@ -1,7 +1,7 @@
 import "dotenv/config";
 
 import { closeDb } from "../src/db";
-import { listUnsentOutreach, markOutreachSent } from "../src/lib/catalog/trainer-outreach";
+import { listUnsentOutreach, markOutreachSent, resolveOutreachScope } from "../src/lib/catalog/trainer-outreach";
 
 const command = process.argv[2] || "list";
 const handle = process.argv[3] || "";
@@ -16,7 +16,8 @@ function accountReady() {
 async function main() {
   if (!accountReady()) return;
   if (command === "list") {
-    const rows = await listUnsentOutreach();
+    const requested = process.argv.slice(3);
+    const rows = requested.length ? await resolveOutreachScope(requested) : await listUnsentOutreach();
     console.log(JSON.stringify(rows, null, 2));
     return;
   }
