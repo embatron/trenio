@@ -36,7 +36,7 @@ async function measuredPhoto(urlPath: string): Promise<FaceCandidate | null> {
 
 /** Every trainer page uses one face card. The file is chosen from that trainer's photos. */
 export async function trainerShareJpeg(slug: string) {
-  if (!trainerSitemapPath(slug)) return null;
+  if (typeof slug !== "string" || !trainerSitemapPath(slug)) return null;
   try {
     const [row] = await getDb()
       .select({

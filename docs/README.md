@@ -120,7 +120,7 @@ AGENTS.md             # Entry point для агентов
 | `/account/reviews`      | `account.reviews.tsx`      | Свои отзывы и статус                                          |
 | `/account/messages`     | `account.messages.tsx`     | Сообщения клиента тренерам. Роли trainer и club переходят в `/me/messages` |
 | `/messages/files/$id`   | `messages.files.$id.ts`    | Файл из переписки. Только участник, без страницы |
-| `/og/trainers/$slug.jpg` | `og.trainers.$slug[.]jpg.ts` | Широкое фото лица для превью в мессенджерах. Не страница |
+| `/og/trainers/{slug}.jpg` | `og.trainers.{$slug}[.]jpg.ts` | Широкое фото лица для превью в мессенджерах. Не страница |
 | `/account/messages/$conversationId` | `account.messages.$conversationId.tsx` | Тред. На широком экране список слева, на узком — сверху |
 | `/account/bookings`     | `account.bookings.tsx`     | Записи на тренировки, раздел в разработке                     |
 | `/account/favorites`    | `account.favorites.tsx`    | Избранные тренеры карточками. Сердечко в шапке ведёт сюда     |

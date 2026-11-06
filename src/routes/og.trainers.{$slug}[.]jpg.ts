@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/og/trainers/$slug.jpg")({
+export const Route = createFileRoute("/og/trainers/{$slug}.jpg")({
   server: {
     handlers: {
       GET: async ({ params }) => {
