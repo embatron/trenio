@@ -77,6 +77,7 @@ import { Route as TrainersPreviewTokenRouteImport } from './routes/trainers.prev
 import { Route as TrainersEditTokenRouteImport } from './routes/trainers.edit.$token'
 import { Route as TrainersClaimTokenRouteImport } from './routes/trainers.claim.$token'
 import { Route as TrainerAdminMessagesConversationIdRouteImport } from './routes/trainer-admin.messages.$conversationId'
+import { Route as OgTrainersSlugDotjpgRouteImport } from './routes/og.trainers.$slug[.]jpg'
 import { Route as MessagesFilesIdRouteImport } from './routes/messages.files.$id'
 import { Route as MeMessagesConversationIdRouteImport } from './routes/me.messages.$conversationId'
 import { Route as HiCodeViewRouteImport } from './routes/hi.$code.view'
@@ -434,6 +435,11 @@ const TrainerAdminMessagesConversationIdRoute =
     path: '/$conversationId',
     getParentRoute: () => TrainerAdminMessagesRoute,
   } as any)
+const OgTrainersSlugDotjpgRoute = OgTrainersSlugDotjpgRouteImport.update({
+  id: '/og/trainers/$slug.jpg',
+  path: '/og/trainers/$slug.jpg',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MessagesFilesIdRoute = MessagesFilesIdRouteImport.update({
   id: '/messages/files/$id',
   path: '/messages/files/$id',
@@ -589,6 +595,7 @@ export interface FileRoutesByFullPath {
   '/hi/$code/view': typeof HiCodeViewRoute
   '/me/messages/$conversationId': typeof MeMessagesConversationIdRoute
   '/messages/files/$id': typeof MessagesFilesIdRoute
+  '/og/trainers/$slug.jpg': typeof OgTrainersSlugDotjpgRoute
   '/trainer-admin/messages/$conversationId': typeof TrainerAdminMessagesConversationIdRoute
   '/trainers/claim/$token': typeof TrainersClaimTokenRoute
   '/trainers/edit/$token': typeof TrainersEditTokenRoute
@@ -666,6 +673,7 @@ export interface FileRoutesByTo {
   '/hi/$code/view': typeof HiCodeViewRoute
   '/me/messages/$conversationId': typeof MeMessagesConversationIdRoute
   '/messages/files/$id': typeof MessagesFilesIdRoute
+  '/og/trainers/$slug.jpg': typeof OgTrainersSlugDotjpgRoute
   '/trainer-admin/messages/$conversationId': typeof TrainerAdminMessagesConversationIdRoute
   '/trainers/claim/$token': typeof TrainersClaimTokenRoute
   '/trainers/edit/$token': typeof TrainersEditTokenRoute
@@ -752,6 +760,7 @@ export interface FileRoutesById {
   '/hi/$code/view': typeof HiCodeViewRoute
   '/me/messages/$conversationId': typeof MeMessagesConversationIdRoute
   '/messages/files/$id': typeof MessagesFilesIdRoute
+  '/og/trainers/$slug.jpg': typeof OgTrainersSlugDotjpgRoute
   '/trainer-admin/messages/$conversationId': typeof TrainerAdminMessagesConversationIdRoute
   '/trainers/claim/$token': typeof TrainersClaimTokenRoute
   '/trainers/edit/$token': typeof TrainersEditTokenRoute
@@ -839,6 +848,7 @@ export interface FileRouteTypes {
     | '/hi/$code/view'
     | '/me/messages/$conversationId'
     | '/messages/files/$id'
+    | '/og/trainers/$slug.jpg'
     | '/trainer-admin/messages/$conversationId'
     | '/trainers/claim/$token'
     | '/trainers/edit/$token'
@@ -916,6 +926,7 @@ export interface FileRouteTypes {
     | '/hi/$code/view'
     | '/me/messages/$conversationId'
     | '/messages/files/$id'
+    | '/og/trainers/$slug.jpg'
     | '/trainer-admin/messages/$conversationId'
     | '/trainers/claim/$token'
     | '/trainers/edit/$token'
@@ -1001,6 +1012,7 @@ export interface FileRouteTypes {
     | '/hi/$code/view'
     | '/me/messages/$conversationId'
     | '/messages/files/$id'
+    | '/og/trainers/$slug.jpg'
     | '/trainer-admin/messages/$conversationId'
     | '/trainers/claim/$token'
     | '/trainers/edit/$token'
@@ -1056,6 +1068,7 @@ export interface RootRouteChildren {
   CategoriesParentSlugChildSlugRoute: typeof CategoriesParentSlugChildSlugRoute
   CategoryParentSlugChildSlugRoute: typeof CategoryParentSlugChildSlugRoute
   MessagesFilesIdRoute: typeof MessagesFilesIdRoute
+  OgTrainersSlugDotjpgRoute: typeof OgTrainersSlugDotjpgRoute
   TrainersClaimTokenRoute: typeof TrainersClaimTokenRoute
   TrainersEditTokenRoute: typeof TrainersEditTokenRoute
   TrainersPreviewTokenRoute: typeof TrainersPreviewTokenRoute
@@ -1539,6 +1552,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrainerAdminMessagesConversationIdRouteImport
       parentRoute: typeof TrainerAdminMessagesRoute
     }
+    '/og/trainers/$slug.jpg': {
+      id: '/og/trainers/$slug.jpg'
+      path: '/og/trainers/$slug.jpg'
+      fullPath: '/og/trainers/$slug.jpg'
+      preLoaderRoute: typeof OgTrainersSlugDotjpgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/messages/files/$id': {
       id: '/messages/files/$id'
       path: '/messages/files/$id'
@@ -1889,6 +1909,7 @@ const rootRouteChildren: RootRouteChildren = {
   CategoriesParentSlugChildSlugRoute: CategoriesParentSlugChildSlugRoute,
   CategoryParentSlugChildSlugRoute: CategoryParentSlugChildSlugRoute,
   MessagesFilesIdRoute: MessagesFilesIdRoute,
+  OgTrainersSlugDotjpgRoute: OgTrainersSlugDotjpgRoute,
   TrainersClaimTokenRoute: TrainersClaimTokenRoute,
   TrainersEditTokenRoute: TrainersEditTokenRoute,
   TrainersPreviewTokenRoute: TrainersPreviewTokenRoute,

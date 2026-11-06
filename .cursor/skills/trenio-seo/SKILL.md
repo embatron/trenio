@@ -62,7 +62,7 @@ Leave:
 
 These are the live gaps. Repeat one only when the task touches it.
 
-- The default share image is `/og.png`: the white wordmark on `#111827`, 1200×630. Pages with their own photo pass `image` and skip the width and height.
+- The default share image is `/og.png`: the white wordmark on `#111827`, 1200×630. Every trainer page with a photo uses `/og/trainers/{slug}.jpg` for Open Graph, the Person image, and the sitemap. The file is chosen from that trainer's photos and is a 1200×630 baseline JPEG. Other pages with their own photo pass `image` and skip the width and height.
 - There is no blog. Do not add `/blog` until an article is actually published.
 - `/clubs` is `noindex` while `CLUBS_LIST` is empty. Index it when a published club exists, and use the `SportsActivityLocation` graph already on `/clubs/$slug`.
 - City and category pages do not emit `ItemList` of trainers. Add it only from the trainers the page actually renders.

@@ -218,7 +218,7 @@ export const Route = createFileRoute("/trainers/$slug")({
       city: t.city,
       about: [t.about[0] ?? "", t.sessions],
       rating: t.rating,
-      photo: loaderData?.photos?.[0] || t.photo,
+      photo: [...(loaderData?.photos ?? []), t.photo].map((item) => item.trim()).find(Boolean) ?? "",
       instagram: t.instagram,
       telegram: loaderData?.contacts?.telegram,
       places: t.places,

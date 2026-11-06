@@ -3,6 +3,7 @@ import { trainerByPhrase } from "@/lib/catalog/sport-taxonomy";
 import { seoHead } from "@/lib/seo/head";
 import { absoluteUrl, SITE_NAME, SITE_ORIGIN, siteTitle } from "@/lib/seo/site";
 import { breadcrumbList } from "@/lib/seo/schema";
+import { SHARE_CARD_HEIGHT, SHARE_CARD_WIDTH } from "@/lib/images/share-size";
 import { bynAmount, cityIn, clipMeta, plainText } from "@/lib/seo/text";
 
 export type TrainerSeoSource = {
@@ -51,6 +52,13 @@ function profileImage(photo: string) {
   return absoluteUrl(value);
 }
 
+/** Wide face card for messengers. The search title stays on the document. */
+export function trainerShareImagePath(slug: string, updatedAt?: string) {
+  const stamp = isoStamp(updatedAt)?.replace(/[-:]/g, "").replace(/\.\d+/, "") ?? "";
+  const path = `/og/trainers/${slug}.jpg`;
+  return stamp ? `${path}?v=${stamp}` : path;
+}
+
 /** The title phrase already names the person. Then as much of the biography as fits. */
 function trainerMetaDescription(phrase: string, detail: string) {
   const lead = `${phrase}.`;
@@ -89,14 +97,19 @@ export function trainerSeoHead(trainer: TrainerSeoSource) {
   const url = absoluteUrl(path);
   const about = trainer.about.map((item) => plainText(item)).find(Boolean) ?? "";
   const price = trainer.priceLines.map(bynAmount).find((amount) => amount != null) ?? null;
-  const detail = about || (price != null ? `Одно занятие — ${price} BYN.` : "Цена, формат и контакты.");
+  const detail =
+    about || (price != null ? `Одно занятие — ${price} BYN.` : "Цена, формат и контакты.");
   const description = trainerMetaDescription(phrase, detail);
-  const image = profileImage(trainer.photo);
+  const portrait = profileImage(trainer.photo);
+  const image = portrait
+    ? profileImage(trainerShareImagePath(trainer.slug, trainer.updatedAt))
+    : undefined;
   const createdAt = isoStamp(trainer.createdAt);
   const updatedAt = isoStamp(trainer.updatedAt);
-  const alternateName = trainer.slug.trim().toLowerCase() !== trainer.name.trim().toLowerCase()
-    ? trainer.slug.trim()
-    : "";
+  const alternateName =
+    trainer.slug.trim().toLowerCase() !== trainer.name.trim().toLowerCase()
+      ? trainer.slug.trim()
+      : "";
   const rating = Number(trainer.rating.value);
   const cityPage = cityCatalogBySlug(trainer.city.slug);
   const crumbs = [
@@ -132,6 +145,11 @@ export function trainerSeoHead(trainer: TrainerSeoSource) {
     type: "profile",
     image: image ?? null,
     imageAlt: image ? phrase : undefined,
+    imageWidth: image ? SHARE_CARD_WIDTH : undefined,
+    imageHeight: image ? SHARE_CARD_HEIGHT : undefined,
+    imageType: image ? "image/jpeg" : undefined,
+    shareTitle: phrase,
+    shareDescription: detail,
     index: trainer.index !== false,
     jsonLd: [
       breadcrumbList(crumbs),
@@ -145,7 +163,18 @@ export function trainerSeoHead(trainer: TrainerSeoSource) {
         isPartOf: { "@type": "WebSite", name: SITE_NAME, url: SITE_ORIGIN },
         ...(createdAt ? { dateCreated: createdAt } : {}),
         ...(updatedAt ? { dateModified: updatedAt } : {}),
-        ...(image ? { primaryImageOfPage: image } : {}),
+        ...(image
+          ? {
+              primaryImageOfPage: {
+                "@type": "ImageObject",
+                url: image,
+                contentUrl: image,
+                width: SHARE_CARD_WIDTH,
+                height: SHARE_CARD_HEIGHT,
+                caption: phrase,
+              },
+            }
+          : {}),
         mainEntity: {
           "@type": "Person",
           "@id": `${url}#person`,
@@ -155,7 +184,18 @@ export function trainerSeoHead(trainer: TrainerSeoSource) {
           mainEntityOfPage: url,
           jobTitle: phrase,
           description,
-          ...(image ? { image } : {}),
+          ...(image
+            ? {
+                image: {
+                  "@type": "ImageObject",
+                  url: image,
+                  contentUrl: image,
+                  width: SHARE_CARD_WIDTH,
+                  height: SHARE_CARD_HEIGHT,
+                  caption: phrase,
+                },
+              }
+            : {}),
           ...(knowsAbout.length ? { knowsAbout } : {}),
           ...(trainer.city.label.trim()
             ? {

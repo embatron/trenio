@@ -3,11 +3,12 @@ import { eq } from "drizzle-orm";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { trainerSportDatives } from "@/lib/catalog/sport-taxonomy";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
+import { cardFace } from "@/lib/catalog/account-face";
 import { publicTrainerCityLabel } from "@/lib/catalog/trainer-city";
 import { getDb } from "@/db";
 import { trainerProfiles } from "@/db/schema/trainer-profiles";
 import { logCaught } from "@/lib/log/logger";
-import { trainerDocumentPhrase } from "@/lib/seo/trainer";
+import { trainerDocumentPhrase, trainerShareImagePath } from "@/lib/seo/trainer";
 import { publicAssetUrl, sitemapDay, trainerSitemapPath, type SitemapTrainer } from "@/lib/seo/sitemap";
 
 /** Published `/trainers/{slug}` rows. A database failure leaves the rest of the sitemap intact. */
@@ -47,7 +48,9 @@ export async function listPublishedTrainerSitemapEntries(): Promise<SitemapTrain
         slug: cityCatalogSlug(label) || row.citySlug || "",
         label,
       }, name);
-      const image = publicAssetUrl(row.photos?.[0] || row.avatarPath || "");
+      const image = cardFace(row.avatarPath, row.photos)
+        ? publicAssetUrl(trainerShareImagePath(row.slug, row.updatedAt.toISOString()))
+        : null;
       const lastmod = sitemapDay(row.updatedAt);
       entries.push({
         path,

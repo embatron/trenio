@@ -181,6 +181,22 @@ test("a trainer document names the person, the sport, and the city", () => {
     alt && "content" in alt ? alt.content : "",
     "Тренер по кикбоксингу Владимир Антипенко в Минске",
   );
+  const ogTitle = head.meta.find((item) => "property" in item && item.property === "og:title");
+  assert.equal(
+    ogTitle && "content" in ogTitle ? ogTitle.content : "",
+    "Тренер по кикбоксингу Владимир Антипенко в Минске",
+  );
+  const ogDescription = head.meta.find((item) => "property" in item && item.property === "og:description");
+  assert.equal(ogDescription && "content" in ogDescription ? ogDescription.content : "", "Зал в Минске.");
+  const ogImage = head.meta.find((item) => "property" in item && item.property === "og:image");
+  assert.equal(
+    ogImage && "content" in ogImage ? ogImage.content : "",
+    "https://trenio.by/og/trainers/antipenko.training.jpg",
+  );
+  const width = head.meta.find((item) => "property" in item && item.property === "og:image:width");
+  const height = head.meta.find((item) => "property" in item && item.property === "og:image:height");
+  assert.equal(width && "content" in width ? width.content : "", "1200");
+  assert.equal(height && "content" in height ? height.content : "", "630");
   const graph = head.scripts?.map((script) => JSON.parse(script.children) as {
     "@type"?: string;
     name?: string;
@@ -213,6 +229,11 @@ test("a trainer document names the person, the sport, and the city", () => {
   const longText = longDescription && "content" in longDescription ? longDescription.content : "";
   assert.match(longText, /^Тренер по кикбоксингу, боксу и общефизической подготовке Владимир Антипенко в Минске\./);
   assert.match(longText, /Кикбоксинг и бокс/);
+  const longOg = long.meta.find((item) => "property" in item && item.property === "og:description");
+  const longShare = longOg && "content" in longOg ? longOg.content : "";
+  assert.match(longShare, /^Владимир Минск/);
+  assert.equal(longShare.startsWith("Тренер по"), false);
+  assert.ok(longShare.length <= 170);
   assert.equal(/\p{Emoji_Modifier}/u.test(longText), false);
   assert.ok(longText.length <= 170);
 });
@@ -294,13 +315,24 @@ test("each indexable page kind emits its schema types", () => {
       "@type"?: string;
       dateCreated?: string;
       dateModified?: string;
-      mainEntity?: { alternateName?: string; image?: string };
+      primaryImageOfPage?: { url?: string; width?: number; height?: number };
+      mainEntity?: { alternateName?: string; image?: { url?: string; width?: number; caption?: string } };
     })
     .find((node) => node["@type"] === "ProfilePage");
   assert.equal(profile?.dateCreated, "2026-10-01T08:00:00.000Z");
   assert.equal(profile?.dateModified, "2026-11-04T12:00:00.000Z");
   assert.equal(profile?.mainEntity?.alternateName, "antipenko.training");
-  assert.equal(profile?.mainEntity?.image, "https://trenio.by/trainers/instagram/antipenko.training.jpg");
+  assert.equal(profile?.mainEntity?.image?.url, "https://trenio.by/og/trainers/antipenko.training.jpg?v=20261104T120000Z");
+  assert.equal(profile?.mainEntity?.image?.width, 1200);
+  assert.equal(profile?.mainEntity?.image?.caption, "Тренер по кикбоксингу Владимир Антипенко в Минске");
+  assert.equal(profile?.primaryImageOfPage?.url, profile?.mainEntity?.image?.url);
+  assert.equal(profile?.primaryImageOfPage?.width, 1200);
+  assert.equal(profile?.primaryImageOfPage?.height, 630);
+  const datedImage = trainer.meta.find((item) => "property" in item && item.property === "og:image");
+  assert.equal(
+    datedImage && "content" in datedImage ? datedImage.content : "",
+    "https://trenio.by/og/trainers/antipenko.training.jpg?v=20261104T120000Z",
+  );
 
   const hidden = trainerSeoHead({
     slug: "hidden",
