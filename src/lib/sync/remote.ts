@@ -1,3 +1,6 @@
+import type { TrainerPatch } from "./apply-card";
+import type { TrainerSyncHead } from "./trainers";
+
 export type MarkPush = {
   handle: string;
   outreachSentAt?: string | null;
@@ -56,6 +59,71 @@ export async function pushMarks(marks: MarkPush[]): Promise<PushOutcome> {
     return { status: "ok", tokens: tokensOf(json), missing: [] };
   } catch {
     return { status: "failed", tokens: {}, missing: [] };
+  }
+}
+
+async function getJson(path: string): Promise<{ status: number; json: Record<string, unknown> | null }> {
+  const token = process.env.SYNC_TOKEN ?? "";
+  if (token.length < 32) return { status: 0, json: null };
+  const response = await fetch(`${origin()}${path}`, {
+    headers: { authorization: `Bearer ${token}` },
+  });
+  const json = await response.json().catch(() => null);
+  return { status: response.status, json: json && typeof json === "object" ? json as Record<string, unknown> : null };
+}
+
+function remoteStatus(status: number, json: Record<string, unknown> | null, read = false): PushStatus {
+  if (status === 404 || status === 405) return "undeployed";
+  if (read && status === 429) return "failed";
+  if (read && (status !== 200 || json?.ok !== true)) return status === 401 ? "denied" : "undeployed";
+  if (status === 401) return "denied";
+  if (status === 200 && json?.ok === true) return "ok";
+  return "failed";
+}
+
+export async function fetchTrainerHeads(): Promise<{ status: PushStatus; trainers: TrainerSyncHead[] }> {
+  if (process.env.NODE_ENV === "production") return { status: "ok", trainers: [] };
+  try {
+    const { status, json } = await getJson("/api/sync/trainer");
+    const result = remoteStatus(status, json, true);
+    const trainers = Array.isArray(json?.trainers) ? json.trainers as TrainerSyncHead[] : [];
+    return { status: result, trainers: result === "ok" ? trainers : [] };
+  } catch {
+    return { status: "failed", trainers: [] };
+  }
+}
+
+export async function fetchTrainerCard(handle: string): Promise<{
+  status: PushStatus;
+  card: TrainerPatch["card"];
+  head: TrainerSyncHead | null;
+  files: Array<{ name?: unknown; data?: unknown }>;
+}> {
+  if (process.env.NODE_ENV === "production") return { status: "ok", card: null, head: null, files: [] };
+  try {
+    const { status, json } = await getJson(`/api/sync/trainer?handle=${encodeURIComponent(handle)}`);
+    const result = remoteStatus(status, json, true);
+    return {
+      status: result,
+      card: (json?.card ?? null) as TrainerPatch["card"],
+      head: (json?.head ?? null) as TrainerSyncHead | null,
+      files: Array.isArray(json?.files) ? json.files as Array<{ name?: unknown; data?: unknown }> : [],
+    };
+  } catch {
+    return { status: "failed", card: null, head: null, files: [] };
+  }
+}
+
+export async function pushTrainerPatch(
+  patch: TrainerPatch,
+  files: Array<{ name?: unknown; data?: unknown }>,
+): Promise<PushStatus> {
+  if (process.env.NODE_ENV === "production") return "ok";
+  try {
+    const { status, json } = await postJson("/api/sync/trainer", { patch, files });
+    return remoteStatus(status, json);
+  } catch {
+    return "failed";
   }
 }
 

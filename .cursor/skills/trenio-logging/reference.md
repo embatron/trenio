@@ -43,6 +43,7 @@
 | `admin.trainer_outreach` | The first Instagram outreach was marked sent. The row stores the slug, not the message |
 | `admin.sync_marks` | The laptop synced message, link, and visit marks. The row stores the count, not the short link |
 | `admin.sync_trainer` | The laptop synced one imported draft and its photos. The row stores the handle |
+| `admin.sync_trainers` | The laptop synced trainer cards, catalog status, and message marks. The row stores counts or one handle, not the card text or the short link |
 | `admin.trainer_invite` | Staff copied the trainer's short link. The row stores the slug, not the link. A published profile is `denied` |
 | `admin.trainer_invite_sent` | The copied short link was marked sent. The row stores the slug, not the link |
 | `admin.trainer_note` | Staff saved a trainer note. The row stores the slug, not the note text |

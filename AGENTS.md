@@ -54,6 +54,7 @@
 | `.cursor/skills/trenio-docs-sync/` | After tasks — sync documentation |
 | `.cursor/skills/trenio-instagram-trainers/` | Import public Instagram trainer profiles into drafts, apply operator notes and an attached Threads profile, choose photos by composition, write each draft to the local database and to the live site through `/api/sync/trainer`, and leave it unpublished. Command: `/import-instagram-trainers` |
 | `.cursor/skills/trenio-send-msgs/` | Send the first Instagram outreach from the signed-in `trenioby` account. Handles, a count, and other words written with the command are the scope. Commands: `/messages`, `/send-msgs` |
+| `.cursor/skills/trenio-sync-trainers/` | Copy trainer cards, catalog status, and message marks between the laptop and the live site. Command: `/sync-trainers` |
 | `.cursor/skills/trenio-messages/` | Direct messages: who can write, composer, receipts, polling. Rule: `.cursor/rules/messages.mdc` |
 | `.cursor/skills/trenio-logging/` | Operational journal in `app_logs` and `trainer_journal`. Rows are kept. Command: `/logging`. Rule: `.cursor/rules/logging.mdc` |
 | `.cursor/skills/trenio-diagnosis/` | Diagnose a failure from `app_logs`. Command: `/diagnosis` |
