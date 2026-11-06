@@ -5,7 +5,9 @@ import { reviewTextLength } from "@/lib/catalog/review-html";
 import {
   DEFAULT_INSTAGRAM_MESSAGE,
   DEFAULT_USER_WELCOME,
+  OUTREACH_SITE_LINK,
   outreachHello,
+  outreachWithSiteLink,
   instagramGaps,
   outreachTemplate,
   parseUserWelcome,
@@ -49,7 +51,13 @@ test("the first outreach message does not carry the short link", () => {
   assert.match(DEFAULT_INSTAGRAM_MESSAGE, /^\{hello\}/);
   assert.equal(outreachHello("Анна"), "Анна, добрый день!");
   assert.equal(outreachHello("  "), "Добрый день!");
-  assert.match(DEFAULT_INSTAGRAM_MESSAGE, /https:\/\/trenio\.by/);
+  assert.match(DEFAULT_INSTAGRAM_MESSAGE, /trenio by/);
+  assert.equal(DEFAULT_INSTAGRAM_MESSAGE.includes(OUTREACH_SITE_LINK), false);
+  const linked = outreachWithSiteLink(DEFAULT_INSTAGRAM_MESSAGE.replaceAll("{hello}", outreachHello("Анна")));
+  assert.match(linked, /^Анна, добрый день!/);
+  assert.match(linked, /https:\/\/trenio\.by/);
+  assert.equal(linked.includes("trenio by"), false);
+  assert.equal(linked.includes("/hi/"), false);
   assert.equal(DEFAULT_INSTAGRAM_MESSAGE.includes("{doorUrl}"), false);
   assert.equal(outreachTemplate("{hello}\n{doorUrl}"), DEFAULT_INSTAGRAM_MESSAGE);
 });

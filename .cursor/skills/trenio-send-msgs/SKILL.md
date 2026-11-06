@@ -57,10 +57,12 @@ Each row has `send`. Send only where `send` is true. `sent`, `not-draft`, and `m
 Load the saved site text. If it is empty or contains `{doorUrl}`, send `DEFAULT_INSTAGRAM_MESSAGE` from `src/lib/site-texts/defaults.ts`.
 
 ```bash
-./node_modules/.bin/tsx --env-file=.env -e 'import { loadSiteText } from "./src/lib/site-texts/store.ts"; import { outreachTemplate } from "./src/lib/site-texts/defaults.ts"; console.log(outreachTemplate(await loadSiteText("instagram_message")));'
+./node_modules/.bin/tsx --env-file=.env -e 'import { loadSiteText } from "./src/lib/site-texts/store.ts"; import { outreachHello, outreachTemplate, outreachWithSiteLink } from "./src/lib/site-texts/defaults.ts"; const run = async () => { console.log(outreachWithSiteLink(outreachTemplate(await loadSiteText("instagram_message")).replaceAll("{hello}", outreachHello("Анна")))); }; run();'
 ```
 
-The default text starts with `{hello}`. Replace that with the trainer's given name and «добрый день!»: «Анна, добрый день!». When the given name is empty, the line is «Добрый день!». The letter names https://trenio.by and does not include a personal short link.
+The default text starts with `{hello}`. Replace that with the trainer's given name and «добрый день!»: «Анна, добрый день!». When the given name is empty, the line is «Добрый день!». The letter does not include a personal short link.
+
+The words `trenio by` are the site link. Before typing, turn them into `https://trenio.by` with `outreachWithSiteLink` from `src/lib/site-texts/defaults.ts`. Instagram makes that address the link. Do not type the bare words `trenio by` or `trenio.by`. Do not send until the composer contains `https://trenio.by`.
 
 ## Flow
 
@@ -97,7 +99,7 @@ With no arguments, each row is a draft with an Instagram handle and an empty mes
 
 ### 4. Send
 
-Click the composer, insert the outreach text, and send. Wait until that text is visible in the thread. Do not attach the short link.
+Click the composer, insert the outreach text, and send. The words `trenio by` are already replaced by `https://trenio.by`. Wait until that address is visible in the thread. Do not attach the short link.
 
 ### 5. Mark
 

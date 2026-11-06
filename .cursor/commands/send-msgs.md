@@ -5,7 +5,7 @@ Send the first direct message from the `trenioby` Instagram account to imported 
 ## Project context
 
 - Follow `.cursor/skills/trenio-send-msgs/SKILL.md` for the whole run.
-- The message is the outreach in site settings. It does not include the magic link.
+- The message is the outreach in site settings. It does not include the magic link. The words `trenio by` are sent as the link `https://trenio.by`.
 - The magic link stays on the trainer row. An admin copies it afterwards and sends it by hand.
 - A sent message sets «Сообщение». Copying the link sets «Ссылка». Opening `/hi/{code}` sets «Заход».
 

@@ -27,11 +27,19 @@ export const DEFAULT_USER_WELCOME = [
   "Ссылка действует сутки. Никому её не пересылайте.",
 ].join("\n");
 
+/** The site name in the first Instagram message. Instagram linkifies the address, not a separate label. */
+export const OUTREACH_SITE_LINK = "https://trenio.by";
+
+/** Turn the words «trenio by» into the address Instagram can open. */
+export function outreachWithSiteLink(text: string) {
+  return text.replaceAll("trenio by", OUTREACH_SITE_LINK);
+}
+
 /** First Instagram direct message. The short link is copied separately and sent later. */
 export const DEFAULT_INSTAGRAM_MESSAGE = [
   "{hello}",
   "",
-  "Мы развиваем https://trenio.by – единую базу тренеров Беларуси, которая помогает людям находить подходящих специалистов в разных спортивных направлениях.",
+  "Мы развиваем trenio by – единую базу тренеров Беларуси, которая помогает людям находить подходящих специалистов в разных спортивных направлениях.",
   "Нам очень понравился ваш профиль, поэтому хотели бы пригласить вас присоединиться к нашему каталогу! Будем рады, если вы станете его частью.",
   "",
   "Подскажите, было бы вам интересно такое предложение?",

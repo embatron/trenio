@@ -104,7 +104,7 @@ function AdminSitePage() {
             <span>Сообщение для Instagram</span>
             <textarea ref={instagramRef} rows={12} value={instagramMessage} onChange={(event) => setInstagramMessage(event.target.value)} />
           </label>
-          <p>Этот текст копирует иконка текста в таблице тренеров. Его же отправляет команда первого сообщения в Instagram. Короткая ссылка в этот текст не входит: её копирует соседняя иконка и отправляет администратор следом.</p>
+          <p>Этот текст копирует иконка текста в таблице тренеров. Его же отправляет команда первого сообщения в Instagram. Короткая ссылка в этот текст не входит: её копирует соседняя иконка и отправляет администратор следом. Слова «trenio by» при копировании и отправке становятся ссылкой https://trenio.by.</p>
           <PlaceList
             field={instagramRef}
             value={instagramMessage}
@@ -113,6 +113,10 @@ function AdminSitePage() {
               {
                 token: "{hello}",
                 text: "Первая строка: «Анна, добрый день!» или «Добрый день!», если имени нет.",
+              },
+              {
+                token: "trenio by",
+                text: "Название сайта. В Instagram это ссылка на https://trenio.by.",
               },
             ]}
           />
