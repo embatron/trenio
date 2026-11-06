@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/sabaigym_/",
+  "handle": "sabaigym_",
+  "slug": "sabaigym_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Геннадий",
+  "lastName": "Ткаченко",
+  "fullName": "Геннадий Ткаченко",
+  "gender": "male",
+  "nameQuotes": [
+    "Ткаченко Геннадий"
+  ],
+  "headline": "Тренер по тайскому боксу",
+  "sourceBio": "Personal blog 🥊Тренировки по муай тай🏆 🥊Детские, взрослые группы🥇 🥊 Индивидуальные тренировки🤼 🥊Удобное для вас время🌝🕚 🥊 Есенина 14🇧🇾 🥊 Пиши в директ✉ www.sabaigym.by",
+  "sourceAbout": [
+    "Тренирует в Минске."
+  ],
+  "bio": "Я Геннадий Ткаченко. Веду тренировки по муай тай в Минске. Есть детские и взрослые группы и индивидуальные тренировки.",
+  "about": [
+    "Детские и взрослые группы веду отдельно. Индивидуальные тренировки ставим на удобное для вас время."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "муай тай"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tajskij-boks",
+    "parentSlug": "edinoborstva",
+    "label": "Тайский бокс"
+  },
+  "city": "Минск",
+  "address": "Есенина 14",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/sabaigym_.jpg",
+  "photos": [
+    "/trainers/instagram/sabaigym_.jpg",
+    "/trainers/instagram/sabaigym_-g2.jpg",
+    "/trainers/instagram/sabaigym_-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 2
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/sabaigym_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

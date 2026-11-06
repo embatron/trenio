@@ -1,0 +1,72 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/marysavitskaya/",
+  "handle": "marysavitskaya",
+  "slug": "marysavitskaya",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Мария",
+  "lastName": "Савицкая",
+  "fullName": "Мария Савицкая",
+  "gender": "female",
+  "nameQuotes": [
+    "Савицкая Мария"
+  ],
+  "headline": "Тренер по большому теннису",
+  "sourceBio": "Personal Coach Аккредитованный тренер по теннису Основатель : @savitennisclub 📩 Minsk🇧🇾-Wuhan 🇨🇳📍 t.me/tenniswithmary",
+  "sourceAbout": [],
+  "bio": "Я Мария Савицкая, аккредитованный тренер по теннису.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "bolshoj-tennis",
+      "parentSlug": "raketki",
+      "label": "Большой теннис",
+      "evidence": "теннис"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bolshoj-tennis",
+    "parentSlug": "raketki",
+    "label": "Большой теннис"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/marysavitskaya.jpg",
+  "photos": [
+    "/trainers/instagram/marysavitskaya.jpg",
+    "/trainers/instagram/marysavitskaya-g2.jpg",
+    "/trainers/instagram/marysavitskaya-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/marysavitskaya/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/tenniswithmary",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

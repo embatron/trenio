@@ -1,0 +1,64 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pasha_goncharenko_/",
+  "handle": "pasha_goncharenko_",
+  "slug": "pasha_goncharenko_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Павел",
+  "lastName": "Гончаренко",
+  "fullName": "Павел Гончаренко",
+  "gender": "male",
+  "nameQuotes": [
+    "Павел Гончаренко"
+  ],
+  "headline": "",
+  "sourceBio": "Тренер🏆 @sktriumfstk 🔥 Образование БГУФК🏢🎓 Мечты не работают пока не работаешь ты 😈 По вопросам сотрудничества в Direct 📝 Viber 📲",
+  "sourceAbout": [],
+  "bio": "Я тренер. У меня образование БГУФК.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/pasha_goncharenko_.jpg",
+  "photos": [
+    "/trainers/instagram/pasha_goncharenko_.jpg",
+    "/trainers/instagram/pasha_goncharenko_-g2.jpg",
+    "/trainers/instagram/pasha_goncharenko_-g3.jpg",
+    "/trainers/instagram/pasha_goncharenko_-g4.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 3,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pasha_goncharenko_/",
+    "phone": "+375 33 649-19-46",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "city",
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

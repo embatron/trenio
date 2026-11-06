@@ -1,0 +1,86 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/sergey.the.champ/",
+  "handle": "sergey.the.champ",
+  "slug": "sergey.the.champ",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Сергей",
+  "lastName": "Хомицкий",
+  "fullName": "Сергей Хомицкий",
+  "gender": "male",
+  "nameQuotes": [
+    "Сергей Хомицкий"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "Personal Coach Чемпион Европы по боксу🥊 Убираю живот мужикам 35-55 лет без диет и марафонов Быстро обучаю боксу Узнай в тесте, как быстро убрать живот+консультация⬇️",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "",
+  "threadsUrl": "",
+  "bio": "Я чемпион Европы по боксу. Убираю живот мужикам 35-55 лет без диет. Быстро обучаю боксу.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/sergey.the.champ/p/DPwJjzEDLk7/",
+      "caption": "Бесплатная диагностика: Листай карусель ➡️"
+    },
+    {
+      "url": "https://www.instagram.com/sergey.the.champ/p/DJe5TCRI5bD/",
+      "caption": "Как Дмитрий в 49 лет скинул 23 кг, вылез из обезболов и стал выглядеть на миллион 💥. История о том, что никогда не поздно взять жизнь в свои руки. Листай карусель ➡️"
+    },
+    {
+      "url": "https://www.instagram.com/sergey.the.champ/p/CpnPl8DoUBh/",
+      "caption": "Нет мотивации тренироваться. Читай пост. Информация в карусели. #мотивация #боксвминске #тренировкипобоксуминск"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/sergey.the.champ.jpg",
+  "photos": [
+    "/trainers/instagram/sergey.the.champ.jpg",
+    "/trainers/instagram/sergey.the.champ-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/sergey.the.champ/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/boxingkitchen",
+    "website": "https://fitness-friend.ru/auth/register/lead?code=245c6b6fe928c3c8"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email"
+  ]
+}

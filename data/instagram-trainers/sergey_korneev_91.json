@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/sergey_korneev_91/",
+  "handle": "sergey_korneev_91",
+  "slug": "sergey_korneev_91",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Сергей",
+  "lastName": "Корнеев",
+  "fullName": "Сергей Корнеев",
+  "gender": "male",
+  "nameQuotes": [
+    "Сергей Корнеев"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "Health/beauty ⭐️ ЗМС по боксу 🥊 Профессиональный тренер! ☝️ Провожу групповые и индивидуальные тренировки. Запись по телефону ⬇️",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Сергей Корнеев",
+  "threadsUrl": "",
+  "bio": "Я Сергей, ЗМС по боксу. Я профессиональный тренер.",
+  "about": [
+    "Я провожу групповые и индивидуальные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/sergey_korneev_91.jpg",
+  "photos": [
+    "/trainers/instagram/sergey_korneev_91.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/sergey_korneev_91/",
+    "phone": "+375 29 645-19-81",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

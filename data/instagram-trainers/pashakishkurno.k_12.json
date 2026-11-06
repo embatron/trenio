@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pashakishkurno.k_12/",
+  "handle": "pashakishkurno.k_12",
+  "slug": "pashakishkurno.k_12",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Павел",
+  "lastName": "Кишкурно",
+  "fullName": "Павел Кишкурно",
+  "gender": "male",
+  "nameQuotes": [
+    "Pavel"
+  ],
+  "headline": "Тренер по тайскому боксу",
+  "sourceBio": "Боец, тренер, К-1 8ми чемп РБ 2-х кратный победитель Кубка мира по К-1 Чемп Европы🥉 Инд трен по тайскому боксу и кикбоксингу! Минск! !",
+  "sourceAbout": [],
+  "bio": "Я тренер по тайскому боксу и кикбоксингу. Я 8-кратный чемпион РБ и чемпион Европы по К-1. Дважды брал Кубок мира по К-1.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "Тайский бокс"
+    },
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tajskij-boks",
+    "parentSlug": "edinoborstva",
+    "label": "Тайский бокс"
+  },
+  "city": "",
+  "address": "",
+  "cityCandidates": [
+    "Боец",
+    "Победитель",
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/pashakishkurno.k_12.jpg",
+  "photos": [
+    "/trainers/instagram/pashakishkurno.k_12.jpg",
+    "/trainers/instagram/pashakishkurno.k_12-g2.jpg",
+    "/trainers/instagram/pashakishkurno.k_12-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pashakishkurno.k_12/",
+    "phone": "+375 29 250-95-38",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "city",
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

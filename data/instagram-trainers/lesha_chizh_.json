@@ -1,0 +1,89 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/lesha_chizh_/",
+  "handle": "lesha_chizh_",
+  "slug": "lesha_chizh_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алексей",
+  "lastName": "Чиж",
+  "fullName": "Алексей Чиж",
+  "gender": "male",
+  "nameQuotes": [
+    "Алексей Чиж",
+    "Чиж Алексей"
+  ],
+  "headline": "Тренер по тайскому боксу",
+  "sourceBio": "🥃Мои бары @smena_bar , @bar.buro16.",
+  "sourceAbout": [],
+  "sourceThreads": "Чиж Алексей | Тренер по боксу 🥊Более 4000 тренировок по тайскому боксу! 🔥С нуля до соревнований за 3 месяца 💪🏻Персональные тренировки по авторской программе «CHIZH TEAM» Пиши⬇️ Рабочие процессы! Звуки ударов по мешку не требуют никакой музыки)) #минск #боксминск #тренерминск #minsk Наша привычная обстановка в зале!) обожаю ребят из za_gym_minsk . #минск #спорт #бокс #тренерминск #боксминск В чем парадокс!) именно меня))) я отдал 11 лет за барной стойкой) работал в лучших местах Минска. Поздравте меня! Сегодня 9 лет как я тренирую людей, бить других людей!) Левкова 9, тренажерный зал клюква.",
+  "operatorNotes": "Алексей Чиж, тайский бокс",
+  "threadsUrl": "https://www.threads.com/@lesha_chizh_",
+  "bio": "Я Алексей Чиж, тренер по тайскому боксу в Минске. Я тренирую людей уже 9 лет. Веду персональные тренировки по программе CHIZH TEAM и вывожу от нуля до соревнований за 3 месяца. За плечами более 4000 тренировок.",
+  "about": [
+    "Персональные тренировки идут по моей программе CHIZH TEAM. На мешке работаем так, что слышны сами удары."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "Тайский бокс"
+    },
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tajskij-boks",
+    "parentSlug": "edinoborstva",
+    "label": "Тайский бокс"
+  },
+  "city": "Минск",
+  "address": "Левкова 9, тренажерный зал клюква",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/lesha_chizh_.jpg",
+  "photos": [
+    "/trainers/instagram/lesha_chizh_.jpg",
+    "/trainers/instagram/lesha_chizh_-g2.jpg",
+    "/trainers/instagram/lesha_chizh_-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/lesha_chizh_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

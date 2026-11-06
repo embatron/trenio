@@ -1,0 +1,81 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kazak_grigory/",
+  "handle": "kazak_grigory",
+  "slug": "kazak_grigory",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Григорий",
+  "lastName": "Казак",
+  "fullName": "Григорий Казак",
+  "gender": "male",
+  "nameQuotes": [
+    "Казак Григорий"
+  ],
+  "headline": "Тренер по рукопашному бою",
+  "sourceBio": "Руководитель @6x12club Тренировки.Рукопашному бою 🥋🥊 Детские и взрослые группы🤼‍♂️ Индивидуальные тренировки👊🏻",
+  "sourceAbout": [],
+  "bio": "Я Григорий, руководитель. Веду тренировки по рукопашному бою для детских и взрослых групп. Провожу индивидуальные тренировки.",
+  "about": [
+    "Тренировки по рукопашному бою проходят для детских и взрослых групп. Есть и индивидуальные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "rukopashnyj",
+      "parentSlug": "edinoborstva",
+      "label": "Рукопашный бой",
+      "evidence": "Рукопашный бой"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "rukopashnyj",
+    "parentSlug": "edinoborstva",
+    "label": "Рукопашный бой"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kazak_grigory.jpg",
+  "photos": [
+    "/trainers/instagram/kazak_grigory.jpg",
+    "/trainers/instagram/kazak_grigory-g2.jpg",
+    "/trainers/instagram/kazak_grigory-g3.jpg",
+    "/trainers/instagram/kazak_grigory-g4.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 3,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kazak_grigory/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

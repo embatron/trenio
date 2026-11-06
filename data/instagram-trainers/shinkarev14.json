@@ -1,0 +1,88 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/shinkarev14/",
+  "handle": "shinkarev14",
+  "slug": "shinkarev14",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Владислав",
+  "lastName": "Шинкарев",
+  "fullName": "Владислав Шинкарев",
+  "gender": "male",
+  "nameQuotes": [
+    "Владислав Шинкарев",
+    "Владислав"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "🥊Тренер - Бокс! 👊 Индивидуальные и групповые тренировки! 🥇 Подготовка спортсменов! 🏆 Готовлю чемпионов! ✍ Доп. инфо -> в Директ! TikTok: shinkarev14 m.vk.com/shinkarev88vlad",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Владислав Шинкарев",
+  "threadsUrl": "",
+  "bio": "Я Владислав Шинкарев, тренер по боксу. Веду индивидуальные и групповые тренировки. Готовлю спортсменов и чемпионов.",
+  "about": [
+    "Тренировки провожу индивидуально и в группе. Готовлю спортсменов и веду их к чемпионскому результату."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "подготовка спортсменов"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/shinkarev14.jpg",
+  "photos": [
+    "/trainers/instagram/shinkarev14.jpg",
+    "/trainers/instagram/shinkarev14-g2.jpg",
+    "/trainers/instagram/shinkarev14-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/shinkarev14/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://m.vk.com/shinkarev88vlad"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

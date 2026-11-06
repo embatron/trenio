@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-03T16:12:35.873Z",
+  "updatedAt": "2026-11-06T11:00:56.625Z",
   "profiles": [
     {
       "handle": "embatron.eth",
@@ -67,24 +67,6 @@
       "file": "data/instagram-trainers/ar.boxing.by.json"
     },
     {
-      "handle": "shum_ann",
-      "slug": "shum_ann",
-      "fullName": "Шумилова",
-      "primarySport": "ОФК",
-      "city": "Минск",
-      "status": "draft",
-      "missing": [
-        "firstName",
-        "price",
-        "phone",
-        "email",
-        "telegram",
-        "gender",
-        "pinnedPosts"
-      ],
-      "file": "data/instagram-trainers/shum_ann.json"
-    },
-    {
       "handle": "levsha_team",
       "slug": "levsha_team",
       "fullName": "Сергей Овсяников",
@@ -113,6 +95,258 @@
         "telegram"
       ],
       "file": "data/instagram-trainers/farkhad_akhmejanau.json"
+    },
+    {
+      "handle": "kazak_grigory",
+      "slug": "kazak_grigory",
+      "fullName": "Григорий Казак",
+      "primarySport": "Рукопашный бой",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/kazak_grigory.json"
+    },
+    {
+      "handle": "shum_ann",
+      "slug": "shum_ann",
+      "fullName": "Аня Шумилова",
+      "primarySport": "ОФК",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/shum_ann.json"
+    },
+    {
+      "handle": "alex_bro_training",
+      "slug": "alex_bro_training",
+      "fullName": "Алексей Бро",
+      "primarySport": "Фитнес",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/alex_bro_training.json"
+    },
+    {
+      "handle": "sergey.the.champ",
+      "slug": "sergey.the.champ",
+      "fullName": "Сергей Хомицкий",
+      "primarySport": "Бокс",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/sergey.the.champ.json"
+    },
+    {
+      "handle": "sharapov.v_boxingcoach",
+      "slug": "sharapov.v_boxingcoach",
+      "fullName": "",
+      "primarySport": "Бокс",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "firstName",
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "gender",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/sharapov.v_boxingcoach.json"
+    },
+    {
+      "handle": "sergey_korneev_91",
+      "slug": "sergey_korneev_91",
+      "fullName": "Сергей Корнеев",
+      "primarySport": "Бокс",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/sergey_korneev_91.json"
+    },
+    {
+      "handle": "seku_bangura",
+      "slug": "seku_bangura",
+      "fullName": "Секу Бангура",
+      "primarySport": "Кикбоксинг",
+      "city": "",
+      "status": "draft",
+      "missing": [
+        "city",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "gender",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/seku_bangura.json"
+    },
+    {
+      "handle": "usatov_yuri",
+      "slug": "usatov_yuri",
+      "fullName": "Юрий Усатов",
+      "primarySport": "Фитнес",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/usatov_yuri.json"
+    },
+    {
+      "handle": "1.manko",
+      "slug": "1.manko",
+      "fullName": "Евгений Манько",
+      "primarySport": "MMA",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/1.manko.json"
+    },
+    {
+      "handle": "lesha_chizh_",
+      "slug": "lesha_chizh_",
+      "fullName": "Алексей Чиж",
+      "primarySport": "Тайский бокс",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/lesha_chizh_.json"
+    },
+    {
+      "handle": "shinkarev14",
+      "slug": "shinkarev14",
+      "fullName": "Владислав Шинкарев",
+      "primarySport": "Бокс",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/shinkarev14.json"
+    },
+    {
+      "handle": "personaltraining3006",
+      "slug": "personaltraining3006",
+      "fullName": "Евгений Аникевич",
+      "primarySport": "MMA",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/personaltraining3006.json"
+    },
+    {
+      "handle": "kreins.power",
+      "slug": "kreins.power",
+      "fullName": "Павел Крейнис",
+      "primarySport": "Силовой тренинг",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/kreins.power.json"
+    },
+    {
+      "handle": "ostroshapkin_sergei",
+      "slug": "ostroshapkin_sergei",
+      "fullName": "Сергей Острошапкин",
+      "primarySport": "Бокс",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/ostroshapkin_sergei.json"
+    },
+    {
+      "handle": "parkuun_",
+      "slug": "parkuun_",
+      "fullName": "Алексей Паркун",
+      "primarySport": "MMA",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/parkuun_.json"
+    },
+    {
+      "handle": "krasavin386",
+      "slug": "krasavin386",
+      "fullName": "Александр Красавин",
+      "primarySport": "",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "sport",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/krasavin386.json"
     }
   ]
 }

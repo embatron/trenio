@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/aleksandrkovtik/",
+  "handle": "aleksandrkovtik",
+  "slug": "aleksandrkovtik",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александр",
+  "lastName": "Ковтик",
+  "fullName": "Александр Ковтик",
+  "gender": "male",
+  "nameQuotes": [
+    "Александр Ковтик"
+  ],
+  "headline": "Тренер по тайскому боксу и кикбоксингу",
+  "sourceBio": "Тренер Чемпионов",
+  "sourceAbout": [],
+  "bio": "Я Александр Ковтик, тренер чемпионов. В детстве ходил в секцию, год преподавал физкультуру в деревенской школе, окончил институт и десять лет работал там преподавателем. Тренерскую работу начал с детской группы и стал первым наставником Аллазова, Васькова, Тумасяна и Климовича. Написал учебные пособия и программу для спортивной школы, и лучше получается учить тренировать, чем тренировать самому.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "тайский бокс"
+    },
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "кикбоксинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tajskij-boks",
+    "parentSlug": "edinoborstva",
+    "label": "Тайский бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "adult",
+    "kid",
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/aleksandrkovtik.jpg",
+  "photos": [
+    "/trainers/instagram/aleksandrkovtik.jpg",
+    "/trainers/instagram/aleksandrkovtik-g2.jpg",
+    "/trainers/instagram/aleksandrkovtik-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/aleksandrkovtik/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

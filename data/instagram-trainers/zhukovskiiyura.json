@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/zhukovskiiyura/",
+  "handle": "zhukovskiiyura",
+  "slug": "zhukovskiiyura",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юрий",
+  "lastName": "Жуковский",
+  "fullName": "Юрий Жуковский",
+  "gender": "male",
+  "nameQuotes": [
+    "Юрий Жуковский"
+  ],
+  "headline": "Тренер по тайскому боксу",
+  "sourceBio": "💯Тренировки по муай-тай и кикбоксингу ЗМС по кикбоксингу. Многократный чемпион мира и Европы среди профессионалов и любителей",
+  "sourceAbout": [],
+  "bio": "Я Юрий Жуковский, тренер по муай-тай и кикбоксингу в Минске. Я ЗМС по кикбоксингу, многократный чемпион мира и Европы среди профессионалов и любителей.",
+  "about": [
+    "Тренировки проходят по муай-тай и кикбоксингу."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "муай тай"
+    },
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tajskij-boks",
+    "parentSlug": "edinoborstva",
+    "label": "Тайский бокс"
+  },
+  "city": "Минск",
+  "address": "Masherova 17/4",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/zhukovskiiyura.jpg",
+  "photos": [
+    "/trainers/instagram/zhukovskiiyura.jpg",
+    "/trainers/instagram/zhukovskiiyura-g2.jpg",
+    "/trainers/instagram/zhukovskiiyura-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/zhukovskiiyura/",
+    "phone": "+375 33 334-11-11",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

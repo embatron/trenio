@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/1.manko/",
+  "handle": "1.manko",
+  "slug": "1.manko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгений",
+  "lastName": "Манько",
+  "fullName": "Евгений Манько",
+  "gender": "male",
+  "nameQuotes": [
+    "Евгений Манько"
+  ],
+  "headline": "Тренер по MMA",
+  "sourceBio": "Personal Coach 🔸Твой личный тренер 💪 🔹Образование - высшее (БГУФК) 🔸Магистр педагогических наук 🎓 🔹Старший преподователь БГУ 🔸Чемпион Мира среди профессионалов 👊🏻",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Евгений Манько. ММА, рукопашный бой.",
+  "threadsUrl": "",
+  "bio": "Я Евгений, личный тренер по MMA и рукопашному бою. У меня высшее образование, БГУФК, и я магистр педагогических наук. Я старший преподаватель БГУ и чемпион мира среди профессионалов.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/1.manko/p/DcvIWXGCNYB/",
+      "caption": "В этом сезоне дебютировали в пурпурных поясах на AJP Grand Slam😄 Вышло не плохо: 3 схватки - 2 победы SUB и одно поражение по очкам, итог - бронза! Есть маленькая ошибка - мы ее знаем и уже приступили к работе над ошибками, хочу выразить огромную благодарность моим тренерам: @dojodogxroutine и @nikmarloou , а также всем парням кто помогал подготовится из зала @holyfamilygym Вместе все вершины под силу 👊🏻"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "mma",
+      "parentSlug": "edinoborstva",
+      "label": "MMA",
+      "evidence": "мма"
+    },
+    {
+      "slug": "rukopashnyj",
+      "parentSlug": "edinoborstva",
+      "label": "Рукопашный бой",
+      "evidence": "Рукопашный бой"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "mma",
+    "parentSlug": "edinoborstva",
+    "label": "MMA"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/1.manko.jpg",
+  "photos": [
+    "/trainers/instagram/1.manko.jpg",
+    "/trainers/instagram/1.manko-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/1.manko/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

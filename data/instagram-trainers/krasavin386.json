@@ -1,0 +1,70 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/krasavin386/",
+  "handle": "krasavin386",
+  "slug": "krasavin386",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александр",
+  "lastName": "Красавин",
+  "fullName": "Александр Красавин",
+  "gender": "male",
+  "nameQuotes": [
+    "Александр Красавин"
+  ],
+  "headline": "",
+  "sourceBio": "Тренер спортсмен, серебряный призер Европы , бронзовый призер кубка мира.",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Александр Красавин",
+  "threadsUrl": "",
+  "bio": "Я Александр Красавин, тренер и спортсмен. Серебряный призер Европы и бронзовый призер кубка мира.",
+  "about": [
+    "Веду персональные занятия и групповой формат."
+  ],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/krasavin386.jpg",
+  "photos": [
+    "/trainers/instagram/krasavin386.jpg",
+    "/trainers/instagram/krasavin386-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/krasavin386/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

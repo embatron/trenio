@@ -1,0 +1,94 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/tema_varivotskiy/",
+  "handle": "tema_varivotskiy",
+  "slug": "tema_varivotskiy",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Артем",
+  "lastName": "",
+  "fullName": "Артем",
+  "gender": "male",
+  "nameQuotes": [
+    "Меня зовут Артем"
+  ],
+  "headline": "Тренер по тайскому боксу",
+  "sourceBio": "🥊Персональные/ Групповые тренировки 📍пр.Дзержинского 104Б ФОРМАТЫ ТРЕНИРОВОК | РЕЗУЛЬТАТЫ ДОП ИНФА | ⤵️",
+  "sourceAbout": [],
+  "bio": "Я тренер по тайскому боксу.",
+  "about": [
+    "Веду персональные и групповые тренировки."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/tema_varivotskiy/p/DaKVWvcl97h/",
+      "caption": "Меня зовут Артем, мне 22 года и я…. Тренер по Тайскому боксу. В детстве я был гиперактивным ребенком. Свой спортивный путь начал с секции футбола (кто бы мог подумать). Там долго не задержался,и в возрасте 10 лет попадаю на первую тренировку по Тайскому Боксу. Далее годы упорных тренировок,сборов,соревнований различного уровня. Но результат стоил того: В 15 лет провел свой первый профессиональный бой на стадионе в Тайланде. В 17 лет выполнил норматив Мастера Спорта завоевав серебрянную медаль Чемпионата Мира. В 2024 году завоевал бронзовую медаль Чемпионата Мира в Греции. Получил высшее физкультурное образовние (БГУФК). И самое главное: приобрел бесценный опыт. Закончив спортивную карьеру я понял - мой опыт должен работать на других."
+    }
+  ],
+  "sports": [
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "Тайский бокс"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "futbol",
+      "label": "Футбол",
+      "quote": "Свой спортивный путь начал с секции футбола"
+    }
+  ],
+  "primarySport": {
+    "slug": "tajskij-boks",
+    "parentSlug": "edinoborstva",
+    "label": "Тайский бокс"
+  },
+  "city": "Минск",
+  "address": "пр.Дзержинского 104Б",
+  "cityCandidates": [
+    "Минск",
+    "Петровщина"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/tema_varivotskiy.jpg",
+  "photos": [
+    "/trainers/instagram/tema_varivotskiy.jpg",
+    "/trainers/instagram/tema_varivotskiy-g2.jpg",
+    "/trainers/instagram/tema_varivotskiy-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/tema_varivotskiy/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

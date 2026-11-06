@@ -1,0 +1,96 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yulianborisov/",
+  "handle": "yulianborisov",
+  "slug": "yulianborisov",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлиан",
+  "lastName": "Борисов",
+  "fullName": "Юлиан Борисов",
+  "gender": "male",
+  "nameQuotes": [
+    "Юлиан"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "сотрудничество в директ📩 ▪️Мастер спорта международного класса ▪️высшее тренерское образование ▪️Для записи на тренировку: Звони",
+  "sourceAbout": [],
+  "bio": "Я Юлиан Борисов, тренер по боксу и кикбоксингу в Минске. Я мастер спорта международного класса. У меня высшее тренерское образование. Провожу индивидуальные и групповые тренировки.",
+  "about": [
+    "На тренировку записываются по звонку."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/yulianborisov/reel/DXtcadkxUIN/",
+      "caption": "Лучшая терапия"
+    },
+    {
+      "url": "https://www.instagram.com/yulianborisov/reel/C0yo_s7oJUB/",
+      "caption": "Действуйте"
+    },
+    {
+      "url": "https://www.instagram.com/yulianborisov/reel/Ch5CU9kIFhm/",
+      "caption": ""
+    }
+  ],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    },
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yulianborisov.jpg",
+  "photos": [
+    "/trainers/instagram/yulianborisov.jpg",
+    "/trainers/instagram/yulianborisov-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yulianborisov/",
+    "phone": "+375 25 697-00-59",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram"
+  ]
+}

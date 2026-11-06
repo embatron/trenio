@@ -1,0 +1,92 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/swimcoach.alexandra/",
+  "handle": "swimcoach.alexandra",
+  "slug": "swimcoach.alexandra",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александра",
+  "lastName": "Власенко",
+  "fullName": "Александра Власенко",
+  "gender": "female",
+  "nameQuotes": [
+    "Александра Власенко | Тренер по плаванию | Минск",
+    "Меня зовут Александра Власенко"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "🏆 МС РБ | 15 лет стажа | 200+ учеников Обучение с нуля и совершенствование техники плавания 👥Персонально и Сплит-тренировки (дети 6+ / взрослые)",
+  "sourceAbout": [],
+  "bio": "Я Александра Власенко, тренер в Минске. Учу плавание с нуля и совершенствую технику плавания. Веду персональные и сплит-тренировки для детей от 6 лет и взрослых. Занятия проходят в бассейне «Орлёнок».",
+  "about": [
+    "Занятия проходят персонально и сплитом. Обучаю с нуля и совершенствую технику плавания."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/swimcoach.alexandra/p/DeMiiIQIf5o/",
+      "caption": "Давайте знакомиться 🤍 Меня зовут Александра Власенко. Я тренер по плаванию в Минске, мастер спорта, окончила БГУФК и уже 15 лет работаю с детьми и взрослыми 🏊🏻‍♀️ Ко мне приходят с очень разными запросами: • научиться плавать с нуля • перестать бояться воды или глубины • научиться спокойно опускать лицо в воду • разобраться с дыханием • улучшить технику плавания • научиться плавать разными стилями • плавать легче и без постоянной усталости • поработать над осанкой С детьми часто приходят с запросом научить ребёнка плавать, помочь ему перестать бояться воды, освоиться в бассейне, улучшить технику или поработать над осанкой. Если хотите узнать подробнее о форматах тренировок, стоимости, месте занятий и записи — переходите в актуальное «ЗАПИСЬ». Там собрала всю основную информацию!☺️ #минск #обучениеплаванию #тренерпоплаванию #бассейнминск"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "научиться плавать"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Минск",
+  "address": "Каховская 74",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/swimcoach.alexandra.jpg",
+  "photos": [
+    "/trainers/instagram/swimcoach.alexandra.jpg",
+    "/trainers/instagram/swimcoach.alexandra-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/swimcoach.alexandra/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

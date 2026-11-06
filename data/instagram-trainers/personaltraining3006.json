@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/personaltraining3006/",
+  "handle": "personaltraining3006",
+  "slug": "personaltraining3006",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгений",
+  "lastName": "Аникевич",
+  "fullName": "Евгений Аникевич",
+  "gender": "male",
+  "nameQuotes": [
+    "Евгений Аникевич",
+    "Zhenya Anikevich"
+  ],
+  "headline": "Тренер по MMA",
+  "sourceBio": "Основатель #fightforfitnessminsk. Personal trainer MMA, kickboxing, grappling, functional training. Personal trainer Pride Fitness House.",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Евгений Аникевич, Минск, просп. Победителей, 129",
+  "threadsUrl": "",
+  "bio": "Я Евгений Аникевич, тренер по MMA в Минске. Веду занятия как personal trainer: MMA, kickboxing, grappling и functional training. Тренирую в Pride Fitness House.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "mma",
+      "parentSlug": "edinoborstva",
+      "label": "MMA",
+      "evidence": "MMA"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "mma",
+    "parentSlug": "edinoborstva",
+    "label": "MMA"
+  },
+  "city": "Минск",
+  "address": "просп. Победителей, 129",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/personaltraining3006.jpg",
+  "photos": [
+    "/trainers/instagram/personaltraining3006.jpg",
+    "/trainers/instagram/personaltraining3006-g2.jpg",
+    "/trainers/instagram/personaltraining3006-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/personaltraining3006/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

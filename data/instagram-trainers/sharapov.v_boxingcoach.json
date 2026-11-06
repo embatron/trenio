@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/sharapov.v_boxingcoach/",
+  "handle": "sharapov.v_boxingcoach",
+  "slug": "sharapov.v_boxingcoach",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "",
+  "lastName": "",
+  "fullName": "",
+  "gender": "",
+  "nameQuotes": [],
+  "headline": "Тренер по боксу",
+  "sourceBio": "Мастер Спорта. тренер по боксу",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "",
+  "threadsUrl": "",
+  "bio": "Я тренер по боксу в Минске. Я мастер спорта.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/sharapov.v_boxingcoach.jpg",
+  "photos": [
+    "/trainers/instagram/sharapov.v_boxingcoach.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/sharapov.v_boxingcoach/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "firstName",
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "gender",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/antonina_coach/",
+  "handle": "antonina_coach",
+  "slug": "antonina_coach",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Антонина",
+  "lastName": "Догруйол",
+  "fullName": "Антонина Догруйол",
+  "gender": "female",
+  "nameQuotes": [
+    "тренер по боксу Антонина Догруйол",
+    "Антонина Догруйол будет вести"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "Personal Coach ▫️выпускница БГУФК ▫️мастер спорта В спорте более 20 лет",
+  "sourceAbout": [
+    "Когда говорят, что красота спасет мир, они имеют в виду и бойцовский мир тоже 😉 На днях наш тренерский состав пополнился сногсшибательной красоткой! Знакомьтесь - наш новый тренер по боксу Антонина Догруйол🔥 Начало спортивного пути для Тони пришлось на секцию дзюдо: придя туда однажды, она задержалась там на целых 12 лет. За это время неоднократно становилась призером чемпионата республики и получила звание мастера спорта по дзюдо. Затем она решила расширить специализацию и увлеклась ударкой - это привело ее в ММА. В смешанных единоборствах провела два боя: одна победа и одна ничья. Антонина - дипломированный тренер. После этого 2 года работала в Турции в зале «PRO GOLD GYM» персональным тренером по боксу и муайтай. В нашем зале очаровательная Антонина Догруйол будет вести утреннюю смешанную и вечернюю женскую группу по классическому боксу по понедельникам, средам и пятницам, а также персональные тренировки. Запись открыта! Тренирует в Минске."
+  ],
+  "bio": "Я Антонина Догруйол, тренер по боксу в Минске. Я выпускница БГУФК и дипломированный тренер, в спорте больше 20 лет. Дзюдо занималась 12 лет и получила звание мастера спорта, в ММА провела два боя. 2 года в Турции, в зале PRO GOLD GYM, вела тренировки по боксу и муайтай.",
+  "about": [
+    "По понедельникам, средам и пятницам утром собирается смешанная группа, вечером женская, обе по классическому боксу. Отдельно провожу персональные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    },
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "муай тай"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "dzyudo",
+      "label": "Дзюдо",
+      "quote": "секцию дзюдо"
+    },
+    {
+      "slug": "mma",
+      "label": "MMA",
+      "quote": "привело ее в ММА"
+    },
+    {
+      "slug": "edinoborstva",
+      "label": "Единоборства",
+      "quote": "В смешанных единоборствах провела два боя"
+    }
+  ],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/antonina_coach.jpg",
+  "photos": [
+    "/trainers/instagram/antonina_coach.jpg",
+    "/trainers/instagram/antonina_coach-g2.jpg",
+    "/trainers/instagram/antonina_coach-g3.jpg",
+    "/trainers/instagram/antonina_coach-g4.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 3,
+    "certificates": 0,
+    "skipped": 3
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/antonina_coach/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

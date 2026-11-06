@@ -1,0 +1,98 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/parkuun_/",
+  "handle": "parkuun_",
+  "slug": "parkuun_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алексей",
+  "lastName": "Паркун",
+  "fullName": "Алексей Паркун",
+  "gender": "male",
+  "nameQuotes": [
+    "Алексей Паркун"
+  ],
+  "headline": "Тренер по MMA",
+  "sourceBio": "Professional MMA fighter European champion🥇 (Pankration) Master of sports 🇧🇾",
+  "sourceAbout": [],
+  "sourceThreads": "Alexei Parcoun Чемпион Европы Тренировки ММА/КИКБОКСИНГ 📍Минск Работа с Юрием Романовым 🥊 #mma#box",
+  "operatorNotes": "Алексей Паркун",
+  "threadsUrl": "https://www.threads.com/@parkuun_",
+  "bio": "Я Алексей Паркун, чемпион Европы в Pankration. Веду тренировки по MMA и кикбоксингу в Минске.",
+  "about": [
+    "Тренировки провожу по MMA и кикбоксингу."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/parkuun_/p/DKaGAMjoqUQ/",
+      "caption": "🌃"
+    },
+    {
+      "url": "https://www.instagram.com/parkuun_/p/DUqFSNHDBGk/",
+      "caption": "🌃🌆"
+    },
+    {
+      "url": "https://www.instagram.com/parkuun_/p/DMiJU9ho8P9/",
+      "caption": "🏔️ 🪨✊"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "mma",
+      "parentSlug": "edinoborstva",
+      "label": "MMA",
+      "evidence": "MMA"
+    },
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "mma",
+    "parentSlug": "edinoborstva",
+    "label": "MMA"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/parkuun_.jpg",
+  "photos": [
+    "/trainers/instagram/parkuun_.jpg",
+    "/trainers/instagram/parkuun_-g2.jpg",
+    "/trainers/instagram/parkuun_-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/parkuun_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

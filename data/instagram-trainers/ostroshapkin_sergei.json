@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ostroshapkin_sergei/",
+  "handle": "ostroshapkin_sergei",
+  "slug": "ostroshapkin_sergei",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Сергей",
+  "lastName": "Острошапкин",
+  "fullName": "Сергей Острошапкин",
+  "gender": "male",
+  "nameQuotes": [
+    "Сергей Острошапкин"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "МСМК по боксу,Участник Олимпийских Игр в Атланте '96,Член Бел.союза спортсменов неоднократный чемпион Европы и РБ тренировки 🥊мужчин/женщин/детей",
+  "sourceAbout": [],
+  "sourceThreads": "🆂🅴🆁🅶🅴🅸 🥊",
+  "operatorNotes": "Сергей Острошапкин",
+  "threadsUrl": "https://www.threads.com/@ostroshapkin_sergei",
+  "bio": "Я Сергей Острошапкин, МСМК по боксу. Участник Олимпийских игр в Атланте 96, член союза спортсменов и неоднократный чемпион Европы и РБ.",
+  "about": [
+    "Провожу тренировки мужчин, женщин и детей."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ostroshapkin_sergei.jpg",
+  "photos": [
+    "/trainers/instagram/ostroshapkin_sergei.jpg",
+    "/trainers/instagram/ostroshapkin_sergei-g2.jpg",
+    "/trainers/instagram/ostroshapkin_sergei-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ostroshapkin_sergei/",
+    "phone": "+375 29 677-55-70",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

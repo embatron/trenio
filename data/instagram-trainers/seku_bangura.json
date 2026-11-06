@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/seku_bangura/",
+  "handle": "seku_bangura",
+  "slug": "seku_bangura",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Секу",
+  "lastName": "Бангура",
+  "fullName": "Секу Бангура",
+  "gender": "",
+  "nameQuotes": [
+    "Секу Бангура"
+  ],
+  "headline": "Тренер по кикбоксингу",
+  "sourceBio": "Индивидуальные и групповые тренировки 💪 Найди свою силу!",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Секу Бангура. Кикбоксинг, муай тай. ул. Ложинская, 14/1",
+  "threadsUrl": "",
+  "bio": "Я Секу Бангура. Я провожу индивидуальные и групповые тренировки по кикбоксингу и муай тай.",
+  "about": [
+    "Я провожу индивидуальные и групповые тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    },
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "муай тай"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "kikboksing",
+    "parentSlug": "edinoborstva",
+    "label": "Кикбоксинг"
+  },
+  "city": "",
+  "address": "ул. Ложинская, 14/1",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/seku_bangura.jpg",
+  "photos": [
+    "/trainers/instagram/seku_bangura.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/seku_bangura/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "city",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "gender",
+    "pinnedPosts"
+  ]
+}
