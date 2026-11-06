@@ -13,4 +13,6 @@ export const trainerWelcomes = pgTable("trainer_welcomes", {
   phone: varchar("phone", { length: 20 }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   linkSentAt: timestamp("link_sent_at", { withTimezone: true }),
+  /** Staff decision on the applications page: `new`, `done`, or `rejected`. */
+  staffStatus: varchar("staff_status", { length: 16 }).notNull().default("new"),
 });

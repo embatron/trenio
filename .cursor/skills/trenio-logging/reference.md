@@ -40,6 +40,7 @@
 | `message.send` / `message.file` / `message.ensure` / `message.close` / `message.reopen` / `message.report` / `message.dismiss` / `message.block` / `message.notify` / `message.push` / `message.welcome` | Message mutations, attachment upload, and notices. `message.welcome` is the portal greeting to a new trainer. Log the size and extension, not the file name, the file body, or the welcome text. A download is logged only when it fails |
 | `message.list` / `message.thread` / `message.read` / `message.unread` / `message.hide` | Failures only |
 | `admin.review` | Review publish or reject |
+| `admin.welcome` | Staff marks a trainer application done or rejected. The row stores the handle or the application id, not the phone |
 | `admin.trainer_outreach` | The first Instagram outreach was marked sent. The row stores the slug, not the message |
 | `admin.sync_marks` | The laptop synced message, link, and visit marks. The row stores the count, not the short link |
 | `admin.sync_trainer` | The laptop synced one imported draft and its photos. The row stores the handle |
