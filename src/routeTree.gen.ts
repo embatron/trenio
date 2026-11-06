@@ -58,6 +58,7 @@ import { Route as AuthGoogleRouteImport } from './routes/auth.google'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
 import { Route as AuthCredentialsRouteImport } from './routes/auth.credentials'
 import { Route as AuthConfirmEmailRouteImport } from './routes/auth.confirm-email'
+import { Route as AdminWelcomesRouteImport } from './routes/admin.welcomes'
 import { Route as AdminTrainersRouteImport } from './routes/admin.trainers'
 import { Route as AdminSiteRouteImport } from './routes/admin.site'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
@@ -340,6 +341,11 @@ const AuthConfirmEmailRoute = AuthConfirmEmailRouteImport.update({
   path: '/auth/confirm-email',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminWelcomesRoute = AdminWelcomesRouteImport.update({
+  id: '/welcomes',
+  path: '/welcomes',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminTrainersRoute = AdminTrainersRouteImport.update({
   id: '/trainers',
   path: '/trainers',
@@ -558,6 +564,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/site': typeof AdminSiteRoute
   '/admin/trainers': typeof AdminTrainersRouteWithChildren
+  '/admin/welcomes': typeof AdminWelcomesRoute
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/credentials': typeof AuthCredentialsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -639,6 +646,7 @@ export interface FileRoutesByTo {
   '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/site': typeof AdminSiteRoute
+  '/admin/welcomes': typeof AdminWelcomesRoute
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/credentials': typeof AuthCredentialsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -725,6 +733,7 @@ export interface FileRoutesById {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/site': typeof AdminSiteRoute
   '/admin/trainers': typeof AdminTrainersRouteWithChildren
+  '/admin/welcomes': typeof AdminWelcomesRoute
   '/auth/confirm-email': typeof AuthConfirmEmailRoute
   '/auth/credentials': typeof AuthCredentialsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -814,6 +823,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/site'
     | '/admin/trainers'
+    | '/admin/welcomes'
     | '/auth/confirm-email'
     | '/auth/credentials'
     | '/auth/forgot-password'
@@ -895,6 +905,7 @@ export interface FileRouteTypes {
     | '/admin/reviews'
     | '/admin/settings'
     | '/admin/site'
+    | '/admin/welcomes'
     | '/auth/confirm-email'
     | '/auth/credentials'
     | '/auth/forgot-password'
@@ -980,6 +991,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/site'
     | '/admin/trainers'
+    | '/admin/welcomes'
     | '/auth/confirm-email'
     | '/auth/credentials'
     | '/auth/forgot-password'
@@ -1434,6 +1446,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthConfirmEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/welcomes': {
+      id: '/admin/welcomes'
+      path: '/welcomes'
+      fullPath: '/admin/welcomes'
+      preLoaderRoute: typeof AdminWelcomesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/trainers': {
       id: '/admin/trainers'
       path: '/trainers'
@@ -1758,6 +1777,7 @@ interface AdminRouteChildren {
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSiteRoute: typeof AdminSiteRoute
   AdminTrainersRoute: typeof AdminTrainersRouteWithChildren
+  AdminWelcomesRoute: typeof AdminWelcomesRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -1769,6 +1789,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSiteRoute: AdminSiteRoute,
   AdminTrainersRoute: AdminTrainersRouteWithChildren,
+  AdminWelcomesRoute: AdminWelcomesRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 

@@ -1,6 +1,11 @@
 import { Link, useRouteContext, useRouterState } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+
 import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
+import { MESSAGE_SCAN_MS } from "@/lib/messages/polling";
+import { getAdminShellFn } from "@/lib/admin/shell";
 import { logoutFn } from "@/lib/auth/functions";
 import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { getCabinetPath, hasAnyRole, isStaff } from "@/lib/auth/roles";
@@ -19,7 +24,6 @@ import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 import { TRAINER_INVITE_LINE } from "@/lib/catalog/trainer-welcome";
 import { SITE_EMAIL, SITE_INSTAGRAM_URL } from "@/lib/seo/site";
 import { PORTAL_TELEGRAM_URL } from "@/lib/site-texts/defaults";
-import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const CHROME_CSS = `
 .site-header {
@@ -562,7 +566,15 @@ export function Logo({ className }: { className?: string }) {
 }
 
 type AccountMenuTo = "/account/messages" | "/account/reviews" | "/account/bookings" | "/account/favorites" | "/account/settings";
-type AdminMenuTo = "/admin" | "/admin/trainers" | "/admin/reviews" | "/admin/messages" | "/admin/accounts" | "/admin/finance" | "/admin/settings";
+type AdminMenuTo =
+  | "/admin"
+  | "/admin/trainers"
+  | "/admin/welcomes"
+  | "/admin/reviews"
+  | "/admin/messages"
+  | "/admin/accounts"
+  | "/admin/finance"
+  | "/admin/settings";
 type MeMenuTo = "/me" | "/me/messages" | "/me/reviews" | "/me/favorites" | "/me/profile" | "/me/settings";
 
 type HeaderMenuItem =
@@ -590,6 +602,7 @@ const TRAINER_MENU: HeaderMenuItem[] = [
 const ADMIN_MENU: HeaderMenuItem[] = [
   { id: "overview", label: "Обзор", kind: "admin", to: "/admin" },
   { id: "trainers", label: "Тренеры", kind: "admin", to: "/admin/trainers" },
+  { id: "welcomes", label: "Заявки от тренера", kind: "admin", to: "/admin/welcomes" },
   { id: "reviews", label: "Отзывы", kind: "admin", to: "/admin/reviews" },
   { id: "messages", label: "Сообщения", kind: "admin", to: "/admin/messages" },
   { id: "accounts", label: "Аккаунты", kind: "admin", to: "/admin/accounts" },
@@ -608,9 +621,15 @@ function MenuCount({ count }: { count?: number }) {
   return <span className={`account-menu__count${count > 0 ? " is-hot" : ""}`}>{count > 99 ? "99+" : count}</span>;
 }
 
-function menuCounts(roles: UserRole[], own: number, inbox: number, favorites: number | undefined): Record<string, number | undefined> {
+function menuCounts(
+  roles: UserRole[],
+  own: number,
+  inbox: number,
+  favorites: number | undefined,
+  welcomesOpen: number | undefined,
+): Record<string, number | undefined> {
   const messages = own + inbox;
-  if (isStaff(roles)) return { messages };
+  if (isStaff(roles)) return { messages, welcomes: welcomesOpen };
   if (hasAnyRole(roles, ["trainer", "club"])) return { messages, favorites };
   return { messages, bookings: 0, favorites };
 }
@@ -627,8 +646,51 @@ function HeaderMenuLink({ item, count, onNavigate }: { item: HeaderMenuItem; cou
   return <Link to={item.to} {...props}>{body}</Link>;
 }
 
+function useOpenWelcomes(enabled: boolean) {
+  const shell = useServerFn(getAdminShellFn);
+  const shellRef = useRef(shell);
+  shellRef.current = shell;
+  const [open, setOpen] = useState(0);
+
+  useEffect(() => {
+    if (!enabled) return;
+    let stop = false;
+    let timer = 0;
+    const tick = async () => {
+      if (document.visibilityState === "hidden") return;
+      try {
+        const next = await shellRef.current();
+        if (!stop) setOpen(next.welcomesOpen);
+      } catch {
+        /* keep the last count */
+      }
+    };
+    void tick();
+    const loop = () => {
+      timer = window.setTimeout(() => {
+        void tick().finally(() => {
+          if (!stop) loop();
+        });
+      }, MESSAGE_SCAN_MS);
+    };
+    const onVisible = () => {
+      if (document.visibilityState === "visible") void tick();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    loop();
+    return () => {
+      stop = true;
+      window.clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [enabled]);
+
+  return enabled ? open : undefined;
+}
+
 function AccountButton() {
   const { user } = useRouteContext({ from: "__root__" });
+  const welcomesOpen = useOpenWelcomes(Boolean(user && isStaff(user.roles)));
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -674,7 +736,13 @@ function AccountButton() {
 
   const name = [user.firstName, user.lastName].filter(Boolean).join(" ");
   const items = headerMenuFor(user.roles);
-  const counts = menuCounts(user.roles, messaging.own, messaging.inbox, ready ? keys.length : undefined);
+  const counts = menuCounts(
+    user.roles,
+    messaging.own,
+    messaging.inbox,
+    ready ? keys.length : undefined,
+    welcomesOpen,
+  );
   const show = () => {
     if (holdClosed.current) return;
     window.clearTimeout(closeTimer.current);
@@ -855,6 +923,7 @@ function MegaCities({ onClose }: { onClose: () => void }) {
 
 function MegaAccount({ menuOpen, onClose }: { menuOpen: boolean; onClose: () => void }) {
   const { user } = useRouteContext({ from: "__root__" });
+  const welcomesOpen = useOpenWelcomes(Boolean(user && isStaff(user.roles)));
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const logout = useAuthServerFn(logoutFn);
@@ -869,7 +938,13 @@ function MegaAccount({ menuOpen, onClose }: { menuOpen: boolean; onClose: () => 
   const name = [user.firstName, user.lastName].filter(Boolean).join(" ");
   const label = user.nick || name || "Кабинет";
   const items = headerMenuFor(user.roles);
-  const counts = menuCounts(user.roles, messaging.own, messaging.inbox, ready ? keys.length : undefined);
+  const counts = menuCounts(
+    user.roles,
+    messaging.own,
+    messaging.inbox,
+    ready ? keys.length : undefined,
+    welcomesOpen,
+  );
 
   return (
     <div className={`mega-account${open ? " is-open" : ""}`}>

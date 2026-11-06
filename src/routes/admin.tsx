@@ -14,6 +14,7 @@ import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: AdminSectionPath }> = [
   { id: "overview", label: "Обзор", icon: "overview", to: "/admin" },
   { id: "trainers", label: "Тренеры", icon: "trainers", to: "/admin/trainers" },
+  { id: "welcomes", label: "Заявки от тренера", icon: "contacts", to: "/admin/welcomes" },
   { id: "reviews", label: "Отзывы", icon: "reviews", to: "/admin/reviews" },
   { id: "messages", label: "Сообщения", icon: "messages", to: "/admin/messages" },
   { id: "accounts", label: "Аккаунты", icon: "accounts", to: "/admin/accounts" },
@@ -94,10 +95,16 @@ function AdminLayout() {
   if (!user) return null;
 
   const role = user.roles.map((item) => ROLE_LABELS[item]).join(", ");
-  const active = [...SECTIONS].reverse().find((item) => pathname === item.to || (item.to !== "/admin" && pathname.startsWith(`${item.to}/`)))?.id
-    ?? "overview";
+  const active =
+    [...SECTIONS]
+      .reverse()
+      .find(
+        (item) =>
+          pathname === item.to || (item.to !== "/admin" && pathname.startsWith(`${item.to}/`)),
+      )?.id ?? "overview";
   const items = SECTIONS.map((item) => {
     if (item.id === "reviews") return { ...item, badge: counts.reviewsPending };
+    if (item.id === "welcomes") return { ...item, badge: counts.welcomesOpen };
     if (item.id === "messages") return { ...item, badge: messaging.total };
     return item;
   });

@@ -107,6 +107,7 @@ export type AccountSectionPath = "/account/reviews" | "/account/bookings" | "/ac
 export type AdminSectionPath =
   | "/admin"
   | "/admin/trainers"
+  | "/admin/welcomes"
   | "/admin/reviews"
   | "/admin/messages"
   | "/admin/accounts"
