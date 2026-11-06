@@ -419,8 +419,6 @@ const CSS = `
 .similar-trainers__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
 .similar-trainers__track { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--layout-gap); }
 .similar-trainers .trainer-name { flex-direction: column; align-items: flex-start; gap: 0; }
-.similar-trainers .trainer-card__footer .trainer-contacts__link { width: 30px; height: 30px; }
-.similar-trainers .trainer-card__footer .trainer-contacts__link svg { width: 15px; height: 15px; }
 
 .mobile-contact-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 200; padding: 10px var(--layout-gutter) calc(10px + env(safe-area-inset-bottom, 0px)); background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); border-top: 1px solid var(--line); display: none; }
 .mobile-contact-bar__inner { max-width: 600px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }

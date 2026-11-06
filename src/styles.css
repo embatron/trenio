@@ -302,7 +302,6 @@ html.is-staff-layout {
 .favorites-grid {
   padding: 16px 18px 18px;
 }
-.favorites-grid .trainer-card__footer { flex-wrap: nowrap; }
 .favorites-grid .trainer-card__location { flex: 1 1 auto; }
 
 .trainer-card {
@@ -368,22 +367,24 @@ html.is-staff-layout {
   }
 }
 .trainer-card__body { display: flex; flex-direction: column; gap: 8px; padding: 16px 16px 18px; }
-.trainer-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.trainer-card__head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 2px 8px; }
 .trainer-name { display: flex; flex-direction: row; flex-wrap: nowrap; align-items: baseline; gap: 0.35em; min-width: 0; }
 .trainer-name__line { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.trainer-card__name { margin: 0; min-width: 0; font-size: var(--fs-card); line-height: 1.25; letter-spacing: -0.02em; font-weight: var(--fw-title); color: var(--dark); transition: color 0.16s ease; }
+.trainer-card__name { flex: 1 1 9em; margin: 0; min-width: min(100%, 9em); font-size: 13px; line-height: 1.2; letter-spacing: 0; font-weight: var(--fw-title); color: var(--dark); transition: color 0.16s ease; }
+.trainer-card__name .trainer-name { flex-direction: column; align-items: flex-start; gap: 0; }
+.trainer-card__name .trainer-name__line { overflow: visible; text-overflow: clip; white-space: normal; overflow-wrap: break-word; }
 .trainer-card:hover .trainer-card__name,
 .trainer-card:focus-visible .trainer-card__name { color: var(--primary); }
-.trainer-card__rating { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 4px; color: var(--dark); font-size: 13px; font-weight: var(--fw-title); white-space: nowrap; }
+.trainer-card__rating { flex: 0 0 auto; margin-left: auto; display: inline-flex; align-items: center; gap: 4px; color: var(--dark); font-size: 12px; font-weight: var(--fw-title); white-space: nowrap; }
 .trainer-card__rating svg { width: 13px; height: 13px; fill: #ffb400; stroke: none; }
 .trainer-card__rating span { color: var(--muted); font-weight: var(--fw-ui); }
 .trainer-card__rating--empty { color: var(--muted); }
 .trainer-card__rating--empty svg { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); }
 .trainer-card__sport { margin: 0; color: var(--muted); font-size: var(--fs-meta); line-height: 1.35; font-weight: var(--fw-ui); }
-.trainer-card__footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 2px; padding-top: 12px; border-top: 1px solid var(--line); flex-wrap: nowrap; }
-.trainer-card__location { display: inline-flex; align-items: center; gap: 5px; min-width: 0; color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); }
+.trainer-card__footer { display: flex; align-items: center; justify-content: flex-start; gap: 8px; margin-top: 2px; padding-top: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.trainer-card__location { display: inline-flex; align-items: center; gap: 5px; min-width: 0; max-width: 100%; color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); }
 .trainer-card__location svg { flex: 0 0 auto; width: 13px; height: 13px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.trainer-card__location span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trainer-card__location span { overflow: visible; text-overflow: clip; white-space: normal; overflow-wrap: break-word; }
 .trainer-card__price { margin: 0; color: var(--dark); font-size: 14px; font-weight: var(--fw-title); }
 .trainer-card__price small { color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); }
 .trainer-card__hit, .sr-card__hit, .club-trainer-card__hit {
@@ -560,39 +561,7 @@ input.is-locked {
   }
   .favorites-grid { padding: 12px; }
 }
-@media (max-width: 640px) and (min-width: 360px) {
-  .trainer-grid .trainer-name,
-  .cat-grid .trainer-name,
-  .favorites-grid .trainer-name,
-  .sr-grid .trainer-name {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0;
-  }
-}
-/* Two trainer cards on a phone: a smaller name and tighter contact row leave room for the sport, price, and city. */
 @media (max-width: 767px) and (min-width: 360px) {
-  .trainer-grid .trainer-card__name,
-  .cat-grid .trainer-card__name,
-  .favorites-grid .trainer-card__name,
-  .sr-grid .trainer-card__name {
-    font-size: 14px;
-    line-height: 1.15;
-  }
-  .trainer-grid .trainer-card__footer .trainer-contacts__link,
-  .cat-grid .trainer-card__footer .trainer-contacts__link,
-  .favorites-grid .trainer-card__footer .trainer-contacts__link,
-  .sr-grid .trainer-card__footer .trainer-contacts__link {
-    width: 30px;
-    height: 30px;
-  }
-  .trainer-grid .trainer-card__footer .trainer-contacts__link svg,
-  .cat-grid .trainer-card__footer .trainer-contacts__link svg,
-  .favorites-grid .trainer-card__footer .trainer-contacts__link svg,
-  .sr-grid .trainer-card__footer .trainer-contacts__link svg {
-    width: 15px;
-    height: 15px;
-  }
   .trainer-grid .trainer-card__save,
   .trainer-grid .trainer-card__share,
   .cat-grid .trainer-card__save,

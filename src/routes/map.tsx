@@ -780,7 +780,6 @@ export function CatalogMapScreen({
                         <div key={trainer.slug} className="map-person" style={{ animationDelay: `${Math.min(index, 11) * 40}ms` }}>
                           <CatalogTrainerCard
                             marked={pinSlugs.includes(trainer.slug)}
-                            showContacts={false}
                             onHover={setCardSlug}
                             trainer={{
                               slug: trainer.slug,

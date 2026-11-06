@@ -3,7 +3,6 @@ import { useEffect } from "react";
 
 import { FavoriteButton } from "@/components/favorite-button";
 import { ShareProfileButton } from "@/components/share-profile";
-import { TrainerContactIcons } from "@/components/messages/trainer-contact-icons";
 import { PhotoImage } from "@/components/photo-image";
 import { TrainerName } from "@/components/trainer-name";
 import { TrainerRating } from "@/components/trainer-rating";
@@ -34,13 +33,11 @@ export type CatalogTrainerCardData = {
 export function CatalogTrainerCard({
   trainer,
   marked = false,
-  showContacts = true,
   countImpression = true,
   onHover,
 }: {
   trainer: CatalogTrainerCardData;
   marked?: boolean;
-  showContacts?: boolean;
   countImpression?: boolean;
   onHover?: (slug: string | null) => void;
 }) {
@@ -90,14 +87,6 @@ export function CatalogTrainerCard({
             </svg>
             <span>{trainer.city}</span>
           </span>
-          {showContacts ? (
-            <TrainerContactIcons
-              slug={trainer.slug}
-              phone={trainer.phone}
-              instagram={trainer.instagram}
-              telegram={trainer.telegram}
-            />
-          ) : null}
         </div>
       </div>
     </article>
