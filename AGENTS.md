@@ -52,7 +52,7 @@
 | `.cursor/skills/trenio-pwa-audit/` | PWA-related work or before finishing UI |
 | `.cursor/skills/trenio-mobile-audit/` | UI/layout/responsive changes. Command: `/mobile-adapt` |
 | `.cursor/skills/trenio-docs-sync/` | After tasks — sync documentation |
-| `.cursor/skills/trenio-instagram-trainers/` | Import public Instagram trainer profiles into drafts, copy each draft to the server, and leave it unpublished. Command: `/import-instagram-trainers` |
+| `.cursor/skills/trenio-instagram-trainers/` | Import public Instagram trainer profiles into drafts, apply operator notes and an attached Threads profile, choose photos by composition, copy each draft to the server, and leave it unpublished. Command: `/import-instagram-trainers` |
 | `.cursor/skills/trenio-messages/` | Direct messages: who can write, composer, receipts, polling. Rule: `.cursor/rules/messages.mdc` |
 | `.cursor/skills/trenio-logging/` | Operational journal in `app_logs` and `trainer_journal`. Rows are kept. Command: `/logging`. Rule: `.cursor/rules/logging.mdc` |
 | `.cursor/skills/trenio-diagnosis/` | Diagnose a failure from `app_logs`. Command: `/diagnosis` |

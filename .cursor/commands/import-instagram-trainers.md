@@ -1,6 +1,6 @@
 # Import Instagram trainers
 
-Read public Instagram profiles into Trenio draft trainer records. One link or a bulk list. Each trainer gets photo search and readable card text.
+Read public Instagram profiles into Trenio draft trainer records. One link or a bulk list. Facts written in the same message, and a Threads profile when one is attached, are applied to that account. Photos are chosen by the frame, not by the pixel count. The card text is sentences a person can read aloud.
 
 ## Project context
 
@@ -13,31 +13,35 @@ Read public Instagram profiles into Trenio draft trainer records. One link or a 
 
 ## Input
 
-The rest of the user message is the source list. Accept profile URLs and bare handles. A bare handle becomes `https://www.instagram.com/{handle}/`.
+The rest of the user message is the source list, plus anything the user knows about that account. Accept Instagram profile URLs and bare handles. A bare handle becomes `https://www.instagram.com/{handle}/`. Accept a Threads profile URL (`threads.net` or `threads.com`) as a source for the Instagram account it belongs to. Accept prose facts: name, surname, city, sport, phone, and the rest. Copy those facts onto the account. They fill what the profile does not say. For the name, city, phone, email, Telegram, price, and coaching years, a fact the user states replaces a different value on the page.
+
+One Instagram profile: every fact and every Threads link in the message applies to it. Several profiles: a fact or a Threads link applies to the profile URL nearest above it. A sentence that names a handle applies to that handle. Text above the first URL is not copied onto every profile.
 
 Example:
 
 ```
 /import-instagram-trainers
 https://www.instagram.com/antipenko.training/
-https://www.instagram.com/another.coach/
+https://www.threads.net/@antipenko.training
+Анна Антипенко, Минск, тренер по пилатесу, взрослые
 ```
 
 ## Do this now
 
 1. Read the skill, `fields.md`, `scripts/extract-profile.fn.js`, and `scripts/extract-post.fn.js`.
-2. Normalize every link. Reject post, reel, and story URLs as the source list.
-3. For one profile at a time: open it, snapshot, expand the biography, extract the header, contact buttons, and the pinned-post links.
-4. Save the face photo by the rule in the skill section "Face photo". Playwright opens the profile and takes the largest profile picture the page itself loaded. Use only the import Chrome profile and the account named there.
+2. Normalize every link. Split off the operator note and any Threads profile. Reject Instagram post, reel, and story URLs as the source list. A Threads post URL is only a way to reach that author's profile.
+3. For one profile at a time: open it, snapshot, expand the biography, extract the header, contact buttons, and the pinned-post links. Copy the operator note for this handle into the raw file.
+4. Save the face photo by the rule in the skill section "Face photo". Among CDN copies of that same picture, keep the largest file the page loaded. Use only the import Chrome profile and the account named there. When the profile picture is a logo or cuts the face off, use a clear portrait from a post instead.
 5. Open the highlight titled «Обо мне», «О себе», «About», or «About me» when it exists. Copy each frame's text.
-6. Open each pinned post, up to three. Read the caption for profile fields: sport, experience, who they teach, address, city, phone, price, email, Telegram, language, and format. Do not copy or retell that caption in «Как меня представить» or «Как проходят мои тренировки». Store at most two photos from that post. Keep a photo of the trainer, the session, or the gym. Skip a text card, logo, or flyer. A diploma with the word «диплом», «сертификат», or «удостоверение» in the caption is a document, not a gallery photo.
-7. From other posts on the same grid, add two or three more photos of the trainer, a session, or the gym. Do not treat those posts as pinned, and do not copy their captions onto the card.
-8. Run ten `sequentialthinking` steps for that trainer. Separate sports they coach from sports they only practice. Put facts from pinned captions into fields: sport, coaching experience, audience, address, city, phone, and the rest. Store years only when the text says they are coaching years. A bare «стаж N лет» stays out of the field and out of the card. Write «Как меня представить» and «Как проходят мои тренировки» as short first-person sentences from the biography and the about highlight only. Leave the training text empty when those two never describe a session, even if a pin does. Copy email and Telegram when the profile or a pin shows them, without confirmation. Copy a mobile from the biography, the about highlight, a pinned caption, or a `tel:` button into the phone field. Store that number as `+375 29 123-45-67`. Do not put it in the biography or the card text, do not replace it with another number, and do not confirm it. Copy a street or hall into `address` and do not geocode it.
-9. Write `resolved` into `data/instagram-trainers/_raw/{handle}.json` and run `save-draft.ts` for that file. Fix a rejection by revising the thought, not by editing the draft.
-10. Carry that saved draft to the production server. See "Server" below. Leave `status` as `draft`.
-11. On a login wall, stop and ask the user to sign in once in the import Chrome window from the skill. Do not type the password. On a checkpoint, stop the batch.
-12. Report each profile: name, coached sport, practiced sports, city, phone, email, telegram, pinned count, face side in pixels, gallery count, certificate count, whether the training text was written, and fields still empty.
-13. Close the Playwright page.
+6. When the user attached Threads, open that profile in the same browser. Expand the biography. Read the header and the posts that add facts about this person, up to 12. Copy the text. Apply it to the fields and to the card.
+7. Open each pinned post, up to three. Read the caption for profile fields: sport, experience, who they teach, address, city, phone, price, email, Telegram, language, and format. Do not copy or retell that caption in «Как меня представить» or «Как проходят мои тренировки». Store at most two photos from that post. Choose them by the frame: the trainer is recognizable, the face is not cut off, the action or the room is readable. Skip a larger file when the frame is a blur, a crowd, a collage, or mostly floor. Skip a text card, logo, or flyer. A diploma with the word «диплом», «сертификат», or «удостоверение» in the caption is a document, not a gallery photo.
+8. From other posts on the same grid, and from the Threads posts already opened, add frames until two or three gallery photos pass that same composition bar. One strong frame is enough. Do not treat those posts as pinned, and do not copy their Instagram captions onto the card.
+9. Run eleven `sequentialthinking` steps for that trainer. Separate sports they coach from sports they only practice. Put facts from pinned captions, Threads, and the operator note into fields: sport, coaching experience, audience, address, city, phone, and the rest. A single name, city, phone, email, Telegram, price, or coaching-year value in the note replaces the page. Store years only when the text says they are coaching years. A bare «стаж N лет» stays out of the field and out of the card. Write «Как меня представить» and «Как проходят мои тренировки» as first-person sentences a person can read aloud. Sources are the biography, the about highlight, Threads, and the note. Leave the training text empty when those never describe a session, even if a pin does. Copy email and Telegram when the profile, a pin, Threads, or the note shows them, without confirmation. Copy a mobile from those sources into the phone field. Store that number as `+375 29 123-45-67`. Do not put it in the biography or the card text, and do not confirm it. The note's mobile wins when it states one. Copy a street or hall into `address` and do not geocode it.
+10. Write `resolved`, `operatorNotes`, and `threads` into `data/instagram-trainers/_raw/{handle}.json` and run `save-draft.ts` for that file. Fix a rejection by revising the thought, not by editing the draft.
+11. Carry that saved draft to the production server. See "Server" below. Leave `status` as `draft`.
+12. On a login wall, sign in from `LOGIN.md` in the import Chrome window. Do not print the password. On a checkpoint, stop the batch. Threads uses that same window.
+13. Report each profile: name, coached sport, practiced sports, city, phone, email, telegram, pinned count, face side in pixels, gallery count, certificate count, whether the training text was written, whether the note was applied, whether Threads was read, and fields still empty.
+14. Close the Playwright page.
 
 ## Server
 
@@ -52,5 +56,5 @@ Carry each saved account to production before the report. Do this by default. Do
 ## Result
 
 - Saved drafts are listed with their file paths. Each one is also on the production server, still unpublished.
-- The largest profile picture the page loaded is on disk, plus two or three photos from posts. Pinned captions fill profile fields. They are not copied into the card text. Empty fields stay empty.
+- The profile picture is on disk when it shows the person. Gallery frames are the ones where the trainer and the session read clearly. A larger file does not win. Pinned captions fill profile fields. They are not copied into the card text. The operator note and the Threads profile fill fields and the spoken card text. Empty fields stay empty when no source states them.
 - The public trainer page stays closed until the trainer publishes it from the cabinet.

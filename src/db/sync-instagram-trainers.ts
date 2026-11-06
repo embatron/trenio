@@ -35,6 +35,8 @@ type DraftFile = {
   languages?: string[];
   sourceBio?: string;
   sourceAbout?: string[];
+  sourceThreads?: string;
+  operatorNotes?: string;
   audiences?: ImportedTrainerDraft["audiences"];
   avatarPath?: string;
   photos?: string[];
@@ -79,7 +81,12 @@ async function sync() {
       gender: draft.gender,
       headline: draft.headline,
       bio: draft.bio || published?.bio || "",
-      sourceBio: [draft.sourceBio, ...(draft.sourceAbout ?? [])].map((part) => (part || "").trim()).filter(Boolean).join("\n\n") || draft.bio,
+      sourceBio: [
+        draft.sourceBio,
+        ...(draft.sourceAbout ?? []),
+        draft.sourceThreads ? `Threads. ${draft.sourceThreads}` : "",
+        draft.operatorNotes ? `Заметка. ${draft.operatorNotes}` : "",
+      ].map((part) => (part || "").trim()).filter(Boolean).join("\n\n") || draft.bio,
       about: draft.about ?? [],
       pinned: draft.pinned ?? [],
       sports: draft.sports ?? [],
