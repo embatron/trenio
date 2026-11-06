@@ -1,7 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
+import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { getAdminWelcomesFn, type AdminWelcome } from "@/lib/admin/welcomes";
+
+const PHONE_PATH =
+  "M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.5 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.5c.9.2 1.8.4 2.7.5A2 2 0 0 1 22 16.9z";
 
 export const Route = createFileRoute("/admin/welcomes")({
   loader: () => getAdminWelcomesFn(),
@@ -26,38 +31,74 @@ function formatWhen(value: string) {
   }).format(new Date(value));
 }
 
-function ContactLink({ href, children }: { href: string; children: string }) {
+function ContactLine({
+  href,
+  label,
+  name,
+  external,
+  phone,
+  icon,
+}: {
+  href: string;
+  label: string;
+  name: string;
+  external?: boolean;
+  phone?: boolean;
+  icon: ReactNode;
+}) {
   return (
-    <a className="cabinet-inline-link" href={href} target="_blank" rel="noopener noreferrer">
-      {children}
+    <a
+      className={phone ? "welcome-contact welcome-contact--phone" : "welcome-contact"}
+      href={href}
+      aria-label={name}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
+    >
+      <span className="welcome-contact__mark">{icon}</span>
+      <span>{label}</span>
     </a>
   );
 }
 
 function ContactCell({ welcome }: { welcome: AdminWelcome }) {
-  const bits = [
+  const lines = [
     welcome.instagram ? (
-      <ContactLink key="ig" href={`https://www.instagram.com/${welcome.instagram}/`}>
-        {welcome.instagram}
-      </ContactLink>
+      <ContactLine
+        key="ig"
+        href={`https://www.instagram.com/${welcome.instagram}/`}
+        label={welcome.instagram}
+        name={`Instagram ${welcome.instagram}`}
+        external
+        icon={<InstagramIcon />}
+      />
     ) : null,
     welcome.telegram ? (
-      <ContactLink key="tg" href={`https://t.me/${welcome.telegram}`}>
-        {`@${welcome.telegram}`}
-      </ContactLink>
+      <ContactLine
+        key="tg"
+        href={`https://t.me/${welcome.telegram}`}
+        label={`@${welcome.telegram}`}
+        name={`Telegram @${welcome.telegram}`}
+        external
+        icon={<TelegramIcon />}
+      />
     ) : null,
     welcome.phone ? (
-      <a
+      <ContactLine
         key="phone"
-        className="cabinet-inline-link"
         href={`tel:${welcome.phone.replace(/[^\d+]/g, "")}`}
-      >
-        {welcome.phone}
-      </a>
+        label={welcome.phone}
+        name={`Телефон ${welcome.phone}`}
+        phone
+        icon={
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d={PHONE_PATH} />
+          </svg>
+        }
+      />
     ) : null,
   ].filter(Boolean);
-  if (bits.length === 0) return "—";
-  return <span className="welcome-contacts">{bits}</span>;
+  if (lines.length === 0) return "—";
+  return <span className="welcome-contacts">{lines}</span>;
 }
 
 function AdminWelcomesPage() {
@@ -114,8 +155,12 @@ function AdminWelcomesPage() {
       <style
         dangerouslySetInnerHTML={{
           __html: `
-        .welcome-contacts { display: flex; flex-wrap: wrap; gap: 4px 12px; }
-        .welcome-contacts .cabinet-inline-link { margin-top: 0; }
+        .welcome-contacts { display: grid; justify-items: start; }
+        .welcome-contact { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--text); font-size: 14px; font-weight: var(--fw-body); line-height: 1.3; text-decoration: none; white-space: nowrap; }
+        .welcome-contact__mark { width: 22px; height: 22px; display: grid; place-items: center; flex: 0 0 22px; }
+        .welcome-contact__mark svg { width: 20px; height: 20px; display: block; }
+        .welcome-contact--phone svg { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+        .welcome-contact:hover { color: var(--primary); }
       `,
         }}
       />
