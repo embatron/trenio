@@ -8,11 +8,9 @@ import {
   getAdminWelcomesFn,
   setAdminWelcomeStatusFn,
   type AdminWelcome,
-  type WelcomeStaffStatus,
 } from "@/lib/admin/welcomes";
 
 const CHECK = "M5 12l5 5L20 7";
-const CROSS = "M6 6l12 12M18 6L6 18";
 
 const PHONE_PATH =
   "M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.5 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.5c.9.2 1.8.4 2.7.5A2 2 0 0 1 22 16.9z";
@@ -136,7 +134,7 @@ function IconButton({
 }: {
   label: string;
   path: string;
-  tone: "approve" | "reject";
+  tone: "approve";
   disabled?: boolean;
   onClick: () => void;
 }) {
@@ -163,9 +161,9 @@ function AdminWelcomesPage() {
   const setStatus = useAuthServerFn(setAdminWelcomeStatusFn);
   const [busyId, setBusyId] = useState<string | null>(null);
 
-  function decide(id: string, status: Extract<WelcomeStaffStatus, "done" | "rejected">) {
+  function decide(id: string) {
     setBusyId(id);
-    void setStatus({ data: { id, status } })
+    void setStatus({ data: { id, status: "done" } })
       .then(() => router.invalidate())
       .finally(() => setBusyId(null));
   }
@@ -226,16 +224,7 @@ function AdminWelcomesPage() {
                               path={CHECK}
                               tone="approve"
                               disabled={busyId === row.id}
-                              onClick={() => decide(row.id, "done")}
-                            />
-                          ) : null}
-                          {row.staffStatus !== "rejected" ? (
-                            <IconButton
-                              label="Отклонить"
-                              path={CROSS}
-                              tone="reject"
-                              disabled={busyId === row.id}
-                              onClick={() => decide(row.id, "rejected")}
+                              onClick={() => decide(row.id)}
                             />
                           ) : null}
                         </div>
