@@ -17,7 +17,11 @@ import { BELARUS_CITIES } from "@/lib/catalog/city-taxonomy";
 import { TRAINER_AUDIENCE_OPTIONS, TRAINER_FORMAT_OPTIONS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { getSportTaxonomyChild, getTopLevelSportCategory, listPublishedSportCategories, listSecondLevelSports } from "@/lib/catalog/sport-taxonomy";
 import { placeLine } from "@/lib/geo/schemas";
-import { outreachHello } from "@/lib/site-texts/defaults";
+import { outreachHello, outreachWithSiteLink } from "@/lib/site-texts/defaults";
+
+const TRAINER_PAGE_SIZE = 20;
+type TrainerPublishTab = "unpublished" | "published";
+type TrainerSort = "date-desc" | "date-asc" | "reviews" | "rating" | "popularity" | "sent" | "link" | "visit" | "note";
 
 const dateFormat = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short", year: "numeric" });
 const addedFormat = new Intl.DateTimeFormat("en-GB", {
@@ -249,7 +253,7 @@ function InviteCopy({
 }
 
 function fillHello(template: string, firstName: string) {
-  return template.replaceAll("{hello}", outreachHello(firstName));
+  return outreachWithSiteLink(template.replaceAll("{hello}", outreachHello(firstName)));
 }
 
 function TextCopy({ template, firstName, sent }: { template: string; firstName: string; sent: boolean }) {
@@ -326,8 +330,45 @@ function searchHaystack(trainer: AdminTrainer) {
   ].join(" ").toLocaleLowerCase("ru").replaceAll("ё", "е");
 }
 
+function sortTrainers(rows: AdminTrainer[], sort: TrainerSort) {
+  const byName = (a: AdminTrainer, b: AdminTrainer) => a.fullName.localeCompare(b.fullName, "ru");
+  rows.sort((a, b) => {
+    if (sort === "reviews") return b.reviews - a.reviews || byName(a, b);
+    if (sort === "rating") return Number(b.rating) - Number(a.rating) || b.reviews - a.reviews || byName(a, b);
+    if (sort === "popularity") return b.popularity - a.popularity || byName(a, b);
+    if (sort === "sent") {
+      const left = a.outreachSentAt ? Date.parse(a.outreachSentAt) : 0;
+      const right = b.outreachSentAt ? Date.parse(b.outreachSentAt) : 0;
+      return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
+    }
+    if (sort === "link") {
+      const left = a.inviteSentAt ? Date.parse(a.inviteSentAt) : 0;
+      const right = b.inviteSentAt ? Date.parse(b.inviteSentAt) : 0;
+      return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
+    }
+    if (sort === "visit") {
+      const left = a.doorEnteredAt ? Date.parse(a.doorEnteredAt) : 0;
+      const right = b.doorEnteredAt ? Date.parse(b.doorEnteredAt) : 0;
+      return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
+    }
+    if (sort === "note") {
+      const left = a.staffNoteAt ? Date.parse(a.staffNoteAt) : 0;
+      const right = b.staffNoteAt ? Date.parse(b.staffNoteAt) : 0;
+      return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
+    }
+    const left = a.createdAt ? Date.parse(a.createdAt) : 0;
+    const right = b.createdAt ? Date.parse(b.createdAt) : 0;
+    if (!left && !right) return byName(a, b);
+    if (!left) return 1;
+    if (!right) return -1;
+    return sort === "date-asc" ? left - right : right - left;
+  });
+  return rows;
+}
+
 export function AdminTrainersTable({ trainers, outreachText }: { trainers: AdminTrainer[]; outreachText: string }) {
   const [query, setQuery] = useState("");
+  const [publishTab, setPublishTab] = useState<TrainerPublishTab>("unpublished");
   const [editSlug, setEditSlug] = useState<string | null>(null);
   const [notePatch, setNotePatch] = useState<Record<string, { body: string; at: string; count: number }>>({});
   const [linkPatch, setLinkPatch] = useState<Record<string, string>>({});
@@ -353,12 +394,12 @@ export function AdminTrainersTable({ trainers, outreachText }: { trainers: Admin
   const [link, setLink] = useState<"" | "sent" | "unsent">("");
   const [visit, setVisit] = useState<"" | "yes" | "no">("");
   const [note, setNote] = useState<"" | "yes" | "no">("");
-  const [sort, setSort] = useState<"date-desc" | "date-asc" | "reviews" | "rating" | "popularity" | "sent" | "link" | "visit" | "note">("date-desc");
+  const [sort, setSort] = useState<TrainerSort>("date-desc");
   const sportOptions = useMemo(
     () => listSecondLevelSports().filter((item) => !category || item.parentSlug === category),
     [category],
   );
-  const visible = useMemo(() => {
+  const visibleBuckets = useMemo(() => {
     const tokens = query.trim().toLocaleLowerCase("ru").replaceAll("ё", "е").split(/\s+/).filter(Boolean);
     const rows = listed.filter((trainer) => {
       const parents = trainer.sportSlugs.map((slug) => getSportTaxonomyChild(slug)?.parentSlug);
@@ -381,41 +422,16 @@ export function AdminTrainersTable({ trainers, outreachText }: { trainers: Admin
       }
       return true;
     });
-    const byName = (a: AdminTrainer, b: AdminTrainer) => a.fullName.localeCompare(b.fullName, "ru");
-    rows.sort((a, b) => {
-      if (sort === "reviews") return b.reviews - a.reviews || byName(a, b);
-      if (sort === "rating") return Number(b.rating) - Number(a.rating) || b.reviews - a.reviews || byName(a, b);
-      if (sort === "popularity") return b.popularity - a.popularity || byName(a, b);
-      if (sort === "sent") {
-        const left = a.outreachSentAt ? Date.parse(a.outreachSentAt) : 0;
-        const right = b.outreachSentAt ? Date.parse(b.outreachSentAt) : 0;
-        return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
-      }
-      if (sort === "link") {
-        const left = a.inviteSentAt ? Date.parse(a.inviteSentAt) : 0;
-        const right = b.inviteSentAt ? Date.parse(b.inviteSentAt) : 0;
-        return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
-      }
-      if (sort === "visit") {
-        const left = a.doorEnteredAt ? Date.parse(a.doorEnteredAt) : 0;
-        const right = b.doorEnteredAt ? Date.parse(b.doorEnteredAt) : 0;
-        return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
-      }
-      if (sort === "note") {
-        const left = a.staffNoteAt ? Date.parse(a.staffNoteAt) : 0;
-        const right = b.staffNoteAt ? Date.parse(b.staffNoteAt) : 0;
-        return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
-      }
-      const left = a.createdAt ? Date.parse(a.createdAt) : 0;
-      const right = b.createdAt ? Date.parse(b.createdAt) : 0;
-      if (!left && !right) return byName(a, b);
-      if (!left) return 1;
-      if (!right) return -1;
-      return sort === "date-asc" ? left - right : right - left;
-    });
-    return rows;
+    const unpublished = sortTrainers(rows.filter((trainer) => trainer.status !== "published"), sort);
+    const published = sortTrainers(rows.filter((trainer) => trainer.status === "published"), sort);
+    return { unpublished, published };
   }, [listed, query, category, sport, city, format, audience, message, link, visit, note, sort]);
-  const pager = useTablePage(visible, `${query}|${category}|${sport}|${city}|${format}|${audience}|${message}|${link}|${visit}|${note}|${sort}`);
+  const visible = publishTab === "published" ? visibleBuckets.published : visibleBuckets.unpublished;
+  const pager = useTablePage(
+    visible,
+    `${query}|${category}|${sport}|${city}|${format}|${audience}|${message}|${link}|${visit}|${note}|${sort}|${publishTab}`,
+    TRAINER_PAGE_SIZE,
+  );
 
   if (listed.length === 0) {
     return <p className="cabinet-empty">Тренеров пока нет.</p>;
@@ -423,6 +439,14 @@ export function AdminTrainersTable({ trainers, outreachText }: { trainers: Admin
 
   return (
     <>
+      <div className="cabinet-tabs" role="tablist" aria-label="Публикация">
+        <button type="button" role="tab" aria-selected={publishTab === "unpublished"} onClick={() => setPublishTab("unpublished")}>
+          {`Неопубликованные (${visibleBuckets.unpublished.length})`}
+        </button>
+        <button type="button" role="tab" aria-selected={publishTab === "published"} onClick={() => setPublishTab("published")}>
+          {`Опубликованные (${visibleBuckets.published.length})`}
+        </button>
+      </div>
       <div className="cabinet-filters">
         <label className="cabinet-filters__search">
           <span>Поиск</span>
@@ -538,7 +562,8 @@ export function AdminTrainersTable({ trainers, outreachText }: { trainers: Admin
           <table className="cabinet-table cabinet-table--trainers">
             <thead>
               <tr>
-                <th>Тренер</th>
+                <th className="is-index" aria-label="Номер">№</th>
+                <th className="is-person">Тренер</th>
                 <th>Действия</th>
                 <th>Сообщение</th>
                 <th>Ссылка</th>
@@ -556,9 +581,10 @@ export function AdminTrainersTable({ trainers, outreachText }: { trainers: Admin
               </tr>
             </thead>
             <tbody>
-              {pager.rows.map((trainer) => (
+              {pager.rows.map((trainer, index) => (
                 <tr key={trainer.slug}>
-                  <td>
+                  <td className="is-index">{pager.from + index}</td>
+                  <td className="is-person">
                     <div className="cabinet-person">
                       <UserAvatar name={trainer.fullName || trainer.firstName || trainer.slug} src={trainer.avatarPath} size={44} />
                       <div className="cabinet-person__text">
