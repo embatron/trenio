@@ -84,6 +84,11 @@ test("public head uses an absolute canonical and a clipped description", () => {
   const description = head.meta.find((item) => "name" in item && item.name === "description");
   const canonical = head.links[0];
   const graph = head.scripts?.find((script) => script.children.includes("WebPage"));
+  const ogTitle = head.meta.find((item) => "property" in item && item.property === "og:title");
+  assert.equal(
+    ogTitle && "content" in ogTitle ? ogTitle.content : "",
+    "Найти тренера по боксу",
+  );
   assert.equal(canonical?.href, "https://trenio.by/categories/edinoborstva/boks");
   assert.ok(graph);
   assert.equal(graph.children.includes("<"), false);
@@ -115,6 +120,24 @@ test("city and category snippets use the Belarus query, not an alias dump", () =
   assert.equal(description.includes("любительский бокс, бокс"), false);
   const head = catalogPageHead(brest, boxing);
   assert.equal(head.links[0]?.href, "https://trenio.by/city/brest/boks");
+  const cityImage = head.meta.find((item) => "property" in item && item.property === "og:image");
+  const cityWidth = head.meta.find((item) => "property" in item && item.property === "og:image:width");
+  const cityTitle = head.meta.find((item) => "property" in item && item.property === "og:title");
+  assert.equal(
+    cityImage && "content" in cityImage ? cityImage.content : "",
+    "https://trenio.by/og/categories/edinoborstva.jpg",
+  );
+  assert.equal(cityWidth && "content" in cityWidth ? cityWidth.content : "", "1200");
+  assert.equal(
+    cityTitle && "content" in cityTitle ? cityTitle.content : "",
+    "Найти тренера по боксу в Бресте",
+  );
+  const cityOnly = catalogPageHead(brest, null);
+  const wordmark = cityOnly.meta.find((item) => "property" in item && item.property === "og:image");
+  assert.equal(
+    wordmark && "content" in wordmark ? wordmark.content : "",
+    "https://trenio.by/og.png",
+  );
   const fitness = categorySearchDescription("Найти тренера по фитнесу", "длинный текст", [
     "фитнес",
     "тренажёрный зал",

@@ -3,7 +3,12 @@ import test from "node:test";
 
 import sharp from "sharp";
 
-import { pickFacePhoto, renderShareCard, sharePhotoRelative } from "@/lib/images/share-card";
+import {
+  pickFacePhoto,
+  renderContainCard,
+  renderShareCard,
+  sharePhotoRelative,
+} from "@/lib/images/share-card";
 import { SHARE_CARD_HEIGHT, SHARE_CARD_WIDTH } from "@/lib/images/share-size";
 
 test("the share path stays inside public trainer and avatar photos", () => {
@@ -67,4 +72,28 @@ test("a share card is a baseline 1200×630 jpeg and keeps the top of the portrai
     .raw()
     .toBuffer();
   assert.ok(sample[0] > sample[2]);
+});
+
+test("a category card keeps the whole picture inside a baseline 1200×630 jpeg", async () => {
+  const source = await sharp({
+    create: { width: 80, height: 80, channels: 3, background: { r: 220, g: 20, b: 20 } },
+  })
+    .png()
+    .toBuffer();
+  const card = await renderContainCard(source);
+  const meta = await sharp(card).metadata();
+  assert.equal(meta.width, SHARE_CARD_WIDTH);
+  assert.equal(meta.height, SHARE_CARD_HEIGHT);
+  assert.equal(meta.format, "jpeg");
+  assert.equal(meta.isProgressive, false);
+  const corner = await sharp(card)
+    .extract({ left: 4, top: 4, width: 1, height: 1 })
+    .raw()
+    .toBuffer();
+  const center = await sharp(card)
+    .extract({ left: 600, top: 315, width: 1, height: 1 })
+    .raw()
+    .toBuffer();
+  assert.ok(corner[0] < 20 && corner[1] < 20 && corner[2] < 20);
+  assert.ok(center[0] > center[2]);
 });

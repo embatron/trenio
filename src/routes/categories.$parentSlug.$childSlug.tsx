@@ -1,6 +1,11 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { canonicalCategoryPath } from "@/lib/catalog/slug-policy";
-import { categorySearchDescription, getParentCategoryFeaturedImage, getTopLevelSportCategory, getSportTaxonomyChildInCategory, isPublishedSportCategory } from "@/lib/catalog/sport-taxonomy";
+import {
+  categorySearchDescription,
+  getTopLevelSportCategory,
+  getSportTaxonomyChildInCategory,
+  isPublishedSportCategory,
+} from "@/lib/catalog/sport-taxonomy";
 import { categoryRouteHead } from "@/lib/seo/catalog";
 import { documentLead, siteTitle } from "@/lib/seo/site";
 import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
@@ -62,7 +67,7 @@ export const Route = createFileRoute("/categories/$parentSlug/$childSlug")({
       title,
       description: desc,
       path,
-      image: getParentCategoryFeaturedImage(params.parentSlug),
+      parentSlug: params.parentSlug,
       faq: category.faq,
       crumbs: [
         { name: "Главная", path: "/" },

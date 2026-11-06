@@ -186,6 +186,21 @@ function baselineCard(input: sharp.Sharp) {
     .toBuffer();
 }
 
+/** 1200×630 baseline JPEG. The whole picture stays inside the frame, on black. */
+export async function renderContainCard(bytes: Buffer) {
+  return sharp(bytes, { failOn: "none", animated: false })
+    .rotate()
+    .flatten({ background: "#000000" })
+    .resize({
+      width: SHARE_CARD_WIDTH,
+      height: SHARE_CARD_HEIGHT,
+      fit: "contain",
+      background: "#000000",
+    })
+    .jpeg({ quality: 80, progressive: false, mozjpeg: false })
+    .toBuffer();
+}
+
 /** 1200×630 baseline JPEG. A portrait keeps the head. A wide frame follows the skin. */
 export async function renderShareCard(bytes: Buffer) {
   const frame = await frameSample(bytes);

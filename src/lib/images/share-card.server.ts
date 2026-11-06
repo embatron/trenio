@@ -8,7 +8,13 @@ import sharp from "sharp";
 import { getDb } from "@/db";
 import { trainerProfiles } from "@/db/schema";
 import {
+  getParentCategoryFeaturedImage,
+  getTopLevelSportCategory,
+  isPublishedSportCategory,
+} from "@/lib/catalog/sport-taxonomy";
+import {
   pickFacePhoto,
+  renderContainCard,
   renderShareCard,
   sharePhotoRelative,
   type FaceCandidate,
@@ -61,6 +67,38 @@ export async function trainerShareJpeg(slug: string) {
     logCaught("catalog", "catalog.share", error, {
       target: slug,
       route: `/og/trainers/${slug}.jpg`,
+    });
+    return null;
+  }
+}
+
+function categoryArtFile(urlPath: string) {
+  const value = urlPath.trim().split("?")[0] ?? "";
+  if (!value.startsWith("/images/") || value.includes("..") || value.includes("\\")) return null;
+  if (!/\.(png|jpe?g|webp)$/i.test(value)) return null;
+  const relative = value.slice(1);
+  const roots = [path.resolve("public"), path.resolve("dist/client")];
+  for (const root of roots) {
+    const file = path.resolve(root, relative);
+    if (file !== root && file.startsWith(root + path.sep) && existsSync(file)) return file;
+  }
+  return null;
+}
+
+/** The category illustration, fitted whole into the same 1200×630 card. */
+export async function categoryShareJpeg(slug: string) {
+  if (typeof slug !== "string") return null;
+  const category = getTopLevelSportCategory(slug);
+  if (!category || !isPublishedSportCategory(category)) return null;
+  const art = getParentCategoryFeaturedImage(slug);
+  const file = art ? categoryArtFile(art) : null;
+  if (!file) return null;
+  try {
+    return await renderContainCard(await readFile(file));
+  } catch (error) {
+    logCaught("catalog", "catalog.share", error, {
+      target: slug,
+      route: `/og/categories/${slug}.jpg`,
     });
     return null;
   }

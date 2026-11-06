@@ -53,7 +53,7 @@
 | `catalog.trainer_preview` / `catalog.trainer_edit` / `catalog.trainer_save` / `catalog.trainer_publish` | Profile preview and edit links. They stay valid until the profile is published, then open the public trainer URL. A missing link is `denied`. Tokens and URLs stay out of the row |
 | `catalog.list` | Published catalog list failed. Success is not stored |
 | `catalog.sitemap` | The sitemap could not read published trainer profiles. The rest of the file is still served. Success is not stored |
-| `catalog.share` | The messenger face card could not be drawn. A missing photo is a 404 and is not stored |
+| `catalog.share` | The messenger card could not be drawn. A missing trainer photo or category picture is a 404 and is not stored |
 | `catalog.claim` | Welcome-link side effect failed |
 | `system.ready` / `system.unhandled` / `system.ssr` / `system.purge` / `system.probe` | Process and unhandled errors |
 | `system.image` | TinyPNG failed while storing an upload. The original sharp file is kept. The API key is not stored |

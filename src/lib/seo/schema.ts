@@ -1,4 +1,12 @@
-import { absoluteUrl, OG_LOCALE, SITE_EMAIL, SITE_LOGO, SITE_NAME, SITE_ORIGIN } from "@/lib/seo/site";
+import { SHARE_CARD_HEIGHT, SHARE_CARD_WIDTH } from "@/lib/images/share-size";
+import {
+  absoluteUrl,
+  OG_LOCALE,
+  SITE_EMAIL,
+  SITE_LOGO,
+  SITE_NAME,
+  SITE_ORIGIN,
+} from "@/lib/seo/site";
 
 export type SeoCrumb = { name: string; path: string };
 
@@ -31,7 +39,14 @@ export function faqPage(items: Array<{ q: string; a: string }>) {
   return { "@context": CONTEXT, "@type": "FAQPage", mainEntity };
 }
 
-export function collectionPage(input: { name: string; path: string; description: string; items?: SeoLink[] }) {
+export function collectionPage(input: {
+  name: string;
+  path: string;
+  description: string;
+  items?: SeoLink[];
+  image?: string;
+}) {
+  const image = input.image?.trim();
   return {
     "@context": CONTEXT,
     "@type": "CollectionPage",
@@ -40,6 +55,17 @@ export function collectionPage(input: { name: string; path: string; description:
     url: absoluteUrl(input.path),
     inLanguage: OG_LOCALE.replace("_", "-"),
     isPartOf: { "@type": "WebSite", name: SITE_NAME, url: SITE_ORIGIN },
+    ...(image
+      ? {
+          image: {
+            "@type": "ImageObject",
+            url: absoluteUrl(image),
+            contentUrl: absoluteUrl(image),
+            width: SHARE_CARD_WIDTH,
+            height: SHARE_CARD_HEIGHT,
+          },
+        }
+      : {}),
     ...(input.items?.length
       ? {
           mainEntity: {
@@ -66,7 +92,8 @@ export function homeGraph(faq: Array<{ q: string; a: string }>) {
       logo: absoluteUrl(SITE_LOGO),
       email: SITE_EMAIL,
       areaServed: { "@type": "Country", name: "Беларусь" },
-      description: "Каталог тренеров в Беларуси. Сервис не проверяет квалификацию и не принимает оплату за занятия.",
+      description:
+        "Каталог тренеров в Беларуси. Сервис не проверяет квалификацию и не принимает оплату за занятия.",
     },
     {
       "@context": CONTEXT,

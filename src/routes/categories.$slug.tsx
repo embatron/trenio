@@ -96,7 +96,7 @@ export const Route = createFileRoute("/categories/$slug")({
       title,
       description: desc,
       path,
-      image: getParentCategoryFeaturedImage(params.slug),
+      parentSlug: params.slug,
       faq: c.faq,
       crumbs: [
         { name: "Главная", path: "/" },

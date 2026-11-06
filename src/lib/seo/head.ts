@@ -1,4 +1,10 @@
-import { DEFAULT_SHARE_IMAGE, OG_LOCALE, SITE_NAME, absoluteUrl } from "@/lib/seo/site";
+import {
+  DEFAULT_SHARE_IMAGE,
+  OG_LOCALE,
+  SITE_NAME,
+  absoluteUrl,
+  documentLead,
+} from "@/lib/seo/site";
 import { clipMeta } from "@/lib/seo/text";
 
 export const NOINDEX_FOLLOW = { name: "robots" as const, content: "noindex, follow" };
@@ -33,7 +39,7 @@ export type SeoHeadInput = {
 export function seoHead(input: SeoHeadInput) {
   const title = input.title.trim();
   const description = clipMeta(input.description);
-  const shareTitle = (input.shareTitle ?? title).trim();
+  const shareTitle = (input.shareTitle ?? documentLead(title)).trim();
   const shareDescription = clipMeta(input.shareDescription ?? description);
   const canonical = absoluteUrl(input.path);
   const image = absoluteUrl(input.image || DEFAULT_SHARE_IMAGE);
