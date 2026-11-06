@@ -26,6 +26,8 @@ import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { readCertificates } from "@/lib/catalog/certificate-file";
 import { sanitizeReviewHtml, reviewPlainText } from "@/lib/catalog/review-html";
 import { publicTrainerCityLabel } from "@/lib/catalog/trainer-city";
+import { relayDoorMark } from "@/lib/sync/relay";
+import { ensurePublicDoorLink } from "@/lib/catalog/trainer-outreach";
 import { publishConfirmedDraft } from "@/lib/catalog/trainer-door-claim";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import {
@@ -50,15 +52,6 @@ function requestOrigin() {
   } catch {
     return fallback;
   }
-}
-
-const DOOR_ALPHABET = "23456789abcdefghijkmnpqrstuvwxyz";
-
-function shortCode() {
-  const bytes = randomBytes(8);
-  let code = "";
-  for (let i = 0; i < 8; i += 1) code += DOOR_ALPHABET[bytes[i] % DOOR_ALPHABET.length];
-  return code;
 }
 
 const doorCodeSchema = z.string().trim().toLowerCase().regex(/^[23456789abcdefghijkmnpqrstuvwxyz]{8}$/);
@@ -166,18 +159,13 @@ export const issueTrainerInviteFn = createServerFn({ method: "POST" })
       });
       throw new AuthError("Профиль уже опубликован. Ссылка больше не копируется.", "VALIDATION");
     }
-    let code = shortCode();
-    for (let attempt = 0; attempt < 5; attempt += 1) {
-      const [clash] = await db.select({ id: trainerProfiles.id }).from(trainerProfiles).where(eq(trainerProfiles.previewToken, code)).limit(1);
-      if (!clash) break;
-      code = shortCode();
+    let url = "";
+    try {
+      url = await ensurePublicDoorLink(row.slug);
+    } catch (error) {
+      logCaught("admin", "admin.trainer_invite", error, { actorUserId: context.user.id, target: row.slug });
+      throw new AuthError("Короткая ссылка не записалась на сервер. Повторите.", "VALIDATION");
     }
-    await db.update(trainerProfiles).set({
-      previewToken: code,
-      editToken: null,
-      updatedAt: new Date(),
-    }).where(eq(trainerProfiles.id, row.id));
-    const url = `${requestOrigin()}/hi/${code}`;
     void writeLog({
       level: "info",
       domain: "admin",
@@ -197,7 +185,12 @@ export const markTrainerInviteSentFn = createServerFn({ method: "POST" })
     assertStaff(context.user.roles);
     const db = getDb();
     const [row] = await db
-      .select({ id: trainerProfiles.id, status: trainerProfiles.status })
+      .select({
+        id: trainerProfiles.id,
+        status: trainerProfiles.status,
+        handle: trainerProfiles.instagramHandle,
+        previewToken: trainerProfiles.previewToken,
+      })
       .from(trainerProfiles)
       .where(eq(trainerProfiles.slug, data.slug))
       .limit(1);
@@ -207,12 +200,17 @@ export const markTrainerInviteSentFn = createServerFn({ method: "POST" })
     }
     const sentAt = new Date();
     await db.update(trainerProfiles).set({ inviteSentAt: sentAt }).where(eq(trainerProfiles.id, row.id));
+    await relayDoorMark({
+      handle: row.handle || data.slug,
+      token: row.previewToken ?? "",
+      linkAt: sentAt.toISOString(),
+    });
     void writeLog({
       level: "info",
       domain: "admin",
       action: "admin.trainer_invite_sent",
       outcome: "success",
-      message: "Сообщение отмечено отправленным.",
+      message: "Короткая ссылка отмечена отправленной.",
       actorUserId: context.user.id,
       target: data.slug,
     });

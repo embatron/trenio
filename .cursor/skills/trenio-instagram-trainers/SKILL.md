@@ -73,7 +73,7 @@ Import progress:
 - [ ] Photo search by composition: keep or skip every stored image
 - [ ] Sequential thinking, thoughts 1–11, for this trainer only
 - [ ] Write resolved into the raw file and run save-draft
-- [ ] Carry that draft to the production server, still unpublished
+- [ ] Sync that draft into the local database and the production database, still unpublished
 - [ ] Report filled and missing fields
 ```
 
@@ -230,15 +230,29 @@ If the script rejects the file, revise the thought it names and run it again. Do
 
 ### 6. Server
 
-After the draft is accepted, carry that one account to production. This is the default. Do not wait for another request.
+After the draft is accepted, write it into the local database and carry that same account to production. This is the default. Do not wait for another request.
+
+`save-draft.ts` writes the JSON and the photo files only. The database row appears only where the draft is applied. Apply it locally first:
+
+```bash
+./node_modules/.bin/tsx --env-file=.env src/db/sync-instagram-trainers.ts {handle}
+```
+
+Then send that same draft, including the photos, to the live site:
+
+```bash
+./node_modules/.bin/tsx --env-file=.env scripts/sync-remote.ts trainer {handle}
+```
+
+Exit 0 means the live database and the photo files are updated. The profile stays `draft`. Do not rebuild for that account.
+
+Exit 2 means the live site does not have `/api/sync/trainer` yet. Read `.cursor/skills/trenio-vps/SKILL.md`, copy `data/instagram-trainers/{handle}.json` and `public/trainers/instagram/{handle}*` into the app directory, and run `src/db/sync-instagram-trainers.ts {handle}` there. Do not run it without a handle. Rebuild and restart so those photo files are served. Do not print secrets. Do not deploy unrelated changes.
 
 The row stays `draft`. Do not set `published`. A guest does not see `/trainers/{handle}`. The trainer opens the magic link, enters the cabinet, and publishes the profile there. A request to put the account on the server means this transfer.
 
-Read `.cursor/skills/trenio-vps/SKILL.md`. Copy `data/instagram-trainers/{handle}.json` and `public/trainers/instagram/{handle}*` into the app directory. Run `src/db/sync-instagram-trainers.ts` with that handle only. Do not run it without a handle. Rebuild and restart the app service so the photo files are served. Do not print secrets. Do not deploy unrelated changes.
-
 ### 7. Report
 
-One line per link: handle, full name, primary sport, practiced sports, city, phone, email, telegram, pinned count, face side in pixels, gallery count, certificate count, whether the training text was written, whether an operator note was applied, whether Threads was read, and fields still empty. Drafts stay unpublished. Say that the draft is on the server. Call `browser_close` when the batch ends.
+One line per link: handle, full name, primary sport, practiced sports, city, phone, email, telegram, pinned count, face side in pixels, gallery count, certificate count, whether the training text was written, whether an operator note was applied, whether Threads was read, and fields still empty. Drafts stay unpublished. Say that the draft is in the local database and on the server. Call `browser_close` when the batch ends.
 
 ## Bulk
 

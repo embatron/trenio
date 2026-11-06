@@ -7,6 +7,7 @@ import { TrainerName } from "@/components/trainer-name";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { TRAINER_PUBLISH_LABEL, type AdminTrainer } from "@/lib/admin/trainers";
 import { TrainerNoteCell } from "@/components/admin-trainer-note";
+import { TrainerEditDialog } from "@/components/admin-trainer-page";
 import { issueTrainerInviteFn, markTrainerInviteSentFn } from "@/lib/catalog/trainer-magic";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { displayAccountLogin } from "@/lib/auth/login-name";
@@ -31,16 +32,18 @@ const CROSS_ICON = "M6 6l12 12M18 6L6 18";
 const EDIT_ICON = "M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z";
 const LINK_LEFT = "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71";
 const LINK_RIGHT = "M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71";
+const TEXT_PAGE = "M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z";
+const TEXT_FOLD = "M14 3v5h5";
+const TEXT_LINES = "M8 13h8M8 17h5";
 const EYE_ICON = "M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12z";
 const EYE_OFF_ICON = "M3 4l18 16M9.9 6.2A11 11 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a18 18 0 0 1-3.1 4M6.2 7.1C4 8.6 2.5 11 2.5 12S6 18.5 12 18.5c1.4 0 2.7-.3 3.8-.8M9.5 9.6a3 3 0 0 0 4.2 4.1";
 const CLOCK_ICON = "M12 7.5V12l3 2";
 const ARCHIVE_ICON = "M3 5h18v4H3zM5 9v10h14V9M10 13h4";
 const PHONE_PATH = "M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.5 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.5c.9.2 1.8.4 2.7.5A2 2 0 0 1 22 16.9z";
 
-function DoorMark({ at }: { at: string }) {
+function FlagMark({ at, sent, waiting }: { at: string; sent: string; waiting: string }) {
   if (at) {
-    const when = dateFormat.format(new Date(at));
-    const label = `Был по ссылке ${when}`;
+    const label = `${sent} ${dateFormat.format(new Date(at))}`;
     return (
       <span className="cabinet-mark is-sent" title={label} aria-label={label}>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d={CHECK_ICON} /></svg>
@@ -48,7 +51,7 @@ function DoorMark({ at }: { at: string }) {
     );
   }
   return (
-    <span className="cabinet-mark is-unsent" title="Ещё не заходил" aria-label="Ещё не заходил">
+    <span className="cabinet-mark is-unsent" title={waiting} aria-label={waiting}>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d={CROSS_ICON} /></svg>
     </span>
   );
@@ -209,7 +212,7 @@ function InviteCopy({
         ? "Ссылка скопирована и отмечена отправленной"
         : error
           ? error
-          : "Скопировать ссылку и отметить отправленной";
+          : "Скопировать короткую ссылку и отметить её отправленной";
   return (
     <button
       type="button"
@@ -239,6 +242,35 @@ function InviteCopy({
     >
       <svg viewBox="0 0 24 24" aria-hidden="true">
         {copied ? <path d={CHECK_ICON} /> : <><path d={LINK_LEFT} /><path d={LINK_RIGHT} /></>}
+      </svg>
+    </button>
+  );
+}
+
+function fillHello(template: string, firstName: string) {
+  const name = firstName.trim();
+  return template.replaceAll("{hello}", name ? `${name}, привет!` : "Привет!");
+}
+
+function TextCopy({ template, firstName }: { template: string; firstName: string }) {
+  const [copied, setCopied] = useState(false);
+  const label = copied ? "Текст скопирован" : "Скопировать текст первого сообщения";
+  return (
+    <button
+      type="button"
+      className="cabinet-icon-btn"
+      aria-label={label}
+      title={label}
+      onClick={() => {
+        void copyText(fillHello(template, firstName)).then((ok) => {
+          if (!ok) return;
+          setCopied(true);
+          window.setTimeout(() => setCopied(false), 2000);
+        });
+      }}
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        {copied ? <path d={CHECK_ICON} /> : <><path d={TEXT_PAGE} /><path d={TEXT_FOLD} /><path d={TEXT_LINES} /></>}
       </svg>
     </button>
   );
@@ -274,7 +306,8 @@ function searchHaystack(trainer: AdminTrainer) {
     formats.join(" "),
     TRAINER_PUBLISH_LABEL[trainer.status],
     trainer.staffNote,
-    trainer.inviteSentAt ? "отправлено" : "ожидает",
+    trainer.outreachSentAt ? "сообщение отправлено" : "сообщение не отправлено",
+    trainer.inviteSentAt ? "ссылка отправлена" : "ссылка не отправлена",
     trainer.doorEnteredAt ? "был заходил" : "не заходил",
     trainer.createdAt ? addedOn(trainer.createdAt) : "",
     trainer.rating,
@@ -288,22 +321,23 @@ function searchHaystack(trainer: AdminTrainer) {
   ].join(" ").toLocaleLowerCase("ru").replaceAll("ё", "е");
 }
 
-export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
+export function AdminTrainersTable({ trainers, outreachText }: { trainers: AdminTrainer[]; outreachText: string }) {
   const [query, setQuery] = useState("");
+  const [editSlug, setEditSlug] = useState<string | null>(null);
   const [notePatch, setNotePatch] = useState<Record<string, { body: string; at: string; count: number }>>({});
-  const [sentPatch, setSentPatch] = useState<Record<string, string>>({});
+  const [linkPatch, setLinkPatch] = useState<Record<string, string>>({});
   const listed = useMemo(
     () => trainers.map((trainer) => {
       const note = notePatch[trainer.slug];
-      const sent = sentPatch[trainer.slug];
-      if (!note && !sent) return trainer;
+      const link = linkPatch[trainer.slug];
+      if (!note && !link) return trainer;
       return {
         ...trainer,
         ...(note ? { staffNote: note.body, staffNoteAt: note.at, staffNoteCount: note.count } : {}),
-        ...(sent ? { inviteSentAt: sent } : {}),
+        ...(link ? { inviteSentAt: link } : {}),
       };
     }),
-    [trainers, notePatch, sentPatch],
+    [trainers, notePatch, linkPatch],
   );
   const [category, setCategory] = useState("");
   const [sport, setSport] = useState("");
@@ -311,9 +345,10 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
   const [format, setFormat] = useState<"" | TrainerFormat>("");
   const [audience, setAudience] = useState<"" | TrainerAudience>("");
   const [message, setMessage] = useState<"" | "sent" | "unsent">("");
+  const [link, setLink] = useState<"" | "sent" | "unsent">("");
   const [visit, setVisit] = useState<"" | "yes" | "no">("");
   const [note, setNote] = useState<"" | "yes" | "no">("");
-  const [sort, setSort] = useState<"date-desc" | "date-asc" | "reviews" | "rating" | "popularity" | "sent" | "visit" | "note">("date-desc");
+  const [sort, setSort] = useState<"date-desc" | "date-asc" | "reviews" | "rating" | "popularity" | "sent" | "link" | "visit" | "note">("date-desc");
   const sportOptions = useMemo(
     () => listSecondLevelSports().filter((item) => !category || item.parentSlug === category),
     [category],
@@ -327,8 +362,10 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
       if (city && trainer.city !== city) return false;
       if (format && !trainer.formats.includes(format)) return false;
       if (audience && !trainer.audiences.includes(audience)) return false;
-      if (message === "sent" && !trainer.inviteSentAt) return false;
-      if (message === "unsent" && trainer.inviteSentAt) return false;
+      if (message === "sent" && !trainer.outreachSentAt) return false;
+      if (message === "unsent" && trainer.outreachSentAt) return false;
+      if (link === "sent" && !trainer.inviteSentAt) return false;
+      if (link === "unsent" && trainer.inviteSentAt) return false;
       if (visit === "yes" && !trainer.doorEnteredAt) return false;
       if (visit === "no" && trainer.doorEnteredAt) return false;
       if (note === "yes" && trainer.staffNoteCount < 1) return false;
@@ -345,6 +382,11 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
       if (sort === "rating") return Number(b.rating) - Number(a.rating) || b.reviews - a.reviews || byName(a, b);
       if (sort === "popularity") return b.popularity - a.popularity || byName(a, b);
       if (sort === "sent") {
+        const left = a.outreachSentAt ? Date.parse(a.outreachSentAt) : 0;
+        const right = b.outreachSentAt ? Date.parse(b.outreachSentAt) : 0;
+        return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
+      }
+      if (sort === "link") {
         const left = a.inviteSentAt ? Date.parse(a.inviteSentAt) : 0;
         const right = b.inviteSentAt ? Date.parse(b.inviteSentAt) : 0;
         return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
@@ -367,8 +409,8 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
       return sort === "date-asc" ? left - right : right - left;
     });
     return rows;
-  }, [listed, query, category, sport, city, format, audience, message, visit, note, sort]);
-  const pager = useTablePage(visible, `${query}|${category}|${sport}|${city}|${format}|${audience}|${message}|${visit}|${note}|${sort}`);
+  }, [listed, query, category, sport, city, format, audience, message, link, visit, note, sort]);
+  const pager = useTablePage(visible, `${query}|${category}|${sport}|${city}|${format}|${audience}|${message}|${link}|${visit}|${note}|${sort}`);
 
   if (listed.length === 0) {
     return <p className="cabinet-empty">Тренеров пока нет.</p>;
@@ -447,6 +489,14 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
           </select>
         </label>
         <label>
+          <span>Ссылка</span>
+          <select value={link} onChange={(event) => setLink(event.target.value as "" | "sent" | "unsent")}>
+            <option value="">Все</option>
+            <option value="sent">Отправлена</option>
+            <option value="unsent">Не отправлена</option>
+          </select>
+        </label>
+        <label>
           <span>Заход</span>
           <select value={visit} onChange={(event) => setVisit(event.target.value as "" | "yes" | "no")}>
             <option value="">Все</option>
@@ -470,7 +520,8 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
             <option value="reviews">По комментариям</option>
             <option value="rating">По оценке</option>
             <option value="popularity">По рейтингу</option>
-            <option value="sent">Сначала отправленные</option>
+            <option value="sent">Сначала с сообщением</option>
+            <option value="link">Сначала со ссылкой</option>
             <option value="visit">Сначала зашедшие</option>
             <option value="note">Сначала с заметкой</option>
           </select>
@@ -485,6 +536,7 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                 <th>Тренер</th>
                 <th>Действия</th>
                 <th>Сообщение</th>
+                <th>Ссылка</th>
                 <th>Заход</th>
                 <th>Публикация</th>
                 <th>Категория</th>
@@ -514,29 +566,21 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
                   </td>
                   <td className="is-actions">
                     <div className="cabinet-row-actions">
+                      <TextCopy template={outreachText} firstName={trainer.firstName} />
                       <InviteCopy
                         slug={trainer.slug}
                         ready={Boolean(trainer.id)}
                         published={trainer.status === "published"}
-                        onSent={(at) => setSentPatch((current) => ({ ...current, [trainer.slug]: at }))}
+                        onSent={(at) => setLinkPatch((current) => ({ ...current, [trainer.slug]: at }))}
                       />
-                      <a className="cabinet-icon-btn" href={`/admin/trainers/${trainer.slug}`} aria-label="Редактировать" title="Редактировать">
+                      <button type="button" className="cabinet-icon-btn" aria-label="Редактировать" title="Редактировать" onClick={() => setEditSlug(trainer.slug)}>
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
-                      </a>
+                      </button>
                     </div>
                   </td>
-                  <td>
-                    {trainer.inviteSentAt ? (
-                      <span className="cabinet-mark is-sent" title={dateFormat.format(new Date(trainer.inviteSentAt))} aria-label="Отправлено">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d={CHECK_ICON} /></svg>
-                      </span>
-                    ) : (
-                      <span className="cabinet-mark is-unsent" aria-label="Не отправлено">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d={CROSS_ICON} /></svg>
-                      </span>
-                    )}
-                  </td>
-                  <td><DoorMark at={trainer.doorEnteredAt} /></td>
+                  <td><FlagMark at={trainer.outreachSentAt} sent="Сообщение отправлено" waiting="Сообщение не отправлено" /></td>
+                  <td><FlagMark at={trainer.inviteSentAt} sent="Ссылка отправлена" waiting="Ссылка не отправлена" /></td>
+                  <td><FlagMark at={trainer.doorEnteredAt} sent="Был по ссылке" waiting="Ещё не заходил" /></td>
                   <td className="is-publish"><PublishMark status={trainer.status} /></td>
                   <td>{categoryLabels(trainer.sportSlugs) || "—"}</td>
                   <td className="is-audience">{audienceLabels(trainer.audiences) || "—"}</td>
@@ -567,6 +611,7 @@ export function AdminTrainersTable({ trainers }: { trainers: AdminTrainer[] }) {
         <TablePager page={pager.page} pages={pager.pages} total={pager.total} from={pager.from} to={pager.to} onPage={pager.setPage} />
         </>
       )}
+      {editSlug ? <TrainerEditDialog slug={editSlug} onClose={() => setEditSlug(null)} /> : null}
     </>
   );
 }

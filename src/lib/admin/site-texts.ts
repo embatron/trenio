@@ -17,6 +17,7 @@ const textField = z.string().trim().min(1, "Текст не может быть 
 const saveSchema = z.object({
   trainerWelcome: textField,
   userWelcome: textField,
+  instagramMessage: textField,
 });
 
 function assertUsable(input: z.infer<typeof saveSchema>) {
@@ -25,6 +26,9 @@ function assertUsable(input: z.infer<typeof saveSchema>) {
   }
   if (userWelcomePartCount(input.userWelcome) < 4) {
     throw new AuthError("В письме пользователю нужны четыре части. Между ними — отдельная строка ---.", "VALIDATION");
+  }
+  if (input.instagramMessage.includes("{doorUrl}")) {
+    throw new AuthError("В первом сообщении не ставьте {doorUrl}. Короткую ссылку копирует отдельная иконка, её отправляют следом.", "VALIDATION");
   }
 }
 
@@ -36,6 +40,7 @@ export const getSiteTextsFn = createServerFn({ method: "GET" })
     return {
       trainerWelcome: texts.trainer_welcome,
       userWelcome: texts.user_welcome,
+      instagramMessage: texts.instagram_message,
     };
   });
 
@@ -49,6 +54,7 @@ export const saveSiteTextsFn = createServerFn({ method: "POST" })
       await saveSiteTexts(context.user.id, {
         trainer_welcome: data.trainerWelcome,
         user_welcome: data.userWelcome,
+        instagram_message: data.instagramMessage,
       });
     } catch (error) {
       logCaught("admin", "admin.site_text", error, { actorUserId: context.user.id });
@@ -64,6 +70,7 @@ export const saveSiteTextsFn = createServerFn({ method: "POST" })
       context: {
         trainer: data.trainerWelcome.length,
         user: data.userWelcome.length,
+        instagram: data.instagramMessage.length,
       },
     });
     return { ok: true as const };

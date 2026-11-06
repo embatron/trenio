@@ -10,7 +10,7 @@ export const Route = createFileRoute("/admin/site")({
   head: () => ({
     meta: [
       { title: "Настройки сайта · кабинет администратора · Я ищу тренера на trenio.by" },
-      { name: "description", content: "Тексты приветствия тренеру и письма пользователю." },
+      { name: "description", content: "Тексты писем и сообщения для клиентов trenio.by." },
       { name: "robots", content: "noindex,follow" },
     ],
   }),
@@ -22,17 +22,19 @@ function AdminSitePage() {
   const save = useServerFn(saveSiteTextsFn);
   const [trainerWelcome, setTrainerWelcome] = useState(loaded.trainerWelcome);
   const [userWelcome, setUserWelcome] = useState(loaded.userWelcome);
+  const [instagramMessage, setInstagramMessage] = useState(loaded.instagramMessage);
   const [pending, setPending] = useState(false);
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const trainerRef = useRef<HTMLTextAreaElement>(null);
   const userRef = useRef<HTMLTextAreaElement>(null);
+  const instagramRef = useRef<HTMLTextAreaElement>(null);
 
   return (
     <article className="cabinet-card">
       <h2>Настройки сайта</h2>
       <p className="cabinet-note cabinet-note--lede">
-        Следующее приветствие тренеру и следующее письмо пользователю уже берут текст, который сохранён здесь.
+        Следующее письмо и следующее сообщение уже берут текст, который сохранён здесь.
         Под каждым полем написано, что можно вставить и на какое место это встанет.
       </p>
       <form
@@ -42,7 +44,7 @@ function AdminSitePage() {
           setPending(true);
           setStatus("");
           setError("");
-          void save({ data: { trainerWelcome, userWelcome } })
+          void save({ data: { trainerWelcome, userWelcome, instagramMessage } })
             .then(() => setStatus("Сохранено. Новые тексты уже используются."))
             .catch((err: unknown) => setError(authErrorMessage(err)))
             .finally(() => setPending(false));
@@ -96,6 +98,24 @@ function AdminSitePage() {
             <li>Слова на кнопке. Кнопка сама ведёт на подтверждение почты. Адрес ссылки в текст не вставляется.</li>
             <li>Короткая строка под кнопкой.</li>
           </ol>
+        </div>
+        <div className="site-text">
+          <label>
+            <span>Сообщение для Instagram</span>
+            <textarea ref={instagramRef} rows={12} value={instagramMessage} onChange={(event) => setInstagramMessage(event.target.value)} />
+          </label>
+          <p>Этот текст копирует иконка текста в таблице тренеров. Его же отправляет команда первого сообщения в Instagram. Короткая ссылка в этот текст не входит: её копирует соседняя иконка и отправляет администратор следом.</p>
+          <PlaceList
+            field={instagramRef}
+            value={instagramMessage}
+            onChange={setInstagramMessage}
+            items={[
+              {
+                token: "{hello}",
+                text: "Необязательное приветствие: «Анна, привет!» или «Привет!». В тексте по умолчанию его нет.",
+              },
+            ]}
+          />
         </div>
         {error ? <p className="cabinet-form__error" role="alert">{error}</p> : null}
         {status ? <p className="cabinet-form__ok" role="status">{status}</p> : null}

@@ -3,11 +3,13 @@ import { randomBytes } from "node:crypto";
 import { and, eq, ne } from "drizzle-orm";
 
 import { formatBelarusPhone } from "@/lib/auth/phone";
+import { logCaught, writeLog } from "@/lib/log/logger";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
-import { writeLog } from "@/lib/log/logger";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { inferTrainerGender, type TrainerGender } from "@/lib/catalog/trainer-gender";
 import { instagramProfileSlug } from "@/lib/catalog/trainer-slugs";
+import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
+import { placesFromProfile } from "@/lib/geo/schemas";
 import { getDb } from "./index";
 import { trainerProfiles, users, type TrainerPinnedPost, type TrainerSportRecord } from "./schema";
 
@@ -57,6 +59,54 @@ function newClaimToken() {
   return randomBytes(32).toString("base64url");
 }
 
+/**
+ * The draft stores the street as printed. Sync asks the same geocoder as the cabinet
+ * and keeps that street: a venue name from the map reply does not replace it.
+ */
+async function importedPlace(
+  draft: ImportedTrainerDraft,
+  existing: { trainingPlaces: unknown } | undefined,
+  address: string,
+) {
+  const pending = {
+    trainingPlaces: [{
+      city: draft.city,
+      district: draft.district ?? "",
+      address,
+      lat: null,
+      lng: null,
+      geocodeStatus: "pending" as const,
+    }],
+    address,
+    addressLat: null,
+    addressLng: null,
+    geocodeStatus: "pending" as const,
+  };
+  try {
+    const resolved = await resolveTrainingPlaces(
+      [{ city: draft.city, district: draft.district ?? "", address, lat: null, lng: null }],
+      existing ? placesFromProfile(existing) : [],
+    );
+    const places = resolved.map((place) => ({
+      ...place,
+      city: draft.city.trim() || place.city,
+      district: place.district || draft.district || "",
+      address,
+    }));
+    const mirror = mirrorTrainingPlace(places);
+    return {
+      trainingPlaces: places,
+      address: mirror.address || address,
+      addressLat: mirror.addressLat,
+      addressLng: mirror.addressLng,
+      geocodeStatus: mirror.geocodeStatus,
+    };
+  } catch (error) {
+    logCaught("geo", "geo.profile", error);
+    return pending;
+  }
+}
+
 /** The face stays in the photo list. An empty import list must not wipe it. */
 function profilePhotos(listed: string[] | undefined, avatarPath: string, existing: string[] | undefined) {
   const photos = (listed ?? []).map((item) => item.split("?")[0]).filter(Boolean);
@@ -79,25 +129,7 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
     .where(eq(trainerProfiles.instagramHandle, slug))
     .limit(1);
   const address = (draft.address ?? "").trim();
-  const keepPlace = Boolean(address) && existing?.address === address && existing.geocodeStatus === "ok";
-  const place = address
-    ? {
-        trainingPlaces: keepPlace
-          ? existing?.trainingPlaces ?? []
-          : [{
-              city: draft.city,
-              district: draft.district ?? "",
-              address,
-              lat: null,
-              lng: null,
-              geocodeStatus: "pending" as const,
-            }],
-        address,
-        addressLat: keepPlace ? existing?.addressLat ?? null : null,
-        addressLng: keepPlace ? existing?.addressLng ?? null : null,
-        geocodeStatus: keepPlace ? existing?.geocodeStatus ?? "pending" : "pending" as const,
-      }
-    : {};
+  const place = address ? await importedPlace(draft, existing, address) : {};
   const [taken] = await db
     .select({ id: trainerProfiles.id, handle: trainerProfiles.instagramHandle })
     .from(trainerProfiles)

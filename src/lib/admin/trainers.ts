@@ -39,6 +39,9 @@ import { shrinkImage } from "@/lib/images/tinify";
 import { removeImageSet, writeImageSet } from "@/lib/images/store";
 import { effectiveAudiences, getPublishedTrainer, PUBLISHED_TRAINERS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { joinTrainerName, trainerNameParts } from "@/lib/catalog/trainer-name";
+import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
+import { outreachTemplate } from "@/lib/site-texts/defaults";
+import { loadSiteText } from "@/lib/site-texts/store";
 import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
 import { popularityChecklist, popularityScore } from "@/lib/catalog/trainer-popularity";
 import { loadTrainerInterest, type TrainerInterest } from "@/lib/catalog/trainer-interest";
@@ -112,7 +115,9 @@ export type AdminTrainer = {
   staffNote: string;
   staffNoteAt: string;
   staffNoteCount: number;
-  /** When staff copied the Instagram message. Empty until that click. */
+  /** When the first Instagram message was sent. Empty until then. */
+  outreachSentAt: string;
+  /** When staff copied the short link. Empty until that click. */
   inviteSentAt: string;
   /** First open of the short link. Empty until that visit. */
   doorEnteredAt: string;
@@ -295,8 +300,9 @@ function isCatalog(slug: string) {
 
 export const getAdminTrainersFn = createServerFn({ method: "GET" })
   .middleware([requireAuthMiddleware])
-  .handler(async ({ context }): Promise<{ trainers: AdminTrainer[] }> => {
+  .handler(async ({ context }): Promise<{ trainers: AdminTrainer[]; outreachText: string }> => {
     assertStaff(context.user.roles);
+    await ensureTrainerDoorSchema();
     const db = getDb();
     const [profileRows, ratingRows, interest, noteRows] = await Promise.all([
       db
@@ -334,6 +340,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         createdSource: trainerProfiles.createdSource,
         createdAt: trainerProfiles.createdAt,
         offerAcceptedAt: trainerProfiles.offerAcceptedAt,
+        outreachSentAt: trainerProfiles.outreachSentAt,
         inviteSentAt: trainerProfiles.inviteSentAt,
         doorEnteredAt: trainerProfiles.doorEnteredAt,
         ownerId: users.id,
@@ -440,6 +447,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       staffNote: latestNote.get(row.id)?.body ?? "",
       staffNoteAt: latestNote.get(row.id)?.at ?? "",
       staffNoteCount: latestNote.get(row.id)?.count ?? 0,
+      outreachSentAt: row.outreachSentAt?.toISOString() ?? "",
       inviteSentAt: row.inviteSentAt?.toISOString() ?? "",
       doorEnteredAt: row.doorEnteredAt?.toISOString() ?? "",
       account: row.ownerId && !hidden.has(row.ownerId)
@@ -502,12 +510,15 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       staffNote: "",
       staffNoteAt: "",
       staffNoteCount: 0,
+      outreachSentAt: "",
       inviteSentAt: "",
       doorEnteredAt: "",
     }));
 
+    const savedOutreach = await loadSiteText("instagram_message");
     return {
       trainers: [...fromDb, ...fromCatalog].sort((a, b) => a.fullName.localeCompare(b.fullName, "ru")),
+      outreachText: outreachTemplate(savedOutreach),
     };
   });
 
@@ -970,6 +981,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         staffNote: latestNote?.body ?? "",
         staffNoteAt: latestNote?.createdAt.toISOString() ?? "",
         staffNoteCount: noteRowsForProfile.length,
+        outreachSentAt: row.outreachSentAt?.toISOString() ?? "",
         inviteSentAt: row.inviteSentAt?.toISOString() ?? "",
         doorEnteredAt: row.doorEnteredAt?.toISOString() ?? "",
         account: owner

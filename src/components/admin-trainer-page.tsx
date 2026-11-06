@@ -1,5 +1,7 @@
 import { Link, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+
+import { CabinetModal } from "@/components/cabinet";
 
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { TrainerCardFields, type TrainerCardValues } from "@/components/trainer-card-fields";
@@ -14,6 +16,7 @@ import {
   removeAdminTrainerPhotoFn,
   reorderAdminTrainerPhotosFn,
   requestAdminTrainerPhoneCodeFn,
+  getAdminTrainerDetailFn,
   saveAdminTrainerFn,
   TRAINER_PUBLISH_LABEL,
   TRAINER_PUBLISH_STATUSES,
@@ -60,7 +63,71 @@ function draftFrom(trainer: AdminTrainer): Draft {
   };
 }
 
-export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
+function ListAction({ onDismiss }: { onDismiss?: () => void }) {
+  if (onDismiss) {
+    return <button type="button" className="cabinet-form__ghost" onClick={onDismiss}>К списку</button>;
+  }
+  return <Link className="cabinet-form__ghost" to="/admin/trainers">К списку</Link>;
+}
+
+export function TrainerEditDialog({ slug, onClose }: { slug: string; onClose: () => void }) {
+  const load = useAuthServerFn(getAdminTrainerDetailFn);
+  const [detail, setDetail] = useState<AdminTrainerDetail | null>(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    void load({ data: { slug } })
+      .then((result) => {
+        if (cancelled) return;
+        if (!result) setError("Карточка не найдена.");
+        else setDetail(result);
+      })
+      .catch((reason: unknown) => {
+        if (!cancelled) setError(authErrorMessage(reason));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [load, slug]);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      if (document.querySelector(".avatar-crop-modal")) return;
+      if (document.querySelectorAll(".cabinet-modal").length > 1) return;
+      onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <CabinetModal className="cabinet-modal--trainer" onClick={onClose}>
+      <div
+        className="trainer-edit-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Редактирование профиля"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <button type="button" className="cabinet-icon-btn trainer-edit-dialog__close" aria-label="Закрыть" onClick={onClose}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+        {error ? <p className="cabinet-empty">{error}</p> : null}
+        {detail ? <AdminTrainerPage key={detail.trainer.slug} detail={detail} onDismiss={onClose} /> : null}
+        {!detail && !error ? <p className="cabinet-empty">Загрузка…</p> : null}
+        {error ? (
+          <div className="cabinet-form__actions">
+            <ListAction onDismiss={onClose} />
+          </div>
+        ) : null}
+      </div>
+    </CabinetModal>
+  );
+}
+
+export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDetail; onDismiss?: () => void }) {
   const router = useRouter();
   const save = useAuthServerFn(saveAdminTrainerFn);
   const addPhoto = useAuthServerFn(addAdminTrainerPhotoFn);
@@ -84,8 +151,90 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
     setDraft((current) => ({ ...current, [key]: value }));
   }
 
+  const profileFields = (
+    <>
+      <TrainerCardFields
+        nick={draft.slug}
+        values={draft}
+        onChange={(values: TrainerCardValues) => setDraft((current) => ({
+          ...current,
+          ...values,
+          fullName: joinTrainerName(values.firstName, values.lastName),
+        }))}
+        photos={{
+          initial: detail.photos,
+          onUpload: async (image) => {
+            const result = await addPhoto({ data: { slug: draft.slug, image } }) as { photo: string };
+            return result.photo;
+          },
+          onRemove: async (path) => {
+            await removePhoto({ data: { slug: draft.slug, path } });
+          },
+          onReorder: async (paths) => {
+            await reorderPhotos({ data: { slug: draft.slug, paths } });
+          },
+        }}
+        certificates={{
+          initial: detail.certificates,
+          onUpload: async (file, caption) => {
+            const result = await addCertificate({ data: { slug: draft.slug, fileName: file.name, caption, dataUrl: file.dataUrl } }) as { certificate: TrainerCertificate };
+            return result.certificate;
+          },
+          onCaption: async (path, caption) => {
+            await updateCertificate({ data: { slug: draft.slug, path, caption } });
+          },
+          onRemove: async (path) => {
+            await removeCertificate({ data: { slug: draft.slug, path } });
+          },
+        }}
+        phone={detail.trainer.account ? {
+          linked: true,
+          value: detail.trainer.account.phone || draft.phone,
+          verified: detail.trainer.account.phoneVerified,
+          onRequest: async (phone) => (await requestPhone({ data: { slug: draft.slug, phone } })) as { message: string; already?: boolean; devCode?: string },
+          onConfirm: async (phone, code) => (await confirmPhone({ data: { slug: draft.slug, phone, code } })) as { message: string },
+          onVerified: () => {
+            void router.invalidate();
+          },
+        } : {
+          linked: false,
+          value: draft.phone,
+          onChange: (phone) => setField("phone", phone),
+        }}
+        leading={(
+          <label>
+            <span>Статус публикации</span>
+            <select value={draft.status} onChange={(event) => setField("status", event.target.value as TrainerPublishStatus)}>
+              {TRAINER_PUBLISH_STATUSES.map((status) => (
+                <option key={status} value={status}>{TRAINER_PUBLISH_LABEL[status]}</option>
+              ))}
+            </select>
+            <p className="cabinet-note">Тренер сам выбирает статус в настройках профиля: опубликован, скрыт или снят с публикации. Здесь можно поставить и другие статусы.</p>
+          </label>
+        )}
+      />
+      <p className="cabinet-note">
+        <a href={`/trainers/${draft.slug}`} target="_blank" rel="noopener noreferrer">Открыть карточку в каталоге</a>
+      </p>
+      {error ? <p className="cabinet-form__error">{error}</p> : null}
+      {saved ? <p className="cabinet-form__ok">{saved}</p> : null}
+    </>
+  );
+
+  function scrollTab(node: ReactNode) {
+    if (!onDismiss) return node;
+    return (
+      <>
+        <div className="trainer-edit-scroll">{node}</div>
+        <div className="cabinet-form__actions">
+          <ListAction onDismiss={onDismiss} />
+        </div>
+      </>
+    );
+  }
+
   return (
-    <article className="cabinet-card">
+    <article className={onDismiss ? "cabinet-card trainer-edit-card" : "cabinet-card"}>
       <h2>
         {draft.firstName || draft.lastName ? (
           <TrainerName firstName={draft.firstName} lastName={draft.lastName} />
@@ -108,7 +257,7 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
       </div>
       {tab === "profile" ? (
         <form
-          className="cabinet-form"
+          className={onDismiss ? "cabinet-form trainer-edit-form" : "cabinet-form"}
           onSubmit={(event) => {
             event.preventDefault();
             setPending(true);
@@ -148,78 +297,14 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
               .finally(() => setPending(false));
           }}
         >
-          <TrainerCardFields
-            nick={draft.slug}
-            values={draft}
-            onChange={(values: TrainerCardValues) => setDraft((current) => ({
-              ...current,
-              ...values,
-              fullName: joinTrainerName(values.firstName, values.lastName),
-            }))}
-            photos={{
-              initial: detail.photos,
-              onUpload: async (image) => {
-                const result = await addPhoto({ data: { slug: draft.slug, image } }) as { photo: string };
-                return result.photo;
-              },
-              onRemove: async (path) => {
-                await removePhoto({ data: { slug: draft.slug, path } });
-              },
-              onReorder: async (paths) => {
-                await reorderPhotos({ data: { slug: draft.slug, paths } });
-              },
-            }}
-            certificates={{
-              initial: detail.certificates,
-              onUpload: async (file, caption) => {
-                const result = await addCertificate({ data: { slug: draft.slug, fileName: file.name, caption, dataUrl: file.dataUrl } }) as { certificate: TrainerCertificate };
-                return result.certificate;
-              },
-              onCaption: async (path, caption) => {
-                await updateCertificate({ data: { slug: draft.slug, path, caption } });
-              },
-              onRemove: async (path) => {
-                await removeCertificate({ data: { slug: draft.slug, path } });
-              },
-            }}
-            phone={detail.trainer.account ? {
-              linked: true,
-              value: detail.trainer.account.phone || draft.phone,
-              verified: detail.trainer.account.phoneVerified,
-              onRequest: async (phone) => (await requestPhone({ data: { slug: draft.slug, phone } })) as { message: string; already?: boolean; devCode?: string },
-              onConfirm: async (phone, code) => (await confirmPhone({ data: { slug: draft.slug, phone, code } })) as { message: string },
-              onVerified: () => {
-                void router.invalidate();
-              },
-            } : {
-              linked: false,
-              value: draft.phone,
-              onChange: (phone) => setField("phone", phone),
-            }}
-            leading={(
-              <label>
-                <span>Статус публикации</span>
-                <select value={draft.status} onChange={(event) => setField("status", event.target.value as TrainerPublishStatus)}>
-                  {TRAINER_PUBLISH_STATUSES.map((status) => (
-                    <option key={status} value={status}>{TRAINER_PUBLISH_LABEL[status]}</option>
-                  ))}
-                </select>
-                <p className="cabinet-note">Тренер сам выбирает статус в настройках профиля: опубликован, скрыт или снят с публикации. Здесь можно поставить и другие статусы.</p>
-              </label>
-            )}
-          />
-          <p className="cabinet-note">
-            <a href={`/trainers/${draft.slug}`} target="_blank" rel="noopener noreferrer">Открыть карточку в каталоге</a>
-          </p>
-          {error ? <p className="cabinet-form__error">{error}</p> : null}
-          {saved ? <p className="cabinet-form__ok">{saved}</p> : null}
+          {onDismiss ? <div className="trainer-edit-scroll">{profileFields}</div> : profileFields}
           <div className="cabinet-form__actions">
             <button className="cabinet-form__submit" type="submit" disabled={pending}>{pending ? "Сохранение…" : "Сохранить"}</button>
-            <Link className="cabinet-form__ghost" to="/admin/trainers">К списку</Link>
+            <ListAction onDismiss={onDismiss} />
           </div>
         </form>
       ) : null}
-      {tab === "logins" ? (
+      {tab === "logins" ? scrollTab(
         detail.logins.length === 0 ? (
           <p className="cabinet-empty">
             {facts.linked ? "Входов пока нет." : "Аккаунт не привязан, поэтому входов нет. Карточка создана отдельно от регистрации."}
@@ -252,7 +337,7 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
           </>
         )
       ) : null}
-      {tab === "logs" ? (
+      {tab === "logs" ? scrollTab(
         detail.logs.length === 0 ? (
           <p className="cabinet-empty">Событий пока нет.</p>
         ) : (
@@ -281,7 +366,7 @@ export function AdminTrainerPage({ detail }: { detail: AdminTrainerDetail }) {
           </>
         )
       ) : null}
-      {tab === "facts" ? (
+      {tab === "facts" ? scrollTab(
         <dl className="cabinet-facts">
           <div><dt>Привязка</dt><dd>{facts.linked ? facts.claimStatus : "Аккаунт не привязан"}</dd></div>
           <div><dt>Откуда карточка</dt><dd>{facts.createdSource}</dd></div>

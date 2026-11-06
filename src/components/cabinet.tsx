@@ -639,6 +639,20 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .trainer-note-dialog { position: relative; width: min(520px, calc(100vw - 32px)); max-height: min(80vh, 720px); margin: auto; overflow: auto; border: 0; border-radius: 16px; padding: 20px 64px 20px 20px; color: var(--text); background: var(--white); }
 .trainer-note-dialog::backdrop { background: color-mix(in srgb, var(--dark) 45%, transparent); }
 .trainer-note-dialog__close { position: absolute; top: 8px; right: 8px; }
+.cabinet-modal--trainer { z-index: 360; overflow: hidden; }
+.trainer-edit-dialog { position: relative; width: min(960px, 100%); height: 100%; max-height: 100%; display: flex; flex-direction: column; overflow: hidden; border-radius: var(--card-radius); background: var(--white); color: var(--text); }
+.trainer-edit-dialog__close { position: absolute; top: 8px; right: 8px; z-index: 3; }
+.trainer-edit-card { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+.trainer-edit-dialog .cabinet-card > h2 { padding-right: 56px; }
+.trainer-edit-card > .trainer-edit-form,
+.trainer-edit-card > .trainer-edit-scroll,
+.trainer-edit-dialog > .cabinet-empty { flex: 1; min-height: 0; }
+.trainer-edit-dialog .trainer-edit-form { display: flex; flex-direction: column; overflow: hidden; gap: 0; padding: 0; }
+.trainer-edit-scroll { overflow: auto; overscroll-behavior: contain; }
+.trainer-edit-form .trainer-edit-scroll { display: grid; gap: 12px; align-content: start; padding: 16px 18px; }
+.trainer-edit-dialog .cabinet-form__actions { flex-shrink: 0; position: sticky; bottom: 0; z-index: 2; margin: 0; padding: 12px 18px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: var(--white); }
+.trainer-edit-dialog .address-field__menu,
+.trainer-edit-dialog .entity-menu { position: fixed; z-index: 5; left: max(12px, env(safe-area-inset-left)); right: max(12px, env(safe-area-inset-right)); top: auto; bottom: max(72px, calc(12px + env(safe-area-inset-bottom))); width: auto; max-height: min(50vh, 320px); }
 .trainer-note-dialog h2 { margin: 0 0 12px; font-size: 18px; color: var(--dark); }
 .trainer-note-dialog textarea { width: 100%; min-height: 120px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-control); font: inherit; font-size: 15px; resize: vertical; }
 .trainer-note-dialog__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }

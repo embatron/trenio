@@ -118,7 +118,9 @@ export const trainerProfiles = pgTable(
     previewToken: varchar("preview_token", { length: 64 }),
     /** One-time URL that opens the profile editor. Cleared on first open. */
     editToken: varchar("edit_token", { length: 64 }),
-    /** Set when staff copies the Instagram message. Stays after the profile is published. */
+    /** Set when the first Instagram message is sent. Stays after the profile is published. */
+    outreachSentAt: timestamp("outreach_sent_at", { withTimezone: true }),
+    /** Set when staff copies the short link. Stays after the profile is published. */
     inviteSentAt: timestamp("invite_sent_at", { withTimezone: true }),
     /** First time someone opened the short link `/hi/{code}`. Stays after later visits. */
     doorEnteredAt: timestamp("door_entered_at", { withTimezone: true }),

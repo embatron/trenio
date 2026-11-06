@@ -15,11 +15,22 @@ export function ensureTrainerDoorSchema(): Promise<void> {
   return ready;
 }
 
+async function addTimestamp(db: ReturnType<typeof getDb>, column: "door_entered_at" | "outreach_sent_at") {
+  const found = await db.execute(sql`
+    SELECT 1 AS ok
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'trainer_profiles'
+      AND column_name = ${column}
+  `);
+  if (found.length > 0) return;
+  await db.execute(sql.raw(`ALTER TABLE trainer_profiles ADD COLUMN ${column} timestamptz`));
+}
+
 async function apply() {
   const db = getDb();
-  await db.execute(sql.raw(
-    "ALTER TABLE trainer_profiles ADD COLUMN IF NOT EXISTS door_entered_at timestamptz",
-  ));
+  await addTimestamp(db, "door_entered_at");
+  await addTimestamp(db, "outreach_sent_at");
   const found = await db.execute(sql`SELECT to_regclass('public.app_logs') AS rel`);
   const rel = found[0]?.rel;
   if (!rel) return;

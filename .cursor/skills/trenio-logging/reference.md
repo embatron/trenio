@@ -40,8 +40,11 @@
 | `message.send` / `message.file` / `message.ensure` / `message.close` / `message.reopen` / `message.report` / `message.dismiss` / `message.block` / `message.notify` / `message.push` / `message.welcome` | Message mutations, attachment upload, and notices. `message.welcome` is the portal greeting to a new trainer. Log the size and extension, not the file name, the file body, or the welcome text. A download is logged only when it fails |
 | `message.list` / `message.thread` / `message.read` / `message.unread` / `message.hide` | Failures only |
 | `admin.review` | Review publish or reject |
+| `admin.trainer_outreach` | The first Instagram outreach was marked sent. The row stores the slug, not the message |
+| `admin.sync_marks` | The laptop synced message, link, and visit marks. The row stores the count, not the short link |
+| `admin.sync_trainer` | The laptop synced one imported draft and its photos. The row stores the handle |
 | `admin.trainer_invite` | Staff copied the trainer's short link. The row stores the slug, not the link. A published profile is `denied` |
-| `admin.trainer_invite_sent` | The copied message was marked sent. The row stores the slug, not the text |
+| `admin.trainer_invite_sent` | The copied short link was marked sent. The row stores the slug, not the link |
 | `admin.trainer_note` | Staff saved a trainer note. The row stores the slug, not the note text |
 | `admin.trainer_remove` | A trainer profile was removed from the portal. The row stores the slug |
 | `trainer.add` / `trainer.sync` | A trainer card was inserted, or an import updated an existing card. The row stores the slug, status, and source. Card text stays out |

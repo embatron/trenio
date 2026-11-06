@@ -3,7 +3,7 @@ import { sanitizeReviewHtml } from "@/lib/catalog/review-html";
 /** Telegram bot that opens the Mini App. `{telegram}` in the trainer letter becomes this link. */
 export const PORTAL_TELEGRAM_URL = "https://t.me/TrenioByBot";
 
-export const SITE_TEXT_KEYS = ["trainer_welcome", "user_welcome"] as const;
+export const SITE_TEXT_KEYS = ["trainer_welcome", "user_welcome", "instagram_message"] as const;
 export type SiteTextKey = (typeof SITE_TEXT_KEYS)[number];
 
 export const DEFAULT_TRAINER_WELCOME = [
@@ -27,9 +27,28 @@ export const DEFAULT_USER_WELCOME = [
   "Ссылка действует сутки. Никому её не пересылайте.",
 ].join("\n");
 
+/** First Instagram direct message. The short link is copied separately and sent later. */
+export const DEFAULT_INSTAGRAM_MESSAGE = [
+  "Добрый день!)",
+  "",
+  "Мы развиваем https://trenio.by – единую базу тренеров Беларуси, которая помогает людям находить подходящих специалистов в разных спортивных направлениях.",
+  "Нам очень понравился ваш профиль, поэтому хотели бы пригласить вас присоединиться к нашему каталогу! Будем рады, если вы станете его частью.",
+  "",
+  "Подскажите, было бы вам интересно такое предложение?",
+  "Участие в проекте и дополнительное продвижение вашей анкеты абсолютно бесплатны.",
+].join("\n");
+
+/** The saved row still holds an older letter that includes the short link. Do not send that as the first message. */
+export function outreachTemplate(saved: string) {
+  const body = saved.trim();
+  if (!body || body.includes("{doorUrl}")) return DEFAULT_INSTAGRAM_MESSAGE;
+  return body;
+}
+
 export const SITE_TEXT_DEFAULTS: Record<SiteTextKey, string> = {
   trainer_welcome: DEFAULT_TRAINER_WELCOME,
   user_welcome: DEFAULT_USER_WELCOME,
+  instagram_message: DEFAULT_INSTAGRAM_MESSAGE,
 };
 
 function escapeText(value: string) {
@@ -83,4 +102,23 @@ export function parseUserWelcome(template = DEFAULT_USER_WELCOME): UserWelcomeLe
 
 export function userWelcomePartCount(template: string) {
   return template.replace(/\r\n/g, "\n").split("\n---\n").map((part) => part.trim()).filter(Boolean).length;
+}
+
+export function instagramGaps(missing: string[]) {
+  if (missing.length === 0) return "Открой страницу и глянь, всё ли на месте.";
+  return ["Сверь на странице то, чего не было в открытых данных:", ...missing.map((line) => `— ${line}`)].join("\n");
+}
+
+/** Text copied into an Instagram direct message. Tokens are filled for that trainer. */
+export function renderInstagramMessage(input: {
+  template?: string;
+  hello: string;
+  gaps: string;
+  doorUrl: string;
+}) {
+  const source = input.template?.trim() || DEFAULT_INSTAGRAM_MESSAGE;
+  return source
+    .replaceAll("{hello}", input.hello)
+    .replaceAll("{gaps}", input.gaps)
+    .replaceAll("{doorUrl}", input.doorUrl);
 }

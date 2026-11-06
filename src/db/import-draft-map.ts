@@ -1,0 +1,100 @@
+import { formatBelarusPhone } from "@/lib/auth/phone";
+import { PUBLISHED_TRAINERS } from "@/lib/catalog/published-trainers";
+import { joinTrainerName } from "@/lib/catalog/trainer-name";
+
+import type { ImportedTrainerDraft } from "./trainer-profiles";
+
+export type DraftFile = {
+  handle: string;
+  slug: string;
+  sourceUrl: string;
+  status?: ImportedTrainerDraft["status"];
+  claimStatus?: ImportedTrainerDraft["claimStatus"];
+  createdSource?: ImportedTrainerDraft["createdSource"];
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  gender?: "male" | "female" | "";
+  headline: string;
+  bio: string;
+  about?: string[];
+  pinned?: Array<{ url: string; caption: string }>;
+  sports?: ImportedTrainerDraft["sports"];
+  primarySport?: ImportedTrainerDraft["primarySport"];
+  city: string;
+  address?: string;
+  cityCandidates?: string[];
+  priceFrom?: number | null;
+  experienceYears?: number | null;
+  formats?: ImportedTrainerDraft["formats"];
+  languages?: string[];
+  sourceBio?: string;
+  sourceAbout?: string[];
+  sourceThreads?: string;
+  operatorNotes?: string;
+  audiences?: ImportedTrainerDraft["audiences"];
+  avatarPath?: string;
+  photos?: string[];
+  certificates?: ImportedTrainerDraft["certificates"];
+  contacts?: { instagram?: string; phone?: string; email?: string; telegram?: string; website?: string };
+};
+
+function publishedExtras(instagramUrl: string) {
+  return PUBLISHED_TRAINERS.find((trainer) => trainer.instagram === instagramUrl);
+}
+
+/** No street and no named settlement: the catalog city is Minsk. */
+function importedCity(draft: DraftFile): string {
+  const city = (draft.city || "").trim();
+  if (city) return city;
+  if ((draft.address || "").trim()) return "";
+  const named = (draft.cityCandidates ?? []).map((name) => name.trim()).filter(Boolean);
+  if (named.length > 0) return "";
+  return "Минск";
+}
+
+export function draftFileToImported(draft: DraftFile): ImportedTrainerDraft {
+  const instagramUrl = draft.contacts?.instagram || draft.sourceUrl;
+  const published = publishedExtras(instagramUrl);
+  return {
+    handle: draft.handle,
+    slug: draft.slug,
+    sourceUrl: draft.sourceUrl,
+    status: draft.status ?? "draft",
+    claimStatus: draft.claimStatus ?? "unclaimed",
+    createdSource: draft.createdSource ?? "import",
+    firstName: draft.firstName,
+    lastName: draft.lastName,
+    fullName: joinTrainerName(draft.firstName, draft.lastName) || draft.fullName,
+    gender: draft.gender === "male" || draft.gender === "female" ? draft.gender : undefined,
+    headline: draft.headline,
+    bio: draft.bio || published?.bio || "",
+    sourceBio: [
+      draft.sourceBio,
+      ...(draft.sourceAbout ?? []),
+      draft.sourceThreads ? `Threads. ${draft.sourceThreads}` : "",
+      draft.operatorNotes ? `Заметка. ${draft.operatorNotes}` : "",
+    ].map((part) => (part || "").trim()).filter(Boolean).join("\n\n") || draft.bio,
+    about: draft.about ?? [],
+    pinned: draft.pinned ?? [],
+    sports: draft.sports ?? [],
+    primarySport: draft.primarySport ?? null,
+    audiences: draft.audiences?.length ? draft.audiences : published?.audiences?.length ? published.audiences : ["adult"],
+    formats: draft.formats?.length ? draft.formats : published?.formats ?? [],
+    city: importedCity(draft),
+    citySlug: published?.city.slug,
+    district: published?.district ?? "",
+    address: draft.address || "",
+    priceFrom: draft.priceFrom ?? published?.priceFrom ?? null,
+    languages: draft.languages ?? [],
+    avatarPath: draft.avatarPath || published?.photo || "",
+    photos: Array.isArray(draft.photos) ? draft.photos : undefined,
+    certificates: Array.isArray(draft.certificates) ? draft.certificates : undefined,
+    phone: formatBelarusPhone(draft.contacts?.phone || published?.phone || ""),
+    email: draft.contacts?.email || "",
+    telegram: draft.contacts?.telegram || "",
+    website: draft.contacts?.website || "",
+    instagramUrl,
+    experienceYears: draft.experienceYears || published?.experience || 0,
+  };
+}

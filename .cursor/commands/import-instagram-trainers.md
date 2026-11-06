@@ -38,7 +38,7 @@ https://www.threads.net/@antipenko.training
 8. From other posts on the same grid, and from the Threads posts already opened, add frames until two or three gallery photos pass that same composition bar. One strong frame is enough. Do not treat those posts as pinned, and do not copy their Instagram captions onto the card.
 9. Run eleven `sequentialthinking` steps for that trainer. Separate sports they coach from sports they only practice. Put facts from pinned captions, Threads, and the operator note into fields: sport, coaching experience, audience, address, city, phone, and the rest. A single name, city, phone, email, Telegram, price, or coaching-year value in the note replaces the page. Store years only when the text says they are coaching years. A bare «стаж N лет» stays out of the field and out of the card. Write «Как меня представить» and «Как проходят мои тренировки» as first-person sentences a person can read aloud. Sources are the biography, the about highlight, Threads, and the note. Leave the training text empty when those never describe a session, even if a pin does. Copy email and Telegram when the profile, a pin, Threads, or the note shows them, without confirmation. Copy a mobile from those sources into the phone field. Store that number as `+375 29 123-45-67`. Do not put it in the biography or the card text, and do not confirm it. The note's mobile wins when it states one. Copy a street or hall into `address` and do not geocode it.
 10. Write `resolved`, `operatorNotes`, and `threads` into `data/instagram-trainers/_raw/{handle}.json` and run `save-draft.ts` for that file. Fix a rejection by revising the thought, not by editing the draft.
-11. Carry that saved draft to the production server. See "Server" below. Leave `status` as `draft`.
+11. Carry that saved draft into the local database and to the production server. See "Server" below. Leave `status` as `draft`.
 12. On a login wall, sign in from `LOGIN.md` in the import Chrome window. Do not print the password. On a checkpoint, stop the batch. Threads uses that same window.
 13. Report each profile: name, coached sport, practiced sports, city, phone, email, telegram, pinned count, face side in pixels, gallery count, certificate count, whether the training text was written, whether the note was applied, whether Threads was read, and fields still empty.
 14. Close the Playwright page.
@@ -49,8 +49,9 @@ Carry each saved account to production before the report. Do this by default. Do
 
 - Leave `status` as `draft`. Do not set `published`, `hidden`, or `archived`. A request to put the account on the server is this draft transfer. It is not a request to open the public page.
 - The trainer receives the magic link, opens the cabinet, and publishes the profile there.
-- Read `.cursor/skills/trenio-vps/SKILL.md`. Copy `data/instagram-trainers/{handle}.json` and `public/trainers/instagram/{handle}*` into the app directory. Run `src/db/sync-instagram-trainers.ts` with that handle only. Do not run it without a handle.
-- Rebuild and restart the app service so the photo files are served. Do not print secrets. Do not deploy unrelated changes.
+- Run `src/db/sync-instagram-trainers.ts` locally with that handle only, so the laptop database gets the same draft. `save-draft.ts` does not write the database.
+- Then run `scripts/sync-remote.ts trainer {handle}`. That posts the draft and the photos to `POST /api/sync/trainer`. Exit 0 means the live site stored them and the profile is still a draft.
+- Exit 2 means that route is not on the live site yet. Read `.cursor/skills/trenio-vps/SKILL.md`. Copy `data/instagram-trainers/{handle}.json` and `public/trainers/instagram/{handle}*` into the app directory. Run `src/db/sync-instagram-trainers.ts` on the server with that handle only. Rebuild and restart so the photos are served. Do not print secrets. Do not deploy unrelated changes.
 - A guest who opens `/trainers/{handle}` does not see the profile.
 
 ## Result

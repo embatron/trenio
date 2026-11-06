@@ -85,6 +85,8 @@ import { Route as CitySlugSportRouteImport } from './routes/city.$slug.$sport'
 import { Route as CategoryParentSlugChildSlugRouteImport } from './routes/category.$parentSlug.$childSlug'
 import { Route as CategoriesParentSlugChildSlugRouteImport } from './routes/categories.$parentSlug.$childSlug'
 import { Route as AuthGoogleCallbackRouteImport } from './routes/auth.google.callback'
+import { Route as ApiSyncTrainerRouteImport } from './routes/api.sync.trainer'
+import { Route as ApiSyncMarksRouteImport } from './routes/api.sync.marks'
 import { Route as AdminTrainersSlugRouteImport } from './routes/admin.trainers.$slug'
 import { Route as AdminAccountsIdRouteImport } from './routes/admin.accounts.$id'
 import { Route as AccountMessagesConversationIdRouteImport } from './routes/account.messages.$conversationId'
@@ -475,6 +477,16 @@ const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
   path: '/callback',
   getParentRoute: () => AuthGoogleRoute,
 } as any)
+const ApiSyncTrainerRoute = ApiSyncTrainerRouteImport.update({
+  id: '/api/sync/trainer',
+  path: '/api/sync/trainer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSyncMarksRoute = ApiSyncMarksRouteImport.update({
+  id: '/api/sync/marks',
+  path: '/api/sync/marks',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminTrainersSlugRoute = AdminTrainersSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -567,6 +579,8 @@ export interface FileRoutesByFullPath {
   '/account/messages/$conversationId': typeof AccountMessagesConversationIdRoute
   '/admin/accounts/$id': typeof AdminAccountsIdRoute
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
+  '/api/sync/marks': typeof ApiSyncMarksRoute
+  '/api/sync/trainer': typeof ApiSyncTrainerRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
   '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
@@ -643,6 +657,8 @@ export interface FileRoutesByTo {
   '/account/messages/$conversationId': typeof AccountMessagesConversationIdRoute
   '/admin/accounts/$id': typeof AdminAccountsIdRoute
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
+  '/api/sync/marks': typeof ApiSyncMarksRoute
+  '/api/sync/trainer': typeof ApiSyncTrainerRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
   '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
@@ -726,6 +742,8 @@ export interface FileRoutesById {
   '/account/messages/$conversationId': typeof AccountMessagesConversationIdRoute
   '/admin/accounts/$id': typeof AdminAccountsIdRoute
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
+  '/api/sync/marks': typeof ApiSyncMarksRoute
+  '/api/sync/trainer': typeof ApiSyncTrainerRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
   '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
@@ -811,6 +829,8 @@ export interface FileRouteTypes {
     | '/account/messages/$conversationId'
     | '/admin/accounts/$id'
     | '/admin/trainers/$slug'
+    | '/api/sync/marks'
+    | '/api/sync/trainer'
     | '/auth/google/callback'
     | '/categories/$parentSlug/$childSlug'
     | '/category/$parentSlug/$childSlug'
@@ -887,6 +907,8 @@ export interface FileRouteTypes {
     | '/account/messages/$conversationId'
     | '/admin/accounts/$id'
     | '/admin/trainers/$slug'
+    | '/api/sync/marks'
+    | '/api/sync/trainer'
     | '/auth/google/callback'
     | '/categories/$parentSlug/$childSlug'
     | '/category/$parentSlug/$childSlug'
@@ -969,6 +991,8 @@ export interface FileRouteTypes {
     | '/account/messages/$conversationId'
     | '/admin/accounts/$id'
     | '/admin/trainers/$slug'
+    | '/api/sync/marks'
+    | '/api/sync/trainer'
     | '/auth/google/callback'
     | '/categories/$parentSlug/$childSlug'
     | '/category/$parentSlug/$childSlug'
@@ -1027,6 +1051,8 @@ export interface RootRouteChildren {
   TrainersReviseRoute: typeof TrainersReviseRoute
   CategoriesIndexRoute: typeof CategoriesIndexRoute
   ClubsIndexRoute: typeof ClubsIndexRoute
+  ApiSyncMarksRoute: typeof ApiSyncMarksRoute
+  ApiSyncTrainerRoute: typeof ApiSyncTrainerRoute
   CategoriesParentSlugChildSlugRoute: typeof CategoriesParentSlugChildSlugRoute
   CategoryParentSlugChildSlugRoute: typeof CategoryParentSlugChildSlugRoute
   MessagesFilesIdRoute: typeof MessagesFilesIdRoute
@@ -1569,6 +1595,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthGoogleCallbackRouteImport
       parentRoute: typeof AuthGoogleRoute
     }
+    '/api/sync/trainer': {
+      id: '/api/sync/trainer'
+      path: '/api/sync/trainer'
+      fullPath: '/api/sync/trainer'
+      preLoaderRoute: typeof ApiSyncTrainerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sync/marks': {
+      id: '/api/sync/marks'
+      path: '/api/sync/marks'
+      fullPath: '/api/sync/marks'
+      preLoaderRoute: typeof ApiSyncMarksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/trainers/$slug': {
       id: '/admin/trainers/$slug'
       path: '/$slug'
@@ -1844,6 +1884,8 @@ const rootRouteChildren: RootRouteChildren = {
   TrainersReviseRoute: TrainersReviseRoute,
   CategoriesIndexRoute: CategoriesIndexRoute,
   ClubsIndexRoute: ClubsIndexRoute,
+  ApiSyncMarksRoute: ApiSyncMarksRoute,
+  ApiSyncTrainerRoute: ApiSyncTrainerRoute,
   CategoriesParentSlugChildSlugRoute: CategoriesParentSlugChildSlugRoute,
   CategoryParentSlugChildSlugRoute: CategoryParentSlugChildSlugRoute,
   MessagesFilesIdRoute: MessagesFilesIdRoute,
