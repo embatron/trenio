@@ -54,8 +54,8 @@ function ContactLine({
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
     >
-      <span className="welcome-contact__mark">{icon}</span>
-      <span>{label}</span>
+      {icon}
+      {label}
     </a>
   );
 }
@@ -98,7 +98,7 @@ function ContactCell({ welcome }: { welcome: AdminWelcome }) {
     ) : null,
   ].filter(Boolean);
   if (lines.length === 0) return "—";
-  return <span className="welcome-contacts">{lines}</span>;
+  return <div className="welcome-contacts">{lines}</div>;
 }
 
 function AdminWelcomesPage() {
@@ -155,12 +155,11 @@ function AdminWelcomesPage() {
       <style
         dangerouslySetInnerHTML={{
           __html: `
-        .welcome-contacts { display: grid; justify-items: start; }
-        .welcome-contact { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--text); font-size: 14px; font-weight: var(--fw-body); line-height: 1.3; text-decoration: none; white-space: nowrap; }
-        .welcome-contact__mark { width: 22px; height: 22px; display: grid; place-items: center; flex: 0 0 22px; }
-        .welcome-contact__mark svg { width: 20px; height: 20px; display: block; }
-        .welcome-contact--phone svg { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
-        .welcome-contact:hover { color: var(--primary); }
+        .cabinet-table .welcome-contacts { display: flex; flex-direction: column; align-items: flex-start; }
+        .cabinet-table .welcome-contact { display: flex; flex-direction: row; align-items: center; gap: 8px; min-height: 44px; color: var(--text); font-size: 14px; font-weight: var(--fw-body); line-height: 1.3; text-decoration: none; white-space: nowrap; }
+        .cabinet-table .welcome-contact svg { width: 20px; height: 20px; flex: 0 0 20px; display: block; }
+        .cabinet-table .welcome-contact--phone svg { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+        .cabinet-table .welcome-contact:hover { color: var(--primary); }
       `,
         }}
       />
