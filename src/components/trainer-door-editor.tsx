@@ -6,7 +6,6 @@ import { GoogleLoginButton } from "@/components/auth/google-login-button";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { requestDoorEmailFn } from "@/lib/catalog/trainer-magic";
-import { SITE_INSTAGRAM_URL } from "@/lib/seo/site";
 
 const LOGIN_PHRASE = "Войдите в аккаунт";
 
@@ -111,16 +110,49 @@ export function TrainerDoorMail({
   );
 }
 
-function DoorMailSent({ email, onClose }: { email: string; onClose: () => void }) {
+function DoorMailSent({ email }: { email: string }) {
+  const requestEmail = useAuthServerFn(requestDoorEmailFn);
+  const [pending, setPending] = useState(false);
+  const [again, setAgain] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  function resend() {
+    setPending(true);
+    setError(null);
+    void requestEmail({ data: { email } })
+      .then(() => setAgain(true))
+      .catch((err: unknown) => setError(authErrorMessage(err)))
+      .finally(() => setPending(false));
+  }
+
   return (
     <>
-      <h2 id="door-mail-sent">Ссылка уже отправлена</h2>
-      <p>Ссылка на {email} уже отправлена. Проверьте почту, в том числе папку «Спам».</p>
-      <p>
-        Если вы не видите ссылку, напишите в директ Instagram:{" "}
-        <a href={SITE_INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">{SITE_INSTAGRAM_URL}</a>
-      </p>
-      <button type="button" className="door-mail-modal__ok" autoFocus onClick={onClose}>Ок, понял</button>
+      <h2 id="door-mail-sent">{again ? "Ссылка отправлена" : "Ссылка уже отправлена"}</h2>
+      {again ? (
+        <p>
+          Новая ссылка на {email} отправлена. Проверьте почту, в том числе папку «Спам». Откройте
+          последнее письмо: предыдущая ссылка уже не действует.
+        </p>
+      ) : (
+        <>
+          <p>Ссылка на {email} уже отправлена. Проверьте почту, в том числе папку «Спам».</p>
+          <p>Если письма нет, вышлем ссылку ещё раз.</p>
+        </>
+      )}
+      {error ? (
+        <p className="door-mail__error" role="alert">
+          {error}
+        </p>
+      ) : null}
+      <button
+        type="button"
+        className="door-mail-modal__ok"
+        autoFocus
+        disabled={pending}
+        onClick={resend}
+      >
+        {pending ? "Отправка…" : "Выслать еще раз"}
+      </button>
     </>
   );
 }
@@ -167,7 +199,7 @@ export function TrainerDoorMailDialog({
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </button>
         {sent ? (
-          <DoorMailSent email={sent} onClose={onClose} />
+          <DoorMailSent email={sent} />
         ) : (
           <>
             <h2 id="door-mail-title">Создание аккаунта тренера</h2>
@@ -193,6 +225,8 @@ export function TrainerDoorMailDialog({
         .door-mail-modal__x svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
         .door-mail-modal__x:hover { color: var(--dark); }
         .door-mail-modal__ok { justify-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
+        .door-mail-modal__ok:disabled { opacity: 0.6; cursor: default; }
+        .door-mail-modal__card .door-mail__error { margin: 0; color: var(--primary-dark); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
       `}</style>
     </div>,
     document.body,
