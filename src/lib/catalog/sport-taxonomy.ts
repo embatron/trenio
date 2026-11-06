@@ -534,7 +534,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Экстрим",
     titleGenitive: "экстремальному спорту",
     iconKey: "outdoor",
-    description: "Скалолазание, альпинизм, паркур, походы и ориентирование.",
+    description: "Скалолазание, альпинизм, паркур, походы, ориентирование, мотокросс и эндуро.",
     aliases: ["экстрим", "экстремальный спорт", "походы и скалы", "активный отдых"],
     count: "",
     bg: "linear-gradient(135deg, #edfbe8 0%, #bfe9ac 100%)",
@@ -556,6 +556,12 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         aliases: ["туризм", "поход", "трекинг"],
       },
       { slug: "orientirovanie", label: "Ориентирование", titleGenitive: "ориентированию", aliases: ["спортивное ориентирование"] },
+      {
+        slug: "motokross",
+        label: "Мотокросс и эндуро",
+        titleGenitive: "мотокроссу и эндуро",
+        aliases: ["турэндуро", "мотокросс", "эндуро", "enduro", "motocross"],
+      },
     ],
   }),
   defineCategory({
