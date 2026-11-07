@@ -12,9 +12,9 @@ import { deniedCabinetTarget, ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 
 const TRAINER_PAGES: CabinetNavPage[] = [
+  { id: "drafts", label: "Драфты", to: "/admin/trainers/drafts" },
   { id: "welcomes", label: "Заявки", to: "/admin/welcomes" },
   { id: "reviews", label: "Отзывы", to: "/admin/reviews" },
-  { id: "drafts", label: "Драфты", to: "/admin/trainers/drafts" },
 ];
 
 const SETTINGS_PAGES: CabinetNavPage[] = [
@@ -117,6 +117,7 @@ function AdminLayout() {
     return {
       ...item,
       pages: item.pages.map((page) => {
+        if (page.id === "drafts") return { ...page, badge: counts.draftsOpen };
         if (page.id === "welcomes") return { ...page, badge: counts.welcomesOpen };
         if (page.id === "reviews") return { ...page, badge: counts.reviewsPending };
         return page;

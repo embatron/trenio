@@ -612,9 +612,9 @@ const TRAINER_MENU: HeaderMenuItem[] = [
 const ADMIN_MENU: HeaderMenuItem[] = [
   { id: "overview", label: "Обзор", kind: "admin", to: "/admin" },
   { id: "trainers", label: "Тренеры", kind: "admin", to: "/admin/trainers" },
+  { id: "drafts", label: "Драфты", kind: "admin", to: "/admin/trainers/drafts" },
   { id: "welcomes", label: "Заявки", kind: "admin", to: "/admin/welcomes" },
   { id: "reviews", label: "Отзывы", kind: "admin", to: "/admin/reviews" },
-  { id: "drafts", label: "Драфты", kind: "admin", to: "/admin/trainers/drafts" },
   { id: "messages", label: "Сообщения", kind: "admin", to: "/admin/messages" },
   { id: "accounts", label: "Аккаунты", kind: "admin", to: "/admin/accounts" },
   { id: "finance", label: "Бухгалтерия", kind: "admin", to: "/admin/finance" },
@@ -638,10 +638,10 @@ function menuCounts(
   own: number,
   inbox: number,
   favorites: number | undefined,
-  welcomesOpen: number | undefined,
+  staff: { welcomesOpen?: number; draftsOpen?: number },
 ): Record<string, number | undefined> {
   const messages = own + inbox;
-  if (isStaff(roles)) return { messages, welcomes: welcomesOpen };
+  if (isStaff(roles)) return { messages, welcomes: staff.welcomesOpen, drafts: staff.draftsOpen };
   if (hasAnyRole(roles, ["trainer", "club"])) return { messages, favorites };
   return { messages, bookings: 0, favorites };
 }
@@ -658,11 +658,11 @@ function HeaderMenuLink({ item, count, onNavigate }: { item: HeaderMenuItem; cou
   return <Link to={item.to} {...props}>{body}</Link>;
 }
 
-function useOpenWelcomes(enabled: boolean) {
+function useStaffMenuCounts(enabled: boolean) {
   const shell = useServerFn(getAdminShellFn);
   const shellRef = useRef(shell);
   shellRef.current = shell;
-  const [open, setOpen] = useState(0);
+  const [counts, setCounts] = useState<{ welcomesOpen?: number; draftsOpen?: number }>({});
 
   useEffect(() => {
     if (!enabled) return;
@@ -672,7 +672,7 @@ function useOpenWelcomes(enabled: boolean) {
       if (document.visibilityState === "hidden") return;
       try {
         const next = await shellRef.current();
-        if (!stop) setOpen(next.welcomesOpen);
+        if (!stop) setCounts({ welcomesOpen: next.welcomesOpen, draftsOpen: next.draftsOpen });
       } catch {
         /* keep the last count */
       }
@@ -697,12 +697,12 @@ function useOpenWelcomes(enabled: boolean) {
     };
   }, [enabled]);
 
-  return enabled ? open : undefined;
+  return enabled ? counts : {};
 }
 
 function AccountButton() {
   const { user } = useRouteContext({ from: "__root__" });
-  const welcomesOpen = useOpenWelcomes(Boolean(user && isStaff(user.roles)));
+  const staffCounts = useStaffMenuCounts(Boolean(user && isStaff(user.roles)));
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -753,7 +753,7 @@ function AccountButton() {
     messaging.own,
     messaging.inbox,
     ready ? keys.length : undefined,
-    welcomesOpen,
+    staffCounts,
   );
   const show = () => {
     if (holdClosed.current) return;
@@ -935,7 +935,7 @@ function MegaCities({ onClose }: { onClose: () => void }) {
 
 function MegaAccount({ menuOpen, onClose }: { menuOpen: boolean; onClose: () => void }) {
   const { user } = useRouteContext({ from: "__root__" });
-  const welcomesOpen = useOpenWelcomes(Boolean(user && isStaff(user.roles)));
+  const staffCounts = useStaffMenuCounts(Boolean(user && isStaff(user.roles)));
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const logout = useAuthServerFn(logoutFn);
@@ -955,7 +955,7 @@ function MegaAccount({ menuOpen, onClose }: { menuOpen: boolean; onClose: () => 
     messaging.own,
     messaging.inbox,
     ready ? keys.length : undefined,
-    welcomesOpen,
+    staffCounts,
   );
 
   return (
