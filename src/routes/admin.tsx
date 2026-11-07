@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, redirect, useRouterState } from "@tanstack/rea
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
-import { CabinetShell, cabinetPathMatches, type AdminSectionPath, type CabinetIcon, type CabinetNavPage } from "@/components/cabinet";
+import { CabinetShell, cabinetPathMatches, type AdminSectionPath, type CabinetIcon } from "@/components/cabinet";
 import { useMessaging } from "@/components/messages/messages-live";
 import { getAdminShellFn } from "@/lib/admin/shell";
 import { MESSAGE_SCAN_MS } from "@/lib/messages/polling";
@@ -11,27 +11,19 @@ import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { deniedCabinetTarget, ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 
-const TRAINER_PAGES: CabinetNavPage[] = [
-  { id: "all", label: "Весь список", to: "/admin/trainers" },
-  { id: "drafts", label: "Драфты", to: "/admin/trainers/drafts" },
-  { id: "active", label: "Активные", to: "/admin/trainers/active" },
-  { id: "unclear", label: "Непонятные", to: "/admin/trainers/unclear" },
-  { id: "welcomes", label: "Заявки", to: "/admin/welcomes" },
-  { id: "reviews", label: "Отзывы", to: "/admin/reviews" },
-];
-
-const SETTINGS_PAGES: CabinetNavPage[] = [
-  { id: "account", label: "Аккаунт", to: "/admin/settings" },
-  { id: "site", label: "Сайт", to: "/admin/site" },
-];
-
-const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: AdminSectionPath; pages?: CabinetNavPage[] }> = [
+const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: AdminSectionPath }> = [
   { id: "overview", label: "Обзор", icon: "overview", to: "/admin" },
-  { id: "trainers", label: "Тренеры", icon: "trainers", to: "/admin/trainers", pages: TRAINER_PAGES },
+  { id: "all", label: "Весь список", icon: "trainers", to: "/admin/trainers" },
+  { id: "drafts", label: "Драфты", icon: "trainers", to: "/admin/trainers/drafts" },
+  { id: "active", label: "Активные", icon: "trainers", to: "/admin/trainers/active" },
+  { id: "unclear", label: "Непонятные", icon: "trainers", to: "/admin/trainers/unclear" },
+  { id: "welcomes", label: "Заявки", icon: "contacts", to: "/admin/welcomes" },
+  { id: "reviews", label: "Отзывы", icon: "reviews", to: "/admin/reviews" },
   { id: "messages", label: "Сообщения", icon: "messages", to: "/admin/messages" },
   { id: "accounts", label: "Аккаунты", icon: "accounts", to: "/admin/accounts" },
   { id: "finance", label: "Бухгалтерия", icon: "finance", to: "/admin/finance" },
-  { id: "settings", label: "Настройки", icon: "profile", to: "/admin/settings", pages: SETTINGS_PAGES },
+  { id: "settings", label: "Настройки", icon: "profile", to: "/admin/settings" },
+  { id: "site", label: "Сайт", icon: "site", to: "/admin/site" },
 ];
 
 export const Route = createFileRoute("/admin")({
@@ -108,26 +100,19 @@ function AdminLayout() {
   const role = user.roles.map((item) => ROLE_LABELS[item]).join(", ");
   const active =
     [...SECTIONS]
-      .reverse()
-      .find(
-        (item) =>
-          item.pages?.some((page) => cabinetPathMatches(pathname, page.to)) ||
-          cabinetPathMatches(pathname, item.to),
-      )?.id ?? "overview";
+      .filter((item) => cabinetPathMatches(pathname, item.to))
+      .sort((a, b) => b.to.length - a.to.length)[0]?.id ?? "overview";
+  const badges: Record<string, number | undefined> = {
+    messages: messaging.total,
+    drafts: counts.draftsOpen,
+    active: counts.publishedCount,
+    unclear: counts.unclearCount,
+    welcomes: counts.welcomesOpen,
+    reviews: counts.reviewsPending,
+  };
   const items = SECTIONS.map((item) => {
-    if (item.id === "messages") return { ...item, badge: messaging.total };
-    if (item.id !== "trainers" || !item.pages) return item;
-    return {
-      ...item,
-      pages: item.pages.map((page) => {
-        if (page.id === "drafts") return { ...page, badge: counts.draftsOpen };
-        if (page.id === "active") return { ...page, badge: counts.publishedCount };
-        if (page.id === "unclear") return { ...page, badge: counts.unclearCount };
-        if (page.id === "welcomes") return { ...page, badge: counts.welcomesOpen };
-        if (page.id === "reviews") return { ...page, badge: counts.reviewsPending };
-        return page;
-      }),
-    };
+    const badge = badges[item.id];
+    return typeof badge === "number" ? { ...item, badge } : item;
   });
 
   return (

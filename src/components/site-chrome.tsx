@@ -524,6 +524,12 @@ body.is-search-docked .site-header__search {
   .mega-account.is-open .mega-account__list { display: grid; }
   .mega-account__list .account-menu__item { white-space: normal; }
   .mega-account__list .account-menu__item > span:first-child { min-width: 0; }
+  .mega-panel.is-cabinet .mega-cats,
+  .mega-panel.is-cabinet .mega-cities,
+  .mega-panel.is-cabinet > .mega-sheet { display: none; }
+  .mega-panel.is-cabinet .mega-account { border-bottom: 0; }
+  .mega-panel.is-cabinet .mega-account__toggle { display: none; }
+  .mega-panel.is-cabinet .mega-account__list { display: grid; margin-top: 0; }
 }
 @media (max-width: 560px) {
   .mega-cats.is-open .mega-cats__row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -613,7 +619,6 @@ const TRAINER_MENU: HeaderMenuItem[] = [
 
 const ADMIN_MENU: HeaderMenuItem[] = [
   { id: "overview", label: "Обзор", kind: "admin", to: "/admin" },
-  { id: "trainers", label: "Тренеры", kind: "admin", to: "/admin/trainers" },
   { id: "all", label: "Весь список", kind: "admin", to: "/admin/trainers" },
   { id: "drafts", label: "Драфты", kind: "admin", to: "/admin/trainers/drafts" },
   { id: "active", label: "Активные", kind: "admin", to: "/admin/trainers/active" },
@@ -658,7 +663,7 @@ function HeaderMenuLink({ item, count, onNavigate }: { item: HeaderMenuItem; cou
     return <Link to={item.to} activeOptions={item.to === "/me" ? { exact: true } : undefined} {...props}>{body}</Link>;
   }
   if (item.kind === "admin") {
-    return <Link to={item.to} {...props}>{body}</Link>;
+    return <Link to={item.to} activeOptions={{ exact: item.to === "/admin" || item.to === "/admin/trainers" || item.to === "/admin/accounts" }} {...props}>{body}</Link>;
   }
   return <Link to={item.to} {...props}>{body}</Link>;
 }
@@ -1015,6 +1020,7 @@ function MegaPin() {
 
 function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { user } = useRouteContext({ from: "__root__" });
+  const cabinetMenu = Boolean(user && (isStaff(user.roles) || hasAnyRole(user.roles, ["trainer", "club"])));
   const [sportsOpen, setSportsOpen] = useState(false);
   const [citiesOpen, setCitiesOpen] = useState(false);
   useEffect(() => {
@@ -1035,7 +1041,7 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
 
   return (
     <div
-      className={`mega-panel${open ? " is-open" : ""}`}
+      className={`mega-panel${open ? " is-open" : ""}${cabinetMenu ? " is-cabinet" : ""}`}
       role="dialog"
       aria-modal="true"
       aria-label="Меню"
