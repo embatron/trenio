@@ -10,15 +10,31 @@ import { assertStaff } from "@/lib/admin/access";
 import { AuthError } from "@/lib/auth/errors";
 import { editorHtml } from "@/lib/catalog/review-html";
 import { writeLog } from "@/lib/log/logger";
+import { cityCatalogByName } from "@/lib/catalog/city-pages";
 import { mirrorTrainingPlace, resolveTrainingPlaces, suggestCachedOrRemote } from "@/lib/geo/resolve";
 import {
   MAP_TEMPORARILY_UNAVAILABLE,
+  isSpecificAddress,
   placesFromProfile,
   placeLine,
   suggestAddressSchema,
   type AddressSuggestion,
   type TrainerPlace,
 } from "@/lib/geo/schemas";
+
+function cityCenterPlace(city: string): TrainerPlace[] {
+  const name = city.trim();
+  if (!name) return [];
+  const center = cityCatalogByName(name);
+  return [{
+    city: name,
+    district: "",
+    address: "",
+    lat: center?.lat ?? null,
+    lng: center?.lng ?? null,
+    geocodeStatus: center ? "ok" : null,
+  }];
+}
 
 function toSuggestions(hits: AddressSuggestion[]): AddressSuggestion[] {
   return hits.filter((hit) => hit.displayName && hit.lat != null && hit.lng != null).slice(0, 5);
@@ -67,6 +83,7 @@ export const getTrainerAddressFn = createServerFn({ method: "GET" })
   .handler(async ({ data }): Promise<{ places: Array<{ city: string; district: string; address: string; lat: number | null; lng: number | null }>; about: string }> => {
     const [row] = await getDb()
       .select({
+        city: trainerProfiles.city,
         trainingPlaces: trainerProfiles.trainingPlaces,
         address: trainerProfiles.address,
         addressLat: trainerProfiles.addressLat,
@@ -77,7 +94,12 @@ export const getTrainerAddressFn = createServerFn({ method: "GET" })
       .from(trainerProfiles)
       .where(eq(trainerProfiles.slug, data.slug))
       .limit(1);
-    const places = placesFromProfile(row ?? {}).map((place) => {
+    const stored = placesFromProfile(row ?? {});
+    const specific = stored.filter((place) => isSpecificAddress(place.address));
+    const shown = specific.length > 0
+      ? specific
+      : cityCenterPlace((row?.city ?? "").trim() || stored.find((place) => place.city.trim())?.city || "");
+    const places = shown.map((place) => {
       const mapped = place.geocodeStatus === "ok" && place.lat != null && place.lng != null;
       return {
         city: place.city,

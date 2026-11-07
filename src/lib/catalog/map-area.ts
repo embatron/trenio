@@ -6,7 +6,8 @@ import type { MapAreaInput } from "@/lib/catalog/map-area-input";
 import { trainerProfiles, trainerReviews } from "@/db/schema";
 import type { TrainerAudience, TrainerFormat } from "@/lib/catalog/published-trainers";
 import { trainerNameParts } from "@/lib/catalog/trainer-name";
-import { placesFromProfile } from "@/lib/geo/schemas";
+import { cityCatalogByName, listCityCatalogPages } from "@/lib/catalog/city-pages";
+import { isSpecificAddress, placesFromProfile, SPECIFIC_ADDRESS_SQL } from "@/lib/geo/schemas";
 import { MAP_CLUSTER_CAP, MAP_PAGE_SIZE, MAP_PIN_CAP, MAP_TOOLTIP_CAP } from "@/lib/catalog/map-limits";
 
 const SLUG_CAP = 200;
@@ -196,12 +197,28 @@ function boundsWhere(bounds: AreaBounds | null): SQL {
   return sql`${lat} AND ${lng}`;
 }
 
+function cityCenterValues(): SQL {
+  const rows = listCityCatalogPages().map((city) => sql`(${foldCity(city.name)}, ${city.lat}::double precision, ${city.lng}::double precision)`);
+  return sql.join(rows, sql`, `);
+}
+
 function placesSql(filters: AreaFilters, bounds: AreaBounds | null, applyPrice: boolean): SQL {
   const city = foldCity(filters.city);
   const citySql = city
     ? sql`lower(replace(city, 'ё', 'е')) = ${city}`
     : sql`true`;
+  const profileCitySql = city
+    ? sql`lower(replace(btrim(tp.city), 'ё', 'е')) = ${city}`
+    : sql`true`;
+  const centerBounds = bounds
+    ? bounds.world
+      ? sql`centers.lat BETWEEN ${bounds.south} AND ${bounds.north}`
+      : bounds.wraps
+        ? sql`centers.lat BETWEEN ${bounds.south} AND ${bounds.north} AND (centers.lng >= ${bounds.west} OR centers.lng <= ${bounds.east})`
+        : sql`centers.lat BETWEEN ${bounds.south} AND ${bounds.north} AND centers.lng BETWEEN ${bounds.west} AND ${bounds.east}`
+    : sql`true`;
   return sql`
+    WITH mapped AS (
     SELECT slug, price_from, lat, lng, city, address
     FROM (
       SELECT
@@ -244,8 +261,34 @@ function placesSql(filters: AreaFilters, bounds: AreaBounds | null, applyPrice: 
     WHERE geocode_status = 'ok'
       AND lat BETWEEN -90 AND 90
       AND lng BETWEEN -180 AND 180
+      AND coalesce(address, '') ~* ${SPECIFIC_ADDRESS_SQL}
       AND ${citySql}
       AND ${boundsWhere(bounds)}
+    )
+    SELECT slug, price_from, lat, lng, city, address FROM mapped
+    UNION ALL
+    SELECT
+      tp.slug,
+      coalesce(tp.price_from, 0)::int AS price_from,
+      centers.lat,
+      centers.lng,
+      btrim(tp.city) AS city,
+      '' AS address
+    FROM trainer_profiles tp
+    JOIN (VALUES ${cityCenterValues()}) AS centers(name, lat, lng)
+      ON lower(replace(btrim(tp.city), 'ё', 'е')) = centers.name
+    WHERE ${profileWhere(filters, applyPrice)}
+      AND tp.slug NOT IN (SELECT slug FROM mapped)
+      AND NOT EXISTS (
+        SELECT 1
+        FROM jsonb_array_elements(
+          CASE WHEN jsonb_typeof(tp.training_places) = 'array' THEN tp.training_places ELSE '[]'::jsonb END
+        ) AS place
+        WHERE coalesce(place->>'address', '') ~* ${SPECIFIC_ADDRESS_SQL}
+      )
+      AND coalesce(tp.address, '') !~* ${SPECIFIC_ADDRESS_SQL}
+      AND ${profileCitySql}
+      AND ${centerBounds}
   `;
 }
 
@@ -303,11 +346,22 @@ function toMapTrainer(row: {
   addressLng: number | null;
   geocodeStatus: string | null;
 }): MapTrainer | null {
-  const places = placesFromProfile(row).flatMap((place) => {
+  const stored = placesFromProfile(row);
+  const specific = stored.flatMap((place) => {
+    if (!isSpecificAddress(place.address)) return [];
     if (place.geocodeStatus !== "ok" || place.lat == null || place.lng == null) return [];
     if (!Number.isFinite(place.lat) || !Number.isFinite(place.lng)) return [];
     return [{ city: place.city, address: place.address, lat: place.lat, lng: place.lng }];
   });
+  const hasSpecific = specific.length > 0
+    || stored.some((place) => isSpecificAddress(place.address))
+    || isSpecificAddress(row.address ?? "");
+  const center = cityCatalogByName(row.city);
+  const places = specific.length > 0
+    ? specific
+    : !hasSpecific && center
+      ? [{ city: row.city.trim(), address: "", lat: center.lat, lng: center.lng }]
+      : [];
   if (places.length === 0) return null;
   const sports = (row.sports ?? []).flatMap((sport) => {
     const slug = sport?.slug?.trim() ?? "";

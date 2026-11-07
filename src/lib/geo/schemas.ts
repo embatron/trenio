@@ -65,6 +65,16 @@ export const EMPTY_TRAINER_PLACE: TrainerPlace = {
   geocodeStatus: null,
 };
 
+const SPECIFIC_ADDRESS = /улиц|(?<![\p{L}])ул\.|проспект|пр-т|(?<![\p{L}])пр\.|переул|бульвар|проезд|площад|набережн|(?<![\p{L}\d])\d{1,4}(?![\p{L}\d])/iu;
+
+/** Postgres form of `isSpecificAddress`, for the catalog map query. */
+export const SPECIFIC_ADDRESS_SQL = "(улиц|проспект|пр-т|переул|бульвар|проезд|площад|набережн|(^|[^[:alpha:]])пр[.]|(^|[^[:alpha:]])ул[.]|(^|[^[:alnum:]])[0-9]{1,4}([^[:alnum:]]|$))";
+
+/** A street or a house number. A hall name alone is not a point on the map. */
+export function isSpecificAddress(address: string) {
+  return SPECIFIC_ADDRESS.test(address);
+}
+
 export function placeLine(place: { city: string; district: string; address: string }) {
   return [place.city, place.address].map((part) => part.trim()).filter(Boolean).join(", ");
 }
