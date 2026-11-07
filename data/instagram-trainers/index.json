@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-07T15:17:33.300Z",
+  "updatedAt": "2026-11-07T20:06:22.394Z",
   "profiles": [
     {
       "handle": "embatron.eth",
@@ -1457,6 +1457,22 @@
         "pinnedPosts"
       ],
       "file": "data/instagram-trainers/kristina_fedyuk_.json"
+    },
+    {
+      "handle": "andrushkevichdmitrii",
+      "slug": "andrushkevichdmitrii",
+      "fullName": "Дмитрий Андрушкевич",
+      "primarySport": "Тайский бокс",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/andrushkevichdmitrii.json"
     }
   ]
 }

@@ -61,6 +61,17 @@ test("an unknown category slug is not a public document", () => {
     parentSlug: "fitnes",
     childSlug: "ofp",
   });
+  assert.deepEqual(categorySlugRoute("pitanie"), {
+    kind: "child",
+    parentSlug: "fitnes",
+    childSlug: "nutriciolog",
+  });
+  assert.deepEqual(categoryChildRoute("fitnes", "nutriciolog"), { kind: "render" });
+  assert.deepEqual(categoryChildRoute("pitanie", "nutriciolog"), {
+    kind: "child",
+    parentSlug: "fitnes",
+    childSlug: "nutriciolog",
+  });
 
   assert.deepEqual(categoryChildRoute("zzzz-not-real", "boks"), { kind: "missing" });
   assert.deepEqual(categoryChildRoute("velnes", "meditaciya"), { kind: "missing" });

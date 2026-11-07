@@ -77,7 +77,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     children: [
       { slug: "boks", label: "Бокс", titleGenitive: "боксу", aliases: ["бокс", "любительский бокс", "boxing"] },
       { slug: "kikboksing", label: "Кикбоксинг", titleGenitive: "кикбоксингу", aliases: ["кикбоксинг", "кибоксинг"] },
-      { slug: "tajskij-boks", label: "Тайский бокс", titleGenitive: "тайскому боксу", aliases: ["муай тай", "тайский бокс", "таиландский бокс"] },
+      { slug: "tajskij-boks", label: "Тайский бокс", titleGenitive: "тайскому боксу", aliases: ["муай тай", "muay thai", "muaythai", "тайский бокс", "таиландский бокс"] },
       { slug: "mma", label: "MMA", titleGenitive: "MMA", aliases: ["мма", "смешанные единоборства"] },
       { slug: "karate", label: "Карате", titleGenitive: "карате", aliases: ["каратэ", "киокушинкай", "киокушин"] },
       { slug: "dzyudo", label: "Дзюдо", titleGenitive: "дзюдо", aliases: ["judo"] },
@@ -97,7 +97,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Фитнес",
     titleGenitive: "фитнесу",
     iconKey: "gymFitness",
-    description: "ОФП, кроссфит, тяжёлая атлетика, пауэрлифтинг, силовой тренинг, бодибилдинг и коррекция фигуры.",
+    description: "ОФП, кроссфит, тяжёлая атлетика, пауэрлифтинг, силовой тренинг, бодибилдинг, коррекция фигуры и питание.",
     aliases: ["фитнес", "тренажёрный зал", "тренажерка", "спортзал", "персональный тренер", "кардио", "тренировки 50+"],
     count: "",
     bg: "linear-gradient(135deg, #fff1d6 0%, #ffd08a 100%)",
@@ -153,6 +153,20 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         slug: "figura",
         label: "Коррекция фигуры",
         titleGenitive: "коррекции фигуры",
+      },
+      {
+        slug: "nutriciolog",
+        label: "Питание",
+        titleGenitive: "питанию",
+        aliases: [
+          "нутрициолог",
+          "нутрициология",
+          "тренер по питанию",
+          "консультант по питанию",
+          "программы питания",
+          "рацион",
+          "составление рациона",
+        ],
       },
     ],
   }),
@@ -620,25 +634,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
       { slug: "bridzh", label: "Бридж", titleGenitive: "бриджу", aliases: ["спортивный бридж"] },
     ],
   }),
-  defineCategory({
-    slug: "pitanie",
-    label: "Питание",
-    titleGenitive: "питанию",
-    iconKey: "wellness",
-    description: "Тренер по питанию и рациону.",
-    aliases: ["составление рациона"],
-    count: "",
-    bg: "linear-gradient(135deg, #e7f7f2 0%, #b7e6d4 100%)",
-    children: [
-      {
-        slug: "nutriciolog",
-        label: "Питание",
-        titleGenitive: "питанию",
-        aliases: ["нутрициолог", "нутрициология", "тренер по питанию", "консультант по питанию", "программы питания", "рацион"],
-      },
-    ],
-  }),
-];
+  ];
 
 export const TOP_LEVEL_SPORT_CATEGORY_BY_SLUG = Object.fromEntries(
   TOP_LEVEL_SPORT_CATEGORIES.map((category) => [category.slug, category]),
