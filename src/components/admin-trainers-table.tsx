@@ -366,14 +366,26 @@ function sortTrainers(rows: AdminTrainer[], sort: TrainerSort) {
   return rows;
 }
 
+const SORT_OPTIONS: Array<{ id: TrainerSort; label: string }> = [
+  { id: "date-desc", label: "Сначала новые" },
+  { id: "date-asc", label: "Сначала старые" },
+  { id: "reviews", label: "По комментариям" },
+  { id: "rating", label: "По оценке" },
+  { id: "popularity", label: "По рейтингу" },
+  { id: "sent", label: "Сначала с сообщением" },
+  { id: "link", label: "Сначала со ссылкой" },
+  { id: "visit", label: "Сначала зашедшие" },
+  { id: "note", label: "Сначала с заметкой" },
+];
+
 export function AdminTrainersTable({
   trainers,
   outreachText,
-  unsentOnly = false,
+  list = "all",
 }: {
   trainers: AdminTrainer[];
   outreachText: string;
-  unsentOnly?: boolean;
+  list?: "all" | "unsent" | "published";
 }) {
   const [query, setQuery] = useState("");
   const [publishTab, setPublishTab] = useState<TrainerPublishTab>("unpublished");
@@ -392,9 +404,11 @@ export function AdminTrainersTable({
           ...(link ? { inviteSentAt: link } : {}),
         };
       });
-      return unsentOnly ? patched.filter((trainer) => !trainer.outreachSentAt) : patched;
+      if (list === "unsent") return patched.filter((trainer) => !trainer.outreachSentAt);
+      if (list === "published") return patched.filter((trainer) => trainer.status === "published");
+      return patched;
     },
-    [trainers, notePatch, linkPatch, unsentOnly],
+    [trainers, notePatch, linkPatch, list],
   );
   const [category, setCategory] = useState("");
   const [sport, setSport] = useState("");
@@ -437,7 +451,16 @@ export function AdminTrainersTable({
     const published = sortTrainers(rows.filter((trainer) => trainer.status === "published"), sort);
     return { unpublished, published };
   }, [listed, query, category, sport, city, format, audience, message, link, visit, note, sort]);
-  const visible = publishTab === "published" ? visibleBuckets.published : visibleBuckets.unpublished;
+  const visible = list === "published"
+    ? visibleBuckets.published
+    : list === "unsent"
+      ? sortTrainers(
+          visibleBuckets.unpublished.concat(visibleBuckets.published),
+          sort,
+        )
+      : publishTab === "published"
+        ? visibleBuckets.published
+        : visibleBuckets.unpublished;
   const pager = useTablePage(
     visible,
     `${query}|${category}|${sport}|${city}|${format}|${audience}|${message}|${link}|${visit}|${note}|${sort}|${publishTab}`,
@@ -445,22 +468,26 @@ export function AdminTrainersTable({
   );
 
   if (listed.length === 0) {
-    const empty = unsentOnly && trainers.length > 0
+    const empty = list === "unsent" && trainers.length > 0
       ? "Заготовок нет: первое сообщение уже отправлено всем тренерам."
-      : "Тренеров пока нет.";
+      : list === "published" && trainers.length > 0
+        ? "Опубликованных карточек нет."
+        : "Тренеров пока нет.";
     return <p className="cabinet-empty">{empty}</p>;
   }
 
   return (
     <>
-      <div className="cabinet-tabs" role="tablist" aria-label="Публикация">
-        <button type="button" role="tab" aria-selected={publishTab === "unpublished"} onClick={() => setPublishTab("unpublished")}>
-          {`Неопубликованные (${visibleBuckets.unpublished.length})`}
-        </button>
-        <button type="button" role="tab" aria-selected={publishTab === "published"} onClick={() => setPublishTab("published")}>
-          {`Опубликованные (${visibleBuckets.published.length})`}
-        </button>
-      </div>
+      {list === "all" ? (
+        <div className="cabinet-tabs" role="tablist" aria-label="Публикация">
+          <button type="button" role="tab" aria-selected={publishTab === "unpublished"} onClick={() => setPublishTab("unpublished")}>
+            {`Неопубликованные (${visibleBuckets.unpublished.length})`}
+          </button>
+          <button type="button" role="tab" aria-selected={publishTab === "published"} onClick={() => setPublishTab("published")}>
+            {`Опубликованные (${visibleBuckets.published.length})`}
+          </button>
+        </div>
+      ) : null}
       <div className="cabinet-filters">
         <label className="cabinet-filters__search">
           <span>Поиск</span>
@@ -523,7 +550,7 @@ export function AdminTrainersTable({
             ))}
           </select>
         </label>
-        {unsentOnly ? null : (
+        {list === "unsent" ? null : (
           <label>
             <span>Сообщение</span>
             <select value={message} onChange={(event) => setMessage(event.target.value as "" | "sent" | "unsent")}>
@@ -533,14 +560,16 @@ export function AdminTrainersTable({
             </select>
           </label>
         )}
-        <label>
-          <span>Ссылка</span>
-          <select value={link} onChange={(event) => setLink(event.target.value as "" | "sent" | "unsent")}>
-            <option value="">Все</option>
-            <option value="sent">Отправлена</option>
-            <option value="unsent">Не отправлена</option>
-          </select>
-        </label>
+        {list === "published" ? null : (
+          <label>
+            <span>Ссылка</span>
+            <select value={link} onChange={(event) => setLink(event.target.value as "" | "sent" | "unsent")}>
+              <option value="">Все</option>
+              <option value="sent">Отправлена</option>
+              <option value="unsent">Не отправлена</option>
+            </select>
+          </label>
+        )}
         <label>
           <span>Заход</span>
           <select value={visit} onChange={(event) => setVisit(event.target.value as "" | "yes" | "no")}>
@@ -560,15 +589,9 @@ export function AdminTrainersTable({
         <label>
           <span>Сортировка</span>
           <select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}>
-            <option value="date-desc">Сначала новые</option>
-            <option value="date-asc">Сначала старые</option>
-            <option value="reviews">По комментариям</option>
-            <option value="rating">По оценке</option>
-            <option value="popularity">По рейтингу</option>
-            <option value="sent">Сначала с сообщением</option>
-            <option value="link">Сначала со ссылкой</option>
-            <option value="visit">Сначала зашедшие</option>
-            <option value="note">Сначала с заметкой</option>
+            {SORT_OPTIONS.filter((option) => list !== "unsent" || option.id !== "sent").filter((option) => list !== "published" || option.id !== "link").map((option) => (
+              <option key={option.id} value={option.id}>{option.label}</option>
+            ))}
           </select>
         </label>
       </div>

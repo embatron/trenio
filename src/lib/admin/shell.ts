@@ -1,4 +1,4 @@
-import { count, eq, inArray, isNull } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 import { createServerFn } from "@tanstack/react-start";
 
 import { requireAuthMiddleware } from "@/auth/middleware";
@@ -8,20 +8,25 @@ import { assertStaff, hiddenStaffIds } from "@/lib/admin/access";
 import { countOpenWelcomes } from "@/lib/admin/welcomes";
 import { PUBLISHED_TRAINERS } from "@/lib/catalog/published-trainers";
 
-async function countUnsentTrainers(): Promise<number> {
+async function countTrainerSlices(): Promise<{ draftsOpen: number; publishedCount: number }> {
   const db = getDb();
   const [row] = await db
-    .select({ value: count() })
-    .from(trainerProfiles)
-    .where(isNull(trainerProfiles.outreachSentAt));
+    .select({
+      draftsOpen: sql<number>`count(*) filter (where ${trainerProfiles.outreachSentAt} is null)`,
+      publishedCount: sql<number>`count(*) filter (where ${trainerProfiles.status} = 'published')`,
+    })
+    .from(trainerProfiles);
+  const draftsOpen = Number(row?.draftsOpen ?? 0);
+  const publishedCount = Number(row?.publishedCount ?? 0);
   const catalogSlugs = PUBLISHED_TRAINERS.map((trainer) => trainer.slug);
-  if (catalogSlugs.length === 0) return Number(row?.value ?? 0);
+  if (catalogSlugs.length === 0) return { draftsOpen, publishedCount };
   const present = await db
     .select({ slug: trainerProfiles.slug })
     .from(trainerProfiles)
     .where(inArray(trainerProfiles.slug, catalogSlugs));
   const known = new Set(present.map((item) => item.slug));
-  return Number(row?.value ?? 0) + catalogSlugs.filter((slug) => !known.has(slug)).length;
+  const extra = catalogSlugs.filter((slug) => !known.has(slug)).length;
+  return { draftsOpen: draftsOpen + extra, publishedCount: publishedCount + extra };
 }
 
 export const getAdminShellFn = createServerFn({ method: "GET" })
@@ -29,18 +34,19 @@ export const getAdminShellFn = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     assertStaff(context.user.roles);
     const db = getDb();
-    const [hidden, rows, welcomesOpen, draftsOpen] = await Promise.all([
+    const [hidden, rows, welcomesOpen, slices] = await Promise.all([
       hiddenStaffIds(context.user.roles),
       db
         .select({ userId: trainerReviews.userId })
         .from(trainerReviews)
         .where(eq(trainerReviews.status, "pending")),
       countOpenWelcomes(),
-      countUnsentTrainers(),
+      countTrainerSlices(),
     ]);
     return {
       reviewsPending: rows.filter((row) => !hidden.has(row.userId)).length,
       welcomesOpen,
-      draftsOpen,
+      draftsOpen: slices.draftsOpen,
+      publishedCount: slices.publishedCount,
     };
   });

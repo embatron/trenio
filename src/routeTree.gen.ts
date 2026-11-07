@@ -93,6 +93,7 @@ import { Route as AuthGoogleCallbackRouteImport } from './routes/auth.google.cal
 import { Route as ApiSyncTrainerRouteImport } from './routes/api.sync.trainer'
 import { Route as ApiSyncMarksRouteImport } from './routes/api.sync.marks'
 import { Route as AdminTrainersDraftsRouteImport } from './routes/admin.trainers.drafts'
+import { Route as AdminTrainersActiveRouteImport } from './routes/admin.trainers.active'
 import { Route as AdminTrainersSlugRouteImport } from './routes/admin.trainers.$slug'
 import { Route as AdminAccountsIdRouteImport } from './routes/admin.accounts.$id'
 import { Route as AccountMessagesConversationIdRouteImport } from './routes/account.messages.$conversationId'
@@ -525,6 +526,11 @@ const AdminTrainersDraftsRoute = AdminTrainersDraftsRouteImport.update({
   path: '/drafts',
   getParentRoute: () => AdminTrainersRoute,
 } as any)
+const AdminTrainersActiveRoute = AdminTrainersActiveRouteImport.update({
+  id: '/active',
+  path: '/active',
+  getParentRoute: () => AdminTrainersRoute,
+} as any)
 const AdminTrainersSlugRoute = AdminTrainersSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -619,6 +625,7 @@ export interface FileRoutesByFullPath {
   '/account/messages/$conversationId': typeof AccountMessagesConversationIdRoute
   '/admin/accounts/$id': typeof AdminAccountsIdRoute
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
+  '/admin/trainers/active': typeof AdminTrainersActiveRoute
   '/admin/trainers/drafts': typeof AdminTrainersDraftsRoute
   '/api/sync/marks': typeof ApiSyncMarksRoute
   '/api/sync/trainer': typeof ApiSyncTrainerRoute
@@ -703,6 +710,7 @@ export interface FileRoutesByTo {
   '/account/messages/$conversationId': typeof AccountMessagesConversationIdRoute
   '/admin/accounts/$id': typeof AdminAccountsIdRoute
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
+  '/admin/trainers/active': typeof AdminTrainersActiveRoute
   '/admin/trainers/drafts': typeof AdminTrainersDraftsRoute
   '/api/sync/marks': typeof ApiSyncMarksRoute
   '/api/sync/trainer': typeof ApiSyncTrainerRoute
@@ -794,6 +802,7 @@ export interface FileRoutesById {
   '/account/messages/$conversationId': typeof AccountMessagesConversationIdRoute
   '/admin/accounts/$id': typeof AdminAccountsIdRoute
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
+  '/admin/trainers/active': typeof AdminTrainersActiveRoute
   '/admin/trainers/drafts': typeof AdminTrainersDraftsRoute
   '/api/sync/marks': typeof ApiSyncMarksRoute
   '/api/sync/trainer': typeof ApiSyncTrainerRoute
@@ -887,6 +896,7 @@ export interface FileRouteTypes {
     | '/account/messages/$conversationId'
     | '/admin/accounts/$id'
     | '/admin/trainers/$slug'
+    | '/admin/trainers/active'
     | '/admin/trainers/drafts'
     | '/api/sync/marks'
     | '/api/sync/trainer'
@@ -971,6 +981,7 @@ export interface FileRouteTypes {
     | '/account/messages/$conversationId'
     | '/admin/accounts/$id'
     | '/admin/trainers/$slug'
+    | '/admin/trainers/active'
     | '/admin/trainers/drafts'
     | '/api/sync/marks'
     | '/api/sync/trainer'
@@ -1061,6 +1072,7 @@ export interface FileRouteTypes {
     | '/account/messages/$conversationId'
     | '/admin/accounts/$id'
     | '/admin/trainers/$slug'
+    | '/admin/trainers/active'
     | '/admin/trainers/drafts'
     | '/api/sync/marks'
     | '/api/sync/trainer'
@@ -1728,6 +1740,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTrainersDraftsRouteImport
       parentRoute: typeof AdminTrainersRoute
     }
+    '/admin/trainers/active': {
+      id: '/admin/trainers/active'
+      path: '/active'
+      fullPath: '/admin/trainers/active'
+      preLoaderRoute: typeof AdminTrainersActiveRouteImport
+      parentRoute: typeof AdminTrainersRoute
+    }
     '/admin/trainers/$slug': {
       id: '/admin/trainers/$slug'
       path: '/$slug'
@@ -1815,12 +1834,14 @@ const AdminAccountsRouteWithChildren = AdminAccountsRoute._addFileChildren(
 
 interface AdminTrainersRouteChildren {
   AdminTrainersSlugRoute: typeof AdminTrainersSlugRoute
+  AdminTrainersActiveRoute: typeof AdminTrainersActiveRoute
   AdminTrainersDraftsRoute: typeof AdminTrainersDraftsRoute
   AdminTrainersIndexRoute: typeof AdminTrainersIndexRoute
 }
 
 const AdminTrainersRouteChildren: AdminTrainersRouteChildren = {
   AdminTrainersSlugRoute: AdminTrainersSlugRoute,
+  AdminTrainersActiveRoute: AdminTrainersActiveRoute,
   AdminTrainersDraftsRoute: AdminTrainersDraftsRoute,
   AdminTrainersIndexRoute: AdminTrainersIndexRoute,
 }

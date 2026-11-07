@@ -577,6 +577,7 @@ type AdminMenuTo =
   | "/admin"
   | "/admin/trainers"
   | "/admin/trainers/drafts"
+  | "/admin/trainers/active"
   | "/admin/welcomes"
   | "/admin/reviews"
   | "/admin/messages"
@@ -613,6 +614,8 @@ const ADMIN_MENU: HeaderMenuItem[] = [
   { id: "overview", label: "Обзор", kind: "admin", to: "/admin" },
   { id: "trainers", label: "Тренеры", kind: "admin", to: "/admin/trainers" },
   { id: "drafts", label: "Драфты", kind: "admin", to: "/admin/trainers/drafts" },
+  { id: "all", label: "Весь список", kind: "admin", to: "/admin/trainers" },
+  { id: "active", label: "Активные", kind: "admin", to: "/admin/trainers/active" },
   { id: "welcomes", label: "Заявки", kind: "admin", to: "/admin/welcomes" },
   { id: "reviews", label: "Отзывы", kind: "admin", to: "/admin/reviews" },
   { id: "messages", label: "Сообщения", kind: "admin", to: "/admin/messages" },
@@ -638,10 +641,10 @@ function menuCounts(
   own: number,
   inbox: number,
   favorites: number | undefined,
-  staff: { welcomesOpen?: number; draftsOpen?: number },
+  staff: { welcomesOpen?: number; draftsOpen?: number; publishedCount?: number },
 ): Record<string, number | undefined> {
   const messages = own + inbox;
-  if (isStaff(roles)) return { messages, welcomes: staff.welcomesOpen, drafts: staff.draftsOpen };
+  if (isStaff(roles)) return { messages, welcomes: staff.welcomesOpen, drafts: staff.draftsOpen, active: staff.publishedCount };
   if (hasAnyRole(roles, ["trainer", "club"])) return { messages, favorites };
   return { messages, bookings: 0, favorites };
 }
@@ -662,7 +665,7 @@ function useStaffMenuCounts(enabled: boolean) {
   const shell = useServerFn(getAdminShellFn);
   const shellRef = useRef(shell);
   shellRef.current = shell;
-  const [counts, setCounts] = useState<{ welcomesOpen?: number; draftsOpen?: number }>({});
+  const [counts, setCounts] = useState<{ welcomesOpen?: number; draftsOpen?: number; publishedCount?: number }>({});
 
   useEffect(() => {
     if (!enabled) return;
@@ -672,7 +675,7 @@ function useStaffMenuCounts(enabled: boolean) {
       if (document.visibilityState === "hidden") return;
       try {
         const next = await shellRef.current();
-        if (!stop) setCounts({ welcomesOpen: next.welcomesOpen, draftsOpen: next.draftsOpen });
+        if (!stop) setCounts({ welcomesOpen: next.welcomesOpen, draftsOpen: next.draftsOpen, publishedCount: next.publishedCount });
       } catch {
         /* keep the last count */
       }

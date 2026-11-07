@@ -108,6 +108,7 @@ export type AdminSectionPath =
   | "/admin"
   | "/admin/trainers"
   | "/admin/trainers/drafts"
+  | "/admin/trainers/active"
   | "/admin/welcomes"
   | "/admin/reviews"
   | "/admin/messages"

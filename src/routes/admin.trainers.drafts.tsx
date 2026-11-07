@@ -24,7 +24,7 @@ function AdminDraftsPage() {
       <p className="cabinet-note cabinet-note--lede">
         Заготовки: карточки, которым ещё не отправляли первое сообщение.
       </p>
-      <AdminTrainersTable trainers={trainers} outreachText={outreachText} unsentOnly />
+      <AdminTrainersTable trainers={trainers} outreachText={outreachText} list="unsent" />
     </article>
   );
 }
