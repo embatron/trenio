@@ -6,8 +6,10 @@ import {
   catalogSportById,
   citySportHasTrainer,
   indexableCitySportPaths,
+  listCatalogSitemapPaths,
 } from "@/lib/catalog/catalog-sports";
 import { cityCatalogBySlug } from "@/lib/catalog/city-pages";
+import { categoryChildRoute, categorySlugRoute } from "@/lib/catalog/sport-taxonomy";
 import { contactClickIsRepeat } from "@/lib/catalog/trainer-contact-clicks";
 
 test("a city and sport page opens only when a published trainer matches", () => {
@@ -40,6 +42,42 @@ test("a city and sport page opens only when a published trainer matches", () => 
   const closed = catalogPathsForSitemap([]);
   assert.ok(closed.includes("/city/minsk"));
   assert.equal(closed.some((path) => path.startsWith("/city/minsk/")), false);
+});
+
+test("an unknown category slug is not a public document", () => {
+  assert.deepEqual(categorySlugRoute("zzzz-not-real"), { kind: "missing" });
+  assert.deepEqual(categorySlugRoute("velnes"), { kind: "missing" });
+  assert.deepEqual(categorySlugRoute("meditaciya"), { kind: "missing" });
+  assert.deepEqual(categorySlugRoute("fitnes"), { kind: "render" });
+  assert.deepEqual(categorySlugRoute("yoga"), { kind: "render" });
+  assert.deepEqual(categorySlugRoute("plavanie"), { kind: "render" });
+  assert.deepEqual(categorySlugRoute("boks"), {
+    kind: "child",
+    parentSlug: "edinoborstva",
+    childSlug: "boks",
+  });
+  assert.deepEqual(categorySlugRoute("ofp"), {
+    kind: "child",
+    parentSlug: "fitnes",
+    childSlug: "ofp",
+  });
+
+  assert.deepEqual(categoryChildRoute("zzzz-not-real", "boks"), { kind: "missing" });
+  assert.deepEqual(categoryChildRoute("velnes", "meditaciya"), { kind: "missing" });
+  assert.deepEqual(categoryChildRoute("edinoborstva", "net-takogo"), {
+    kind: "parent",
+    parentSlug: "edinoborstva",
+  });
+  assert.deepEqual(categoryChildRoute("edinoborstva", "boks"), { kind: "render" });
+  assert.deepEqual(categoryChildRoute("yoga", "yoga"), { kind: "render" });
+
+  const paths = listCatalogSitemapPaths();
+  assert.equal(paths.includes("/categories/velnes"), false);
+  assert.equal(paths.includes("/categories/velnes/meditaciya"), false);
+  assert.equal(paths.includes("/categories/zzzz-not-real"), false);
+  assert.ok(paths.includes("/categories/fitnes"));
+  assert.ok(paths.includes("/categories/edinoborstva/boks"));
+  assert.ok(paths.includes("/city/minsk"));
 });
 
 test("two taps a moment apart count as one click", () => {

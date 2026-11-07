@@ -1,14 +1,13 @@
 import { createFileRoute, Link, notFound, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import { CategoryLink } from "@/lib/catalog/category-routes";
-import { canonicalCategoryPath } from "@/lib/catalog/slug-policy";
 import {
+  categorySlugRoute,
   getSportTaxonomyChild,
   getSportTaxonomyChildInCategory,
   getSportTaxonomyParent,
   getParentCategoryFeaturedImage,
   getTopLevelSportCategory,
-  isPublishedSportCategory,
   categorySearchDescription,
   type CategoryRouteRef,
 } from "@/lib/catalog/sport-taxonomy";
@@ -55,32 +54,20 @@ import {
 
 export const Route = createFileRoute("/categories/$slug")({
   beforeLoad: ({ params }) => {
-    const canonical = canonicalCategoryPath(params.slug);
-    if (canonical?.childSlug) {
+    const load = categorySlugRoute(params.slug);
+    if (load.kind === "child") {
       throw redirect({
         to: "/categories/$parentSlug/$childSlug",
-        params: { parentSlug: canonical.parentSlug, childSlug: canonical.childSlug },
+        params: { parentSlug: load.parentSlug, childSlug: load.childSlug },
       });
     }
-    if (canonical) {
+    if (load.kind === "parent") {
       throw redirect({
         to: "/categories/$slug",
-        params: { slug: canonical.parentSlug },
+        params: { slug: load.parentSlug },
       });
     }
-
-    const category = getTopLevelSportCategory(params.slug);
-    if (category && !isPublishedSportCategory(category)) throw notFound();
-
-    const child = getSportTaxonomyChild(params.slug);
-    if (child && !category) {
-      const parent = getTopLevelSportCategory(child.parentSlug);
-      if (parent && !isPublishedSportCategory(parent)) throw notFound();
-      throw redirect({
-        to: "/categories/$parentSlug/$childSlug",
-        params: { parentSlug: child.parentSlug, childSlug: child.slug },
-      });
-    }
+    if (load.kind === "missing") throw notFound();
   },
   head: ({ params }) => {
     const c = resolveParentCategory(params.slug);

@@ -1,3 +1,4 @@
+import { canonicalCategoryPath } from "@/lib/catalog/slug-policy";
 import { clipMeta } from "@/lib/seo/text";
 
 export type SportIconKey =
@@ -75,8 +76,8 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     featuredImage: "/images/ideogram/boxing.png",
     children: [
       { slug: "boks", label: "Бокс", titleGenitive: "боксу", aliases: ["бокс", "любительский бокс", "boxing"] },
-      { slug: "kikboksing", label: "Кикбоксинг", titleGenitive: "кикбоксингу", aliases: ["кикбоксинг"] },
-      { slug: "tajskij-boks", label: "Тайский бокс", titleGenitive: "тайскому боксу", aliases: ["муай тай", "тайский бокс"] },
+      { slug: "kikboksing", label: "Кикбоксинг", titleGenitive: "кикбоксингу", aliases: ["кикбоксинг", "кибоксинг"] },
+      { slug: "tajskij-boks", label: "Тайский бокс", titleGenitive: "тайскому боксу", aliases: ["муай тай", "тайский бокс", "таиландский бокс"] },
       { slug: "mma", label: "MMA", titleGenitive: "MMA", aliases: ["мма", "смешанные единоборства"] },
       { slug: "karate", label: "Карате", titleGenitive: "карате", aliases: ["каратэ", "киокушинкай", "киокушин"] },
       { slug: "dzyudo", label: "Дзюдо", titleGenitive: "дзюдо", aliases: ["judo"] },
@@ -96,7 +97,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Фитнес",
     titleGenitive: "фитнесу",
     iconKey: "gymFitness",
-    description: "ОФП, кроссфит, тяжёлая атлетика, пауэрлифтинг, силовой тренинг и бодибилдинг.",
+    description: "ОФП, кроссфит, тяжёлая атлетика, пауэрлифтинг, силовой тренинг, бодибилдинг и коррекция фигуры.",
     aliases: ["фитнес", "тренажёрный зал", "тренажерка", "спортзал", "персональный тренер", "кардио", "тренировки 50+"],
     count: "",
     bg: "linear-gradient(135deg, #fff1d6 0%, #ffd08a 100%)",
@@ -147,6 +148,11 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         label: "Бодибилдинг",
         titleGenitive: "бодибилдингу",
         aliases: ["набор массы", "сушка", "bodybuilding"],
+      },
+      {
+        slug: "figura",
+        label: "Коррекция фигуры",
+        titleGenitive: "коррекции фигуры",
       },
     ],
   }),
@@ -614,6 +620,24 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
       { slug: "bridzh", label: "Бридж", titleGenitive: "бриджу", aliases: ["спортивный бридж"] },
     ],
   }),
+  defineCategory({
+    slug: "pitanie",
+    label: "Питание",
+    titleGenitive: "питанию",
+    iconKey: "wellness",
+    description: "Тренер по питанию и рациону.",
+    aliases: ["составление рациона"],
+    count: "",
+    bg: "linear-gradient(135deg, #e7f7f2 0%, #b7e6d4 100%)",
+    children: [
+      {
+        slug: "nutriciolog",
+        label: "Питание",
+        titleGenitive: "питанию",
+        aliases: ["нутрициолог", "нутрициология", "тренер по питанию", "консультант по питанию", "программы питания", "рацион"],
+      },
+    ],
+  }),
 ];
 
 export const TOP_LEVEL_SPORT_CATEGORY_BY_SLUG = Object.fromEntries(
@@ -748,6 +772,47 @@ export function getSportTaxonomyChildInCategory(parentSlug: string, childSlug: s
     parentSlug: parent.slug,
     parentLabel: parent.label,
   } satisfies SportTaxonomyChildWithParent;
+}
+
+export type CategoryRouteLoad =
+  | { kind: "render" }
+  | { kind: "missing" }
+  | { kind: "parent"; parentSlug: string }
+  | { kind: "child"; parentSlug: string; childSlug: string };
+
+/** `/categories/$slug`: a published parent renders. A child slug redirects when its parent is published. */
+export function categorySlugRoute(slug: string): CategoryRouteLoad {
+  const canonical = canonicalCategoryPath(slug);
+  if (canonical?.childSlug) {
+    return { kind: "child", parentSlug: canonical.parentSlug, childSlug: canonical.childSlug };
+  }
+  if (canonical) return { kind: "parent", parentSlug: canonical.parentSlug };
+
+  const category = getTopLevelSportCategory(slug);
+  const child = getSportTaxonomyChild(slug);
+  if (child && !category) {
+    const parent = getTopLevelSportCategory(child.parentSlug);
+    if (!parent || !isPublishedSportCategory(parent)) return { kind: "missing" };
+    return { kind: "child", parentSlug: child.parentSlug, childSlug: child.slug };
+  }
+  if (!category || !isPublishedSportCategory(category)) return { kind: "missing" };
+  return { kind: "render" };
+}
+
+/** `/categories/$parent/$child`: an unknown parent is missing. An unknown child of a published parent goes to that parent. */
+export function categoryChildRoute(parentSlug: string, childSlug: string): CategoryRouteLoad {
+  const canonical = canonicalCategoryPath(parentSlug, childSlug);
+  if (canonical?.childSlug) {
+    return { kind: "child", parentSlug: canonical.parentSlug, childSlug: canonical.childSlug };
+  }
+  if (canonical) return { kind: "parent", parentSlug: canonical.parentSlug };
+
+  const parent = getTopLevelSportCategory(parentSlug);
+  if (!parent || !isPublishedSportCategory(parent)) return { kind: "missing" };
+  if (!getSportTaxonomyChildInCategory(parent.slug, childSlug)) {
+    return { kind: "parent", parentSlug: parent.slug };
+  }
+  return { kind: "render" };
 }
 
 export function isTopLevelCategorySlug(slug: string) {

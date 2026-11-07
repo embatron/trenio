@@ -1,10 +1,9 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
-import { canonicalCategoryPath } from "@/lib/catalog/slug-policy";
 import {
+  categoryChildRoute,
   categorySearchDescription,
   getTopLevelSportCategory,
   getSportTaxonomyChildInCategory,
-  isPublishedSportCategory,
 } from "@/lib/catalog/sport-taxonomy";
 import { categoryRouteHead } from "@/lib/seo/catalog";
 import { documentLead, siteTitle } from "@/lib/seo/site";
@@ -22,30 +21,20 @@ import {
 
 export const Route = createFileRoute("/categories/$parentSlug/$childSlug")({
   beforeLoad: ({ params }) => {
-    const canonical = canonicalCategoryPath(params.parentSlug, params.childSlug);
-    if (canonical?.childSlug) {
+    const load = categoryChildRoute(params.parentSlug, params.childSlug);
+    if (load.kind === "child") {
       throw redirect({
         to: "/categories/$parentSlug/$childSlug",
-        params: { parentSlug: canonical.parentSlug, childSlug: canonical.childSlug },
+        params: { parentSlug: load.parentSlug, childSlug: load.childSlug },
       });
     }
-    if (canonical) {
+    if (load.kind === "parent") {
       throw redirect({
         to: "/categories/$slug",
-        params: { slug: canonical.parentSlug },
+        params: { slug: load.parentSlug },
       });
     }
-
-    const parent = getTopLevelSportCategory(params.parentSlug);
-    if (parent && !isPublishedSportCategory(parent)) throw notFound();
-
-    const category = resolveChildCategory(params.parentSlug, params.childSlug);
-    if (!category) {
-      throw redirect({
-        to: "/categories/$slug",
-        params: { slug: params.parentSlug },
-      });
-    }
+    if (load.kind === "missing") throw notFound();
   },
   head: ({ params }) => {
     const category = resolveChildCategory(params.parentSlug, params.childSlug);
