@@ -92,6 +92,7 @@ import { Route as AuthYandexCallbackRouteImport } from './routes/auth.yandex.cal
 import { Route as AuthGoogleCallbackRouteImport } from './routes/auth.google.callback'
 import { Route as ApiSyncTrainerRouteImport } from './routes/api.sync.trainer'
 import { Route as ApiSyncMarksRouteImport } from './routes/api.sync.marks'
+import { Route as AdminTrainersUnclearRouteImport } from './routes/admin.trainers.unclear'
 import { Route as AdminTrainersDraftsRouteImport } from './routes/admin.trainers.drafts'
 import { Route as AdminTrainersActiveRouteImport } from './routes/admin.trainers.active'
 import { Route as AdminTrainersSlugRouteImport } from './routes/admin.trainers.$slug'
@@ -521,6 +522,11 @@ const ApiSyncMarksRoute = ApiSyncMarksRouteImport.update({
   path: '/api/sync/marks',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminTrainersUnclearRoute = AdminTrainersUnclearRouteImport.update({
+  id: '/unclear',
+  path: '/unclear',
+  getParentRoute: () => AdminTrainersRoute,
+} as any)
 const AdminTrainersDraftsRoute = AdminTrainersDraftsRouteImport.update({
   id: '/drafts',
   path: '/drafts',
@@ -627,6 +633,7 @@ export interface FileRoutesByFullPath {
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
   '/admin/trainers/active': typeof AdminTrainersActiveRoute
   '/admin/trainers/drafts': typeof AdminTrainersDraftsRoute
+  '/admin/trainers/unclear': typeof AdminTrainersUnclearRoute
   '/api/sync/marks': typeof ApiSyncMarksRoute
   '/api/sync/trainer': typeof ApiSyncTrainerRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
@@ -712,6 +719,7 @@ export interface FileRoutesByTo {
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
   '/admin/trainers/active': typeof AdminTrainersActiveRoute
   '/admin/trainers/drafts': typeof AdminTrainersDraftsRoute
+  '/admin/trainers/unclear': typeof AdminTrainersUnclearRoute
   '/api/sync/marks': typeof ApiSyncMarksRoute
   '/api/sync/trainer': typeof ApiSyncTrainerRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
@@ -804,6 +812,7 @@ export interface FileRoutesById {
   '/admin/trainers/$slug': typeof AdminTrainersSlugRoute
   '/admin/trainers/active': typeof AdminTrainersActiveRoute
   '/admin/trainers/drafts': typeof AdminTrainersDraftsRoute
+  '/admin/trainers/unclear': typeof AdminTrainersUnclearRoute
   '/api/sync/marks': typeof ApiSyncMarksRoute
   '/api/sync/trainer': typeof ApiSyncTrainerRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
@@ -898,6 +907,7 @@ export interface FileRouteTypes {
     | '/admin/trainers/$slug'
     | '/admin/trainers/active'
     | '/admin/trainers/drafts'
+    | '/admin/trainers/unclear'
     | '/api/sync/marks'
     | '/api/sync/trainer'
     | '/auth/google/callback'
@@ -983,6 +993,7 @@ export interface FileRouteTypes {
     | '/admin/trainers/$slug'
     | '/admin/trainers/active'
     | '/admin/trainers/drafts'
+    | '/admin/trainers/unclear'
     | '/api/sync/marks'
     | '/api/sync/trainer'
     | '/auth/google/callback'
@@ -1074,6 +1085,7 @@ export interface FileRouteTypes {
     | '/admin/trainers/$slug'
     | '/admin/trainers/active'
     | '/admin/trainers/drafts'
+    | '/admin/trainers/unclear'
     | '/api/sync/marks'
     | '/api/sync/trainer'
     | '/auth/google/callback'
@@ -1733,6 +1745,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSyncMarksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/trainers/unclear': {
+      id: '/admin/trainers/unclear'
+      path: '/unclear'
+      fullPath: '/admin/trainers/unclear'
+      preLoaderRoute: typeof AdminTrainersUnclearRouteImport
+      parentRoute: typeof AdminTrainersRoute
+    }
     '/admin/trainers/drafts': {
       id: '/admin/trainers/drafts'
       path: '/drafts'
@@ -1836,6 +1855,7 @@ interface AdminTrainersRouteChildren {
   AdminTrainersSlugRoute: typeof AdminTrainersSlugRoute
   AdminTrainersActiveRoute: typeof AdminTrainersActiveRoute
   AdminTrainersDraftsRoute: typeof AdminTrainersDraftsRoute
+  AdminTrainersUnclearRoute: typeof AdminTrainersUnclearRoute
   AdminTrainersIndexRoute: typeof AdminTrainersIndexRoute
 }
 
@@ -1843,6 +1863,7 @@ const AdminTrainersRouteChildren: AdminTrainersRouteChildren = {
   AdminTrainersSlugRoute: AdminTrainersSlugRoute,
   AdminTrainersActiveRoute: AdminTrainersActiveRoute,
   AdminTrainersDraftsRoute: AdminTrainersDraftsRoute,
+  AdminTrainersUnclearRoute: AdminTrainersUnclearRoute,
   AdminTrainersIndexRoute: AdminTrainersIndexRoute,
 }
 

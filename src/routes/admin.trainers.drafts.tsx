@@ -8,7 +8,7 @@ export const Route = createFileRoute("/admin/trainers/drafts")({
   head: () => ({
     meta: [
       { title: "Драфты · кабинет администратора · Я ищу тренера на trenio.by" },
-      { name: "description", content: "Карточки тренеров, которым ещё не отправляли первое сообщение." },
+      { name: "description", content: "Карточки тренеров, по которым ещё не было захода." },
       { name: "robots", content: "noindex,follow" },
     ],
   }),
@@ -22,9 +22,9 @@ function AdminDraftsPage() {
     <article className="cabinet-card">
       <h2>Драфты</h2>
       <p className="cabinet-note cabinet-note--lede">
-        Заготовки: карточки, которым ещё не отправляли первое сообщение.
+        Карточки, по которым ещё не было захода. После захода они отсюда уходят.
       </p>
-      <AdminTrainersTable trainers={trainers} outreachText={outreachText} list="unsent" />
+      <AdminTrainersTable trainers={trainers} outreachText={outreachText} list="unvisited" />
     </article>
   );
 }

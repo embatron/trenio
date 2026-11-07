@@ -366,6 +366,14 @@ function sortTrainers(rows: AdminTrainer[], sort: TrainerSort) {
   return rows;
 }
 
+function isUnclearTrainer(trainer: AdminTrainer) {
+  return Boolean(trainer.outreachSentAt)
+    && Boolean(trainer.doorEnteredAt)
+    && trainer.status === "draft"
+    && !trainer.account
+    && !trainer.offerAccepted;
+}
+
 const SORT_OPTIONS: Array<{ id: TrainerSort; label: string }> = [
   { id: "date-desc", label: "Сначала новые" },
   { id: "date-asc", label: "Сначала старые" },
@@ -385,7 +393,7 @@ export function AdminTrainersTable({
 }: {
   trainers: AdminTrainer[];
   outreachText: string;
-  list?: "all" | "unsent" | "published";
+  list?: "all" | "unvisited" | "published" | "unclear";
 }) {
   const [query, setQuery] = useState("");
   const [publishTab, setPublishTab] = useState<TrainerPublishTab>("unpublished");
@@ -404,8 +412,9 @@ export function AdminTrainersTable({
           ...(link ? { inviteSentAt: link } : {}),
         };
       });
-      if (list === "unsent") return patched.filter((trainer) => !trainer.outreachSentAt);
+      if (list === "unvisited") return patched.filter((trainer) => !trainer.doorEnteredAt);
       if (list === "published") return patched.filter((trainer) => trainer.status === "published");
+      if (list === "unclear") return patched.filter(isUnclearTrainer);
       return patched;
     },
     [trainers, notePatch, linkPatch, list],
@@ -453,7 +462,7 @@ export function AdminTrainersTable({
   }, [listed, query, category, sport, city, format, audience, message, link, visit, note, sort]);
   const visible = list === "published"
     ? visibleBuckets.published
-    : list === "unsent"
+    : list === "unvisited" || list === "unclear"
       ? sortTrainers(
           visibleBuckets.unpublished.concat(visibleBuckets.published),
           sort,
@@ -468,11 +477,13 @@ export function AdminTrainersTable({
   );
 
   if (listed.length === 0) {
-    const empty = list === "unsent" && trainers.length > 0
-      ? "Заготовок нет: первое сообщение уже отправлено всем тренерам."
-      : list === "published" && trainers.length > 0
-        ? "Опубликованных карточек нет."
-        : "Тренеров пока нет.";
+    const empty = list === "unvisited" && trainers.length > 0
+      ? "Драфтов нет: по всем карточкам уже был заход."
+      : list === "unclear" && trainers.length > 0
+        ? "Таких карточек нет."
+        : list === "published" && trainers.length > 0
+          ? "Опубликованных карточек нет."
+          : "Тренеров пока нет.";
     return <p className="cabinet-empty">{empty}</p>;
   }
 
@@ -550,7 +561,7 @@ export function AdminTrainersTable({
             ))}
           </select>
         </label>
-        {list === "unsent" ? null : (
+        {list === "unclear" ? null : (
           <label>
             <span>Сообщение</span>
             <select value={message} onChange={(event) => setMessage(event.target.value as "" | "sent" | "unsent")}>
@@ -570,14 +581,16 @@ export function AdminTrainersTable({
             </select>
           </label>
         )}
-        <label>
-          <span>Заход</span>
-          <select value={visit} onChange={(event) => setVisit(event.target.value as "" | "yes" | "no")}>
-            <option value="">Все</option>
-            <option value="yes">Был</option>
-            <option value="no">Не был</option>
-          </select>
-        </label>
+        {list === "unvisited" || list === "unclear" ? null : (
+          <label>
+            <span>Заход</span>
+            <select value={visit} onChange={(event) => setVisit(event.target.value as "" | "yes" | "no")}>
+              <option value="">Все</option>
+              <option value="yes">Был</option>
+              <option value="no">Не был</option>
+            </select>
+          </label>
+        )}
         <label>
           <span>Заметка</span>
           <select value={note} onChange={(event) => setNote(event.target.value as "" | "yes" | "no")}>
@@ -589,7 +602,12 @@ export function AdminTrainersTable({
         <label>
           <span>Сортировка</span>
           <select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}>
-            {SORT_OPTIONS.filter((option) => list !== "unsent" || option.id !== "sent").filter((option) => list !== "published" || option.id !== "link").map((option) => (
+            {SORT_OPTIONS.filter((option) => {
+              if ((list === "unvisited" || list === "unclear") && option.id === "visit") return false;
+              if (list === "unclear" && option.id === "sent") return false;
+              if (list === "published" && option.id === "link") return false;
+              return true;
+            }).map((option) => (
               <option key={option.id} value={option.id}>{option.label}</option>
             ))}
           </select>
