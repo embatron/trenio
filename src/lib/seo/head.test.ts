@@ -100,7 +100,7 @@ test("filtered and private documents stay out of the index", () => {
   const search = seoHead({ title: "Поиск", description: "Результаты", path: "/search", index: false });
   assert.equal(search.meta.some((item) => "content" in item && item.content === "noindex, follow"), true);
   const robots = robotsTxt();
-  for (const path of ["/admin", "/account", "/me", "/auth", "/search", "/trainers/claim"]) {
+  for (const path of ["/admin", "/account", "/me", "/auth", "/search", "/trainers/claim", "/mail", "/favorites"]) {
     assert.equal(robots.includes(`Disallow: ${path}`), true, path);
   }
   assert.equal(robots.includes("Disallow: /map"), false);

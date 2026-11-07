@@ -24,6 +24,8 @@ JSON-LD for each row comes from the helper in [markup.md](markup.md). A `noindex
 | City with several sports | `/city/{city}?sports=` | no | canonical is the city path |
 | Auth | `/auth/*` | no. Token pages are `nofollow` | — |
 | Account, trainer cabinet, admin | `/account`, `/me`, `/admin` | no | — |
+| Mail settings alias | `/mail` | no. Session redirect, no document. `Disallow: /mail` | — |
+| Favorites alias | `/favorites` | no. Session redirect, no document. `Disallow: /favorites` | — |
 | Claim | `/trainers/claim/{token}` | no | — |
 | 403, 404, SSR crash | those responses | no | — |
 

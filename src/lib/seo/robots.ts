@@ -8,6 +8,8 @@ const PRIVATE_PREFIXES = [
   "/auth",
   "/trainer-admin",
   "/trainers/claim",
+  "/mail",
+  "/favorites",
   "/search",
 ] as const;
 

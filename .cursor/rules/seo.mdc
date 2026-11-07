@@ -37,6 +37,7 @@ Public documents go through `seoHead` in `src/lib/seo/head.ts`. A route does not
 | Clubs index, empty | no | `clubsIndexHead([])` | none |
 | Search | no | `searchPageHead` | none |
 | Auth, account, `/me`, admin | no | `NOINDEX_FOLLOW` or `NOINDEX_NOFOLLOW` | none |
+| `/mail`, `/favorites` | no. Redirect before a document | `Disallow` in `robots.txt` | none |
 
 `/map?sports=`, `/map?city=`, and a city with several sports (`?sports=`) call the same helper with noindex. The graph is dropped. Claim tokens, 403, 404, and the SSR crash page are noindex and have no graph.
 
