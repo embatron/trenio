@@ -5,7 +5,9 @@ import { readYandexIdentity, type YandexIdentity } from "@/lib/auth/yandex-ident
 const TOKEN_URL = "https://oauth.yandex.ru/token";
 const AUTH_URL = "https://oauth.yandex.ru/authorize";
 const INFO_URL = "https://login.yandex.ru/info?format=json";
-const SCOPE = "login:email login:info login:avatar login:default_phone";
+// Name (`login:info`) stays off until the Yandex app grants «логин, имя и фамилия, пол».
+// Requesting a missing right makes Yandex reject the whole login with invalid_scope.
+const SCOPE = "login:email login:avatar login:default_phone";
 
 export function yandexConfigured(): boolean {
   return Boolean(process.env.YANDEX_CLIENT_ID?.trim() && process.env.YANDEX_CLIENT_SECRET?.trim());
