@@ -1,0 +1,65 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/dojodogxroutine/",
+  "handle": "dojodogxroutine",
+  "slug": "dojodogxroutine",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгений",
+  "lastName": "Рутко",
+  "fullName": "Евгений Рутко",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Евгений",
+    "Фамилия: Рутко"
+  ],
+  "headline": "",
+  "sourceBio": "𝚏𝚊𝚝𝚑𝚎𝚛 · 𝚋𝚓𝚓 𝚊𝚝𝚑𝚕𝚎𝚝𝚎 · 𝚀𝙰 · 𝚍𝚊𝚒𝚕𝚢 𝚛𝚘𝚞𝚝𝚒𝚗𝚎 ·",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Евгений. Фамилия: Рутко.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Евгений Рутко. Я отец, и каждый день держу свой режим.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/dojodogxroutine.jpg",
+  "photos": [
+    "/trainers/instagram/dojodogxroutine.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/dojodogxroutine/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

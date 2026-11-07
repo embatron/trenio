@@ -1,0 +1,102 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/coachboxing/",
+  "handle": "coachboxing",
+  "slug": "coachboxing",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Константин",
+  "lastName": "Маханьков",
+  "fullName": "Константин Маханьков",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Константин",
+    "Фамилия: Маханьков"
+  ],
+  "headline": "Тренер по MMA",
+  "sourceBio": "Master of Pedagogical Sciences Elite sport coach MMA,Boxing,Kickboxing Manager prof athletes",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Константин. Фамилия: Маханьков.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Константин Маханьков. Я мастер педагогических наук и тренер элитного спорта по MMA. Я менеджер профессиональных спортсменов.",
+  "about": [
+    "В профиле есть записи о тренировках."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/coachboxing/reel/DUnntkIjMkb/",
+      "caption": "30 лет взрослой жизни в 3-х минутах Какими были-какие стали #ретрозаписи #makhankovgym #bestteam"
+    },
+    {
+      "url": "https://www.instagram.com/coachboxing/reel/Cxu7y7noOIc/",
+      "caption": "Просто Надёжно Правильно Не забывайте,что плотно натягиваем бинт только сверху и при крепко сжатом кулаке Всем БОКС #делайтеправильно #бинтуемправильно #детскиеруки #бокс #правильнобинтуемруки #makhankovgym #bestteam #m2g_by"
+    },
+    {
+      "url": "https://www.instagram.com/coachboxing/reel/CmT2uIBI7tI/",
+      "caption": "Бинтуем руки правильно Правильное укрепление рук перед занятиями ударными видами спорта поможет вам избежать нежелательных травм и комфортно наносить жёсткие удары Задавайте вопросы тренеру в комментариях и с удовольствием помогу дельным советом в публикации либо в личных сообщениях #makhankovgym #m2g_by #вопросытренеру #правильнобинтуемруки #бинтуемруки #бокс #boxing #kickboxing #mma #muaythai #bestteam"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "mma",
+      "parentSlug": "edinoborstva",
+      "label": "MMA",
+      "evidence": "MMA"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "boks",
+      "label": "Бокс",
+      "quote": "Всем БОКС"
+    }
+  ],
+  "primarySport": {
+    "slug": "mma",
+    "parentSlug": "edinoborstva",
+    "label": "MMA"
+  },
+  "city": "",
+  "address": "",
+  "cityCandidates": [
+    "Грибы",
+    "Совет"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/coachboxing.jpg",
+  "photos": [
+    "/trainers/instagram/coachboxing.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/coachboxing/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "city",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

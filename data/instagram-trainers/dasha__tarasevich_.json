@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/dasha__tarasevich_/",
+  "handle": "dasha__tarasevich_",
+  "slug": "dasha__tarasevich_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дарья",
+  "lastName": "Тарасевич",
+  "fullName": "Дарья Тарасевич",
+  "gender": "female",
+  "nameQuotes": [
+    "Дарья Тарасевич"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "Обучение плаванию детей",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Дарья Тарасевич, Плавание",
+  "threadsUrl": "",
+  "bio": "Я Дарья Тарасевич, тренер в Минске. Веду обучение плаванию детей. Я мастер спорта РБ.",
+  "about": [
+    "Тренировки у меня персональные. Занятия — обучение плаванию детей."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/dasha__tarasevich_/p/Dcbxojrs0vX/",
+      "caption": "Я Даша. За плечами — 12 лет профессионального плавания, звание Мастера спорта. А ещё 6 лет я каждый день доказываю: плавать можно научиться в любом возрасте. Мои самые маленькие ученики приходят с 3 лет."
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "обучение плаванию"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/dasha__tarasevich_.jpg",
+  "photos": [
+    "/trainers/instagram/dasha__tarasevich_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/dasha__tarasevich_/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/dashaTarasevich0305",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email"
+  ]
+}

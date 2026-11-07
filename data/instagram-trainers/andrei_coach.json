@@ -1,0 +1,97 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/andrei_coach/",
+  "handle": "andrei_coach",
+  "slug": "andrei_coach",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Андрей",
+  "lastName": "Заяц",
+  "fullName": "Андрей Заяц",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Андрей",
+    "Фамилия: Заяц"
+  ],
+  "headline": "",
+  "sourceBio": "Тренер МСМК World Champion WMF🏆 World Champion WKN🏆 WBC🏆 x8Champion BLR🥇 x6World Championship medalist🥈🥉 x4European Championship medalist🥈🥉",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Андрей. Фамилия: Заяц.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Андрей Заяц. Я тренер, мастер спорта международного класса. Чемпион мира WMF и WKN, чемпион WBC и чемпион Беларуси, призёр чемпионатов мира и Европы.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/andrei_coach/p/B4kKyLEHtGK/",
+      "caption": "Всегда готов✊🏼 #muaythai#coach#kickfightergym#kickfighter#muaythaifighter#muaythai#sportsman#sports#minsk#belarus#andreicoach#andreizayats"
+    },
+    {
+      "url": "https://www.instagram.com/andrei_coach/p/BciMFC2lYR6/",
+      "caption": "Месяцы подготовки, для одного дня икс. Измождённые тренировки, травмы, диеты, стрессы, но тебя нечего не останавливает, чтоб взойти на помост ринга. Ты выходишь на битву, которая без огня в душе не будет побеждена. Соревнования это праздник, улыбайтесь и крушите все на своём пути. Фото 2014г. #kickfightergym#kickfighter#muaythaifighter#muaythai#sportsman#sports#sportgirl#minsk#belarus#спорт#спортсмен#спортмояжизнь#спортивные#спортсмены#спортсменки#спортзал#спортклуб#спортжизнь#муайтай#единоборства#минск#беларусь#andreicoach#kunlunfight#andreizayats"
+    },
+    {
+      "url": "https://www.instagram.com/andrei_coach/p/CiAI-6nIpee/",
+      "caption": "Летящей походкой, на путь победный 🙂🥊 Архив 2011 😉 #kickfightergym#kickfighter#muaythaifighter#muaythai#sportsman#sports#sportgirl#minsk#belarus#спорт#спортсмен#спортмояжизнь#спортивные#спортсмены#спортсменки#спортзал#спортклуб#спортжизнь#муайтай#единоборства#минск#беларусь#andreicoach#andreizayats"
+    }
+  ],
+  "sports": [],
+  "practicedSports": [
+    {
+      "slug": "tajskij-boks",
+      "label": "Тайский бокс",
+      "quote": "муайтай"
+    },
+    {
+      "slug": "edinoborstva",
+      "label": "Единоборства",
+      "quote": "единоборства"
+    },
+    {
+      "slug": "fitnes",
+      "label": "Фитнес",
+      "quote": "спортзал"
+    }
+  ],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/andrei_coach.jpg",
+  "photos": [
+    "/trainers/instagram/andrei_coach.jpg",
+    "/trainers/instagram/andrei_coach-g2.jpg",
+    "/trainers/instagram/andrei_coach-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 3,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 1
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/andrei_coach/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://youtube.com/@andreizayats?si=Y4wnnOwaRUcNlkO6"
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

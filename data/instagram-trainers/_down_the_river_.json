@@ -1,0 +1,86 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/_down_the_river_/",
+  "handle": "_down_the_river_",
+  "slug": "_down_the_river_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Артём",
+  "lastName": "Малахов",
+  "fullName": "Артём Малахов",
+  "gender": "male",
+  "nameQuotes": [
+    "Артём Малахов"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Работаю над созданием красивого тела",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Артём Малахов, Фитнес, Брест",
+  "threadsUrl": "",
+  "bio": "Я Артём Малахов, тренер в Бресте. Веду фитнес. Работаю над созданием красивого тела и делюсь опытом.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/_down_the_river_/reel/DXbN24AjND4/",
+      "caption": "Результат приходит не от мыслей, а от действий."
+    },
+    {
+      "url": "https://www.instagram.com/_down_the_river_/reel/DUMB7mYjqKK/",
+      "caption": "Беру 3 человек на персональное ведение"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Брест",
+  "address": "",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/_down_the_river_.jpg",
+  "photos": [
+    "/trainers/instagram/_down_the_river_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/_down_the_river_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

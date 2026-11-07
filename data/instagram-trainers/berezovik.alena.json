@@ -1,0 +1,81 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/berezovik.alena/",
+  "handle": "berezovik.alena",
+  "slug": "berezovik.alena",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алёна",
+  "lastName": "Березовик",
+  "fullName": "Алёна Березовик",
+  "gender": "female",
+  "nameQuotes": [
+    "Алёна Березовик"
+  ],
+  "headline": "Тренер по водным видам спорта",
+  "sourceBio": "Обучение детей с 5 лет",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Алёна Березовик, Плавание, Минск",
+  "threadsUrl": "",
+  "bio": "Я Алёна Березовик, тренер в Минске. Веду плавание. Обучение детей с 5 лет.",
+  "about": [
+    "Занятия индивидуальные. Обучение детей с 5 лет."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Водные виды",
+      "evidence": "плавание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Водные виды"
+  },
+  "city": "Минск",
+  "address": "А. Гаруна, 5 СШ №41 🏢 Якубовского, 52б Фрунзенский ФОЦ",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/berezovik.alena.jpg",
+  "photos": [
+    "/trainers/instagram/berezovik.alena.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/berezovik.alena/",
+    "phone": "+375 33 334-19-24",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

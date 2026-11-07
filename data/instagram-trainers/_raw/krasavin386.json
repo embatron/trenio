@@ -48,7 +48,7 @@
       ]
     }
   ],
-  "operatorNotes": "Александр Красавин",
+  "operatorNotes": "Александр Красавин. Тренер по фитнесу, бодибилдинг, ОФП.",
   "threads": null,
   "avatarUrl": "https://scontent-waw2-2.cdninstagram.com/v/t51.2885-19/135558992_856992851509741_7400517818968941134_n.jpg?_nc_cat=100&ig_cache_key=GFB3FAjtQX0ybgsDAE6ilym-67NmbkULAAAB0j-ccb7-5&ccb=7-5&_nc_sid=669407&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=LNQsRGONP6YQ7kNvwGs1vYT&_nc_oc=AdodMdGZl2kftgrddCcoEvDehKV5-etye73NUJdanknJ6vVxzXAmY5XB8e_st3H67Fs&_nc_zt=24&_nc_ht=scontent-waw2-2.cdninstagram.com&_nc_ss=7b6a8&oh=00_AQQ8O-oVBeEJSOc-hNs4tVazGxTdKdT6p85qSQ3oNupirw&oe=6AF39363",
   "avatarMime": "image/jpeg",
@@ -63,10 +63,10 @@
     ],
     "sourceBio": "Тренер спортсмен, серебряный призер Европы , бронзовый призер кубка мира.",
     "aboutProfile": [],
-    "presentation": "Я Александр Красавин, тренер и спортсмен. Серебряный призер Европы и бронзовый призер кубка мира.",
+    "presentation": "Я Александр Красавин, тренер по фитнесу, бодибилдингу и ОФП. Я спортсмен, серебряный призер Европы и бронзовый призер кубка мира.",
     "presentationQuotes": [
       "Александр Красавин",
-      "Тренер спортсмен",
+      "Тренер по фитнесу, бодибилдинг, ОФП",
       "серебряный призер Европы",
       "бронзовый призер кубка мира"
     ],
@@ -75,11 +75,28 @@
       "персональные",
       "Групповой формат"
     ],
-    "sportQuotes": [],
-    "coachedSports": [],
+    "sportQuotes": [
+      "фитнесу",
+      "бодибилдинг",
+      "ОФП"
+    ],
+    "coachedSports": [
+      {
+        "slug": "fitnes",
+        "quote": "фитнесу"
+      },
+      {
+        "slug": "bodibilding",
+        "quote": "бодибилдинг"
+      },
+      {
+        "slug": "ofp",
+        "quote": "ОФП"
+      }
+    ],
     "practicedSports": [],
     "unrelatedSports": [],
-    "primarySportSlug": "",
+    "primarySportSlug": "fitnes",
     "city": "",
     "address": "",
     "priceFrom": null,

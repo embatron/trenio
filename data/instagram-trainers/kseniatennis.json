@@ -1,0 +1,80 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kseniatennis/",
+  "handle": "kseniatennis",
+  "slug": "kseniatennis",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ксения",
+  "lastName": "Савенкова",
+  "fullName": "Ксения Савенкова",
+  "gender": "female",
+  "nameQuotes": [
+    "Ксения Савенкова"
+  ],
+  "headline": "Тренер по большому теннису",
+  "sourceBio": "Обучаю с нуля и тех, кто уже играет",
+  "sourceAbout": [
+    "Мне было всего 6 лет, когда я впервые переступила порог дворца тенниса на Победителей."
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Ксения Савенкова, Теннис, Минск",
+  "threadsUrl": "",
+  "bio": "Я Ксения Савенкова, тренер в Минске. Веду теннис. Обучаю с нуля и тех, кто уже играет.",
+  "about": [
+    "Тренировки: обучаю с нуля и тех, кто уже играет."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "bolshoj-tennis",
+      "parentSlug": "raketki",
+      "label": "Большой теннис",
+      "evidence": "теннис"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bolshoj-tennis",
+    "parentSlug": "raketki",
+    "label": "Большой теннис"
+  },
+  "city": "Минск",
+  "address": "дворца тенниса на Победителей",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kseniatennis.jpg",
+  "photos": [
+    "/trainers/instagram/kseniatennis.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kseniatennis/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

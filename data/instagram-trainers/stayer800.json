@@ -1,0 +1,92 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/stayer800/",
+  "handle": "stayer800",
+  "slug": "stayer800",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александр",
+  "lastName": "Иванов",
+  "fullName": "Александр Иванов",
+  "gender": "male",
+  "nameQuotes": [
+    "Александр Иванов"
+  ],
+  "headline": "Тренер по водным видам спорта",
+  "sourceBio": "Учу плавать с",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Александр Иванов, Плавание, Витебск",
+  "threadsUrl": "",
+  "bio": "Я Александр Иванов, тренер в Витебске. Веду плавание, триатлон и бег. Учу плавать и влюбляю в бег.",
+  "about": [
+    "Занятия проходят в группах и индивидуально."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Водные виды",
+      "evidence": "плавание"
+    },
+    {
+      "slug": "triatlon",
+      "parentSlug": "beg",
+      "label": "Триатлон",
+      "evidence": "Триатлон"
+    },
+    {
+      "slug": "beg",
+      "parentSlug": "beg",
+      "label": "Бег",
+      "evidence": "Бег"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Водные виды"
+  },
+  "city": "Витебск",
+  "address": "",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/stayer800.jpg",
+  "photos": [
+    "/trainers/instagram/stayer800.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/stayer800/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

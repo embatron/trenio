@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/maryiasmoliakova/",
+  "handle": "maryiasmoliakova",
+  "slug": "maryiasmoliakova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Мария",
+  "lastName": "Смолякова",
+  "fullName": "Мария Смолякова",
+  "gender": "female",
+  "nameQuotes": [
+    "Мария Смолякова"
+  ],
+  "headline": "Тренер по гребле",
+  "sourceBio": "МСМК,Чемпионка мира",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Мария Смолякова, Гребля, Пинск",
+  "threadsUrl": "",
+  "bio": "Я Мария Смолякова, тренер высшей категории. Пинск. Веду греблю. Я МСМК, чемпионка мира.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "greblya",
+      "parentSlug": "plavanie",
+      "label": "Гребля",
+      "evidence": "Гребля"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "greblya",
+    "parentSlug": "plavanie",
+    "label": "Гребля"
+  },
+  "city": "Пинск",
+  "address": "",
+  "cityCandidates": [
+    "Пинск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/maryiasmoliakova.jpg",
+  "photos": [
+    "/trainers/instagram/maryiasmoliakova.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/maryiasmoliakova/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/jackson_wtf/",
+  "handle": "jackson_wtf",
+  "slug": "jackson_wtf",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгений",
+  "lastName": "Мягков",
+  "fullName": "Евгений Мягков",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Евгений",
+    "Фамилия: Мягков"
+  ],
+  "headline": "",
+  "sourceBio": "Kickboxing national team 🇧🇾 МСМК -х5 Belarus🥇 -World championship 2017🥈 -World championship 2024🥇",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Евгений. Фамилия: Мягков.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Евгений Мягков. Я мастер спорта международного класса и вхожу в национальную сборную. Чемпион Беларуси, серебряный призёр чемпионата мира 2017 года и чемпион мира 2024 года.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/jackson_wtf.jpg",
+  "photos": [
+    "/trainers/instagram/jackson_wtf.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/jackson_wtf/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

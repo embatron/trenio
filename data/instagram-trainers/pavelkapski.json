@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pavelkapski/",
+  "handle": "pavelkapski",
+  "slug": "pavelkapski",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Павел",
+  "lastName": "Капский",
+  "fullName": "Павел Капский",
+  "gender": "male",
+  "nameQuotes": [
+    "Павел Капский"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Учу кайфовать от фитнеса",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Павел Капский, Фитнес, Минск",
+  "threadsUrl": "",
+  "bio": "Я Павел Капский, тренер в Минске. Учу кайфовать от фитнеса. 32 года в спорте. Идеальная форма без голодовок.",
+  "about": [
+    "1 занятие в подарок. Есть бесплатная тренировка."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Минск",
+  "address": "Дворец Спорта",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/pavelkapski.jpg",
+  "photos": [
+    "/trainers/instagram/pavelkapski.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pavelkapski/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

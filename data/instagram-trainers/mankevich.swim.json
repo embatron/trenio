@@ -1,0 +1,89 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/mankevich.swim/",
+  "handle": "mankevich.swim",
+  "slug": "mankevich.swim",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Арсений",
+  "lastName": "Манкевич",
+  "fullName": "Арсений Манкевич",
+  "gender": "male",
+  "nameQuotes": [
+    "Арсений Манкевич"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "Научу держаться на воде",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Арсений Манкевич, Плавание",
+  "threadsUrl": "",
+  "bio": "Я Арсений Манкевич, тренер в Минске. Веду плавание. Научу держаться на воде. Обучение с 0, всех возрастов, с 3 до 103.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/mankevich.swim/reel/DGkFFQjoSwZ/",
+      "caption": "Индивидуальные занятия по плаванию в МИНСКЕ! Уже 8 лет обучаю детей и взрослых плаванию. Мастер спорта по плаванию. Персонализированные программы тренировок для детей и взрослых. Для детей неумеющих плавать и более продвинутых. научиться плавать с комфортом. Каховская 74 (Орленок). +375445415517"
+    },
+    {
+      "url": "https://www.instagram.com/mankevich.swim/p/C9Jw3JLIYlk/",
+      "caption": "Меня зовут Манькевич Арсений и я научу плавать вас или вашего ребенка. Опыт работы со взрослыми и детьми. Индивидуальные тренировки. Обучение с 0 дети/взрослые. ул.Каховская 74 (бассейн Орлёнок) 25м ул.Сурганова 4А (аквапарк Фристайл). +375445415517"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "научиться плавать"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Минск",
+  "address": "ул.Каховская 74 (бассейн Орлёнок) 25м ул.Сурганова 4А (аквапарк Фристайл)",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/mankevich.swim.jpg",
+  "photos": [
+    "/trainers/instagram/mankevich.swim.jpg",
+    "/trainers/instagram/mankevich.swim-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 2,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 1
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/mankevich.swim/",
+    "phone": "+375 44 541-55-17",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram"
+  ]
+}

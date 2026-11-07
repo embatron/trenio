@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vica_tennis_coach/",
+  "handle": "vica_tennis_coach",
+  "slug": "vica_tennis_coach",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктория",
+  "lastName": "Лазарева",
+  "fullName": "Виктория Лазарева",
+  "gender": "female",
+  "nameQuotes": [
+    "Виктория Лазарева"
+  ],
+  "headline": "Тренер по большому теннису",
+  "sourceBio": "Индивидуальные тренировки, сплит и мини-группы",
+  "sourceAbout": [
+    "А вот и мои все награды Оставлю тут"
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Теннис, Минск",
+  "threadsUrl": "",
+  "bio": "Я Виктория, тренер в Минске. Веду теннис. Я аккредитованный дипломированный тренер, ex pro player. Инвентарь предоставляется.",
+  "about": [
+    "Тренировки индивидуальные, есть сплит и мини-группы."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/vica_tennis_coach/reel/DfCg7eyIpII/",
+      "caption": "В теннисе может быть и такая эстетика эмоций"
+    },
+    {
+      "url": "https://www.instagram.com/vica_tennis_coach/reel/DDHhNTnt1Ym/",
+      "caption": "Что взять на Первую тренировку по теннису? Удобная спортивная форма. Вода (обычная негазированная). Кроссовки (которые будут плотно держать вашу стопу, только не кеды,во избежание травм)."
+    }
+  ],
+  "sports": [
+    {
+      "slug": "bolshoj-tennis",
+      "parentSlug": "raketki",
+      "label": "Большой теннис",
+      "evidence": "теннис"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bolshoj-tennis",
+    "parentSlug": "raketki",
+    "label": "Большой теннис"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vica_tennis_coach.jpg",
+  "photos": [
+    "/trainers/instagram/vica_tennis_coach.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vica_tennis_coach/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

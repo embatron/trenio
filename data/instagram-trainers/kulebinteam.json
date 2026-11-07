@@ -1,0 +1,67 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kulebinteam/",
+  "handle": "kulebinteam",
+  "slug": "kulebinteam",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Андрей",
+  "lastName": "Кулебин",
+  "fullName": "Андрей Кулебин",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Андрей",
+    "Фамилия: Кулебин"
+  ],
+  "headline": "",
+  "sourceBio": "🏆 Многократный чемпион Мира и Европы (WMC,WKN,WAKO,IFMA,IPCC) 🎓 Заслуженный мастер спорта, тренер высшей категории (Минск) сотрудничество:@pr_kulebin",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Андрей. Фамилия: Кулебин.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Андрей Кулебин. Я заслуженный мастер спорта и тренер высшей категории в Минске. Многократный чемпион мира и Европы.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kulebinteam.jpg",
+  "photos": [
+    "/trainers/instagram/kulebinteam.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kulebinteam/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

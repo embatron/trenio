@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/igorbugaenko/",
+  "handle": "igorbugaenko",
+  "slug": "igorbugaenko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Игорь",
+  "lastName": "Бугаенко",
+  "fullName": "Игорь Бугаенко",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Игорь",
+    "Фамилия: Бугаенко"
+  ],
+  "headline": "Тренер по тайскому боксу",
+  "sourceBio": "ЧЕМПИОН МИРА ПО ВЕРСИЯМ: ТNA,SUPERKOMBAT ,VENUM VICTORY WORLD SERIES, ПОБЕДИТЕЛЬ ТУРНИРОВ АСВ-КВ ИНДИВИДУАЛЬНЫЕ ТРЕНИРОВКИ ТАЙСКИЙ БОКС, К-1, БОКС.",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Игорь. Фамилия: Бугаенко.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Игорь Бугаенко. Я чемпион мира и победитель турниров. Провожу индивидуальные тренировки: тайский бокс, К-1 и бокс.",
+  "about": [
+    "Тренировки проходят индивидуально."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "Тайский бокс"
+    },
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tajskij-boks",
+    "parentSlug": "edinoborstva",
+    "label": "Тайский бокс"
+  },
+  "city": "",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/igorbugaenko.jpg",
+  "photos": [
+    "/trainers/instagram/igorbugaenko.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/igorbugaenko/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

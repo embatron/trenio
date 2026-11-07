@@ -1,0 +1,88 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pashka_0013/",
+  "handle": "pashka_0013",
+  "slug": "pashka_0013",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Павел",
+  "lastName": "",
+  "fullName": "Павел",
+  "gender": "male",
+  "nameQuotes": [
+    "Фитнес тренер Павел"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Персональный тренер / тренирую онлайн",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "имя: Павел, Фитнес",
+  "threadsUrl": "",
+  "bio": "Я Павел, персональный тренер. Веду фитнес. Знаю, как победить жир и увеличить мышечную массу. Улучшаю осанку и корректирую питание.",
+  "about": [
+    "Я персональный тренер и тренирую онлайн."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "",
+  "address": "",
+  "cityCandidates": [
+    "Орша",
+    "Могилев"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "",
+  "photos": [],
+  "certificates": [],
+  "photoSearch": {
+    "face": false,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pashka_0013/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "city",
+    "price",
+    "avatar",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

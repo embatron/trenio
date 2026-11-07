@@ -1,0 +1,66 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yauheni_tselitsa/",
+  "handle": "yauheni_tselitsa",
+  "slug": "yauheni_tselitsa",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгений",
+  "lastName": "Телица",
+  "fullName": "Евгений Телица",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Евгений",
+    "Фамилия: Телица",
+    "Евгений Телица"
+  ],
+  "headline": "",
+  "sourceBio": "Евгений Телица чемпион Мира и Европы Тренер Организатор #pautina_fight #slavcupfight #slavcup Клуб восточных единоборств \"Pautina\"",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Евгений. Фамилия: Телица.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Евгений Телица. Я тренер. Чемпион мира и Европы. Организатор клуба восточных единоборств Pautina.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yauheni_tselitsa.jpg",
+  "photos": [
+    "/trainers/instagram/yauheni_tselitsa.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yauheni_tselitsa/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

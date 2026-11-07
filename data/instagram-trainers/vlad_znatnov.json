@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vlad_znatnov/",
+  "handle": "vlad_znatnov",
+  "slug": "vlad_znatnov",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Владислав",
+  "lastName": "Знатнов",
+  "fullName": "Владислав Знатнов",
+  "gender": "male",
+  "nameQuotes": [
+    "Владислав Знатнов"
+  ],
+  "headline": "Тренер по водным видам спорта",
+  "sourceBio": "Твой проводник в мир плавания",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Владислав Знатнов, Плавание, Гродно",
+  "threadsUrl": "",
+  "bio": "Я Владислав Знатнов, тренер в Гродно. Веду плавание. Я мастер спорта и магистр педагогических наук.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Водные виды",
+      "evidence": "плавание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Водные виды"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vlad_znatnov.jpg",
+  "photos": [
+    "/trainers/instagram/vlad_znatnov.jpg",
+    "/trainers/instagram/vlad_znatnov-g2.jpg",
+    "/trainers/instagram/vlad_znatnov-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vlad_znatnov/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

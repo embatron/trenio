@@ -1,0 +1,73 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/stupakevich_sam/",
+  "handle": "stupakevich_sam",
+  "slug": "stupakevich_sam",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Семён",
+  "lastName": "Ступакевич",
+  "fullName": "Семён Ступакевич",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Семён",
+    "Фамилия: Ступакевич"
+  ],
+  "headline": "",
+  "sourceBio": "Athlete | Fighter @mt_factory_ | National team Belarus 🇧🇾",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Семён. Фамилия: Ступакевич.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Семён Ступакевич. Я спортсмен национальной сборной.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/stupakevich_sam/p/B8EXKKUnsEy/",
+      "caption": "BALTIC MUAY THAI OPEN 2020 Спасибо всем за поддержку!!! #mauythai #onlyfirst #dreamteam"
+    },
+    {
+      "url": "https://www.instagram.com/stupakevich_sam/p/DQfWCZXDUpC/",
+      "caption": "Плечом к плечу с @mikael_19.17 @tishurov_vit 🤝"
+    }
+  ],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/stupakevich_sam.jpg",
+  "photos": [
+    "/trainers/instagram/stupakevich_sam.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/stupakevich_sam/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

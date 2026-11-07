@@ -1,0 +1,95 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/swim.online/",
+  "handle": "swim.online",
+  "slug": "swim.online",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Павел",
+  "lastName": "Чайков",
+  "fullName": "Павел Чайков",
+  "gender": "male",
+  "nameQuotes": [
+    "Павел Чайков",
+    "Павел Чайков, основатель"
+  ],
+  "headline": "Тренер по водным видам спорта",
+  "sourceBio": "Павел Чайков, основатель @family.swimming",
+  "sourceAbout": [
+    "А теперь немного обо мне. Член национальной сборной РБ 2013-2019г. Рекордсмен РБ среди юниоров. Трехкратный рекордсмен РБ в категории Мастерс. Финалист и участник Чемпионатов Европы среди юниоров. Неоднократный чемпион и призёр республиканских и международных соревнований.",
+    "Я основатель",
+    "Все верно, моя мама работала в бассейне и чтобы не тратить время зря я попал в секцию плавания. Свой спортивный путь я начал в спорткомплексе в KOSTYUKOVKA."
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Павел Чайков, Плавание",
+  "threadsUrl": "",
+  "bio": "Я Павел Чайков, основатель и тренер в Минске. Веду плавание. У меня 7 рекордов РБ.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/swim.online/p/DaLSLoqiJ5_/",
+      "caption": "Онлайн-ведение — это возможность получить программу тренировок, поддержку тренера и системную подготовку из любой точки мира и в удобное для вас время. Первая консультация — БЕСПЛАТНО. И ещё 2 первые тренировки — тоже бесплатно."
+    },
+    {
+      "url": "https://www.instagram.com/swim.online/reel/DI6VkXQI0Iw/",
+      "caption": "С чего начать открытую воду и как проходят тренировки? В Family Swimming есть отдельное направление — открытая вода."
+    },
+    {
+      "url": "https://www.instagram.com/swim.online/reel/DI0tseCIFnJ/",
+      "caption": "Мои первые 10 км в открытой солёной воде."
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Водные виды",
+      "evidence": "бассейн"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Водные виды"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/swim.online.jpg",
+  "photos": [
+    "/trainers/instagram/swim.online.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/swim.online/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

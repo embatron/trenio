@@ -6,18 +6,21 @@
   "status": "draft",
   "claimStatus": "unclaimed",
   "createdSource": "import",
-  "firstName": "",
-  "lastName": "",
-  "fullName": "",
-  "gender": "",
-  "nameQuotes": [],
+  "firstName": "Виталий",
+  "lastName": "Шарапов",
+  "fullName": "Виталий Шарапов",
+  "gender": "male",
+  "nameQuotes": [
+    "Виталий Шарапов",
+    "Игоревич"
+  ],
   "headline": "Тренер по боксу",
   "sourceBio": "Мастер Спорта. тренер по боксу",
   "sourceAbout": [],
   "sourceThreads": "",
-  "operatorNotes": "",
+  "operatorNotes": "Виталий Шарапов, Игоревич (Мастер спорта РБ). Адрес зала: г. Минск, ул. Олега Кошевого, 30 (боксёрский клуб / зал). Телефон для справок и записи:",
   "threadsUrl": "",
-  "bio": "Я тренер по боксу в Минске. Я мастер спорта.",
+  "bio": "Я Виталий Игоревич Шарапов, тренер по боксу в Минске. Я мастер спорта РБ.",
   "about": [],
   "pinned": [],
   "sports": [
@@ -35,7 +38,7 @@
     "label": "Бокс"
   },
   "city": "Минск",
-  "address": "",
+  "address": "ул. Олега Кошевого, 30",
   "cityCandidates": [
     "Минск"
   ],
@@ -59,19 +62,15 @@
   },
   "contacts": {
     "instagram": "https://www.instagram.com/sharapov.v_boxingcoach/",
-    "phone": "",
+    "phone": "+375 29 773-72-06",
     "email": "",
     "telegram": "",
     "website": ""
   },
   "missing": [
-    "firstName",
-    "lastName",
     "price",
-    "phone",
     "email",
     "telegram",
-    "gender",
     "pinnedPosts"
   ]
 }

@@ -1,0 +1,94 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/royaltennis.kate/",
+  "handle": "royaltennis.kate",
+  "slug": "royaltennis.kate",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Екатерина",
+  "lastName": "",
+  "fullName": "Екатерина",
+  "gender": "female",
+  "nameQuotes": [
+    "ТРЕНЕР ПО ТЕННИСУ ЕКАТЕРИНА 📍 МИНСК"
+  ],
+  "headline": "Тренер по большому теннису",
+  "sourceBio": "место для каждого:научу с 0 или улучшу имеющийся навык",
+  "sourceAbout": [
+    "хочу рассказать тебе свой путь и познакомиться с тобой"
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Екатерина, Теннис, Минск",
+  "threadsUrl": "",
+  "bio": "Я Екатерина, тренер в Минске. Веду теннис. Научу с 0 или улучшу имеющийся навык.",
+  "about": [
+    "Занятия индивидуальные и групповые."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/royaltennis.kate/p/DXIbbJQiCDW/",
+      "caption": "И вот уже 6 лет длится моя профессиональная карьера теннисного тренера!🧡 Я проработала во нескольких теннисных школах,тренировала детей и взрослых"
+    },
+    {
+      "url": "https://www.instagram.com/royaltennis.kate/p/DXM86JZiOim/",
+      "caption": "Листай"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "bolshoj-tennis",
+      "parentSlug": "raketki",
+      "label": "Большой теннис",
+      "evidence": "теннис"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bolshoj-tennis",
+    "parentSlug": "raketki",
+    "label": "Большой теннис"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/royaltennis.kate.jpg",
+  "photos": [
+    "/trainers/instagram/royaltennis.kate.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/royaltennis.kate/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/minskroyaltenniskate",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email"
+  ]
+}

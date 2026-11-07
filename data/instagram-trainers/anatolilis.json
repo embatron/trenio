@@ -1,0 +1,97 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/anatolilis/",
+  "handle": "anatolilis",
+  "slug": "anatolilis",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анатолий",
+  "lastName": "Лис",
+  "fullName": "Анатолий Лис",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Анатолий",
+    "Фамилия: Лис"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "Coach. Boxing, kickboxing, fitness. Fitboxing training. Welnessboxing training.",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Анатолий. Фамилия: Лис.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Анатолий Лис. Я тренер по боксу.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/anatolilis/reel/DIUN9IwS8Gk/",
+      "caption": "Сегодня был насыщенный день. Большой фотоотчет будет завтра на сайте. Друзья! Занимайтесь таким прекрасным видом спорта как #бокс Помните! Здоровье - это самое дорогое что есть у человека. Двери нашего зала на Космонавтов 56 открыты для каждого с 6:15 утра до 21:30 ежедневно. Занятия для детей и подростков бесплатные. #boxing #kickboxing #sport #minsk #belarus"
+    },
+    {
+      "url": "https://www.instagram.com/anatolilis/reel/DFFvgLiMcR4/",
+      "caption": "САЙТ www.FoxBoxing.team - подарок тренеру от учеников 🥊🦊 Анатолий Иванович, спасибо за всё, что вы для нас делаете! Мы настоящая команда - FoxBoxing TEAM 😎. Друзья, переходите по активной ссылке в шапке профиля и узнайте еще больше о том, что такое FoxBoxing 👍."
+    },
+    {
+      "url": "https://www.instagram.com/anatolilis/reel/DDyuggTyxtX/",
+      "caption": "FoxBoxing - #boxing & #kickboxing in #Minsk Зал бокса и кикбоксинга по адресу Минск, Космонавтов 56 открыт ежедневно с 6:15 до 22:00. Занятия для детей и подростков бесплатные. Ждем вас, друзья, на тренировках!"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "kikboksing",
+      "label": "Кикбоксинг",
+      "quote": "кикбоксинга"
+    }
+  ],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Минск",
+  "address": "ул. Космонавтов 56",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "kid",
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/anatolilis.jpg",
+  "photos": [
+    "/trainers/instagram/anatolilis.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/anatolilis/",
+    "phone": "+375 29 668-78-91",
+    "email": "",
+    "telegram": "",
+    "website": "http://www.foxboxing.team/"
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram"
+  ]
+}

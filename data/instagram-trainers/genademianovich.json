@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/genademianovich/",
+  "handle": "genademianovich",
+  "slug": "genademianovich",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Геннадий",
+  "lastName": "Демянович",
+  "fullName": "Геннадий Демянович",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Геннадий",
+    "Фамилия: Демянович"
+  ],
+  "headline": "Тренер по мотокроссу и эндуро",
+  "sourceBio": "▫️Владелец эндуро клуба @lizardtrail.by ▫️Проект по турэндуро @foxtrail.by ▫️Обучаю езде на эндуро и турэндуро ▫️ lizardtrail.by",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Мотокросс и эндуро. Минск. Имя: Геннадий. Фамилия: Демянович.",
+  "threadsUrl": "",
+  "bio": "Я Геннадий Демянович. Обучаю езде на эндуро и турэндуро в Минске. Я владелец эндуро-клуба и веду проект по турэндуро.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "motokross",
+      "parentSlug": "outdoor",
+      "label": "Мотокросс и эндуро",
+      "evidence": "Мотокросс и эндуро"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "motokross",
+    "parentSlug": "outdoor",
+    "label": "Мотокросс и эндуро"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/genademianovich.jpg",
+  "photos": [
+    "/trainers/instagram/genademianovich.jpg",
+    "/trainers/instagram/genademianovich-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/genademianovich/",
+    "phone": "+375 44 731-40-36",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

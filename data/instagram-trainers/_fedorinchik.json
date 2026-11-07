@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/_fedorinchik/",
+  "handle": "_fedorinchik",
+  "slug": "_fedorinchik",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгений",
+  "lastName": "Федоринчик",
+  "fullName": "Евгений Федоринчик",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Евгений",
+    "Фамилия: Федоринчик"
+  ],
+  "headline": "",
+  "sourceBio": "Евгений Федоринчик Спортсмен-инструктор НКРБ Минск",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Евгений. Фамилия: Федоринчик.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Евгений Федоринчик. Я спортсмен-инструктор НКРБ в Минске. Чемпион мира и Европы IFMA.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/_fedorinchik/p/Daj7GsYDEjT/",
+      "caption": "Завершился Чемпионат Мира IFMA 2026. Результат серебро в весовой категории -71кг раздела S-male Elite. Хочу выразить огромную благодарность своим тренерам за отлично проделанную работу в ходе моей подготовки и во время турнира."
+    },
+    {
+      "url": "https://www.instagram.com/_fedorinchik/p/DRtjAMlDAVP/",
+      "caption": "Закончился Чемпионат Европы IFMA 2025 Афины, Греция. Поднялся на высшую ступень пьедестала. 3 боя - 3 победы. 71 kg S-male Elite. Благодарность шефу за его вклад в развитие тайского бокса и кикбоксинга."
+    },
+    {
+      "url": "https://www.instagram.com/_fedorinchik/p/C8PSXEpocbL/",
+      "caption": "IFMA 2024 Senior World Championships, Patras, Greece. Золото чемпионата мира среди молодежи (U-23)."
+    }
+  ],
+  "sports": [],
+  "practicedSports": [
+    {
+      "slug": "tajskij-boks",
+      "label": "Тайский бокс",
+      "quote": "тайского бокса"
+    },
+    {
+      "slug": "kikboksing",
+      "label": "Кикбоксинг",
+      "quote": "кикбоксинга"
+    }
+  ],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/_fedorinchik.jpg",
+  "photos": [
+    "/trainers/instagram/_fedorinchik.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/_fedorinchik/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://youtu.be/b0natKPlvFY?si=ezsflTWdRdVJuQbX"
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

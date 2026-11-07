@@ -1,0 +1,93 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/denistelitsa/",
+  "handle": "denistelitsa",
+  "slug": "denistelitsa",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Денис",
+  "lastName": "Телица",
+  "fullName": "Денис Телица",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Денис",
+    "Фамилия: Телица"
+  ],
+  "headline": "Тренер по кикбоксингу",
+  "sourceBio": "МСМК по кикбоксингу, МС по тай.боксу Тренинровки для детей и взрослых, набор круглый год!!!",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Денис. Фамилия: Телица.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Денис Телица. МСМК по кикбоксингу. Занимаюсь с детьми и со взрослыми.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/denistelitsa/reel/C-ATC_WMtnA/",
+      "caption": "Сбор для поездки на чемпионат мира по тайландскому боксу, г. Бангкок."
+    }
+  ],
+  "sports": [
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "boks",
+      "label": "Бокс",
+      "quote": "тай.боксу"
+    },
+    {
+      "slug": "mma",
+      "label": "MMA",
+      "quote": "mma"
+    }
+  ],
+  "primarySport": {
+    "slug": "kikboksing",
+    "parentSlug": "edinoborstva",
+    "label": "Кикбоксинг"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/denistelitsa.jpg",
+  "photos": [
+    "/trainers/instagram/denistelitsa.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/denistelitsa/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

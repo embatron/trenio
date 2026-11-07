@@ -45,7 +45,7 @@
     "telegrams": []
   },
   "aboutFrames": [],
-  "operatorNotes": "Секу Бангура. Кикбоксинг, муай тай. ул. Ложинская, 14/1",
+  "operatorNotes": "Секу Бангура. Кикбоксинг, муай тай. ул. Ложинская, 14/1. Минск",
   "threads": null,
   "avatarUrl": "https://scontent-waw2-1.cdninstagram.com/v/t51.82787-19/815468392_18630036253007709_600311387302132565_n.jpg?_nc_cat=104&ig_cache_key=GGgPmzBdXwNV6y9CAFX7w7IGvFQIbmNDAQAB0j-ccb7-5&ccb=7-5&_nc_sid=669407&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=eES_H6ZFO2oQ7kNvwEJZlpk&_nc_oc=AdrnmV_vOuhKd-orvlrX67JGF5MVsKmOOw2aYmHMpynWad2f1NmdSn8thNJf5HPW3I0&_nc_zt=24&_nc_ht=scontent-waw2-1.cdninstagram.com&_nc_gid=6SW5mXhEQJcKufto_xh7wg&_nc_ss=7b6a8&oh=00_AQSdAQjMFvmn8tOZfm1-3lxYEnh73nOZ2m8ek8SK5xHa6g&oe=6AF37F6D",
   "avatarMime": "image/jpeg",
@@ -62,12 +62,13 @@
     ],
     "sourceBio": "Индивидуальные и групповые тренировки 💪\nНайди свою силу!",
     "aboutProfile": [],
-    "presentation": "Я Секу Бангура. Я провожу индивидуальные и групповые тренировки по кикбоксингу и муай тай.",
+    "presentation": "Я Секу Бангура. Я провожу индивидуальные и групповые тренировки по кикбоксингу и муай тай в Минске.",
     "presentationQuotes": [
       "Секу Бангура",
       "Индивидуальные и групповые тренировки",
       "Кикбоксинг",
-      "муай тай"
+      "муай тай",
+      "Минск"
     ],
     "training": "Я провожу индивидуальные и групповые тренировки.",
     "trainingQuotes": [
@@ -90,7 +91,7 @@
     "practicedSports": [],
     "unrelatedSports": [],
     "primarySportSlug": "kikboksing",
-    "city": "",
+    "city": "Минск",
     "address": "ул. Ложинская, 14/1",
     "priceFrom": null,
     "phone": "",

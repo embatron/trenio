@@ -1,0 +1,93 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/zhukouskaya_tennis/",
+  "handle": "zhukouskaya_tennis",
+  "slug": "zhukouskaya_tennis",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Татьяна",
+  "lastName": "Жуковская",
+  "fullName": "Татьяна Жуковская",
+  "gender": "female",
+  "nameQuotes": [
+    "Татьяна Жуковская"
+  ],
+  "headline": "Тренер по большому теннису",
+  "sourceBio": "Дети • взрослые • спортсмены",
+  "sourceAbout": [
+    "Сегодня подумала, что далеко не все знают как теннис появился в моей жизни. Поэтому расскажу вам свою историю."
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Татьяна Жуковская, Теннис, Минск",
+  "threadsUrl": "",
+  "bio": "Я Татьяна Жуковская, тренер в Минске. Веду теннис. Учу детей и взрослых. У меня 20 лет опыта.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/zhukouskaya_tennis/p/Dees6RxiCII/",
+      "caption": "Приглашаю на тренировки в Минске. Начинающие дети, юные спортсмены, играющие взрослые. 20 лет тренерской работы. Минск"
+    },
+    {
+      "url": "https://www.instagram.com/zhukouskaya_tennis/p/DaUa9VkiDMq/",
+      "caption": "За каждым большим результатом стоит работа, доверие и ежедневный труд"
+    },
+    {
+      "url": "https://www.instagram.com/zhukouskaya_tennis/reel/DZrK32Cocg4/",
+      "caption": "Работа с детьми, взрослыми, спортсменами разного уровня"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "bolshoj-tennis",
+      "parentSlug": "raketki",
+      "label": "Большой теннис",
+      "evidence": "теннис"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bolshoj-tennis",
+    "parentSlug": "raketki",
+    "label": "Большой теннис"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/zhukouskaya_tennis.jpg",
+  "photos": [
+    "/trainers/instagram/zhukouskaya_tennis.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/zhukouskaya_tennis/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

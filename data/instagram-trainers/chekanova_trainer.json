@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/chekanova_trainer/",
+  "handle": "chekanova_trainer",
+  "slug": "chekanova_trainer",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Татьяна",
+  "lastName": "Чеканова",
+  "fullName": "Татьяна Чеканова",
+  "gender": "female",
+  "nameQuotes": [
+    "Татьяна Чеканова"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "ТАТЬЯНА тренер с аккредитацией",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Татьяна Чеканова, Фитнес, Брест",
+  "threadsUrl": "",
+  "bio": "Я Татьяна Чеканова, тренер с аккредитацией в Бресте. Веду фитнес. Первый фитнес с барабанными палочками и перчинкой.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/chekanova_trainer/reel/DaA4mkmM6fa/",
+      "caption": "НАСТОЯЩИЕ БАРАБАНЫ И ПАУНД! Вас ждет зажигательная фитнес-вечеринка"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Брест",
+  "address": "",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/chekanova_trainer.jpg",
+  "photos": [
+    "/trainers/instagram/chekanova_trainer.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/chekanova_trainer/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/poundbrest",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email"
+  ]
+}

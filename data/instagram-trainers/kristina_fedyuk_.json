@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kristina_fedyuk_/",
+  "handle": "kristina_fedyuk_",
+  "slug": "kristina_fedyuk_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Кристина",
+  "lastName": "Федюк",
+  "fullName": "Кристина Федюк",
+  "gender": "female",
+  "nameQuotes": [
+    "Кристина Федюк"
+  ],
+  "headline": "Тренер по акробатике",
+  "sourceBio": "МС по прыжкам на акробатической дорожке 🤸‍♀️ Тренер @evrocentrgymnastics Замужем Мама 2-ух сыночков",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кристина Федюк, акробатика, Минск, дети, подростки. улица Одинцова, 32 | проспект Победителей, 2 | улица Калиновского, 111 | улица Сурганова, 2а",
+  "threadsUrl": "",
+  "bio": "Я Кристина Федюк, тренер по акробатике в Минске. Я МС по прыжкам на акробатической дорожке. Веду детей и подростков.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "akrobatika",
+      "parentSlug": "gimnastika",
+      "label": "Акробатика",
+      "evidence": "акробатическая дорожка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "akrobatika",
+    "parentSlug": "gimnastika",
+    "label": "Акробатика"
+  },
+  "city": "Минск",
+  "address": "улица Одинцова, 32 | проспект Победителей, 2 | улица Калиновского, 111",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "kid",
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kristina_fedyuk_.jpg",
+  "photos": [
+    "/trainers/instagram/kristina_fedyuk_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kristina_fedyuk_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

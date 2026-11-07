@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/dobriy_trener.by/",
+  "handle": "dobriy_trener.by",
+  "slug": "dobriy_trener.by",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Татьяна",
+  "lastName": "Серякова",
+  "fullName": "Татьяна Серякова",
+  "gender": "female",
+  "nameQuotes": [
+    "Татьяна Серякова"
+  ],
+  "headline": "Тренер по водным видам спорта",
+  "sourceBio": "Учу плавать быстро и легко",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Татьяна Серякова, Плавание, Минск",
+  "threadsUrl": "",
+  "bio": "Я Татьяна Серякова, тренер в Минске. Веду плавание. Учу плавать быстро и легко. Веду гидрореабилитацию детей с РАС.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Водные виды",
+      "evidence": "плавание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Водные виды"
+  },
+  "city": "Минск",
+  "address": "ул. Каховская, д. 74",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/dobriy_trener.by.jpg",
+  "photos": [
+    "/trainers/instagram/dobriy_trener.by.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/dobriy_trener.by/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

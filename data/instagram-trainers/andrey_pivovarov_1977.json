@@ -1,0 +1,99 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/andrey_pivovarov_1977/",
+  "handle": "andrey_pivovarov_1977",
+  "slug": "andrey_pivovarov_1977",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Андрей",
+  "lastName": "Пивоваров",
+  "fullName": "Андрей Пивоваров",
+  "gender": "male",
+  "nameQuotes": [
+    "Андрей Пивоваров"
+  ],
+  "headline": "Тренер по борьбе",
+  "sourceBio": "Профессиональный тренер по единоборствам. MMA, SAMBO, JUDO, BOXING. Начальная подготовка. Корректировка техники.",
+  "sourceAbout": [],
+  "sourceThreads": "Pivovarov Andrey 🇧🇾 andrey_pivovarov_1977 373 followers ММА&JUDO Отправил (-а) Вам запрос на добавление в друзья Возьму на персональную тренировку любителя ранних подъемов Побыли в Москве на этапе Кубка мира Нет))) Единоборства к лицу всем Натуралистов, 10. Приходить к нам потренироваться)) Кусочки тренировочного процесса на Натуралистов,10. Ждем и Вас Watch this story by Olympia Gym & SPA",
+  "operatorNotes": "Андрей Пивоваров, Минск, борьбу",
+  "threadsUrl": "https://www.threads.com/@andrey_pivovarov_1977",
+  "bio": "Я Андрей Пивоваров, тренер по единоборствам в Минске. Веду борьбу, MMA, самбо, дзюдо и бокс. Начинаю с начальной подготовки и корректирую технику.",
+  "about": [
+    "Беру на персональную тренировку. На ней начальная подготовка и корректировка техники."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "borba",
+      "parentSlug": "edinoborstva",
+      "label": "Борьба",
+      "evidence": "Борьба"
+    },
+    {
+      "slug": "mma",
+      "parentSlug": "edinoborstva",
+      "label": "MMA",
+      "evidence": "MMA"
+    },
+    {
+      "slug": "sambo",
+      "parentSlug": "edinoborstva",
+      "label": "Самбо",
+      "evidence": "sambo"
+    },
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "boxing"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "borba",
+    "parentSlug": "edinoborstva",
+    "label": "Борьба"
+  },
+  "city": "Минск",
+  "address": "Натуралистов, 10",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/andrey_pivovarov_1977.jpg",
+  "photos": [
+    "/trainers/instagram/andrey_pivovarov_1977.jpg",
+    "/trainers/instagram/andrey_pivovarov_1977-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/andrey_pivovarov_1977/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://youtu.be/YVaFkc5cvKE"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

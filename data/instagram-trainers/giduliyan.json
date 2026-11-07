@@ -1,0 +1,65 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/giduliyan/",
+  "handle": "giduliyan",
+  "slug": "giduliyan",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Сергей",
+  "lastName": "Гидулян",
+  "fullName": "Сергей Гидулян",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Сергей",
+    "Фамилия: Гидулян"
+  ],
+  "headline": "",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Сергей. Фамилия: Гидулян.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Сергей Гидулян.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/giduliyan.jpg",
+  "photos": [
+    "/trainers/instagram/giduliyan.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/giduliyan/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://goldenv.by/"
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

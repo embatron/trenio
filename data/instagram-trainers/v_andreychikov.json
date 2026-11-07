@@ -1,0 +1,88 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/v_andreychikov/",
+  "handle": "v_andreychikov",
+  "slug": "v_andreychikov",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Владислав",
+  "lastName": "Андрейчиков",
+  "fullName": "Владислав Андрейчиков",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Владислав",
+    "Фамилия: Андрейчиков"
+  ],
+  "headline": "Тренер по тайскому боксу",
+  "sourceBio": "VLADISLAV ANDREYCHIKOV Master of sport 🇧🇾🥊 •Твой личный тренер 🥊 •Групповые и индивидуальные тренировки",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Владислав. Фамилия: Андрейчиков.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Владислав Андрейчиков. Я личный тренер по тайскому боксу и кикбоксингу в Минске. Мастер спорта.",
+  "about": [
+    "Провожу групповые и индивидуальные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "Тайский бокс"
+    },
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tajskij-boks",
+    "parentSlug": "edinoborstva",
+    "label": "Тайский бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/v_andreychikov.jpg",
+  "photos": [
+    "/trainers/instagram/v_andreychikov.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/v_andreychikov/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/grinevichandrey/",
+  "handle": "grinevichandrey",
+  "slug": "grinevichandrey",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Андрей",
+  "lastName": "Гриневич",
+  "fullName": "Андрей Гриневич",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Андрей",
+    "Фамилия: Гриневич"
+  ],
+  "headline": "",
+  "sourceBio": "Personal Coach @multisport.academy founder Karate coach",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Андрей. Фамилия: Гриневич.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Андрей Гриневич. Я коуч и основатель. Восьмикратный чемпион BLR и призёр мира и Европы WKF. Трёхкратный чемпион Европы по годзю-рю и шестикратный призёр Премьер-лиги.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/grinevichandrey.jpg",
+  "photos": [
+    "/trainers/instagram/grinevichandrey.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/grinevichandrey/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

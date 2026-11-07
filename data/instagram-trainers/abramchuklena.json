@@ -1,0 +1,123 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/abramchuklena/",
+  "handle": "abramchuklena",
+  "slug": "abramchuklena",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алёна",
+  "lastName": "Абрамчук",
+  "fullName": "Алёна Абрамчук",
+  "gender": "female",
+  "nameQuotes": [
+    "Алёна Абрамчук"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Создаю изящный рельеф и тонкую талию без диет",
+  "sourceAbout": [
+    "Привет! Я Лена – персональный тренер в Бресте.",
+    "Знаю, как сделать ваше тело сильным, рельефным и выносливым.",
+    "Со мной худеют и забывают о боли в спине.",
+    "Научу вас тренироваться безопасно, эффективно и в удовольствие.",
+    "Мой путь — это 15 лет в профессиональном спорте высших достижений.",
+    "Я Мастер спорта международного класса, финалистка Олимпийских игр и многократный призер чемпионатов Европы по легкой атлетике.",
+    "А еще – я дважды мама поэтому тему возвращения в форму знаю не только по учебникам.",
+    "ПЕРСОНАЛЬНЫЙ ФИТНЕС: СИЛОВЫЕ И ФУНКЦИОНАЛЬНЫЕ ТРЕНИРОВКИ В ФК «ДЕЛЬТА».",
+    "МАМА В ФОРМЕ. БЕРЕЖНОЕ И БЕЗОПАСНОЕ ВОССТАНОВЛЕНИЕ ПОСЛЕ РОДОВ.",
+    "УМНЫЙ ФИТНЕС: ТРЕНИРОВКИ ПРИ БОЛЯХ В СПИНЕ."
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Алёна Абрамчук, Фитнес, Брест",
+  "threadsUrl": "",
+  "bio": "Я Алёна Абрамчук, персональный тренер в Бресте. Веду фитнес. Я мастер спорта международного класса и финалистка Олимпийских игр по легкой атлетике. Создаю изящный рельеф и тонкую талию без диет.",
+  "about": [
+    "Веду персональный фитнес: силовые и функциональные тренировки."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/abramchuklena/reel/DdHId7IIKPx/",
+      "caption": "Я -Лена тренер из Брест"
+    },
+    {
+      "url": "https://www.instagram.com/abramchuklena/reel/DaKO5lRIvhR/",
+      "caption": "как поднять 3 тонны на мотофестивале и зачем это тренеру"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "silovoj-trening",
+      "parentSlug": "fitnes",
+      "label": "Силовой тренинг",
+      "evidence": "силовые"
+    },
+    {
+      "slug": "krossfit",
+      "parentSlug": "fitnes",
+      "label": "Кроссфит",
+      "evidence": "функциональные тренировки"
+    },
+    {
+      "slug": "reabilitaciya",
+      "parentSlug": "reabilitaciya",
+      "label": "Реабилитация",
+      "evidence": "восстановление"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "legkaya-atletika",
+      "label": "Лёгкая атлетика",
+      "quote": "легкой атлетике"
+    }
+  ],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Брест",
+  "address": "ФК «Дельта»",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/abramchuklena.jpg",
+  "photos": [
+    "/trainers/instagram/abramchuklena.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/abramchuklena/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

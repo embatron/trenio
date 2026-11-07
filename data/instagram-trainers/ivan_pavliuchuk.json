@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ivan_pavliuchuk/",
+  "handle": "ivan_pavliuchuk",
+  "slug": "ivan_pavliuchuk",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Иван",
+  "lastName": "Павлючук",
+  "fullName": "Иван Павлючук",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Иван",
+    "Фамилия: Павлючук"
+  ],
+  "headline": "Тренер по тайскому боксу",
+  "sourceBio": "Тренер муайтай/кикбоксинг BLR 🥊",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Иван. Фамилия: Павлючук.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Иван Павлючук. Я тренер по тайскому боксу и кикбоксингу.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/ivan_pavliuchuk/p/DRsGTPQjNSK/",
+      "caption": "Все ровно скажут что мы жулики, но только жулики так и скажут, всем спасибо, особенно всем кто помогал организовывать это великолепное мероприятие. Отдельное спасибо тренеру за школу и плечо, битве карапузов 25лет"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "муай тай"
+    },
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tajskij-boks",
+    "parentSlug": "edinoborstva",
+    "label": "Тайский бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ivan_pavliuchuk.jpg",
+  "photos": [
+    "/trainers/instagram/ivan_pavliuchuk.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ivan_pavliuchuk/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/via_1705_/",
+  "handle": "via_1705_",
+  "slug": "via_1705_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Иван",
+  "lastName": "Верле",
+  "fullName": "Иван Верле",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Иван",
+    "Фамилия: Верле"
+  ],
+  "headline": "",
+  "sourceBio": "Стремитесь же опередить друг друга в добрых делах",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Иван. Фамилия: Верле.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Иван Верле.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/via_1705_.jpg",
+  "photos": [
+    "/trainers/instagram/via_1705_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/via_1705_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

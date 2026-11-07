@@ -1,0 +1,97 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ketty_kis/",
+  "handle": "ketty_kis",
+  "slug": "ketty_kis",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Екатерина",
+  "lastName": "Киселёва",
+  "fullName": "Екатерина Киселёва",
+  "gender": "female",
+  "nameQuotes": [
+    "Екатерина Киселёва",
+    "Тренер по плаванию, Минск, Екатерина Киселёва"
+  ],
+  "headline": "Тренер по водным видам спорта",
+  "sourceBio": "Избавила от страха воды >300 детей и взрослых Научу плавать правильно и красиво в любом возрасте, безопасные тренировки для вашего здоровья",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Екатерина Киселёва, Плавание",
+  "threadsUrl": "",
+  "bio": "Я Екатерина Киселёва, тренер в Минске. Плавание веду для детей и взрослых. Избавила от страха воды больше 300 детей и взрослых.",
+  "about": [
+    "Тренировки безопасные и нужны для здоровья. Я учу плавать правильно и красиво в любом возрасте."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/ketty_kis/p/C_I_8oLt9tu/",
+      "caption": "Меня зовут Екатерина, мне 36 лет и я тренер по плаванию в Минске, работаю с детьми и взрослыми. В плавании я с 4 лет, и это уже +30 лет. Я КМС по плаванию и современному пятиборью, чемпионка РБ, участница чемпионата Европы. Обожаю работать с детьми, веду групповые и индивидуальные занятия."
+    },
+    {
+      "url": "https://www.instagram.com/ketty_kis/p/C_TMw1VNtB7/",
+      "caption": "Ко мне часто приходят на занятия взрослые люди и недоумевают, почему вроде бы нормально плывут, не тонут, но очень быстро устают. Здесь, конечно, нужно рассматривать индивидуально каждый случай."
+    },
+    {
+      "url": "https://www.instagram.com/ketty_kis/p/C_N1xPqNCPX/",
+      "caption": "Плавание это чувство свободы, гармонии и безопасности. Часто эти страхи появляются ещё в детстве."
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Водные виды",
+      "evidence": "плавание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Водные виды"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ketty_kis.jpg",
+  "photos": [
+    "/trainers/instagram/ketty_kis.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ketty_kis/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

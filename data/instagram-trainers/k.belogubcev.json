@@ -1,0 +1,92 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/k.belogubcev/",
+  "handle": "k.belogubcev",
+  "slug": "k.belogubcev",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Константин",
+  "lastName": "Белогубцев",
+  "fullName": "Константин Белогубцев",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Константин",
+    "Фамилия: Белогубцев"
+  ],
+  "headline": "Тренер по кикбоксингу",
+  "sourceBio": "Кикбоксинг и тайский бокс",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Константин. Фамилия: Белогубцев.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Константин Белогубцев. Я тренер по кикбоксингу в Минске. КМС по кикбоксингу. Тренирую профессионалов, новичков и детей.",
+  "about": [
+    "Есть пробное занятие."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "tajskij-boks",
+      "label": "Тайский бокс",
+      "quote": "тайский бокс"
+    },
+    {
+      "slug": "boks",
+      "label": "Бокс",
+      "quote": "Девушки и бокс"
+    }
+  ],
+  "primarySport": {
+    "slug": "kikboksing",
+    "parentSlug": "edinoborstva",
+    "label": "Кикбоксинг"
+  },
+  "city": "Минск",
+  "address": "Olshevskogo 11, Minsk, Belarus",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/k.belogubcev.jpg",
+  "photos": [
+    "/trainers/instagram/k.belogubcev.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/k.belogubcev/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

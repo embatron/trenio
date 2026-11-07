@@ -1,0 +1,94 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/karrinaaass/",
+  "handle": "karrinaaass",
+  "slug": "karrinaaass",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Карина",
+  "lastName": "Парафенюк",
+  "fullName": "Карина Парафенюк",
+  "gender": "female",
+  "nameQuotes": [
+    "КАРИНА ПАРАФЕНЮК"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Помогу сделать фигуру мечты",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Карина Парафенюк, Фитнес, Брест",
+  "threadsUrl": "",
+  "bio": "Я Карина Парафенюк, персональный тренер в Бресте. Веду фитнес. Помогу сделать фигуру мечты. Я мастер спорта по спортивной акробатике.",
+  "about": [
+    "Я персональный тренер."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/karrinaaass/p/DVrIQO7F2OC/",
+      "caption": ""
+    },
+    {
+      "url": "https://www.instagram.com/karrinaaass/p/DZ1xpRvA768/",
+      "caption": ""
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "akrobatika",
+      "label": "Акробатика",
+      "quote": "Спортивной Акробатике"
+    }
+  ],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Брест",
+  "address": "",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/karrinaaass.jpg",
+  "photos": [
+    "/trainers/instagram/karrinaaass.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/karrinaaass/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

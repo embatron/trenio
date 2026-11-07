@@ -1,0 +1,86 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/nikmarloou/",
+  "handle": "nikmarloou",
+  "slug": "nikmarloou",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Никита",
+  "lastName": "Сахно",
+  "fullName": "Никита Сахно",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Никита",
+    "Фамилия: Сахно"
+  ],
+  "headline": "Тренер по джиу-джитсу",
+  "sourceBio": "Моя твоя джиу-джитсу научить",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Никита. Фамилия: Сахно.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Никита Сахно. Я учу джиу-джитсу.",
+  "about": [
+    "Провожу персональные."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/nikmarloou/reel/CqXc2aeoOU9/",
+      "caption": "Привет! Напоминаю, что я провожу индивидуальные тренировки по бразильскому джиу-джитсу для каждого. Детишки, школьники, студенты, взрослые - любой возраст. Индивидуальный подход."
+    }
+  ],
+  "sports": [
+    {
+      "slug": "bjj",
+      "parentSlug": "edinoborstva",
+      "label": "Джиу-джитсу",
+      "evidence": "бразильское джиу-джитсу"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bjj",
+    "parentSlug": "edinoborstva",
+    "label": "Джиу-джитсу"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/nikmarloou.jpg",
+  "photos": [
+    "/trainers/instagram/nikmarloou.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/nikmarloou/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

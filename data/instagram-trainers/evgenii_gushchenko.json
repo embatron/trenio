@@ -1,0 +1,93 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/evgenii_gushchenko/",
+  "handle": "evgenii_gushchenko",
+  "slug": "evgenii_gushchenko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгений",
+  "lastName": "Гущенко",
+  "fullName": "Евгений Гущенко",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Евгений",
+    "Фамилия: Гущенко"
+  ],
+  "headline": "Тренер по кикбоксингу",
+  "sourceBio": "Кикбоксинг • Тайский Бокс • Ушу",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Евгений. Фамилия: Гущенко.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Евгений Гущенко. Кикбоксинг, тайский бокс и ушу.",
+  "about": [
+    "Детские группы с 6 лет, юношеские группы и группы для взрослых. Есть индивидуальные занятия."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    },
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "Тайский бокс"
+    },
+    {
+      "slug": "ushu",
+      "parentSlug": "edinoborstva",
+      "label": "Ушу",
+      "evidence": "Ушу"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "kikboksing",
+    "parentSlug": "edinoborstva",
+    "label": "Кикбоксинг"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/evgenii_gushchenko.jpg",
+  "photos": [
+    "/trainers/instagram/evgenii_gushchenko.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/evgenii_gushchenko/",
+    "phone": "+375 29 892-46-36",
+    "email": "",
+    "telegram": "",
+    "website": "https://vk.com/kolizei_vtb"
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

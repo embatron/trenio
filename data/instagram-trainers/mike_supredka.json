@@ -1,0 +1,92 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/mike_supredka/",
+  "handle": "mike_supredka",
+  "slug": "mike_supredka",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Михаил",
+  "lastName": "Супредка",
+  "fullName": "Михаил Супредка",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Михаил",
+    "Фамилия: Супредка"
+  ],
+  "headline": "Тренер по единоборствам",
+  "sourceBio": "Actor | Stuntman",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Михаил. Фамилия: Супредка.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Михаил Супредка. Я тренирую единоборства. Кикбоксинг и тайский бокс. Я спортсмен, актёр и каскадёр.",
+  "about": [
+    "В профиле есть тренировки."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/mike_supredka/reel/DTKUToaCEVe/",
+      "caption": "Мустанг продышался на лапах #mma #kickboxing #muaythai #discipline"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "edinoborstva",
+      "parentSlug": "edinoborstva",
+      "label": "Единоборства",
+      "evidence": "Единоборства"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "kikboksing",
+      "label": "Кикбоксинг",
+      "quote": "Кикбоксинг"
+    },
+    {
+      "slug": "tajskij-boks",
+      "label": "Тайский бокс",
+      "quote": "Тайский бокс"
+    }
+  ],
+  "primarySport": {
+    "slug": "edinoborstva",
+    "parentSlug": "edinoborstva",
+    "label": "Единоборства"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/mike_supredka.jpg",
+  "photos": [
+    "/trainers/instagram/mike_supredka.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/mike_supredka/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

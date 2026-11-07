@@ -1,0 +1,86 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/greblya.orsha.trener/",
+  "handle": "greblya.orsha.trener",
+  "slug": "greblya.orsha.trener",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дмитрий",
+  "lastName": "Олегович",
+  "fullName": "Дмитрий Олегович",
+  "gender": "male",
+  "nameQuotes": [
+    "Дмитрий Олегович"
+  ],
+  "headline": "Тренер по байдарке",
+  "sourceBio": "Тренер по гребле на байдарках и каноэ",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Дмитрий Олегович, Орша",
+  "threadsUrl": "",
+  "bio": "Я Дмитрий Олегович, тренер в городе Орша. Веду греблю на байдарках и каноэ.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/greblya.orsha.trener/p/DccQxzeMpOa/",
+      "caption": "Гребля на байдарках и каноэ - это тренировки на свежем воздухе. Каждому ребенку выдаётся спортивный инвентарь, лодка и весло. Детская спортивная секция для мальчиков и девочек абсолютно бесплатная."
+    }
+  ],
+  "sports": [
+    {
+      "slug": "kayaking",
+      "parentSlug": "plavanie",
+      "label": "Байдарка",
+      "evidence": "гребля на байдарках"
+    },
+    {
+      "slug": "kanoe",
+      "parentSlug": "plavanie",
+      "label": "Каноэ",
+      "evidence": "Каноэ"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "kayaking",
+    "parentSlug": "plavanie",
+    "label": "Байдарка"
+  },
+  "city": "Орша",
+  "address": "",
+  "cityCandidates": [
+    "Орша"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "",
+  "photos": [],
+  "certificates": [],
+  "photoSearch": {
+    "face": false,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/greblya.orsha.trener/",
+    "phone": "+375 29 591-31-23",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "avatar",
+    "email",
+    "telegram"
+  ]
+}

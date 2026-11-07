@@ -1,0 +1,91 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/dema_cherkas/",
+  "handle": "dema_cherkas",
+  "slug": "dema_cherkas",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Демьян",
+  "lastName": "Черкас",
+  "fullName": "Демьян Черкас",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Демьян",
+    "Фамилия: Черкас"
+  ],
+  "headline": "Тренер по тайскому боксу",
+  "sourceBio": "Professional Fighter & Coach",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Демьян. Фамилия: Черкас.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Демьян Черкас. Я тренер по тайскому боксу и кикбоксингу в Минске.",
+  "about": [
+    "Провожу персональные тренировки по тайскому боксу и кикбоксингу."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/dema_cherkas/p/DaDM2cuM-aS/",
+      "caption": "🥊 Хочешь стать сильнее, увереннее в себе и освоить ударную технику под руководством профессионального спортсмена? Приглашаю на индивидуальные тренировки по тайскому боксу и кикбоксингу в Минске. Персональные тренировки — это самый быстрый путь к результату. Всё внимание тренера направлено только на тебя и твой прогресс. Что ты получишь: ✔ Индивидуальный подход и программу под свои цели ✔ Постановку правильной техники ударов и защитных действий ✔ Развитие силы, выносливости, скорости и координации ✔ Работу над уверенностью и дисциплиной ✔ Гибкий график тренировок ✔ Безопасный и эффективный тренировочный процесс Подходит для любого уровня подготовки — от новичка до уверенного любителя. Немного обо мне: 🏆 Член национальной команды Республики Беларусь 🏆 Мастер спорта Республики Беларусь 🏆 Действующий профессиональный спортсмен 🏆 Победитель и призёр республиканских и международных турниров Если давно хотел попробовать себя в единоборствах или выйти на новый уровень подготовки — сейчас самое время начать. 📍 Минск 📩 За записью и информацией в Direct"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "Тайский бокс"
+    },
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tajskij-boks",
+    "parentSlug": "edinoborstva",
+    "label": "Тайский бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/dema_cherkas.jpg",
+  "photos": [
+    "/trainers/instagram/dema_cherkas.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/dema_cherkas/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

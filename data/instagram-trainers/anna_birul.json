@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/anna_birul/",
+  "handle": "anna_birul",
+  "slug": "anna_birul",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анна",
+  "lastName": "Бируль",
+  "fullName": "Анна Бируль",
+  "gender": "female",
+  "nameQuotes": [
+    "Анна Бируль"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Мотивирую на спорт и здоровое питание",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Анна Бируль, Фитнес, Полоцк",
+  "threadsUrl": "",
+  "bio": "Я Анна Бируль, фитнес-тренер и нутрициолог в Полоцке. Веду фитнес. Снижаю вес, составляю программы питания и веду онлайн-сопровождение.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/anna_birul/p/CpXSNLgM7wN/",
+      "caption": "Я Аня, фитнес-инструктор и персональный тренер, консультант по питанию."
+    },
+    {
+      "url": "https://www.instagram.com/anna_birul/p/DdPOQu9ONTL/",
+      "caption": "Выбирай только тот свет , в котором ты расцветаешь"
+    },
+    {
+      "url": "https://www.instagram.com/anna_birul/reel/Da7O58-sI23/",
+      "caption": "Summer"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Полоцк",
+  "address": "",
+  "cityCandidates": [
+    "Полоцк"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/anna_birul.jpg",
+  "photos": [
+    "/trainers/instagram/anna_birul.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/anna_birul/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

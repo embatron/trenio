@@ -1,0 +1,100 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/anisenkova.fitness/",
+  "handle": "anisenkova.fitness",
+  "slug": "anisenkova.fitness",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анна",
+  "lastName": "Анисенкова",
+  "fullName": "Анна Анисенкова",
+  "gender": "female",
+  "nameQuotes": [
+    "Анисенкова Анна",
+    "Имя: Анна",
+    "Фамилия: Анисенкова"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Анисенкова Анна 📌Приведу к результату и желаемой физ.форме Ⓜ️Немига 🔩GymBox💪Тренировки в тренажёрном ✍Пиши Direct Тренировки➡️и начнем сотрудничать пр-т Победителей, Minsk, Belarus www.levelup-linguistic-fitness.online/lessonsenglish_for_fitness",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Фитнес. Имя: Анна. Фамилия: Анисенкова.",
+  "threadsUrl": "",
+  "bio": "Я Анна Анисенкова. Я фитнес-тренер в Минске. Приведу к результату и к желаемой форме.",
+  "about": [
+    "Я приведу к результату и к желаемой форме. Тренировки проходят в тренажёрном зале."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/anisenkova.fitness/p/DC4pd_9upxU/",
+      "caption": "📌ВОСПОЛЬЗУЙСЯ ВЫГОДНЫМ ПРЕДЛОЖЕНИЕМ🔥 ✅ Приходи на пробную тренировку со скидкой 2️⃣0️⃣%➡️ и получи СКИДКУ 1️⃣0️⃣% НА ПЕРСОНАЛЬНЫЕ ТРЕНИРОВКИ В ТЕЧЕНИЕ 2️⃣ МЕСЯЦЕВ (50руб.) 📝 Подробнее Direct 🔩Занятия проходят по адресу: ФИТНЕС ЦЕНТР \"GYMBOX\" г. Минск, пр-т Победителей, 11 (500 метров станции метро🚉 Немига). ☝️ПИШИ 📝ХОЧУ НА ТРЕНИРОВКУ ✍ и узнай свободное время."
+    },
+    {
+      "url": "https://www.instagram.com/anisenkova.fitness/p/DM7zMIlN829/",
+      "caption": "📌НАЧНИ БЕГАТЬ👟👟. НАЙДИ В СЕБЕ МОТИВАЦИЮ 🏃‍♀️🏃‍♂️ ТРЕНИРОВКИ ПО БЕГУ С ТРЕНЕРОМ ВСЕГО ЗА 1️⃣5️⃣руб🔥 Условия: Ты платишь полную стоимость за месяц 3х4х15=180руб. Это за 12 тренировок по бегу / по 3 тренировки в неделю. ✌Проспал, забыл, поленился, оплаченная тренировка пропала! 😳 💥Нет большей мотивации, чем оплаченный абонемент💯 + 💥фитнес тренер не даст прогуливать🤓 + 💥научишься рано вставать и во время ложиться спать🥳 + 💥наконец-то в твоей жизни появится двигательная активность👟+ 💥так и до тренажёрного зала с тренером добегаешься😉❤ 👟Занятия проходят в Центральном районе вдоль реки Свислочь по маршрутам: 1️⃣🏃‍♀️ДИСТАНЦИЯ 1,5 КМ: Стэла Победитей - ул. Богдановича (до моста около метро🚉 Немига) ️2️⃣🏃‍♂️ДИСТАНЦИЯ 3 КМ: Стэла Победитей - ул. Богдановича - Стэла Победителей ️3️⃣🏃‍♀️ДИСТАНЦИЯ 4 КМ: Стэла Победитей - ул. Я.Купалы (Журавинка) - Стэла Победителей ️4️⃣🏃‍♀️ДИСТАНЦИЯ 5 КМ: Стэла Победитей - пр.Независимости (до моста Центрального парка) - Стэла Победителей 5️⃣🏃‍♀️ДИСТАНЦИЯ 5 КМ: Стэла Победителей - СДЮШОР по водным видам спорта /Дом гребли - Стэла Победителей 📌🕖🥳 ВРЕМЯ и ДНИ ТРЕНИРОВОК: 6:00 / 6:30 / 7:00 по согласованию с тренером и участниками группы (группа не более 7 человек). 🕙 ДЛИТЕЛЬНОСТЬ ТРЕНИРОВКИ: 20-45 минут в зависимости от дистанции ☝️ПИШИ 📝ХОЧУ НА ТРЕНИРОВКУ ПО БЕГУ✍ и узнай все подробности. #бег #минск #фитнестренер"
+    },
+    {
+      "url": "https://www.instagram.com/anisenkova.fitness/reel/ChT9j1xIE5B/",
+      "caption": "#gymmotivations ❤ #lifeisbeautiful #followme #alwaysdifferent #moment - @anisenkova.fitness on August 16, 2022"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "тренажёрный зал"
+    },
+    {
+      "slug": "beg",
+      "parentSlug": "beg",
+      "label": "Бег",
+      "evidence": "Бег"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Минск",
+  "address": "г. Минск, пр-т Победителей, 11",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": 50,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/anisenkova.fitness.jpg",
+  "photos": [
+    "/trainers/instagram/anisenkova.fitness.jpg",
+    "/trainers/instagram/anisenkova.fitness-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/anisenkova.fitness/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://www.levelup-linguistic-fitness.online/lessonsenglish_for_fitness"
+  },
+  "missing": [
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

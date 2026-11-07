@@ -1,0 +1,65 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/leshkoandrey/",
+  "handle": "leshkoandrey",
+  "slug": "leshkoandrey",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Андрей",
+  "lastName": "Лешко",
+  "fullName": "Андрей Лешко",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Андрей",
+    "Фамилия: Лешко"
+  ],
+  "headline": "",
+  "sourceBio": "fight_club_volkovysk",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Андрей. Фамилия: Лешко.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Андрей Лешко.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/leshkoandrey.jpg",
+  "photos": [
+    "/trainers/instagram/leshkoandrey.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/leshkoandrey/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

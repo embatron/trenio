@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pavel_berserk_shelest/",
+  "handle": "pavel_berserk_shelest",
+  "slug": "pavel_berserk_shelest",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Павел",
+  "lastName": "Шелест",
+  "fullName": "Павел Шелест",
+  "gender": "male",
+  "nameQuotes": [
+    "Павел Шелест"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "Боксёр-кулачник Боец лиги @topdogfight Тренер-практик. Бойцовский бренд @berserk.renew 🎖 МСМК",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Павел Шелест, бокс, Минск",
+  "threadsUrl": "",
+  "bio": "Я Павел Шелест, тренер по боксу в Минске. Я боксёр-кулачник и тренер-практик. Я МСМК.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/pavel_berserk_shelest.jpg",
+  "photos": [
+    "/trainers/instagram/pavel_berserk_shelest.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pavel_berserk_shelest/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://youtu.be/uvxV9JWIfs4"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

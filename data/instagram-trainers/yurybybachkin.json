@@ -1,0 +1,65 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yurybybachkin/",
+  "handle": "yurybybachkin",
+  "slug": "yurybybachkin",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юрий",
+  "lastName": "Быбочкин",
+  "fullName": "Юрий Быбочкин",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Юрий",
+    "Фамилия: Быбочкин"
+  ],
+  "headline": "",
+  "sourceBio": "team_fighting_grodno",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Юрий. Фамилия: Быбочкин.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Юрий Быбочкин.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yurybybachkin.jpg",
+  "photos": [
+    "/trainers/instagram/yurybybachkin.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yurybybachkin/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

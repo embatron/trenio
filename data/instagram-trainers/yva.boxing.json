@@ -1,0 +1,68 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yva.boxing/",
+  "handle": "yva.boxing",
+  "slug": "yva.boxing",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виталий",
+  "lastName": "Ягнешик",
+  "fullName": "Виталий Ягнешик",
+  "gender": "male",
+  "nameQuotes": [
+    "Виталий Ягнешик",
+    "Имя: Виталий",
+    "Фамилия: Ягнешик"
+  ],
+  "headline": "",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Виталий. Фамилия: Ягнешик.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Виталий Ягнешик.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yva.boxing.jpg",
+  "photos": [
+    "/trainers/instagram/yva.boxing.jpg",
+    "/trainers/instagram/yva.boxing-g2.jpg",
+    "/trainers/instagram/yva.boxing-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 3,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 1
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yva.boxing/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/jenny.protennis/",
+  "handle": "jenny.protennis",
+  "slug": "jenny.protennis",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгения",
+  "lastName": "Палагутина",
+  "fullName": "Евгения Палагутина",
+  "gender": "female",
+  "nameQuotes": [
+    "Евгения Палагутина",
+    "Тренер Евгения"
+  ],
+  "headline": "Тренер по большому теннису",
+  "sourceBio": "Магистр биологических наук",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Евгения Палагутина, Теннис, Минск",
+  "threadsUrl": "",
+  "bio": "Я Евгения Палагутина, тренер в Минске. Веду большой теннис. Я магистр биологических наук и судья II кат. В теннисе 20 лет, научный подход.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "bolshoj-tennis",
+      "parentSlug": "raketki",
+      "label": "Большой теннис",
+      "evidence": "Большой теннис"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bolshoj-tennis",
+    "parentSlug": "raketki",
+    "label": "Большой теннис"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/jenny.protennis.jpg",
+  "photos": [
+    "/trainers/instagram/jenny.protennis.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/jenny.protennis/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/eugeniyapalagutina",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

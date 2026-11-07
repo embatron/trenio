@@ -13,20 +13,43 @@
   "nameQuotes": [
     "Александр Красавин"
   ],
-  "headline": "",
+  "headline": "Тренер по фитнесу",
   "sourceBio": "Тренер спортсмен, серебряный призер Европы , бронзовый призер кубка мира.",
   "sourceAbout": [],
   "sourceThreads": "",
-  "operatorNotes": "Александр Красавин",
+  "operatorNotes": "Александр Красавин. Тренер по фитнесу, бодибилдинг, ОФП.",
   "threadsUrl": "",
-  "bio": "Я Александр Красавин, тренер и спортсмен. Серебряный призер Европы и бронзовый призер кубка мира.",
+  "bio": "Я Александр Красавин, тренер по фитнесу, бодибилдингу и ОФП. Я спортсмен, серебряный призер Европы и бронзовый призер кубка мира.",
   "about": [
     "Веду персональные занятия и групповой формат."
   ],
   "pinned": [],
-  "sports": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "bodibilding",
+      "parentSlug": "fitnes",
+      "label": "Бодибилдинг",
+      "evidence": "Бодибилдинг"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
+    }
+  ],
   "practicedSports": [],
-  "primarySport": null,
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
   "city": "Минск",
   "address": "",
   "cityCandidates": [],
@@ -60,7 +83,6 @@
     "website": ""
   },
   "missing": [
-    "sport",
     "price",
     "phone",
     "email",

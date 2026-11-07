@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/m.petrovskaya/",
+  "handle": "m.petrovskaya",
+  "slug": "m.petrovskaya",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Марина",
+  "lastName": "Петровская",
+  "fullName": "Марина Петровская",
+  "gender": "female",
+  "nameQuotes": [
+    "Марина Петровская",
+    "Тренер по плаванию Минск | Марина Петровская"
+  ],
+  "headline": "Тренер по водным видам спорта",
+  "sourceBio": "Мастер спорта с красным дипломом Со мной переплывают Босфор Научу плавать, а не купаться",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Марина Петровская, Плавание",
+  "threadsUrl": "",
+  "bio": "Я Марина Петровская, тренер в Минске. Я учу плавание, а не купаться. Я мастер спорта с красным дипломом. Со мной переплывают Босфор.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/m.petrovskaya/p/DMuVgEFsomp/",
+      "caption": "Тезисно про здоровое питание."
+    },
+    {
+      "url": "https://www.instagram.com/m.petrovskaya/p/DT71zKaiIlu/",
+      "caption": "Не буду умничать, о том что работают все четыре конечности, в сложнейшей координации движения, что формируется нейронный связи… Хотя и это тоже)) но, сегодня всё банально просто, читаем в карусели 👉🏾"
+    },
+    {
+      "url": "https://www.instagram.com/m.petrovskaya/reel/CydNpEAoNvy/",
+      "caption": "Наш путь с нуля до Босфора! Длинной в 10 месяцев. У вас есть тренер и программа подготовки - это четкий план, следуя которому, будьте уверены, вы переплывете не только Босфор!"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Водные виды",
+      "evidence": "плавание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Водные виды"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/m.petrovskaya.jpg",
+  "photos": [
+    "/trainers/instagram/m.petrovskaya.jpg",
+    "/trainers/instagram/m.petrovskaya-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/m.petrovskaya/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

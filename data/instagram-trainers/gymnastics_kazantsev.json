@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/gymnastics_kazantsev/",
+  "handle": "gymnastics_kazantsev",
+  "slug": "gymnastics_kazantsev",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Андрей",
+  "lastName": "Казанцев",
+  "fullName": "Андрей Казанцев",
+  "gender": "male",
+  "nameQuotes": [
+    "Казанцев Андрей"
+  ],
+  "headline": "Тренер по спортивной гимнастике",
+  "sourceBio": "МС по спортивной гимнастике🤸 Тренер \"Европейского центра гимнастики\" Мальчики 4-8 лет",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Минск, дети, подростки. улица Одинцова, 32 | проспект Победителей, 2 | улица Калиновского, 111 | улица Сурганова, 2а",
+  "threadsUrl": "",
+  "bio": "Я Андрей Казанцев, тренер по спортивной гимнастике в Минске. Веду детей и подростков, мальчиков 4-8 лет, в Европейском центре гимнастики.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "sportivnaya",
+      "parentSlug": "gimnastika",
+      "label": "Спортивная гимнастика",
+      "evidence": "Спортивная гимнастика"
+    },
+    {
+      "slug": "gimnastika",
+      "parentSlug": "gimnastika",
+      "label": "Гимнастика",
+      "evidence": "Гимнастика"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "sportivnaya",
+    "parentSlug": "gimnastika",
+    "label": "Спортивная гимнастика"
+  },
+  "city": "Минск",
+  "address": "улица Одинцова, 32 | проспект Победителей, 2 | улица Калиновского, 111",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "kid",
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/gymnastics_kazantsev.jpg",
+  "photos": [
+    "/trainers/instagram/gymnastics_kazantsev.jpg",
+    "/trainers/instagram/gymnastics_kazantsev-g2.jpg",
+    "/trainers/instagram/gymnastics_kazantsev-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/gymnastics_kazantsev/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

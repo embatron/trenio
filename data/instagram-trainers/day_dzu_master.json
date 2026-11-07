@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/day_dzu_master/",
+  "handle": "day_dzu_master",
+  "slug": "day_dzu_master",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Кирилл",
+  "lastName": "Грищенко",
+  "fullName": "Кирилл Грищенко",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Кирилл",
+    "Фамилия: Грищенко"
+  ],
+  "headline": "",
+  "sourceBio": "- Heavyweight MMA: 10-2 -🥇|| European Games Greco-Roman Wrestling -🥇Belarus Boxing Champion -🥇🥈🥇ADCC Belarus",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Кирилл. Фамилия: Грищенко.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Кирилл Грищенко. Выступаю в тяжёлом весе MMA, счёт 10-2. Чемпион Европейских игр по борьбе.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/day_dzu_master/p/DYPnVu8DKYh/",
+      "caption": "Всего за 3 года со 129 места поднялся на 64 место. С каждым боем я стабильно учусь, расту и становлюсь все сильнее 💪🏻 Как вам такой прогресс в мировом рейтинге? 🥊"
+    }
+  ],
+  "sports": [],
+  "practicedSports": [
+    {
+      "slug": "mma",
+      "label": "MMA",
+      "quote": "MMA"
+    },
+    {
+      "slug": "borba",
+      "label": "Борьба",
+      "quote": "Борьба"
+    }
+  ],
+  "primarySport": null,
+  "city": "",
+  "address": "",
+  "cityCandidates": [
+    "Переход",
+    "Борьба",
+    "Прогресс"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/day_dzu_master.jpg",
+  "photos": [
+    "/trainers/instagram/day_dzu_master.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/day_dzu_master/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "city",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

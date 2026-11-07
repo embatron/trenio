@@ -1,0 +1,70 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/murakbxing/",
+  "handle": "murakbxing",
+  "slug": "murakbxing",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Мурат",
+  "lastName": "Азербиев",
+  "fullName": "Мурат Азербиев",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Мурат",
+    "Фамилия: Азербиев"
+  ],
+  "headline": "",
+  "sourceBio": "индивидуальные тренировки 🥊",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Мурат. Фамилия: Азербиев.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Мурат Азербиев. Провожу индивидуальные тренировки.",
+  "about": [
+    "Тренировки проходят индивидуально."
+  ],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/murakbxing.jpg",
+  "photos": [
+    "/trainers/instagram/murakbxing.jpg",
+    "/trainers/instagram/murakbxing-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/murakbxing/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

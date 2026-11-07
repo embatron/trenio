@@ -1,0 +1,92 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/coach_maryia/",
+  "handle": "coach_maryia",
+  "slug": "coach_maryia",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Мария",
+  "lastName": "Терновская",
+  "fullName": "Мария Терновская",
+  "gender": "female",
+  "nameQuotes": [
+    "Мария Терновская"
+  ],
+  "headline": "Тренер по большому теннису",
+  "sourceBio": "Теннис для здоровья.",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Мария Терновская, Теннис, Минск",
+  "threadsUrl": "",
+  "bio": "Я Мария Терновская, нутрициолог и тренер в Минске. Веду теннис. Теннис для здоровья. Набор в группу для взрослых.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/coach_maryia/p/DaxkRazAG_5/",
+      "caption": "Как понять, какие тренировки выбрать? Индивидуально, в группе?"
+    },
+    {
+      "url": "https://www.instagram.com/coach_maryia/p/DZao_SagUpQ/",
+      "caption": "Я НЕ подойду вам как тренер, если"
+    },
+    {
+      "url": "https://www.instagram.com/coach_maryia/p/DYZ3E2fCGo-/",
+      "caption": "Что купить, чтобы было бюджетно, долго хранилось и быстро готовилось?"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "bolshoj-tennis",
+      "parentSlug": "raketki",
+      "label": "Большой теннис",
+      "evidence": "теннис"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bolshoj-tennis",
+    "parentSlug": "raketki",
+    "label": "Большой теннис"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [
+    "adult"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/coach_maryia.jpg",
+  "photos": [
+    "/trainers/instagram/coach_maryia.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/coach_maryia/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/alexzl_7002/",
+  "handle": "alexzl_7002",
+  "slug": "alexzl_7002",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александр",
+  "lastName": "Злыгостев",
+  "fullName": "Александр Злыгостев",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Александр",
+    "Фамилия: Злыгостев"
+  ],
+  "headline": "",
+  "sourceBio": "Muaythai and kikboxing Coach СК. GYM STARS Минск, СДЮШОР Минского района",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Александр. Фамилия: Злыгостев.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Александр Злыгостев. Я тренер в Минске, в СК GYM STARS и в СДЮШОР Минского района.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/alexzl_7002.jpg",
+  "photos": [
+    "/trainers/instagram/alexzl_7002.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/alexzl_7002/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/dmitrypiasetsky/",
+  "handle": "dmitrypiasetsky",
+  "slug": "dmitrypiasetsky",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дмитрий",
+  "lastName": "Пясецкий",
+  "fullName": "Дмитрий Пясецкий",
+  "gender": "male",
+  "nameQuotes": [
+    "Имя: Дмитрий",
+    "Фамилия: Пясецкий"
+  ],
+  "headline": "",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Имя: Дмитрий. Фамилия: Пясецкий.",
+  "threadsUrl": "",
+  "bio": "Меня зовут Дмитрий Пясецкий.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/dmitrypiasetsky.jpg",
+  "photos": [
+    "/trainers/instagram/dmitrypiasetsky.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/dmitrypiasetsky/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://youtube.com/live/tzzCk2Q9bCI?feature=share"
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}
