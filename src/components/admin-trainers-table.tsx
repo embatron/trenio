@@ -608,13 +608,13 @@ export function AdminTrainersTable({
                 <th>Ссылка</th>
                 <th>Заход</th>
                 <th>Публикация</th>
+                <th className="is-contacts">Контакты</th>
                 <th>Категория</th>
                 <th>С кем</th>
                 <th>Город</th>
                 <th>Добавлен</th>
                 <th>Оценка</th>
                 <th>Рейтинг</th>
-                <th>Контакты</th>
                 <th>Аккаунт</th>
                 <th>Заметка</th>
               </tr>
@@ -652,13 +652,13 @@ export function AdminTrainersTable({
                   <td><FlagMark at={trainer.inviteSentAt} sent="Ссылка отправлена" waiting="Ссылка не отправлена" /></td>
                   <td><FlagMark at={trainer.doorEnteredAt} sent="Был по ссылке" waiting="Ещё не заходил" /></td>
                   <td className="is-publish"><PublishMark status={trainer.status} /></td>
+                  <td className="is-contacts"><TrainerSocial instagram={trainer.instagram} telegram={trainer.telegram} phone={confirmedCabinetPhone(trainer)} /></td>
                   <td>{categoryLabels(trainer.sportSlugs) || "—"}</td>
                   <td className="is-audience">{audienceLabels(trainer.audiences) || "—"}</td>
                   <td>{trainer.city || "—"}</td>
                   <td>{trainer.createdAt ? addedOn(trainer.createdAt) : "—"}</td>
                   <td><TrainerStars rating={trainer.rating} reviews={trainer.reviews} /></td>
                   <td title={`Рейтинг ${trainer.popularity} из 100`}>{Number.isInteger(trainer.popularity) ? trainer.popularity : trainer.popularity.toFixed(1)}</td>
-                  <td><TrainerSocial instagram={trainer.instagram} telegram={trainer.telegram} phone={confirmedCabinetPhone(trainer)} /></td>
                   <td title={trainer.account ? "Аккаунт создан и привязан к карточке" : "В каталоге есть карточка, но пользователь ещё не зарегистрировался и не забрал профиль"}>
                     {trainer.account ? displayAccountLogin(trainer.account.email) : "Аккаунт не создан"}
                   </td>

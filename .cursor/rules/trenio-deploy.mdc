@@ -1,0 +1,18 @@
+---
+description: Soft production deploy so trenio.by does not answer 502
+alwaysApply: true
+---
+
+# Soft deploy
+
+A production update builds while the current process keeps answering. Do not restart the service until a standby copy of the new build is already answering. The edge uses that standby when the main port refuses a connection, so the restart does not answer 502.
+
+## Order
+
+1. Pull and build. Leave the service running.
+2. Start the standby. Wait until it returns 200.
+3. If the standby never answers, stop it and leave the service as it is.
+4. Restart the service only after the standby answers.
+5. Wait until the service answers 200 again, then stop the standby.
+
+Do not restart the service first. Do not restart the other sites on that machine. Host, ports, the standby command, and the nginx upstream are in `.cursor/skills/trenio-vps/SKILL.md`. Do not copy them into this rule, and do not print `.env`.

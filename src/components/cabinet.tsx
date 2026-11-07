@@ -713,6 +713,8 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-table--trainers td.is-note,
 .cabinet-table--trainers td.is-actions,
 .cabinet-table--trainers td.is-publish { text-align: center; }
+.cabinet-table--trainers th.is-contacts,
+.cabinet-table--trainers td.is-contacts { text-align: left; }
 .cabinet-table--trainers .is-publish.is-published { color: #16a34a; }
 .cabinet-table--trainers .is-publish.is-draft { color: #f59e0b; }
 .cabinet-table--trainers .is-publish.is-hidden,
@@ -752,11 +754,11 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-icon-btn.is-inactive,
 .cabinet-icon-btn.is-inactive:disabled { color: var(--muted); opacity: 0.45; cursor: default; }
 .cabinet-icon-btn.is-inactive:hover { background: transparent; }
-.cabinet-table--trainers .cabinet-person { display: grid; grid-template-columns: 44px max-content; align-items: center; column-gap: 8px; width: max-content; }
+.cabinet-table--trainers .cabinet-person { display: grid; grid-template-columns: 44px minmax(0, 240px); align-items: center; column-gap: 8px; width: max-content; }
 .cabinet-table--trainers .cabinet-row-actions { justify-content: center; gap: 0; }
-.cabinet-table--trainers .cabinet-person__text { min-width: max-content; }
-.cabinet-table--trainers .cabinet-person__text strong,
-.cabinet-table--trainers .cabinet-person__meta { display: block; white-space: nowrap; overflow: visible; text-overflow: clip; }
+.cabinet-table--trainers .cabinet-person__text { min-width: 0; max-width: 240px; }
+.cabinet-table--trainers .cabinet-person__text strong { display: block; white-space: nowrap; overflow: visible; text-overflow: clip; }
+.cabinet-table--trainers .cabinet-person__meta { display: block; max-width: 240px; white-space: normal; overflow-wrap: anywhere; }
 .cabinet-table--trainers .cabinet-person__text { display: flex; flex-direction: column; justify-content: center; gap: 1px; line-height: 1.15; }
 .cabinet-table--trainers .cabinet-person__text strong { line-height: 1.15; }
 .cabinet-table--trainers a.cabinet-trainer-name { display: inline; min-height: 0; line-height: 1.15; color: var(--primary); text-decoration: none; }
@@ -768,7 +770,7 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-table--trainers .cabinet-rating.is-empty { color: var(--muted); font-weight: var(--fw-ui); }
 .cabinet-table--trainers .cabinet-rating.is-empty svg { fill: none; stroke: var(--muted); stroke-width: var(--icon-stroke); }
 .cabinet-table--trainers .cabinet-rating__count { color: var(--muted); font-weight: var(--fw-ui); }
-.cabinet-table--trainers .cabinet-social { display: inline-flex; align-items: center; justify-content: center; }
+.cabinet-table--trainers .cabinet-social { display: inline-flex; align-items: center; justify-content: flex-start; }
 .cabinet-table--trainers .cabinet-social__link { width: 44px; height: 44px; display: grid; place-items: center; color: inherit; }
 .cabinet-table--trainers .cabinet-social__link svg { width: 22px; height: 22px; overflow: visible; }
 .cabinet-table--trainers .cabinet-social__link--line svg { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
