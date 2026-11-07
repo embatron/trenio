@@ -5,6 +5,7 @@ export * from "./trainer-profiles";
 export * from "./trainer-staff-notes";
 export * from "./trainer-profile-views";
 export * from "./trainer-card-impressions";
+export * from "./trainer-contact-clicks";
 export * from "./trainer-reviews";
 export * from "./user-favorites";
 export * from "./messages";

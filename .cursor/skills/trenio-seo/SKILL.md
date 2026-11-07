@@ -20,7 +20,7 @@ Product copy and the URL rules stay in `docs/PRODUCT.md` §6 and `.cursor/rules/
 
 ## Adapt a page
 
-1. Classify it with [pages.md](pages.md). Private, token, empty-shell, and filtered URLs are `noindex`. A city + one sport page stays indexable even when no trainer is published, because the title and the about copy already exist.
+1. Classify it with [pages.md](pages.md). Private, token, empty-shell, and filtered URLs are `noindex`. A city + one sport page is `noindex` and stays out of the sitemap until a published trainer matches that city and sport. The page itself stays open. Publishing the trainer puts the URL back into the index and the sitemap with no extra switch.
 2. Build the document with the page-kind helper. It calls `seoHead` from `src/lib/seo/head.ts`. Canonical is absolute and has no query string.
 3. H1 stays the product sentence already on the page (`Найти тренера по …`, `Я ищу тренера`, `Привет!`). The title carries the same query, then ` | ` and `SITE_NAME` (`Я ищу тренера на trenio.by`) via `siteTitle`. Do not rewrite the H1 to stuff a keyword. A trainer title is `Тренер по {виды} {имя фамилия} в {городе}`.
 4. Description is one or two sentences: the query, then city, price, and format. One extra alias from `pickSearchAlias`. Never a comma list of aliases.

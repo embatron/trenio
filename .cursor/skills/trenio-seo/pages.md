@@ -11,8 +11,8 @@ JSON-LD for each row comes from the helper in [markup.md](markup.md). A `noindex
 | Category | `/categories/{parent}` | yes | `Найти тренера по {titleGenitive} \| Я ищу тренера на trenio.by` |
 | Sport | `/categories/{parent}/{child}` | yes | same pattern, child dative |
 | City | `/city/{city}` | yes | `Найти тренера в {locative} \| Я ищу тренера на trenio.by` |
-| City + sport | `/city/{city}/{sport}` | yes | `Найти тренера по {dative} в {locative} \| Я ищу тренера на trenio.by` |
-| Nested sport | `/city/minsk/yoga/yoga` | yes | same, when the sport slug equals its parent |
+| City + sport | `/city/{city}/{sport}` | yes, when a published trainer matches that city and sport. Otherwise `noindex` and out of the sitemap. The page stays open | `Найти тренера по {dative} в {locative} \| Я ищу тренера на trenio.by` |
+| Nested sport | `/city/minsk/yoga/yoga` | same rule as city + sport | same, when the sport slug equals its parent |
 | Trainer | `/trainers/{slug}` | yes | `Тренер по {все виды в дательном, через «и»} {имя фамилия} в {предложный город} \| Я ищу тренера на trenio.by`. Example: `Тренер по боксу Артём Романович в Минске \| Я ищу тренера на trenio.by`. ОФП, ЛФК and ОФК expand. A town outside the twenty uses `в городе {name}`. The H1 stays the person's name. |
 | Map | `/map` | yes | `Тренеры на карте Беларуси \| Я ищу тренера на trenio.by` |
 | Map with query | `/map?sports=` or `?city=` | no | canonical stays `/map` |

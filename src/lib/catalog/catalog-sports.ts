@@ -189,3 +189,65 @@ export function listCatalogSitemapPaths() {
   }
   return [...paths];
 }
+
+export type CitySportPresence = {
+  city: string;
+  sportSlugs: string[];
+  sportParents: string[];
+};
+
+function cityNameKey(value: string) {
+  return value.trim().toLowerCase().replaceAll("ё", "е");
+}
+
+/** Same city and sport test the catalog page uses before any audience or price filter. */
+export function citySportHasTrainer(
+  trainers: CitySportPresence[],
+  city: CityCatalogPage,
+  sport: CatalogSport,
+) {
+  const name = cityNameKey(city.name);
+  if (!name) return false;
+  return trainers.some((trainer) => {
+    if (!cityNameKey(trainer.city).includes(name)) return false;
+    return trainerMatchesSportSelection(
+      { sportSlugs: trainer.sportSlugs, sportParents: trainer.sportParents, tags: [] },
+      [sport],
+      "",
+    );
+  });
+}
+
+export function citySportPageIsOpen(
+  trainers: Array<{ city: { label: string }; sports: Array<{ slug: string; parentSlug: string }> }> | undefined,
+  city: CityCatalogPage | null,
+  sport: CatalogSport | null,
+) {
+  if (!trainers || !city || !sport) return false;
+  return citySportHasTrainer(
+    trainers.map((trainer) => ({
+      city: trainer.city.label,
+      sportSlugs: trainer.sports.map((item) => item.slug),
+      sportParents: trainer.sports.map((item) => item.parentSlug),
+    })),
+    city,
+    sport,
+  );
+}
+
+/** City + sport paths that currently have a published trainer. */
+export function indexableCitySportPaths(trainers: CitySportPresence[]) {
+  const paths: string[] = [];
+  for (const city of listCityCatalogPages()) {
+    for (const sport of SPORTS) {
+      if (citySportHasTrainer(trainers, city, sport)) paths.push(catalogSportPath(city.slug, sport));
+    }
+  }
+  return paths;
+}
+
+/** Full catalog list, with empty city + sport pages left out. City hubs stay. */
+export function catalogPathsForSitemap(indexableCitySports: readonly string[]) {
+  const open = new Set(indexableCitySports);
+  return listCatalogSitemapPaths().filter((path) => !/^\/city\/[^/]+\/.+/.test(path) || open.has(path));
+}

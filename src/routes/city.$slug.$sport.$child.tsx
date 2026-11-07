@@ -1,5 +1,5 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
-import { catalogSportById } from "@/lib/catalog/catalog-sports";
+import { catalogSportById, citySportPageIsOpen } from "@/lib/catalog/catalog-sports";
 import { catalogPageHead } from "@/lib/seo/catalog";
 import { cityCatalogBySlug } from "@/lib/catalog/city-pages";
 import { canonicalCategoryPath } from "@/lib/catalog/slug-policy";
@@ -34,11 +34,11 @@ export const Route = createFileRoute("/city/$slug/$sport/$child")({
     }
     throw notFound();
   },
-  head: ({ params }) => {
+  head: ({ params, loaderData }) => {
     const city = cityCatalogBySlug(params.slug);
     const sport = catalogSportById(`${params.sport}/${params.child}`);
     if (!city || !sport) return { meta: [{ title: "Город | Я ищу тренера на trenio.by" }] };
-    return catalogPageHead(city, sport);
+    return catalogPageHead(city, sport, !citySportPageIsOpen(loaderData?.trainers, city, sport));
   },
   loader: async () => {
     const [ratings, prices, trainers] = await Promise.all([

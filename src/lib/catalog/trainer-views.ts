@@ -7,6 +7,7 @@ import { readSessionToken } from "@/auth/session";
 import { requireAuthMiddleware } from "@/auth/middleware";
 import { getDb } from "@/db";
 import { trainerProfileViews, trainerProfiles, userFavorites } from "@/db/schema";
+import { contactClickDailyCounts, type ContactClickKind } from "@/lib/catalog/trainer-contact-clicks";
 import { impressionDailyCounts } from "@/lib/catalog/trainer-impression-store";
 import {
   emptyFavoriteStats,
@@ -23,17 +24,47 @@ import { visitorId } from "@/lib/catalog/trainer-visitor";
 
 export type { TrainerFavoriteStats, TrainerViewPeriod, TrainerViewStats };
 
+export type TrainerContactStats = {
+  phone: TrainerViewStats;
+  instagram: TrainerViewStats;
+  telegram: TrainerViewStats;
+};
+
 export type TrainerCabinetPulse = {
   visits: TrainerViewStats;
   favorites: TrainerFavoriteStats;
   impressions: TrainerViewStats;
+  contacts: TrainerContactStats;
+};
+
+const emptyContacts: TrainerContactStats = {
+  phone: emptyViewStats,
+  instagram: emptyViewStats,
+  telegram: emptyViewStats,
 };
 
 const emptyPulse: TrainerCabinetPulse = {
   visits: emptyViewStats,
   favorites: emptyFavoriteStats,
   impressions: emptyViewStats,
+  contacts: emptyContacts,
 };
+
+function contactsFromDaily(
+  rows: Array<{ day: string; kind: ContactClickKind; total: number }>,
+  today: string,
+): TrainerContactStats {
+  const pick = (kind: ContactClickKind) =>
+    statsFromDaily(
+      rows.filter((row) => row.kind === kind).map(({ day, total }) => ({ day, total })),
+      today,
+    );
+  return {
+    phone: pick("phone"),
+    instagram: pick("instagram"),
+    telegram: pick("telegram"),
+  };
+}
 
 /** One visit per browser per Minsk day. The profile owner is not counted. */
 export const recordTrainerProfileViewFn = createServerFn({ method: "POST" })
@@ -74,7 +105,7 @@ export const getOwnTrainerViewStatsFn = createServerFn({ method: "GET" })
 
     const today = minskToday();
     const earliest = periodSpans(today).month.previous.start;
-    const [viewRows, saveRows, impressionRows] = await Promise.all([
+    const [viewRows, saveRows, impressionRows, contactRows] = await Promise.all([
       db
         .select({ day: trainerProfileViews.day, total: count() })
         .from(trainerProfileViews)
@@ -89,11 +120,13 @@ export const getOwnTrainerViewStatsFn = createServerFn({ method: "GET" })
           ...(profile.ownerUserId ? [ne(userFavorites.userId, profile.ownerUserId)] : []),
         )),
       impressionDailyCounts(profile.id, earliest),
+      contactClickDailyCounts(profile.id, earliest),
     ]);
 
     return {
       visits: statsFromDaily(viewRows.map((row) => ({ day: row.day, total: Number(row.total) })), today),
       favorites: favoriteStats(saveRows.map((row) => row.createdAt.getTime()), today),
       impressions: statsFromDaily(impressionRows, today),
+      contacts: contactsFromDaily(contactRows, today),
     };
   });

@@ -21,10 +21,20 @@ import { countRu, pluralRu } from "@/lib/ru-plural";
 
 type PulseMode = "day" | "week" | "month";
 
-const PERIOD_COPY: Record<PulseMode, { link: string; visit: string; saved: string; shown: string; same: string; against: string }> = {
-  day: { link: "сутки", visit: "Посещения за сутки", saved: "Сохранения за сутки", shown: "Показы за сутки", same: "как вчера", against: "ко вчерашнему" },
-  week: { link: "неделя", visit: "Посещения за неделю", saved: "Сохранения за неделю", shown: "Показы за неделю", same: "как на прошлой неделе", against: "к прошлой неделе" },
-  month: { link: "месяц", visit: "Посещения за месяц", saved: "Сохранения за месяц", shown: "Показы за месяц", same: "как в прошлом месяце", against: "к прошлому месяцу" },
+const PERIOD_COPY: Record<PulseMode, {
+  link: string;
+  visit: string;
+  saved: string;
+  shown: string;
+  phone: string;
+  instagram: string;
+  telegram: string;
+  same: string;
+  against: string;
+}> = {
+  day: { link: "сутки", visit: "Посещения за сутки", saved: "Сохранения за сутки", shown: "Показы за сутки", phone: "Телефон за сутки", instagram: "Instagram за сутки", telegram: "Telegram за сутки", same: "как вчера", against: "ко вчерашнему" },
+  week: { link: "неделя", visit: "Посещения за неделю", saved: "Сохранения за неделю", shown: "Показы за неделю", phone: "Телефон за неделю", instagram: "Instagram за неделю", telegram: "Telegram за неделю", same: "как на прошлой неделе", against: "к прошлой неделе" },
+  month: { link: "месяц", visit: "Посещения за месяц", saved: "Сохранения за месяц", shown: "Показы за месяц", phone: "Телефон за месяц", instagram: "Instagram за месяц", telegram: "Telegram за месяц", same: "как в прошлом месяце", against: "к прошлому месяцу" },
 };
 
 const meRoute = getRouteApi("/me");
@@ -33,7 +43,7 @@ export const Route = createFileRoute("/me/")({
   head: () => ({
     meta: [
       { title: "Общая панель · личный кабинет тренера · Я ищу тренера на trenio.by" },
-      { name: "description", content: "Общая панель: статус страницы, посещения и рейтинг." },
+      { name: "description", content: "Общая панель: статус страницы, посещения, переходы и рейтинг." },
       { name: "robots", content: "noindex,follow" },
     ],
   }),
@@ -100,6 +110,15 @@ function Figure({
       <span className={`cabinet-stat__delta ${delta.className}`}>{delta.text}</span>
       {note ? <span className="cabinet-stat__note">{note}</span> : null}
     </div>
+  );
+}
+
+function contactsAnswer(): ReactNode {
+  return (
+    <>
+      <p>Переход — это нажатие на телефон, Instagram или Telegram на публичной странице. Каждое нажатие пишется отдельно. Если нажали вы сами, этот переход не считается. Два нажатия подряд за пару секунд считаются одним.</p>
+      <p>Ссылки «сутки», «неделя» и «месяц» меняют все три числа. Сравнение считается так же, как у посещений.</p>
+    </>
   );
 }
 
@@ -294,6 +313,7 @@ function MeOverviewPage() {
   const { trainer, views, ratings } = meRoute.useLoaderData();
   const [visitMode, setVisitMode] = useState<PulseMode>("day");
   const [showMode, setShowMode] = useState<PulseMode>("day");
+  const [contactMode, setContactMode] = useState<PulseMode>("day");
   const hasProfile = Boolean(trainer?.slug);
   const rating = hasProfile && trainer ? ratingFor(trainer.slug, ratings) : null;
   const checklist = checklistFor(trainer);
@@ -341,6 +361,35 @@ function MeOverviewPage() {
               against={PERIOD_COPY[showMode].against}
             />
           </div>
+          <div className="cabinet-stat">
+            <StatMark>
+              <path d="M14 5h5v5" />
+              <path d="M19 5l-8 8" />
+              <path d="M10 6H6a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4" />
+            </StatMark>
+            <PeriodSwitch value={contactMode} label="Период переходов" onChange={setContactMode} />
+            <Figure
+              value={views.contacts.phone[contactMode].current}
+              label={PERIOD_COPY[contactMode].phone}
+              period={views.contacts.phone[contactMode]}
+              same={PERIOD_COPY[contactMode].same}
+              against={PERIOD_COPY[contactMode].against}
+            />
+            <Figure
+              value={views.contacts.instagram[contactMode].current}
+              label={PERIOD_COPY[contactMode].instagram}
+              period={views.contacts.instagram[contactMode]}
+              same={PERIOD_COPY[contactMode].same}
+              against={PERIOD_COPY[contactMode].against}
+            />
+            <Figure
+              value={views.contacts.telegram[contactMode].current}
+              label={PERIOD_COPY[contactMode].telegram}
+              period={views.contacts.telegram[contactMode]}
+              same={PERIOD_COPY[contactMode].same}
+              against={PERIOD_COPY[contactMode].against}
+            />
+          </div>
           <div className="cabinet-stat cabinet-stat--brand">
             <StatMark>
               <path d="M4 16l5-5 4 3 7-7" />
@@ -365,6 +414,7 @@ function MeOverviewPage() {
           items={[
             { q: "Как считаются посещения?", a: visitsAnswer() },
             { q: "Что такое показ?", a: showsAnswer() },
+            { q: "Как считаются переходы?", a: contactsAnswer() },
             { q: "Как считается рейтинг?", a: popularityAnswer(parts, rating, checklist) },
             {
               q: "Когда способ связи виден клиенту?",

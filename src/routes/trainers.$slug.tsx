@@ -32,6 +32,7 @@ import { ShareProfileButton } from "@/components/share-profile";
 import { TrainerAddressMap } from "@/components/trainer-address-map";
 import { TrainerContactIcons } from "@/components/messages/trainer-contact-icons";
 import { getPublicTrainerContactsFn, type PublicTrainerContacts } from "@/lib/catalog/trainer-contacts";
+import { recordTrainerContactClick } from "@/lib/catalog/trainer-contact-client";
 import { recordTrainerProfileViewFn } from "@/lib/catalog/trainer-views";
 import { ReviewEditor } from "@/components/review-editor";
 import { ReviewExcerpt, ReviewHtml } from "@/components/review-html";
@@ -1227,7 +1228,7 @@ function TrainerPage() {
       {contacts.phone ? <div className="mobile-contact-bar" aria-label="Телефон">
         <div className="mobile-contact-bar__inner" style={{ gridTemplateColumns: "1fr" }}>
           {phoneVisible ? (
-            <a className="btn btn--primary" href={phoneHref(shownPhone)}>{shownPhone}</a>
+            <a className="btn btn--primary" href={phoneHref(shownPhone)} onClick={() => recordTrainerContactClick(t.slug, "phone")}>{shownPhone}</a>
           ) : (
             <button className="btn btn--primary" type="button" onClick={() => setPhoneVisible(true)}>
               Показать телефон

@@ -26,7 +26,7 @@ Public documents go through `seoHead` in `src/lib/seo/head.ts`. A route does not
 | Category | yes | `categoryRouteHead` | `BreadcrumbList`, `CollectionPage`, `FAQPage` |
 | Sport | yes | `categoryRouteHead` | `BreadcrumbList`, `CollectionPage`, `FAQPage` |
 | City | yes | `catalogPageHead` | `BreadcrumbList`, `CollectionPage` |
-| City + sport | yes | `catalogPageHead` | `BreadcrumbList`, `CollectionPage` |
+| City + sport | yes, when a published trainer matches. Empty stays `noindex` and out of the sitemap | `catalogPageHead` | `BreadcrumbList`, `CollectionPage` when indexed |
 | Trainer | yes | `trainerSeoHead` | `BreadcrumbList`, `ProfilePage`, `Person` |
 | Map | yes, without a query | `mapPageHead(false)` | `BreadcrumbList`, `WebPage` |
 | About | yes | `infoPageHead("about")` | `BreadcrumbList`, `AboutPage` |

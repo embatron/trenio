@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { ne } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { trainerProfiles } from "@/db/schema";
@@ -21,7 +21,7 @@ export const getHomeStatsFn = createServerFn({ method: "GET" }).handler(async ()
       experienceYears: trainerProfiles.experienceYears,
     })
     .from(trainerProfiles)
-    .where(ne(trainerProfiles.status, "archived"));
+    .where(eq(trainerProfiles.status, "published"));
 
   const sports = new Set<string>();
   const cities = new Set<string>();

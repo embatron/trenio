@@ -2,6 +2,7 @@ import { useRouteContext } from "@tanstack/react-router";
 
 import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { formatBelarusPhone } from "@/lib/auth/phone";
+import { recordTrainerContactClick } from "@/lib/catalog/trainer-contact-client";
 import { hasAnyRole } from "@/lib/auth/roles";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
 
@@ -74,18 +75,18 @@ export function TrainerContactIcons({
   const icons = (
     <div className="trainer-contacts" onClick={stopCardNavigation}>
       {phoneLink ? (
-        <a className="trainer-contacts__link trainer-contacts__link--line trainer-contacts__link--phone" href={phoneLink.href} aria-label={`Позвонить ${phoneLink.label}`} title={phoneLink.label}>
+        <a className="trainer-contacts__link trainer-contacts__link--line trainer-contacts__link--phone" href={phoneLink.href} aria-label={`Позвонить ${phoneLink.label}`} title={phoneLink.label} onClick={() => recordTrainerContactClick(slug, "phone")}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d={PHONE_PATH} /></svg>
           {heading ? <span className="trainer-contacts__phone">{phoneLink.label}</span> : null}
         </a>
       ) : null}
       {instagramUrl ? (
-        <a className="trainer-contacts__link" href={instagramUrl} target="_blank" rel="ugc noopener noreferrer" aria-label="Instagram" title="Instagram">
+        <a className="trainer-contacts__link" href={instagramUrl} target="_blank" rel="ugc noopener noreferrer" aria-label="Instagram" title="Instagram" onClick={() => recordTrainerContactClick(slug, "instagram")}>
           <InstagramIcon />
         </a>
       ) : null}
       {telegramUrl ? (
-        <a className="trainer-contacts__link" href={telegramUrl} target="_blank" rel="ugc noopener noreferrer" aria-label="Telegram" title="Telegram">
+        <a className="trainer-contacts__link" href={telegramUrl} target="_blank" rel="ugc noopener noreferrer" aria-label="Telegram" title="Telegram" onClick={() => recordTrainerContactClick(slug, "telegram")}>
           <TelegramIcon />
         </a>
       ) : null}
