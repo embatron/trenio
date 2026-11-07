@@ -5,7 +5,7 @@ import { readYandexIdentity, type YandexIdentity } from "@/lib/auth/yandex-ident
 const TOKEN_URL = "https://oauth.yandex.ru/token";
 const AUTH_URL = "https://oauth.yandex.ru/authorize";
 const INFO_URL = "https://login.yandex.ru/info?format=json";
-const SCOPE = "login:email login:avatar login:default_phone";
+const SCOPE = "login:email login:info login:avatar login:default_phone";
 
 export function yandexConfigured(): boolean {
   return Boolean(process.env.YANDEX_CLIENT_ID?.trim() && process.env.YANDEX_CLIENT_SECRET?.trim());

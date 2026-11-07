@@ -6,6 +6,7 @@ import { hashPassword, normalizeEmail } from "@/auth/password";
 import { beginLogin, revokeAllUserSessions } from "@/auth/service";
 import { getDb } from "@/db";
 import { trainerProfiles, userRoles, users, type User } from "@/db/schema";
+import { rememberOAuthNames } from "@/auth/oauth-profile";
 import { decideYandexLink } from "@/lib/auth/auth-decisions";
 import { isReservedAccountEmail } from "@/lib/auth/pending-email";
 import { getPostLoginPath } from "@/lib/auth/roles";
@@ -104,6 +105,7 @@ export async function openYandexAccount(
   if (!user) return { kind: "refuse", reason: "invalid" };
   const fresh = (await db.select().from(users).where(eq(users.id, user.id)).limit(1))[0] ?? user;
   await stampYandexMailbox(fresh.id, email);
+  await rememberOAuthNames(fresh.id, { firstName: identity.name, lastName: identity.lastName });
   await attachYandexPhone(fresh.id, identity.phone);
   const opened = await beginLogin(fresh, meta);
   if ("totpTicket" in opened) return { kind: "totp", ticket: opened.totpTicket, email, userId: fresh.id };

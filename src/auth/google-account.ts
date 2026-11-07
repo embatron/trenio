@@ -6,6 +6,7 @@ import { hashPassword, normalizeEmail } from "@/auth/password";
 import { beginLogin, revokeAllUserSessions } from "@/auth/service";
 import { getDb } from "@/db";
 import { trainerProfiles, userRoles, users, type User } from "@/db/schema";
+import { rememberOAuthNames } from "@/auth/oauth-profile";
 import { decideGoogleLink } from "@/lib/auth/auth-decisions";
 import type { GoogleIdentity } from "@/lib/auth/google-identity";
 import { isReservedAccountEmail } from "@/lib/auth/pending-email";
@@ -66,6 +67,7 @@ export async function openGoogleAccount(
           passwordHash,
           emailVerifiedAt: new Date(),
           firstName: identity.name,
+          lastName: identity.lastName?.trim() || null,
           status: "active",
           lastSignupIntent: "client_signup",
           googleSub: identity.sub,
@@ -103,6 +105,7 @@ export async function openGoogleAccount(
   if (!user) return { kind: "refuse", reason: "invalid" };
   const fresh = (await db.select().from(users).where(eq(users.id, user.id)).limit(1))[0] ?? user;
   await stampGoogleMailbox(fresh.id, email);
+  await rememberOAuthNames(fresh.id, { firstName: identity.name, lastName: identity.lastName });
   const opened = await beginLogin(fresh, meta);
   if ("totpTicket" in opened) return { kind: "totp", ticket: opened.totpTicket, email, userId: fresh.id };
   const roles = await rolesOf(fresh.id);

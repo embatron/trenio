@@ -48,14 +48,34 @@ export function readYandexIdentity(
   const phoneRaw = body.default_phone && typeof body.default_phone === "object"
     ? (body.default_phone as { number?: unknown }).number
     : "";
-  const given = cleanName(body.first_name);
-  const avatarId = typeof body.default_avatar_id === "string" ? body.default_avatar_id.trim() : "";
+  const named = yandexPersonName(body);
+  const avatarId = yandexAvatarId(body.default_avatar_id);
+  const emptyPortrait = body.is_avatar_empty === true || body.is_avatar_empty === "true";
   return {
     sub,
     email,
-    name: given || "Пользователь",
-    lastName: cleanName(body.last_name),
+    name: named.name,
+    lastName: named.lastName,
     phone: storedBelarusPhone(typeof phoneRaw === "string" ? phoneRaw : ""),
-    avatarUrl: body.is_avatar_empty === true || !avatarId ? null : yandexPortraitUrl(avatarId),
+    avatarUrl: emptyPortrait || !avatarId ? null : yandexPortraitUrl(avatarId),
   };
+}
+
+function yandexAvatarId(value: unknown): string {
+  if (typeof value === "number" && Number.isFinite(value)) return String(Math.trunc(value));
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function yandexPersonName(body: Record<string, unknown>): { name: string; lastName: string } {
+  const first = cleanName(body.first_name);
+  const last = cleanName(body.last_name);
+  if (first || last) return { name: first || "Пользователь", lastName: last };
+  const real = cleanName(body.real_name);
+  if (real) {
+    const [given, ...rest] = real.split(" ");
+    return { name: given || "Пользователь", lastName: rest.join(" ") };
+  }
+  const display = cleanName(body.display_name);
+  if (display) return { name: display, lastName: "" };
+  return { name: "Пользователь", lastName: "" };
 }

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { openGoogleAccount } from "@/auth/google-account";
+import { applyExternalPortrait } from "@/auth/oauth-profile";
 import { googleIdentityFromCode } from "@/auth/google";
 import { clientIpFromHeaders } from "@/auth/request-meta";
 import { sessionCookieHeader } from "@/auth/session";
@@ -77,6 +78,7 @@ export const Route = createFileRoute("/auth/google/callback")({
             userAgent: request.headers.get("user-agent"),
           });
           if (result.kind === "refuse") return toLogin(result.reason === "invalid" ? "failed" : result.reason, back);
+          await applyExternalPortrait(result.userId, identity.avatarUrl, "auth.login.google");
           const doorClaim = packed.door
             ? await claimDoorAfterGoogle({
                 userId: result.userId,

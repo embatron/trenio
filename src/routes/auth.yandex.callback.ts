@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { clientIpFromHeaders } from "@/auth/request-meta";
 import { sessionCookieHeader } from "@/auth/session";
 import { openYandexAccount } from "@/auth/yandex-account";
-import { applyYandexPortrait } from "@/auth/yandex-portrait";
+import { applyExternalPortrait } from "@/auth/oauth-profile";
 import { yandexIdentityFromCode } from "@/auth/yandex";
 import { safeReturnPath } from "@/lib/auth/return-path";
 import { claimDoorAfterYandex } from "@/lib/catalog/trainer-door-claim";
@@ -78,7 +78,7 @@ export const Route = createFileRoute("/auth/yandex/callback")({
             userAgent: request.headers.get("user-agent"),
           });
           if (result.kind === "refuse") return toLogin(result.reason === "invalid" ? "failed" : result.reason, back);
-          await applyYandexPortrait(result.userId, identity.avatarUrl);
+          await applyExternalPortrait(result.userId, identity.avatarUrl, "auth.login.yandex");
           const doorClaim = packed.door
             ? await claimDoorAfterYandex({
                 userId: result.userId,

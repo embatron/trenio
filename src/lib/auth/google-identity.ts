@@ -2,6 +2,8 @@ export type GoogleIdentity = {
   sub: string;
   email: string;
   name: string;
+  lastName: string;
+  avatarUrl: string | null;
 };
 
 const SUB = /^[A-Za-z0-9_-]{1,255}$/;
@@ -35,5 +37,24 @@ export function readGoogleIdentity(
     : typeof claims.name === "string"
       ? claims.name.split(" ")[0]
       : "";
-  return { sub, email, name: googleGivenName(given) };
+  const family = typeof claims.family_name === "string" ? claims.family_name : "";
+  return { sub, email, name: googleGivenName(given), lastName: googleFamilyName(family), avatarUrl: googlePicture(claims.picture) };
+}
+
+function googleFamilyName(value: string): string {
+  return value.replace(/\s+/g, " ").replace(/[^\p{L}\p{N} .'-]/gu, "").trim().slice(0, 100);
+}
+
+/** Google sends a 96px face. Ask for the same crop at 200px. */
+function googlePicture(value: unknown): string | null {
+  if (typeof value !== "string" || !value.startsWith("https://")) return null;
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    return null;
+  }
+  const host = url.hostname;
+  if (host !== "googleusercontent.com" && !host.endsWith(".googleusercontent.com")) return null;
+  return url.href.replace(/=s\d+(-[a-z])?(?=$|[?#])/, "=s200-c");
 }
