@@ -59,14 +59,17 @@
     "kid"
   ],
   "languages": [],
-  "avatarPath": "",
-  "photos": [],
+  "avatarPath": "/trainers/instagram/greblya.orsha.trener.jpg",
+  "photos": [
+    "/trainers/instagram/greblya.orsha.trener.jpg",
+    "/trainers/instagram/greblya.orsha.trener-g2.jpg"
+  ],
   "certificates": [],
   "photoSearch": {
-    "face": false,
+    "face": true,
     "pinned": 1,
-    "candidates": 0,
-    "gallery": 0,
+    "candidates": 1,
+    "gallery": 1,
     "certificates": 0,
     "skipped": 0
   },
@@ -79,7 +82,6 @@
   },
   "missing": [
     "price",
-    "avatar",
     "email",
     "telegram"
   ]

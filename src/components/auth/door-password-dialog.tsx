@@ -1,4 +1,3 @@
-import { useRouter } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -11,15 +10,12 @@ import { setDoorPasswordFn } from "@/lib/catalog/trainer-magic";
 
 /** Password step after the magic-link mail. It stays until the password is saved. */
 export function DoorPasswordDialog() {
-  const router = useRouter();
   const save = useAuthServerFn(setDoorPasswordFn);
   const [password, setPassword] = useState("");
   const [repeat, setRepeat] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
-  const [done, setDone] = useState<string | null>(null);
-  const [closed, setClosed] = useState(false);
   const [ready, setReady] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -30,7 +26,7 @@ export function DoorPasswordDialog() {
   }, []);
 
   useEffect(() => {
-    if (!ready || done) return;
+    if (!ready) return;
     const overlay = overlayRef.current;
     if (!overlay) return;
     const locked: HTMLElement[] = [];
@@ -63,21 +59,12 @@ export function DoorPasswordDialog() {
         }
       }
     };
-  }, [ready, done]);
+  }, [ready]);
 
-  if (!ready || closed) return null;
-
-  function close() {
-    setClosed(true);
-    void router.invalidate();
-  }
+  if (!ready) return null;
 
   return createPortal(
-    <div
-      ref={overlayRef}
-      className="cabinet-modal cabinet-modal--lock"
-      onClick={done ? close : undefined}
-    >
+    <div ref={overlayRef} className="cabinet-modal cabinet-modal--lock">
       <AuthStyles />
       <div
         className="cabinet-modal__card door-password"
@@ -86,18 +73,7 @@ export function DoorPasswordDialog() {
         aria-labelledby="door-password-title"
         onClick={(event) => event.stopPropagation()}
       >
-        {done ? (
-          <>
-            <button type="button" className="door-password__x" aria-label="Закрыть" onClick={close}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
-            </button>
-            <h2 id="door-password-title">Аккаунт создан</h2>
-            <p>{done}</p>
-            <button type="button" className="auth-submit" autoFocus onClick={close}>Ок, принял</button>
-          </>
-        ) : (
-          <>
-            <h2 id="door-password-title">Пароль для кабинета</h2>
+        <h2 id="door-password-title">Пароль для кабинета</h2>
             <p>Придумайте пароль и повторите его. После этого аккаунт будет создан.</p>
             {error ? <p className="auth-alert" role="alert">{error}</p> : null}
             <form
@@ -116,14 +92,8 @@ export function DoorPasswordDialog() {
                 setPending(true);
                 setError(null);
                 void save({ data: { password, passwordConfirm: repeat } })
-                  .then((result) => {
-                    const slug = (result as { slug?: string }).slug;
-                    if (slug && /^[a-z0-9._]{1,30}$/.test(slug)) {
-                      window.location.assign(`/trainers/${slug}?created=1`);
-                      return;
-                    }
-                    const message = (result as { message?: string }).message ?? "Дальше можно работать со своим аккаунтом.";
-                    setDone(message);
+                  .then(() => {
+                    window.location.assign("/me/profile?created=1");
                   })
                   .catch((err: unknown) => {
                     setError(authErrorMessage(err));
@@ -164,8 +134,6 @@ export function DoorPasswordDialog() {
                 {pending ? "Сохранение…" : "Сохранить пароль"}
               </button>
             </form>
-          </>
-        )}
       </div>
       <style>{`
         .cabinet-modal.cabinet-modal--lock {

@@ -698,8 +698,8 @@ function CabinetCreatedDialog({ trainer, onClose }: { trainer: Trainer; onClose:
         aria-labelledby="profile-created-title"
         onClick={(event) => event.stopPropagation()}
       >
-        <h2 id="profile-created-title">Кабинет создан</h2>
-        <p>Профиль можно править.</p>
+        <h2 id="profile-created-title">Ваш аккаунт активирован</h2>
+        <p>Страница опубликована и уже видна другим пользователям. Вы можете редактировать собственный контент, фотографии, тексты и добавлять контакты.</p>
         <div className="profile-created__row">
           <UserAvatar name={trainer.name} src={trainer.photo || null} size={44} />
           <div>
@@ -712,6 +712,13 @@ function CabinetCreatedDialog({ trainer, onClose }: { trainer: Trainer; onClose:
         </div>
         <button type="button" onClick={onClose}>Понятно</button>
       </div>
+      <style>{`
+        .cabinet-modal { position: fixed; inset: 0; z-index: 420; display: grid; place-items: center; overflow: auto; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: rgba(var(--dark-rgb), 0.45); }
+        .profile-created { box-sizing: border-box; width: min(440px, 100%); display: grid; gap: 12px; padding: 20px; border-radius: var(--card-radius); background: var(--white); color: var(--text); }
+        .profile-created h2 { margin: 0; color: var(--dark); font-size: 22px; }
+        .profile-created p { margin: 0; }
+        .profile-created > button { justify-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
+      `}</style>
     </CabinetModal>
   );
 }
@@ -801,7 +808,7 @@ function TrainerPage() {
           setMailError("Ссылка уже не действует.");
           return;
         }
-        window.location.replace(result.needsPassword ? `/trainers/${slug}` : `/trainers/${slug}?created=1`);
+        window.location.replace(result.needsPassword ? `/trainers/${slug}` : "/me/profile?created=1");
       })
       .catch((error: unknown) => {
         try {

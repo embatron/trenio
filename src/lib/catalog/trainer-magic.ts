@@ -595,6 +595,7 @@ async function attachDoorProfile(profileId: string, userId: string, email: strin
       photos: trainerProfiles.photos,
     });
   if (updated.length === 0) throw new AuthError("Ссылка уже не действует.", "VALIDATION");
+  await getDb().insert(userRoles).values({ userId, role: "trainer" }).onConflictDoNothing();
   const card = updated[0];
   await copyCardFaceToAccount(userId, card.avatarPath, card.photos);
 }

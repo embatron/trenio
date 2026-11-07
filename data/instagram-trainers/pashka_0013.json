@@ -13,23 +13,35 @@
   "nameQuotes": [
     "Фитнес тренер Павел"
   ],
-  "headline": "Тренер по фитнесу",
+  "headline": "Тренер по бодибилдингу",
   "sourceBio": "Персональный тренер / тренирую онлайн",
   "sourceAbout": [],
   "sourceThreads": "",
-  "operatorNotes": "имя: Павел, Фитнес",
+  "operatorNotes": "имя: Павел, Фитнес, бодибилдинг, силовой тренинг, ОФП, питание",
   "threadsUrl": "",
-  "bio": "Я Павел, персональный тренер. Веду фитнес. Знаю, как победить жир и увеличить мышечную массу. Улучшаю осанку и корректирую питание.",
+  "bio": "Я Павел, персональный тренер. Веду бодибилдинг, силовой тренинг и ОФП. Знаю, как победить жир и увеличить мышечную массу. Улучшаю осанку и корректирую питание.",
   "about": [
     "Я персональный тренер и тренирую онлайн."
   ],
   "pinned": [],
   "sports": [
     {
-      "slug": "fitnes",
+      "slug": "bodibilding",
       "parentSlug": "fitnes",
-      "label": "Фитнес",
-      "evidence": "персональный тренер"
+      "label": "Бодибилдинг",
+      "evidence": "Бодибилдинг"
+    },
+    {
+      "slug": "silovoj-trening",
+      "parentSlug": "fitnes",
+      "label": "Силовой тренинг",
+      "evidence": "Силовой тренинг"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
     },
     {
       "slug": "osanka",
@@ -40,9 +52,9 @@
   ],
   "practicedSports": [],
   "primarySport": {
-    "slug": "fitnes",
+    "slug": "bodibilding",
     "parentSlug": "fitnes",
-    "label": "Фитнес"
+    "label": "Бодибилдинг"
   },
   "city": "",
   "address": "",
@@ -57,14 +69,18 @@
   ],
   "audiences": [],
   "languages": [],
-  "avatarPath": "",
-  "photos": [],
+  "avatarPath": "/trainers/instagram/pashka_0013.jpg",
+  "photos": [
+    "/trainers/instagram/pashka_0013.jpg",
+    "/trainers/instagram/pashka_0013-g2.jpg",
+    "/trainers/instagram/pashka_0013-g3.jpg"
+  ],
   "certificates": [],
   "photoSearch": {
-    "face": false,
+    "face": true,
     "pinned": 0,
-    "candidates": 0,
-    "gallery": 0,
+    "candidates": 2,
+    "gallery": 2,
     "certificates": 0,
     "skipped": 0
   },
@@ -79,7 +95,6 @@
     "lastName",
     "city",
     "price",
-    "avatar",
     "phone",
     "email",
     "telegram",

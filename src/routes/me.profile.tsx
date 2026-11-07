@@ -1,6 +1,7 @@
 import { createFileRoute, getRouteApi } from "@tanstack/react-router";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
+import { CabinetModal } from "@/components/cabinet";
 import { TrainerProfileForm } from "@/components/trainer-profile-form";
 
 const meRoute = getRouteApi("/me");
@@ -15,6 +16,39 @@ export const Route = createFileRoute("/me/profile")({
   }),
   component: MeProfilePage,
 });
+
+function ActivationWelcome() {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("created") !== "1") return;
+    setOpen(true);
+  }, []);
+  function close() {
+    setOpen(false);
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has("created")) return;
+    params.delete("created");
+    const query = params.toString();
+    const next = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+    window.history.replaceState(window.history.state, "", next);
+  }
+  if (!open) return null;
+  return (
+    <CabinetModal onClick={close}>
+      <div
+        className="cabinet-modal__card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="profile-created-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <h2 id="profile-created-title">Ваш аккаунт активирован</h2>
+        <p>Страница опубликована и уже видна другим пользователям. Вы можете редактировать собственный контент, фотографии, тексты и добавлять контакты.</p>
+        <button type="button" onClick={close}>Понятно</button>
+      </div>
+    </CabinetModal>
+  );
+}
 
 function MeProfilePage() {
   const { trainer } = meRoute.useLoaderData();
@@ -48,6 +82,7 @@ function MeProfilePage() {
     >
       <h2>Мой профиль</h2>
       <TrainerProfileForm profile={trainer} />
+      <ActivationWelcome />
     </article>
   );
 }

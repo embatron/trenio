@@ -13,14 +13,16 @@
   "nameQuotes": [
     "Анна Бируль"
   ],
-  "headline": "Тренер по фитнесу",
+  "headline": "Тренер по бодибилдингу",
   "sourceBio": "Мотивирую на спорт и здоровое питание",
   "sourceAbout": [],
   "sourceThreads": "",
-  "operatorNotes": "Анна Бируль, Фитнес, Полоцк",
+  "operatorNotes": "Анна Бируль, Фитнес, Полоцк, бодибилдинг, коррекция фигуры. Я Аня, фитнес-инструктор и персональный тренер, консультант по питанию. помогаю девочкам и мальчикам вести здоровый образ жизни и к рациональному, сбалансированному питанию.",
   "threadsUrl": "",
-  "bio": "Я Анна Бируль, фитнес-тренер и нутрициолог в Полоцке. Веду фитнес. Снижаю вес, составляю программы питания и веду онлайн-сопровождение.",
-  "about": [],
+  "bio": "Я Анна Бируль, фитнес-тренер и нутрициолог в Полоцке. Веду бодибилдинг и коррекцию фигуры. Я консультант по питанию. Помогаю вести здоровый образ жизни.",
+  "about": [
+    "Я персональный тренер и консультант по питанию."
+  ],
   "pinned": [
     {
       "url": "https://www.instagram.com/anna_birul/p/CpXSNLgM7wN/",
@@ -37,6 +39,24 @@
   ],
   "sports": [
     {
+      "slug": "bodibilding",
+      "parentSlug": "fitnes",
+      "label": "Бодибилдинг",
+      "evidence": "Бодибилдинг"
+    },
+    {
+      "slug": "figura",
+      "parentSlug": "fitnes",
+      "label": "Коррекция фигуры",
+      "evidence": "Коррекция фигуры"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "pitanie",
+      "label": "Питание",
+      "evidence": "консультант по питанию"
+    },
+    {
       "slug": "fitnes",
       "parentSlug": "fitnes",
       "label": "Фитнес",
@@ -45,9 +65,9 @@
   ],
   "practicedSports": [],
   "primarySport": {
-    "slug": "fitnes",
+    "slug": "bodibilding",
     "parentSlug": "fitnes",
-    "label": "Фитнес"
+    "label": "Бодибилдинг"
   },
   "city": "Полоцк",
   "address": "",
@@ -63,14 +83,16 @@
   "languages": [],
   "avatarPath": "/trainers/instagram/anna_birul.jpg",
   "photos": [
-    "/trainers/instagram/anna_birul.jpg"
+    "/trainers/instagram/anna_birul.jpg",
+    "/trainers/instagram/anna_birul-g2.jpg",
+    "/trainers/instagram/anna_birul-g3.jpg"
   ],
   "certificates": [],
   "photoSearch": {
     "face": true,
     "pinned": 3,
-    "candidates": 0,
-    "gallery": 0,
+    "candidates": 2,
+    "gallery": 2,
     "certificates": 0,
     "skipped": 0
   },

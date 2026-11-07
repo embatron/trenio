@@ -51,14 +51,16 @@
   "languages": [],
   "avatarPath": "/trainers/instagram/kristina_fedyuk_.jpg",
   "photos": [
-    "/trainers/instagram/kristina_fedyuk_.jpg"
+    "/trainers/instagram/kristina_fedyuk_.jpg",
+    "/trainers/instagram/kristina_fedyuk_-g2.jpg",
+    "/trainers/instagram/kristina_fedyuk_-g3.jpg"
   ],
   "certificates": [],
   "photoSearch": {
     "face": true,
     "pinned": 0,
-    "candidates": 0,
-    "gallery": 0,
+    "candidates": 2,
+    "gallery": 2,
     "certificates": 0,
     "skipped": 0
   },

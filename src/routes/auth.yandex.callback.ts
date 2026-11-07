@@ -115,10 +115,7 @@ export const Route = createFileRoute("/auth/yandex/callback")({
           } else {
             headers.append("set-cookie", sessionCookieHeader(result.token));
             headers.append("set-cookie", clearCookie());
-            const doorSlug = cookieValue(request.headers.get("cookie"), "trenio_trainer_preview").trim().toLowerCase();
-            const doorPage = doorClaim === "claimed" && /^[a-z0-9._]{1,30}$/.test(doorSlug)
-              ? `/trainers/${doorSlug}?created=1`
-              : "/me";
+            const doorPage = doorClaim === "claimed" ? "/me/profile?created=1" : "/me";
             headers.set("location", doorHome ? doorPage : result.redirectTo);
           }
           headers.set("cache-control", "private, no-store");

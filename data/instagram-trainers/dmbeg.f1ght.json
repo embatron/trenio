@@ -1,0 +1,110 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/dmbeg.f1ght/",
+  "handle": "dmbeg.f1ght",
+  "slug": "dmbeg.f1ght",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дмитрий",
+  "lastName": "Беганский",
+  "fullName": "Дмитрий Беганский",
+  "gender": "male",
+  "nameQuotes": [
+    "Беганский Дмитрий"
+  ],
+  "headline": "Тренер по кикбоксингу",
+  "sourceBio": "Групповые и индивидуальные занятия для взрослых и детей",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Щучин Щучин, Островского 34",
+  "threadsUrl": "",
+  "bio": "Я Дмитрий Беганский, тренер в Щучине. Веду кибоксинг и таиландский бокс.",
+  "about": [
+    "Занятия групповые и индивидуальные. Они для взрослых и для детей."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/dmbeg.f1ght/p/DWncZGfijq9/",
+      "caption": "Кульминация тренировочного процесса. Групповые и индивидуальные занятия по спортивным единоборствам. в direct. +375333512792(Viber/Telegram). г. Щучин, ул.Островского 34 (С/К им. В.Б.Шурупова)"
+    },
+    {
+      "url": "https://www.instagram.com/dmbeg.f1ght/reel/DODkb2iCqnU/",
+      "caption": "Приглашаю детей и подростков на занятия по единоборствам. Что получит ваш ребенок, тренируясь в СК им. В.Б.Шурупова. Физическое развитие. Уверенность в себе. Дисциплину и ответственность. Навык самозащиты. Умение работать в команде. в direct. +375333512792(Viber/Telegram). г. Щучин, ул.Островского 34 (С/К им. В.Б.Шурупова)"
+    },
+    {
+      "url": "https://www.instagram.com/dmbeg.f1ght/p/DQ-CUpRCoRC/",
+      "caption": "Единственным, чего действительно стоит бояться, является сам страх. Групповые и индивидуальные занятия по спортивным единоборствам. в direct. +375333512792(Viber/Telegram). г. Щучин, ул.Островского 34 (С/К им. В.Б.Шурупова)"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "кибоксинг"
+    },
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "таиландский бокс"
+    },
+    {
+      "slug": "edinoborstva",
+      "parentSlug": "edinoborstva",
+      "label": "Единоборства",
+      "evidence": "Единоборства"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "kikboksing",
+    "parentSlug": "edinoborstva",
+    "label": "Кикбоксинг"
+  },
+  "city": "Щучин",
+  "address": "Островского 34",
+  "cityCandidates": [
+    "Щучин"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid",
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/dmbeg.f1ght.jpg",
+  "photos": [
+    "/trainers/instagram/dmbeg.f1ght.jpg",
+    "/trainers/instagram/dmbeg.f1ght-g2.jpg",
+    "/trainers/instagram/dmbeg.f1ght-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/dmbeg.f1ght/",
+    "phone": "+375 33 351-27-92",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram"
+  ]
+}

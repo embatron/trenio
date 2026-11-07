@@ -7,7 +7,7 @@ import { logCaught, writeLog } from "@/lib/log/logger";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { inferTrainerGender, type TrainerGender } from "@/lib/catalog/trainer-gender";
-import { instagramProfileSlug } from "@/lib/catalog/trainer-slugs";
+import { instagramProfileSlug, trainerPersonKey } from "@/lib/catalog/trainer-slugs";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
 import { MAX_TRAINING_PLACES, placesFromProfile } from "@/lib/geo/schemas";
 import { getDb } from "./index";
@@ -127,6 +127,25 @@ function profilePhotos(listed: string[] | undefined, avatarPath: string, existin
   return photos.slice(0, 9);
 }
 
+/** The slug that already belongs to this given name and surname, if it is not `slug`. */
+export async function duplicateTrainerSlug(slug: string, firstName: string, lastName: string): Promise<string | null> {
+  const key = trainerPersonKey(firstName, lastName);
+  if (!key) return null;
+  const self = instagramProfileSlug(slug);
+  const rows = await getDb().select({
+    slug: trainerProfiles.slug,
+    handle: trainerProfiles.instagramHandle,
+    firstName: trainerProfiles.firstName,
+    lastName: trainerProfiles.lastName,
+  }).from(trainerProfiles);
+  for (const row of rows) {
+    const other = instagramProfileSlug(row.handle || row.slug);
+    if (other === self || row.slug === self) continue;
+    if (trainerPersonKey(row.firstName, row.lastName) === key) return row.slug;
+  }
+  return null;
+}
+
 export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
   const db = getDb();
   const slug = instagramProfileSlug(draft.handle);
@@ -146,6 +165,19 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
       : eq(trainerProfiles.slug, slug))
     .limit(1);
   if (taken) throw new Error(`Nick ${slug} is already used by @${taken.handle}.`);
+  const duplicate = await duplicateTrainerSlug(slug, draft.firstName, draft.lastName);
+  if (duplicate) {
+    void writeLog({
+      level: "warn",
+      domain: "catalog",
+      action: "trainer.add",
+      outcome: "denied",
+      message: "Вторая карточка на того же человека не создана.",
+      target: duplicate,
+      subject: slug,
+    });
+    throw new Error(`This person already has slug ${duplicate}. Update that card. Do not create a second one.`);
+  }
 
   if (existing?.ownerUserId) {
     const [owner] = await db

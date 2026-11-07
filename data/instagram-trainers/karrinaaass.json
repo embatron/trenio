@@ -13,13 +13,13 @@
   "nameQuotes": [
     "КАРИНА ПАРАФЕНЮК"
   ],
-  "headline": "Тренер по фитнесу",
+  "headline": "Тренер по акробатике",
   "sourceBio": "Помогу сделать фигуру мечты",
   "sourceAbout": [],
   "sourceThreads": "",
-  "operatorNotes": "Карина Парафенюк, Фитнес, Брест",
+  "operatorNotes": "Карина Парафенюк, Фитнес, Брест, акробатика, силовой тренинг, бодибилдинг, ОФП",
   "threadsUrl": "",
-  "bio": "Я Карина Парафенюк, персональный тренер в Бресте. Веду фитнес. Помогу сделать фигуру мечты. Я мастер спорта по спортивной акробатике.",
+  "bio": "Я Карина Парафенюк, персональный тренер в Бресте. Веду акробатику, силовой тренинг, бодибилдинг и ОФП. Помогу сделать фигуру мечты. Я мастер спорта по спортивной акробатике.",
   "about": [
     "Я персональный тренер."
   ],
@@ -35,23 +35,35 @@
   ],
   "sports": [
     {
-      "slug": "fitnes",
-      "parentSlug": "fitnes",
-      "label": "Фитнес",
-      "evidence": "персональный тренер"
-    }
-  ],
-  "practicedSports": [
-    {
       "slug": "akrobatika",
+      "parentSlug": "gimnastika",
       "label": "Акробатика",
-      "quote": "Спортивной Акробатике"
+      "evidence": "Акробатика"
+    },
+    {
+      "slug": "silovoj-trening",
+      "parentSlug": "fitnes",
+      "label": "Силовой тренинг",
+      "evidence": "Силовой тренинг"
+    },
+    {
+      "slug": "bodibilding",
+      "parentSlug": "fitnes",
+      "label": "Бодибилдинг",
+      "evidence": "Бодибилдинг"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
     }
   ],
+  "practicedSports": [],
   "primarySport": {
-    "slug": "fitnes",
-    "parentSlug": "fitnes",
-    "label": "Фитнес"
+    "slug": "akrobatika",
+    "parentSlug": "gimnastika",
+    "label": "Акробатика"
   },
   "city": "Брест",
   "address": "",
@@ -67,14 +79,18 @@
   "languages": [],
   "avatarPath": "/trainers/instagram/karrinaaass.jpg",
   "photos": [
-    "/trainers/instagram/karrinaaass.jpg"
+    "/trainers/instagram/karrinaaass.jpg",
+    "/trainers/instagram/karrinaaass-g2.jpg",
+    "/trainers/instagram/karrinaaass-g3.jpg",
+    "/trainers/instagram/karrinaaass-g4.jpg",
+    "/trainers/instagram/karrinaaass-g5.jpg"
   ],
   "certificates": [],
   "photoSearch": {
     "face": true,
     "pinned": 2,
-    "candidates": 0,
-    "gallery": 0,
+    "candidates": 4,
+    "gallery": 4,
     "certificates": 0,
     "skipped": 0
   },

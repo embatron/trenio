@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-07T12:11:12.684Z",
+  "updatedAt": "2026-11-07T15:17:33.300Z",
   "profiles": [
     {
       "handle": "embatron.eth",
@@ -127,21 +127,6 @@
         "pinnedPosts"
       ],
       "file": "data/instagram-trainers/shum_ann.json"
-    },
-    {
-      "handle": "alex_bro_training",
-      "slug": "alex_bro_training",
-      "fullName": "Алексей Бро",
-      "primarySport": "Фитнес",
-      "city": "Минск",
-      "status": "draft",
-      "missing": [
-        "price",
-        "phone",
-        "email",
-        "telegram"
-      ],
-      "file": "data/instagram-trainers/alex_bro_training.json"
     },
     {
       "handle": "sergey.the.champ",
@@ -1197,21 +1182,6 @@
       "file": "data/instagram-trainers/anastasia_dlssk.json"
     },
     {
-      "handle": "greblya.orsha.trener",
-      "slug": "greblya.orsha.trener",
-      "fullName": "Дмитрий Олегович",
-      "primarySport": "Байдарка",
-      "city": "Орша",
-      "status": "draft",
-      "missing": [
-        "price",
-        "avatar",
-        "email",
-        "telegram"
-      ],
-      "file": "data/instagram-trainers/greblya.orsha.trener.json"
-    },
-    {
       "handle": "maryiasmoliakova",
       "slug": "maryiasmoliakova",
       "fullName": "Мария Смолякова",
@@ -1243,70 +1213,6 @@
       "file": "data/instagram-trainers/vasili_wrestling.json"
     },
     {
-      "handle": "pavelkapski",
-      "slug": "pavelkapski",
-      "fullName": "Павел Капский",
-      "primarySport": "Фитнес",
-      "city": "Минск",
-      "status": "draft",
-      "missing": [
-        "price",
-        "phone",
-        "email",
-        "telegram",
-        "pinnedPosts"
-      ],
-      "file": "data/instagram-trainers/pavelkapski.json"
-    },
-    {
-      "handle": "pashka_0013",
-      "slug": "pashka_0013",
-      "fullName": "Павел",
-      "primarySport": "Фитнес",
-      "city": "",
-      "status": "draft",
-      "missing": [
-        "lastName",
-        "city",
-        "price",
-        "avatar",
-        "phone",
-        "email",
-        "telegram",
-        "pinnedPosts"
-      ],
-      "file": "data/instagram-trainers/pashka_0013.json"
-    },
-    {
-      "handle": "anna_birul",
-      "slug": "anna_birul",
-      "fullName": "Анна Бируль",
-      "primarySport": "Фитнес",
-      "city": "Полоцк",
-      "status": "draft",
-      "missing": [
-        "price",
-        "phone",
-        "email",
-        "telegram"
-      ],
-      "file": "data/instagram-trainers/anna_birul.json"
-    },
-    {
-      "handle": "chekanova_trainer",
-      "slug": "chekanova_trainer",
-      "fullName": "Татьяна Чеканова",
-      "primarySport": "Фитнес",
-      "city": "Брест",
-      "status": "draft",
-      "missing": [
-        "price",
-        "phone",
-        "email"
-      ],
-      "file": "data/instagram-trainers/chekanova_trainer.json"
-    },
-    {
       "handle": "morshchakin_reform",
       "slug": "morshchakin_reform",
       "fullName": "Александр Морщакин",
@@ -1322,36 +1228,6 @@
       "file": "data/instagram-trainers/morshchakin_reform.json"
     },
     {
-      "handle": "_down_the_river_",
-      "slug": "_down_the_river_",
-      "fullName": "Артём Малахов",
-      "primarySport": "Фитнес",
-      "city": "Брест",
-      "status": "draft",
-      "missing": [
-        "price",
-        "phone",
-        "email",
-        "telegram"
-      ],
-      "file": "data/instagram-trainers/_down_the_river_.json"
-    },
-    {
-      "handle": "karrinaaass",
-      "slug": "karrinaaass",
-      "fullName": "Карина Парафенюк",
-      "primarySport": "Фитнес",
-      "city": "Брест",
-      "status": "draft",
-      "missing": [
-        "price",
-        "phone",
-        "email",
-        "telegram"
-      ],
-      "file": "data/instagram-trainers/karrinaaass.json"
-    },
-    {
       "handle": "abramchuklena",
       "slug": "abramchuklena",
       "fullName": "Алёна Абрамчук",
@@ -1365,22 +1241,6 @@
         "telegram"
       ],
       "file": "data/instagram-trainers/abramchuklena.json"
-    },
-    {
-      "handle": "pavel_silko",
-      "slug": "pavel_silko",
-      "fullName": "Павел Силко",
-      "primarySport": "Фитнес",
-      "city": "Брест",
-      "status": "draft",
-      "missing": [
-        "price",
-        "avatar",
-        "phone",
-        "email",
-        "telegram"
-      ],
-      "file": "data/instagram-trainers/pavel_silko.json"
     },
     {
       "handle": "pavel_berserk_shelest",
@@ -1415,22 +1275,6 @@
       "file": "data/instagram-trainers/andrey_pivovarov_1977.json"
     },
     {
-      "handle": "kristina_fedyuk_",
-      "slug": "kristina_fedyuk_",
-      "fullName": "Кристина Федюк",
-      "primarySport": "Акробатика",
-      "city": "Минск",
-      "status": "draft",
-      "missing": [
-        "price",
-        "phone",
-        "email",
-        "telegram",
-        "pinnedPosts"
-      ],
-      "file": "data/instagram-trainers/kristina_fedyuk_.json"
-    },
-    {
       "handle": "gymnastics_kazantsev",
       "slug": "gymnastics_kazantsev",
       "fullName": "Андрей Казанцев",
@@ -1461,6 +1305,158 @@
         "pinnedPosts"
       ],
       "file": "data/instagram-trainers/nastia.koralchuk.json"
+    },
+    {
+      "handle": "pavel_silko",
+      "slug": "pavel_silko",
+      "fullName": "Павел Силко",
+      "primarySport": "Бодибилдинг",
+      "city": "Брест",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/pavel_silko.json"
+    },
+    {
+      "handle": "_down_the_river_",
+      "slug": "_down_the_river_",
+      "fullName": "Артём Малахов",
+      "primarySport": "Бодибилдинг",
+      "city": "Брест",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/_down_the_river_.json"
+    },
+    {
+      "handle": "karrinaaass",
+      "slug": "karrinaaass",
+      "fullName": "Карина Парафенюк",
+      "primarySport": "Акробатика",
+      "city": "Брест",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/karrinaaass.json"
+    },
+    {
+      "handle": "chekanova_trainer",
+      "slug": "chekanova_trainer",
+      "fullName": "Татьяна Чеканова",
+      "primarySport": "Кроссфит",
+      "city": "Брест",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/chekanova_trainer.json"
+    },
+    {
+      "handle": "pashka_0013",
+      "slug": "pashka_0013",
+      "fullName": "Павел",
+      "primarySport": "Бодибилдинг",
+      "city": "",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "city",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/pashka_0013.json"
+    },
+    {
+      "handle": "anna_birul",
+      "slug": "anna_birul",
+      "fullName": "Анна Бируль",
+      "primarySport": "Бодибилдинг",
+      "city": "Полоцк",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/anna_birul.json"
+    },
+    {
+      "handle": "pavelkapski",
+      "slug": "pavelkapski",
+      "fullName": "Павел Капский",
+      "primarySport": "Силовой тренинг",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/pavelkapski.json"
+    },
+    {
+      "handle": "greblya.orsha.trener",
+      "slug": "greblya.orsha.trener",
+      "fullName": "Дмитрий Олегович",
+      "primarySport": "Байдарка",
+      "city": "Орша",
+      "status": "draft",
+      "missing": [
+        "price",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/greblya.orsha.trener.json"
+    },
+    {
+      "handle": "dmbeg.f1ght",
+      "slug": "dmbeg.f1ght",
+      "fullName": "Дмитрий Беганский",
+      "primarySport": "Кикбоксинг",
+      "city": "Щучин",
+      "status": "draft",
+      "missing": [
+        "price",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/dmbeg.f1ght.json"
+    },
+    {
+      "handle": "kristina_fedyuk_",
+      "slug": "kristina_fedyuk_",
+      "fullName": "Кристина Федюк",
+      "primarySport": "Акробатика",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/kristina_fedyuk_.json"
     }
   ]
 }

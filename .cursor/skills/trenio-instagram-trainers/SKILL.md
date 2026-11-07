@@ -22,6 +22,7 @@ Every profile gets its own photo search and its own card text. Do not reuse a se
 ## Do
 
 - Use `user-playwright` for the page and `user-sequential-thinking` for the decision. Discover a tool with `GetDynamicTools` before calling it.
+- Treat the Instagram handle as the slug and the account id. Before opening a profile, look up that handle and that given name plus surname in `data/instagram-trainers/` and in `trainer_profiles`. The same handle is the same card: update it. The same given name and surname on another slug stops the import. Report that slug. A given name without a surname is not matched to other cards.
 - Finish one trainer, including all eleven thoughts and the save, before opening the next profile.
 - Keep the biography, the about-highlight frames, and the pinned captions verbatim in `sourceBio`, `aboutProfile`, and `pinned[].caption`.
 - Write new sentences for «Как меня представить» and «Как проходят мои тренировки» from the biography, the about highlight, the Threads profile, and the operator note. A pinned Instagram caption is not a sentence for those fields. The sentences are first person and readable aloud. They are not a stack of labels.
@@ -38,6 +39,7 @@ Every profile gets its own photo search and its own card text. Do not reuse a se
 - Save an `s100`, `s150`, or `s206` thumbnail as a photo, or edit a thumbnail URL (delete `stp`, or replace `s150` with `s1080`).
 - Read Instagram from any browser profile except the import profile named below.
 - Choose a given name from the handle, from a previous trainer, or from an example in this skill.
+- Save a second slug for a person who already has a card. The same given name and surname is that person. Update the existing slug.
 - Leave the given name empty when the profile, a pinned caption, Threads, or the operator note writes that name next to the surname.
 - Save when two different given names are written for the same surname and the operator note does not pick one.
 - Treat the latest posts as pinned when no pin mark is visible. Open at most three pinned posts. Other posts supply gallery photos only, and only frames that pass the composition bar. Their captions are not profile facts.
@@ -64,7 +66,7 @@ Right: the biography is `Кикбоксинг. Минск. Дети и взро�
 
 ```
 Import progress:
-- [ ] Normalize the URL list, the operator note, and any Threads link
+- [ ] Normalize the URL list, the operator note, and any Threads link. Look up the handle and the name. The same handle is an update. The same person on another slug stops here
 - [ ] For each profile: header, contacts, face photo
 - [ ] About highlight, when that title exists
 - [ ] Threads profile, when the user attached one: header, biography, posts
@@ -159,7 +161,7 @@ Judge every stored image, including Threads frames, from the screenshot:
 
 Prefer, when several frames clear the floor: a portrait or three-quarter with the face unobstructed; then the trainer coaching or training, body in frame, the action understandable; then the gym only when the trainer is in it. A still moment beats a motion blur. An empty hall loses to a session. One strong frame is enough. Do not pad the gallery with a weaker frame to reach three when a stronger frame is already kept. When every still photo fails that bar, keep the stills the profile has anyway: a back view, a crop, or a crowd is the gallery rather than no photo. Skip a video and a story. A reel is a video. A carousel of photos is not.
 
-A profile with no pins still finishes photo search. After the pins, open other posts on the grid until two or three gallery photos are chosen, or the grid has no such photo. Those posts are `extraPosts`, at most three, and their captions are not quotes for the card. A text card, logo, or flyer is skipped.
+A profile with no pins still finishes photo search. After the pins, open other posts on the grid until two or three gallery photos are chosen, or the grid has no such photo. Those posts are `extraPosts`, at most four, and their captions are not quotes for the card. A text card, logo, or flyer is skipped.
 
 Return to the profile only after that post's caption and photos are stored. Then go back to the profile grid only to reach the next pin.
 

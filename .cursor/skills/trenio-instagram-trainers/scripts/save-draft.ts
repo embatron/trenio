@@ -10,6 +10,9 @@ import { tinifyImage } from "../../../../src/lib/images/tinify.ts";
 import { formatBelarusPhone } from "../../../../src/lib/auth/phone.ts";
 import { inferTrainerGender } from "../../../../src/lib/catalog/trainer-gender.ts";
 import { TOP_LEVEL_SPORT_CATEGORIES } from "../../../../src/lib/catalog/sport-taxonomy.ts";
+import { trainerPersonKey } from "../../../../src/lib/catalog/trainer-slugs.ts";
+import { closeDb } from "../../../../src/db/index.ts";
+import { duplicateTrainerSlug } from "../../../../src/db/trainer-profiles.ts";
 
 type RawPhoto = {
   url?: string;
@@ -579,18 +582,19 @@ function fail(rawPath: string, message: string): never {
   throw new Error(`${rawPath}: ${message}`);
 }
 
-function assertUniqueNick(handle: string, slug: string, rawPath: string) {
+async function assertUniqueAccount(handle: string, slug: string, firstName: string, lastName: string, rawPath: string) {
+  const key = trainerPersonKey(firstName, lastName);
   let names: string[] = [];
   try {
     names = readdirSync(DRAFT_DIR).filter((name) => name.endsWith(".json") && name !== "index.json");
   } catch {
-    return;
+    names = [];
   }
   for (const name of names) {
     if (name === `${handle}.json`) continue;
-    let other: { handle?: string; slug?: string } = {};
+    let other: { handle?: string; slug?: string; firstName?: string; lastName?: string } = {};
     try {
-      other = JSON.parse(readFileSync(join(DRAFT_DIR, name), "utf8")) as { handle?: string; slug?: string };
+      other = JSON.parse(readFileSync(join(DRAFT_DIR, name), "utf8")) as typeof other;
     } catch {
       continue;
     }
@@ -599,7 +603,17 @@ function assertUniqueNick(handle: string, slug: string, rawPath: string) {
     if (otherNick === slug || otherHandle === handle) {
       fail(rawPath, `Nick ${slug} is already used by ${other.handle || name}.`);
     }
+    if (key && trainerPersonKey(other.firstName || "", other.lastName || "") === key) {
+      fail(rawPath, `This person already has slug ${otherNick || name}. Update that card. Do not create a second one.`);
+    }
   }
+  let duplicate: string | null = null;
+  try {
+    duplicate = await duplicateTrainerSlug(slug, firstName, lastName);
+  } catch {
+    fail(rawPath, "Could not read existing trainers. Do not create a card until that list is available.");
+  }
+  if (duplicate) fail(rawPath, `This person already has slug ${duplicate}. Update that card. Do not create a second one.`);
 }
 
 async function saveOne(rawPath: string, settlements: string[]) {
@@ -617,8 +631,8 @@ async function saveOne(rawPath: string, settlements: string[]) {
   const corpus = [pageCorpus, note].join("\n");
   const pins = (raw.pinned || []).slice(0, 3);
   if ((raw.pinned || []).length > 3) fail(rawPath, "More than 3 pinned posts were stored.");
-  const extras = (raw.extraPosts || []).slice(0, 3);
-  if ((raw.extraPosts || []).length > 3) fail(rawPath, "More than 3 other posts were stored.");
+  const extras = (raw.extraPosts || []).slice(0, 4);
+  if ((raw.extraPosts || []).length > 4) fail(rawPath, "More than 4 other posts were stored.");
   const threadPosts: PinnedPost[] = (raw.threads?.posts || []).map((post) => ({
     url: post.url,
     caption: post.text,
@@ -956,7 +970,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
   const storedThreads = stripPhones(threadsText);
   const slug = handle.trim().toLowerCase().replace(/[^a-z0-9._]/g, "").slice(0, 30);
   if (!slug) fail(rawPath, "Instagram nick is empty.");
-  assertUniqueNick(handle, slug, rawPath);
+  await assertUniqueAccount(handle, slug, firstName, lastName, rawPath);
 
   let previous: { status?: string; claimStatus?: string } = {};
   try {
@@ -1094,11 +1108,15 @@ if (!inputs.length) {
 }
 
 const settlements = loadSettlements();
-const saved = await Promise.all(inputs.map((file) => saveOne(file, settlements)));
-updateIndex(saved);
-for (const draft of saved) {
-  const trainingState = draft.about.length ? "yes" : "no";
-  const noteState = draft.operatorNotes ? "yes" : "no";
-  const threadsState = draft.threadsUrl ? "yes" : "no";
-  console.log(`${draft.handle}\t${draft.fullName || "—"}\t${draft.primarySport?.label || "—"}\t${draft.city || "—"}\tgallery:${draft.photoSearch.gallery}\tcertificates:${draft.photoSearch.certificates}\ttraining:${trainingState}\tnotes:${noteState}\tthreads:${threadsState}\tmissing:${draft.missing.join(",") || "none"}`);
+try {
+  const saved = await Promise.all(inputs.map((file) => saveOne(file, settlements)));
+  updateIndex(saved);
+  for (const draft of saved) {
+    const trainingState = draft.about.length ? "yes" : "no";
+    const noteState = draft.operatorNotes ? "yes" : "no";
+    const threadsState = draft.threadsUrl ? "yes" : "no";
+    console.log(`${draft.handle}\t${draft.fullName || "—"}\t${draft.primarySport?.label || "—"}\t${draft.city || "—"}\tgallery:${draft.photoSearch.gallery}\tcertificates:${draft.photoSearch.certificates}\ttraining:${trainingState}\tnotes:${noteState}\tthreads:${threadsState}\tmissing:${draft.missing.join(",") || "none"}`);
+  }
+} finally {
+  await closeDb();
 }

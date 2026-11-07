@@ -205,6 +205,7 @@ export function CabinetShell({
   const navEl = useRef<HTMLElement>(null);
   const sideRef = useRef<HTMLElement>(null);
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const personalCabinet = pathname.startsWith("/me") || pathname.startsWith("/account");
   useEffect(() => {
     const header = document.getElementById("site-header");
     const side = sideRef.current;
@@ -312,7 +313,7 @@ export function CabinetShell({
       <SiteHeader />
       <main>
         <div className="layout-with-sidebar">
-          <aside className="cabinet-side" ref={sideRef}>
+          <aside className={personalCabinet ? "cabinet-side cabinet-side--personal" : "cabinet-side"} ref={sideRef}>
             <div className="cabinet-title">
               <h1>{title}</h1>
               {lede ? <p>{lede}</p> : null}
@@ -1085,6 +1086,18 @@ a.cabinet-icon-btn { text-decoration: none; }
 .site-tokens button:hover { border-color: var(--primary); color: var(--primary); }
 .site-tokens code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; font-weight: var(--fw-title); }
 .site-parts { display: grid; gap: 4px; padding-left: 1.2em; }
+@media (max-width: 767px) {
+  .cabinet-side--personal {
+    position: static;
+    top: auto;
+    z-index: auto;
+    max-height: none;
+    overflow: visible;
+  }
+  .layout-with-sidebar:has(> .cabinet-side--personal) .cabinet-section {
+    scroll-margin-top: calc(var(--cabinet-sticky-top, 96px) + 16px);
+  }
+}
 @media (max-width: 640px) {
   .cabinet-stats { grid-template-columns: 1fr; }
   .cabinet-contact { grid-template-columns: 28px minmax(0, 1fr) auto; }
