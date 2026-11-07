@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { clientIpFromHeaders } from "@/auth/request-meta";
 import { sessionCookieHeader } from "@/auth/session";
 import { openYandexAccount } from "@/auth/yandex-account";
-import { applyExternalPortrait } from "@/auth/oauth-profile";
+import { applyExternalPortrait, rememberOAuthNames } from "@/auth/oauth-profile";
 import { yandexIdentityFromCode } from "@/auth/yandex";
 import { safeReturnPath } from "@/lib/auth/return-path";
 import { claimDoorAfterYandex } from "@/lib/catalog/trainer-door-claim";
@@ -88,6 +88,9 @@ export const Route = createFileRoute("/auth/yandex/callback")({
                 previewSlug: cookieValue(request.headers.get("cookie"), "trenio_trainer_preview"),
               })
             : null;
+          if (packed.door) {
+            await rememberOAuthNames(result.userId, { firstName: identity.name, lastName: identity.lastName });
+          }
           const doorHome = doorClaim === "claimed" || doorClaim === "own" || doorClaim === "busy";
           const created = result.kind === "session" && result.created;
           void writeLog({

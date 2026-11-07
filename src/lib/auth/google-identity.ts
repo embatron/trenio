@@ -32,13 +32,43 @@ export function readGoogleIdentity(
   if (!EMAIL.test(email) || email.length > 320) return null;
   const sub = typeof claims.sub === "string" ? claims.sub.trim() : "";
   if (!SUB.test(sub)) return null;
-  const given = typeof claims.given_name === "string" && claims.given_name.trim()
-    ? claims.given_name
-    : typeof claims.name === "string"
-      ? claims.name.split(" ")[0]
-      : "";
-  const family = typeof claims.family_name === "string" ? claims.family_name : "";
-  return { sub, email, name: googleGivenName(given), lastName: googleFamilyName(family), avatarUrl: googlePicture(claims.picture) };
+  const named = googlePersonName(claims);
+  return { sub, email, name: named.name, lastName: named.lastName, avatarUrl: googlePicture(claims.picture) };
+}
+
+/** Userinfo fills a name the ID token left blank. A different subject is ignored. */
+export function mergeGoogleProfile(
+  claims: Record<string, unknown>,
+  profile: Record<string, unknown> | null,
+): Record<string, unknown> {
+  if (!profile || profile.sub !== claims.sub) return claims;
+  const next = { ...claims };
+  for (const key of ["given_name", "family_name", "name", "picture"] as const) {
+    const current = typeof next[key] === "string" ? next[key].trim() : "";
+    const incoming = typeof profile[key] === "string" ? profile[key].trim() : "";
+    if (!current && incoming) next[key] = incoming;
+  }
+  return next;
+}
+
+function cleanName(value: unknown): string {
+  const raw = typeof value === "string" ? value : "";
+  return raw.replace(/\s+/g, " ").replace(/[^\p{L}\p{N} .'-]/gu, "").trim().slice(0, 100);
+}
+
+/** Given name and surname. A single full name is split when Google sends no surname field. */
+function googlePersonName(claims: Record<string, unknown>): { name: string; lastName: string } {
+  const given = cleanName(claims.given_name);
+  let family = cleanName(claims.family_name);
+  const full = cleanName(claims.name);
+  if (!family && full) {
+    if (given && full.startsWith(`${given} `)) family = full.slice(given.length).trim();
+    else if (!given) {
+      const [first, ...rest] = full.split(" ");
+      return { name: googleGivenName(first), lastName: googleFamilyName(rest.join(" ")) };
+    }
+  }
+  return { name: googleGivenName(given || full.split(" ")[0] || ""), lastName: googleFamilyName(family) };
 }
 
 function googleFamilyName(value: string): string {

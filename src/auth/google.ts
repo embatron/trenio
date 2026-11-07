@@ -1,12 +1,13 @@
 import { createPublicKey, createVerify, randomBytes } from "node:crypto";
 
-import { readGoogleIdentity, type GoogleIdentity } from "@/lib/auth/google-identity";
+import { mergeGoogleProfile, readGoogleIdentity, type GoogleIdentity } from "@/lib/auth/google-identity";
 
 type Jwk = { kid: string; kty: string; n: string; e: string; alg?: string };
 
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
 const AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
 const CERTS_URL = "https://www.googleapis.com/oauth2/v3/certs";
+const USERINFO_URL = "https://openidconnect.googleapis.com/v1/userinfo";
 
 let certs: { expiresAt: number; keys: Jwk[] } | null = null;
 
@@ -82,8 +83,9 @@ export async function googleIdentityFromCode(code: string): Promise<GoogleIdenti
     body,
   });
   if (!response.ok) return null;
-  const payload = (await response.json()) as { id_token?: unknown };
+  const payload = (await response.json()) as { id_token?: unknown; access_token?: unknown };
   const token = typeof payload.id_token === "string" ? payload.id_token : "";
+  const accessToken = typeof payload.access_token === "string" ? payload.access_token : "";
   const [headerPart, payloadPart] = token.split(".");
   const header = headerPart ? decodePart(headerPart) : null;
   const claims = payloadPart ? decodePart(payloadPart) : null;
@@ -91,5 +93,20 @@ export async function googleIdentityFromCode(code: string): Promise<GoogleIdenti
   const keys = await googleCerts();
   const key = keys.find((item) => item.kid === header.kid);
   if (!key || !signatureMatches(token, key)) return null;
-  return readGoogleIdentity(claims, clientId);
+  const profile = accessToken ? await googleUserInfo(accessToken) : null;
+  return readGoogleIdentity(mergeGoogleProfile(claims, profile), clientId);
+}
+
+async function googleUserInfo(accessToken: string): Promise<Record<string, unknown> | null> {
+  try {
+    const response = await fetch(USERINFO_URL, {
+      headers: { authorization: `Bearer ${accessToken}` },
+      signal: AbortSignal.timeout(8_000),
+    });
+    if (!response.ok) return null;
+    const body = (await response.json()) as unknown;
+    return body && typeof body === "object" ? (body as Record<string, unknown>) : null;
+  } catch {
+    return null;
+  }
 }

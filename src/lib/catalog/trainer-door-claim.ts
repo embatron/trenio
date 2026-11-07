@@ -6,6 +6,7 @@ import { trainerProfiles, userRoles, users } from "@/db/schema";
 import { writeLog } from "@/lib/log/logger";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
 
+const PLACEHOLDER_NAME = "Пользователь";
 const DOOR_PROFILE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DOOR_SLUG = /^[a-z0-9._]{1,30}$/;
 
@@ -37,6 +38,18 @@ type DoorClaimInput = {
   previewSlug: string;
   via?: "google" | "yandex";
 };
+
+/** A new account takes the card name. An empty or placeholder card name leaves the provider name. */
+export function doorAccountName(created: boolean, card: { firstName: string; lastName: string }) {
+  if (!created) return {};
+  const firstName = card.firstName.trim();
+  const lastName = card.lastName.trim();
+  return {
+    ...(firstName && firstName !== PLACEHOLDER_NAME ? { firstName } : {}),
+    ...(lastName ? { lastName } : {}),
+    lastSignupIntent: "trainer_claim" as const,
+  };
+}
 
 /** Google or Yandex on the short link proves the mailbox and binds the imported card. No password step. */
 export async function claimDoorAfterGoogle(input: DoorClaimInput): Promise<DoorGoogleClaim> {
@@ -110,6 +123,7 @@ export async function claimDoorAfterGoogle(input: DoorClaimInput): Promise<DoorG
 
   const now = new Date();
   const email = normalizeEmail(input.email);
+  const accountName = doorAccountName(input.created, row);
   const updated = await db
     .update(trainerProfiles)
     .set({
@@ -133,11 +147,8 @@ export async function claimDoorAfterGoogle(input: DoorClaimInput): Promise<DoorG
 
   await publishConfirmedDraft(row);
   await db.insert(userRoles).values({ userId: input.userId, role: "trainer" }).onConflictDoNothing();
-  const firstName = row.firstName.trim();
-  const lastName = row.lastName.trim();
   await db.update(users).set({
-    ...(input.created && firstName ? { firstName } : {}),
-    ...(input.created ? { lastName: lastName || null, lastSignupIntent: "trainer_claim" as const } : {}),
+    ...accountName,
     needsPassword: false,
     updatedAt: now,
   }).where(eq(users.id, input.userId));

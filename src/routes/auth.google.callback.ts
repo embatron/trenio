@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { openGoogleAccount } from "@/auth/google-account";
-import { applyExternalPortrait } from "@/auth/oauth-profile";
+import { applyExternalPortrait, rememberOAuthNames } from "@/auth/oauth-profile";
 import { googleIdentityFromCode } from "@/auth/google";
 import { clientIpFromHeaders } from "@/auth/request-meta";
 import { sessionCookieHeader } from "@/auth/session";
@@ -88,6 +88,9 @@ export const Route = createFileRoute("/auth/google/callback")({
                 previewSlug: cookieValue(request.headers.get("cookie"), "trenio_trainer_preview"),
               })
             : null;
+          if (packed.door) {
+            await rememberOAuthNames(result.userId, { firstName: identity.name, lastName: identity.lastName });
+          }
           const doorHome = doorClaim === "claimed" || doorClaim === "own" || doorClaim === "busy";
           const created = result.kind === "session" && result.created;
           void writeLog({

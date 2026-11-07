@@ -4,6 +4,7 @@ import { and, eq } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { trainerProfiles, users } from "@/db/schema";
+import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import { writeImageSet } from "@/lib/images/store";
 import { logCaught, writeLog } from "@/lib/log/logger";
 
@@ -34,9 +35,26 @@ export async function rememberOAuthNames(
     .where(eq(users.id, userId))
     .limit(1);
   if (!user || user.status === "deleted" || user.status === "suspended") return;
-  const patch = oauthNamePatch(user, { firstName: incoming.firstName, lastName: incoming.lastName ?? "" });
-  if (!patch.firstName && !patch.lastName) return;
-  await db.update(users).set({ ...patch, updatedAt: new Date() }).where(eq(users.id, userId));
+  const incomingName = { firstName: incoming.firstName, lastName: incoming.lastName ?? "" };
+  const patch = oauthNamePatch(user, incomingName);
+  if (patch.firstName || patch.lastName) {
+    await db.update(users).set({ ...patch, updatedAt: new Date() }).where(eq(users.id, userId));
+  }
+  const cards = await db
+    .select({ id: trainerProfiles.id, firstName: trainerProfiles.firstName, lastName: trainerProfiles.lastName })
+    .from(trainerProfiles)
+    .where(eq(trainerProfiles.ownerUserId, userId));
+  for (const card of cards) {
+    const cardPatch = oauthNamePatch(card, incomingName);
+    if (!cardPatch.firstName && !cardPatch.lastName) continue;
+    const firstName = cardPatch.firstName ?? card.firstName;
+    const lastName = cardPatch.lastName ?? card.lastName;
+    await db.update(trainerProfiles).set({
+      ...cardPatch,
+      fullName: joinTrainerName(firstName, lastName),
+      updatedAt: new Date(),
+    }).where(eq(trainerProfiles.id, card.id));
+  }
 }
 
 function allowedPortrait(url: string): boolean {

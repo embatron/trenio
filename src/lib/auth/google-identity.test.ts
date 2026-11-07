@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { readGoogleIdentity } from "@/lib/auth/google-identity";
+import { mergeGoogleProfile, readGoogleIdentity } from "@/lib/auth/google-identity";
 
 const CLIENT = "client.apps.googleusercontent.com";
 const NOW = Date.parse("2026-11-02T12:00:00Z");
@@ -38,6 +38,18 @@ test("Google keeps the family name and a larger portrait", () => {
   assert.equal(identity?.lastName, "Коваль");
   assert.equal(identity?.avatarUrl, "https://lh3.googleusercontent.com/a-/abc=s200-c");
   assert.equal(readGoogleIdentity(claims({ picture: "https://evil.example/a.jpg" }), CLIENT, NOW)?.avatarUrl, null);
+});
+
+test("Google splits a full name and accepts the surname from userinfo", () => {
+  const identity = readGoogleIdentity(claims({ given_name: undefined, name: "Евгений Соколов" }), CLIENT, NOW);
+  assert.equal(identity?.name, "Евгений");
+  assert.equal(identity?.lastName, "Соколов");
+  const merged = mergeGoogleProfile(claims({ given_name: "Анна", name: "" }), {
+    sub: "1040200300",
+    family_name: "Коваль",
+  });
+  assert.equal(readGoogleIdentity(merged, CLIENT, NOW)?.lastName, "Коваль");
+  assert.equal(mergeGoogleProfile(claims(), { sub: "other", family_name: "Чужая" }).family_name, undefined);
 });
 
 test("an unverified or foreign token is refused", () => {
