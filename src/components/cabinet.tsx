@@ -371,11 +371,11 @@ export function CabinetShell({
                     return (
                       <Fragment key={item.id}>
                         <option value={item.id}>{label}</option>
-                        {item.pages?.map((page) => (
+                        {item.id === active ? item.pages?.map((page) => (
                           <option key={page.id} value={`page:${page.id}`}>
                             {typeof page.badge === "number" ? `— ${page.label} (${page.badge > 99 ? "99+" : page.badge})` : `— ${page.label}`}
                           </option>
-                        ))}
+                        )) : null}
                       </Fragment>
                     );
                   })}
@@ -401,7 +401,7 @@ export function CabinetShell({
                   const badge = typeof item.badge === "number" ? (
                     <span className={`cabinet-nav__badge${item.badge > 0 ? " is-hot" : ""}`}>{item.badge > 99 ? "99+" : item.badge}</span>
                   ) : null;
-                  const pages = item.pages?.length ? (
+                  const pages = item.id === active && item.pages?.length ? (
                     <div className="cabinet-nav__sub" aria-label={item.label}>
                       <span className="cabinet-nav__mark" aria-hidden="true" />
                       {item.pages.map((page) => {
