@@ -26,8 +26,11 @@ export const OG_LOCALE = "ru_BY";
 /** Public mailbox. Footer, contacts, privacy, and schema.org use this address. */
 export const SITE_EMAIL = "trenioby@gmail.com";
 
-/** Public Instagram of the catalog. Footer and the mega menu use this address. */
+/** Public Instagram of the catalog. Footer, the mega menu, and contacts use this address. */
 export const SITE_INSTAGRAM_URL = "https://www.instagram.com/trenioby/";
+
+/** Public Threads of the catalog. The same places as Instagram. */
+export const SITE_THREADS_URL = "https://www.threads.com/@trenioby";
 
 /** Square mark for the organization logo in structured data. */
 export const SITE_LOGO = "/logo-mark.png";

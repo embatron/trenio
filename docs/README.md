@@ -103,7 +103,7 @@ AGENTS.md             # Entry point для агентов
 | `/city/$slug`           | `city.$slug.index.tsx`     | Каталог тренеров города. Город страницы уже выбран. В сайдбаре фильтр спорта: оба уровня таксономии, поиск и мультиселект. 20 крупнейших городов: minsk, gomel, grodno, vitebsk, mogilev, brest, bobruisk, baranovichi, borisov, pinsk, mozyr, lida, orsha, soligorsk, novopolotsk, molodechno, polotsk, zhlobin, rechitsa, zhodino |
 | `/city/$slug/$sport`    | `city.$slug.$sport.index.tsx` | Страница «Найти тренера по {спорту} в {городе}». Один вид спорта или категория. Пример: `/city/brest/boks` |
 | `/city/$slug/$sport/$child` | `city.$slug.$sport.$child.tsx` | Тот же каталог, если slug вида спорта совпадает с категорией: `/city/minsk/yoga/yoga`. Остальные вложенные адреса переходят на короткий |
-| `/sitemap.xml`          | `sitemap[.]xml.ts`         | Карта страниц каталога, городов, связок спорт + город и опубликованных профилей `/trainers/{slug}`. Черновики не входят |
+| `/sitemap.xml`          | `sitemap[.]xml.ts`         | Карта страниц каталога, городов, связок спорт + город, где есть опубликованный тренер, и профилей `/trainers/{slug}`. Пустая связка и черновик не входят |
 | `/robots.txt`           | `robots[.]txt.ts`          | Разрешает обход и указывает sitemap |
 | `/404`                  | `404.tsx`                  | Фирменная страница «страница не найдена». Тот же экран у любого неизвестного адреса. Не индексируется |
 | `/403`                  | `403.tsx`                  | Фирменная страница «нет доступа». Тот же экран, если сервер закрыл страницу. Не индексируется |
@@ -164,7 +164,7 @@ AGENTS.md             # Entry point для агентов
 | `/me/settings`          | `me.settings.tsx`          | Имя, фамилия, телефон, пароль и сеансы. Подтверждение Telegram остаётся в контактах. Тот же блок «Письма», что в настройках клиента |
 | `/trainer-admin`        | `trainer-admin.tsx`        | Старый адрес кабинета: перенаправляет на `/me`, `?tab=settings` на `/me/settings`, `?tab=card` на `/me/profile`, `?tab=reviews` на `/me/reviews` |
 | `/about`                | `about.tsx`                | О сервисе: лендинг «Кто мы», «Что мы делаем», «Как это работает». У каждой главы обложка |
-| `/contacts`             | `contacts.tsx`             | Контакты: trenioby@gmail.com                                  |
+| `/contacts`             | `contacts.tsx`             | Контакты: trenioby@gmail.com, Telegram, Instagram и Threads   |
 | `/privacy`              | `privacy.tsx`              | Политика конфиденциальности                                   |
 | `/join/trainer`         | `join.trainer.tsx`         | «Привет!». Instagram, Telegram и телефон РБ. Ссылка «У меня нет Instagram» открывает Telegram и телефон. Сюда ведут «Стать тренером», «Оставить Instagram» и пустой каталог. Текст приглашения один: «Скинь свой Instagram — профиль заполним мы.» |
 | `/offer`                | `offer.tsx`                | Договор оферты для размещения профиля тренера                 |

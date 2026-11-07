@@ -73,6 +73,9 @@ const INFO_CSS = `
   color: var(--primary-dark); font-size: 18px; font-weight: var(--fw-title); text-decoration: none;
 }
 .info-mail:hover { text-decoration: underline; }
+.info-body .portal-social { margin-top: 0; }
+.info-body .portal-social a { color: var(--dark); font-weight: inherit; }
+.info-body .portal-social a:hover { text-decoration: none; background: var(--light-bg); }
 .info-related {
   display: flex; flex-wrap: wrap; gap: 4px 20px;
   margin-top: 36px; padding-top: 8px; border-top: 1px solid var(--line);

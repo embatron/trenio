@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { InfoPage } from "@/components/info-page";
+import { PortalSocial } from "@/components/site-chrome";
 import { infoPageCopy, infoPageHead } from "@/lib/seo/pages";
 import { SITE_EMAIL } from "@/lib/seo/site";
 
@@ -23,6 +24,10 @@ function ContactsPage() {
           <a className="info-mail" href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>
         </p>
         <p>Ответ придёт на ту же почту. Отдельного телефона поддержки нет: занятие и запись согласуют напрямую с тренером.</p>
+      </section>
+      <section>
+        <h2>Соцсети</h2>
+        <PortalSocial />
       </section>
       <section>
         <h2>О чём писать</h2>

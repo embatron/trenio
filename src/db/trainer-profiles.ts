@@ -9,7 +9,7 @@ import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { inferTrainerGender, type TrainerGender } from "@/lib/catalog/trainer-gender";
 import { instagramProfileSlug } from "@/lib/catalog/trainer-slugs";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
-import { placesFromProfile } from "@/lib/geo/schemas";
+import { MAX_TRAINING_PLACES, placesFromProfile } from "@/lib/geo/schemas";
 import { getDb } from "./index";
 import { trainerProfiles, users, type TrainerPinnedPost, type TrainerSportRecord } from "./schema";
 
@@ -59,8 +59,15 @@ function newClaimToken() {
   return randomBytes(32).toString("base64url");
 }
 
+/** A draft may list up to three halls separated by " | " or a new line. */
+function addressLines(address: string): string[] {
+  const parts = address.split(/\s*\|\s*|\n+/u).map((part) => part.trim()).filter(Boolean);
+  const lines = parts.length > 0 ? parts : [address.trim()];
+  return lines.slice(0, MAX_TRAINING_PLACES);
+}
+
 /**
- * The draft stores the street as printed. Sync asks the same geocoder as the cabinet
+ * The draft stores each street as printed. Sync asks the same geocoder as the cabinet
  * and keeps that street: a venue name from the map reply does not replace it.
  */
 async function importedPlace(
@@ -68,35 +75,36 @@ async function importedPlace(
   existing: { trainingPlaces: unknown } | undefined,
   address: string,
 ) {
+  const lines = addressLines(address);
   const pending = {
-    trainingPlaces: [{
+    trainingPlaces: lines.map((line) => ({
       city: draft.city,
       district: draft.district ?? "",
-      address,
+      address: line,
       lat: null,
       lng: null,
       geocodeStatus: "pending" as const,
-    }],
-    address,
+    })),
+    address: lines[0] ?? address,
     addressLat: null,
     addressLng: null,
     geocodeStatus: "pending" as const,
   };
   try {
     const resolved = await resolveTrainingPlaces(
-      [{ city: draft.city, district: draft.district ?? "", address, lat: null, lng: null }],
+      lines.map((line) => ({ city: draft.city, district: draft.district ?? "", address: line, lat: null, lng: null })),
       existing ? placesFromProfile(existing) : [],
     );
-    const places = resolved.map((place) => ({
+    const places = resolved.map((place, index) => ({
       ...place,
       city: draft.city.trim() || place.city,
       district: place.district || draft.district || "",
-      address,
+      address: lines[index] || place.address,
     }));
     const mirror = mirrorTrainingPlace(places);
     return {
       trainingPlaces: places,
-      address: mirror.address || address,
+      address: mirror.address || lines[0] || address,
       addressLat: mirror.addressLat,
       addressLng: mirror.addressLng,
       geocodeStatus: mirror.geocodeStatus,

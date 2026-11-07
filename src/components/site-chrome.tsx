@@ -15,14 +15,14 @@ import { pluralRu } from "@/lib/ru-plural";
 import { BELARUS_OBLAST_CENTERS } from "@/lib/catalog/city-taxonomy";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
-import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
+import { InstagramIcon, TelegramIcon, ThreadsIcon } from "@/components/brand-icons";
 import { InstallBanner } from "@/components/install-banner";
 import { MessagePush } from "@/components/message-push";
 import { UserAvatar } from "@/components/user-avatar";
 import { TrainerName } from "@/components/trainer-name";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 import { TRAINER_INVITE_LINE } from "@/lib/catalog/trainer-welcome";
-import { SITE_EMAIL, SITE_INSTAGRAM_URL } from "@/lib/seo/site";
+import { SITE_EMAIL, SITE_INSTAGRAM_URL, SITE_THREADS_URL } from "@/lib/seo/site";
 import { PORTAL_TELEGRAM_URL } from "@/lib/site-texts/defaults";
 
 const CHROME_CSS = `
@@ -283,6 +283,13 @@ body.is-search-docked .site-header__search {
 }
 .mega-link:hover { background: var(--light-bg); color: var(--primary-dark); }
 .mega-link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+@media (min-width: 768px) {
+  .mega-grid > .mega-col:not(.mega-col__hero) { gap: 8px; }
+  .mega-grid > .mega-col:not(.mega-col__hero) .mega-link {
+    min-height: 34px;
+    padding-block: 4px;
+  }
+}
 .mega-mark {
   width: 16px; height: 16px; flex: 0 0 auto;
   display: grid; place-items: center; color: var(--primary);
@@ -1081,7 +1088,6 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             <ul>
               <li><Link className="mega-link mega-link--text" to="/" onClick={onClose}>Найти тренера</Link></li>
               <li><Link className="mega-link mega-link--text" to="/map" search={{ sports: undefined, city: undefined }} onClick={onClose}>На карте</Link></li>
-              <li><Link className="mega-link mega-link--text" to="/auth/signup" onClick={onClose}>Создать аккаунт</Link></li>
               {user ? (
                 <li>
                   <Link className="mega-link mega-link--text" to={getCabinetPath(user.roles)} onClick={onClose}>
@@ -1089,7 +1095,10 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
                   </Link>
                 </li>
               ) : (
-                <li><Link className="mega-link mega-link--text" to="/auth/login" onClick={onClose}>Войти</Link></li>
+                <>
+                  <li><Link className="mega-link mega-link--text" to="/auth/signup" onClick={onClose}>Создать аккаунт</Link></li>
+                  <li><Link className="mega-link mega-link--text" to="/auth/login" onClick={onClose}>Войти</Link></li>
+                </>
               )}
             </ul>
           </div>
@@ -1118,7 +1127,7 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   );
 }
 
-function PortalSocial({ onClose }: { onClose?: () => void }) {
+export function PortalSocial({ onClose }: { onClose?: () => void }) {
   return (
     <div className="portal-social">
       <a
@@ -1140,6 +1149,16 @@ function PortalSocial({ onClose }: { onClose?: () => void }) {
         onClick={onClose}
       >
         <InstagramIcon />
+      </a>
+      <a
+        href={SITE_THREADS_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Threads"
+        title="Threads"
+        onClick={onClose}
+      >
+        <ThreadsIcon />
       </a>
     </div>
   );

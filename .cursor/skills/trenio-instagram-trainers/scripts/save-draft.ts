@@ -195,6 +195,8 @@ function noteNamePairs(note: string, settlements: string[]): Array<{ first: stri
     const last = match[2] || "";
     if (!first || !last || ROLE_WORDS.test(first) || ROLE_WORDS.test(last)) continue;
     if (cities.has(first.toLowerCase()) || cities.has(last.toLowerCase())) continue;
+    const before = note.slice(Math.max(0, (match.index ?? 0) - 16), match.index ?? 0);
+    if (/(?:ул\.?|улиц\p{L}*|проспект|пр-т|пер\.|переул\p{L}*|бульвар)\s*$/iu.test(before)) continue;
     if (pairs.some((pair) => pair.first === first && pair.last === last)) continue;
     pairs.push({ first, last });
   }
