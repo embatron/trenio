@@ -17,6 +17,8 @@ import { PhotoImage } from "@/components/photo-image";
 import { TrainerName } from "@/components/trainer-name";
 import { TrainerRating } from "@/components/trainer-rating";
 import type { MapAreaFeature } from "@/lib/catalog/map-trainers";
+import { MAP_TOOLTIP_CAP } from "@/lib/catalog/map-limits";
+import { capMapFeatures } from "@/lib/catalog/map-window";
 import { countRu } from "@/lib/ru-plural";
 
 const MINSK: [number, number] = [53.9006, 27.559];
@@ -121,7 +123,7 @@ function showPoint(map: LeafletMap, point: CatalogMapUser, zoom: number, program
 }
 
 export function TrainerCatalogMapView({
-  features,
+  features: incomingFeatures,
   user,
   focus,
   highlightKeys = [],
@@ -137,6 +139,7 @@ export function TrainerCatalogMapView({
   onPinHover?: (key: string | null) => void;
   onBounds?: (bounds: CatalogMapBounds) => void;
 }) {
+  const features = capMapFeatures(incomingFeatures);
   const nodeRef = useRef<HTMLDivElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
@@ -150,6 +153,7 @@ export function TrainerCatalogMapView({
   const hideTimer = useRef<number | null>(null);
   const pinClickRef = useRef(false);
   const pinnedRef = useRef<string | null>(null);
+  const suppressHoverRef = useRef(0);
   const featureKey = features.map((feature) => `${feature.kind}:${feature.key}:${feature.count}`).join("|");
   const featuresRef = useRef(features);
   featuresRef.current = features;
@@ -168,7 +172,18 @@ export function TrainerCatalogMapView({
   const onPinHoverRef = useRef(onPinHover);
   onPinHoverRef.current = onPinHover;
 
+  const dismissTip = (event?: { preventDefault: () => void; stopPropagation: () => void }) => {
+    event?.preventDefault();
+    event?.stopPropagation();
+    if (hideTimer.current != null) window.clearTimeout(hideTimer.current);
+    pinnedRef.current = null;
+    suppressHoverRef.current = Date.now() + 350;
+    setPinnedKey(null);
+    setHoverKey(null);
+  };
+
   const holdPin = (key: string) => {
+    if (Date.now() < suppressHoverRef.current) return;
     if (hideTimer.current != null) window.clearTimeout(hideTimer.current);
     setHoverKey(key);
   };
@@ -206,8 +221,7 @@ export function TrainerCatalogMapView({
         pinClickRef.current = false;
         return;
       }
-      setHoverKey(null);
-      setPinnedKey(null);
+      dismissTip();
     });
     mapRef.current = map;
     const report = () => {
@@ -231,10 +245,7 @@ export function TrainerCatalogMapView({
       report();
     };
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setHoverKey(null);
-        setPinnedKey(null);
-      }
+      if (event.key === "Escape") dismissTip();
     };
     window.addEventListener("resize", onResize);
     window.addEventListener("keydown", onKey);
@@ -439,18 +450,8 @@ export function TrainerCatalogMapView({
           onMouseEnter={() => holdPin(active.key)}
           onMouseLeave={releasePin}
         >
-          {pinnedKey === active.key ? (
-            <button
-              type="button"
-              className="catalog-map__close"
-              aria-label="Закрыть"
-              onClick={() => setPinnedKey(null)}
-            >
-              ×
-            </button>
-          ) : null}
           <ul className="catalog-map__people">
-            {active.trainers.map((trainer) => (
+            {active.trainers.slice(0, MAP_TOOLTIP_CAP).map((trainer) => (
               <li key={trainer.slug}>
                 <Link to="/trainers/$slug" params={{ slug: trainer.slug }}>
                   {trainer.photo ? (
@@ -478,8 +479,18 @@ export function TrainerCatalogMapView({
             ))}
           </ul>
           <p className="catalog-map__where">{active.label}</p>
-          {active.count > active.trainers.length ? (
-            <p className="catalog-map__more">Ещё {active.count - active.trainers.length} в списке рядом</p>
+          {active.count > Math.min(active.trainers.length, MAP_TOOLTIP_CAP) ? (
+            <p className="catalog-map__more">Ещё {active.count - Math.min(active.trainers.length, MAP_TOOLTIP_CAP)} в списке рядом</p>
+          ) : null}
+          {pinnedKey === active.key ? (
+            <button
+              type="button"
+              className="catalog-map__close"
+              aria-label="Закрыть"
+              onClick={dismissTip}
+            >
+              ×
+            </button>
           ) : null}
         </div>
       ) : null}
@@ -524,12 +535,12 @@ const MAP_VIEW_CSS = `
 .catalog-map__tip.is-above::after { bottom: -7px; transform: translateX(-50%) rotate(45deg); }
 .catalog-map__tip.is-below::after { top: -7px; transform: translateX(-50%) rotate(225deg); }
 .catalog-map__close {
-  position: absolute; top: 4px; right: 4px; z-index: 1; width: 44px; height: 44px;
+  position: absolute; top: 4px; right: 4px; z-index: 2; width: 44px; height: 44px;
   border: 0; border-radius: 999px; background: var(--light-bg); color: var(--dark);
   font-size: 22px; line-height: 1; cursor: pointer;
 }
 .catalog-map__close:hover { color: var(--primary); }
-.catalog-map__people { list-style: none; margin: 0; padding: 8px 0 0; display: grid; gap: 4px; min-height: 0; max-height: var(--people-max, min(320px, 46dvh)); overflow: auto; overscroll-behavior: contain; }
+.catalog-map__people { position: relative; z-index: 1; list-style: none; margin: 0; padding: 8px 0 0; display: grid; gap: 4px; min-height: 0; max-height: var(--people-max, min(320px, 46dvh)); overflow: auto; overscroll-behavior: contain; }
 .catalog-map__people a {
   display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 8px; min-height: 44px;
   padding: 4px; border-radius: 12px; color: inherit; text-decoration: none;
@@ -538,8 +549,12 @@ const MAP_VIEW_CSS = `
 .catalog-map__photo { width: 48px; height: 64px; object-fit: cover; object-position: center; border-radius: 10px; display: block; background: var(--light-bg); }
 .catalog-map__photo--empty { display: grid; place-items: center; color: var(--primary); font-weight: var(--fw-title); font-size: 18px; }
 .catalog-map__copy { min-width: 0; display: grid; gap: 1px; align-content: start; }
-.catalog-map__tip:has(.catalog-map__close) .catalog-map__copy { padding-right: 52px; }
-.catalog-map__copy .trainer-name { font-size: 14px; }
+.catalog-map__tip:has(.catalog-map__close) .catalog-map__people > li:first-child .catalog-map__copy { padding-right: 36px; }
+.catalog-map__copy .trainer-name {
+  flex-direction: column; align-items: flex-start; gap: 0;
+  font-size: 13px; line-height: 1.15; letter-spacing: 0; font-weight: var(--fw-title);
+}
+.catalog-map__copy .trainer-name__line { overflow: visible; text-overflow: clip; white-space: normal; overflow-wrap: break-word; }
 .catalog-map__sport { color: var(--muted); font-size: 12px; line-height: 1.3; }
 .catalog-map__where, .catalog-map__more { margin: 0; padding: 0 6px 2px; color: var(--muted); font-size: 12px; line-height: 1.3; }
 .catalog-map__price { font-size: 13px; font-weight: var(--fw-title); color: var(--dark); }

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { CatalogEmpty } from "@/components/catalog-empty";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
+import { MapPeopleWindow } from "@/components/map-people-window";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { SportIcon } from "@/components/sport-icon";
 import { TrainerCatalogMap } from "@/components/trainer-catalog-map";
@@ -26,6 +27,48 @@ import { reportClientEvent } from "@/lib/log/client-reporter";
 import { pluralRu } from "@/lib/ru-plural";
 
 const MINSK: CatalogMapUser = { lat: 53.9006, lng: 27.559 };
+
+function MapListedCard({
+  trainer,
+  marked,
+  settled,
+  delay,
+  city,
+  onHover,
+}: {
+  trainer: MapTrainer;
+  marked: boolean;
+  settled: boolean;
+  delay: string;
+  city: string;
+  onHover: (slug: string | null | ((current: string | null) => string | null)) => void;
+}) {
+  useEffect(() => () => {
+    onHover((current) => (current === trainer.slug ? null : current));
+  }, [onHover, trainer.slug]);
+  return (
+    <div className={settled ? "map-person is-settled" : "map-person"} style={settled ? undefined : { animationDelay: delay }}>
+      <CatalogTrainerCard
+        marked={marked}
+        onHover={onHover}
+        trainer={{
+          slug: trainer.slug,
+          name: trainer.name,
+          firstName: trainer.firstName,
+          lastName: trainer.lastName,
+          photo: trainer.photo,
+          tags: trainer.tags,
+          desc: "",
+          rating: trainer.rating,
+          reviews: trainer.reviews,
+          city,
+          price: trainer.price,
+          experience: trainer.experience,
+        }}
+      />
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/map")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -164,6 +207,7 @@ export function CatalogMapScreen({
   const [price, setPrice] = useState<{ min: number; max: number } | null>(null);
   const moreRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const seenPeopleRef = useRef(new Set<string>());
   const queryRef = useRef<Parameters<typeof listMapAreaFn>[0]["data"] | null>(null);
   const generationRef = useRef(0);
   const nextCursorRef = useRef<number | null>(null);
@@ -770,30 +814,24 @@ export function CatalogMapScreen({
                   )
                 ) : (
                   <>
-                    <div className={`map-people${loading ? " is-pending" : ""}`}>
-                      {rows.map((trainer, index) => (
-                        <div key={trainer.slug} className="map-person" style={{ animationDelay: `${Math.min(index, 11) * 40}ms` }}>
-                          <CatalogTrainerCard
+                    <MapPeopleWindow count={rows.length} pending={loading}>
+                      {(start, end) => rows.slice(start, end).map((trainer, offset) => {
+                        const index = start + offset;
+                        const settled = seenPeopleRef.current.has(trainer.slug);
+                        if (!settled) seenPeopleRef.current.add(trainer.slug);
+                        return (
+                          <MapListedCard
+                            key={trainer.slug}
+                            trainer={trainer}
                             marked={pinSlugs.includes(trainer.slug)}
+                            settled={settled}
+                            delay={`${Math.min(index, 11) * 40}ms`}
+                            city={cardCity(trainer)}
                             onHover={setCardSlug}
-                            trainer={{
-                              slug: trainer.slug,
-                              name: trainer.name,
-                              firstName: trainer.firstName,
-                              lastName: trainer.lastName,
-                              photo: trainer.photo,
-                              tags: trainer.tags,
-                              desc: "",
-                              rating: trainer.rating,
-                              reviews: trainer.reviews,
-                              city: cardCity(trainer),
-                              price: trainer.price,
-                              experience: trainer.experience,
-                            }}
                           />
-                        </div>
-                      ))}
-                    </div>
+                        );
+                      })}
+                    </MapPeopleWindow>
                     {nextCursor != null ? <div ref={sentinelRef} className="map-sentinel" /> : null}
                     {loadingMore ? <p className="map-loading">Подгружаем ещё</p> : null}
                   </>
@@ -878,6 +916,9 @@ const PAGE_CSS = `
 .map-count { margin: 0 0 12px; font-size: 15px; color: var(--muted); font-weight: var(--fw-ui); }
 .map-count b { color: var(--dark); font-weight: var(--fw-title); }
 .map-people { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--layout-gap); }
+.map-people-frame { position: relative; }
+.map-people-frame > .map-people { position: absolute; top: 0; left: 0; right: 0; }
+.map-person.is-settled { animation: none; }
 .map-people.is-pending { opacity: 0.72; }
 .map-person { min-width: 0; animation: map-card-in 0.34s ease both; }
 @keyframes map-card-in { from { opacity: 0; } to { opacity: 1; } }

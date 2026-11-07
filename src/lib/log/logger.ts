@@ -1,5 +1,4 @@
 import { clientIpFromHeaders } from "@/auth/request-meta";
-import { getDb } from "@/db";
 import { appLogs } from "@/db/schema";
 import { isAuthError } from "@/lib/auth/errors";
 import {
@@ -150,6 +149,7 @@ export async function writeLog(event: LogEvent): Promise<void> {
   const subject = event.subject?.includes("*") ? event.subject.slice(0, 320) : normalizeSubject(event.subject);
 
   try {
+    const { getDb } = await import("@/db");
     await getDb()
       .insert(appLogs)
       .values({

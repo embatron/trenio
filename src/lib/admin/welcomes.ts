@@ -3,7 +3,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireAuthMiddleware } from "@/auth/middleware";
-import { getDb } from "@/db";
 import { trainerProfiles, trainerWelcomes } from "@/db/schema";
 import { assertStaff } from "@/lib/admin/access";
 import { AuthError } from "@/lib/auth/errors";
@@ -33,14 +32,21 @@ export type AdminWelcome = {
 
 let staffColumnReady: Promise<void> | null = null;
 
+async function database() {
+  const { getDb } = await import("@/db");
+  return getDb();
+}
+
 function ensureWelcomeStaffColumn(): Promise<void> {
   if (!staffColumnReady) {
-    staffColumnReady = getDb()
-      .execute(
-        sql`
+    staffColumnReady = database()
+      .then((db) =>
+        db.execute(
+          sql`
         ALTER TABLE trainer_welcomes
         ADD COLUMN IF NOT EXISTS staff_status varchar(16) NOT NULL DEFAULT 'new'
       `,
+        ),
       )
       .then(() => undefined)
       .catch((error) => {
@@ -99,7 +105,7 @@ function matchTrainer(
 }
 
 async function loadProfiles(): Promise<ProfileHit[]> {
-  const rows = await getDb()
+  const rows = await (await database())
     .select({
       slug: trainerProfiles.slug,
       firstName: trainerProfiles.firstName,
@@ -130,8 +136,9 @@ export function welcomeIsOpen(row: {
 
 export async function countOpenWelcomes(): Promise<number> {
   await ensureWelcomeStaffColumn();
+  const db = await database();
   const [welcomes, profiles] = await Promise.all([
-    getDb()
+    db
       .select({
         instagram: trainerWelcomes.instagram,
         telegram: trainerWelcomes.telegram,
@@ -159,7 +166,7 @@ export const getAdminWelcomesFn = createServerFn({ method: "GET" })
     assertStaff(context.user.roles);
     await ensureWelcomeStaffColumn();
     const [rows, profiles] = await Promise.all([
-      getDb()
+      (await database())
         .select({
           id: trainerWelcomes.id,
           channel: trainerWelcomes.channel,
@@ -206,13 +213,13 @@ export const setAdminWelcomeStatusFn = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     assertStaff(context.user.roles);
     await ensureWelcomeStaffColumn();
-    const [existing] = await getDb()
+    const [existing] = await (await database())
       .select({ id: trainerWelcomes.id, instagram: trainerWelcomes.instagram })
       .from(trainerWelcomes)
       .where(eq(trainerWelcomes.id, data.id))
       .limit(1);
     if (!existing) throw new AuthError("Заявка не найдена.", "VALIDATION");
-    await getDb()
+    await (await database())
       .update(trainerWelcomes)
       .set({ staffStatus: data.status })
       .where(eq(trainerWelcomes.id, data.id));

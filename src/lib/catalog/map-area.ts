@@ -7,11 +7,8 @@ import { trainerProfiles, trainerReviews } from "@/db/schema";
 import type { TrainerAudience, TrainerFormat } from "@/lib/catalog/published-trainers";
 import { trainerNameParts } from "@/lib/catalog/trainer-name";
 import { placesFromProfile } from "@/lib/geo/schemas";
+import { MAP_CLUSTER_CAP, MAP_PAGE_SIZE, MAP_PIN_CAP, MAP_TOOLTIP_CAP } from "@/lib/catalog/map-limits";
 
-export const MAP_PAGE_SIZE = 12;
-const PIN_POINT_CAP = 80;
-const CLUSTER_CAP = 180;
-const TOOLTIP_CAP = 8;
 const SLUG_CAP = 200;
 
 export type MapTrainerPlace = {
@@ -447,6 +444,8 @@ async function pinFeatures(filters: AreaFilters, bounds: AreaBounds): Promise<Ma
       count(DISTINCT slug)::int AS count
     FROM places
     GROUP BY 1, 2
+    ORDER BY count DESC
+    LIMIT ${MAP_PIN_CAP}
   `);
   const samples = await queryRows(sql`
     WITH places AS (${placesSql(filters, bounds, true)})
@@ -475,7 +474,7 @@ async function pinFeatures(filters: AreaFilters, bounds: AreaBounds): Promise<Ma
     list.push(slug);
     slugsByKey.set(key, list);
   }
-  const sampleSlugs = [...new Set([...slugsByKey.values()].flatMap((list) => list.slice(0, TOOLTIP_CAP)))];
+  const sampleSlugs = [...new Set([...slugsByKey.values()].flatMap((list) => list.slice(0, MAP_TOOLTIP_CAP)))];
   const loaded = await loadTrainers(sampleSlugs, bounds, filters.city);
   const bySlug = new Map(loaded.map((trainer) => [trainer.slug, trainer]));
   return groups.flatMap((row) => {
@@ -494,7 +493,7 @@ async function pinFeatures(filters: AreaFilters, bounds: AreaBounds): Promise<Ma
       label: [city, address].filter(Boolean).join(", "),
       count: num(row.count),
       slugs,
-      trainers: slugs.slice(0, TOOLTIP_CAP).flatMap((slug) => {
+      trainers: slugs.slice(0, MAP_TOOLTIP_CAP).flatMap((slug) => {
         const trainer = bySlug.get(slug);
         return trainer ? [cardOf(trainer)] : [];
       }),
@@ -518,11 +517,11 @@ async function clusterFeatures(filters: AreaFilters, bounds: AreaBounds, zoom: n
       FROM places
       GROUP BY 1, 2
       ORDER BY count DESC
-      LIMIT ${CLUSTER_CAP + 1}
+      LIMIT ${MAP_CLUSTER_CAP + 1}
     `);
-    if (rows.length <= CLUSTER_CAP) break;
+    if (rows.length <= MAP_CLUSTER_CAP) break;
   }
-  return rows.slice(0, CLUSTER_CAP).flatMap((row) => {
+  return rows.slice(0, MAP_CLUSTER_CAP).flatMap((row) => {
     const lat = num(row.lat);
     const lng = num(row.lng);
     const gx = num(row.gx);
@@ -600,7 +599,7 @@ export async function loadMapArea(input: MapAreaInput): Promise<MapArea> {
   const trainers = await loadTrainers(pageSlugs, bounds, filters.city);
   let features: MapAreaFeature[] = [];
   if (includeFeatures) {
-    features = points > PIN_POINT_CAP
+    features = points > MAP_PIN_CAP
       ? await clusterFeatures(filters, bounds, input.zoom)
       : await pinFeatures(filters, bounds);
   }
