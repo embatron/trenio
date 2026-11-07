@@ -576,12 +576,14 @@ type AccountMenuTo = "/account" | "/account/messages" | "/account/reviews" | "/a
 type AdminMenuTo =
   | "/admin"
   | "/admin/trainers"
+  | "/admin/trainers/drafts"
   | "/admin/welcomes"
   | "/admin/reviews"
   | "/admin/messages"
   | "/admin/accounts"
   | "/admin/finance"
-  | "/admin/settings";
+  | "/admin/settings"
+  | "/admin/site";
 type MeMenuTo = "/me" | "/me/messages" | "/me/reviews" | "/me/favorites" | "/me/profile" | "/me/settings";
 
 type HeaderMenuItem =
@@ -610,12 +612,14 @@ const TRAINER_MENU: HeaderMenuItem[] = [
 const ADMIN_MENU: HeaderMenuItem[] = [
   { id: "overview", label: "Обзор", kind: "admin", to: "/admin" },
   { id: "trainers", label: "Тренеры", kind: "admin", to: "/admin/trainers" },
-  { id: "welcomes", label: "Заявки от тренера", kind: "admin", to: "/admin/welcomes" },
+  { id: "welcomes", label: "Заявки", kind: "admin", to: "/admin/welcomes" },
   { id: "reviews", label: "Отзывы", kind: "admin", to: "/admin/reviews" },
+  { id: "drafts", label: "Драфты", kind: "admin", to: "/admin/trainers/drafts" },
   { id: "messages", label: "Сообщения", kind: "admin", to: "/admin/messages" },
   { id: "accounts", label: "Аккаунты", kind: "admin", to: "/admin/accounts" },
   { id: "finance", label: "Бухгалтерия", kind: "admin", to: "/admin/finance" },
   { id: "settings", label: "Настройки", kind: "admin", to: "/admin/settings" },
+  { id: "site", label: "Сайт", kind: "admin", to: "/admin/site" },
 ];
 
 function headerMenuFor(roles: UserRole[]): HeaderMenuItem[] {

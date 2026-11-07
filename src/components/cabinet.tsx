@@ -1,5 +1,5 @@
-import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
-import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { Link, useNavigate, useRouteContext, useRouterState } from "@tanstack/react-router";
+import { Fragment, useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 import { CredentialsRequiredDialog } from "@/components/auth/credentials-required-dialog";
@@ -107,6 +107,7 @@ export type AccountSectionPath = "/account" | "/account/reviews" | "/account/boo
 export type AdminSectionPath =
   | "/admin"
   | "/admin/trainers"
+  | "/admin/trainers/drafts"
   | "/admin/welcomes"
   | "/admin/reviews"
   | "/admin/messages"
@@ -131,6 +132,24 @@ export type CabinetSectionLink = {
   label: string;
 };
 
+export type CabinetNavPage = {
+  id: string;
+  label: string;
+  to: AccountSectionPath | AdminSectionPath | TrainerSectionPath | MeSectionPath;
+  badge?: number;
+};
+
+export function cabinetPathMatches(pathname: string, to: string) {
+  if (to === "/admin" || to === "/me" || to === "/account") return pathname === to;
+  return pathname === to || pathname.startsWith(`${to}/`);
+}
+
+export function currentCabinetPage(pathname: string, pages: readonly CabinetNavPage[]) {
+  return pages
+    .filter((page) => cabinetPathMatches(pathname, page.to))
+    .sort((a, b) => b.to.length - a.to.length)[0] ?? null;
+}
+
 export type CabinetNavItem = {
   id: string;
   label: string;
@@ -139,6 +158,7 @@ export type CabinetNavItem = {
   to?: AccountSectionPath | AdminSectionPath | TrainerSectionPath | MeSectionPath;
   search?: { tab: "overview" | "settings" | "card" | "reviews" };
   sections?: readonly CabinetSectionLink[];
+  pages?: readonly CabinetNavPage[];
 };
 
 export function CabinetStyles() {
@@ -180,7 +200,9 @@ export function CabinetShell({
   const publicSlug = profileSlug?.trim() || "";
   const identity = <TrainerName firstName={firstName} lastName={lastName} empty="Без имени" />;
   const navRef = useRef<HTMLDivElement>(null);
+  const navEl = useRef<HTMLElement>(null);
   const sideRef = useRef<HTMLElement>(null);
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   useEffect(() => {
     const header = document.getElementById("site-header");
     const side = sideRef.current;
@@ -202,8 +224,9 @@ export function CabinetShell({
     };
   }, []);
   const sectionKey = items.find((item) => item.id === active)?.sections?.map((section) => section.id).join("|") ?? "";
+  const pageHere = currentCabinetPage(pathname, items.flatMap((item) => item.pages ?? []));
+  const pageSig = items.map((item) => item.pages?.map((page) => `${page.id}:${page.badge ?? ""}`).join(",") ?? "").join("|");
   const [currentSection, setCurrentSection] = useState<string | null>(null);
-  const subRef = useRef<HTMLDivElement>(null);
   const spyPause = useRef(0);
   useEffect(() => {
     navRef.current?.querySelector(".is-active")?.scrollIntoView({ inline: "nearest", block: "nearest" });
@@ -229,14 +252,22 @@ export function CabinetShell({
     return () => observer.disconnect();
   }, [sectionKey]);
   useLayoutEffect(() => {
-    const root = subRef.current;
-    const mark = root?.querySelector<HTMLElement>(".cabinet-nav__mark");
-    const link = root?.querySelector<HTMLElement>(".is-current");
-    if (!root || !mark || !link) return;
-    mark.style.width = `${link.offsetWidth}px`;
-    mark.style.height = `${link.offsetHeight}px`;
-    mark.style.transform = `translate(${link.offsetLeft}px, ${link.offsetTop}px)`;
-  }, [currentSection, sectionKey]);
+    const root = navEl.current;
+    if (!root) return;
+    for (const sub of root.querySelectorAll<HTMLElement>(".cabinet-nav__sub")) {
+      const mark = sub.querySelector<HTMLElement>(".cabinet-nav__mark");
+      const link = sub.querySelector<HTMLElement>(".is-current");
+      if (!mark) continue;
+      if (!link) {
+        mark.style.width = "0px";
+        mark.style.height = "0px";
+        continue;
+      }
+      mark.style.width = `${link.offsetWidth}px`;
+      mark.style.height = `${link.offsetHeight}px`;
+      mark.style.transform = `translate(${link.offsetLeft}px, ${link.offsetTop}px)`;
+    }
+  }, [currentSection, sectionKey, pathname, pageSig]);
   function moveToSection(id: string) {
     const target = document.getElementById(id);
     if (!target) return;
@@ -305,6 +336,7 @@ export function CabinetShell({
               </div>
             </div>
             <nav
+              ref={navEl}
               className="cabinet-nav"
               aria-label="Разделы кабинета"
               style={sectionKey ? { ["--nav-sub-row" as string]: String(items.findIndex((item) => item.id === active) + 2) } : undefined}
@@ -312,10 +344,16 @@ export function CabinetShell({
               <div className="cabinet-nav__pick">
                 <select
                   aria-label="Раздел кабинета"
-                  value={active}
+                  value={pageHere ? `page:${pageHere.id}` : active}
                   onChange={(event) => {
-                    const item = items.find((entry) => entry.id === event.target.value);
-                    if (!item || item.id === active) return;
+                    const value = event.target.value;
+                    if (value.startsWith("page:")) {
+                      const page = items.flatMap((entry) => entry.pages ?? []).find((entry) => entry.id === value.slice(5));
+                      if (page) void navigate({ to: page.to });
+                      return;
+                    }
+                    const item = items.find((entry) => entry.id === value);
+                    if (!item) return;
                     if (item.to === "/trainer-admin") {
                       void navigate({ to: "/trainer-admin", search: item.search ?? {} });
                       return;
@@ -324,14 +362,22 @@ export function CabinetShell({
                       void navigate({ to: item.to });
                       return;
                     }
-                    onSelect?.(item.id);
+                    if (item.id !== active) onSelect?.(item.id);
                   }}
                 >
-                  {items.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {typeof item.badge === "number" ? `${item.label} (${item.badge > 99 ? "99+" : item.badge})` : item.label}
-                    </option>
-                  ))}
+                  {items.map((item) => {
+                    const label = typeof item.badge === "number" ? `${item.label} (${item.badge > 99 ? "99+" : item.badge})` : item.label;
+                    return (
+                      <Fragment key={item.id}>
+                        <option value={item.id}>{label}</option>
+                        {item.pages?.map((page) => (
+                          <option key={page.id} value={`page:${page.id}`}>
+                            {typeof page.badge === "number" ? `— ${page.label} (${page.badge > 99 ? "99+" : page.badge})` : `— ${page.label}`}
+                          </option>
+                        ))}
+                      </Fragment>
+                    );
+                  })}
                 </select>
                 {sectionKey ? (
                   <select
@@ -348,45 +394,76 @@ export function CabinetShell({
               <div className="cabinet-nav__items" ref={navRef}>
                 {items.map((item) => {
                   const className = item.id === active ? "is-active" : undefined;
+                  const onChild = Boolean(pageHere && item.pages?.some((page) => page.id === pageHere.id));
+                  const current = item.id === active && !onChild ? "page" as const : undefined;
                   const icon = <svg viewBox="0 0 24 24" aria-hidden="true"><path d={ICONS[item.icon]} /></svg>;
                   const badge = typeof item.badge === "number" ? (
                     <span className={`cabinet-nav__badge${item.badge > 0 ? " is-hot" : ""}`}>{item.badge > 99 ? "99+" : item.badge}</span>
                   ) : null;
+                  const pages = item.pages?.length ? (
+                    <div className="cabinet-nav__sub" aria-label={item.label}>
+                      <span className="cabinet-nav__mark" aria-hidden="true" />
+                      {item.pages.map((page) => {
+                        const here = page.id === pageHere?.id;
+                        return (
+                          <Link
+                            key={page.id}
+                            to={page.to}
+                            className={here ? "is-current" : undefined}
+                            aria-current={here ? "page" : undefined}
+                          >
+                            <span className="cabinet-nav__label">{page.label}</span>
+                            {typeof page.badge === "number" ? (
+                              <span className={`cabinet-nav__badge${page.badge > 0 ? " is-hot" : ""}`}>{page.badge > 99 ? "99+" : page.badge}</span>
+                            ) : null}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  ) : null;
                   if (item.to === "/trainer-admin") {
                     return (
-                      <Link key={item.id} to="/trainer-admin" search={item.search ?? {}} className={className} aria-current={item.id === active ? "page" : undefined}>
-                        {icon}
-                        <span className="cabinet-nav__label">{item.label}</span>
-                        {badge}
-                      </Link>
+                      <Fragment key={item.id}>
+                        <Link to="/trainer-admin" search={item.search ?? {}} className={className} aria-current={current}>
+                          {icon}
+                          <span className="cabinet-nav__label">{item.label}</span>
+                          {badge}
+                        </Link>
+                        {pages}
+                      </Fragment>
                     );
                   }
                   if (item.to) {
                     return (
-                      <Link key={item.id} to={item.to} activeOptions={item.to === "/me" || item.to === "/admin" ? { exact: true } : undefined} className={className} aria-current={item.id === active ? "page" : undefined}>
-                        {icon}
-                        <span className="cabinet-nav__label">{item.label}</span>
-                        {badge}
-                      </Link>
+                      <Fragment key={item.id}>
+                        <Link to={item.to} activeOptions={item.to === "/me" || item.to === "/admin" ? { exact: true } : undefined} className={className} aria-current={current}>
+                          {icon}
+                          <span className="cabinet-nav__label">{item.label}</span>
+                          {badge}
+                        </Link>
+                        {pages}
+                      </Fragment>
                     );
                   }
                   return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      className={className}
-                      aria-current={item.id === active ? "page" : undefined}
-                      onClick={() => onSelect?.(item.id)}
-                    >
-                      {icon}
-                      <span className="cabinet-nav__label">{item.label}</span>
-                      {badge}
-                    </button>
+                    <Fragment key={item.id}>
+                      <button
+                        type="button"
+                        className={className}
+                        aria-current={current}
+                        onClick={() => onSelect?.(item.id)}
+                      >
+                        {icon}
+                        <span className="cabinet-nav__label">{item.label}</span>
+                        {badge}
+                      </button>
+                      {pages}
+                    </Fragment>
                   );
                 })}
               </div>
               {sectionKey ? (
-                <div className="cabinet-nav__sub" aria-label="Разделы профиля" ref={subRef}>
+                <div className="cabinet-nav__sub" aria-label="Разделы профиля">
                   <span className="cabinet-nav__mark" aria-hidden="true" />
                   {items.find((item) => item.id === active)?.sections?.map((section) => (
                     <a
@@ -460,9 +537,9 @@ a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
   .cabinet-nav__mark { transition: none; }
 }
 @media (min-width: 961px) {
-  .cabinet-nav:has(.cabinet-nav__sub) { display: grid; }
-  .cabinet-nav:has(.cabinet-nav__sub) .cabinet-nav__items { display: contents; }
-  .cabinet-nav__sub { grid-row: var(--nav-sub-row); margin-left: 18px; }
+  .cabinet-nav:has(> .cabinet-nav__sub) { display: grid; }
+  .cabinet-nav:has(> .cabinet-nav__sub) .cabinet-nav__items { display: contents; }
+  .cabinet-nav > .cabinet-nav__sub { grid-row: var(--nav-sub-row); margin-left: 18px; }
 }
 .cabinet-nav__sub a { position: relative; z-index: 1; color: var(--muted); font-size: 14px; font-weight: var(--fw-ui); transition: color 0.28s ease; }
 .cabinet-nav__sub a.is-current { background: transparent; color: var(--primary); }

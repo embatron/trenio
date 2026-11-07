@@ -9,7 +9,7 @@ export const Route = createFileRoute("/admin/site")({
   loader: () => getSiteTextsFn(),
   head: () => ({
     meta: [
-      { title: "Настройки сайта · кабинет администратора · Я ищу тренера на trenio.by" },
+      { title: "Сайт · кабинет администратора · Я ищу тренера на trenio.by" },
       { name: "description", content: "Тексты писем и сообщения для клиентов trenio.by." },
       { name: "robots", content: "noindex,follow" },
     ],
@@ -32,7 +32,7 @@ function AdminSitePage() {
 
   return (
     <article className="cabinet-card">
-      <h2>Настройки сайта</h2>
+      <h2>Сайт</h2>
       <p className="cabinet-note cabinet-note--lede">
         Следующее письмо и следующее сообщение уже берут текст, который сохранён здесь.
         Под каждым полем написано, что можно вставить и на какое место это встанет.

@@ -366,24 +366,35 @@ function sortTrainers(rows: AdminTrainer[], sort: TrainerSort) {
   return rows;
 }
 
-export function AdminTrainersTable({ trainers, outreachText }: { trainers: AdminTrainer[]; outreachText: string }) {
+export function AdminTrainersTable({
+  trainers,
+  outreachText,
+  unsentOnly = false,
+}: {
+  trainers: AdminTrainer[];
+  outreachText: string;
+  unsentOnly?: boolean;
+}) {
   const [query, setQuery] = useState("");
   const [publishTab, setPublishTab] = useState<TrainerPublishTab>("unpublished");
   const [editSlug, setEditSlug] = useState<string | null>(null);
   const [notePatch, setNotePatch] = useState<Record<string, { body: string; at: string; count: number }>>({});
   const [linkPatch, setLinkPatch] = useState<Record<string, string>>({});
   const listed = useMemo(
-    () => trainers.map((trainer) => {
-      const note = notePatch[trainer.slug];
-      const link = linkPatch[trainer.slug];
-      if (!note && !link) return trainer;
-      return {
-        ...trainer,
-        ...(note ? { staffNote: note.body, staffNoteAt: note.at, staffNoteCount: note.count } : {}),
-        ...(link ? { inviteSentAt: link } : {}),
-      };
-    }),
-    [trainers, notePatch, linkPatch],
+    () => {
+      const patched = trainers.map((trainer) => {
+        const note = notePatch[trainer.slug];
+        const link = linkPatch[trainer.slug];
+        if (!note && !link) return trainer;
+        return {
+          ...trainer,
+          ...(note ? { staffNote: note.body, staffNoteAt: note.at, staffNoteCount: note.count } : {}),
+          ...(link ? { inviteSentAt: link } : {}),
+        };
+      });
+      return unsentOnly ? patched.filter((trainer) => !trainer.outreachSentAt) : patched;
+    },
+    [trainers, notePatch, linkPatch, unsentOnly],
   );
   const [category, setCategory] = useState("");
   const [sport, setSport] = useState("");
@@ -434,7 +445,10 @@ export function AdminTrainersTable({ trainers, outreachText }: { trainers: Admin
   );
 
   if (listed.length === 0) {
-    return <p className="cabinet-empty">Тренеров пока нет.</p>;
+    const empty = unsentOnly && trainers.length > 0
+      ? "Заготовок нет: первое сообщение уже отправлено всем тренерам."
+      : "Тренеров пока нет.";
+    return <p className="cabinet-empty">{empty}</p>;
   }
 
   return (
@@ -509,14 +523,16 @@ export function AdminTrainersTable({ trainers, outreachText }: { trainers: Admin
             ))}
           </select>
         </label>
-        <label>
-          <span>Сообщение</span>
-          <select value={message} onChange={(event) => setMessage(event.target.value as "" | "sent" | "unsent")}>
-            <option value="">Все</option>
-            <option value="sent">Отправлено</option>
-            <option value="unsent">Не отправлено</option>
-          </select>
-        </label>
+        {unsentOnly ? null : (
+          <label>
+            <span>Сообщение</span>
+            <select value={message} onChange={(event) => setMessage(event.target.value as "" | "sent" | "unsent")}>
+              <option value="">Все</option>
+              <option value="sent">Отправлено</option>
+              <option value="unsent">Не отправлено</option>
+            </select>
+          </label>
+        )}
         <label>
           <span>Ссылка</span>
           <select value={link} onChange={(event) => setLink(event.target.value as "" | "sent" | "unsent")}>

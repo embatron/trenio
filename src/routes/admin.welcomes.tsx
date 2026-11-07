@@ -19,7 +19,7 @@ export const Route = createFileRoute("/admin/welcomes")({
   loader: () => getAdminWelcomesFn(),
   head: () => ({
     meta: [
-      { title: "Заявки от тренера · кабинет администратора · Я ищу тренера на trenio.by" },
+      { title: "Заявки · кабинет администратора · Я ищу тренера на trenio.by" },
       { name: "description", content: "Заявки со страницы «Стать тренером»." },
       { name: "robots", content: "noindex,follow" },
     ],
@@ -170,7 +170,7 @@ function AdminWelcomesPage() {
 
   return (
     <article className="cabinet-card">
-      <h2>Заявки от тренера</h2>
+      <h2>Заявки</h2>
       {rows.length === 0 ? (
         <p className="cabinet-empty">Заявок пока нет.</p>
       ) : (
