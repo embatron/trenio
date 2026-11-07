@@ -29,14 +29,17 @@ export async function publishConfirmedDraft(row: { id: string; slug: string; sta
   });
 }
 
-/** Google on the short link proves the mailbox and binds the imported card. No password step. */
-export async function claimDoorAfterGoogle(input: {
+type DoorClaimInput = {
   userId: string;
   email: string;
   created: boolean;
   profileId: string;
   previewSlug: string;
-}): Promise<DoorGoogleClaim> {
+  via?: "google" | "yandex";
+};
+
+/** Google or Yandex on the short link proves the mailbox and binds the imported card. No password step. */
+export async function claimDoorAfterGoogle(input: DoorClaimInput): Promise<DoorGoogleClaim> {
   const profileId = input.profileId.trim();
   const previewSlug = input.previewSlug.trim().toLowerCase();
   if (!DOOR_PROFILE_ID.test(profileId) || !DOOR_SLUG.test(previewSlug)) {
@@ -144,7 +147,9 @@ export async function claimDoorAfterGoogle(input: {
     domain: "account",
     action: "account.claim",
     outcome: "success",
-    message: "Google привязал импортированный профиль. Почта подтверждена.",
+    message: input.via === "yandex"
+      ? "Яндекс привязал импортированный профиль. Почта подтверждена."
+      : "Google привязал импортированный профиль. Почта подтверждена.",
     subject: email,
     actorUserId: input.userId,
     target: row.slug,
@@ -153,4 +158,9 @@ export async function claimDoorAfterGoogle(input: {
   const { sendTrainerWelcome } = await import("@/lib/messages/welcome");
   await sendTrainerWelcome({ id: input.userId, firstName: row.firstName.trim() || "Тренер" });
   return "claimed";
+}
+
+/** Yandex on the short link uses the same mailbox proof as Google. */
+export function claimDoorAfterYandex(input: Omit<DoorClaimInput, "via">): Promise<DoorGoogleClaim> {
+  return claimDoorAfterGoogle({ ...input, via: "yandex" });
 }

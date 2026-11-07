@@ -26,6 +26,20 @@ export function decideSmsSignup(input: {
 
 export type GoogleLinkChoice = "create" | "takeover" | "attach" | "refuse";
 
+function decideMailboxLink(input: {
+  exists: boolean;
+  blocked: boolean;
+  emailVerified: boolean;
+  currentSub: string | null;
+  incomingSub: string;
+}): GoogleLinkChoice {
+  if (!input.exists) return "create";
+  if (input.blocked) return "refuse";
+  if (!input.emailVerified) return "takeover";
+  if (input.currentSub && input.currentSub !== input.incomingSub) return "refuse";
+  return "attach";
+}
+
 /**
  * Google is proof of the mailbox. An unverified password row is replaced.
  * A verified row is entered only when its Google id is empty or the same.
@@ -37,12 +51,18 @@ export function decideGoogleLink(input: {
   googleSub: string | null;
   incomingSub: string;
 }): GoogleLinkChoice {
-  if (!input.exists) return "create";
-  if (input.blocked) return "refuse";
-  if (!input.emailVerified) return "takeover";
-  if (input.googleSub && input.googleSub !== input.incomingSub) return "refuse";
-  if (!input.googleSub) return "attach";
-  return "attach";
+  return decideMailboxLink({ ...input, currentSub: input.googleSub });
+}
+
+/** Yandex is the same proof, on `yandex_sub`. A Google id on the row does not block it. */
+export function decideYandexLink(input: {
+  exists: boolean;
+  blocked: boolean;
+  emailVerified: boolean;
+  yandexSub: string | null;
+  incomingSub: string;
+}): GoogleLinkChoice {
+  return decideMailboxLink({ ...input, currentSub: input.yandexSub });
 }
 
 export function accountGatePath(user: {

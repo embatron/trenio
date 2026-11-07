@@ -4,14 +4,17 @@ import { getDb } from "@/db";
 
 const STATEMENTS = [
   "ALTER TABLE users ADD COLUMN IF NOT EXISTS google_sub varchar(255)",
+  "ALTER TABLE users ADD COLUMN IF NOT EXISTS yandex_sub varchar(255)",
   "ALTER TABLE users ADD COLUMN IF NOT EXISTS password_set_at timestamptz",
   `UPDATE users SET password_set_at = created_at
    WHERE password_set_at IS NULL
      AND google_sub IS NULL
+     AND yandex_sub IS NULL
      AND needs_password = false
      AND email NOT LIKE 'pending.%@users.trenio.invalid'`,
   "ALTER TABLE users ADD COLUMN IF NOT EXISTS telegram_bot_seen_at timestamptz",
   "CREATE UNIQUE INDEX IF NOT EXISTS users_google_sub_unique ON users (google_sub)",
+  "CREATE UNIQUE INDEX IF NOT EXISTS users_yandex_sub_unique ON users (yandex_sub)",
   "ALTER TABLE users ADD COLUMN IF NOT EXISTS totp_secret text",
   "ALTER TABLE users ADD COLUMN IF NOT EXISTS totp_enabled_at timestamptz",
   "ALTER TABLE users ADD COLUMN IF NOT EXISTS totp_recovery_hashes text",

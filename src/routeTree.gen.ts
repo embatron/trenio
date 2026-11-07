@@ -47,6 +47,7 @@ import { Route as ClubsSlugRouteImport } from './routes/clubs.$slug'
 import { Route as CitySlugRouteImport } from './routes/city.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
+import { Route as AuthYandexRouteImport } from './routes/auth.yandex'
 import { Route as AuthVerifyEmailRouteImport } from './routes/auth.verify-email'
 import { Route as AuthTotpRouteImport } from './routes/auth.totp'
 import { Route as AuthSignupRouteImport } from './routes/auth.signup'
@@ -87,6 +88,7 @@ import { Route as HiCodeEditRouteImport } from './routes/hi.$code.edit'
 import { Route as CitySlugSportRouteImport } from './routes/city.$slug.$sport'
 import { Route as CategoryParentSlugChildSlugRouteImport } from './routes/category.$parentSlug.$childSlug'
 import { Route as CategoriesParentSlugChildSlugRouteImport } from './routes/categories.$parentSlug.$childSlug'
+import { Route as AuthYandexCallbackRouteImport } from './routes/auth.yandex.callback'
 import { Route as AuthGoogleCallbackRouteImport } from './routes/auth.google.callback'
 import { Route as ApiSyncTrainerRouteImport } from './routes/api.sync.trainer'
 import { Route as ApiSyncMarksRouteImport } from './routes/api.sync.marks'
@@ -284,6 +286,11 @@ const CategorySlugRoute = CategorySlugRouteImport.update({
 const CategoriesSlugRoute = CategoriesSlugRouteImport.update({
   id: '/categories/$slug',
   path: '/categories/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthYandexRoute = AuthYandexRouteImport.update({
+  id: '/auth/yandex',
+  path: '/auth/yandex',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
@@ -492,6 +499,11 @@ const CategoriesParentSlugChildSlugRoute =
     path: '/categories/$parentSlug/$childSlug',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthYandexCallbackRoute = AuthYandexCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthYandexRoute,
+} as any)
 const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
   id: '/callback',
   path: '/callback',
@@ -576,6 +588,7 @@ export interface FileRoutesByFullPath {
   '/auth/signup': typeof AuthSignupRoute
   '/auth/totp': typeof AuthTotpRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
+  '/auth/yandex': typeof AuthYandexRouteWithChildren
   '/categories/$slug': typeof CategoriesSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
@@ -603,6 +616,7 @@ export interface FileRoutesByFullPath {
   '/api/sync/marks': typeof ApiSyncMarksRoute
   '/api/sync/trainer': typeof ApiSyncTrainerRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
+  '/auth/yandex/callback': typeof AuthYandexCallbackRoute
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
   '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
   '/city/$slug/$sport': typeof CitySlugSportRouteWithChildren
@@ -658,6 +672,7 @@ export interface FileRoutesByTo {
   '/auth/signup': typeof AuthSignupRoute
   '/auth/totp': typeof AuthTotpRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
+  '/auth/yandex': typeof AuthYandexRouteWithChildren
   '/categories/$slug': typeof CategoriesSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/clubs/$slug': typeof ClubsSlugRoute
@@ -684,6 +699,7 @@ export interface FileRoutesByTo {
   '/api/sync/marks': typeof ApiSyncMarksRoute
   '/api/sync/trainer': typeof ApiSyncTrainerRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
+  '/auth/yandex/callback': typeof AuthYandexCallbackRoute
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
   '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
   '/hi/$code/edit': typeof HiCodeEditRoute
@@ -745,6 +761,7 @@ export interface FileRoutesById {
   '/auth/signup': typeof AuthSignupRoute
   '/auth/totp': typeof AuthTotpRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
+  '/auth/yandex': typeof AuthYandexRouteWithChildren
   '/categories/$slug': typeof CategoriesSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/city/$slug': typeof CitySlugRouteWithChildren
@@ -772,6 +789,7 @@ export interface FileRoutesById {
   '/api/sync/marks': typeof ApiSyncMarksRoute
   '/api/sync/trainer': typeof ApiSyncTrainerRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
+  '/auth/yandex/callback': typeof AuthYandexCallbackRoute
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
   '/category/$parentSlug/$childSlug': typeof CategoryParentSlugChildSlugRoute
   '/city/$slug/$sport': typeof CitySlugSportRouteWithChildren
@@ -835,6 +853,7 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/auth/totp'
     | '/auth/verify-email'
+    | '/auth/yandex'
     | '/categories/$slug'
     | '/category/$slug'
     | '/city/$slug'
@@ -862,6 +881,7 @@ export interface FileRouteTypes {
     | '/api/sync/marks'
     | '/api/sync/trainer'
     | '/auth/google/callback'
+    | '/auth/yandex/callback'
     | '/categories/$parentSlug/$childSlug'
     | '/category/$parentSlug/$childSlug'
     | '/city/$slug/$sport'
@@ -917,6 +937,7 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/auth/totp'
     | '/auth/verify-email'
+    | '/auth/yandex'
     | '/categories/$slug'
     | '/category/$slug'
     | '/clubs/$slug'
@@ -943,6 +964,7 @@ export interface FileRouteTypes {
     | '/api/sync/marks'
     | '/api/sync/trainer'
     | '/auth/google/callback'
+    | '/auth/yandex/callback'
     | '/categories/$parentSlug/$childSlug'
     | '/category/$parentSlug/$childSlug'
     | '/hi/$code/edit'
@@ -1003,6 +1025,7 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/auth/totp'
     | '/auth/verify-email'
+    | '/auth/yandex'
     | '/categories/$slug'
     | '/category/$slug'
     | '/city/$slug'
@@ -1030,6 +1053,7 @@ export interface FileRouteTypes {
     | '/api/sync/marks'
     | '/api/sync/trainer'
     | '/auth/google/callback'
+    | '/auth/yandex/callback'
     | '/categories/$parentSlug/$childSlug'
     | '/category/$parentSlug/$childSlug'
     | '/city/$slug/$sport'
@@ -1079,6 +1103,7 @@ export interface RootRouteChildren {
   AuthSignupRoute: typeof AuthSignupRoute
   AuthTotpRoute: typeof AuthTotpRoute
   AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
+  AuthYandexRoute: typeof AuthYandexRouteWithChildren
   CategoriesSlugRoute: typeof CategoriesSlugRoute
   CategorySlugRoute: typeof CategorySlugRoute
   CitySlugRoute: typeof CitySlugRouteWithChildren
@@ -1369,6 +1394,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/yandex': {
+      id: '/auth/yandex'
+      path: '/auth/yandex'
+      fullPath: '/auth/yandex'
+      preLoaderRoute: typeof AuthYandexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/verify-email': {
       id: '/auth/verify-email'
       path: '/auth/verify-email'
@@ -1649,6 +1681,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesParentSlugChildSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/yandex/callback': {
+      id: '/auth/yandex/callback'
+      path: '/callback'
+      fullPath: '/auth/yandex/callback'
+      preLoaderRoute: typeof AuthYandexCallbackRouteImport
+      parentRoute: typeof AuthYandexRoute
+    }
     '/auth/google/callback': {
       id: '/auth/google/callback'
       path: '/callback'
@@ -1867,6 +1906,18 @@ const AuthGoogleRouteWithChildren = AuthGoogleRoute._addFileChildren(
   AuthGoogleRouteChildren,
 )
 
+interface AuthYandexRouteChildren {
+  AuthYandexCallbackRoute: typeof AuthYandexCallbackRoute
+}
+
+const AuthYandexRouteChildren: AuthYandexRouteChildren = {
+  AuthYandexCallbackRoute: AuthYandexCallbackRoute,
+}
+
+const AuthYandexRouteWithChildren = AuthYandexRoute._addFileChildren(
+  AuthYandexRouteChildren,
+)
+
 interface CitySlugSportRouteChildren {
   CitySlugSportChildRoute: typeof CitySlugSportChildRoute
   CitySlugSportIndexRoute: typeof CitySlugSportIndexRoute
@@ -1937,6 +1988,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSignupRoute: AuthSignupRoute,
   AuthTotpRoute: AuthTotpRoute,
   AuthVerifyEmailRoute: AuthVerifyEmailRoute,
+  AuthYandexRoute: AuthYandexRouteWithChildren,
   CategoriesSlugRoute: CategoriesSlugRoute,
   CategorySlugRoute: CategorySlugRoute,
   CitySlugRoute: CitySlugRouteWithChildren,

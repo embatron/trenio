@@ -3,6 +3,8 @@ import postgres from "postgres";
 const STATEMENTS = [
   "ALTER TABLE users ADD COLUMN IF NOT EXISTS google_sub varchar(255)",
   "CREATE UNIQUE INDEX IF NOT EXISTS users_google_sub_unique ON users (google_sub)",
+  "ALTER TABLE users ADD COLUMN IF NOT EXISTS yandex_sub varchar(255)",
+  "CREATE UNIQUE INDEX IF NOT EXISTS users_yandex_sub_unique ON users (yandex_sub)",
 ];
 
 async function main() {
@@ -11,7 +13,7 @@ async function main() {
   const sql = postgres(url, { max: 1 });
   try {
     for (const statement of STATEMENTS) await sql.unsafe(statement);
-    console.info("google login column is ready.");
+    console.info("google and yandex login columns are ready.");
   } finally {
     await sql.end({ timeout: 5 });
   }

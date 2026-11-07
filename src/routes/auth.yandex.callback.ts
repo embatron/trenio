@@ -1,0 +1,130 @@
+import { createFileRoute } from "@tanstack/react-router";
+
+import { clientIpFromHeaders } from "@/auth/request-meta";
+import { sessionCookieHeader } from "@/auth/session";
+import { openYandexAccount } from "@/auth/yandex-account";
+import { applyYandexPortrait } from "@/auth/yandex-portrait";
+import { yandexIdentityFromCode } from "@/auth/yandex";
+import { safeReturnPath } from "@/lib/auth/return-path";
+import { claimDoorAfterYandex } from "@/lib/catalog/trainer-door-claim";
+import { logCaught, writeLog } from "@/lib/log/logger";
+
+const COOKIE = "trenio_yandex_oauth";
+
+function readPacked(header: string | null): { state: string; redirect: string; door: boolean } | null {
+  if (!header) return null;
+  const raw = header.split(";").map((part) => part.trim()).find((part) => part.startsWith(`${COOKIE}=`));
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(Buffer.from(decodeURIComponent(raw.slice(COOKIE.length + 1)), "base64url").toString("utf8")) as {
+      state?: unknown;
+      redirect?: unknown;
+      door?: unknown;
+    };
+    if (typeof parsed.state !== "string" || typeof parsed.redirect !== "string") return null;
+    return { state: parsed.state, redirect: parsed.redirect, door: parsed.door === true };
+  } catch {
+    return null;
+  }
+}
+
+function cookieValue(header: string | null, name: string): string {
+  if (!header) return "";
+  const raw = header.split(";").map((part) => part.trim()).find((part) => part.startsWith(`${name}=`));
+  if (!raw) return "";
+  try {
+    return decodeURIComponent(raw.slice(name.length + 1));
+  } catch {
+    return "";
+  }
+}
+
+function clearCookie(): string {
+  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+  return `${COOKIE}=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax${secure}`;
+}
+
+function toLogin(reason: string | null, back: string | null) {
+  const params = new URLSearchParams();
+  if (reason) params.set("yandex", reason);
+  if (back) params.set("redirect", back);
+  const query = params.toString();
+  return new Response(null, {
+    status: 302,
+    headers: {
+      location: query ? `/auth/login?${query}` : "/auth/login",
+      "set-cookie": clearCookie(),
+      "cache-control": "private, no-store",
+    },
+  });
+}
+
+export const Route = createFileRoute("/auth/yandex/callback")({
+  server: {
+    handlers: {
+      GET: async ({ request }) => {
+        const url = new URL(request.url);
+        const packed = readPacked(request.headers.get("cookie"));
+        const back = safeReturnPath(packed?.redirect);
+        if (url.searchParams.get("error") === "access_denied") return toLogin(null, back);
+        if (!packed || packed.state !== url.searchParams.get("state")) return toLogin("failed", back);
+        const code = url.searchParams.get("code")?.trim() ?? "";
+        if (!code) return toLogin("failed", back);
+        try {
+          const identity = await yandexIdentityFromCode(code);
+          if (!identity) return toLogin("failed", back);
+          const result = await openYandexAccount(identity, back, {
+            ipAddress: clientIpFromHeaders(request.headers.get("x-real-ip")),
+            userAgent: request.headers.get("user-agent"),
+          });
+          if (result.kind === "refuse") return toLogin(result.reason === "invalid" ? "failed" : result.reason, back);
+          await applyYandexPortrait(result.userId, identity.avatarUrl);
+          const doorClaim = packed.door
+            ? await claimDoorAfterYandex({
+                userId: result.userId,
+                email: result.email,
+                created: result.kind === "session" && result.created,
+                profileId: cookieValue(request.headers.get("cookie"), "trenio_trainer_edit"),
+                previewSlug: cookieValue(request.headers.get("cookie"), "trenio_trainer_preview"),
+              })
+            : null;
+          const doorHome = doorClaim === "claimed" || doorClaim === "own" || doorClaim === "busy";
+          const created = result.kind === "session" && result.created;
+          void writeLog({
+            level: "info",
+            domain: "auth",
+            action: created ? "auth.signup.yandex" : "auth.login.yandex",
+            outcome: "success",
+            message: result.kind === "totp"
+              ? "Нужен код приложения."
+              : created
+                ? "Аккаунт создан через Яндекс."
+                : "Вход через Яндекс выполнен.",
+            subject: result.email,
+            actorUserId: result.userId,
+          });
+          const headers = new Headers();
+          if (result.kind === "totp") {
+            const { totpTicketCookieHeader } = await import("@/auth/session");
+            headers.append("set-cookie", totpTicketCookieHeader(result.ticket));
+            headers.append("set-cookie", clearCookie());
+            headers.set("location", "/auth/totp");
+          } else {
+            headers.append("set-cookie", sessionCookieHeader(result.token));
+            headers.append("set-cookie", clearCookie());
+            const doorSlug = cookieValue(request.headers.get("cookie"), "trenio_trainer_preview").trim().toLowerCase();
+            const doorPage = doorClaim === "claimed" && /^[a-z0-9._]{1,30}$/.test(doorSlug)
+              ? `/trainers/${doorSlug}?created=1`
+              : "/me";
+            headers.set("location", doorHome ? doorPage : result.redirectTo);
+          }
+          headers.set("cache-control", "private, no-store");
+          return new Response(null, { status: 302, headers });
+        } catch (error) {
+          logCaught("auth", "auth.login.yandex", error);
+          return toLogin("failed", back);
+        }
+      },
+    },
+  },
+});

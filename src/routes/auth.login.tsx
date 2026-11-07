@@ -9,6 +9,7 @@ import {
   useCountdown,
 } from "@/components/auth/phone-otp-fields";
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
+import { YandexLoginButton } from "@/components/auth/yandex-login-button";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
 import {
@@ -22,12 +23,13 @@ import { safeReturnPath } from "@/lib/auth/return-path";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
 export const Route = createFileRoute("/auth/login")({
-  validateSearch: (search: Record<string, unknown>): { redirect?: string; google?: string } => {
+  validateSearch: (search: Record<string, unknown>): { redirect?: string; google?: string; yandex?: string } => {
     const redirect = typeof search.redirect === "string" ? search.redirect : undefined;
-    const google = search.google === "failed" || search.google === "deleted" || search.google === "blocked" || search.google === "taken"
-      ? search.google
-      : undefined;
-    return { ...(redirect ? { redirect } : {}), ...(google ? { google } : {}) };
+    const reason = (value: unknown) =>
+      value === "failed" || value === "deleted" || value === "blocked" || value === "taken" ? value : undefined;
+    const google = reason(search.google);
+    const yandex = reason(search.yandex);
+    return { ...(redirect ? { redirect } : {}), ...(google ? { google } : {}), ...(yandex ? { yandex } : {}) };
   },
   beforeLoad: async ({ context, search }) => {
     if (context.user) {
@@ -41,7 +43,7 @@ export const Route = createFileRoute("/auth/login")({
       NOINDEX_FOLLOW,
       {
         name: "description",
-        content: "Войдите в trenio.by по e-mail, Google или телефону, чтобы искать тренировки и вести профиль.",
+        content: "Войдите в trenio.by по e-mail, Google, Яндексу или телефону, чтобы искать тренировки и вести профиль.",
       },
     ],
   }),
@@ -70,16 +72,18 @@ function LoginPage() {
   const requestSms = useAuthServerFn(requestSmsLoginFn);
   const confirmSms = useAuthServerFn(confirmSmsLoginFn);
   const router = useRouter();
-  const { redirect: returnPath, google } = Route.useSearch();
-  const googleMessage = google === "deleted"
-    ? "Этот аккаунт удалён. Войдите паролем и восстановите его."
-    : google === "blocked"
-      ? "Аккаунт заблокирован. Обратитесь в поддержку."
-      : google === "taken"
-        ? "Эта почта уже привязана к другому аккаунту Google."
-        : google === "failed"
-          ? "Не удалось войти через Google. Попробуйте ещё раз."
-          : null;
+  const { redirect: returnPath, google, yandex } = Route.useSearch();
+  const providerNotice = (reason: string | undefined, name: "Google" | "Яндекс") =>
+    reason === "deleted"
+      ? "Этот аккаунт удалён. Войдите паролем и восстановите его."
+      : reason === "blocked"
+        ? "Аккаунт заблокирован. Обратитесь в поддержку."
+        : reason === "taken"
+          ? `Эта почта уже привязана к другому аккаунту ${name}.`
+          : reason === "failed"
+            ? `Не удалось войти через ${name}. Попробуйте ещё раз.`
+            : null;
+  const googleMessage = providerNotice(yandex, "Яндекс") ?? providerNotice(google, "Google");
   const { error, pending, run, redirectTo, setError } = useAuthSubmit();
 
   const goAfterLogin = async (result: { redirectTo?: string; totpRequired?: boolean } | null) => {
@@ -150,6 +154,7 @@ function LoginPage() {
 
           <div className="auth-google-slot">
             <GoogleLoginButton returnPath={returnPath} />
+            <YandexLoginButton returnPath={returnPath} />
             <div className="auth-or" aria-hidden="true">или</div>
           </div>
 

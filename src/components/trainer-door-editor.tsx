@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
+import { YandexLoginButton } from "@/components/auth/yandex-login-button";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { requestDoorEmailFn } from "@/lib/catalog/trainer-magic";
@@ -69,6 +70,7 @@ export function TrainerDoorMail({
         <>
           <div className="door-google">
             <GoogleLoginButton returnPath="/me" door />
+            <YandexLoginButton returnPath="/me" door />
             <div className="auth-or" aria-hidden="true">или</div>
           </div>
           <label>
@@ -203,7 +205,7 @@ export function TrainerDoorMailDialog({
         ) : (
           <>
             <h2 id="door-mail-title">Создание аккаунта тренера</h2>
-            <p>Введите свой e-mail или войдите через Google. На почту придёт ссылка сразу на страницу профиля, и создание аккаунта будет завершено. Google подтверждает адрес сразу, без письма.</p>
+            <p>Введите свой e-mail или войдите через Google или Яндекс. На почту придёт ссылка сразу на страницу профиля, и создание аккаунта будет завершено. Google и Яндекс подтверждают адрес сразу, без письма.</p>
             <TrainerDoorMail
               autoFocus
               onSent={(email) => {

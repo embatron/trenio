@@ -5,6 +5,7 @@ import {
   accountGatePath,
   decideEmailSignup,
   decideGoogleLink,
+  decideYandexLink,
   decideSmsSignup,
   gateAllowsPath,
 } from "./auth-decisions";
@@ -43,6 +44,17 @@ test("Google takes an unverified row and refuses a different Google id", () => {
   );
   assert.equal(
     decideGoogleLink({ exists: true, blocked: true, emailVerified: true, googleSub: null, incomingSub: "g" }),
+    "refuse",
+  );
+});
+
+test("Yandex attaches beside Google and refuses a different Yandex id", () => {
+  assert.equal(
+    decideYandexLink({ exists: true, blocked: false, emailVerified: true, yandexSub: null, incomingSub: "y" }),
+    "attach",
+  );
+  assert.equal(
+    decideYandexLink({ exists: true, blocked: false, emailVerified: true, yandexSub: "other", incomingSub: "y" }),
     "refuse",
   );
 });

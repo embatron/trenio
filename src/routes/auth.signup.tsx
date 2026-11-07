@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 
 import { AuthStyles } from "@/components/auth-styles";
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
+import { YandexLoginButton } from "@/components/auth/yandex-login-button";
 import { honeypotFromForm, HoneypotField } from "@/components/auth/honeypot-field";
 import { PasswordStrength } from "@/components/auth/password-strength";
 import {
@@ -39,7 +40,7 @@ export const Route = createFileRoute("/auth/signup")({
       NOINDEX_FOLLOW,
       {
         name: "description",
-        content: "Создайте аккаунт trenio.by по почте, Google или телефону.",
+        content: "Создайте аккаунт trenio.by по почте, Google, Яндексу или телефону.",
       },
     ],
   }),
@@ -151,6 +152,11 @@ function SignupPage() {
 
           <div className="auth-google-slot">
             <GoogleLoginButton
+              returnPath={returnPath}
+              disabled={!accepted}
+              onBlocked={() => setError("Примите политику конфиденциальности.")}
+            />
+            <YandexLoginButton
               returnPath={returnPath}
               disabled={!accepted}
               onBlocked={() => setError("Примите политику конфиденциальности.")}

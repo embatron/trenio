@@ -5,7 +5,8 @@ import { after, before, describe, test } from "node:test";
 import { eq, like, or } from "drizzle-orm";
 
 import { openGoogleAccount } from "@/auth/google-account";
-import { claimDoorAfterGoogle } from "@/lib/catalog/trainer-door-claim";
+import { openYandexAccount } from "@/auth/yandex-account";
+import { claimDoorAfterGoogle, claimDoorAfterYandex } from "@/lib/catalog/trainer-door-claim";
 import {
   confirmPasswordResetByPhone,
   confirmSmsLogin,
@@ -331,6 +332,95 @@ describe("auth cases", { concurrency: false }, () => {
     const after = await findUserById(other.id);
     assert.equal(after?.googleSub, "owned-sub");
     assert.equal(after?.passwordHash, before);
+  });
+
+  test("Yandex proves the mailbox, fills a free Belarus phone, and publishes a draft", async () => {
+    const db = getDb();
+    const phone = storedBelarusPhone(await freePhone());
+    assert.ok(phone);
+    const address = email("yandex");
+    const opened = await openYandexAccount(
+      { sub: `ya-${stamp}`, email: address, name: "Яна", lastName: "Яндекс", phone, avatarUrl: null },
+      null,
+      {},
+    );
+    assert.equal(opened.kind, "session");
+    if (opened.kind !== "session") return;
+    createdUsers.push(opened.userId);
+    const row = await findUserById(opened.userId);
+    assert.equal(row?.yandexSub, `ya-${stamp}`);
+    assert.equal(row?.phone, phone);
+    assert.ok(row?.phoneVerifiedAt);
+    assert.ok(row?.emailVerifiedAt);
+    assert.equal(row?.passwordSetAt, null);
+    assert.equal(row?.lastName, "Яндекс");
+
+    const busy = await insertAccount({ name: "yandex-phone", verified: true, phone: await freePhone(), phoneVerified: true });
+    const skipped = await openYandexAccount(
+      { sub: `ya2-${stamp}`, email: email("yandex-free"), name: "Нет", lastName: "", phone: busy.phone, avatarUrl: null },
+      null,
+      {},
+    );
+    assert.equal(skipped.kind, "session");
+    if (skipped.kind !== "session") return;
+    createdUsers.push(skipped.userId);
+    assert.equal((await findUserById(skipped.userId))?.phone, null);
+    assert.equal((await findUserById(busy.id))?.phone, busy.phone);
+
+    const googleUser = await insertAccount({ name: "yandex-google", verified: true });
+    await db.update(users).set({ googleSub: `g-${stamp}` }).where(eq(users.id, googleUser.id));
+    const joined = await openYandexAccount(
+      { sub: `ya-g-${stamp}`, email: googleUser.email, name: "Рядом", lastName: "Гугл", phone: null, avatarUrl: null },
+      null,
+      {},
+    );
+    assert.equal(joined.kind, "session");
+    const both = await findUserById(googleUser.id);
+    assert.equal(both?.googleSub, `g-${stamp}`);
+    assert.equal(both?.yandexSub, `ya-g-${stamp}`);
+    assert.equal(both?.lastName, "Кейс");
+
+    const other = await insertAccount({ name: "yandex-taken", verified: true });
+    await db.update(users).set({ yandexSub: "owned-ya" }).where(eq(users.id, other.id));
+    const refused = await openYandexAccount(
+      { sub: "other-ya", email: other.email, name: "Чужой", lastName: "", phone: null, avatarUrl: null },
+      null,
+      {},
+    );
+    assert.equal(refused.kind, "refuse");
+    assert.equal((await findUserById(other.id))?.yandexSub, "owned-ya");
+
+    const slug = `ydoor${stamp}`.slice(0, 30);
+    const claimToken = randomUUID().replace(/-/g, "");
+    const [profile] = await db
+      .insert(trainerProfiles)
+      .values({
+        slug,
+        instagramHandle: slug,
+        sourceUrl: `https://instagram.com/${slug}`,
+        status: "draft",
+        claimStatus: "unclaimed",
+        createdSource: "import",
+        firstName: "Дверь",
+        lastName: "Яндекс",
+        fullName: "Дверь Яндекс",
+        previewToken: `y${stamp}`.slice(0, 16),
+        claimToken,
+        claimPath: `/trainers/claim/${claimToken}`,
+      })
+      .returning();
+    createdProfiles.push(profile.id);
+    assert.equal(await claimDoorAfterYandex({
+      userId: opened.userId,
+      email: address,
+      created: true,
+      profileId: profile.id,
+      previewSlug: slug,
+    }), "claimed");
+    const [card] = await db.select().from(trainerProfiles).where(eq(trainerProfiles.id, profile.id)).limit(1);
+    assert.equal(card?.status, "published");
+    assert.equal(card?.ownerUserId, opened.userId);
+    assert.equal(card?.email, address);
   });
 
   test("Google verifies the mailbox and claims an imported trainer card", async () => {

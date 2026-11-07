@@ -48,7 +48,7 @@ export const users = pgTable(
     phone: varchar("phone", { length: 32 }),
     phoneVerifiedAt: timestamp("phone_verified_at", { withTimezone: true }),
     passwordHash: text("password_hash").notNull(),
-    /** Set when the person types a password. Empty for a Google account and a magic-link trainer until then. */
+    /** Set when the person types a password. Empty for a Google or Yandex account and a magic-link trainer until then. */
     passwordSetAt: timestamp("password_set_at", { withTimezone: true }),
     /** True only for a trainer created from the short Instagram link, until they choose a password. */
     needsPassword: boolean("needs_password").notNull().default(false),
@@ -68,6 +68,8 @@ export const users = pgTable(
     telegramBotSeenAt: timestamp("telegram_bot_seen_at", { withTimezone: true }),
     /** Stable Google account id. Set when the person signs in with Google. */
     googleSub: varchar("google_sub", { length: 255 }),
+    /** Stable Yandex ID. Set when the person signs in with Yandex. */
+    yandexSub: varchar("yandex_sub", { length: 255 }),
     /** AES-GCM blob. Empty until a staff account starts enrollment. */
     totpSecret: text("totp_secret"),
     totpEnabledAt: timestamp("totp_enabled_at", { withTimezone: true }),
@@ -89,6 +91,7 @@ export const users = pgTable(
     uniqueIndex("users_phone_unique").on(table.phone),
     uniqueIndex("users_telegram_user_id_unique").on(table.telegramUserId),
     uniqueIndex("users_google_sub_unique").on(table.googleSub),
+    uniqueIndex("users_yandex_sub_unique").on(table.yandexSub),
     index("users_status_idx").on(table.status),
     index("users_deleted_at_idx").on(table.deletedAt),
   ],
