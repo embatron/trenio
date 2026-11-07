@@ -477,7 +477,6 @@ body.is-search-docked .site-header__search {
   .mega-cats.is-open .mega-sheet { padding-bottom: 18px; }
   .account-face { max-width: 44px; padding-right: 0; }
   .account-face__nick { display: none; }
-  .account-menu.is-open .account-menu__panel { display: none; }
   .mega-account, .mega-cities { display: block; }
   .mega-col--cities { display: none; }
   .mega-account, .mega-cities {
@@ -611,6 +610,15 @@ const TRAINER_MENU: HeaderMenuItem[] = [
   { id: "settings", label: "Настройки", kind: "me", to: "/me/settings" },
 ];
 
+const ADMIN_FACE_MENU: HeaderMenuItem[] = [
+  { id: "overview", label: "Обзор", kind: "admin", to: "/admin" },
+  { id: "trainers", label: "Тренеры", kind: "admin", to: "/admin/trainers" },
+  { id: "messages", label: "Сообщения", kind: "admin", to: "/admin/messages" },
+  { id: "accounts", label: "Аккаунты", kind: "admin", to: "/admin/accounts" },
+  { id: "finance", label: "Бухгалтерия", kind: "admin", to: "/admin/finance" },
+  { id: "settings", label: "Настройки", kind: "admin", to: "/admin/settings" },
+];
+
 const ADMIN_MENU: HeaderMenuItem[] = [
   { id: "overview", label: "Обзор", kind: "admin", to: "/admin" },
   { id: "trainers", label: "Тренеры", kind: "admin", to: "/admin/trainers" },
@@ -631,6 +639,12 @@ function headerMenuFor(roles: UserRole[]): HeaderMenuItem[] {
   if (isStaff(roles)) return ADMIN_MENU;
   if (hasAnyRole(roles, ["trainer", "club"])) return TRAINER_MENU;
   return ACCOUNT_MENU;
+}
+
+/** The user-icon menu stays on the cabinet's first level. Subpages stay in the cabinet. */
+function faceMenuFor(roles: UserRole[]): HeaderMenuItem[] {
+  if (isStaff(roles)) return ADMIN_FACE_MENU;
+  return headerMenuFor(roles);
 }
 
 function MenuCount({ count }: { count?: number }) {
@@ -752,7 +766,7 @@ function AccountButton() {
   }
 
   const name = [user.firstName, user.lastName].filter(Boolean).join(" ");
-  const items = headerMenuFor(user.roles);
+  const items = faceMenuFor(user.roles);
   const counts = menuCounts(
     user.roles,
     messaging.own,
@@ -806,9 +820,8 @@ function AccountButton() {
         }}
         onClick={(event) => {
           const narrow = window.matchMedia("(max-width: 767px)").matches;
-          if (narrow) return;
           const touch = pointerType.current !== "mouse" || window.matchMedia("(hover: none)").matches;
-          if (!touch) return;
+          if (!narrow && !touch) return;
           event.preventDefault();
           setOpen((value) => !value);
         }}
