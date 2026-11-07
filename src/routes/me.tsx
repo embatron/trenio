@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CabinetShell, type CabinetIcon, type MeSectionPath } from "@/components/cabinet";
 import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
+import { TRAINER_PROFILE_SECTIONS } from "@/components/trainer-card-fields";
 import { logoutFn } from "@/lib/auth/functions";
 import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { deniedCabinetTarget, hasAnyRole, ROLE_LABELS } from "@/lib/auth/roles";
@@ -15,10 +16,10 @@ import { listOwnTrainerReviewsFn, listTrainerRatingSummariesFn } from "@/lib/cat
 import { getOwnTrainerViewStatsFn } from "@/lib/catalog/trainer-views";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
-const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: MeSectionPath }> = [
+const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: MeSectionPath; sections?: typeof TRAINER_PROFILE_SECTIONS }> = [
   { id: "overview", label: "Общая панель", icon: "overview", to: "/me" },
   { id: "messages", label: "Мои сообщения", icon: "messages", to: "/me/messages" },
-  { id: "profile", label: "Мой профиль", icon: "trainers", to: "/me/profile" },
+  { id: "profile", label: "Мой профиль", icon: "trainers", to: "/me/profile", sections: TRAINER_PROFILE_SECTIONS },
   { id: "contacts", label: "Мои контакты", icon: "contacts", to: "/me/contacts" },
   { id: "reviews", label: "Мои отзывы", icon: "reviews", to: "/me/reviews" },
   { id: "favorites", label: "Избранное", icon: "favorites", to: "/me/favorites" },
@@ -72,7 +73,8 @@ function MeLayout() {
     if (item.id === "messages") return { ...item, badge: messaging.total };
     if (item.id === "reviews") return { ...item, badge: reviews.length };
     if (item.id === "favorites") return { ...item, badge: ready ? keys.length : undefined };
-    return item;
+    if (item.id !== "profile") return item;
+    return active === "profile" ? item : { ...item, sections: undefined };
   });
 
   return (
