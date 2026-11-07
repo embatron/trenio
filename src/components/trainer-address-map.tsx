@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ComponentType } from "react";
 
 import { YandexIcon } from "@/components/brand-icons";
-import { placeLine } from "@/lib/geo/schemas";
+import { isSpecificAddress, placeLine } from "@/lib/geo/schemas";
 import type { TrainerMapPoint } from "@/components/trainer-address-map-view";
 
 type MapViewProps = { points: TrainerMapPoint[]; activeLat: number; activeLng: number };
@@ -52,7 +52,7 @@ export function TrainerAddressMap({ places }: { places: TrainerProfilePlace[] })
   }, [pointKey, points.length]);
 
   if (listed.length === 0) return null;
-  const route = selectedPoint
+  const route = selectedPoint && isSpecificAddress(selectedPoint.address)
     ? `https://yandex.by/maps/?rtext=~${selectedPoint.lat},${selectedPoint.lng}&rtt=auto`
     : "";
 
