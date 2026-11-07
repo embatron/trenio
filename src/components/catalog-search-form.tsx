@@ -97,6 +97,14 @@ const FORM_CSS = `
   .catalog-search .search-field { padding-inline: 12px; }
   .catalog-search .combo-input { font-size: 17px; }
 }
+@media (max-width: 767px) {
+  .catalog-search.search-block--hero .search-shell { min-height: 0; padding: 4px 5px; }
+  .catalog-search.search-block--hero .search-field { height: 44px; gap: 8px; padding-inline: 12px; }
+  .catalog-search.search-block--hero .combo-input { font-size: 16px; }
+  .catalog-search.search-block--hero .search-icon svg { width: 18px; height: 18px; }
+  .catalog-search.search-block--hero .search-submit { width: 44px; height: 44px; }
+  .catalog-search.search-block--hero .search-submit svg { width: 20px; height: 20px; }
+}
 `;
 
 function Chevron() {
