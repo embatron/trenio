@@ -116,7 +116,7 @@ AGENTS.md             # Entry point для агентов
 | `/trainers/revise` | `trainers.revise.tsx` | Почта или Google для карточки, открытой короткой ссылкой. Google сразу подтверждает почту. Без этого кода страница сразу возвращает на профиль |
 | `/trainers/claim/$token` | `trainers.claim.$token.tsx` | Привязка импортированной карточки: оферта, логин и пароль. После публикации или привязки тот же адрес открывает публичный профиль |
 | `/favorites`            | `favorites.tsx`            | Редирект на `/account/favorites`                              |
-| `/account`              | `account.tsx`              | Оболочка кабинета. `/account` открывает отзывы                |
+| `/account`              | `account.tsx`, `account.index.tsx` | Оболочка кабинета. `/account` — профиль: дни на сайте, почта, телефон, отзывы, избранное и переписки. После входа обычный пользователь попадает сюда |
 | `/account/reviews`      | `account.reviews.tsx`      | Свои отзывы и статус                                          |
 | `/account/messages`     | `account.messages.tsx`     | Сообщения клиента тренерам. Роли trainer и club переходят в `/me/messages` |
 | `/messages/files/$id`   | `messages.files.$id.ts`    | Файл из переписки. Только участник, без страницы |

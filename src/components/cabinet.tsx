@@ -102,7 +102,7 @@ export function CabinetNotice({
   );
 }
 
-export type AccountSectionPath = "/account/reviews" | "/account/bookings" | "/account/favorites" | "/account/settings" | "/account/messages";
+export type AccountSectionPath = "/account" | "/account/reviews" | "/account/bookings" | "/account/favorites" | "/account/settings" | "/account/messages";
 
 export type AdminSectionPath =
   | "/admin"
@@ -492,6 +492,8 @@ a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
 .cabinet-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--layout-gap); }
 .cabinet-stat, .cabinet-card { border: 1px solid var(--line); border-radius: var(--card-radius); background: var(--white); }
 .cabinet-stat { position: relative; padding: 16px 18px; }
+a.cabinet-stat { display: block; color: inherit; text-decoration: none; }
+a.cabinet-stat:hover { border-color: var(--primary); }
 .cabinet-stat strong { display: block; font-size: 28px; letter-spacing: var(--tracking-heading); color: var(--dark); }
 .cabinet-stat span { color: var(--muted); font-size: 13px; }
 .cabinet-stat__mark { position: absolute; top: 14px; right: 14px; width: 28px; height: 28px; display: grid; place-items: center; color: var(--primary); }
@@ -745,6 +747,9 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-card > .cabinet-note--lede { padding: 12px 18px 0; }
 .cabinet-card > .cabinet-note--lede a { color: var(--primary); font-weight: var(--fw-title); text-decoration: none; }
 .cabinet-card > .cabinet-note--lede a:hover { text-decoration: underline; }
+.cabinet-facts { display: grid; gap: 8px; margin: 0; padding: 4px 18px 16px; list-style: none; color: var(--muted); font-size: 14px; line-height: 1.45; }
+.cabinet-facts a { color: var(--primary); font-weight: var(--fw-title); text-decoration: none; }
+.cabinet-facts a:hover { text-decoration: underline; }
 .cabinet-form { display: grid; gap: 12px; padding: 16px 18px; }
 .cabinet-form > h3 { margin: 0; font-size: 16px; font-weight: var(--fw-title); letter-spacing: -0.02em; color: var(--dark); }
 .cabinet-form:has(.cabinet-section) { gap: 18px; }

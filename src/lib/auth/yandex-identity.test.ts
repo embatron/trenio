@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { oauthNamePatch } from "@/auth/oauth-profile";
+import { keepsOwnPortrait, oauthNamePatch } from "@/auth/oauth-profile";
 import { readYandexIdentity } from "@/lib/auth/yandex-identity";
 
 const CLIENT = "6371bfd0812a449eb311318200429953";
@@ -53,6 +53,15 @@ test("a numeric Yandex portrait id and a full name still come through", () => {
   assert.equal(identity?.name, "Евгений");
   assert.equal(identity?.lastName, "Соколов");
   assert.equal(identity?.avatarUrl, "https://avatars.yandex.net/get-yapic/131652443/islands-200");
+});
+
+test("a Yandex portrait id may contain a slash, and an existing photo stays", () => {
+  const identity = readYandexIdentity(profile({ default_avatar_id: "20758/enc-abcdef" }), CLIENT);
+  assert.equal(identity?.avatarUrl, "https://avatars.yandex.net/get-yapic/20758/enc-abcdef/islands-200");
+  assert.equal(readYandexIdentity(profile({ default_avatar_id: "../evil" }), CLIENT)?.avatarUrl, null);
+  assert.equal(keepsOwnPortrait("/avatars/own.jpg", []), true);
+  assert.equal(keepsOwnPortrait("", ["/trainers/instagram/card.jpg"]), true);
+  assert.equal(keepsOwnPortrait("", [""]), false);
 });
 
 test("a provider name fills only a placeholder", () => {

@@ -13,7 +13,7 @@ export type YandexIdentity = {
 
 const SUB = /^[A-Za-z0-9_-]{1,255}$/;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const AVATAR_ID = /^[A-Za-z0-9_-]{1,64}$/;
+const AVATAR_ID = /^[A-Za-z0-9_-]{1,80}(?:\/[A-Za-z0-9_-]{1,80}){0,2}$/;
 
 function cleanName(value: unknown): string {
   const raw = typeof value === "string" ? value : "";

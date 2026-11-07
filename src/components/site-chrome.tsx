@@ -565,7 +565,7 @@ export function Logo({ className }: { className?: string }) {
   );
 }
 
-type AccountMenuTo = "/account/messages" | "/account/reviews" | "/account/bookings" | "/account/favorites" | "/account/settings";
+type AccountMenuTo = "/account" | "/account/messages" | "/account/reviews" | "/account/bookings" | "/account/favorites" | "/account/settings";
 type AdminMenuTo =
   | "/admin"
   | "/admin/trainers"
@@ -583,6 +583,7 @@ type HeaderMenuItem =
   | { id: string; label: string; kind: "me"; to: MeMenuTo };
 
 const ACCOUNT_MENU: HeaderMenuItem[] = [
+  { id: "profile", label: "Профиль", kind: "account", to: "/account" },
   { id: "messages", label: "Мои сообщения", kind: "account", to: "/account/messages" },
   { id: "reviews", label: "Мои отзывы", kind: "account", to: "/account/reviews" },
   { id: "bookings", label: "Мои записи", kind: "account", to: "/account/bookings" },

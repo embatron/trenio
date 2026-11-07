@@ -56,13 +56,13 @@ export function canAccessFinance(userRoles: UserRole[]): boolean {
 export function getPostLoginPath(roles: UserRole[]): string {
   if (isStaff(roles)) return "/admin";
   if (hasAnyRole(roles, ["trainer", "club"])) return "/me";
-  return "/account/reviews";
+  return "/account";
 }
 
-export function getCabinetPath(roles: UserRole[]): "/admin" | "/me" | "/account/reviews" {
+export function getCabinetPath(roles: UserRole[]): "/admin" | "/me" | "/account" {
   if (isStaff(roles)) return "/admin";
   if (hasAnyRole(roles, ["trainer", "club"])) return "/me";
-  return "/account/reviews";
+  return "/account";
 }
 
 /** Trainer cabinet path that keeps the open thread and the `trainer` query. */

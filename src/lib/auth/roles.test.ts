@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { accountPathForTrainer, deniedCabinetTarget } from "@/lib/auth/roles";
+import { accountPathForTrainer, deniedCabinetTarget, getPostLoginPath } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
 
 const user: UserRole[] = ["user"];
@@ -10,6 +10,12 @@ const club: UserRole[] = ["club"];
 const admin: UserRole[] = ["admin"];
 const superadmin: UserRole[] = ["superadmin"];
 const staffTrainer: UserRole[] = ["admin", "trainer"];
+
+test("a client opens the profile after login", () => {
+  assert.equal(getPostLoginPath(user), "/account");
+  assert.equal(getPostLoginPath(trainer), "/me");
+  assert.equal(getPostLoginPath(admin), "/admin");
+});
 
 test("a client stays out of the trainer and staff cabinets", () => {
   assert.equal(deniedCabinetTarget("account", user, "/account/reviews"), null);

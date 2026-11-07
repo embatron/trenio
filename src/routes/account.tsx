@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { CabinetShell, type AccountSectionPath } from "@/components/cabinet";
+import { CabinetShell, type AccountSectionPath, type CabinetIcon } from "@/components/cabinet";
 import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
 import { logoutFn } from "@/lib/auth/functions";
@@ -13,7 +13,8 @@ import { listTrainerPricesFn } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
-const SECTIONS: Array<{ id: string; label: string; icon: "reviews" | "bookings" | "favorites" | "profile" | "messages"; to: AccountSectionPath }> = [
+const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: AccountSectionPath }> = [
+  { id: "profile", label: "Профиль", icon: "overview", to: "/account" },
   { id: "messages", label: "Мои сообщения", icon: "messages", to: "/account/messages" },
   { id: "reviews", label: "Мои отзывы", icon: "reviews", to: "/account/reviews" },
   { id: "bookings", label: "Мои записи", icon: "bookings", to: "/account/bookings" },
@@ -24,7 +25,7 @@ const SECTIONS: Array<{ id: string; label: string; icon: "reviews" | "bookings" 
 export const Route = createFileRoute("/account")({
   beforeLoad: ({ context, location }) => {
     if (!context.user) {
-      const next = location.pathname.startsWith("/account") ? location.pathname : "/account/reviews";
+      const next = location.pathname.startsWith("/account") ? location.pathname : "/account";
       throw redirect({ to: "/auth/login", search: { redirect: next } });
     }
     const away = deniedCabinetTarget("account", context.user.roles, location.pathname, location.searchStr);
@@ -50,9 +51,11 @@ function AccountLayout() {
   if (!user) return null;
 
   const role = user.roles.map((item) => ROLE_LABELS[item]).join(", ");
-  const active = pathname.startsWith("/account/messages")
-    ? "messages"
-    : SECTIONS.find((item) => pathname === item.to)?.id ?? "reviews";
+  const active = pathname === "/account" || pathname === "/account/"
+    ? "profile"
+    : pathname.startsWith("/account/messages")
+      ? "messages"
+      : SECTIONS.find((item) => pathname === item.to)?.id ?? "profile";
   const items = SECTIONS.map((item) => {
     if (item.id === "messages") return { ...item, badge: messaging.own };
     if (item.id === "reviews") return { ...item, badge: cabinet.reviews.length };

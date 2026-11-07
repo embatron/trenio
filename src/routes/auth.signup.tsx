@@ -83,7 +83,7 @@ function SignupPage() {
   ) => {
     if (result?.user?.needsCredentials) {
       await router.invalidate();
-      redirectTo(result.redirectTo ?? "/account/reviews");
+      redirectTo(result.redirectTo ?? "/account");
       return;
     }
     const next = safeReturnPath(returnPath) ?? result?.redirectTo;

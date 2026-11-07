@@ -3,7 +3,7 @@ import path from "node:path";
 import { and, eq } from "drizzle-orm";
 
 import { getDb } from "@/db";
-import { users } from "@/db/schema";
+import { trainerProfiles, users } from "@/db/schema";
 import { writeImageSet } from "@/lib/images/store";
 import { logCaught, writeLog } from "@/lib/log/logger";
 
@@ -49,9 +49,18 @@ function allowedPortrait(url: string): boolean {
   if (parsed.protocol !== "https:") return false;
   const host = parsed.hostname;
   if (host === "avatars.yandex.net" || host === "avatars.mds.yandex.net") {
-    return parsed.pathname.startsWith("/get-yapic/");
+    return parsed.pathname.startsWith("/get-yapic/") || parsed.pathname === "/i" || parsed.pathname.startsWith("/i/");
   }
   return host === "googleusercontent.com" || host.endsWith(".googleusercontent.com");
+}
+
+function filledPicture(value: string): boolean {
+  return value.split("?")[0].trim() !== "";
+}
+
+/** The account photo or a trainer card photo is already theirs. Do not replace it. */
+export function keepsOwnPortrait(accountPath: string, cardPaths: string[]): boolean {
+  return filledPicture(accountPath) || cardPaths.some(filledPicture);
 }
 
 function looksLikeImage(bytes: Buffer, type: string): boolean {
@@ -72,7 +81,13 @@ export async function applyExternalPortrait(userId: string, avatarUrl: string | 
       .from(users)
       .where(eq(users.id, userId))
       .limit(1);
-    if (!user || user.avatarPath || user.status === "deleted" || user.status === "suspended") return;
+    if (!user || user.status === "deleted" || user.status === "suspended") return;
+    const cards = await db
+      .select({ avatarPath: trainerProfiles.avatarPath, photos: trainerProfiles.photos })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.ownerUserId, userId));
+    const cardPaths = cards.flatMap((card) => [card.avatarPath, ...(card.photos ?? [])]);
+    if (keepsOwnPortrait(user.avatarPath, cardPaths)) return;
     const response = await fetch(avatarUrl, { redirect: "follow", signal: AbortSignal.timeout(8_000) });
     if (!response.ok || !allowedPortrait(response.url)) {
       void writeLog({
