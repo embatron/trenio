@@ -8,7 +8,7 @@ import type { TrainerAudience, TrainerFormat } from "@/lib/catalog/published-tra
 import { trainerNameParts } from "@/lib/catalog/trainer-name";
 import { cityCatalogByName, listCityCatalogPages } from "@/lib/catalog/city-pages";
 import { isSpecificAddress, placesFromProfile, SPECIFIC_ADDRESS_SQL } from "@/lib/geo/schemas";
-import { MAP_CLUSTER_CAP, MAP_PAGE_SIZE, MAP_PIN_CAP, MAP_TOOLTIP_CAP } from "@/lib/catalog/map-limits";
+import { MAP_CLUSTER_CAP, MAP_PAGE_SIZE, MAP_PIN_CAP, MAP_TOOLTIP_CAP, mapClusterStep } from "@/lib/catalog/map-limits";
 
 const SLUG_CAP = 200;
 
@@ -318,11 +318,6 @@ function normalizeBounds(south: number, west: number, north: number, east: numbe
   };
 }
 
-function clusterStep(zoom: number, attempt: number) {
-  const base = 360 / 2 ** Math.min(18, Math.max(0, zoom));
-  return Math.min(120, Math.max(0.0002, (base / 4) * 2 ** attempt));
-}
-
 async function queryRows(query: SQL) {
   return asRows(await getDb().execute(query));
 }
@@ -557,9 +552,9 @@ async function pinFeatures(filters: AreaFilters, bounds: AreaBounds): Promise<Ma
 
 async function clusterFeatures(filters: AreaFilters, bounds: AreaBounds, zoom: number): Promise<MapAreaFeature[]> {
   let rows: Record<string, unknown>[] = [];
-  let step = clusterStep(zoom, 0);
+  let step = mapClusterStep(zoom, 0);
   for (let attempt = 0; attempt < 6; attempt += 1) {
-    step = clusterStep(zoom, attempt);
+    step = mapClusterStep(zoom, attempt);
     rows = await queryRows(sql`
       WITH places AS (${placesSql(filters, bounds, true)})
       SELECT

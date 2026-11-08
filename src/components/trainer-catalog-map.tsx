@@ -11,6 +11,7 @@ type ViewProps = {
   highlightKeys?: readonly string[];
   onPinHover?: (key: string | null) => void;
   onBounds?: (bounds: CatalogMapBounds) => void;
+  onUnavailable?: () => void;
 };
 
 export function TrainerCatalogMap({
@@ -74,7 +75,15 @@ export function TrainerCatalogMap({
           ) : empty}
         </div>
       ) : View ? (
-        <View features={features} user={user} focus={focus} highlightKeys={highlightKeys} onPinHover={onPinHover} onBounds={onBounds} />
+        <View
+          features={features}
+          user={user}
+          focus={focus}
+          highlightKeys={highlightKeys}
+          onPinHover={onPinHover}
+          onBounds={onBounds}
+          onUnavailable={() => setFailed(true)}
+        />
       ) : (
         <div className="catalog-map__skeleton" role="status">Загрузка карты</div>
       )}
@@ -137,10 +146,16 @@ const MAP_SHELL_CSS = `
 .catalog-map__status {
   position: absolute;
   z-index: 4;
-  left: 12px;
-  bottom: 12px;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
   margin: 0;
   padding: 6px 10px;
+  max-width: calc(100% - 128px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
   border-radius: 999px;
   background: var(--white);
   color: var(--muted);
@@ -166,10 +181,12 @@ const MAP_SHELL_CSS = `
 .catalog-map__locate svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .catalog-map__locate.is-on { color: var(--primary); border-color: var(--primary); }
 .catalog-map__locate:disabled { opacity: 0.6; cursor: progress; }
+.catalog-map [class*="-zoom__plus"],
+.catalog-map [class*="-zoom__minus"] { width: 44px; height: 44px; }
 @media (min-width: 960px) {
   .catalog-map { height: min(72dvh, 760px); min-height: 480px; }
 }
 @media (max-width: 959px) {
-  .catalog-map { height: min(42dvh, 320px); min-height: 240px; }
+  .catalog-map { height: min(42dvh, 320px); min-height: 280px; }
 }
 `;

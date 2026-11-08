@@ -4,7 +4,12 @@ import { YandexIcon } from "@/components/brand-icons";
 import { isSpecificAddress, placeLine } from "@/lib/geo/schemas";
 import type { TrainerMapPoint } from "@/components/trainer-address-map-view";
 
-type MapViewProps = { points: TrainerMapPoint[]; activeLat: number; activeLng: number };
+type MapViewProps = {
+  points: TrainerMapPoint[];
+  activeLat: number;
+  activeLng: number;
+  onUnavailable?: () => void;
+};
 
 export type TrainerProfilePlace = {
   city: string;
@@ -97,6 +102,7 @@ export function TrainerAddressMap({ places }: { places: TrainerProfilePlace[] })
                 points={points}
                 activeLat={mapPoint.lat as number}
                 activeLng={mapPoint.lng as number}
+                onUnavailable={() => setFailed(true)}
               />
             )}
           </div>
@@ -141,14 +147,17 @@ const ADDRESS_MAP_CSS = `
   isolation: isolate;
   width: 100%;
   max-width: 100%;
-  height: 240px;
+  height: 280px;
   overflow: hidden;
   border-radius: var(--card-radius);
   border: 1px solid rgba(var(--dark-rgb), 0.06);
   box-shadow: 0 14px 42px rgba(var(--dark-rgb), 0.07);
   background: var(--neutral-bg);
 }
-.trainer-address__leaflet { width: 100%; height: 100%; }
+.trainer-address__map { width: 100%; height: 100%; }
+.trainer-address__pin { width: 36px; height: 36px; transform: translate(-18px, -34px); }
+.trainer-address__canvas [class*="-zoom__plus"],
+.trainer-address__canvas [class*="-zoom__minus"] { width: 44px; height: 44px; }
 .trainer-address__skeleton {
   display: grid;
   place-items: center;
@@ -160,17 +169,12 @@ const ADDRESS_MAP_CSS = `
   text-align: center;
   padding: 16px;
 }
-.trainer-address__pin { background: transparent !important; border: 0 !important; }
-.trainer-address__canvas .leaflet-container { width: 100%; height: 100%; font: inherit; }
-.trainer-address__canvas .leaflet-container img { max-width: none; }
-.trainer-address__canvas .leaflet-control-zoom a { width: 44px; height: 44px; line-height: 44px; }
-.trainer-address__canvas .leaflet-control-attribution { display: none; }
 .trainer-address__route { width: 100%; }
 .trainer-address__route .yandex-mark { stroke: none; }
 .trainer-address__route .yandex-mark circle { fill: #fc3f1d; stroke: none; }
 .trainer-address__route .yandex-mark path { fill: #fff; stroke: none; }
 @media (min-width: 768px) {
-  .trainer-address__canvas { height: 280px; }
+  .trainer-address__canvas { height: 320px; }
   .trainer-address__route { width: fit-content; }
 }
 `;

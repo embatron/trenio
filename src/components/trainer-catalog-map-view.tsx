@@ -1,17 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
-import {
-  DomEvent,
-  circleMarker,
-  divIcon,
-  map as createMap,
-  marker,
-  tileLayer,
-  type CircleMarker,
-  type Map as LeafletMap,
-  type Marker,
-} from "leaflet";
-import "leaflet/dist/leaflet.css";
+
+type TipStyle = CSSProperties & { "--people-max"?: string };
 
 import { PhotoImage } from "@/components/photo-image";
 import { TrainerName } from "@/components/trainer-name";
@@ -19,11 +9,20 @@ import { TrainerRating } from "@/components/trainer-rating";
 import type { MapAreaFeature } from "@/lib/catalog/map-trainers";
 import { MAP_TOOLTIP_CAP } from "@/lib/catalog/map-limits";
 import { capMapFeatures } from "@/lib/catalog/map-window";
+import {
+  loadYandexMaps,
+  mountYandexMap,
+  quietMapChrome,
+  type YandexMap,
+  type YandexMarker,
+} from "@/lib/maps/yandex-maps";
 import { countRu } from "@/lib/ru-plural";
 
 const MINSK: [number, number] = [53.9006, 27.559];
 const DESKTOP_OPEN_ZOOM = 12;
 const PHONE_OPEN_ZOOM = 11;
+const PIN_ANCHOR_X = 18;
+const PIN_ANCHOR_Y = 34;
 
 /** The phone map is shorter, so the same zoom leaves nearby trainers outside the frame. */
 function openingZoom() {
@@ -41,14 +40,9 @@ export type CatalogMapBounds = {
   zoom: number;
 };
 
-function pinIcon(count: number, mode: "idle" | "lit" | "dim") {
+function pinHtml(count: number) {
   const badge = count > 1 ? `<span class="catalog-map__count">${count}</span>` : "";
-  return divIcon({
-    className: "catalog-map__pin",
-    html: `<span class="catalog-map__glyph is-${mode}">${PIN}${badge}</span>`,
-    iconSize: [36, 36],
-    iconAnchor: [18, 34],
-  });
+  return `<span class="catalog-map__glyph is-idle">${PIN}${badge}</span>`;
 }
 
 function clusterLabel(count: number) {
@@ -63,14 +57,9 @@ function clusterLabel(count: number) {
   return `${text}м`;
 }
 
-function clusterIcon(count: number) {
+function clusterHtml(count: number) {
   const size = count >= 1000 ? 56 : count >= 100 ? 50 : count >= 10 ? 44 : 40;
-  return divIcon({
-    className: "catalog-map__cluster",
-    html: `<span class="catalog-map__bubble" style="width:${size}px;height:${size}px">${clusterLabel(count)}</span>`,
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2],
-  });
+  return { size, html: `<span class="catalog-map__bubble" style="width:${size}px;height:${size}px">${clusterLabel(count)}</span>` };
 }
 
 function litPinKeys(features: MapAreaFeature[], openKey: string | null, highlightKeys: readonly string[]) {
@@ -116,10 +105,34 @@ function tipPlacement(input: {
   };
 }
 
-function showPoint(map: LeafletMap, point: CatalogMapUser, zoom: number, programmatic: { current: boolean }) {
-  programmatic.current = true;
-  map.setView([point.lat, point.lng], zoom);
-  programmatic.current = false;
+type Placed = { marker: YandexMarker; element: HTMLElement };
+
+function markerShape(element: HTMLElement): [[number, number], [number, number]] {
+  if (element.dataset.kind === "cluster") {
+    const size = Number.parseFloat(element.style.width) || 40;
+    const half = size / 2;
+    return [[-half, -half], [half, half]];
+  }
+  return [[-18, -34], [18, 2]];
+}
+
+function paintFeature(element: HTMLElement, feature: MapAreaFeature) {
+  if (feature.kind === "cluster") {
+    const bubble = clusterHtml(feature.count);
+    element.className = "catalog-map__cluster";
+    element.style.width = `${bubble.size}px`;
+    element.style.height = `${bubble.size}px`;
+    element.innerHTML = bubble.html;
+    element.setAttribute("aria-label", countRu(feature.count, "тренер", "тренера", "тренеров"));
+  } else {
+    element.className = "catalog-map__pin";
+    element.style.width = "";
+    element.style.height = "";
+    element.innerHTML = pinHtml(feature.count);
+    element.setAttribute("aria-label", feature.label);
+  }
+  element.dataset.count = String(feature.count);
+  element.dataset.kind = feature.kind;
 }
 
 export function TrainerCatalogMapView({
@@ -129,6 +142,7 @@ export function TrainerCatalogMapView({
   highlightKeys = [],
   onPinHover,
   onBounds,
+  onUnavailable,
 }: {
   features: MapAreaFeature[];
   user: CatalogMapUser | null;
@@ -138,17 +152,19 @@ export function TrainerCatalogMapView({
   highlightKeys?: readonly string[];
   onPinHover?: (key: string | null) => void;
   onBounds?: (bounds: CatalogMapBounds) => void;
+  onUnavailable?: () => void;
 }) {
   const features = capMapFeatures(incomingFeatures);
   const nodeRef = useRef<HTMLDivElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<LeafletMap | null>(null);
-  const markersRef = useRef<Map<string, Marker>>(new Map());
-  const youRef = useRef<CircleMarker | null>(null);
+  const mapRef = useRef<YandexMap | null>(null);
+  const markersRef = useRef<Map<string, Placed>>(new Map());
+  const youRef = useRef<YandexMarker | null>(null);
+  const moveListeners = useRef(new Set<() => void>());
   const [ready, setReady] = useState(false);
   const [hoverKey, setHoverKey] = useState<string | null>(null);
   const [pinnedKey, setPinnedKey] = useState<string | null>(null);
-  const [cardStyle, setCardStyle] = useState<CSSProperties | null>(null);
+  const [cardStyle, setCardStyle] = useState<TipStyle | null>(null);
   const [tipBelow, setTipBelow] = useState(false);
   const hideTimer = useRef<number | null>(null);
   const pinClickRef = useRef(false);
@@ -159,11 +175,11 @@ export function TrainerCatalogMapView({
   featuresRef.current = features;
   const onBoundsRef = useRef(onBounds);
   onBoundsRef.current = onBounds;
+  const onUnavailableRef = useRef(onUnavailable);
+  onUnavailableRef.current = onUnavailable;
   const focusRef = useRef(focus);
   focusRef.current = focus;
   const focusKey = focus ? `${focus.lat.toFixed(5)},${focus.lng.toFixed(5)}` : "";
-  const movedRef = useRef(false);
-  const programmaticRef = useRef(false);
   const userKey = user ? `${user.lat.toFixed(5)},${user.lng.toFixed(5)}` : "";
   const openKey = hoverKey ?? pinnedKey;
   pinnedRef.current = pinnedKey;
@@ -181,6 +197,8 @@ export function TrainerCatalogMapView({
     setPinnedKey(null);
     setHoverKey(null);
   };
+  const dismissRef = useRef(dismissTip);
+  dismissRef.current = dismissTip;
 
   const holdPin = (key: string) => {
     if (Date.now() < suppressHoverRef.current) return;
@@ -192,69 +210,73 @@ export function TrainerCatalogMapView({
     if (hideTimer.current != null) window.clearTimeout(hideTimer.current);
     hideTimer.current = window.setTimeout(() => setHoverKey(null), 160);
   };
+  const holdRef = useRef(holdPin);
+  const releaseRef = useRef(releasePin);
+  holdRef.current = holdPin;
+  releaseRef.current = releasePin;
 
   useEffect(() => {
     const node = nodeRef.current;
     if (!node) return;
-    const start = focusRef.current ?? MINSK_POINT;
-    const map = createMap(node, {
-      scrollWheelZoom: false,
-      attributionControl: false,
-      zoomControl: true,
-      keyboard: false,
-    }).setView([start.lat, start.lng], openingZoom());
-    map.getContainer().tabIndex = -1;
-    for (const link of map.getContainer().querySelectorAll<HTMLAnchorElement>(".leaflet-control a")) {
-      link.addEventListener("click", (event) => event.preventDefault());
-    }
-    const noteMove = () => {
-      if (!programmaticRef.current) movedRef.current = true;
+    let cancelled = false;
+    let map: YandexMap | null = null;
+    const fail = () => {
+      if (!cancelled) onUnavailableRef.current?.();
     };
-    map.on("dragstart", noteMove);
-    map.on("zoomstart", noteMove);
-    tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "",
-      maxZoom: 19,
-    }).addTo(map);
-    map.on("click", () => {
-      if (pinClickRef.current) {
-        pinClickRef.current = false;
-        return;
-      }
-      dismissTip();
-    });
-    mapRef.current = map;
     const report = () => {
-      const box = map.getBounds();
+      const current = mapRef.current;
+      const box = current?.bounds;
+      if (!current || !box) return;
+      const lngs = [box[0][0], box[1][0]];
+      const lats = [box[0][1], box[1][1]];
       onBoundsRef.current?.({
-        south: box.getSouth(),
-        west: box.getWest(),
-        north: box.getNorth(),
-        east: box.getEast(),
-        zoom: map.getZoom(),
+        west: Math.min(...lngs),
+        east: Math.max(...lngs),
+        south: Math.min(...lats),
+        north: Math.max(...lats),
+        zoom: current.zoom,
       });
     };
-    map.on("moveend", report);
-    setReady(true);
-    const frame = window.requestAnimationFrame(() => {
-      map.invalidateSize();
-      report();
-    });
-    const onResize = () => {
-      map.invalidateSize();
-      report();
-    };
+    void loadYandexMaps()
+      .then(async (ymaps) => {
+        if (cancelled) return;
+        const start = focusRef.current ?? MINSK_POINT;
+        map = mountYandexMap(ymaps, node, [start.lng, start.lat], openingZoom());
+        map.onClick(() => {
+          if (pinClickRef.current) {
+            pinClickRef.current = false;
+            return;
+          }
+          dismissRef.current();
+        });
+        map.onMove(() => {
+          for (const listener of moveListeners.current) listener();
+        });
+        map.onIdle(() => {
+          for (const listener of moveListeners.current) listener();
+          report();
+        });
+        map.onResize(() => {
+          for (const listener of moveListeners.current) listener();
+          report();
+        });
+        mapRef.current = map;
+        setReady(true);
+        window.requestAnimationFrame(() => {
+          quietMapChrome(node);
+          report();
+        });
+      })
+      .catch(fail);
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") dismissTip();
+      if (event.key === "Escape") dismissRef.current();
     };
-    window.addEventListener("resize", onResize);
     window.addEventListener("keydown", onKey);
     return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener("resize", onResize);
+      cancelled = true;
       window.removeEventListener("keydown", onKey);
       if (hideTimer.current != null) window.clearTimeout(hideTimer.current);
-      map.remove();
+      map?.destroy();
       mapRef.current = null;
       markersRef.current.clear();
       youRef.current = null;
@@ -268,57 +290,45 @@ export function TrainerCatalogMapView({
     const next = new Map(featuresRef.current.map((feature) => [feature.key, feature]));
     for (const [key, item] of markersRef.current) {
       if (!next.has(key)) {
-        item.remove();
+        item.marker.remove();
         markersRef.current.delete(key);
       }
     }
     for (const feature of featuresRef.current) {
       const existing = markersRef.current.get(feature.key);
       if (existing) {
-        const node = existing.getElement();
-        if (node && node.dataset.count !== String(feature.count)) {
-          existing.setIcon(feature.kind === "cluster" ? clusterIcon(feature.count) : pinIcon(feature.count, "idle"));
-          const updated = existing.getElement();
-          if (updated) updated.dataset.count = String(feature.count);
-        }
+        if (existing.element.dataset.count !== String(feature.count)) paintFeature(existing.element, feature);
         continue;
       }
-      const item = feature.kind === "cluster"
-        ? marker([feature.lat, feature.lng], {
-          icon: clusterIcon(feature.count),
-          keyboard: false,
-          zIndexOffset: 40,
-          alt: countRu(feature.count, "тренер", "тренера", "тренеров"),
-        })
-        : marker([feature.lat, feature.lng], {
-          icon: pinIcon(feature.count, "idle"),
-          keyboard: false,
-          alt: feature.label,
-        });
-      item.addTo(map);
-      if (feature.kind === "cluster") {
-        item.on("click", (event) => {
-          DomEvent.stop(event);
-          pinClickRef.current = true;
-          movedRef.current = true;
-          map.setView([feature.lat, feature.lng], Math.min(map.getZoom() + 2, 16));
-        });
-      } else {
-        item.on("mouseover", () => holdPin(feature.key));
-        item.on("mouseout", () => releasePin());
-        item.on("click", (event) => {
-          DomEvent.stop(event);
-          pinClickRef.current = true;
-          if (hideTimer.current != null) window.clearTimeout(hideTimer.current);
-          const opened = pinnedRef.current === feature.key ? null : feature.key;
-          pinnedRef.current = opened;
-          setPinnedKey(opened);
-          setHoverKey(opened);
-        });
-      }
-      const placed = item.getElement();
-      if (placed) placed.dataset.count = String(feature.count);
-      markersRef.current.set(feature.key, item);
+      const element = document.createElement("div");
+      paintFeature(element, feature);
+      const marker = map.addMarker({
+        coordinates: [feature.lng, feature.lat],
+        element,
+        zIndex: feature.kind === "cluster" ? 40 : 0,
+        shape: markerShape(element),
+        onClick: feature.kind === "cluster"
+          ? () => {
+            pinClickRef.current = true;
+            const current = mapRef.current;
+            if (!current) return;
+            current.setLocation({
+              center: [feature.lng, feature.lat],
+              zoom: Math.min(current.zoom + 2, 16),
+            });
+          }
+          : () => {
+            pinClickRef.current = true;
+            if (hideTimer.current != null) window.clearTimeout(hideTimer.current);
+            const opened = pinnedRef.current === feature.key ? null : feature.key;
+            pinnedRef.current = opened;
+            setPinnedKey(opened);
+            setHoverKey(opened);
+          },
+        onEnter: feature.kind === "pin" ? () => holdRef.current(feature.key) : undefined,
+        onLeave: feature.kind === "pin" ? () => releaseRef.current() : undefined,
+      });
+      markersRef.current.set(feature.key, { marker, element });
     }
     const keep = (current: string | null) => (current && next.has(current) && next.get(current)?.kind === "pin" ? current : null);
     setHoverKey(keep);
@@ -334,44 +344,49 @@ export function TrainerCatalogMapView({
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
-    youRef.current?.remove();
-    youRef.current = null;
-    if (user) {
-      youRef.current = circleMarker([user.lat, user.lng], {
-        radius: 8,
-        color: "#ffffff",
-        weight: 3,
-        fillColor: "#f04b50",
-        fillOpacity: 1,
-      }).addTo(map);
-      movedRef.current = true;
-      showPoint(map, user, 14, programmaticRef);
+    if (youRef.current) {
+      youRef.current.remove();
+      youRef.current = null;
     }
-  }, [userKey, ready]);
+    if (user) {
+      const element = document.createElement("div");
+      element.className = "catalog-map__you";
+      element.setAttribute("aria-hidden", "true");
+      const marker = map.addMarker({
+        coordinates: [user.lng, user.lat],
+        element,
+        zIndex: 500,
+        shape: [[-8, -8], [8, 8]],
+      });
+      youRef.current = marker;
+      map.setLocation({ center: [user.lng, user.lat], zoom: 14 });
+    }
+  }, [userKey, ready, user]);
 
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
     const next = focusRef.current ?? MINSK_POINT;
-    const center = map.getCenter();
+    const center = map.center;
     const zoom = openingZoom();
-    const same = Math.abs(center.lat - next.lat) < 0.0001
-      && Math.abs(center.lng - next.lng) < 0.0001
-      && map.getZoom() === zoom;
+    const same = Math.abs(center[1] - next.lat) < 0.0001
+      && Math.abs(center[0] - next.lng) < 0.0001
+      && Math.round(map.zoom) === zoom;
     if (same) return;
-    showPoint(map, next, zoom, programmaticRef);
+    map.setLocation({ center: [next.lng, next.lat], zoom });
   }, [ready, focusKey]);
 
   useEffect(() => {
     const lit = litPinKeys(featuresRef.current, openKey, highlightKeys);
     const dim = lit.size > 0;
     for (const [key, item] of markersRef.current) {
-      const glyph = item.getElement()?.querySelector(".catalog-map__glyph");
-      if (!glyph) continue;
-      const mode = lit.has(key) ? "lit" : dim ? "dim" : "idle";
-      glyph.classList.remove("is-idle", "is-lit", "is-dim");
-      glyph.classList.add(`is-${mode}`);
-      item.setZIndexOffset(lit.has(key) ? 600 : 0);
+      const glyph = item.element.querySelector(".catalog-map__glyph");
+      if (glyph) {
+        const mode = lit.has(key) ? "lit" : dim ? "dim" : "idle";
+        glyph.classList.remove("is-idle", "is-lit", "is-dim");
+        glyph.classList.add(`is-${mode}`);
+      }
+      item.marker.update({ zIndex: lit.has(key) ? 600 : item.element.dataset.kind === "cluster" ? 40 : 0 });
     }
   }, [openKey, highlightKeys, featureKey]);
 
@@ -383,14 +398,19 @@ export function TrainerCatalogMapView({
   useLayoutEffect(() => {
     const map = mapRef.current;
     const node = nodeRef.current;
-    if (!map || !node || !active) {
+    const placed = active ? markersRef.current.get(active.key) : null;
+    if (!map || !node || !active || !placed) {
       setCardStyle(null);
       return;
     }
     const place = () => {
       const tip = tipRef.current;
-      if (!tip) return;
-      const point = map.latLngToContainerPoint([active.lat, active.lng]);
+      const pin = markersRef.current.get(active.key)?.element;
+      if (!tip || !pin) return;
+      const mapBox = node.getBoundingClientRect();
+      const pinBox = pin.getBoundingClientRect();
+      const x = pinBox.left - mapBox.left + PIN_ANCHOR_X;
+      const y = pinBox.top - mapBox.top + PIN_ANCHOR_Y;
       tip.style.width = `${Math.min(248, Math.max(160, node.clientWidth - TIP_EDGE * 2))}px`;
       const people = tip.querySelector<HTMLElement>(".catalog-map__people");
       const locked = people?.style.maxHeight ?? "";
@@ -400,8 +420,8 @@ export function TrainerCatalogMapView({
       const peopleScroll = people?.scrollHeight ?? peopleHeight;
       if (people) people.style.maxHeight = locked;
       const next = tipPlacement({
-        x: point.x,
-        y: point.y,
+        x,
+        y,
         mapWidth: node.clientWidth,
         mapHeight: node.clientHeight,
         naturalHeight,
@@ -410,10 +430,10 @@ export function TrainerCatalogMapView({
       });
       setTipBelow(next.below);
       setCardStyle((current) => {
-        const style: CSSProperties = {
+        const style: TipStyle = {
           position: "absolute",
           left: next.left,
-          top: point.y,
+          top: y,
           right: "auto",
           bottom: "auto",
           width: next.width,
@@ -421,7 +441,8 @@ export function TrainerCatalogMapView({
           "--people-max": `${Math.round(next.peopleMax)}px`,
         };
         if (
-          current?.left === style.left
+          current
+          && current.left === style.left
           && current.top === style.top
           && current.width === style.width
           && current.transform === style.transform
@@ -431,17 +452,15 @@ export function TrainerCatalogMapView({
       });
     };
     place();
-    map.on("move", place);
-    map.on("zoom", place);
+    moveListeners.current.add(place);
     return () => {
-      map.off("move", place);
-      map.off("zoom", place);
+      moveListeners.current.delete(place);
     };
   }, [active]);
 
   return (
     <>
-      <div ref={nodeRef} className="catalog-map__leaflet" />
+      <div ref={nodeRef} className="catalog-map__map" />
       {active ? (
         <div
           ref={tipRef}
@@ -500,22 +519,28 @@ export function TrainerCatalogMapView({
 }
 
 const MAP_VIEW_CSS = `
-.catalog-map__leaflet { width: 100%; height: 100%; background: var(--neutral-bg); overflow-anchor: none; }
-.catalog-map__pin, .catalog-map__cluster { background: none; border: 0; }
-.catalog-map__pin { animation: map-mark-in 0.28s ease; }
+.catalog-map__map { width: 100%; height: 100%; background: var(--neutral-bg); overflow-anchor: none; }
+.catalog-map__pin, .catalog-map__cluster { margin: 0; padding: 0; background: none; border: 0; cursor: pointer; }
+.catalog-map__pin { width: 36px; height: 36px; transform: translate(-18px, -34px); animation: map-mark-in 0.28s ease; }
+.catalog-map__cluster { transform: translate(-50%, -50%); }
 .catalog-map__bubble {
   display: grid; place-items: center; border-radius: 999px; background: var(--primary); color: #fff;
   border: 2px solid #fff; box-shadow: 0 8px 18px rgba(var(--primary-rgb), 0.35);
   font-size: 13px; font-weight: var(--fw-title); line-height: 1; animation: map-mark-in 0.28s ease;
 }
 @keyframes map-mark-in { from { opacity: 0; } to { opacity: 1; } }
-.catalog-map__glyph { position: relative; display: block; width: 36px; height: 36px; color: var(--primary); transform-origin: 50% 100%; transition: transform 0.16s ease, opacity 0.16s ease, filter 0.16s ease, color 0.16s ease; }
-.catalog-map__glyph.is-lit { color: var(--primary); transform: translateY(-4px) scale(1.14); filter: drop-shadow(0 8px 10px rgba(var(--primary-rgb), 0.5)); }
+.catalog-map__glyph { position: relative; display: block; width: 36px; height: 36px; color: #f04b50; color: var(--primary, #f04b50); transform-origin: 50% 100%; transition: transform 0.16s ease, opacity 0.16s ease, filter 0.16s ease, color 0.16s ease; }
+.catalog-map__glyph.is-lit { color: #f04b50; color: var(--primary, #f04b50); transform: translateY(-4px) scale(1.14); filter: drop-shadow(0 8px 10px rgba(240, 75, 80, 0.5)); }
 .catalog-map__glyph.is-dim { color: #c5c9d1; opacity: 1; }
 .catalog-map__count {
   position: absolute; top: -2px; right: -4px; min-width: 18px; height: 18px; padding: 0 4px;
   border-radius: 999px; background: var(--dark); color: #fff; font-size: 11px; font-weight: var(--fw-title);
   line-height: 18px; text-align: center;
+}
+.catalog-map__you {
+  width: 16px; height: 16px; box-sizing: border-box; border-radius: 999px;
+  background: #f04b50; border: 3px solid #fff; transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 6px rgba(240, 75, 80, 0.2);
 }
 .catalog-map__tip {
   position: absolute; z-index: 1000; display: grid; gap: 6px; box-sizing: border-box;
@@ -549,7 +574,7 @@ const MAP_VIEW_CSS = `
 .catalog-map__photo { width: 48px; height: 64px; object-fit: cover; object-position: center; border-radius: 10px; display: block; background: var(--light-bg); }
 .catalog-map__photo--empty { display: grid; place-items: center; color: var(--primary); font-weight: var(--fw-title); font-size: 18px; }
 .catalog-map__copy { min-width: 0; display: grid; gap: 1px; align-content: start; }
-.catalog-map__tip:has(.catalog-map__close) .catalog-map__people > li:first-child .catalog-map__copy { padding-right: 36px; }
+.catalog-map__tip:has(.catalog-map__close) .catalog-map__people > li:first-child .catalog-map__copy { padding-right: 48px; }
 .catalog-map__copy .trainer-name {
   flex-direction: column; align-items: flex-start; gap: 0;
   font-size: 13px; line-height: 1.15; letter-spacing: 0; font-weight: var(--fw-title);
@@ -558,5 +583,4 @@ const MAP_VIEW_CSS = `
 .catalog-map__sport { color: var(--muted); font-size: 12px; line-height: 1.3; }
 .catalog-map__where, .catalog-map__more { margin: 0; padding: 0 6px 2px; color: var(--muted); font-size: 12px; line-height: 1.3; }
 .catalog-map__price { font-size: 13px; font-weight: var(--fw-title); color: var(--dark); }
-.catalog-map .leaflet-control-zoom a { width: 44px; height: 44px; line-height: 44px; }
 `;
