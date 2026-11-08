@@ -3,6 +3,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from
 
 type TipStyle = CSSProperties & { "--people-max"?: string };
 
+import { MapZoom } from "@/components/map-zoom";
 import { PhotoImage } from "@/components/photo-image";
 import { TrainerName } from "@/components/trainer-name";
 import { TrainerRating } from "@/components/trainer-rating";
@@ -220,6 +221,7 @@ export function TrainerCatalogMapView({
     if (!node) return;
     let cancelled = false;
     let map: YandexMap | null = null;
+    let stopChrome = () => {};
     const fail = () => {
       if (!cancelled) onUnavailableRef.current?.();
     };
@@ -263,7 +265,7 @@ export function TrainerCatalogMapView({
         mapRef.current = map;
         setReady(true);
         window.requestAnimationFrame(() => {
-          quietMapChrome(node);
+          stopChrome = quietMapChrome(node);
           report();
         });
       })
@@ -274,6 +276,7 @@ export function TrainerCatalogMapView({
     window.addEventListener("keydown", onKey);
     return () => {
       cancelled = true;
+      stopChrome();
       window.removeEventListener("keydown", onKey);
       if (hideTimer.current != null) window.clearTimeout(hideTimer.current);
       map?.destroy();
@@ -461,6 +464,7 @@ export function TrainerCatalogMapView({
   return (
     <>
       <div ref={nodeRef} className="catalog-map__map" />
+      <MapZoom mapRef={mapRef} />
       {active ? (
         <div
           ref={tipRef}

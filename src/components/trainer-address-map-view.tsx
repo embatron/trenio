@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 
+import { MapZoom } from "@/components/map-zoom";
 import { loadYandexMaps, mountYandexMap, quietMapChrome, type YandexMap } from "@/lib/maps/yandex-maps";
 
 const PIN = `<svg viewBox="0 0 24 24" width="36" height="36" aria-hidden="true"><path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" fill="#f04b50" stroke="#fff" stroke-width="1.2"/><circle cx="12" cy="9" r="2.4" fill="#fff"/></svg>`;
@@ -30,6 +31,7 @@ export function TrainerAddressMapView({
     if (!node || points.length === 0) return;
     let cancelled = false;
     let map: YandexMap | null = null;
+    let stopChrome = () => {};
     const fail = () => {
       if (!cancelled) onUnavailableRef.current?.();
     };
@@ -53,11 +55,12 @@ export function TrainerAddressMapView({
           });
         }
         if (cancelled) return;
-        quietMapChrome(node);
+        stopChrome = quietMapChrome(node);
       })
       .catch(fail);
     return () => {
       cancelled = true;
+      stopChrome();
       map?.destroy();
       mapRef.current = null;
     };
@@ -69,5 +72,10 @@ export function TrainerAddressMapView({
     mapRef.current?.setLocation({ center: [activeLng, activeLat], zoom: 16 });
   }, [activeLat, activeLng]);
 
-  return <div ref={nodeRef} className="trainer-address__map" />;
+  return (
+    <>
+      <div ref={nodeRef} className="trainer-address__map" />
+      <MapZoom mapRef={mapRef} />
+    </>
+  );
 }

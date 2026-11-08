@@ -147,9 +147,6 @@ function elementLayout(ymaps: YMaps, element: HTMLElement) {
 
 function wrapMap(ymaps: YMaps, raw: RawMap): YandexMap {
   raw.behaviors.disable("scrollZoom");
-  const zoom = raw.controls.get("zoomControl");
-  zoom?.options.set("size", "small");
-  zoom?.options.set("position", { left: 12, top: 12 });
   return {
     get bounds(): LngLatBounds | undefined {
       const box = raw.getBounds();
@@ -214,18 +211,34 @@ function wrapMap(ymaps: YMaps, raw: RawMap): YandexMap {
   };
 }
 
-/** The map pane should not take arrow keys. Copyright links stay reachable. */
-export function quietMapChrome(node: HTMLElement) {
+const EXTRA_MAP_LINK = /создать свою карту/i;
+
+function hideExtraMapChrome(node: HTMLElement) {
   for (const el of node.querySelectorAll<HTMLElement>("[tabindex]")) {
     if (el.tagName !== "A") el.tabIndex = -1;
   }
+  for (const el of node.querySelectorAll<HTMLElement>("a, [class*='gototech'], [class*='gototaxi']")) {
+    const text = (el.textContent ?? "").replace(/\s+/g, " ").trim();
+    const href = el.getAttribute("href") ?? "";
+    const promo = EXTRA_MAP_LINK.test(text) || /map-constructor|mapconstructor/i.test(href);
+    const spare = String(el.className).includes("gototech") || String(el.className).includes("gototaxi");
+    if (promo || spare) el.style.setProperty("display", "none", "important");
+  }
+}
+
+/** The map pane should not take arrow keys. Copyright and «Как добраться» stay reachable. */
+export function quietMapChrome(node: HTMLElement) {
+  hideExtraMapChrome(node);
+  const observer = new MutationObserver(() => hideExtraMapChrome(node));
+  observer.observe(node, { childList: true, subtree: true });
+  return () => observer.disconnect();
 }
 
 export function mountYandexMap(ymaps: YMaps, node: HTMLElement, center: LngLat, zoom: number) {
   const raw = new ymaps.Map(node, {
     center: [center[1], center[0]],
     zoom,
-    controls: ["zoomControl"],
+    controls: [],
   }, {
     suppressMapOpenBlock: false,
     yandexMapDisablePoiInteractivity: true,

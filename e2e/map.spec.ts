@@ -56,7 +56,7 @@ test("map keeps one frame inside the cap while the scale changes", async ({ page
   const wheeled = await markOffset(page);
   expect(wheeled).toEqual(before);
 
-  await page.locator(".catalog-map [class*='-zoom__minus']").click();
+  await page.getByRole("button", { name: "Отдалить" }).click();
   await page.waitForTimeout(900);
   const wider = await markOffset(page);
   expect(wider).not.toBeNull();
@@ -97,7 +97,7 @@ test("map controls stay tappable on a phone and a tablet", async ({ page }) => {
     await waitForMap(page);
     expect(await overflow(page), `${width} overflow`).toBeLessThanOrEqual(1);
 
-    const zoom = page.locator(".catalog-map [class*='-zoom__plus']");
+    const zoom = page.getByRole("button", { name: "Приблизить" });
     const zoomBox = await zoom.boundingBox();
     expect(zoomBox!.width, `${width} zoom`).toBeGreaterThanOrEqual(44);
     expect(zoomBox!.height, `${width} zoom`).toBeGreaterThanOrEqual(44);
@@ -158,7 +158,10 @@ test("trainer profile map and search map stay inside the screen", async ({ page 
   const canvasBox = await canvas.boundingBox();
   expect(canvasBox!.height).toBeGreaterThanOrEqual(280);
   await expect(canvas.locator("a[href*='maps_termsofuse']")).toBeVisible();
-  const zoom = canvas.locator("[class*='-zoom__plus']");
+  await expect(canvas.locator("[class*='gotoymaps']").first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "Проложить маршрут" })).toHaveCount(0);
+  await expect(canvas.getByText("Создать свою карту")).toBeHidden();
+  const zoom = page.getByRole("button", { name: "Приблизить" });
   const zoomBox = await zoom.boundingBox();
   expect(zoomBox!.width).toBeGreaterThanOrEqual(44);
   expect(await overflow(page)).toBeLessThanOrEqual(1);

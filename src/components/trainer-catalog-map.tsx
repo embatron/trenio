@@ -181,8 +181,6 @@ const MAP_SHELL_CSS = `
 .catalog-map__locate svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .catalog-map__locate.is-on { color: var(--primary); border-color: var(--primary); }
 .catalog-map__locate:disabled { opacity: 0.6; cursor: progress; }
-.catalog-map [class*="-zoom__plus"],
-.catalog-map [class*="-zoom__minus"] { width: 44px; height: 44px; }
 @media (min-width: 960px) {
   .catalog-map { height: min(72dvh, 760px); min-height: 480px; }
 }

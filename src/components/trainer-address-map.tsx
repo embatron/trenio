@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type ComponentType } from "react";
 
-import { YandexIcon } from "@/components/brand-icons";
-import { isSpecificAddress, placeLine } from "@/lib/geo/schemas";
+import { placeLine } from "@/lib/geo/schemas";
 import type { TrainerMapPoint } from "@/components/trainer-address-map-view";
 
 type MapViewProps = {
@@ -57,9 +56,6 @@ export function TrainerAddressMap({ places }: { places: TrainerProfilePlace[] })
   }, [pointKey, points.length]);
 
   if (listed.length === 0) return null;
-  const route = selectedPoint && isSpecificAddress(selectedPoint.address)
-    ? `https://yandex.by/maps/?rtext=~${selectedPoint.lat},${selectedPoint.lng}&rtt=auto`
-    : "";
 
   function show(index: number) {
     setActive(index);
@@ -106,10 +102,6 @@ export function TrainerAddressMap({ places }: { places: TrainerProfilePlace[] })
               />
             )}
           </div>
-          {route ? <a className="btn btn--secondary trainer-address__route" href={route} target="_blank" rel="noopener noreferrer">
-            <YandexIcon />
-            Проложить маршрут
-          </a> : null}
         </>
       ) : null}
       <style>{ADDRESS_MAP_CSS}</style>
@@ -156,8 +148,6 @@ const ADDRESS_MAP_CSS = `
 }
 .trainer-address__map { width: 100%; height: 100%; }
 .trainer-address__pin { width: 36px; height: 36px; transform: translate(-18px, -34px); }
-.trainer-address__canvas [class*="-zoom__plus"],
-.trainer-address__canvas [class*="-zoom__minus"] { width: 44px; height: 44px; }
 .trainer-address__skeleton {
   display: grid;
   place-items: center;
@@ -169,12 +159,7 @@ const ADDRESS_MAP_CSS = `
   text-align: center;
   padding: 16px;
 }
-.trainer-address__route { width: 100%; }
-.trainer-address__route .yandex-mark { stroke: none; }
-.trainer-address__route .yandex-mark circle { fill: #fc3f1d; stroke: none; }
-.trainer-address__route .yandex-mark path { fill: #fff; stroke: none; }
 @media (min-width: 768px) {
   .trainer-address__canvas { height: 320px; }
-  .trainer-address__route { width: fit-content; }
 }
 `;
