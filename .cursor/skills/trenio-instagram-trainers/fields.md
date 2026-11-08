@@ -54,7 +54,7 @@ A pinned caption is read for fields: sport, experience, audience, address, city,
 
 One to four sentences. At most 700 characters. Fewer sentences when the source is thin. Do not pad. A practiced sport may appear only as something they do themselves, never as the sport they coach.
 
-«Как проходят мои тренировки» (`about`) answers how a session goes when the biography, the about highlight, Threads, or the note says so. Up to three paragraphs, separated by a blank line, at most 1600 characters and 8 sentences. Leave it empty when those sources never mention a session, a warm-up, sparring, or an individual or group format. A pin that does mention them fills `formats`, `audiences`, or `address` and leaves this text empty. Do not turn a list of sports into a fake session.
+«Как проходят мои тренировки» (`about`) answers how a session goes when the biography, the about highlight, Threads, or the note says so. Up to three paragraphs, separated by a blank line, at most 1600 characters and 8 sentences. Leave it empty when those sources never mention a session, a warm-up, sparring, or an individual or group format. When the operator asks to use the biography lines themselves, write those lines as spoken sentences and quote them verbatim. A pin that does mention them fills `formats`, `audiences`, or `address` and leaves this text empty. Do not turn a list of sports into a fake session.
 
 Each card text carries `presentationQuotes` or `trainingQuotes`: verbatim slices of the biography, the about highlight, Threads, or the operator note. A number in the card text must already appear there. A street named in a pin is `address`, not a sentence in this text.
 

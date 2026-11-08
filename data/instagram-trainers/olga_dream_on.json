@@ -1,0 +1,93 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/olga_dream_on/",
+  "handle": "olga_dream_on",
+  "slug": "olga_dream_on",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ольга",
+  "lastName": "Мальцева",
+  "fullName": "Ольга Мальцева",
+  "gender": "female",
+  "nameQuotes": [
+    "Ольга Мальцева"
+  ],
+  "headline": "Тренер по джампингу",
+  "sourceBio": "owner @jump_street_minsk Тренер- универсал групповых программ В мире много дорог, не стоит выбирать одну и ту же раз за разом t.me/jump_street_minsk",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Ольга Мальцева Gym/Physical Fitness Center 🟣Худеем на Jumping 🟣Строим тело на TRX, Pilates 🟣Укрепляем спину 🟣1 абонемент-10 направлений 🫟 Allsports и Gymfit Джампинг Пилатес TRX Фитнес клуб МИНСК Есть аккредитация Алибегова, 24",
+  "threadsUrl": "",
+  "bio": "Я Ольга Мальцева, тренер по джампингу, TRX и пилатесу в Минске. Я в клубе Allsports и Gymfit. Есть аккредитация.",
+  "about": [
+    "Худеем на джампинге. Строим тело на TRX и пилатесе. Укрепляем спину. Один абонемент — 10 направлений."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "dzhamping",
+      "parentSlug": "fitnes",
+      "label": "Джампинг",
+      "evidence": "Джампинг"
+    },
+    {
+      "slug": "trx",
+      "parentSlug": "fitnes",
+      "label": "TRX",
+      "evidence": "TRX"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Pilates"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "dzhamping",
+    "parentSlug": "fitnes",
+    "label": "Джампинг"
+  },
+  "city": "Минск",
+  "address": "Алибегова, 24",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/olga_dream_on.jpg",
+  "photos": [
+    "/trainers/instagram/olga_dream_on.jpg",
+    "/trainers/instagram/olga_dream_on-g2.jpg",
+    "/trainers/instagram/olga_dream_on-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/olga_dream_on/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/jump_street_minsk",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

@@ -9,6 +9,7 @@ import {
   getParentCategoryFeaturedImage,
   getTopLevelSportCategory,
   categorySearchDescription,
+  phraseAsWritten,
   type CategoryRouteRef,
 } from "@/lib/catalog/sport-taxonomy";
 import { categoryAbout } from "@/lib/catalog/category-copy";
@@ -358,7 +359,7 @@ function fallbackChildCategory(parentSlug: string, childSlug: string): Category 
   return {
     slug: childSlug,
     title: child.label,
-    titleGenitive: child.titleGenitive ?? child.label.toLowerCase(),
+    titleGenitive: child.titleGenitive ?? phraseAsWritten(child.label),
     lead: `${child.label} в разделе «${parentCategory.label}»: подбор тренера по городу, цене и формату занятий.`,
     subSports: [
       "С нуля",
@@ -445,7 +446,7 @@ function fallbackCategory(slug: string): Category {
   return {
     slug,
     title,
-    titleGenitive: topLevelCategory?.titleGenitive ?? child?.titleGenitive ?? title.toLowerCase(),
+    titleGenitive: topLevelCategory?.titleGenitive ?? child?.titleGenitive ?? phraseAsWritten(title),
     lead,
     subSports,
     related,

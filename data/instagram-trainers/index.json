@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-07T20:06:22.394Z",
+  "updatedAt": "2026-11-08T13:39:16.351Z",
   "profiles": [
     {
       "handle": "embatron.eth",
@@ -1262,7 +1262,7 @@
       "handle": "andrey_pivovarov_1977",
       "slug": "andrey_pivovarov_1977",
       "fullName": "Андрей Пивоваров",
-      "primarySport": "Борьба",
+      "primarySport": "MMA",
       "city": "Минск",
       "status": "draft",
       "missing": [
@@ -1473,6 +1473,37 @@
         "pinnedPosts"
       ],
       "file": "data/instagram-trainers/andrushkevichdmitrii.json"
+    },
+    {
+      "handle": "vika_quick",
+      "slug": "vika_quick",
+      "fullName": "Виктория Горбунова",
+      "primarySport": "Йога и растяжка",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/vika_quick.json"
+    },
+    {
+      "handle": "olga_dream_on",
+      "slug": "olga_dream_on",
+      "fullName": "Ольга Мальцева",
+      "primarySport": "Джампинг",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/olga_dream_on.json"
     }
   ]
 }

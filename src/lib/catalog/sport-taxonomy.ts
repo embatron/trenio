@@ -97,7 +97,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Фитнес",
     titleGenitive: "фитнесу",
     iconKey: "gymFitness",
-    description: "ОФП, кроссфит, тяжёлая атлетика, пауэрлифтинг, силовой тренинг, бодибилдинг, коррекция фигуры и питание.",
+    description: "ОФП, кроссфит, джампинг, TRX, тяжёлая атлетика, пауэрлифтинг, силовой тренинг, бодибилдинг, коррекция фигуры и питание.",
     aliases: ["фитнес", "тренажёрный зал", "тренажерка", "спортзал", "персональный тренер", "кардио", "тренировки 50+"],
     count: "",
     bg: "linear-gradient(135deg, #fff1d6 0%, #ffd08a 100%)",
@@ -123,7 +123,19 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         slug: "krossfit",
         label: "Кроссфит",
         titleGenitive: "кроссфиту",
-        aliases: ["crossfit", "функциональные тренировки", "функциональный тренинг", "TRX"],
+        aliases: ["crossfit", "функциональные тренировки", "функциональный тренинг"],
+      },
+      {
+        slug: "dzhamping",
+        label: "Джампинг",
+        titleGenitive: "джампингу",
+        aliases: ["jumping"],
+      },
+      {
+        slug: "trx",
+        label: "TRX",
+        titleGenitive: "TRX",
+        aliases: ["подвесные петли"],
       },
       {
         slug: "shtanga",
@@ -440,7 +452,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     featuredImage: "/images/ideogram/yoga2.png",
     children: [
       { slug: "yoga", label: "Йога", titleGenitive: "йоге", aliases: ["хатха", "виньяса", "йога для начинающих"] },
-      { slug: "pilates", label: "Пилатес", titleGenitive: "пилатесу" },
+      { slug: "pilates", label: "Пилатес", titleGenitive: "пилатесу", aliases: ["Pilates"] },
       {
         slug: "stretching",
         label: "Растяжка",
@@ -713,11 +725,19 @@ export function listSecondLevelSports() {
 /** A trainer card lists at most four second-level sports. */
 export const MAX_TRAINER_SPORTS = 4;
 
+/** After «по». An abbreviation stays in capitals. A normal name starts lowercase. */
+export function phraseAsWritten(value: string): string {
+  const trimmed = value.trim();
+  const letters = [...trimmed].filter((char) => /\p{L}/u.test(char)).join("");
+  if (letters.length > 0 && letters === letters.toUpperCase()) return trimmed;
+  return trimmed.toLowerCase();
+}
+
 /** Dative after «по»: «тренер по боксу». Abbreviations and indeclinable names stay as written. */
 export function sportDative(sport: { slug: string; label: string }): string {
   return getSportTaxonomyChild(sport.slug)?.titleGenitive
     ?? getTopLevelSportCategory(sport.slug)?.titleGenitive
-    ?? sport.label.toLowerCase();
+    ?? phraseAsWritten(sport.label);
 }
 
 export function trainerSportDatives(sports: Array<{ slug: string; label: string }>): string[] {

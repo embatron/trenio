@@ -13,24 +13,18 @@
   "nameQuotes": [
     "Андрей Пивоваров"
   ],
-  "headline": "Тренер по борьбе",
+  "headline": "Тренер по MMA",
   "sourceBio": "Профессиональный тренер по единоборствам. MMA, SAMBO, JUDO, BOXING. Начальная подготовка. Корректировка техники.",
   "sourceAbout": [],
   "sourceThreads": "Pivovarov Andrey 🇧🇾 andrey_pivovarov_1977 373 followers ММА&JUDO Отправил (-а) Вам запрос на добавление в друзья Возьму на персональную тренировку любителя ранних подъемов Побыли в Москве на этапе Кубка мира Нет))) Единоборства к лицу всем Натуралистов, 10. Приходить к нам потренироваться)) Кусочки тренировочного процесса на Натуралистов,10. Ждем и Вас Watch this story by Olympia Gym & SPA",
   "operatorNotes": "Андрей Пивоваров, Минск, борьбу",
   "threadsUrl": "https://www.threads.com/@andrey_pivovarov_1977",
-  "bio": "Я Андрей Пивоваров, тренер по единоборствам в Минске. Веду борьбу, MMA, самбо, дзюдо и бокс. Начинаю с начальной подготовки и корректирую технику.",
+  "bio": "Я Андрей Пивоваров, тренер по единоборствам в Минске. Веду MMA, грэпплинг, дзюдо и бокс. Начинаю с начальной подготовки и корректирую технику.",
   "about": [
     "Беру на персональную тренировку. На ней начальная подготовка и корректировка техники."
   ],
   "pinned": [],
   "sports": [
-    {
-      "slug": "borba",
-      "parentSlug": "edinoborstva",
-      "label": "Борьба",
-      "evidence": "Борьба"
-    },
     {
       "slug": "mma",
       "parentSlug": "edinoborstva",
@@ -38,23 +32,29 @@
       "evidence": "MMA"
     },
     {
-      "slug": "sambo",
+      "slug": "grepling",
       "parentSlug": "edinoborstva",
-      "label": "Самбо",
-      "evidence": "sambo"
+      "label": "Грэпплинг",
+      "evidence": "греплинг"
+    },
+    {
+      "slug": "dzyudo",
+      "parentSlug": "edinoborstva",
+      "label": "Дзюдо",
+      "evidence": "JUDO"
     },
     {
       "slug": "boks",
       "parentSlug": "edinoborstva",
       "label": "Бокс",
-      "evidence": "boxing"
+      "evidence": "BOXING"
     }
   ],
   "practicedSports": [],
   "primarySport": {
-    "slug": "borba",
+    "slug": "mma",
     "parentSlug": "edinoborstva",
-    "label": "Борьба"
+    "label": "MMA"
   },
   "city": "Минск",
   "address": "Натуралистов, 10",

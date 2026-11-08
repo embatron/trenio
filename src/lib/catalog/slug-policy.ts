@@ -36,7 +36,6 @@ export const LEGACY_CATALOG_SLUGS: Record<string, CatalogSlugTarget> = {
   "funkcionalnyj-trening": { parentSlug: "fitnes", childSlug: "krossfit" },
   "kardio-trenirovki": { parentSlug: "fitnes" },
   kardio: { parentSlug: "fitnes" },
-  trx: { parentSlug: "fitnes", childSlug: "krossfit" },
   "atleticheskaya-podgotovka": { parentSlug: "fitnes", childSlug: "ofp" },
   atletika: { parentSlug: "beg", childSlug: "legkaya-atletika" },
   "sportivnaya-podgotovka": { parentSlug: "fitnes", childSlug: "ofp" },

@@ -1,0 +1,81 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vika_quick/",
+  "handle": "vika_quick",
+  "slug": "vika_quick",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктория",
+  "lastName": "Горбунова",
+  "fullName": "Виктория Горбунова",
+  "gender": "female",
+  "nameQuotes": [
+    "Виктория Горбунова",
+    "Виктория / йога тренер"
+  ],
+  "headline": "Тренер по йоге, пилатесу и растяжке",
+  "sourceBio": "📍Минск Наполняю сердца любовью 💙 Управляю состоянием 🌷 Вдохновляю на лёгкость ✈️ Благославляю на рейв 😜",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Виктория Горбунова",
+  "threadsUrl": "",
+  "bio": "Я Виктория Горбунова, йога тренер в Минске. Управляю состоянием и вдохновляю на лёгкость.",
+  "about": [
+    "Наполняю сердца любовью. Управляю состоянием. Вдохновляю на лёгкость. Благославляю на рейв."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога и растяжка",
+      "evidence": "йога"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога и растяжка"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vika_quick.jpg",
+  "photos": [
+    "/trainers/instagram/vika_quick.jpg",
+    "/trainers/instagram/vika_quick-g2.jpg",
+    "/trainers/instagram/vika_quick-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vika_quick/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

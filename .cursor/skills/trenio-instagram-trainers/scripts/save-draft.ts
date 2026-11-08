@@ -197,6 +197,9 @@ function noteNamePairs(note: string, settlements: string[]): Array<{ first: stri
     const first = match[1] || "";
     const last = match[2] || "";
     if (!first || !last || ROLE_WORDS.test(first) || ROLE_WORDS.test(last)) continue;
+    if (!/^[\p{Script=Cyrillic}]+$/u.test(first) || !/^[\p{Script=Cyrillic}]+$/u.test(last)) continue;
+    const sportWord = (word: string) => catalogPhrases().some((phrase) => phrase.label.toLowerCase() === word.toLowerCase() || phrase.alias.toLowerCase() === word.toLowerCase());
+    if (sportWord(first) || sportWord(last)) continue;
     if (cities.has(first.toLowerCase()) || cities.has(last.toLowerCase())) continue;
     const before = note.slice(Math.max(0, (match.index ?? 0) - 16), match.index ?? 0);
     if (/(?:ул\.?|улиц\p{L}*|проспект|пр-т|пер\.|переул\p{L}*|бульвар)\s*$/iu.test(before)) continue;
@@ -312,7 +315,14 @@ function matchSports(text: string): SportHit[] {
       found.push({ ...phrase, start, end: start + match[0].length });
     }
   }
-  found.sort((a, b) => (b.end - b.start) - (a.end - a.start) || a.start - b.start);
+  found.sort((a, b) => {
+    const byLength = (b.end - b.start) - (a.end - a.start);
+    if (byLength) return byLength;
+    if (a.start !== b.start) return a.start - b.start;
+    const aSpecific = a.slug === a.parentSlug ? 1 : 0;
+    const bSpecific = b.slug === b.parentSlug ? 1 : 0;
+    return aSpecific - bSpecific;
+  });
   const taken: Array<{ start: number; end: number }> = [];
   const hits: SportHit[] = [];
   const seen = new Set<string>();
@@ -352,6 +362,8 @@ function matchCities(text: string, settlements: string[]): string[] {
       const token = word.toLowerCase();
       if (token === cityName) return true;
       if (cityName.length < 4 || !token.startsWith(cityName)) return false;
+      // «любовью» is not the village Любовь. An inflected name is capitalized.
+      if (word[0] === word[0].toLowerCase()) return false;
       return /^(?:[еуаыию]|ом|ой|ах|ях|ою)$/iu.test(token.slice(cityName.length));
     });
     if (city) found.add(city);
@@ -833,9 +845,12 @@ async function saveOne(rawPath: string, settlements: string[]) {
   assertCardText(rawPath, "training", training, trainingQuotes, cardCorpus, 1600, 8);
   if (trainingParagraphs.length > 3) fail(rawPath, "training has at most 3 paragraphs.");
   const sessionInProfile = SESSION_CUE.test(cardCorpus);
+  const trainingQuoted = trainingQuotes.length > 0 && trainingQuotes.every((quote) =>
+    includesNorm(sourceBio, quote) || includesNorm(note, quote) || includesNorm(threadsText, quote) || aboutFrames.some((frame) => includesNorm(frame, quote)),
+  );
   if (sessionInProfile && !training) fail(rawPath, "The biography, the about highlight, Threads, or the operator note describes a session. Write training («Как проходят мои тренировки»).");
-  if (!sessionInProfile && training) fail(rawPath, "training describes a session the biography, the about highlight, Threads, and the operator note do not. A pinned caption fills fields and stays out of the card.");
-  if (training && !trainingQuotes.some((quote) => SESSION_CUE.test(quote))) {
+  if (!sessionInProfile && training && !trainingQuoted) fail(rawPath, "training describes a session the biography, the about highlight, Threads, and the operator note do not. A pinned caption fills fields and stays out of the card.");
+  if (training && !trainingQuotes.some((quote) => SESSION_CUE.test(quote)) && !trainingQuoted) {
     fail(rawPath, "trainingQuotes must include the line that describes the session.");
   }
   const storedSourceBio = stripPhones(sourceBio);
