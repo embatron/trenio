@@ -36,7 +36,7 @@ import {
   type TrainerAudience,
   type TrainerFormat,
 } from "@/lib/catalog/published-trainers";
-import { MAX_TRAINER_SPORTS, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
+import { MAX_TRAINER_SPORTS, trainerSportSlugs, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
 import { placesFromProfile, placesShape, savedWithMapNotice } from "@/lib/geo/schemas";
 import { logCaught, writeLog } from "@/lib/log/logger";
@@ -421,7 +421,7 @@ export const getMagicTrainerFn = createServerFn({ method: "GET" })
   .handler(async (): Promise<MagicTrainerDraft | null> => {
     const row = await profileFromEditCookie();
     if (!row) return null;
-    const sports = trainerSportsFromSlugs((row.sports ?? []).map((sport) => sport.slug)).slugs;
+    const sports = trainerSportSlugs((row.sports ?? []).map((sport) => sport.slug));
     const [pendingMail] = await getDb()
       .select({ email: authDoorClaims.email })
       .from(authDoorClaims)
@@ -474,8 +474,8 @@ async function saveFromCookie(data: z.infer<typeof cardSchema>, publish: boolean
     throw new AuthError("Ссылка на редактирование уже не действует.", "VALIDATION");
   }
   const picked = trainerSportsFromSlugs(data.sportSlugs);
-  if (picked.slugs.length > MAX_TRAINER_SPORTS || picked.sports.length !== picked.slugs.length) {
-    throw new AuthError("Выберите вид спорта из списка категорий.", "VALIDATION");
+  if (picked.sports.length > MAX_TRAINER_SPORTS) {
+    throw new AuthError("Можно выбрать не больше четырёх видов спорта.", "VALIDATION");
   }
   const city = await assertBelarusCity(data.city);
   const places = await resolveTrainingPlaces(data.places, placesFromProfile(row));

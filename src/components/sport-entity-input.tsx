@@ -1,5 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 
+import { filterTrainerSports } from "@/lib/catalog/catalog-sports";
 import { listSecondLevelSports, MAX_TRAINER_SPORTS } from "@/lib/catalog/sport-taxonomy";
 
 export function SportEntityInput({
@@ -17,18 +18,12 @@ export function SportEntityInput({
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const listId = useId();
-  const selected = value.flatMap((slug) => {
+  const known = value.filter((slug) => bySlug.has(slug));
+  const selected = known.flatMap((slug) => {
     const sport = bySlug.get(slug);
     return sport ? [sport] : [];
   });
-  const needle = query.trim().toLowerCase();
-  const matches = sports.filter((sport) => {
-    if (value.includes(sport.slug)) return false;
-    if (!needle) return true;
-    return sport.label.toLowerCase().includes(needle)
-      || sport.parentLabel.toLowerCase().includes(needle)
-      || sport.aliases?.some((alias) => alias.toLowerCase().includes(needle));
-  }).slice(0, 8);
+  const matches = filterTrainerSports(query).filter((sport) => !known.includes(sport.slug));
 
   useEffect(() => {
     const onPointer = (event: PointerEvent) => {
@@ -39,14 +34,14 @@ export function SportEntityInput({
   }, []);
 
   function add(slug: string) {
-    if (value.includes(slug) || value.length >= max) return;
-    onChange([...value, slug]);
+    if (known.includes(slug) || known.length >= max) return;
+    onChange([...known, slug]);
     setQuery("");
-    setOpen(true);
+    setOpen(false);
   }
 
   function remove(slug: string) {
-    onChange(value.filter((item) => item !== slug));
+    onChange(known.filter((item) => item !== slug));
   }
 
   return (
@@ -63,8 +58,8 @@ export function SportEntityInput({
         aria-expanded={open}
         aria-controls={listId}
         aria-label="Виды спорта"
-        placeholder={value.length >= max ? "Уже четыре" : selected.length === 0 ? "Найти вид спорта" : ""}
-        disabled={value.length >= max}
+        placeholder={known.length >= max ? "Уже четыре" : selected.length === 0 ? "Найти вид спорта" : ""}
+        disabled={known.length >= max}
         onFocus={() => setOpen(true)}
         onChange={(event) => {
           setQuery(event.target.value);
@@ -85,7 +80,15 @@ export function SportEntityInput({
         <ul className="entity-menu" id={listId} role="listbox">
           {matches.map((sport) => (
             <li key={sport.slug}>
-              <button type="button" role="option" onClick={() => add(sport.slug)}>
+              <button
+                type="button"
+                role="option"
+                onPointerDown={(event) => {
+                  event.preventDefault();
+                  add(sport.slug);
+                }}
+                onClick={() => add(sport.slug)}
+              >
                 {sport.label}
                 <span>{sport.parentLabel}</span>
               </button>

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { listCatalogSports, catalogSportByName, filterCatalogSports } from "./catalog-sports";
+import { listCatalogSports, catalogSportByName, filterCatalogSports, filterTrainerSports } from "./catalog-sports";
 import { BELARUS_CITIES, BELARUS_QUICK_CITIES, filterBelarusCities, resolveBelarusCity } from "./city-taxonomy";
 import { editDistance, foldSearchText, keyboardToLatin, keyboardToRussian } from "./query-flex";
 import { filterSportSuggestions, quickSportLabels } from "./sport-suggestions";
@@ -104,6 +104,34 @@ test("sport field fixes layout, alias, and a jammed pair without grabbing a neig
   assert.ok(filterSportSuggestions("").includes("Бокс"));
   assert.equal(catalogSportByName("лодки"), null);
   assert.ok(filterCatalogSports("лодки", 8).length > 1);
+});
+
+test("trainer sport field reads like the catalog and stores a real sport", () => {
+  assert.equal(filterTrainerSports("qjuf")[0]?.label, "Йога");
+  assert.equal(filterTrainerSports("йоаг")[0]?.label, "Йога");
+  assert.equal(filterTrainerSports("бокс")[0]?.label, "Бокс");
+  assert.equal(filterTrainerSports("бокс").some((sport) => sport.label === "Кикбоксинг"), false);
+  assert.equal(filterTrainerSports(",jrc")[0]?.label, "Бокс");
+  assert.equal(filterTrainerSports("ььф")[0]?.label, "MMA");
+  assert.equal(filterTrainerSports("mma")[0]?.label, "MMA");
+  assert.equal(filterTrainerSports("crossfit")[0]?.label, "Кроссфит");
+  assert.equal(filterTrainerSports("boxing")[0]?.label, "Бокс");
+  assert.ok(filterTrainerSports("фитнес").every((sport) => sport.level === 2 && sport.parentSlug === "fitnes"));
+  assert.ok(filterTrainerSports("фитнез").every((sport) => sport.level === 2 && sport.parentSlug === "fitnes"));
+  assert.ok(filterTrainerSports("abnytc").every((sport) => sport.level === 2 && sport.parentSlug === "fitnes"));
+  assert.equal(catalogSportByName("бо"), null);
+  assert.ok(filterTrainerSports("бо").some((sport) => sport.label === "Бокс"));
+  assert.ok(filterTrainerSports("бо").every((sport) => sport.level === 2));
+  assert.ok(filterTrainerSports("").every((sport) => sport.level === 2));
+  assert.ok(filterTrainerSports("").length <= 8);
+  assert.equal(filterTrainerSports("yoga").length, 0);
+  for (const sport of listCatalogSports()) {
+    if (sport.level !== 2) continue;
+    const folded = foldSearchText(sport.label);
+    if (Array.from(folded).length < 4) continue;
+    const typed = keyboardToLatin(folded);
+    assert.equal(filterTrainerSports(typed)[0]?.id, catalogSportByName(typed)?.id, sport.label);
+  }
 });
 
 test("anti-patterns: noise, neighbours, and shared words do not pick a wrong name", () => {

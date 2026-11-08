@@ -622,13 +622,13 @@ export function TrainerCardFields({
             ? "Как и где проходят мои тренировки и чем они отличаются: место и формат."
             : "Расскажите подробно, как и где проходят тренировки и чем они отличаются: место и формат."}
         </p>
-        <label>
-          <span>{self ? "Мои виды спорта" : "Виды спорта"}</span>
+        <div>
+          <span className="cabinet-media__label">{self ? "Мои виды спорта" : "Виды спорта"}</span>
           <SportEntityInput
             value={values.sportSlugs}
             onChange={(sportSlugs) => patch({ sportSlugs })}
           />
-        </label>
+        </div>
         <p className="cabinet-note">Не больше четырёх видов спорта.</p>
         <label>
           <span>{self ? "Мой тренерский стаж, лет" : "Общий тренерский стаж, лет"}</span>

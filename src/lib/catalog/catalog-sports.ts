@@ -123,6 +123,25 @@ export function filterCatalogSports(query: string, limit = 8): CatalogSport[] {
     .map((row) => row.item);
 }
 
+const SECOND_LEVEL_SPORTS = SPORTS.filter((sport) => sport.level === 2);
+
+/** Sports a trainer can store. Same reading as the catalog, without a parent section. */
+export function filterTrainerSports(query: string, limit = 8): CatalogSport[] {
+  const q = fold(query);
+  if (!q) {
+    return [...SECOND_LEVEL_SPORTS].sort((a, b) => a.label.localeCompare(b.label, "ru")).slice(0, limit);
+  }
+  const resolved = catalogSportByName(query);
+  if (resolved?.level === 1) {
+    return SECOND_LEVEL_SPORTS.filter((sport) => sport.parentSlug === resolved.slug).slice(0, limit);
+  }
+  const ranked = rankTargets(q, SECOND_LEVEL_SPORTS, sportTarget).map((row) => row.item);
+  if (resolved?.level === 2) {
+    return [resolved, ...ranked.filter((sport) => sport.id !== resolved.id)].slice(0, limit);
+  }
+  return ranked.slice(0, limit);
+}
+
 export function catalogSportPath(citySlug: string, sport: CatalogSport) {
   if (sport.id.includes("/")) return `/city/${citySlug}/${sport.parentSlug}/${sport.slug}`;
   return `/city/${citySlug}/${sport.slug}`;

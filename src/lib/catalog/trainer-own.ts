@@ -30,7 +30,7 @@ import { effectiveAudiences, type TrainerAudience, type TrainerFormat } from "@/
 import { joinTrainerName, trainerNameParts } from "@/lib/catalog/trainer-name";
 import { editorHtml, reviewPlainText, reviewTextLength, sanitizeReviewHtml } from "@/lib/catalog/review-html";
 import { writeImageSet } from "@/lib/images/store";
-import { MAX_TRAINER_SPORTS, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
+import { MAX_TRAINER_SPORTS, trainerSportSlugs, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
 import { placesFromProfile, placesShape, savedWithMapNotice, type TrainerPlace } from "@/lib/geo/schemas";
 
@@ -235,7 +235,7 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
       headline: row.headline,
       bio: row.bio,
       about: editorHtml(row.about),
-      sportSlugs: trainerSportsFromSlugs(row.sports.map((sport) => sport.slug)).slugs,
+      sportSlugs: trainerSportSlugs(row.sports.map((sport) => sport.slug)),
       city: row.city,
       district: row.district,
       places: placesFromProfile(row),
@@ -297,14 +297,10 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
     if (!reviewPlainText(bio)) {
       throw new AuthError("Напишите, как вас представить.", "VALIDATION");
     }
-    const picked = trainerSportsFromSlugs(data.sportSlugs);
-    if (picked.slugs.length > MAX_TRAINER_SPORTS) {
+    const sports = trainerSportsFromSlugs(data.sportSlugs).sports;
+    if (sports.length > MAX_TRAINER_SPORTS) {
       throw new AuthError("Можно выбрать не больше четырёх видов спорта.", "VALIDATION");
     }
-    if (picked.sports.length !== picked.slugs.length) {
-      throw new AuthError("Выберите вид спорта из списка категорий.", "VALIDATION");
-    }
-    const sports = picked.sports;
     const city = await assertBelarusCity(data.city);
     const phone = formatBelarusPhone(account?.phone || existing?.phone || "");
     let avatarPath = existing?.avatarPath ?? "";

@@ -1087,6 +1087,7 @@ a.cabinet-icon-btn { text-decoration: none; }
 .site-tokens code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; font-weight: var(--fw-title); }
 .site-parts { display: grid; gap: 4px; padding-left: 1.2em; }
 @media (max-width: 767px) {
+  .cabinet-form input, .cabinet-form textarea, .cabinet-form select, .entity-input input { font-size: 16px; }
   .cabinet-side--personal {
     position: static;
     top: auto;

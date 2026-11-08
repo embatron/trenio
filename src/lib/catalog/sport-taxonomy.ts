@@ -742,6 +742,11 @@ export function trainerSportsFromSlugs(slugs: string[]) {
   return { slugs: unique, sports };
 }
 
+/** Second-level sports only. A stored section such as «fitnes» is not a sport the trainer can keep. */
+export function trainerSportSlugs(slugs: string[]) {
+  return trainerSportsFromSlugs(slugs).sports.map((sport) => sport.slug);
+}
+
 export function getSportTaxonomyParent(slug: string) {
   const child = getSportTaxonomyChild(slug);
   return child ? getTopLevelSportCategory(child.parentSlug) : undefined;
