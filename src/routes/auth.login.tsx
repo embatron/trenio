@@ -218,6 +218,7 @@ function LoginPage() {
                     type={showPassword ? "text" : "password"}
                     required
                     placeholder="Введите пароль"
+                    maxLength={128}
                     autoComplete="current-password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}

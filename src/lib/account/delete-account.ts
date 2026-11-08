@@ -4,7 +4,7 @@ import path from "node:path";
 import { and, eq, inArray, isNotNull, or, sql, type SQL } from "drizzle-orm";
 
 import { consumeRateLimit, RATE_LIMITED_MESSAGE } from "@/auth/rate-limit";
-import { getDummyPasswordHash, hashPassword, verifyPassword } from "@/auth/password";
+import { getDummyPasswordHash, hashPassword, upgradePasswordHash, verifyPassword } from "@/auth/password";
 import { createSession, findUserByLogin } from "@/auth/service";
 import { getDb } from "@/db";
 import {
@@ -469,6 +469,7 @@ export async function restoreOwnAccount(
   if (!user || !passwordMatches) {
     throw new AuthError("Неверный логин или пароль.", "INVALID_CREDENTIALS");
   }
+  await upgradePasswordHash(user.id, password, user.passwordHash);
   if (isGodUser(user.id)) {
     return createSession(user.id, meta);
   }

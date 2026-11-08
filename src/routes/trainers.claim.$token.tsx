@@ -5,6 +5,7 @@ import { AuthStyles } from "@/components/auth-styles";
 import { UserAvatar } from "@/components/user-avatar";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { passwordMeterScore } from "@/lib/auth/password-policy";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { claimTrainerProfileFn, getTrainerClaimFn } from "@/lib/catalog/trainer-claim";
 
@@ -42,7 +43,7 @@ function ClaimMissing() {
 }
 
 function PasswordStrength({ password }: { password: string }) {
-  const met = [password.length >= 8, /\d/.test(password), /[A-ZА-ЯЁ]/.test(password)].filter(Boolean).length;
+  const met = passwordMeterScore(password);
   const level = password.length === 0 ? 0 : Math.max(met, 1);
   const width = password.length === 0 ? 0 : met === 0 ? 16 : (met / 3) * 100;
   return (

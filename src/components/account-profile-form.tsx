@@ -554,6 +554,7 @@ export function AccountProfileForm({
             <input
               type="password"
               required
+              maxLength={128}
               autoComplete="current-password"
               value={currentPassword}
               onChange={(event) => setCurrentPassword(event.target.value)}
@@ -570,6 +571,7 @@ export function AccountProfileForm({
             type="password"
             required
             minLength={8}
+            maxLength={128}
             autoComplete="new-password"
             value={newPassword}
             onChange={(event) => setNewPassword(event.target.value)}
@@ -581,6 +583,7 @@ export function AccountProfileForm({
             type="password"
             required
             minLength={8}
+            maxLength={128}
             autoComplete="new-password"
             value={repeatPassword}
             onChange={(event) => setRepeatPassword(event.target.value)}
@@ -590,7 +593,7 @@ export function AccountProfileForm({
           {pending ? "Сохранение…" : user.hasPassword ? "Сменить пароль" : "Задать пароль"}
         </button>
         <p className="cabinet-note">
-          Нужны минимум 8 символов, цифра и заглавная буква. Эта сессия останется, остальные
+          Нужны минимум 8 символов. Слишком известный пароль не подойдёт. Эта сессия останется, остальные
           устройства выйдут.
         </p>
       </form>
@@ -728,6 +731,7 @@ export function AccountProfileForm({
                     type="password"
                     required
                     autoFocus
+                    maxLength={128}
                     autoComplete="current-password"
                     value={deletePassword}
                     onChange={(event) => setDeletePassword(event.target.value)}

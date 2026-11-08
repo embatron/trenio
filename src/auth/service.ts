@@ -22,6 +22,7 @@ import {
   getDummyPasswordHash,
   hashPassword,
   normalizeEmail,
+  upgradePasswordHash,
   validatePasswordStrength,
   verifyPassword,
 } from "@/auth/password";
@@ -457,6 +458,8 @@ export async function loginUser(input: {
     }
     throw new AuthError("Неверный логин или пароль.", "INVALID_CREDENTIALS");
   }
+
+  await upgradePasswordHash(user.id, input.password, user.passwordHash);
 
   if (user.status === "deleted") {
     const { resolveDeletedLogin } = await import("@/lib/account/delete-account");

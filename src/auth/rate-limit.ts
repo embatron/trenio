@@ -10,7 +10,7 @@ const memory = new Map<string, Bucket>();
 
 export const RATE_LIMITS = {
   loginIp: { windowMs: 15 * 60_000, max: 12 },
-  loginId: { windowMs: 15 * 60_000, max: 8 },
+  loginId: { windowMs: 15 * 60_000, max: 10 },
   otpPhone: { windowMs: 60_000, max: 1 },
   otpIp: { windowMs: 15 * 60_000, max: 6 },
   forgotIp: { windowMs: 15 * 60_000, max: 5 },
@@ -73,6 +73,26 @@ export async function consumeRateLimit(
       return { ok: false, retryAfterSec };
     }
     return { ok: true };
+  }
+}
+
+/** Current hits in the open window. Does not increment. */
+export async function readRateLimit(key: string, windowMs: number): Promise<number> {
+  const now = Date.now();
+  try {
+    await ensureAuthSchema();
+    const result = await getDb().execute(sql`
+      SELECT hit_count, window_start FROM auth_rate_buckets WHERE bucket_key = ${key}
+    `);
+    const row = firstRow(result);
+    if (!row) return 0;
+    const start = new Date(String(row.window_start)).getTime();
+    if (now - start >= windowMs) return 0;
+    return Number(row.hit_count);
+  } catch {
+    const row = memory.get(key);
+    if (!row || now - row.start >= windowMs) return 0;
+    return row.count;
   }
 }
 

@@ -217,6 +217,7 @@ function SignupPage() {
                     type={showPassword ? "text" : "password"}
                     required
                     placeholder="Минимум 8 символов"
+                    maxLength={128}
                     autoComplete="new-password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}

@@ -4,14 +4,41 @@ import { storedBelarusPhone } from "@/lib/auth/phone";
 
 export { validatePasswordStrength } from "@/lib/auth/password-policy";
 
-const SCRYPT_OPTIONS = {
-  N: 16384,
-  r: 8,
-  p: 1,
-  maxmem: 32 * 1024 * 1024,
-} as const;
-
+/** OWASP scrypt: N = 2^17, r = 8, p = 1. Memory is 128·N·r bytes. */
+const SCRYPT_N = 131072;
+const SCRYPT_LEGACY_N = 16384;
+const SCRYPT_R = 8;
+const SCRYPT_P = 1;
+const SCRYPT_MAXMEM = 256 * 1024 * 1024;
 const KEY_LENGTH = 64;
+const PASSWORD_MAX = 128;
+
+function scryptOptions(n: number) {
+  return { N: n, r: SCRYPT_R, p: SCRYPT_P, maxmem: SCRYPT_MAXMEM };
+}
+
+function parseStoredHash(passwordHash: string): { n: number; salt: string; hash: Buffer } | null {
+  const parts = passwordHash.split(":");
+  if (parts[0] !== "scrypt") return null;
+  let n = SCRYPT_LEGACY_N;
+  let salt = "";
+  let hex = "";
+  if (parts.length === 3) {
+    salt = parts[1] ?? "";
+    hex = parts[2] ?? "";
+  } else if (parts.length === 4) {
+    n = Number(parts[1]);
+    salt = parts[2] ?? "";
+    hex = parts[3] ?? "";
+  } else {
+    return null;
+  }
+  if (n !== SCRYPT_LEGACY_N && n !== SCRYPT_N) return null;
+  if (!salt || !hex) return null;
+  const hash = Buffer.from(hex, "hex");
+  if (hash.length !== KEY_LENGTH) return null;
+  return { n, salt, hash };
+}
 
 /** Precomputed hash for timing-safe login when user does not exist. */
 let dummyPasswordHash: string | null = null;
@@ -23,23 +50,47 @@ export async function getDummyPasswordHash(): Promise<string> {
   return dummyPasswordHash;
 }
 
+export function passwordNeedsRehash(passwordHash: string): boolean {
+  const parsed = parseStoredHash(passwordHash);
+  return !parsed || parsed.n !== SCRYPT_N;
+}
+
 export async function hashPassword(password: string): Promise<string> {
+  if (password.length > PASSWORD_MAX) {
+    throw new Error("password too long");
+  }
   const salt = randomBytes(16).toString("hex");
-  const hash = scryptSync(password, salt, KEY_LENGTH, SCRYPT_OPTIONS).toString("hex");
-  return `scrypt:${salt}:${hash}`;
+  const hash = scryptSync(password, salt, KEY_LENGTH, scryptOptions(SCRYPT_N)).toString("hex");
+  return `scrypt:${SCRYPT_N}:${salt}:${hash}`;
 }
 
 export async function verifyPassword(password: string, passwordHash: string): Promise<boolean> {
-  const parts = passwordHash.split(":");
-  if (parts.length !== 3 || parts[0] !== "scrypt") return false;
-  const [, salt, expectedHex] = parts;
+  if (password.length > PASSWORD_MAX) return false;
+  const parsed = parseStoredHash(passwordHash);
+  if (!parsed) return false;
   try {
-    const derived = scryptSync(password, salt, KEY_LENGTH, SCRYPT_OPTIONS);
-    const expected = Buffer.from(expectedHex, "hex");
-    if (derived.length !== expected.length) return false;
-    return timingSafeEqual(derived, expected);
+    const derived = scryptSync(password, parsed.salt, KEY_LENGTH, scryptOptions(parsed.n));
+    if (derived.length !== parsed.hash.length) return false;
+    return timingSafeEqual(derived, parsed.hash);
   } catch {
     return false;
+  }
+}
+
+/** After a real password match, replace a legacy cost with the current one. */
+export async function upgradePasswordHash(userId: string, password: string, stored: string): Promise<void> {
+  if (!passwordNeedsRehash(stored)) return;
+  try {
+    const { getDb } = await import("@/db");
+    const { users } = await import("@/db/schema");
+    const { eq } = await import("drizzle-orm");
+    await getDb()
+      .update(users)
+      .set({ passwordHash: await hashPassword(password), updatedAt: new Date() })
+      .where(eq(users.id, userId));
+  } catch (error) {
+    const { logCaught } = await import("@/lib/log/logger");
+    logCaught("auth", "auth.login", error, { actorUserId: userId });
   }
 }
 

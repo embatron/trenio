@@ -108,6 +108,7 @@ export function DoorPasswordDialog() {
                     ref={passwordRef}
                     type={showPassword ? "text" : "password"}
                     required
+                    maxLength={128}
                     autoComplete="new-password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
@@ -123,6 +124,7 @@ export function DoorPasswordDialog() {
                 <input
                   type={showPassword ? "text" : "password"}
                   required
+                  maxLength={128}
                   autoComplete="new-password"
                   aria-invalid={mismatch}
                   value={repeat}

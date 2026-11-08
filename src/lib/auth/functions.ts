@@ -39,11 +39,12 @@ import {
   requireSessionMiddleware,
 } from "@/auth/middleware";
 import {
+  assertPasswordLoginAllowed,
   confirmPasswordResetByPhone,
   confirmSmsLogin,
   consumeForgotEmailLimit,
-  consumePasswordLoginLimit,
   loginWithTelegramWebApp,
+  notePasswordLoginFailure,
   loginWithTelegramWidget,
   requestPasswordResetByPhone,
   requestSmsLogin,
@@ -229,7 +230,7 @@ export const loginFn = createServerFn({ method: "POST" })
         throw new AuthError("Неверный логин или пароль.", "INVALID_CREDENTIALS");
       }
       const meta = getRequestMeta();
-      await consumePasswordLoginLimit(data.email, meta.clientKey);
+      await assertPasswordLoginAllowed(data.email, meta.clientKey);
       const session = await loginUser({
         email: data.email,
         password: data.password,
@@ -251,6 +252,9 @@ export const loginFn = createServerFn({ method: "POST" })
       }
       return finishLogin(session, data.remember, "auth.login");
     } catch (error) {
+      if (isAuthError(error) && error.code === "INVALID_CREDENTIALS" && !data.honeypot?.trim()) {
+        await notePasswordLoginFailure(data.email, getRequestMeta().clientKey);
+      }
       rethrowAuth(error, "auth.login", data.email, null, data.honeypot?.trim() ? "denied" : undefined);
     }
   });
@@ -971,10 +975,13 @@ export const restoreAccountFn = createServerFn({ method: "POST" })
         throw new AuthError("Неверный логин или пароль.", "INVALID_CREDENTIALS");
       }
       const meta = getRequestMeta();
-      await consumePasswordLoginLimit(data.email, meta.clientKey);
+      await assertPasswordLoginAllowed(data.email, meta.clientKey);
       const session = await restoreOwnAccount(data.email, data.password, meta);
       return finishLogin(session, data.remember, "account.restore", "Пользователь восстановил аккаунт.");
     } catch (error) {
+      if (isAuthError(error) && error.code === "INVALID_CREDENTIALS" && !data.honeypot?.trim()) {
+        await notePasswordLoginFailure(data.email, getRequestMeta().clientKey);
+      }
       rethrowAuth(error, "account.restore", data.email, null);
     }
   });

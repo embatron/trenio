@@ -142,6 +142,7 @@ export function CredentialsRequiredDialog() {
                 type={showPassword ? "text" : "password"}
                 required
                 autoComplete="new-password"
+                maxLength={128}
                 placeholder="Минимум 8 символов"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
@@ -161,6 +162,7 @@ export function CredentialsRequiredDialog() {
             <input
               type={showPassword ? "text" : "password"}
               required
+              maxLength={128}
               autoComplete="new-password"
               placeholder="Повторите пароль"
               aria-invalid={repeat.length > 0 && repeat !== password}

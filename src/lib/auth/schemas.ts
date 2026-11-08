@@ -6,7 +6,7 @@ const honeypotSchema = z.string().max(200).optional();
 
 export const loginSchema = z.object({
   email: z.string().trim().min(3, "Введите почту или ник").max(320),
-  password: z.string().min(1, "Введите пароль"),
+  password: z.string().min(1, "Введите пароль").max(128, "Пароль не длиннее 128 символов"),
   remember: z.boolean().optional().default(true),
   honeypot: honeypotSchema,
 });
@@ -83,7 +83,7 @@ export const forgotPasswordSchema = z.object({
 
 export const resetPasswordSchema = z.object({
   token: z.string().min(1),
-  password: z.string().min(8, "Минимум 8 символов"),
+  password: z.string().min(8, "Минимум 8 символов").max(128, "Пароль не длиннее 128 символов"),
 });
 
 export const verifyEmailSchema = z.object({
@@ -106,7 +106,7 @@ export const accountAvatarSchema = z.object({
 
 export const changePasswordSchema = z.object({
   currentPassword: z.string().max(128).optional().default(""),
-  newPassword: z.string().min(8, "Пароль должен содержать минимум 8 символов"),
+  newPassword: z.string().min(8, "Пароль должен содержать минимум 8 символов").max(128, "Пароль не длиннее 128 символов"),
 });
 
 export const deleteAccountSchema = z.object({

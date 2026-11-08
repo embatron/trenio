@@ -172,7 +172,7 @@ IP берётся из `CF-Connecting-IP` или `X-Real-IP`. Если в зап
 
 ### 4.4 Безопасность auth
 
-- Пароли: **scrypt** (Node.js crypto), min 8 + цифра + заглавная
+- Пароли: **scrypt** (Node.js crypto), N = 131072, r = 8, p = 1. Хеш с N = 16384 принимается и обновляется при входе. От 8 до 128 символов, без требования цифры и заглавной буквы. Частые утёкшие пароли отклоняются по локальному списку. Поле входа тоже не длиннее 128 символов, чтобы длинная строка не доходила до scrypt
 - Timing-safe login (dummy hash при несуществующем email)
 - Session rotation при login / reset password
 - Cookie: HttpOnly, SameSite=Lax, Secure в production

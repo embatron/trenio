@@ -14,7 +14,7 @@ import {
 } from "@/lib/auth/phone";
 import { hashPassword } from "@/auth/password";
 import { GENERIC_OTP_ERROR, GENERIC_OTP_SENT, issueOtp, matchAuthDelay, verifyOtp } from "@/auth/otp";
-import { consumeRateLimit, RATE_LIMITED_MESSAGE, RATE_LIMITS } from "@/auth/rate-limit";
+import { consumeRateLimit, readRateLimit, RATE_LIMITED_MESSAGE, RATE_LIMITS } from "@/auth/rate-limit";
 import { isSmsByEnabled } from "@/auth/sms";
 import {
   assertUserCanAuthenticate,
@@ -304,14 +304,29 @@ export async function loginWithTelegramWebApp(initData: string, meta: LoginMeta)
   return completeTelegramLogin(user.id, user.username, meta);
 }
 
-export async function consumePasswordLoginLimit(email: string, clientKey: string) {
+function loginBuckets(email: string, clientKey: string) {
   const normalized = email.trim().toLowerCase();
-  const ipLimit = await consumeRateLimit(`login:ip:${clientKey}`, RATE_LIMITS.loginIp.windowMs, RATE_LIMITS.loginIp.max);
-  const idLimit = await consumeRateLimit(
-    `login:id:${normalized}`,
-    RATE_LIMITS.loginId.windowMs,
-    RATE_LIMITS.loginId.max,
-  );
+  return {
+    ipKey: `login:ip:${clientKey}`,
+    idKey: `login:id:${normalized}`,
+  };
+}
+
+/** Reject when this address or IP already used its failed-login window. Does not count the try. */
+export async function assertPasswordLoginAllowed(email: string, clientKey: string) {
+  const { ipKey, idKey } = loginBuckets(email, clientKey);
+  const ipCount = await readRateLimit(ipKey, RATE_LIMITS.loginIp.windowMs);
+  const idCount = await readRateLimit(idKey, RATE_LIMITS.loginId.windowMs);
+  if (ipCount >= RATE_LIMITS.loginIp.max || idCount >= RATE_LIMITS.loginId.max) {
+    throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
+  }
+}
+
+/** Count one failed password check. A successful login does not call this. */
+export async function notePasswordLoginFailure(email: string, clientKey: string) {
+  const { ipKey, idKey } = loginBuckets(email, clientKey);
+  const ipLimit = await consumeRateLimit(ipKey, RATE_LIMITS.loginIp.windowMs, RATE_LIMITS.loginIp.max);
+  const idLimit = await consumeRateLimit(idKey, RATE_LIMITS.loginId.windowMs, RATE_LIMITS.loginId.max);
   if (!ipLimit.ok || !idLimit.ok) {
     throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
   }

@@ -1,6 +1,8 @@
+import { passwordMeterScore } from "@/lib/auth/password-policy";
+
 /** Live password meter shared by the trainer door and the plain-user credentials step. */
 export function PasswordStrength({ password }: { password: string }) {
-  const met = [password.length >= 8, /\d/.test(password), /[A-ZА-ЯЁ]/.test(password)].filter(Boolean).length;
+  const met = passwordMeterScore(password);
   const level = password.length === 0 ? 0 : Math.max(met, 1);
   const width = password.length === 0 ? 0 : met === 0 ? 16 : (met / 3) * 100;
   return (

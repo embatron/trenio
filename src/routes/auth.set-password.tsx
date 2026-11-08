@@ -106,6 +106,7 @@ function SetPasswordPage() {
                   type={showPassword ? "text" : "password"}
                   required
                   minLength={8}
+                  maxLength={128}
                   autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -119,7 +120,7 @@ function SetPasswordPage() {
                 </button>
               </div>
               <span className="auth-field__hint auth-field__hint--block">
-                Минимум 8 символов, цифра и заглавная буква.
+                Минимум 8 символов. Слишком известный пароль не подойдёт.
               </span>
             </label>
             <label className="auth-field">
@@ -128,6 +129,7 @@ function SetPasswordPage() {
                 type={showPassword ? "text" : "password"}
                 required
                 minLength={8}
+                maxLength={128}
                 autoComplete="new-password"
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}

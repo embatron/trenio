@@ -138,6 +138,7 @@ export function useContactStepUp() {
                 <input
                   ref={passwordRef}
                   type="password"
+                  maxLength={128}
                   autoComplete="current-password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}

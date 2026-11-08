@@ -8,10 +8,11 @@ import { openGoogleAccount } from "@/auth/google-account";
 import { openYandexAccount } from "@/auth/yandex-account";
 import { claimDoorAfterGoogle, claimDoorAfterYandex } from "@/lib/catalog/trainer-door-claim";
 import {
+  assertPasswordLoginAllowed,
   confirmPasswordResetByPhone,
   confirmSmsLogin,
   consumeForgotEmailLimit,
-  consumePasswordLoginLimit,
+  notePasswordLoginFailure,
   requestSmsLogin,
   type LoginMeta,
 } from "@/auth/login-channels";
@@ -566,29 +567,35 @@ describe("auth cases", { concurrency: false }, () => {
     assert.equal(clientIpFromHeaders(null), "unknown");
   });
 
-  test("password limits apply to every address, including a ninth try", async () => {
+  test("password limits apply to every address, including an eleventh try", async () => {
     const source = await import("node:fs/promises").then((fs) =>
       fs.readFile(new URL("./login-channels.ts", import.meta.url), "utf8"),
     );
     const fn = source.slice(
-      source.indexOf("export async function consumePasswordLoginLimit"),
+      source.indexOf("export async function assertPasswordLoginAllowed"),
       source.indexOf("export async function consumeForgotEmailLimit"),
     );
     assert.equal(fn.includes("isGodLogin"), false);
     const address = email("limit");
-    for (let i = 0; i < 8; i += 1) {
-      await consumePasswordLoginLimit(address, meta(`limit-${i}`).clientKey);
+    for (let i = 0; i < 10; i += 1) {
+      await notePasswordLoginFailure(address, meta(`limit-${i}`).clientKey);
     }
     const [bucket] = await getDb()
       .select({ hitCount: authRateBuckets.hitCount })
       .from(authRateBuckets)
       .where(eq(authRateBuckets.bucketKey, `login:id:${address}`))
       .limit(1);
-    assert.equal(bucket?.hitCount, 8);
+    assert.equal(bucket?.hitCount, 10);
     await expectAuth(
-      () => consumePasswordLoginLimit(address, meta("limit-last").clientKey),
+      () => assertPasswordLoginAllowed(address, meta("limit-last").clientKey),
       "RATE_LIMITED",
     );
+    const [after] = await getDb()
+      .select({ hitCount: authRateBuckets.hitCount })
+      .from(authRateBuckets)
+      .where(eq(authRateBuckets.bucketKey, `login:id:${address}`))
+      .limit(1);
+    assert.equal(after?.hitCount, 10);
   });
 
   test("forgot-password is limited per mailbox, not only per IP", async () => {

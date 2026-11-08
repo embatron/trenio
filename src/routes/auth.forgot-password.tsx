@@ -218,6 +218,7 @@ function ForgotPasswordPage() {
                         type="password"
                         required
                         minLength={8}
+                        maxLength={128}
                         autoComplete="new-password"
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
@@ -229,6 +230,7 @@ function ForgotPasswordPage() {
                         type="password"
                         required
                         minLength={8}
+                        maxLength={128}
                         autoComplete="new-password"
                         value={passwordConfirmation}
                         onChange={(event) => setPasswordConfirmation(event.target.value)}
