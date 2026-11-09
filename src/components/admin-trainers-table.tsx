@@ -82,11 +82,17 @@ function addedOn(iso: string) {
   return addedFormat.format(new Date(iso));
 }
 
-/** Cabinet phone that the owner added and confirmed. The digits stay off the row. */
+/** Cabinet phone that the owner added and confirmed. The contacts column keeps the digits off the icon. */
 function confirmedCabinetPhone(trainer: AdminTrainer) {
   const account = trainer.account;
   if (!account?.phone || !account.phoneVerified) return "";
   return formatBelarusPhone(account.phone);
+}
+
+/** Account column: the owner's phone, not the mailbox. */
+function accountPhoneLabel(trainer: AdminTrainer) {
+  if (!trainer.account) return "Аккаунт не создан";
+  return formatBelarusPhone(trainer.account.phone) || "не указан";
 }
 
 function categoryLabels(slugs: string[]) {
@@ -325,6 +331,7 @@ function searchHaystack(trainer: AdminTrainer) {
     account?.name ?? "",
     account?.email ?? "",
     account ? displayAccountLogin(account.email) : "аккаунт не создан",
+    accountPhoneLabel(trainer),
     account?.phone ?? "",
     account?.phone.replace(/\D/g, "") ?? "",
   ].join(" ").toLocaleLowerCase("ru").replaceAll("ё", "е");
@@ -677,8 +684,8 @@ export function AdminTrainersTable({
                   <td>{trainer.createdAt ? addedOn(trainer.createdAt) : "—"}</td>
                   <td><TrainerStars rating={trainer.rating} reviews={trainer.reviews} /></td>
                   <td title={`Рейтинг ${trainer.popularity} из 100`}>{Number.isInteger(trainer.popularity) ? trainer.popularity : trainer.popularity.toFixed(1)}</td>
-                  <td title={trainer.account ? "Аккаунт создан и привязан к карточке" : "В каталоге есть карточка, но пользователь ещё не зарегистрировался и не забрал профиль"}>
-                    {trainer.account ? displayAccountLogin(trainer.account.email) : "Аккаунт не создан"}
+                  <td title={trainer.account ? "Телефон аккаунта, привязанного к карточке" : "В каталоге есть карточка, но пользователь ещё не зарегистрировался и не забрал профиль"}>
+                    {accountPhoneLabel(trainer)}
                   </td>
                   <td className="is-note">
                     {trainer.id ? (
