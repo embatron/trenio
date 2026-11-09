@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { listCatalogSports, catalogSportByName, filterCatalogSports, filterTrainerSports } from "./catalog-sports";
+import { listCatalogSports, catalogSportByName, filterCatalogSports, filterTrainerSports, trainerSportMenu } from "./catalog-sports";
 import { BELARUS_CITIES, BELARUS_QUICK_CITIES, filterBelarusCities, resolveBelarusCity } from "./city-taxonomy";
 import { editDistance, foldSearchText, keyboardToLatin, keyboardToRussian } from "./query-flex";
 import { filterSportSuggestions, quickSportLabels } from "./sport-suggestions";
@@ -116,15 +116,28 @@ test("trainer sport field reads like the catalog and stores a real sport", () =>
   assert.equal(filterTrainerSports("mma")[0]?.label, "MMA");
   assert.equal(filterTrainerSports("crossfit")[0]?.label, "Кроссфит");
   assert.equal(filterTrainerSports("boxing")[0]?.label, "Бокс");
+  assert.equal(filterTrainerSports("фитнес").length, 10);
   assert.ok(filterTrainerSports("фитнес").every((sport) => sport.level === 2 && sport.parentSlug === "fitnes"));
   assert.ok(filterTrainerSports("фитнез").every((sport) => sport.level === 2 && sport.parentSlug === "fitnes"));
+  assert.ok(filterTrainerSports("фитни").every((sport) => sport.level === 2 && sport.parentSlug === "fitnes"));
+  assert.equal(filterTrainerSports("фитни").length, 10);
   assert.ok(filterTrainerSports("abnytc").every((sport) => sport.level === 2 && sport.parentSlug === "fitnes"));
+  assert.ok(filterTrainerSports("fitness").every((sport) => sport.level === 2 && sport.parentSlug === "fitnes"));
+  assert.equal(filterTrainerSports("yoga").some((sport) => sport.label === "Йога"), true);
+  assert.equal(filterTrainerSports("swimming")[0]?.label, "Плавание");
+  assert.equal(trainerSportMenu("").sports.length, 0);
+  assert.ok(trainerSportMenu("").sections.some((section) => section.label === "Фитнес"));
+  assert.equal(trainerSportMenu("фитнес").section?.label, "Фитнес");
+  assert.equal(trainerSportMenu("фитнес").sports.length, 10);
+  assert.equal(trainerSportMenu("фитни").section?.label, "Фитнес");
+  assert.equal(trainerSportMenu("крофит").sports[0]?.label, "Кроссфит");
+  assert.equal(trainerSportMenu("крофит").section, null);
   assert.equal(catalogSportByName("бо"), null);
   assert.ok(filterTrainerSports("бо").some((sport) => sport.label === "Бокс"));
   assert.ok(filterTrainerSports("бо").every((sport) => sport.level === 2));
   assert.ok(filterTrainerSports("").every((sport) => sport.level === 2));
   assert.ok(filterTrainerSports("").length <= 8);
-  assert.equal(filterTrainerSports("yoga").length, 0);
+  assert.ok(filterTrainerSports("yoga").some((sport) => sport.label === "Йога"));
   for (const sport of listCatalogSports()) {
     if (sport.level !== 2) continue;
     const folded = foldSearchText(sport.label);

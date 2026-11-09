@@ -629,7 +629,7 @@ export function TrainerCardFields({
             onChange={(sportSlugs) => patch({ sportSlugs })}
           />
         </div>
-        <p className="cabinet-note">Не больше четырёх видов спорта.</p>
+        <p className="cabinet-note">Не больше четырёх видов. Фитнес и другие разделы открывают виды внутри: в карточку попадает вид, не раздел.</p>
         <label>
           <span>{self ? "Мой тренерский стаж, лет" : "Общий тренерский стаж, лет"}</span>
           <input

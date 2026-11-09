@@ -1,7 +1,8 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 
-import { filterTrainerSports } from "@/lib/catalog/catalog-sports";
+import { trainerSportMenu } from "@/lib/catalog/catalog-sports";
 import { listSecondLevelSports, MAX_TRAINER_SPORTS } from "@/lib/catalog/sport-taxonomy";
+import { pluralRu } from "@/lib/ru-plural";
 
 export function SportEntityInput({
   value,
@@ -15,6 +16,7 @@ export function SportEntityInput({
   const sports = useMemo(() => listSecondLevelSports(), []);
   const bySlug = useMemo(() => new Map(sports.map((sport) => [sport.slug, sport])), [sports]);
   const [query, setQuery] = useState("");
+  const [openedSection, setOpenedSection] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const listId = useId();
@@ -23,7 +25,11 @@ export function SportEntityInput({
     const sport = bySlug.get(slug);
     return sport ? [sport] : [];
   });
-  const matches = filterTrainerSports(query).filter((sport) => !known.includes(sport.slug));
+  const menu = useMemo(
+    () => trainerSportMenu(query, query.trim() ? null : openedSection),
+    [openedSection, query],
+  );
+  const choices = menu.sports.filter((sport) => !known.includes(sport.slug));
 
   useEffect(() => {
     const onPointer = (event: PointerEvent) => {
@@ -37,11 +43,17 @@ export function SportEntityInput({
     if (known.includes(slug) || known.length >= max) return;
     onChange([...known, slug]);
     setQuery("");
-    setOpen(false);
+    setOpen(true);
   }
 
   function remove(slug: string) {
     onChange(known.filter((item) => item !== slug));
+  }
+
+  function openSection(slug: string) {
+    setOpenedSection(slug);
+    setQuery("");
+    setOpen(true);
   }
 
   return (
@@ -57,8 +69,9 @@ export function SportEntityInput({
         role="combobox"
         aria-expanded={open}
         aria-controls={listId}
+        aria-autocomplete="list"
         aria-label="Виды спорта"
-        placeholder={known.length >= max ? "Уже четыре" : selected.length === 0 ? "Найти вид спорта" : ""}
+        placeholder={known.length >= max ? "Уже четыре" : selected.length === 0 ? "Найти раздел или вид" : ""}
         disabled={known.length >= max}
         onFocus={() => setOpen(true)}
         onChange={(event) => {
@@ -68,7 +81,8 @@ export function SportEntityInput({
         onKeyDown={(event) => {
           if (event.key === "Enter") {
             event.preventDefault();
-            if (matches[0]) add(matches[0].slug);
+            if (choices[0]) add(choices[0].slug);
+            else if (!query.trim() && menu.sections[0]) openSection(menu.sections[0].slug);
           }
           if (event.key === "Backspace" && query === "" && selected.length > 0) {
             remove(selected[selected.length - 1].slug);
@@ -76,10 +90,39 @@ export function SportEntityInput({
           if (event.key === "Escape") setOpen(false);
         }}
       />
-      {open && matches.length > 0 ? (
-        <ul className="entity-menu" id={listId} role="listbox">
-          {matches.map((sport) => (
-            <li key={sport.slug}>
+      {open && known.length < max && query.trim() && !menu.section && menu.sections.length === 0 && choices.length === 0 ? (
+        <ul className="entity-menu entity-menu--tall" id={listId}>
+          <li className="entity-menu__hint"><p>Нет такого вида. Откройте раздел или поправьте название.</p></li>
+        </ul>
+      ) : null}
+      {open && known.length < max && (menu.section || menu.sections.length > 0 || choices.length > 0) ? (
+        <ul className="entity-menu entity-menu--tall" id={listId} role="listbox">
+          {menu.section ? (
+            <li className="entity-menu__hint">
+              <p>{menu.section.label} — раздел сайта. Выберите вид внутри него.</p>
+              {query.trim() === "" ? (
+                <button type="button" onClick={() => setOpenedSection(null)}>Все разделы</button>
+              ) : null}
+            </li>
+          ) : null}
+          {menu.sections.map((section) => (
+            <li key={section.slug}>
+              <button
+                type="button"
+                role="option"
+                onPointerDown={(event) => {
+                  event.preventDefault();
+                  openSection(section.slug);
+                }}
+                onClick={() => openSection(section.slug)}
+              >
+                {section.label}
+                <span>раздел, {section.count} {pluralRu(section.count, "вид", "вида", "видов")}</span>
+              </button>
+            </li>
+          ))}
+          {choices.map((sport) => (
+            <li key={sport.id}>
               <button
                 type="button"
                 role="option"
@@ -94,6 +137,9 @@ export function SportEntityInput({
               </button>
             </li>
           ))}
+          {menu.section && choices.length === 0 ? (
+            <li className="entity-menu__hint"><p>Все виды этого раздела уже выбраны.</p></li>
+          ) : null}
         </ul>
       ) : null}
     </div>

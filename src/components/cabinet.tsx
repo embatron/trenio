@@ -740,6 +740,7 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .trainer-edit-dialog .cabinet-form__actions { flex-shrink: 0; position: sticky; bottom: 0; z-index: 2; margin: 0; padding: 12px 18px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: var(--white); }
 .trainer-edit-dialog .address-field__menu,
 .trainer-edit-dialog .entity-menu { position: fixed; z-index: 5; left: max(12px, env(safe-area-inset-left)); right: max(12px, env(safe-area-inset-right)); top: auto; bottom: max(72px, calc(12px + env(safe-area-inset-bottom))); width: auto; max-height: min(50vh, 320px); }
+.trainer-edit-dialog .entity-menu.entity-menu--tall { max-height: min(52vh, 440px); }
 .trainer-note-dialog h2 { margin: 0 0 12px; font-size: 18px; color: var(--dark); }
 .trainer-note-dialog textarea { width: 100%; min-height: 120px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-control); font: inherit; font-size: 15px; resize: vertical; }
 .trainer-note-dialog__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
@@ -978,6 +979,10 @@ html.is-credentials-locked .cabinet-modal--lock { pointer-events: auto; }
 .entity-chip { min-height: 44px; display: inline-flex; align-items: center; gap: 6px; padding: 0 12px; border: 0; border-radius: 999px; background: rgba(var(--primary-rgb), 0.12); color: var(--dark); font: inherit; font-size: 13px; font-weight: var(--fw-title); cursor: pointer; }
 .cabinet-modal__card--form .entity-chip { min-height: 44px; padding: 0 12px; border-radius: 999px; background: rgba(var(--primary-rgb), 0.12); color: var(--dark); }
 .entity-menu { position: absolute; z-index: 3; left: 0; right: 0; top: calc(100% + 4px); margin: 0; padding: 4px; list-style: none; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); max-height: 240px; overflow: auto; }
+.entity-menu--tall { max-height: min(52vh, 440px); }
+.entity-menu__hint { display: grid; gap: 4px; padding: 8px 10px; }
+.entity-menu__hint p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
+.entity-menu__hint button, .cabinet-modal__card--form .entity-menu__hint button { width: auto; min-height: 44px; padding: 0; border: 0; background: transparent; color: var(--primary); font: inherit; font-weight: var(--fw-title); text-align: left; cursor: pointer; }
 .entity-menu button, .cabinet-modal__card--form .entity-menu button { width: 100%; min-height: 44px; padding: 0 10px; border: 0; border-radius: var(--radius-control); background: transparent; color: var(--dark); font: inherit; font-weight: var(--fw-ui); text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 8px; cursor: pointer; }
 .entity-menu button span { color: var(--muted); font-size: 13px; }
 .entity-menu button:hover, .cabinet-modal__card--form .entity-menu button:hover { background: rgba(var(--dark-rgb), 0.04); }

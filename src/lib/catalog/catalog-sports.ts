@@ -1,5 +1,5 @@
 import { listCityCatalogPages, type CityCatalogPage } from "@/lib/catalog/city-pages";
-import { foldSearchText, leadingTarget, rankTargets, type FlexTarget } from "@/lib/catalog/query-flex";
+import { editDistance, foldSearchText, leadingTarget, queryReadings, rankTargets, type FlexTarget } from "@/lib/catalog/query-flex";
 import {
   TOP_LEVEL_SPORT_CATEGORIES,
   getTopLevelSportCategory,
@@ -125,21 +125,157 @@ export function filterCatalogSports(query: string, limit = 8): CatalogSport[] {
 
 const SECOND_LEVEL_SPORTS = SPORTS.filter((sport) => sport.level === 2);
 
-/** Sports a trainer can store. Same reading as the catalog, without a parent section. */
+export type TrainerSportSection = {
+  slug: string;
+  label: string;
+  count: number;
+};
+
+export type TrainerSportMenu = {
+  /** The typed words named a site section. The trainer still picks a sport inside it. */
+  section: { slug: string; label: string } | null;
+  sections: TrainerSportSection[];
+  sports: CatalogSport[];
+};
+
+function trainerSections(): TrainerSportSection[] {
+  return SPORTS.filter((sport) => sport.level === 1).map((sport) => ({
+    slug: sport.slug,
+    label: sport.label,
+    count: SECOND_LEVEL_SPORTS.filter((child) => child.parentSlug === sport.slug).length,
+  }));
+}
+
+function sectionSports(slug: string): CatalogSport[] {
+  return SECOND_LEVEL_SPORTS.filter((sport) => sport.parentSlug === slug);
+}
+
+function slugKey(value: string) {
+  return fold(value).replace(/-/g, "");
+}
+
+/** A latin slug, including a section that shares its slug with a child. */
+function sportBySlug(query: string): CatalogSport | null {
+  const key = slugKey(query);
+  if (key.length < 3) return null;
+  const hits = SPORTS.filter((sport) => slugKey(sport.slug) === key);
+  if (hits.length === 0) return null;
+  if (hits.length === 1) return hits[0];
+  return hits.find((sport) => sport.level === 1) ?? null;
+}
+
+function phraseDistance(reading: string, phrase: string): number | null {
+  const text = fold(phrase);
+  const readingLength = [...reading].length;
+  if (!text || readingLength < 4) return null;
+  const tokens = [text];
+  for (const word of text.split(/[\s-]+/)) {
+    const length = [...word].length;
+    if (length >= 5 && length + 1 >= readingLength) tokens.push(word);
+  }
+  let best: number | null = null;
+  for (const token of tokens) {
+    if (Math.abs([...token].length - readingLength) > 2) continue;
+    const distance = token === reading ? 0 : editDistance(reading, token, 2);
+    if (distance == null) continue;
+    if (best == null || distance < best) best = distance;
+  }
+  return best;
+}
+
+/** A miss two edits away, after the strict catalog reading found nothing. */
+function looseDictionaryHits(query: string): CatalogSport[] {
+  const readings = queryReadings(query).filter((reading) => [...reading].length >= 4);
+  if (readings.length === 0) return [];
+  let best = Number.POSITIVE_INFINITY;
+  const found: CatalogSport[] = [];
+  for (const sport of SPORTS) {
+    const phrases = [sport.label, ...sport.aliases];
+    let distance: number | null = null;
+    for (const reading of readings) {
+      for (const phrase of phrases) {
+        const gap = phraseDistance(reading, phrase);
+        if (gap == null) continue;
+        if (distance == null || gap < distance) distance = gap;
+      }
+    }
+    if (distance == null) continue;
+    if (distance < best) {
+      best = distance;
+      found.length = 0;
+      found.push(sport);
+    } else if (distance === best) found.push(sport);
+  }
+  return found;
+}
+
+function resolveTrainerSport(query: string): CatalogSport | null {
+  return catalogSportByName(query) ?? sportBySlug(query);
+}
+
+/** Sports a trainer can store. A section name opens every sport inside it. */
 export function filterTrainerSports(query: string, limit = 8): CatalogSport[] {
   const q = fold(query);
   if (!q) {
     return [...SECOND_LEVEL_SPORTS].sort((a, b) => a.label.localeCompare(b.label, "ru")).slice(0, limit);
   }
-  const resolved = catalogSportByName(query);
-  if (resolved?.level === 1) {
-    return SECOND_LEVEL_SPORTS.filter((sport) => sport.parentSlug === resolved.slug).slice(0, limit);
-  }
+  const resolved = resolveTrainerSport(query);
+  if (resolved?.level === 1) return sectionSports(resolved.slug);
   const ranked = rankTargets(q, SECOND_LEVEL_SPORTS, sportTarget).map((row) => row.item);
   if (resolved?.level === 2) {
     return [resolved, ...ranked.filter((sport) => sport.id !== resolved.id)].slice(0, limit);
   }
-  return ranked.slice(0, limit);
+  if (ranked.length > 0) return ranked.slice(0, limit);
+
+  const loose = looseDictionaryHits(query);
+  const section = loose.find((sport) => sport.level === 1);
+  const sports = loose.filter((sport) => sport.level === 2);
+  if (section && sports.every((sport) => sport.parentSlug === section.slug)) return sectionSports(section.slug);
+  return sports.slice(0, limit);
+}
+
+/** What the trainer sport field shows: sections first, then the sports inside the one that was named. */
+export function trainerSportMenu(query: string, browseSlug?: string | null): TrainerSportMenu {
+  const q = fold(query);
+  if (!q) {
+    if (browseSlug) {
+      const section = SPORTS.find((sport) => sport.level === 1 && sport.slug === browseSlug);
+      if (section) {
+        return {
+          section: { slug: section.slug, label: section.label },
+          sections: [],
+          sports: sectionSports(section.slug),
+        };
+      }
+    }
+    return { section: null, sections: trainerSections(), sports: [] };
+  }
+
+  const resolved = resolveTrainerSport(query);
+  if (resolved?.level === 1) {
+    return {
+      section: { slug: resolved.slug, label: resolved.label },
+      sections: [],
+      sports: sectionSports(resolved.slug),
+    };
+  }
+  const sports = filterTrainerSports(query, 12);
+  const parent = sports[0]?.parentSlug;
+  const opened = parent
+    && !resolved
+    && sports.length === sectionSports(parent).length
+    && sports.every((sport) => sport.parentSlug === parent);
+  if (opened) {
+    const section = SPORTS.find((sport) => sport.level === 1 && sport.slug === parent);
+    if (section) {
+      return {
+        section: { slug: section.slug, label: section.label },
+        sections: [],
+        sports,
+      };
+    }
+  }
+  return { section: null, sections: [], sports };
 }
 
 export function catalogSportPath(citySlug: string, sport: CatalogSport) {
