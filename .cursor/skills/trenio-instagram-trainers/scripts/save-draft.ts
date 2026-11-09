@@ -37,6 +37,8 @@ type PinnedPost = {
   visibleText?: string;
   /** Words read off a pinned photo: about the trainer, the session, or the facts. */
   imageText?: string[];
+  /** True when the opened post is a reel or another video. A video stores no frame. */
+  video?: boolean;
   photos?: RawPhoto[];
 };
 
@@ -669,6 +671,29 @@ async function geocodedPlaces(
   return { address: lines.slice(0, 3).join(" | "), city: hitCity };
 }
 
+const MOTION_URL = /\/(?:reel|reels|tv)\//i;
+const STILL_REFUSAL = "A reel or a video is not a trainer photo. Store no frame from it.";
+
+function videoBytes(bytes: Buffer): boolean {
+  if (bytes.length >= 8 && bytes.subarray(4, 8).toString("ascii") === "ftyp") return true;
+  if (bytes.length >= 4 && bytes[0] === 0x1a && bytes[1] === 0x45 && bytes[2] === 0xdf && bytes[3] === 0xa3) return true;
+  return false;
+}
+
+function assertStillPhotos(rawPath: string, post: PinnedPost, pinnedCaption: boolean) {
+  const url = post.url || "";
+  const motion = MOTION_URL.test(url) || post.video === true;
+  const photos = post.photos || [];
+  if (motion && photos.length) fail(rawPath, STILL_REFUSAL);
+  if (motion && !pinnedCaption) fail(rawPath, "A reel is a video. Do not store it. Scroll to a still photo.");
+  for (const photo of photos) {
+    if (MOTION_URL.test(photo.url || "") || /^video\//i.test(photo.mime || "")) fail(rawPath, STILL_REFUSAL);
+    if (!photo.base64) continue;
+    const bytes = Buffer.from(photo.base64, "base64");
+    if (videoBytes(bytes)) fail(rawPath, STILL_REFUSAL);
+  }
+}
+
 async function saveOne(rawPath: string, settlements: string[]) {
   const raw = JSON.parse(readFileSync(rawPath, "utf8")) as RawExtract;
   if (raw.blocked) fail(rawPath, `Instagram blocked the read (${raw.blocked}). Do not invent a profile.`);
@@ -686,15 +711,14 @@ async function saveOne(rawPath: string, settlements: string[]) {
   if ((raw.pinned || []).length > 3) fail(rawPath, "More than 3 pinned posts were stored.");
   const extras = (raw.extraPosts || []).slice(0, 12);
   if ((raw.extraPosts || []).length > 12) fail(rawPath, "More than 12 other photo posts were stored.");
-  for (const post of extras) {
-    if (/\/reel\//i.test(post.url || "")) fail(rawPath, "A reel is a video. Do not store it. Scroll to a still photo.");
-  }
+  for (const post of extras) assertStillPhotos(rawPath, post, false);
   const threadPosts: PinnedPost[] = (raw.threads?.posts || []).map((post) => ({
     url: post.url,
     caption: post.text,
     visibleText: post.text,
     photos: post.photos,
   }));
+  for (const post of threadPosts) assertStillPhotos(rawPath, post, true);
   const photoSources = [...pins, ...extras, ...threadPosts];
 
   const firstName = cleanLine(resolved.firstName || "");
@@ -740,9 +764,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
     const postSource = `${post.ogDescription || ""}\n${post.heading || ""}\n${post.visibleText || ""}`;
     if (caption && !includesNorm(postSource, caption)) fail(rawPath, `Pinned caption ${index + 1} is not in that post.`);
     if ((post.photos || []).length > 2) fail(rawPath, "A pinned post stores at most 2 photos.");
-    if (/\/reel\//i.test(post.url || "") && (post.photos || []).length) {
-      fail(rawPath, "A pinned reel is read for its caption. Do not store its video frame.");
-    }
+    assertStillPhotos(rawPath, post, true);
   });
   extras.forEach((post) => {
     if ((post.photos || []).length > 2) fail(rawPath, "Another post stores at most 2 photos.");
@@ -961,6 +983,13 @@ async function saveOne(rawPath: string, settlements: string[]) {
   if (extraCities.length) fail(rawPath, `Card text names ${extraCities.join(", ")}. The saved city is ${statedCity || "empty"}.`);
   if (statedCity && matchCities(cardCorpus, settlements).includes(statedCity) && !matchCities(presentation, settlements).includes(statedCity)) {
     fail(rawPath, `presentation must name ${statedCity}.`);
+  }
+
+  if (raw.avatarBase64 || raw.avatarUrl || raw.avatarMime) {
+    const avatarBytes = raw.avatarBase64 ? Buffer.from(raw.avatarBase64, "base64") : Buffer.alloc(0);
+    if (MOTION_URL.test(raw.avatarUrl || "") || /^video\//i.test(raw.avatarMime || "") || videoBytes(avatarBytes)) {
+      fail(rawPath, STILL_REFUSAL);
+    }
   }
 
   const avatarPath = await writeAvatar(handle, raw);

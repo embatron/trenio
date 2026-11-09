@@ -51,6 +51,7 @@ Every profile gets its own photo search and its own card text. Do not reuse a se
 - Ignore a fact the operator wrote, or stop a Threads profile after the first line of the biography. Skip the Threads photo verdict, or keep a Threads video as a gallery photo.
 - Write the card as labels, hashtags, a pipe-separated slogan, or a pasted caption.
 - Save a text card, logo, or flyer as a gallery photo. Save a diploma as a gallery photo. Save a frame that cuts the face, hides the person in a crowd, or is mostly a blur, when a clearer frame of the same trainer exists.
+- Save a reel, a reel poster, or any video as the face or as a gallery photo. A pinned reel keeps its caption and stores no image. An empty gallery is the result when the profile has only video.
 - Reply, like, or otherwise react to a story. Open the about highlight only to read it.
 - Write the draft into `src/routes/trainers.$slug.tsx`. Store a whole sentence as the address. The script geocodes a short street or hall.
 - Set `status` to `published`. A request to put the account on the server still leaves the row a draft.
@@ -58,13 +59,14 @@ Every profile gets its own photo search and its own card text. Do not reuse a se
 Wrong: the header shows only a surname, so the given name is left empty even though a pinned caption states it.
 Wrong: two pinned captions use two different given names, and one of them is picked.
 Wrong: the pinned caption is pasted or retold in «Как проходят мои тренировки», or a text card from that pin is saved as a gallery photo.
+Wrong: the grid is reels, so the reel poster is saved as the gallery or as the face.
 Wrong: the address field is the whole sentence that mentioned a hall.
 Right: one given name is written in the profile, a pinned caption, the about highlight, Threads, or the operator note, and that exact name is saved. «Я Аня» stays Аня. A note that says «Анна Козлова» is saved even when the profile header has no name, and it replaces a different name the page shows.
 Right: the bio says she coaches ОФК and ЛФК, and that she goes hiking. ОФК is the coached sport. Hiking is stored as practiced, not as the headline.
 Right: a pinned caption that says the group is for children, the price is 40 BYN, and the hall is on a named street fills audiences, price, and the place query. It does not become the card paragraph. The script geocodes `пр. Независимости, 32А` and stores the street from that match, not `стр. 2` and not the rest of the sentence. A pin that shows the coach clearly, face in frame, is kept. A larger blurry frame from the same carousel is skipped. A slide that is a text card is not a gallery photo: its words are copied into `imageText` and may fill the card.
 Right: the biography says `тренер`, and the next lines are `йога, пилатес`. Both are coached. `йоге` and `пилатесу` are those same sports. A sport written only on a pinned photo is still classified.
 Right: the biography is `Кикбоксинг. Минск. Дети и взрослые.` The card says `Я тренер по кикбоксингу в Минске. Занимаюсь с детьми и со взрослыми.`
-Right: the top of the grid is reels. Those tiles stay closed. The search scrolls to a still photo lower on the page and judges that file. A Threads post that shows the same person training is judged the same way, and its text fills the fields.
+Right: the top of the grid is reels. Those tiles stay closed. The search scrolls to a still photo lower on the page and judges that file. A reel poster is not that still. A Threads post that shows the same person training is judged the same way, and its text fills the fields. A Threads video stores no frame.
 
 ## Flow
 
@@ -167,7 +169,7 @@ Judge every stored image, including Threads frames, from the screenshot:
 - `certificate` — a document, and the caption contains «диплом», «сертификат», or «удостоверение». Saved as `{handle}-d1.jpg` with a verbatim caption. Not also a gallery photo.
 - skip — `text`, `logo`, `flyer`, `duplicate` (the same file as the face), `not-trainer`, `crop` (face cut at the chin or eyes, or the frame is mostly floor, ceiling, or a wall), `clutter` (collage, chat screenshot, text burned over the photo), `crowd` (this trainer cannot be picked out), `back` (only the back of the head when a clearer frame exists), or `blur` (motion blur or a dark frame where the person is not readable).
 
-Prefer, when several frames clear the floor: a portrait or three-quarter with the face unobstructed; then the trainer coaching or training, body in frame, the action understandable; then the gym only when the trainer is in it. A still moment beats a motion blur. An empty hall loses to a session. One strong frame is enough. Do not pad the gallery with a weaker frame to reach three when a stronger frame is already kept. When every still photo fails that bar, keep the stills the profile has anyway: a back view, a crop, or a crowd is the gallery rather than no photo. Skip a video and a story. A reel is a video. A carousel of photos is not.
+Prefer, when several frames clear the floor: a portrait or three-quarter with the face unobstructed; then the trainer coaching or training, body in frame, the action understandable; then the gym only when the trainer is in it. A still moment beats a motion blur. An empty hall loses to a session. One strong frame is enough. Do not pad the gallery with a weaker frame to reach three when a stronger frame is already kept. When every still photo fails that bar, keep the still photos the profile has, including a back view or a crop, so the card is not left without a picture. A reel, a reel poster, a video, and a story are never that fallback: store no file from them. A carousel photo is a photo.
 
 A profile with no pins still finishes photo search. After the pins, scroll the profile grid and open other `photo` tiles until two or three gallery photos are chosen, or the grid ends. The first extract only lists tiles already loaded. Scroll, then extract again. Trainers often fill the top of the page with video, so keep scrolling, to the bottom of the grid if that is where the stills are. Do not stop because the first screen is reels. A reel is not opened and is not stored. The photo posts you open are `extraPosts`, at most 12, and their captions are not quotes for the card. A text card, logo, or flyer is skipped. The same scroll applies to a Threads profile that was attached: pass videos, copy the text, and judge the stills.
 
