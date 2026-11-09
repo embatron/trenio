@@ -7,6 +7,7 @@ import { join, resolve } from "node:path";
 import "dotenv/config";
 import sharp from "sharp";
 import { tinifyImage } from "../../../../src/lib/images/tinify.ts";
+import { coverPosition } from "../../../../src/lib/images/variants.ts";
 import { formatBelarusPhone } from "../../../../src/lib/auth/phone.ts";
 import { inferTrainerGender } from "../../../../src/lib/catalog/trainer-gender.ts";
 import { foldYo, prepareSportText, sportAliasRegex } from "../../../../src/lib/catalog/sport-alias.ts";
@@ -542,10 +543,15 @@ async function storeAvatar(bytes: Buffer, absoluteMaster: string) {
     { name: "w960", width: 960, height: 1280, fit: "inside" as const },
   ];
   const source = sharp(master, { failOn: "none" });
+  const meta = await source.metadata();
   for (const variant of variants) {
+    const gravity =
+      variant.fit === "cover"
+        ? coverPosition(meta.width ?? 0, meta.height ?? 0, variant.width, variant.height)
+        : "centre";
     const file = await source
       .clone()
-      .resize({ width: variant.width, height: variant.height, fit: variant.fit, position: "attention", withoutEnlargement: true })
+      .resize({ width: variant.width, height: variant.height, fit: variant.fit, position: gravity, withoutEnlargement: true })
       .jpeg({ quality: 78, mozjpeg: true })
       .toBuffer();
     writeFileSync(`${base}-${variant.name}.jpg`, file);

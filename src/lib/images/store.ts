@@ -4,7 +4,7 @@ import path from "node:path";
 import sharp from "sharp";
 
 import { shrinkImage } from "@/lib/images/tinify";
-import { IMAGE_VARIANTS } from "@/lib/images/variants";
+import { coverPosition, IMAGE_VARIANTS } from "@/lib/images/variants";
 
 const VARIANTS: Array<{
   name: (typeof IMAGE_VARIANTS)[number];
@@ -23,16 +23,23 @@ async function writeDerivatives(
   absoluteMaster: string,
   position: "attention" | "centre",
 ) {
+  const meta = await source.clone().metadata();
+  const sourceWidth = meta.width ?? 0;
+  const sourceHeight = meta.height ?? 0;
   const base = absoluteMaster.replace(/\.[a-z0-9]+$/i, "");
   await Promise.all(
     VARIANTS.map(async (variant) => {
+      const gravity =
+        position === "centre" || variant.fit !== "cover"
+          ? "centre"
+          : coverPosition(sourceWidth, sourceHeight, variant.width, variant.height);
       const file = await source
         .clone()
         .resize({
           width: variant.width,
           height: variant.height,
           fit: variant.fit,
-          position,
+          position: gravity,
           withoutEnlargement: true,
         })
         .jpeg({ quality: 78, mozjpeg: true })
