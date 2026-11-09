@@ -2,7 +2,7 @@
 import { createServerFn } from "@tanstack/react-start";
 
 import { requireAuthMiddleware, requireSessionMiddleware } from "@/auth/middleware";
-import { accountGatePath } from "@/lib/auth/auth-decisions";
+import { accountGatePath, phoneStandsInForMailbox } from "@/lib/auth/auth-decisions";
 import { staffNeedsTotp } from "@/lib/auth/staff-totp";
 import { isPendingSignupEmail } from "@/lib/auth/pending-email";
 import { AuthError, isAuthError } from "@/lib/auth/errors";
@@ -259,7 +259,7 @@ export const unreadCountFn = createServerFn({ method: "POST" })
   .validator(z.object({}))
   .handler(async ({ context }) => {
     const gated = accountGatePath({
-      needsCredentials: isPendingSignupEmail(context.user.email),
+      needsCredentials: isPendingSignupEmail(context.user.email) && !phoneStandsInForMailbox(context.user),
       needsDoorPassword: context.user.needsPassword && context.user.lastSignupIntent === "trainer_claim",
       needsTotp: staffNeedsTotp(context.user.roles, context.user.totpEnabled),
     });

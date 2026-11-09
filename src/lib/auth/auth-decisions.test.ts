@@ -8,6 +8,7 @@ import {
   decideYandexLink,
   decideSmsSignup,
   gateAllowsPath,
+  phoneStandsInForMailbox,
 } from "./auth-decisions";
 import { STAFF_TOTP_REQUIRED, staffNeedsTotp, staffTotpAtLogin } from "./staff-totp";
 
@@ -16,6 +17,24 @@ test("email signup does not enter an existing mailbox", () => {
   assert.equal(decideEmailSignup("unverified"), "refresh");
   assert.equal(decideEmailSignup("verified"), "notice");
   assert.equal(decideEmailSignup("blocked"), "notice");
+});
+
+test("a short-link phone stands in for a mailbox", () => {
+  assert.equal(phoneStandsInForMailbox({
+    email: "pending.00000000-0000-4000-8000-000000000000@users.trenio.invalid",
+    phoneVerified: true,
+    lastSignupIntent: "trainer_claim",
+  }), true);
+  assert.equal(phoneStandsInForMailbox({
+    email: "pending.00000000-0000-4000-8000-000000000000@users.trenio.invalid",
+    phoneVerified: true,
+    lastSignupIntent: "client_signup",
+  }), false);
+  assert.equal(phoneStandsInForMailbox({
+    email: "trainer@example.com",
+    phoneVerified: true,
+    lastSignupIntent: "trainer_claim",
+  }), false);
 });
 
 test("a signup SMS cannot enter an account that linked the number later", () => {

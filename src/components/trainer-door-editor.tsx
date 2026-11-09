@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
+import { PhoneOtpFields, clientValidatePhone, useCountdown } from "@/components/auth/phone-otp-fields";
 import { YandexLoginButton } from "@/components/auth/yandex-login-button";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { BY_PHONE_COUNTRY_PREFIX, OTP_RESEND_SECONDS } from "@/lib/auth/phone";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
-import { requestDoorEmailFn } from "@/lib/catalog/trainer-magic";
+import { confirmDoorPhoneFn, requestDoorEmailFn, requestDoorPhoneFn } from "@/lib/catalog/trainer-magic";
 
 const LOGIN_PHRASE = "Войдите в аккаунт";
 
@@ -22,7 +24,84 @@ function DoorMailNotice({ message }: { message: string }) {
   );
 }
 
-/** Email for an unclaimed profile opened by the short Instagram link. */
+function DoorPhoneForm() {
+  const requestPhone = useAuthServerFn(requestDoorPhoneFn);
+  const confirmPhone = useAuthServerFn(confirmDoorPhoneFn);
+  const [phone, setPhone] = useState(BY_PHONE_COUNTRY_PREFIX);
+  const [code, setCode] = useState("");
+  const [sent, setSent] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const countdown = useCountdown(0);
+
+  function send(current = phone) {
+    const phoneError = clientValidatePhone(current);
+    if (phoneError) {
+      setError(phoneError);
+      return;
+    }
+    setPending(true);
+    setError(null);
+    void requestPhone({ data: { phone: current } })
+      .then((result) => {
+        const issued = result as { retryAfterSec?: number };
+        setSent(true);
+        countdown.restart(issued.retryAfterSec ?? OTP_RESEND_SECONDS);
+      })
+      .catch((err: unknown) => setError(authErrorMessage(err)))
+      .finally(() => setPending(false));
+  }
+
+  return (
+    <form
+      className="door-phone"
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (!sent) {
+          send();
+          return;
+        }
+        setPending(true);
+        setError(null);
+        void confirmPhone({ data: { phone, code } })
+          .then((result) => {
+            const opened = result as { slug?: string; needsPassword?: boolean; redirectTo?: string };
+            const slug = opened.slug ?? "";
+            if (!/^[a-z0-9._]{1,30}$/.test(slug)) {
+              setError("Ссылка уже не действует.");
+              return;
+            }
+            if (opened.redirectTo === "/auth/totp") {
+              window.location.assign("/auth/totp");
+              return;
+            }
+            window.location.replace(opened.needsPassword ? `/trainers/${slug}` : "/me/profile");
+          })
+          .catch((err: unknown) => setError(authErrorMessage(err)))
+          .finally(() => setPending(false));
+      }}
+    >
+      <PhoneOtpFields
+        idPrefix="door"
+        phone={phone}
+        onPhoneChange={setPhone}
+        code={code}
+        onCodeChange={setCode}
+        phoneError={undefined}
+        codeError={undefined}
+        sent={sent}
+        secondsLeft={countdown.left}
+        submitting={pending}
+        confirmLabel="Открыть кабинет"
+        sendLabel="Получить код"
+        onResend={() => send()}
+      />
+      {error ? <p className="door-mail__error" role="alert">{error}</p> : null}
+    </form>
+  );
+}
+
+/** Email or a Belarus mobile for an unclaimed profile opened by the short Instagram link. */
 export function TrainerDoorMail({
   autoFocus = false,
   onSent,
@@ -37,6 +116,7 @@ export function TrainerDoorMail({
   const [pending, setPending] = useState(false);
   const [sent, setSent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [phoneOpen, setPhoneOpen] = useState(false);
 
   function send() {
     setPending(true);
@@ -52,13 +132,7 @@ export function TrainerDoorMail({
   }
 
   return (
-    <form
-      className="door-mail"
-      onSubmit={(event) => {
-        event.preventDefault();
-        if (!sent) send();
-      }}
-    >
+    <div className="door-mail">
       {sent ? (
         <>
           <p className="door-mail__ok" id="door-mail-sent" role="status">{sent}</p>
@@ -71,8 +145,19 @@ export function TrainerDoorMail({
           <div className="door-google">
             <GoogleLoginButton returnPath="/me" door />
             <YandexLoginButton returnPath="/me" door />
+            {phoneOpen ? <DoorPhoneForm /> : (
+              <button type="button" className="auth-google" onClick={() => setPhoneOpen(true)}>
+                Войти с помощью телефона
+              </button>
+            )}
             <div className="auth-or" aria-hidden="true">или</div>
           </div>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              send();
+            }}
+          >
           <label>
             <span>Email</span>
             <input
@@ -88,6 +173,7 @@ export function TrainerDoorMail({
           <button type="submit" disabled={pending}>
             {pending ? "Отправка…" : "Отправить ссылку"}
           </button>
+          </form>
         </>
       )}
       {error ? <p className="door-mail__error" role="alert"><DoorMailNotice message={error} /></p> : null}
@@ -99,16 +185,29 @@ export function TrainerDoorMail({
         .auth-google { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 50px; height: 50px; padding: 0; border-radius: var(--radius-control); border: 1px solid rgba(var(--dark-rgb), 0.14); background: #fff; color: var(--dark); font: inherit; font-size: 15px; font-weight: var(--fw-title); letter-spacing: -0.01em; text-decoration: none; cursor: pointer; }
         .auth-google:hover { border-color: var(--primary); }
         .auth-google svg { width: 18px; height: 18px; flex: 0 0 auto; }
+        .door-phone { display: grid; gap: 12px; }
+        .door-phone .auth-field { display: grid; gap: 6px; }
+        .door-phone .auth-field__label { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
+        .door-phone .auth-field input, .door-phone .auth-submit { box-sizing: border-box; width: 100%; min-height: 44px; }
+        .door-phone .auth-field input { padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--text); font: inherit; font-size: 16px; }
+        .door-phone .auth-submit { border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
+        .door-phone .auth-submit:disabled { opacity: 0.6; cursor: default; }
+        .door-phone .auth-field__error, .door-phone .auth-muted { margin: 0; color: var(--primary-dark); font-size: 13px; }
+        .door-phone .auth-muted { color: var(--muted); }
+        .door-phone .auth-resend { min-height: 44px; padding: 0; border: 0; background: transparent; color: var(--primary); font: inherit; font-weight: var(--fw-title); cursor: pointer; text-align: left; }
         .door-mail label { display: grid; gap: 6px; }
         .door-mail label span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
-        .door-mail input { box-sizing: border-box; width: 100%; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--text); font: inherit; font-size: 16px; }
+        .door-mail label input { box-sizing: border-box; width: 100%; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--text); font: inherit; font-size: 16px; }
         .door-mail button { justify-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
+        .door-mail button.auth-google { justify-self: stretch; width: 100%; height: 50px; padding: 0; border: 1px solid rgba(var(--dark-rgb), 0.14); border-radius: var(--radius-control); background: #fff; color: var(--dark); box-shadow: none; }
+        .door-mail button.auth-google:hover { border-color: var(--primary); background: #fff; }
         .door-mail button:disabled { opacity: 0.6; cursor: default; }
         .door-mail__ok { margin: 0; font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
         .door-mail__error { margin: 0; color: var(--primary-dark); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
         .door-mail__error a { color: var(--primary); font-weight: var(--fw-title); text-decoration: underline; text-underline-offset: 3px; }
+        .door-mail form { display: grid; gap: 12px; }
       `}</style>
-    </form>
+    </div>
   );
 }
 
@@ -205,7 +304,7 @@ export function TrainerDoorMailDialog({
         ) : (
           <>
             <h2 id="door-mail-title">Создание аккаунта тренера</h2>
-            <p>Введите свой e-mail или войдите через Google или Яндекс. На почту придёт ссылка сразу на страницу профиля, и создание аккаунта будет завершено. Google и Яндекс подтверждают адрес сразу, без письма.</p>
+            <p>Нужна почта или мобильный номер. Почта подтверждается ссылкой из письма. Телефон — кодом из SMS, и после кода открывается кабинет. Google и Яндекс подтверждают адрес сразу, без письма.</p>
             <TrainerDoorMail
               autoFocus
               onSent={(email) => {

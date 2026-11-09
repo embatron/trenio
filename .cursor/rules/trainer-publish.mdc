@@ -5,14 +5,14 @@ alwaysApply: true
 
 # Trainer publish
 
-An imported profile stays `draft` until the trainer confirms the mailbox. That confirmation is the letter sent to the address they typed, or Google on the same short link. Opening `/hi/{code}` alone does not publish the card. The trainer can hide the page from the cabinet. A later confirmation does not publish a hidden or archived card.
+An imported profile stays `draft` until the trainer confirms a mailbox or a Belarus mobile. Mailbox confirmation is the letter sent to the address they typed, or Google or Yandex on the same short link. A mobile confirmation is the SMS code on that same short link. Opening `/hi/{code}` alone does not publish the card. The trainer can hide the page from the cabinet. A later confirmation does not publish a hidden or archived card.
 
-Import, a server copy, the short-link visit, and the password step do not publish it. The confirmed mailbox does.
+Import, a server copy, the short-link visit, and the password step do not publish it. The confirmed mailbox or the confirmed mobile does.
 
 ## Do
 
 - Save and sync an imported profile as `draft`.
-- Publish the draft when the confirmation letter is opened or Google binds the card.
+- Publish the draft when the confirmation letter is opened, Google or Yandex binds the card, or the SMS code on the short link is accepted.
 - Leave the account window on the short link until the card has an owner.
 - Let the trainer set the page to hidden in the cabinet.
 

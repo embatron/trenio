@@ -65,6 +65,7 @@ import {
   signupWithTelegramWebApp,
   signupWithTelegramWidget,
 } from "@/auth/signup-channels";
+import { phoneStandsInForMailbox } from "@/lib/auth/auth-decisions";
 import { isPendingSignupEmail } from "@/lib/auth/pending-email";
 import { staffNeedsTotp } from "@/lib/auth/staff-totp";
 import {
@@ -104,7 +105,7 @@ import { clearSessionCookie, clearTotpTicketCookie, readSessionToken, readTotpTi
 import type { LogOutcome } from "@/lib/log/policy";
 
 function toPublicUser(user: SessionUser): PublicUser {
-  const needsCredentials = isPendingSignupEmail(user.email);
+  const needsCredentials = isPendingSignupEmail(user.email) && !phoneStandsInForMailbox(user);
   return {
     id: user.id,
     email: needsCredentials ? "" : user.email,

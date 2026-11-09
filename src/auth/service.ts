@@ -86,6 +86,8 @@ export type SessionUser = {
   needsPassword: boolean;
   /** The person has typed a password. Google-only and unfinished magic-link accounts stay false. */
   hasPassword: boolean;
+  /** A Belarus mobile was confirmed by SMS. */
+  phoneVerified: boolean;
   totpEnabled: boolean;
 };
 
@@ -135,6 +137,7 @@ function toSessionUser(user: User, roles: UserRole[]): SessionUser {
     telegramUsername: user.telegramUsername,
     needsPassword: user.needsPassword && !user.googleSub && !user.yandexSub,
     hasPassword: user.passwordSetAt != null,
+    phoneVerified: user.phoneVerifiedAt != null,
     totpEnabled: user.totpEnabledAt != null,
   };
 }

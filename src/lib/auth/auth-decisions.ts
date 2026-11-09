@@ -1,4 +1,17 @@
+import { isPendingSignupEmail } from "@/lib/auth/pending-email";
+
 export type EmailSignupKind = "none" | "unverified" | "verified" | "blocked";
+
+/** A short-link trainer proved a Belarus mobile, so the placeholder mailbox is not a second gate. */
+export function phoneStandsInForMailbox(user: {
+  email: string;
+  phoneVerified: boolean;
+  lastSignupIntent: string | null;
+}): boolean {
+  return Boolean(user.phoneVerified)
+    && user.lastSignupIntent === "trainer_claim"
+    && isPendingSignupEmail(user.email);
+}
 
 /** Public email signup never opens a session. An unverified row can be refreshed. */
 export function decideEmailSignup(kind: EmailSignupKind): "create" | "refresh" | "notice" {

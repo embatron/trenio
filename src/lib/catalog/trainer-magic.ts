@@ -1,13 +1,15 @@
-import { randomBytes } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 
 import { createServerFn } from "@tanstack/react-start";
 import { getCookie, getRequest, setCookie } from "@tanstack/react-start/server";
-import { and, desc, eq, gt, inArray, isNull, or } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, isNull, ne, or } from "drizzle-orm";
 import { z } from "zod";
 
 import { optionalAuthMiddleware, requireAuthMiddleware, requireSessionMiddleware } from "@/auth/middleware";
 import { clientIpFromHeaders } from "@/auth/request-meta";
-import { consumeRateLimit, RATE_LIMITED_MESSAGE } from "@/auth/rate-limit";
+import { GENERIC_OTP_ERROR, issueOtp, verifyOtp } from "@/auth/otp";
+import { consumeRateLimit, RATE_LIMITED_MESSAGE, RATE_LIMITS } from "@/auth/rate-limit";
+import { isSmsByEnabled } from "@/auth/sms";
 import { hashPassword, normalizeEmail, validatePasswordStrength } from "@/auth/password";
 import { setSessionCookie, setTotpTicketCookie } from "@/auth/session";
 import { beginLogin, findUserByEmail } from "@/auth/service";
@@ -19,7 +21,9 @@ import { mailTransportReady, sendMail } from "@/lib/mail/send.server";
 import { assertStaff } from "@/lib/admin/access";
 import { copyCardFaceToAccount } from "@/lib/catalog/account-face";
 import { AuthError } from "@/lib/auth/errors";
-import { formatBelarusPhone, validateBelarusMobile } from "@/lib/auth/phone";
+import { formatBelarusPhone, normalizeBelarusMobile, storedBelarusPhone, validateBelarusMobile } from "@/lib/auth/phone";
+import { belarusPhoneEquals } from "@/lib/auth/phone-match";
+import { isPendingSignupEmail, pendingSignupEmail } from "@/lib/auth/pending-email";
 import { isStaff } from "@/lib/auth/roles";
 import { assertBelarusCity } from "@/lib/catalog/belarus-city.server";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
@@ -39,7 +43,7 @@ import {
 import { MAX_TRAINER_SPORTS, trainerSportSlugs, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
 import { placesFromProfile, placesShape, savedWithMapNotice } from "@/lib/geo/schemas";
-import { logCaught, writeLog } from "@/lib/log/logger";
+import { logCaught, maskPhone, writeLog } from "@/lib/log/logger";
 
 const PREVIEW_COOKIE = "trenio_trainer_preview";
 const EDIT_COOKIE = "trenio_trainer_edit";
@@ -358,6 +362,18 @@ async function profileFromEditCookie() {
   return row ?? null;
 }
 
+async function openDoorProfile() {
+  const row = await profileFromEditCookie();
+  if (!row || row.status === "published") {
+    throw new AuthError("Ссылка на редактирование уже не действует.", "VALIDATION");
+  }
+  if (row.ownerUserId) throw new AuthError("Этот профиль уже привязан. Войдите в аккаунт.", "VALIDATION");
+  if (!row.previewToken || getCookie(PREVIEW_COOKIE) !== row.slug) {
+    throw new AuthError("Ссылка на редактирование уже не действует.", "VALIDATION");
+  }
+  return row;
+}
+
 const cardSchema = z.object({
   firstName: z.string().trim().min(1, "Укажите имя.").max(100),
   lastName: z.string().trim().max(100),
@@ -615,14 +631,7 @@ async function openDoorSession(userId: string) {
 export const requestDoorEmailFn = createServerFn({ method: "POST" })
   .validator(doorEmailSchema)
   .handler(async ({ data }) => {
-    const row = await profileFromEditCookie();
-    if (!row || row.status === "published") {
-      throw new AuthError("Ссылка на редактирование уже не действует.", "VALIDATION");
-    }
-    if (row.ownerUserId) throw new AuthError("Этот профиль уже привязан. Войдите в аккаунт.", "VALIDATION");
-    if (!row.previewToken || getCookie(PREVIEW_COOKIE) !== row.slug) {
-      throw new AuthError("Ссылка на редактирование уже не действует.", "VALIDATION");
-    }
+    const row = await openDoorProfile();
     const email = normalizeEmail(data.email);
     const ip = clientIpFromHeaders(getRequest().headers.get("x-real-ip"));
     const limit = await consumeRateLimit(`door-email:${row.id}:${ip}`, 60_000, 1);
@@ -690,6 +699,157 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
       target: row.slug,
     });
     return { ok: true as const, message: "Ссылка уже отправлена.", email };
+  });
+
+const doorPhoneSchema = z.object({
+  phone: z.string().trim().min(4).max(32),
+});
+
+export const requestDoorPhoneFn = createServerFn({ method: "POST" })
+  .validator(doorPhoneSchema)
+  .handler(async ({ data }) => {
+    const row = await openDoorProfile();
+    const phoneError = validateBelarusMobile(data.phone);
+    const phone = normalizeBelarusMobile(data.phone);
+    if (phoneError || !phone) {
+      throw new AuthError(phoneError ?? "Укажите мобильный номер РБ: +375 25, 29, 33 или 44.", "VALIDATION");
+    }
+    if (process.env.NODE_ENV === "production" && !isSmsByEnabled()) {
+      throw new AuthError("СМС сейчас недоступны. Подтвердите почту.", "VALIDATION");
+    }
+    const ip = clientIpFromHeaders(getRequest().headers.get("x-real-ip"));
+    const ipLimit = await consumeRateLimit(`door-phone:ip:${ip}`, RATE_LIMITS.otpIp.windowMs, RATE_LIMITS.otpIp.max);
+    const phoneLimit = await consumeRateLimit(`door-phone:${phone}`, RATE_LIMITS.otpPhone.windowMs, RATE_LIMITS.otpPhone.max);
+    const blocked = !phoneLimit.ok ? phoneLimit : !ipLimit.ok ? ipLimit : null;
+    if (blocked) {
+      throw new AuthError(`Код можно отправить снова через ${blocked.retryAfterSec} с.`, "RATE_LIMITED");
+    }
+    const [owner] = await getDb()
+      .select({ id: users.id, status: users.status })
+      .from(users)
+      .where(belarusPhoneEquals(users.phone, phone))
+      .limit(1);
+    if (owner && (owner.status === "deleted" || owner.status === "suspended")) {
+      throw new AuthError("Этот номер нельзя использовать.", "VALIDATION");
+    }
+    const issued = await issueOtp({
+      phone,
+      purpose: "register",
+      userId: owner?.id ?? null,
+      send: true,
+    });
+    if (!issued.ok) {
+      throw new AuthError(
+        issued.code === "rate_limited" ? issued.error : "Не удалось отправить SMS. Попробуйте позже.",
+        issued.code === "rate_limited" ? "RATE_LIMITED" : "VALIDATION",
+      );
+    }
+    void writeLog({
+      level: "info",
+      domain: "sms",
+      action: "sms.send",
+      outcome: "success",
+      message: "Код на короткую ссылку отправлен.",
+      subject: maskPhone(phone),
+      target: row.slug,
+    });
+    return { ok: true as const, retryAfterSec: issued.retryAfterSec, devCode: issued.devCode };
+  });
+
+export const confirmDoorPhoneFn = createServerFn({ method: "POST" })
+  .validator(doorPhoneSchema.extend({ code: z.string().trim().min(4).max(12) }))
+  .handler(async ({ data }) => {
+    const row = await openDoorProfile();
+    const phone = normalizeBelarusMobile(data.phone);
+    const stored = phone ? storedBelarusPhone(phone) : null;
+    if (!phone || !stored) throw new AuthError(GENERIC_OTP_ERROR, "INVALID_CREDENTIALS");
+    const verified = await verifyOtp({ phone, purpose: "register", code: data.code });
+    if (!verified.ok) throw new AuthError(GENERIC_OTP_ERROR, "INVALID_CREDENTIALS");
+
+    const db = getDb();
+    const [owner] = await db.select().from(users).where(belarusPhoneEquals(users.phone, phone)).limit(1);
+    if (verified.userId) {
+      if (!owner || owner.id !== verified.userId || owner.status === "deleted" || owner.status === "suspended") {
+        throw new AuthError(GENERIC_OTP_ERROR, "INVALID_CREDENTIALS");
+      }
+    } else if (owner) {
+      throw new AuthError(GENERIC_OTP_ERROR, "INVALID_CREDENTIALS");
+    }
+
+    let user = owner ?? null;
+    const now = new Date();
+    if (!user) {
+      const id = randomUUID();
+      const passwordHash = await hashPassword(randomBytes(32).toString("base64url"));
+      const [created] = await db.insert(users).values({
+        id,
+        email: pendingSignupEmail(id),
+        phone: stored,
+        phoneVerifiedAt: now,
+        passwordHash,
+        firstName: row.firstName || "Тренер",
+        lastName: row.lastName || null,
+        status: "active",
+        lastSignupIntent: "trainer_claim",
+        needsPassword: true,
+      }).returning();
+      if (!created) throw new AuthError("Не удалось открыть кабинет. Попробуйте ещё раз.", "VALIDATION");
+      user = created;
+      await db.insert(userRoles).values({ userId: user.id, role: "user" });
+    } else {
+      const roles = await db.select({ role: userRoles.role }).from(userRoles).where(eq(userRoles.userId, user.id));
+      if (isStaff(roles.map((item) => item.role))) {
+        throw new AuthError("Этот номер нельзя использовать.", "VALIDATION");
+      }
+      const [other] = await db
+        .select({ id: trainerProfiles.id })
+        .from(trainerProfiles)
+        .where(and(eq(trainerProfiles.ownerUserId, user.id), ne(trainerProfiles.id, row.id)))
+        .limit(1);
+      if (other) throw new AuthError("У этого аккаунта уже есть другая карточка.", "VALIDATION");
+      const needsPassword = !user.passwordSetAt && !user.googleSub && !user.yandexSub;
+      await db.update(users).set({
+        phone: stored,
+        phoneVerifiedAt: user.phoneVerifiedAt ?? now,
+        status: user.status === "pending_verification" ? "active" : user.status,
+        ...(needsPassword ? { needsPassword: true, lastSignupIntent: "trainer_claim" as const } : {}),
+        updatedAt: now,
+      }).where(eq(users.id, user.id));
+      user = { ...user, needsPassword, phoneVerifiedAt: user.phoneVerifiedAt ?? now };
+    }
+
+    const updated = await db
+      .update(trainerProfiles)
+      .set({
+        ownerUserId: user.id,
+        claimStatus: "claimed",
+        claimedAt: now,
+        phone: stored,
+        updatedAt: now,
+      })
+      .where(and(eq(trainerProfiles.id, row.id), isNull(trainerProfiles.ownerUserId)))
+      .returning({
+        id: trainerProfiles.id,
+        avatarPath: trainerProfiles.avatarPath,
+        photos: trainerProfiles.photos,
+      });
+    if (updated.length === 0) throw new AuthError("Ссылка уже не действует.", "VALIDATION");
+    await db.insert(userRoles).values({ userId: user.id, role: "trainer" }).onConflictDoNothing();
+    await copyCardFaceToAccount(user.id, updated[0].avatarPath, updated[0].photos);
+    await publishConfirmedDraft(row);
+    const next = await openDoorSession(user.id);
+    void writeLog({
+      level: "info",
+      domain: "account",
+      action: "account.claim",
+      outcome: "success",
+      message: "Телефон открыл профиль. Номер подтверждён.",
+      subject: maskPhone(phone),
+      actorUserId: user.id,
+      target: row.slug,
+    });
+    if (next === "/auth/totp") return { ok: true as const, slug: row.slug, needsPassword: false, redirectTo: next };
+    return { ok: true as const, slug: row.slug, needsPassword: user.needsPassword, redirectTo: "/me" };
   });
 
 export const confirmDoorEmailFn = createServerFn({ method: "POST" })
@@ -813,7 +973,7 @@ export const setDoorPasswordFn = createServerFn({ method: "POST" })
       action: "account.password",
       outcome: "success",
       message: "Тренер задал пароль по короткой ссылке.",
-      subject: context.user.email,
+      subject: isPendingSignupEmail(context.user.email) ? null : context.user.email,
       actorUserId: context.user.id,
       target: owned.slug,
     });
@@ -822,6 +982,9 @@ export const setDoorPasswordFn = createServerFn({ method: "POST" })
     await sendTrainerWelcome({ id: context.user.id, firstName: owned.firstName || context.user.firstName });
 
     let mailed = false;
+    if (isPendingSignupEmail(context.user.email)) {
+      return { ok: true as const, mailed, slug: owned.slug, message: "Дальше можно работать со своим аккаунтом." };
+    }
     try {
       const letter = renderLetter({
         service: true,
