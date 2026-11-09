@@ -17,7 +17,7 @@ Tokens and classes live in `src/styles.css`. Do not invent a second width, gutte
 - Info pages use `.layout-container--prose` (`--layout-prose-max: 760px`). Chrome around them still uses `--layout-max`.
 - The staff cabinet (`/admin`, admin and superadmin only) wraps the page in `.layout-staff`. That class sets `--layout-max` to `--layout-staff-max` (`1680px`), so the header, the cabinet, and the footer on those pages share one wider edge. Trainer cabinet, account, and the public catalog stay on `1240px`. Do not put `.layout-staff` on `/me` or `/account`.
 - Gap between columns and cards is `--layout-gap` (24px). Sidebar is `--layout-sidebar-w` (280px) via `.layout-with-sidebar`.
-- Below 768px, trainer card grids use 95% of that gap: `.trainer-grid`, `.cat-grid`, `.favorites-grid`, `.sr-grid`, `.map-people`, `.similar-trainers__track`, and `.club-trainer-grid`. The homepage tile shows 16 trainers, and 12 of them below 768px.
+- Below 768px, trainer card grids that share `--layout-gap` use 20px: `.trainer-grid`, `.cat-grid`, `.favorites-grid`, `.sr-grid`, `.map-people`, and `.similar-trainers__track`. `.club-trainer-grid` keeps its own gap, 95% of 14px. The homepage tile shows 16 trainers, and 12 of them below 768px.
 - A horizontal scroller (icon rail, card rail) uses `.layout-rail`. The track scrolls inside that box. It does not use `100vw` or sit flush with the screen edge.
 - `--layout-gutter` already includes `env(safe-area-inset-*)`. The viewport meta keeps `viewport-fit=cover` so a standalone PWA does not draw content under the notch.
 

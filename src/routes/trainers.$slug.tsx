@@ -467,7 +467,7 @@ const CSS = `
   .similar-trainers__track { grid-template-columns: 1fr; }
 }
 @media (max-width: 767px) {
-  .similar-trainers__track { gap: calc(var(--layout-gap) * 0.95); }
+  .similar-trainers__track { gap: 20px; }
 }
 
 `;

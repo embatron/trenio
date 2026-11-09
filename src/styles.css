@@ -586,13 +586,13 @@ input.is-locked {
     height: 12px;
   }
 }
-/* Phone trainer cards sit 5% closer. The home tile shows 12 of the 16. */
+/* Phone trainer cards use a 20px gap. The home tile shows 12 of the 16. */
 @media (max-width: 767px) {
   .trainer-grid,
   .cat-grid,
   .favorites-grid,
   .sr-grid {
-    gap: calc(var(--layout-gap) * 0.95);
+    gap: 20px;
   }
   .trainer-grid--home > :nth-child(n + 13) { display: none; }
 }

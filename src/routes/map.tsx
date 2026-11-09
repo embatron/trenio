@@ -970,7 +970,7 @@ const PAGE_CSS = `
   .map-people { grid-template-columns: 1fr; }
 }
 @media (max-width: 767px) {
-  .map-people { gap: calc(var(--layout-gap) * 0.95); }
+  .map-people { gap: 20px; }
 }
 @media (min-width: 720px) {
   .map-people { grid-template-columns: repeat(3, minmax(0, 1fr)); }
