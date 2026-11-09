@@ -8,7 +8,7 @@ description: >-
 
 # Sync trainers
 
-Instagram outreach runs on the laptop, so the laptop database and the live site have to carry the same trainers. The script copies missing cards, newer card text, catalog status, and the three marks. It does not send an Instagram message.
+Instagram outreach runs on the laptop, so the laptop database and the live site have to carry the same trainers. The script copies missing cards, newer card text, catalog status, and the message and link marks. A visit is written when `/hi/{code}` is opened on that host. The laptop copies a live visit onto an empty local mark and does not send its own visit to the site. The script does not send an Instagram message.
 
 ## Do
 
@@ -26,7 +26,8 @@ Instagram outreach runs on the laptop, so the laptop database and the live site 
 
 - Run the script on the server. The server is the other side of the sync.
 - Publish a draft. A draft stays a draft. A status that is already published, hidden, or archived is copied onto the draft side.
-- Replace a message mark, a link mark, or a visit mark that is already set. An empty mark is filled from the side that has it.
+- Replace a message mark, a link mark, or a visit mark that is already set. An empty message or link mark is filled from the side that has it.
+- Copy a visit mark from the laptop to the live site. The visit is written only when `/hi/{code}` is opened on that host. The laptop fills an empty visit from the live site.
 - Replace the live short link. The laptop adopts that code when its own is empty.
 - Print the card text, a phone, an email, or a token.
 
@@ -35,4 +36,4 @@ Instagram outreach runs on the laptop, so the laptop database and the live site 
 - A trainer who exists on only one side is copied to the other, including photos.
 - Card text moves when the text hash differs. The newer `updated_at` wins. The same clock keeps the live card.
 - A draft never overwrites a published, hidden, or archived card. Two catalog statuses follow the newer card.
-- Marks move on their own, so a message mark does not overwrite the card.
+- Message and link marks move on their own, so a mark does not overwrite the card. A visit moves only from the live site to an empty laptop mark.

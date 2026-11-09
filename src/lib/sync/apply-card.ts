@@ -205,6 +205,11 @@ function contentValues(card: TrainerCardBody) {
   };
 }
 
+/** A visit is written by opening `/hi/{code}` on this host. Production does not take one from a sync. */
+function acceptSyncedDoor() {
+  return process.env.NODE_ENV !== "production";
+}
+
 export async function applyTrainerPatch(patch: TrainerPatch, files: IncomingFile[], tie: Tie) {
   await ensureTrainerDoorSchema();
   const handle = cleanHandle(patch.handle);
@@ -237,7 +242,7 @@ export async function applyTrainerPatch(patch: TrainerPatch, files: IncomingFile
       claimPath: claimPathFor(claimToken),
       outreachSentAt: iso(patch.outreachSentAt) ? new Date(patch.outreachSentAt as string) : null,
       inviteSentAt: iso(patch.inviteSentAt) ? new Date(patch.inviteSentAt as string) : null,
-      doorEnteredAt: iso(patch.doorEnteredAt) ? new Date(patch.doorEnteredAt as string) : null,
+      doorEnteredAt: acceptSyncedDoor() && iso(patch.doorEnteredAt) ? new Date(patch.doorEnteredAt as string) : null,
       updatedAt: new Date(patch.updatedAt),
     });
     logTrainerPresence({
@@ -264,7 +269,7 @@ export async function applyTrainerPatch(patch: TrainerPatch, files: IncomingFile
   const nextStatus = mergedStatus(existing.status, patch.status, current.updatedAt, patch.updatedAt, tie);
   const outreach = nextStamp(existing.outreachSentAt, patch.outreachSentAt);
   const invite = nextStamp(existing.inviteSentAt, patch.inviteSentAt);
-  const door = nextStamp(existing.doorEnteredAt, patch.doorEnteredAt);
+  const door = acceptSyncedDoor() ? nextStamp(existing.doorEnteredAt, patch.doorEnteredAt) : null;
   const writeCard = Boolean(patch.card)
     && trainerRevision(patch.card as TrainerCardBody) !== current.revision
     && incomingCardWins(current.updatedAt, patch.updatedAt, tie);

@@ -56,7 +56,6 @@ export async function applySyncMarks(marks: MarkPush[]): Promise<AppliedMarks> {
         handle: trainerProfiles.instagramHandle,
         outreachSentAt: trainerProfiles.outreachSentAt,
         inviteSentAt: trainerProfiles.inviteSentAt,
-        doorEnteredAt: trainerProfiles.doorEnteredAt,
         previewToken: trainerProfiles.previewToken,
       })
       .from(trainerProfiles)
@@ -66,20 +65,18 @@ export async function applySyncMarks(marks: MarkPush[]): Promise<AppliedMarks> {
       missing.push(handle);
       continue;
     }
+    // doorEnteredAt stays out of this patch. Opening /hi/{code} on this host is the only writer.
     const patch: {
       outreachSentAt?: Date;
       inviteSentAt?: Date;
-      doorEnteredAt?: Date;
       previewToken?: string;
       updatedAt?: Date;
     } = {};
     const outreach = nextStamp(row.outreachSentAt, mark.outreachSentAt);
     const invite = nextStamp(row.inviteSentAt, mark.inviteSentAt);
-    const door = nextStamp(row.doorEnteredAt, mark.doorEnteredAt);
     const token = nextToken(row.previewToken, mark.previewToken);
     if (outreach) patch.outreachSentAt = outreach;
     if (invite) patch.inviteSentAt = invite;
-    if (door) patch.doorEnteredAt = door;
     if (token) {
       const [clash] = await db
         .select({ id: trainerProfiles.id })

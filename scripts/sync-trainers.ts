@@ -32,7 +32,7 @@ function patchFrom(head: TrainerSyncHead, card: Awaited<ReturnType<typeof readTr
     updatedAt: head.updatedAt,
     outreachSentAt: head.outreachSentAt,
     inviteSentAt: head.inviteSentAt,
-    doorEnteredAt: head.doorEnteredAt,
+    doorEnteredAt: null,
     card: card?.card ?? null,
   };
 }
@@ -104,7 +104,6 @@ async function main() {
       handle: trainerProfiles.instagramHandle,
       outreachSentAt: trainerProfiles.outreachSentAt,
       inviteSentAt: trainerProfiles.inviteSentAt,
-      doorEnteredAt: trainerProfiles.doorEnteredAt,
       previewToken: trainerProfiles.previewToken,
     })
     .from(trainerProfiles);
@@ -112,7 +111,7 @@ async function main() {
     handle: row.handle,
     outreachSentAt: row.outreachSentAt?.toISOString() ?? null,
     inviteSentAt: row.inviteSentAt?.toISOString() ?? null,
-    doorEnteredAt: row.doorEnteredAt?.toISOString() ?? null,
+    doorEnteredAt: null,
     previewToken: row.previewToken,
   })));
   if (marks.status === "ok") {

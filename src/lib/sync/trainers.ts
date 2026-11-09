@@ -220,8 +220,7 @@ export function syncMove(local: TrainerSyncHead | null, remote: TrainerSyncHead 
     pushStatus: status === left.status && left.status !== right.status,
     pullStatus: status === right.status && left.status !== right.status,
     pushMarks: stampMissing(left.outreachSentAt, right.outreachSentAt)
-      || stampMissing(left.inviteSentAt, right.inviteSentAt)
-      || stampMissing(left.doorEnteredAt, right.doorEnteredAt),
+      || stampMissing(left.inviteSentAt, right.inviteSentAt),
     pullMarks: stampMissing(right.outreachSentAt, left.outreachSentAt)
       || stampMissing(right.inviteSentAt, left.inviteSentAt)
       || stampMissing(right.doorEnteredAt, left.doorEnteredAt),

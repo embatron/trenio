@@ -87,6 +87,9 @@ test("message marks fill the empty side and do not move the card", () => {
   const live = syncMove(head(), head({ doorEnteredAt: sent }));
   assert.equal(live.pullMarks, true);
   assert.equal(live.pushMarks, false);
+  const localVisit = syncMove(head({ doorEnteredAt: sent }), head());
+  assert.equal(localVisit.pushMarks, false);
+  assert.equal(localVisit.pullMarks, false);
 });
 
 test("a catalog status replaces draft, and two catalog statuses follow the newer card", () => {
