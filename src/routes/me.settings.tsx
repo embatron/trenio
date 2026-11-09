@@ -8,7 +8,7 @@ export const Route = createFileRoute("/me/settings")({
   head: () => ({
     meta: [
       { title: "Настройки · Я ищу тренера на trenio.by" },
-      { name: "description", content: "Имя и фамилия аккаунта." },
+      { name: "description", content: "Имя аккаунта. Фамилия необязательна." },
       { name: "robots", content: "noindex,follow" },
     ],
   }),

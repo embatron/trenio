@@ -92,7 +92,7 @@ export const verifyEmailSchema = z.object({
 
 export const profileNameSchema = z.object({
   firstName: z.string().trim().min(1, "Укажите имя").max(100),
-  lastName: z.string().trim().min(1, "Укажите фамилию").max(100),
+  lastName: z.string().trim().max(100),
 });
 
 export const mailPreferenceSchema = z.object({

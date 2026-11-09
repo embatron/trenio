@@ -59,7 +59,7 @@ import { loadSiteText } from "@/lib/site-texts/store";
 import { renderLetter } from "@/lib/mail/letter";
 import type { MailKind } from "@/lib/mail/kinds";
 import { mailTransportReady, sendMail } from "@/lib/mail/send.server";
-import { signupRoleToIntent, type PublicSignupRole } from "@/lib/auth/roles";
+import { hasAnyRole, signupRoleToIntent, type PublicSignupRole } from "@/lib/auth/roles";
 import { isPendingSignupEmail } from "@/lib/auth/pending-email";
 import { staffTotpAtLogin } from "@/lib/auth/staff-totp";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
@@ -527,7 +527,7 @@ export async function registerUser(input: {
   const firstName = input.firstName.trim();
   const lastName = input.lastName.trim();
   if (!firstName) throw new AuthError("Укажите имя.", "VALIDATION");
-  if (!lastName) throw new AuthError("Укажите фамилию.", "VALIDATION");
+  if (!lastName && input.signupRole === "user") throw new AuthError("Укажите фамилию.", "VALIDATION");
 
   const passwordHash = await hashPassword(input.password);
   const intent = signupRoleToIntent(input.signupRole);
@@ -1465,7 +1465,8 @@ export async function updateAccountName(userId: string, firstName: string, lastN
   if (!trimmedFirst) {
     throw new AuthError("Укажите имя.", "VALIDATION");
   }
-  if (!trimmedLast) {
+  const roles = await getUserRoles(userId);
+  if (!trimmedLast && !hasAnyRole(roles, ["trainer", "club"])) {
     throw new AuthError("Укажите фамилию.", "VALIDATION");
   }
   const now = new Date();

@@ -290,8 +290,8 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       .limit(1);
     const firstName = (account?.firstName ?? "").trim().slice(0, 100);
     const lastName = (account?.lastName ?? "").trim().slice(0, 100);
-    if (!firstName || !lastName) {
-      throw new AuthError("Укажите имя и фамилию в настройках.", "VALIDATION");
+    if (!firstName) {
+      throw new AuthError("Укажите имя в настройках.", "VALIDATION");
     }
     const bio = sanitizeReviewHtml(data.bio);
     if (!reviewPlainText(bio)) {

@@ -1,4 +1,4 @@
-/** Given name and surname are stored apart. `fullName` is only their join. */
+/** Given name and surname are stored apart. The surname may be empty. `fullName` is only their join. */
 
 export function joinTrainerName(firstName: string, lastName?: string | null) {
   return [firstName.trim(), (lastName ?? "").trim()].filter(Boolean).join(" ");

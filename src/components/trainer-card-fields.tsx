@@ -556,9 +556,8 @@ export function TrainerCardFields({
               />
             </label>
             <label>
-              <span>Фамилия</span>
+              <span>Фамилия, необязательно</span>
               <input
-                required
                 value={values.lastName}
                 maxLength={100}
                 autoComplete="family-name"

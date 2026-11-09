@@ -35,6 +35,7 @@ const empty: InviteProfileFacts = {
 test("an empty import lists the real gaps, including city, places and price", () => {
   const missing = inviteMissingLines(empty);
   assert.deepEqual(missing.slice(0, 3), ["город", "места, где ты тренируешь", "цена персональных занятий"]);
+  assert.equal(missing.includes("фамилия"), false);
   const text = trainerInviteMessage({ name: "Владимир", doorUrl: door, publicUrl, published: false, missing, template });
   assert.match(text, /^Владимир, привет!/);
   assert.match(text, /что смогли взять/);

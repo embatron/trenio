@@ -113,6 +113,7 @@ export function AccountProfileForm({
   const [deletePending, setDeletePending] = useState(false);
   const canDelete = !isStaff(user.roles);
   const canBecomeTrainer = !hasAnyRole(user.roles, ["trainer", "club", "admin", "superadmin"]);
+  const surnameOptional = hasAnyRole(user.roles, ["trainer", "club"]);
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName ?? "");
   const [email, setEmail] = useState(user.email);
@@ -183,7 +184,7 @@ export function AccountProfileForm({
           event.preventDefault();
           const nextFirst = firstName.trim();
           const nextLast = lastName.trim();
-          if (!nextFirst || !nextLast) {
+          if (!nextFirst || (!surnameOptional && !nextLast)) {
             fail(new Error(nextFirst ? "Укажите фамилию." : "Укажите имя."));
             return;
           }
@@ -268,9 +269,9 @@ export function AccountProfileForm({
             />
           </label>
           <label>
-            <span>Фамилия</span>
+            <span>{surnameOptional ? "Фамилия, необязательно" : "Фамилия"}</span>
             <input
-              required
+              required={!surnameOptional}
               value={lastName}
               maxLength={100}
               autoComplete="family-name"

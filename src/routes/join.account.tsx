@@ -47,7 +47,7 @@ function TrainerAccountPage() {
           <div className="auth-card__head">
             <h1 className="auth-title">Создать профиль тренера (без Instagram)</h1>
             <p className="auth-sub">
-              Имя, фамилия, почта и пароль. Карточка останется черновиком, пока ты сам её не опубликуешь.
+              Имя, почта и пароль. Фамилия необязательна. Карточка останется черновиком, пока ты сам её не опубликуешь.
             </p>
           </div>
           {user ? <UpgradeForm firstName={user.firstName} lastName={user.lastName ?? ""} /> : <SignupForm />}
@@ -231,8 +231,8 @@ function NameFields({
         <input type="text" required autoComplete="given-name" value={firstName} onChange={(event) => onFirst(event.target.value)} />
       </label>
       <label className="auth-field">
-        <span className="auth-field__label">Фамилия</span>
-        <input type="text" required autoComplete="family-name" value={lastName} onChange={(event) => onLast(event.target.value)} />
+        <span className="auth-field__label">Фамилия, необязательно</span>
+        <input type="text" autoComplete="family-name" value={lastName} onChange={(event) => onLast(event.target.value)} />
       </label>
     </>
   );

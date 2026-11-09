@@ -255,7 +255,7 @@ const saveSchema = z.object({
   slug: z.string().trim().min(1).max(30),
   status: z.enum(TRAINER_PUBLISH_STATUSES),
   firstName: z.string().trim().min(1, "Укажите имя").max(100),
-  lastName: z.string().trim().min(1, "Укажите фамилию").max(100),
+  lastName: z.string().trim().max(100),
   headline: z.string().trim().max(200),
   bio: z.string().trim().max(4000),
   about: z.string().trim().max(8000),
@@ -551,7 +551,6 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
     const firstName = data.firstName.trim().slice(0, 100);
     const lastName = data.lastName.trim().slice(0, 100);
     if (!firstName) throw new AuthError("Укажите имя.", "VALIDATION");
-    if (!lastName) throw new AuthError("Укажите фамилию.", "VALIDATION");
     const published = getPublishedTrainer(data.slug);
     const picked = trainerSportsFromSlugs(data.sportSlugs);
     if (picked.slugs.length > MAX_TRAINER_SPORTS) {

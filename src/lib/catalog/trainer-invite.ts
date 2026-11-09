@@ -30,7 +30,6 @@ const MISSING_LINES: Array<{ key: string; line: string; empty: (facts: InvitePro
   { key: "experience", line: "стаж", empty: (facts) => facts.experienceYears < 1 },
   { key: "format", line: "формат занятий", empty: (facts) => facts.formats < 1 },
   { key: "audience", line: "с кем ты работаешь", empty: (facts) => facts.audiences < 1 },
-  { key: "lastName", line: "фамилия", empty: (facts) => !facts.lastName.trim() },
 ];
 
 function hasPlace(facts: InviteProfileFacts) {
