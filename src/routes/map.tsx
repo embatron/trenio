@@ -938,7 +938,7 @@ const PAGE_CSS = `
 .map-people .trainer-card__body { gap: 4px; padding: 10px 10px 12px; }
 .map-people .trainer-card__name { font-size: 13px; line-height: 1.15; letter-spacing: 0; }
 .map-people .trainer-name { flex-direction: column; align-items: flex-start; gap: 0; }
-.map-people .trainer-card__sport { font-size: 12px; line-height: 1.3; }
+.map-people .trainer-card__sport { font-size: var(--fs-caption); line-height: 1.3; font-weight: var(--fw-body); }
 .map-people .trainer-card__price { font-size: 13px; }
 .map-people .trainer-card__footer { margin-top: 0; padding-top: 8px; }
 .map-people .trainer-card__actions { top: 2px; right: 2px; gap: 0; }

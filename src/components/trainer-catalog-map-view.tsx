@@ -584,7 +584,7 @@ const MAP_VIEW_CSS = `
   font-size: 13px; line-height: 1.15; letter-spacing: 0; font-weight: var(--fw-title);
 }
 .catalog-map__copy .trainer-name__line { overflow: visible; text-overflow: clip; white-space: normal; overflow-wrap: break-word; }
-.catalog-map__sport { color: var(--muted); font-size: 12px; line-height: 1.3; }
+.catalog-map__sport { color: var(--muted); font-size: var(--fs-caption); line-height: 1.3; font-weight: var(--fw-body); }
 .catalog-map__where, .catalog-map__more { margin: 0; padding: 0 6px 2px; color: var(--muted); font-size: 12px; line-height: 1.3; }
 .catalog-map__price { font-size: 13px; font-weight: var(--fw-title); color: var(--dark); }
 `;
