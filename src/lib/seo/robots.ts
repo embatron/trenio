@@ -6,6 +6,7 @@ const PRIVATE_PREFIXES = [
   "/account",
   "/me",
   "/auth",
+  "/join/account",
   "/trainer-admin",
   "/trainers/claim",
   "/mail",

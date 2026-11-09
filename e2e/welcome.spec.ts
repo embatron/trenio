@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "./fixtures";
 
-import { deleteWelcome, readWelcomePhones, waitForJournal } from "./journal";
+import { deleteWelcome, waitForJournal } from "./journal";
 
 test.describe.configure({ mode: "serial" });
 
@@ -87,86 +87,21 @@ test("trainer welcome logs a honeypot denial and a handle without the message", 
   expect(await pageErrors(page)).toEqual([]);
 });
 
-test("trainer welcome without Instagram logs the Telegram name", async ({ page }) => {
-  test.setTimeout(45_000);
-  const telegram = `e2etg${Date.now().toString(36)}`;
-
+test("no Instagram opens the trainer account form", async ({ page }) => {
   await openWelcome(page);
-  await page.getByRole("button", { name: "У меня нет Instagram" }).click();
-  await expect(page.getByRole("heading", { name: "Как с тобой связаться" })).toBeVisible();
-  await expect(page.getByPlaceholder("@имя или ссылка")).toHaveCount(0);
-
-  await page.getByRole("button", { name: "Отправить" }).click();
-  await expect(page.getByText("Оставь Telegram или номер телефона.")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Спасибо" })).toHaveCount(0);
-
-  const name = page.getByPlaceholder("@имя или t.me/…");
-  await page.waitForFunction(() => {
-    const input = document.querySelector('input[placeholder="@имя или t.me/…"]');
-    return !!input && Object.keys(input).some((key) => key.startsWith("__reactFiber") || key.startsWith("__reactProps"));
-  });
-  await name.pressSequentially(telegram);
-  await expect(name).toHaveValue(telegram);
-  await page.getByRole("button", { name: "Отправить" }).click();
-  await expect(page.getByRole("heading", { name: "Спасибо" })).toBeVisible();
-  await expect(page.locator("body")).not.toContainText(telegram);
-
-  try {
-    const saved = await waitForJournal(["--action", "form.welcome", "--target", telegram, "--hours", "1"], (report) =>
-      report.rows.some((row) => row.outcome === "success" && row.target === telegram),
-    );
-    const row = saved.rows.find((item) => item.outcome === "success" && item.target === telegram);
-    expect(row?.message).toBe("Заявка тренера принята.");
-    expect(row?.route).toBe("/join/trainer");
-    expect(row?.context).toEqual({ channel: "other" });
-    expect(JSON.stringify(row)).not.toContain("+375");
-  } finally {
-    await deleteWelcome(telegram, "telegram");
-  }
-
-  expect(await pageErrors(page)).toEqual([]);
-});
-
-test("trainer welcome with only a phone logs the masked number", async ({ page }) => {
-  test.setTimeout(45_000);
-  const formatted = "+375 29 123-45-67";
-  const masked = "375*******67";
-
-  await openWelcome(page);
-  await page.getByRole("button", { name: "У меня нет Instagram" }).click();
-  const phone = page.locator("form.welcome-card input[name=phone]");
-  await page.waitForFunction(() => {
-    const input = document.querySelector("form.welcome-card input[name=phone]");
-    return !!input && Object.keys(input).some((key) => key.startsWith("__reactFiber") || key.startsWith("__reactProps"));
-  });
-  await phone.click();
-  await phone.pressSequentially("291234567");
-  await expect(phone).toHaveValue(formatted);
-  await page.getByRole("button", { name: "Отправить" }).click();
-  await expect(page.getByRole("heading", { name: "Спасибо" })).toBeVisible();
-  await expect(page.locator("body")).not.toContainText(formatted);
-
-  try {
-    const saved = await waitForJournal(["--action", "form.welcome", "--subject", masked, "--hours", "1"], (report) =>
-      report.rows.some((row) => row.subject === masked && row.target === null),
-    );
-    const row = saved.rows.find((item) => item.subject === masked && item.target === null);
-    expect(row?.message).toBe("Заявка тренера принята.");
-    expect(row?.route).toBe("/join/trainer");
-    expect(row?.context).toEqual({ channel: "other" });
-    expect(JSON.stringify(row)).not.toContain("123-45-67");
-    expect(JSON.stringify(row)).not.toContain("+375");
-    expect(await readWelcomePhones(formatted)).toEqual([formatted]);
-  } finally {
-    await deleteWelcome(formatted, "phone");
-  }
-
+  await expect(page.getByRole("link", { name: "Я сделаю свой аккаунт без Instagram" })).toHaveCount(0);
+  await page.getByRole("link", { name: "У меня нет Instagram" }).click();
+  await expect(page).toHaveURL(/\/join\/account$/);
+  await expect(page.getByRole("heading", { name: "Аккаунт без Instagram" })).toBeVisible();
+  await expect(page.getByLabel("Имя")).toBeVisible();
+  await expect(page.getByLabel("Фамилия")).toBeVisible();
+  await expect(page.getByLabel("Email")).toBeVisible();
   expect(await pageErrors(page)).toEqual([]);
 });
 
 test("trainer welcome refuses a Belarus landline", async ({ page }) => {
   await openWelcome(page);
-  await page.getByRole("button", { name: "У меня нет Instagram" }).click();
+  await page.getByPlaceholder("@имя или ссылка").fill("e2elandline");
   const phone = page.locator("form.welcome-card input[name=phone]");
   await page.waitForFunction(() => {
     const input = document.querySelector("form.welcome-card input[name=phone]");

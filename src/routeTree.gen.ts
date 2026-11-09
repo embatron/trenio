@@ -42,6 +42,7 @@ import { Route as MeMessagesRouteImport } from './routes/me.messages'
 import { Route as MeFavoritesRouteImport } from './routes/me.favorites'
 import { Route as MeContactsRouteImport } from './routes/me.contacts'
 import { Route as JoinTrainerRouteImport } from './routes/join.trainer'
+import { Route as JoinAccountRouteImport } from './routes/join.account'
 import { Route as HiCodeRouteImport } from './routes/hi.$code'
 import { Route as ClubsSlugRouteImport } from './routes/clubs.$slug'
 import { Route as CitySlugRouteImport } from './routes/city.$slug'
@@ -264,6 +265,11 @@ const MeContactsRoute = MeContactsRouteImport.update({
 const JoinTrainerRoute = JoinTrainerRouteImport.update({
   id: '/join/trainer',
   path: '/join/trainer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JoinAccountRoute = JoinAccountRouteImport.update({
+  id: '/join/account',
+  path: '/join/account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HiCodeRoute = HiCodeRouteImport.update({
@@ -612,6 +618,7 @@ export interface FileRoutesByFullPath {
   '/city/$slug': typeof CitySlugRouteWithChildren
   '/clubs/$slug': typeof ClubsSlugRoute
   '/hi/$code': typeof HiCodeRouteWithChildren
+  '/join/account': typeof JoinAccountRoute
   '/join/trainer': typeof JoinTrainerRoute
   '/me/contacts': typeof MeContactsRoute
   '/me/favorites': typeof MeFavoritesRoute
@@ -698,6 +705,7 @@ export interface FileRoutesByTo {
   '/category/$slug': typeof CategorySlugRoute
   '/clubs/$slug': typeof ClubsSlugRoute
   '/hi/$code': typeof HiCodeRouteWithChildren
+  '/join/account': typeof JoinAccountRoute
   '/join/trainer': typeof JoinTrainerRoute
   '/me/contacts': typeof MeContactsRoute
   '/me/favorites': typeof MeFavoritesRoute
@@ -791,6 +799,7 @@ export interface FileRoutesById {
   '/city/$slug': typeof CitySlugRouteWithChildren
   '/clubs/$slug': typeof ClubsSlugRoute
   '/hi/$code': typeof HiCodeRouteWithChildren
+  '/join/account': typeof JoinAccountRoute
   '/join/trainer': typeof JoinTrainerRoute
   '/me/contacts': typeof MeContactsRoute
   '/me/favorites': typeof MeFavoritesRoute
@@ -886,6 +895,7 @@ export interface FileRouteTypes {
     | '/city/$slug'
     | '/clubs/$slug'
     | '/hi/$code'
+    | '/join/account'
     | '/join/trainer'
     | '/me/contacts'
     | '/me/favorites'
@@ -972,6 +982,7 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/clubs/$slug'
     | '/hi/$code'
+    | '/join/account'
     | '/join/trainer'
     | '/me/contacts'
     | '/me/favorites'
@@ -1064,6 +1075,7 @@ export interface FileRouteTypes {
     | '/city/$slug'
     | '/clubs/$slug'
     | '/hi/$code'
+    | '/join/account'
     | '/join/trainer'
     | '/me/contacts'
     | '/me/favorites'
@@ -1145,6 +1157,7 @@ export interface RootRouteChildren {
   CitySlugRoute: typeof CitySlugRouteWithChildren
   ClubsSlugRoute: typeof ClubsSlugRoute
   HiCodeRoute: typeof HiCodeRouteWithChildren
+  JoinAccountRoute: typeof JoinAccountRoute
   JoinTrainerRoute: typeof JoinTrainerRoute
   TrainersSlugRoute: typeof TrainersSlugRoute
   TrainersReviseRoute: typeof TrainersReviseRoute
@@ -1393,6 +1406,13 @@ declare module '@tanstack/react-router' {
       path: '/join/trainer'
       fullPath: '/join/trainer'
       preLoaderRoute: typeof JoinTrainerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/join/account': {
+      id: '/join/account'
+      path: '/join/account'
+      fullPath: '/join/account'
+      preLoaderRoute: typeof JoinAccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hi/$code': {
@@ -2057,6 +2077,7 @@ const rootRouteChildren: RootRouteChildren = {
   CitySlugRoute: CitySlugRouteWithChildren,
   ClubsSlugRoute: ClubsSlugRoute,
   HiCodeRoute: HiCodeRouteWithChildren,
+  JoinAccountRoute: JoinAccountRoute,
   JoinTrainerRoute: JoinTrainerRoute,
   TrainersSlugRoute: TrainersSlugRoute,
   TrainersReviseRoute: TrainersReviseRoute,

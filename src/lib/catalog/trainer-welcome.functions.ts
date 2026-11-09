@@ -1,13 +1,25 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
+import { eq, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { clientIpFromHeaders } from "@/auth/request-meta";
+import { readSessionToken } from "@/auth/session";
+import { getSessionUserFromToken } from "@/auth/service";
 import { maskPhone, writeLog } from "@/lib/log/logger";
 import { consumeRateLimit, RATE_LIMITED_MESSAGE } from "@/auth/rate-limit";
 import { getDb } from "@/db";
-import { trainerWelcomes } from "@/db/schema";
-import { optionalBelarusPhone, parseInstagramHandle, parseTelegramHandle } from "@/lib/catalog/trainer-welcome";
+import { trainerProfiles, trainerWelcomes, users } from "@/db/schema";
+import { ensureLocalDoorCode } from "@/lib/catalog/trainer-outreach";
+import { instagramProfileSlug } from "@/lib/catalog/trainer-slugs";
+import {
+  knownWelcomeDestination,
+  ownerLoginEmail,
+  optionalBelarusPhone,
+  parseInstagramHandle,
+  parseTelegramHandle,
+  type TrainerCardStatus,
+} from "@/lib/catalog/trainer-welcome";
 import { renderLetter } from "@/lib/mail/letter";
 import { sendMail } from "@/lib/mail/send.server";
 import { SITE_EMAIL } from "@/lib/seo/site";
@@ -24,7 +36,116 @@ export type TrainerWelcomeChannel = "instagram" | "other";
 
 export type TrainerWelcomeResult =
   | { ok: true; channel: TrainerWelcomeChannel }
+  | { ok: true; channel: "instagram"; existing: "draft"; door: string }
+  | {
+      ok: true;
+      channel: "instagram";
+      existing: "account";
+      status: TrainerCardStatus;
+      email: string | null;
+      slug: string;
+      hasAccount: boolean;
+      /** Set only when the signed-in person already owns this card. */
+      home: "/me" | null;
+    }
   | { ok: false; message: string };
+
+const DOOR_PATH = /^\/hi\/[23456789abcdefghijkmnpqrstuvwxyz]{8}$/;
+
+async function viewerId(): Promise<string | null> {
+  try {
+    const token = readSessionToken();
+    if (!token) return null;
+    const viewer = await getSessionUserFromToken(token);
+    return viewer?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function knownInstagram(handle: string, viewer: string | null): Promise<TrainerWelcomeResult | null> {
+  const needle = instagramProfileSlug(handle);
+  if (!needle) return null;
+  const rows = await getDb()
+    .select({
+      id: trainerProfiles.id,
+      slug: trainerProfiles.slug,
+      handle: trainerProfiles.instagramHandle,
+      status: trainerProfiles.status,
+      previewToken: trainerProfiles.previewToken,
+      ownerUserId: trainerProfiles.ownerUserId,
+      accountEmail: users.email,
+    })
+    .from(trainerProfiles)
+    .leftJoin(users, eq(users.id, trainerProfiles.ownerUserId))
+    .where(or(
+      sql`lower(${trainerProfiles.instagramHandle}) = ${needle}`,
+      sql`lower(split_part(split_part(regexp_replace(${trainerProfiles.instagramUrl}, '^https?://(www\\.)?instagram\\.com/', '', 'i'), '/', 1), '?', 1)) = ${needle}`,
+    ))
+    .limit(2);
+  const row = rows.find((item) => item.handle.toLowerCase() === needle) ?? rows[0];
+  if (!row) return null;
+
+  const hasOwner = Boolean(row.ownerUserId);
+  const destination = knownWelcomeDestination({
+    status: row.status,
+    hasOwner,
+    viewerOwns: Boolean(viewer && row.ownerUserId === viewer),
+  });
+  if (destination === "door") {
+    const code = await ensureLocalDoorCode(row.id, row.previewToken);
+    const door = code ? `/hi/${code}` : "";
+    if (!DOOR_PATH.test(door)) {
+      await writeLog({
+        level: "error",
+        domain: "form",
+        action: "form.welcome",
+        outcome: "failure",
+        message: "Короткая ссылка черновика не открылась.",
+        target: row.slug,
+        route: "/join/trainer",
+        context: { channel: "instagram", existing: "draft" },
+      });
+      return { ok: false, message: "Не получилось открыть профиль. Попробуйте ещё раз." };
+    }
+    await writeLog({
+      level: "info",
+      domain: "form",
+      action: "form.welcome",
+      outcome: "success",
+      message: "Заявка открыла уже собранный черновик.",
+      target: row.slug,
+      route: "/join/trainer",
+      context: { channel: "instagram", existing: "draft" },
+    });
+    return { ok: true, channel: "instagram", existing: "draft", door };
+  }
+
+  const email = destination === "login" || destination === "cabinet" ? ownerLoginEmail(row.ownerUserId, row.accountEmail) : null;
+  await writeLog({
+    level: "info",
+    domain: "form",
+    action: "form.welcome",
+    outcome: "success",
+    message: destination === "cabinet"
+      ? "Заявка открыла кабинет владельца."
+      : "Заявка узнала уже существующий профиль.",
+    subject: email,
+    target: row.slug,
+    route: "/join/trainer",
+    context: { channel: "instagram", existing: destination, status: row.status },
+  });
+  return {
+    ok: true,
+    channel: "instagram",
+    existing: "account",
+    status: row.status,
+    email,
+    slug: row.slug,
+    hasAccount: hasOwner,
+    home: destination === "cabinet" ? "/me" : null,
+  };
+}
 
 const WELCOME_MAIL_FAILED = "Не получилось отправить. Попробуйте ещё раз.";
 
@@ -84,6 +205,12 @@ export const submitTrainerWelcomeFn = createServerFn({ method: "POST" })
       const phone = optionalBelarusPhone(data.phone);
       if (phone.error) return { ok: false, message: "Укажи мобильный номер РБ: +375 25/29/33/44 …" };
 
+      const instagram = parseInstagramHandle(data.instagram);
+      if (instagram) {
+        const known = await knownInstagram(instagram, await viewerId());
+        if (known) return known;
+      }
+
       if (data.channel === "other") {
         if (!telegram.telegram && !phone.phone) {
           return { ok: false, message: "Оставь Telegram или номер телефона." };
@@ -123,7 +250,6 @@ export const submitTrainerWelcomeFn = createServerFn({ method: "POST" })
         return { ok: true, channel: "other" };
       }
 
-      const instagram = parseInstagramHandle(data.instagram);
       if (!instagram) {
         return { ok: false, message: "Укажи имя в Instagram или ссылку на профиль." };
       }

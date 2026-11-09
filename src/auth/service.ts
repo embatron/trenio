@@ -33,6 +33,7 @@ import { acceptTelegramContact, acceptTelegramWebApp, acceptTelegramWidget } fro
 import { authMac, authMacEqual } from "@/auth/otp";
 import { consumeStepUpGrant } from "@/auth/step-up";
 import { isSmsByEnabled, sendQuickSms } from "@/auth/sms";
+import { openManualTrainerAccountSafely } from "@/lib/catalog/trainer-account";
 import {
   planTrainerPhoneOnly,
   planTrainerTelegramConfirm,
@@ -619,6 +620,7 @@ export async function confirmSignupEmailToken(
   const userId = await verifyEmailToken(rawToken);
   const user = await findUserById(userId);
   if (!user) throw new AuthError("Ссылка недействительна или устарела.", "INVALID_TOKEN");
+  if (user.lastSignupIntent === "trainer_create") await openManualTrainerAccountSafely(user);
   return beginLogin(user, meta);
 }
 

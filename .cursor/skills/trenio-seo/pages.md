@@ -17,6 +17,7 @@ JSON-LD for each row comes from the helper in [markup.md](markup.md). A `noindex
 | Map | `/map` | yes | `Тренеры на карте Беларуси \| Я ищу тренера на trenio.by` |
 | Map with query | `/map?sports=` or `?city=` | no | canonical stays `/map` |
 | Join | `/join/trainer` | yes | `Стать тренером — бесплатная карточка \| Я ищу тренера на trenio.by`. H1 stays `Привет!` |
+| Trainer account | `/join/account` | no | Manual cabinet without Instagram. `Disallow` in `robots.txt` |
 | About, contacts, offer, privacy | those paths | yes | the H1, then `\| Я ищу тренера на trenio.by` |
 | Clubs index | `/clubs` | no, until a club is published | — |
 | Club | `/clubs/{slug}` | yes, when the record exists | `{name} — клуб в {city} \| Я ищу тренера на trenio.by` |

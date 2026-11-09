@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { trainerProfiles } from "@/db/schema";
@@ -17,6 +17,46 @@ function shortCode() {
   let code = "";
   for (let i = 0; i < 8; i += 1) code += DOOR_ALPHABET[bytes[i] % DOOR_ALPHABET.length];
   return code;
+}
+
+const DOOR_CODE = /^[23456789abcdefghijkmnpqrstuvwxyz]{8}$/;
+
+export function isDoorCode(value: string | null | undefined): value is string {
+  return typeof value === "string" && DOOR_CODE.test(value);
+}
+
+/**
+ * The short link this database can open. A usable code stays.
+ * A missing or legacy code is replaced here and is not pushed to the other database.
+ */
+export async function ensureLocalDoorCode(profileId: string, current: string | null): Promise<string | null> {
+  if (isDoorCode(current)) return current;
+  const db = getDb();
+  let token = current;
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const next = shortCode();
+    try {
+      const [updated] = await db
+        .update(trainerProfiles)
+        .set({ previewToken: next, updatedAt: new Date() })
+        .where(and(
+          eq(trainerProfiles.id, profileId),
+          token ? eq(trainerProfiles.previewToken, token) : isNull(trainerProfiles.previewToken),
+        ))
+        .returning({ previewToken: trainerProfiles.previewToken });
+      if (isDoorCode(updated?.previewToken)) return updated.previewToken;
+    } catch {
+      /* another request took this code */
+    }
+    const [fresh] = await db
+      .select({ previewToken: trainerProfiles.previewToken })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.id, profileId))
+      .limit(1);
+    if (isDoorCode(fresh?.previewToken)) return fresh.previewToken;
+    token = fresh?.previewToken ?? null;
+  }
+  return null;
 }
 
 export function doorUrl(code: string) {

@@ -174,13 +174,15 @@ function guardTelegram(meta: LoginMeta) {
 const SIGNUP_EMAIL_MESSAGE =
   "Если этот адрес можно использовать, мы отправили письмо со ссылкой. Откройте его и подтвердите почту.";
 
-async function sendSignupLetter(email: string, url: string | null, notice: boolean) {
+async function sendSignupLetter(email: string, url: string | null, notice: boolean, trainer = false) {
   const letter = renderLetter({
     service: true,
-    title: notice ? "Попытка регистрации" : "Подтвердите почту",
+    title: notice ? "Попытка регистрации" : trainer ? "Кабинет тренера" : "Подтвердите почту",
     lead: notice
       ? "Кто-то указал этот адрес при регистрации на trenio.by. Если это были не вы, ничего делать не нужно."
-      : "Остался один шаг, чтобы пользоваться trenio.by.",
+      : trainer
+        ? "Остался один шаг, чтобы открыть кабинет тренера."
+        : "Остался один шаг, чтобы пользоваться trenio.by.",
     action: url ? { href: url, label: "Подтвердить почту" } : undefined,
     note: notice ? undefined : "Ссылка действует сутки. Если вы не регистрировались, не открывайте её.",
   });
@@ -195,6 +197,7 @@ async function sendSignupLetter(email: string, url: string | null, notice: boole
 export async function signupWithEmail(
   input: { email: string; password: string },
   meta: LoginMeta,
+  profile: { firstName?: string; lastName?: string; intent?: "client_signup" | "trainer_create" } = {},
 ): Promise<{ message: string }> {
   if (honeypotTripped(meta)) return { message: SIGNUP_EMAIL_MESSAGE };
   const email = normalizeEmail(input.email);
@@ -221,25 +224,37 @@ export async function signupWithEmail(
 
   try {
     if (decision === "create") {
+      const trainer = profile.intent === "trainer_create";
       const [created] = await db
         .insert(users)
         .values({
           email,
           passwordHash,
           passwordSetAt: new Date(),
-          firstName: PLACEHOLDER_NAME,
-          lastName: null,
+          firstName: cleanName(profile.firstName) || PLACEHOLDER_NAME,
+          lastName: cleanName(profile.lastName) || null,
           status: "pending_verification",
-          lastSignupIntent: "client_signup",
+          lastSignupIntent: trainer ? "trainer_create" : "client_signup",
         })
         .returning();
       await db.insert(userRoles).values({ userId: created.id, role: "user" });
       const proof = await issueSignupEmailProof(created.id);
-      await sendSignupLetter(email, proof.url, false);
+      await sendSignupLetter(email, proof.url, false, trainer);
     } else if (decision === "refresh" && existing) {
-      await db.update(users).set({ passwordHash, passwordSetAt: new Date(), needsPassword: false, updatedAt: new Date() }).where(eq(users.id, existing.id));
+      const trainer = profile.intent === "trainer_create";
+      await db.update(users).set({
+        passwordHash,
+        passwordSetAt: new Date(),
+        needsPassword: false,
+        ...(trainer ? {
+          firstName: cleanName(profile.firstName) || existing.firstName,
+          lastName: cleanName(profile.lastName) || existing.lastName,
+          lastSignupIntent: "trainer_create" as const,
+        } : {}),
+        updatedAt: new Date(),
+      }).where(eq(users.id, existing.id));
       const proof = await issueSignupEmailProof(existing.id);
-      await sendSignupLetter(email, proof.url, false);
+      await sendSignupLetter(email, proof.url, false, trainer);
     } else {
       await sendSignupLetter(email, null, true);
     }

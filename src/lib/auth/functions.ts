@@ -1004,7 +1004,11 @@ export const confirmSignupEmailFn = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     try {
       const session = await confirmSignupEmailToken(data.token, getRequestMeta());
-      return finishLogin(session, true, "auth.signup.confirm", "Почта подтверждена.");
+      const result = await finishLogin(session, true, "auth.signup.confirm", "Почта подтверждена.");
+      if ("user" in result && result.user?.lastSignupIntent === "trainer_create" && result.redirectTo === "/me") {
+        return { ...result, redirectTo: "/me/profile" };
+      }
+      return result;
     } catch (error) {
       rethrowAuth(error, "auth.signup.confirm");
     }

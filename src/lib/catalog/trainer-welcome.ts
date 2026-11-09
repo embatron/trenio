@@ -1,3 +1,4 @@
+import { isPendingSignupEmail, isReservedAccountEmail } from "@/lib/auth/pending-email";
 import { storedBelarusPhone, validateBelarusMobile } from "@/lib/auth/phone";
 
 /** The same invitation everywhere a trainer is asked to join. */
@@ -24,6 +25,45 @@ export function parseTelegramHandle(raw: string): string | null {
   value = value.replace(/^@+/, "").split(/[/?#\s]/)[0] ?? "";
   if (!/^[A-Za-z][A-Za-z0-9_]{4,31}$/.test(value)) return null;
   return value;
+}
+
+export type TrainerCardStatus = "draft" | "published" | "hidden" | "archived";
+
+export type KnownWelcomeDestination = "door" | "cabinet" | "login" | "profile" | "closed";
+
+/**
+ * Draft without an owner continues through the short link.
+ * The signed-in owner goes to the cabinet.
+ * Another account asks for login.
+ * A published card with no account opens the public page.
+ * A hidden or archived card with no account does not pretend there is a login.
+ */
+export function knownWelcomeDestination(input: {
+  status: TrainerCardStatus;
+  hasOwner: boolean;
+  viewerOwns: boolean;
+}): KnownWelcomeDestination {
+  if (input.viewerOwns && input.hasOwner) return "cabinet";
+  if (input.status === "draft" && !input.hasOwner) return "door";
+  if (input.hasOwner) return "login";
+  if (input.status === "published") return "profile";
+  return "closed";
+}
+
+/** Address of the account that owns the card. A card email without an owner is not a login. */
+export function ownerLoginEmail(
+  ownerUserId: string | null,
+  accountEmail: string | null | undefined,
+): string | null {
+  if (!ownerUserId) return null;
+  return publicMailbox(accountEmail);
+}
+
+function publicMailbox(raw: string | null | undefined): string | null {
+  const email = (raw ?? "").trim().toLowerCase();
+  if (!email || isPendingSignupEmail(email) || isReservedAccountEmail(email)) return null;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null;
+  return email;
 }
 
 /** A Belarus mobile, or nothing when the field still holds only `+375`. */
