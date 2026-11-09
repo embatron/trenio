@@ -18,7 +18,7 @@ export type DraftFile = {
   headline: string;
   bio: string;
   about?: string[];
-  pinned?: Array<{ url: string; caption: string }>;
+  pinned?: Array<{ url: string; caption: string; imageText?: string[] }>;
   sports?: ImportedTrainerDraft["sports"];
   primarySport?: ImportedTrainerDraft["primarySport"];
   city: string;
@@ -72,11 +72,12 @@ export function draftFileToImported(draft: DraftFile): ImportedTrainerDraft {
     sourceBio: [
       draft.sourceBio,
       ...(draft.sourceAbout ?? []),
+      ...(draft.pinned ?? []).flatMap((post) => post.imageText ?? []),
       draft.sourceThreads ? `Threads. ${draft.sourceThreads}` : "",
       draft.operatorNotes ? `Заметка. ${draft.operatorNotes}` : "",
     ].map((part) => (part || "").trim()).filter(Boolean).join("\n\n") || draft.bio,
     about: draft.about ?? [],
-    pinned: draft.pinned ?? [],
+    pinned: (draft.pinned ?? []).map((post) => ({ url: post.url, caption: post.caption })),
     sports: draft.sports ?? [],
     primarySport: draft.primarySport ?? null,
     audiences: draft.audiences?.length ? draft.audiences : published?.audiences?.length ? published.audiences : ["adult"],

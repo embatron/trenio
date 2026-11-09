@@ -184,10 +184,12 @@ async () => {
     if ((kind !== "p" && kind !== "reel") || owner.toLowerCase() !== username.toLowerCase() || seenPosts.has(href)) continue;
     seenPosts.add(href);
     const tile = tileRoot(anchor);
-    const pinned = [...tile.querySelectorAll("svg, [aria-label], [title]")].some((el) =>
-      /pin|закреп/i.test(`${el.getAttribute("aria-label") || ""} ${el.getAttribute("title") || ""}`),
-    );
-    posts.push({ href, pinned });
+    const labels = [...tile.querySelectorAll("svg, [aria-label], [title]")]
+      .map((el) => `${el.getAttribute("aria-label") || ""} ${el.getAttribute("title") || ""}`)
+      .join(" ");
+    const pinned = /pin|закреп/i.test(labels);
+    const reel = kind === "reel" || /reel|clip|видео|клип/i.test(labels);
+    posts.push({ href, pinned, kind: reel ? "reel" : "photo" });
   }
   const pinnedPosts = posts.filter((post) => post.pinned).slice(0, 3);
   const profilePictures = headerImages.filter((image) => /profile picture|фото профиля/i.test(image.alt));

@@ -9,8 +9,13 @@ import sharp from "sharp";
 import { tinifyImage } from "../../../../src/lib/images/tinify.ts";
 import { formatBelarusPhone } from "../../../../src/lib/auth/phone.ts";
 import { inferTrainerGender } from "../../../../src/lib/catalog/trainer-gender.ts";
+import { foldYo, prepareSportText, sportAliasRegex } from "../../../../src/lib/catalog/sport-alias.ts";
 import { TOP_LEVEL_SPORT_CATEGORIES } from "../../../../src/lib/catalog/sport-taxonomy.ts";
 import { trainerPersonKey } from "../../../../src/lib/catalog/trainer-slugs.ts";
+import { AuthError } from "../../../../src/lib/auth/errors.ts";
+import { isSpecificAddress } from "../../../../src/lib/geo/schemas.ts";
+import { resolveTrainingPlaces } from "../../../../src/lib/geo/resolve.ts";
+import { logCaught } from "../../../../src/lib/log/logger.ts";
 import { closeDb } from "../../../../src/db/index.ts";
 import { duplicateTrainerSlug } from "../../../../src/db/trainer-profiles.ts";
 
@@ -29,6 +34,8 @@ type PinnedPost = {
   ogDescription?: string;
   heading?: string;
   visibleText?: string;
+  /** Words read off a pinned photo: about the trainer, the session, or the facts. */
+  imageText?: string[];
   photos?: RawPhoto[];
 };
 
@@ -81,7 +88,7 @@ type ResolvedProfile = {
   unrelatedSports?: SportRole[];
   primarySportSlug?: string;
   city?: string;
-  /** Street or hall, copied as printed. Not geocoded. */
+  /** Short street or hall, verbatim. The script geocodes it and stores the street. */
   address?: string;
   priceFrom?: number | null;
   phone?: string;
@@ -128,6 +135,7 @@ type SportHit = {
   label: string;
   titleGenitive: string;
   alias: string;
+  child: boolean;
 };
 
 const ROOT = process.cwd();
@@ -176,7 +184,13 @@ function corpusOf(raw: RawExtract): string {
     raw.headerText || "",
     ...(raw.aboutFrames || []),
     ...(raw.highlights || []),
-    ...pins.flatMap((post) => [post.ogDescription || "", post.heading || "", post.visibleText || "", post.caption || ""]),
+    ...pins.flatMap((post) => [
+      post.ogDescription || "",
+      post.heading || "",
+      post.visibleText || "",
+      post.caption || "",
+      ...(post.imageText || []),
+    ]),
   ].join("\n");
 }
 
@@ -259,57 +273,36 @@ function givenNamesBeside(corpus: string, lastName: string): string[] {
 const HOBBY_CUE = /занима(юсь|ется|лась|лся)|увлека(юсь|ется)|хожу в|для себя|хобби|практикую|испытал[аи]? на себе|в свой тренировочный план/iu;
 const COACH_CUE = /тренер|тренирую(?!сь)|тренирует|преподава|инструктор|обучаю|веду (?:занятия|группы|тренировки)|coach\b|trainer\b/iu;
 
-function foldYo(value: string): string {
-  return value.replace(/ё/gi, (char) => (char === "Ё" ? "Е" : "е"));
-}
-
-function wordPattern(word: string): string {
-  const lower = foldYo(word.toLowerCase());
-  if (/(?:ий|ый|ой|ая|яя|ое|ее)$/u.test(lower) && lower.length > 4) {
-    return `${lower.slice(0, -2)}[а-яе]{1,6}`;
-  }
-  if (/й$/u.test(lower) && lower.length <= 5) {
-    return `${lower.slice(0, -1)}[йюяе][а-яе]{0,2}`;
-  }
-  if (/[ая]$/u.test(lower) && lower.length > 4) {
-    return `${lower.slice(0, -1)}[а-яе]{1,4}`;
-  }
-  return `${lower}[а-яе]{0,3}`;
-}
-
-function aliasRegex(alias: string): RegExp {
-  const parts = alias.trim().toLowerCase().split(/\s+/).filter(Boolean).map(wordPattern);
-  return new RegExp(`(?<![\\p{L}])${parts.join("[\\s-]*")}(?![\\p{L}])`, "iu");
-}
-
 function catalogPhrases(): SportHit[] {
   const phrases: SportHit[] = [];
   for (const category of TOP_LEVEL_SPORT_CATEGORIES) {
     const parents = [
-      { slug: category.slug, parentSlug: category.slug, label: category.label, titleGenitive: category.titleGenitive, aliases: [category.label, ...(category.aliases || [])] },
+      { slug: category.slug, parentSlug: category.slug, label: category.label, titleGenitive: category.titleGenitive, aliases: [category.label, ...(category.aliases || [])], child: false },
       ...category.children.map((child) => ({
         slug: child.slug,
         parentSlug: category.slug,
         label: child.label,
         titleGenitive: child.titleGenitive || child.label,
         aliases: [child.label, ...(child.aliases || [])],
+        child: true,
       })),
     ];
     for (const phrase of parents) {
       for (const alias of phrase.aliases) {
         if (alias.trim().length < 3) continue;
-        phrases.push({ slug: phrase.slug, parentSlug: phrase.parentSlug, label: phrase.label, titleGenitive: phrase.titleGenitive, alias });
+        phrases.push({ slug: phrase.slug, parentSlug: phrase.parentSlug, label: phrase.label, titleGenitive: phrase.titleGenitive, alias, child: phrase.child });
       }
     }
   }
   return phrases;
 }
 
-function matchSports(text: string): SportHit[] {
-  const folded = foldYo(text);
+function matchSports(text: string, settlements: string[]): SportHit[] {
+  const aliases = catalogPhrases().map((phrase) => phrase.alias);
+  const folded = foldYo(prepareSportText(text, settlements, aliases));
   const found: Array<SportHit & { start: number; end: number }> = [];
   for (const phrase of catalogPhrases()) {
-    const pattern = new RegExp(aliasRegex(phrase.alias).source, "giu");
+    const pattern = new RegExp(sportAliasRegex(phrase.alias).source, "giu");
     for (const match of folded.matchAll(pattern)) {
       const start = match.index ?? 0;
       found.push({ ...phrase, start, end: start + match[0].length });
@@ -319,8 +312,8 @@ function matchSports(text: string): SportHit[] {
     const byLength = (b.end - b.start) - (a.end - a.start);
     if (byLength) return byLength;
     if (a.start !== b.start) return a.start - b.start;
-    const aSpecific = a.slug === a.parentSlug ? 1 : 0;
-    const bSpecific = b.slug === b.parentSlug ? 1 : 0;
+    const aSpecific = a.child ? 0 : 1;
+    const bSpecific = b.child ? 0 : 1;
     return aSpecific - bSpecific;
   });
   const taken: Array<{ start: number; end: number }> = [];
@@ -332,7 +325,7 @@ function matchSports(text: string): SportHit[] {
     const key = `${hit.parentSlug}/${hit.slug}`;
     if (seen.has(key)) continue;
     seen.add(key);
-    hits.push({ slug: hit.slug, parentSlug: hit.parentSlug, label: hit.label, titleGenitive: hit.titleGenitive, alias: hit.alias });
+    hits.push({ slug: hit.slug, parentSlug: hit.parentSlug, label: hit.label, titleGenitive: hit.titleGenitive, alias: hit.alias, child: hit.child });
   }
   return hits;
 }
@@ -341,9 +334,9 @@ function clausesOf(text: string): string[] {
   return text.split(/\n+|(?<=[.!?])\s+/u).map((part) => part.trim()).filter(Boolean);
 }
 
-function sportIsHobbyOnly(text: string, alias: string): boolean {
-  const pattern = aliasRegex(alias);
-  const clauses = clausesOf(foldYo(text)).filter((clause) => pattern.test(clause));
+function sportIsHobbyOnly(text: string, alias: string, settlements: string[]): boolean {
+  const pattern = sportAliasRegex(alias);
+  const clauses = clausesOf(foldYo(prepareSportText(text, settlements, [alias]))).filter((clause) => pattern.test(clause));
   return clauses.length > 0 && clauses.every((clause) => HOBBY_CUE.test(clause) && !COACH_CUE.test(clause));
 }
 
@@ -444,7 +437,7 @@ function matchExperience(text: string): number | null {
 function matchFormats(text: string): Array<"individual" | "group"> {
   const formats: Array<"individual" | "group"> = [];
   if (/индивидуальн|персональн/iu.test(text)) formats.push("individual");
-  if (/группов/iu.test(text)) formats.push("group");
+  if (/группов|в групп/iu.test(text)) formats.push("group");
   return formats;
 }
 
@@ -458,7 +451,7 @@ function matchAudiences(text: string): Array<"adult" | "kid" | "teen"> {
 }
 
 const SESSION_CUE = /тренировк|заняти|в зале|группов|индивидуальн|персональн|разминк|спарринг/iu;
-const PLACE_CUE = /улиц|проспект|пр-т|(?<![\p{L}])пр\.|переул|бульвар|проезд|площад|pushkin|пушкин/iu;
+const PLACE_CUE = /улиц|вуліц|проспект|праспект|пр-т|(?<![\p{L}])пр(?:\.|(?![\p{L}]))|(?<![\p{L}])ул(?:\.|(?![\p{L}]))|(?<![\p{L}])вул(?:\.|(?![\p{L}]))|переул|завулак|бульвар|проезд|площад|плошч|набереж|шоссе|pushkin|пушкин/iu;
 const CARD_NOISE = /[#|•·\p{Extended_Pictographic}\uFE0F]|https?:\/\/|t\.me\/|@[\p{L}\d_]/iu;
 const CARD_CTA = /директ|в\s+лс\b|подпиши|пиши(?:те)?|ссылка в шапке|для записи/iu;
 const SKIP_REASONS = new Set(["text", "logo", "flyer", "duplicate", "not-trainer", "crop", "clutter", "crowd", "back", "blur"]);
@@ -496,7 +489,7 @@ function assertCardText(rawPath: string, label: string, text: string, quotes: st
     fail(rawPath, `${label} must be plain sentences: no emoji, hashtags, links, @names, or a call to write in direct.`);
   }
   if (!/[.!?…]/.test(text)) fail(rawPath, `${label} must be sentences a person can read aloud.`);
-  if (!quotes.length) fail(rawPath, `${label} needs verbatim quotes from the biography, the about highlight, Threads, or the operator note.`);
+  if (!quotes.length) fail(rawPath, `${label} needs verbatim quotes from the biography, the about highlight, a pinned photo, Threads, or the operator note.`);
   for (const quote of quotes) {
     if (quote.trim().length < 4 || !includesNorm(corpus, quote)) {
       fail(rawPath, `${label} quote is not in the source: ${quote}`);
@@ -628,6 +621,48 @@ async function assertUniqueAccount(handle: string, slug: string, firstName: stri
   if (duplicate) fail(rawPath, `This person already has slug ${duplicate}. Update that card. Do not create a second one.`);
 }
 
+function placeQueriesOf(value: string): string[] {
+  return value.split(/\s*\|\s*|\n+/u).map(cleanLine).filter(Boolean).slice(0, 3);
+}
+
+function placeQueryWords(value: string): number {
+  return value.split(/[^\p{L}\p{N}]+/u).filter(Boolean).length;
+}
+
+function canonicalSettlement(name: string, settlements: string[]): string {
+  const folded = name.trim().toLocaleLowerCase("ru");
+  return settlements.find((item) => item.toLocaleLowerCase("ru") === folded) || "";
+}
+
+/** The street Nominatim returned. A venue name that did not resolve is dropped. A short street is kept when the map does not answer. */
+async function geocodedPlaces(
+  queries: string[],
+  city: string,
+  settlements: string[],
+): Promise<{ address: string; city: string }> {
+  const lines: string[] = [];
+  let hitCity = "";
+  for (const query of queries) {
+    try {
+      const [place] = await resolveTrainingPlaces(
+        [{ city, district: "", address: query, lat: null, lng: null }],
+        [],
+      );
+      if (place?.geocodeStatus === "ok" && isSpecificAddress(place.address)) {
+        if (!lines.includes(place.address)) lines.push(place.address);
+        if (!hitCity) hitCity = canonicalSettlement(place.city, settlements);
+        continue;
+      }
+      if (isSpecificAddress(query)) lines.push(query);
+    } catch (error) {
+      if (error instanceof AuthError) continue;
+      logCaught("geo", "geo.profile", error);
+      if (isSpecificAddress(query)) lines.push(query);
+    }
+  }
+  return { address: lines.slice(0, 3).join(" | "), city: hitCity };
+}
+
 async function saveOne(rawPath: string, settlements: string[]) {
   const raw = JSON.parse(readFileSync(rawPath, "utf8")) as RawExtract;
   if (raw.blocked) fail(rawPath, `Instagram blocked the read (${raw.blocked}). Do not invent a profile.`);
@@ -643,8 +678,11 @@ async function saveOne(rawPath: string, settlements: string[]) {
   const corpus = [pageCorpus, note].join("\n");
   const pins = (raw.pinned || []).slice(0, 3);
   if ((raw.pinned || []).length > 3) fail(rawPath, "More than 3 pinned posts were stored.");
-  const extras = (raw.extraPosts || []).slice(0, 4);
-  if ((raw.extraPosts || []).length > 4) fail(rawPath, "More than 4 other posts were stored.");
+  const extras = (raw.extraPosts || []).slice(0, 12);
+  if ((raw.extraPosts || []).length > 12) fail(rawPath, "More than 12 other photo posts were stored.");
+  for (const post of extras) {
+    if (/\/reel\//i.test(post.url || "")) fail(rawPath, "A reel is a video. Do not store it. Scroll to a still photo.");
+  }
   const threadPosts: PinnedPost[] = (raw.threads?.posts || []).map((post) => ({
     url: post.url,
     caption: post.text,
@@ -696,6 +734,9 @@ async function saveOne(rawPath: string, settlements: string[]) {
     const postSource = `${post.ogDescription || ""}\n${post.heading || ""}\n${post.visibleText || ""}`;
     if (caption && !includesNorm(postSource, caption)) fail(rawPath, `Pinned caption ${index + 1} is not in that post.`);
     if ((post.photos || []).length > 2) fail(rawPath, "A pinned post stores at most 2 photos.");
+    if (/\/reel\//i.test(post.url || "") && (post.photos || []).length) {
+      fail(rawPath, "A pinned reel is read for its caption. Do not store its video frame.");
+    }
   });
   extras.forEach((post) => {
     if ((post.photos || []).length > 2) fail(rawPath, "Another post stores at most 2 photos.");
@@ -710,26 +751,39 @@ async function saveOne(rawPath: string, settlements: string[]) {
   for (const quote of sportQuotes) {
     if (!includesNorm(corpus, quote)) fail(rawPath, `Sport quote is not in the source: ${quote}`);
   }
-  const pageEvidence = [profileSurface, ...aboutFrames, ...pins.map((post) => `${post.caption || ""}\n${post.visibleText || ""}`), threadsText].join("\n");
+  const imageText = pins.flatMap((post) => (post.imageText || []).map(cleanLine).filter(Boolean));
+  const pageEvidence = [
+    profileSurface,
+    ...aboutFrames,
+    ...imageText,
+    ...pins.map((post) => `${post.caption || ""}\n${post.visibleText || ""}`),
+    threadsText,
+  ].join("\n");
   const evidence = [pageEvidence, note].join("\n");
-  const cardCorpus = [profileSurface, ...aboutFrames, threadsText, note].join("\n");
-  const address = cleanLine(resolved.address || "");
-  if (PLACE_CUE.test(evidence) && !address) {
-    fail(rawPath, "The source names a training place. Copy that line into address. Do not put it in the card text and do not geocode it.");
+  const cardCorpus = [profileSurface, ...aboutFrames, ...imageText, threadsText, note].join("\n");
+  const placeQueries = placeQueriesOf(resolved.address || "");
+  for (const query of placeQueries) {
+    if (!includesNorm(evidence, query)) {
+      fail(rawPath, "address is not a verbatim piece of the profile, Threads, a pinned caption, a pinned image, or the operator note.");
+    }
+    if (query.length > 80 || placeQueryWords(query) > 8) {
+      fail(rawPath, "Put the street or the hall in address, not the whole sentence. The script geocodes it.");
+    }
   }
-  if (address && !includesNorm(evidence, address)) {
-    fail(rawPath, "address is not a verbatim piece of the profile, Threads, a pinned caption, or the operator note.");
+  if (PLACE_CUE.test(evidence) && placeQueries.length === 0) {
+    fail(rawPath, "The source names a training place. Put the street or the hall in address. The script geocodes it.");
   }
-  const expected = matchSports(evidence);
+  const expected = matchSports(evidence, settlements);
   const bySlug = new Map(expected.map((sport) => [sport.slug, sport]));
   const readRoles = (roles: SportRole[] | undefined, label: string) => (roles || []).map((role) => {
     const slug = cleanLine(role.slug || "");
     const quote = cleanLine(role.quote || "");
     const sport = bySlug.get(slug);
-    if (!sport) fail(rawPath, `${label} slug ${slug || "empty"} is not a sport phrase in the profile, Threads, a pinned post, or the operator note.`);
+    if (!sport) fail(rawPath, `${label} slug ${slug || "empty"} is not a sport phrase in the profile, Threads, a pinned post, a pinned image, or the operator note.`);
     if (!quote || !includesNorm(evidence, quote)) fail(rawPath, `${label} quote for ${slug} is not in the source.`);
     const aliases = catalogPhrases().filter((phrase) => phrase.slug === slug).map((phrase) => phrase.alias);
-    if (!aliases.some((alias) => aliasRegex(alias).test(foldYo(quote)))) {
+    const preparedQuote = prepareSportText(quote, settlements, aliases);
+    if (!aliases.some((alias) => sportAliasRegex(alias).test(preparedQuote))) {
       fail(rawPath, `${label} quote for ${slug} does not contain that sport.`);
     }
     return { slug, quote, sport };
@@ -741,7 +795,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
   const missingSport = expected.filter((sport) => !classified.has(sport.slug)).map((sport) => sport.label);
   if (missingSport.length) fail(rawPath, `Classify every sport phrase as coached or practiced: ${missingSport.join(", ")}.`);
   for (const role of coached) {
-    if (sportIsHobbyOnly(evidence, role.sport.alias)) {
+    if (sportIsHobbyOnly(evidence, role.sport.alias, settlements)) {
       fail(rawPath, `${role.sport.label} is only something this person does, not a sport they coach. Quote: ${role.quote}`);
     }
   }
@@ -751,7 +805,14 @@ async function saveOne(rawPath: string, settlements: string[]) {
   if (!coached.length && primarySlug) fail(rawPath, "No coached sport, so primarySportSlug stays empty.");
   const sports = coached.map((role) => role.sport);
 
-  const noteCities = matchCities(note, settlements);
+  const nameTokens = new Set(
+    [resolved.firstName, resolved.lastName]
+      .map((part) => cleanLine(part || "").toLowerCase())
+      .filter((part) => part.length >= 4),
+  );
+  let noteCities = matchCities(note, settlements);
+  const citiesBesidesTheName = noteCities.filter((name) => !nameTokens.has(name.toLowerCase()));
+  if (citiesBesidesTheName.length) noteCities = citiesBesidesTheName;
   const pageCityHits = matchCities(pageCorpus, settlements);
   const pageCued = pageCityHits.filter((name) => cityNamedAsPlace(pageCorpus, name));
   const pageCities = pageCued.length === 1 ? pageCued : pageCityHits;
@@ -764,7 +825,10 @@ async function saveOne(rawPath: string, settlements: string[]) {
   }
   const cities = noteCities.length === 1 ? noteCities : pageCities;
   const statedCity = city;
-  if (!statedCity && !address && cities.length === 0) city = "Минск";
+  const mappedPlace = await geocodedPlaces(placeQueries, statedCity, settlements);
+  let address = mappedPlace.address;
+  if (!statedCity && mappedPlace.city) city = mappedPlace.city;
+  if (!city && !address && cities.length === 0) city = "Минск";
 
   const priceInText = matchPrice(note) ?? matchPrice(pageCorpus);
   const priceFrom = resolved.priceFrom ?? null;
@@ -839,17 +903,21 @@ async function saveOne(rawPath: string, settlements: string[]) {
     fail(rawPath, `The source says «стаж ${vagueExperience[1]}» without saying it is coaching experience. Leave that number out of the card.`);
   }
   if (/[\p{L}]{4,}/u.test(cardCorpus) && !presentation) {
-    fail(rawPath, "Write presentation («Как меня представить») from the biography, the about highlight, Threads, or the operator note.");
+    fail(rawPath, "Write presentation («Как меня представить») from the biography, the about highlight, the words on a pinned photo, Threads, or the operator note.");
   }
   assertCardText(rawPath, "presentation", presentation, presentationQuotes, cardCorpus, 700, 4);
   assertCardText(rawPath, "training", training, trainingQuotes, cardCorpus, 1600, 8);
   if (trainingParagraphs.length > 3) fail(rawPath, "training has at most 3 paragraphs.");
   const sessionInProfile = SESSION_CUE.test(cardCorpus);
   const trainingQuoted = trainingQuotes.length > 0 && trainingQuotes.every((quote) =>
-    includesNorm(sourceBio, quote) || includesNorm(note, quote) || includesNorm(threadsText, quote) || aboutFrames.some((frame) => includesNorm(frame, quote)),
+    includesNorm(sourceBio, quote)
+    || includesNorm(note, quote)
+    || includesNorm(threadsText, quote)
+    || aboutFrames.some((frame) => includesNorm(frame, quote))
+    || imageText.some((frame) => includesNorm(frame, quote)),
   );
-  if (sessionInProfile && !training) fail(rawPath, "The biography, the about highlight, Threads, or the operator note describes a session. Write training («Как проходят мои тренировки»).");
-  if (!sessionInProfile && training && !trainingQuoted) fail(rawPath, "training describes a session the biography, the about highlight, Threads, and the operator note do not. A pinned caption fills fields and stays out of the card.");
+  if (sessionInProfile && !training) fail(rawPath, "The biography, the about highlight, a pinned photo, Threads, or the operator note describes a session. Write training («Как проходят мои тренировки»).");
+  if (!sessionInProfile && training && !trainingQuoted) fail(rawPath, "training describes a session the biography, the about highlight, a pinned photo, Threads, and the operator note do not. A pinned caption fills fields and stays out of the card.");
   if (training && !trainingQuotes.some((quote) => SESSION_CUE.test(quote)) && !trainingQuoted) {
     fail(rawPath, "trainingQuotes must include the line that describes the session.");
   }
@@ -870,18 +938,19 @@ async function saveOne(rawPath: string, settlements: string[]) {
     }
   }
   const allowedSports = new Set([...coached, ...practiced].map((role) => role.slug));
-  for (const hit of matchSports(cardSurface)) {
+  for (const hit of matchSports(cardSurface, settlements)) {
     if (!allowedSports.has(hit.slug)) {
       fail(rawPath, `${hit.label} is not a coached or practiced sport. Leave it out of the card text.`);
     }
   }
+  const sportAliases = catalogPhrases().map((phrase) => phrase.alias);
   const sportInProfile = primary
-    ? catalogPhrases().some((phrase) => phrase.slug === primary.slug && aliasRegex(phrase.alias).test(foldYo(cardCorpus)))
+    ? catalogPhrases().some((phrase) => phrase.slug === primary.slug && sportAliasRegex(phrase.alias).test(prepareSportText(cardCorpus, settlements, sportAliases)))
     : false;
-  if (sportInProfile && !catalogPhrases().some((phrase) => phrase.slug === primary?.slug && aliasRegex(phrase.alias).test(foldYo(presentation)))) {
+  if (sportInProfile && !catalogPhrases().some((phrase) => phrase.slug === primary?.slug && sportAliasRegex(phrase.alias).test(foldYo(presentation)))) {
     fail(rawPath, `presentation must name the coached sport (${primary?.label}).`);
   }
-  const namedCities = matchCities(cardSurface, settlements);
+  const namedCities = matchCities(cardSurface, settlements).filter((name) => !nameTokens.has(name.toLowerCase()));
   const extraCities = namedCities.filter((name) => name !== statedCity);
   if (extraCities.length) fail(rawPath, `Card text names ${extraCities.join(", ")}. The saved city is ${statedCity || "empty"}.`);
   if (statedCity && matchCities(cardCorpus, settlements).includes(statedCity) && !matchCities(presentation, settlements).includes(statedCity)) {
@@ -1004,6 +1073,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
     priceFrom == null ? "price" : "",
     !avatarPath ? "avatar" : "",
     !phoneValue ? "phone" : "",
+    PLACE_CUE.test(evidence) && !address ? "address" : "",
     !emailValue ? "email" : "",
     !telegramValue ? "telegram" : "",
     !gender ? "gender" : "",
@@ -1031,7 +1101,11 @@ async function saveOne(rawPath: string, settlements: string[]) {
     threadsUrl: (raw.threads?.url || "").trim(),
     bio: stripPhones(presentation),
     about: trainingParagraphs.map(stripPhones).filter(Boolean),
-    pinned: pins.map((post) => ({ url: post.url || "", caption: cleanLine(post.caption || "") })),
+    pinned: pins.map((post) => ({
+      url: post.url || "",
+      caption: cleanLine(post.caption || ""),
+      imageText: (post.imageText || []).map(cleanLine).filter(Boolean),
+    })),
     sports: [primary, ...sports.filter((sport) => sport.slug !== primary?.slug)].filter((sport): sport is SportHit => Boolean(sport)).slice(0, 4).map((sport) => ({
       slug: sport.slug,
       parentSlug: sport.parentSlug,

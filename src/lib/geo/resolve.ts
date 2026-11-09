@@ -2,7 +2,7 @@ import { AuthError } from "@/lib/auth/errors";
 import { logCaught, writeLog } from "@/lib/log/logger";
 import { readGeocodeCache, writeGeocodeCache, type CachedGeocode } from "@/lib/geo/cache";
 import { probeAddressCountry, searchNominatim, type GeocodeHit } from "@/lib/geo/nominatim";
-import { expandStreetQuery, normalizeQuery, sanitizeQuery } from "@/lib/geo/normalize";
+import { addressHitScore, addressLookupQueries, expandStreetQuery, normalizeQuery, sanitizeQuery } from "@/lib/geo/normalize";
 import {
   FOREIGN_ADDRESS_MESSAGE,
   MAP_TEMPORARILY_UNAVAILABLE,
@@ -53,39 +53,79 @@ async function writeCache(queryNorm: string, hit: GeocodeHit | null, countryCode
   }
 }
 
+function rankedHit(query: string, hits: GeocodeHit[]): GeocodeHit | null {
+  const ranked = hits
+    .filter((hit) => hit.countryCode === "by")
+    .map((hit) => ({ hit, score: addressHitScore(query, hit) }))
+    .filter((row) => row.score > 0)
+    .sort((a, b) => b.score - a.score);
+  return ranked[0]?.hit ?? null;
+}
+
+/**
+ * Try the shortened street, then a spelling variant.
+ * A cached miss on one variant does not hide a later variant.
+ * A hit that does not share the street or the place name is not accepted.
+ */
 async function lookup(query: string, bypassCache: boolean): Promise<
   | { kind: "ok"; hit: GeocodeHit }
   | { kind: "not_found" }
   | { kind: "foreign" }
   | { kind: "unavailable" }
 > {
-  const expanded = expandStreetQuery(query);
-  const norm = normalizeQuery(expanded);
-  if (!norm) return { kind: "not_found" };
+  const variants = addressLookupQueries(query);
+  if (!variants.length) return { kind: "not_found" };
+  const keys = variants.map((variant) => normalizeQuery(variant));
+  if (!keys.some(Boolean)) return { kind: "not_found" };
+
   if (!bypassCache) {
-    const cached = await readCache(norm);
-    if (cached !== "miss") {
+    let everyVariantCached = true;
+    for (const [index, key] of keys.entries()) {
+      if (!key) continue;
+      const cached = await readCache(key);
+      if (cached === "miss") {
+        everyVariantCached = false;
+        continue;
+      }
       if (cached.foreign) return { kind: "foreign" };
-      return cached.hit ? { kind: "ok", hit: cached.hit } : { kind: "not_found" };
+      if (cached.hit && addressHitScore(variants[index] || query, cached.hit) > 0) {
+        return { kind: "ok", hit: cached.hit };
+      }
     }
+    if (everyVariantCached) return { kind: "not_found" };
   }
-  const remote = await searchNominatim(expanded, { limit: 1, countrycodes: "by", belarusOnly: true });
-  if (remote.kind === "unavailable") return remote;
-  const hit = remote.kind === "ok" ? remote.hits[0] : undefined;
-  if (!hit || hit.countryCode !== "by") {
-    const probe = await probeAddressCountry(expanded);
-    if (probe === "foreign") {
-      await writeCache(norm, null, "other");
-      return { kind: "foreign" };
+
+  for (const [index, variant] of variants.entries()) {
+    const key = keys[index];
+    if (!key) continue;
+    if (!bypassCache) {
+      const cached = await readCache(key);
+      if (cached !== "miss") continue;
     }
-    if (probe === "unavailable") return { kind: "unavailable" };
-    await writeCache(norm, null);
-    return { kind: "not_found" };
+    const remote = await searchNominatim(variant, { limit: 5, countrycodes: "by", belarusOnly: true });
+    if (remote.kind === "unavailable") return remote;
+    const hit = remote.kind === "ok" ? rankedHit(variant, remote.hits) : null;
+    if (!hit) {
+      await writeCache(key, null);
+      continue;
+    }
+    await writeCache(key, hit);
+    const original = normalizeQuery(query);
+    if (original && original !== key) await writeCache(original, hit);
+    const displayNorm = normalizeQuery(hit.displayName);
+    if (displayNorm && displayNorm !== key) await writeCache(displayNorm, hit);
+    return { kind: "ok", hit };
   }
-  await writeCache(norm, hit);
-  const displayNorm = normalizeQuery(hit.displayName);
-  if (displayNorm && displayNorm !== norm) await writeCache(displayNorm, hit);
-  return { kind: "ok", hit };
+
+  const probe = await probeAddressCountry(variants[0]);
+  if (probe === "foreign") {
+    for (const key of keys) {
+      if (key) await writeCache(key, null, "other");
+    }
+    return { kind: "foreign" };
+  }
+  if (probe === "unavailable") return { kind: "unavailable" };
+  return { kind: "not_found" };
 }
 
 /**
@@ -181,7 +221,7 @@ export async function suggestCachedOrRemote(
   query: string,
   allowRemote: () => boolean,
 ): Promise<SuggestLookup> {
-  const expanded = expandStreetQuery(query);
+  const expanded = addressLookupQueries(query)[0] ?? expandStreetQuery(query);
   const norm = normalizeQuery(expanded);
   if (!norm) return { kind: "ok", hits: [] };
   const cached = await readCache(norm);

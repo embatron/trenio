@@ -9,7 +9,7 @@ import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { inferTrainerGender, type TrainerGender } from "@/lib/catalog/trainer-gender";
 import { instagramProfileSlug, trainerPersonKey } from "@/lib/catalog/trainer-slugs";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
-import { MAX_TRAINING_PLACES, placesFromProfile } from "@/lib/geo/schemas";
+import { isSpecificAddress, MAX_TRAINING_PLACES, placesFromProfile } from "@/lib/geo/schemas";
 import { getDb } from "./index";
 import { trainerProfiles, users, type TrainerPinnedPost, type TrainerSportRecord } from "./schema";
 
@@ -67,8 +67,9 @@ function addressLines(address: string): string[] {
 }
 
 /**
- * The draft stores each street as printed. Sync asks the same geocoder as the cabinet
- * and keeps that street: a venue name from the map reply does not replace it.
+ * Sync asks the same geocoder as the cabinet.
+ * A matched street replaces the raw line. A venue name is not the stored address.
+ * When the map does not answer, the raw line stays so a later save can try again.
  */
 async function importedPlace(
   draft: ImportedTrainerDraft,
@@ -99,7 +100,9 @@ async function importedPlace(
       ...place,
       city: draft.city.trim() || place.city,
       district: place.district || draft.district || "",
-      address: lines[index] || place.address,
+      address: place.geocodeStatus === "ok" && isSpecificAddress(place.address)
+        ? place.address
+        : (lines[index] || place.address),
     }));
     const mirror = mirrorTrainingPlace(places);
     return {

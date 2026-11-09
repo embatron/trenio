@@ -138,6 +138,7 @@ async () => {
         const bytes = new Uint8Array(await response.arrayBuffer());
         if (bytes.byteLength === 0 || bytes.byteLength > 1500000) continue;
         const mime = (response.headers.get("content-type") || "image/jpeg").split(";")[0];
+        if (!/^image\/(?:jpeg|png|webp|gif)$/i.test(mime)) continue;
         const size = await measured(bytes, mime);
         if (size.w < 400 || size.h < 400) continue;
         if (best && size.w * size.h <= best.width * best.height) continue;
@@ -163,12 +164,15 @@ async () => {
     /^(?:next|далее|вперёд|вперед|следующ\p{L}*)$/iu.test((button.getAttribute("aria-label") || "").trim()),
   );
 
+  const reelPage = /\/reel\//.test(location.pathname);
+  const videoOnly = reelPage || (Boolean(article?.querySelector("video")) && !carouselNext);
   return {
     url: location.href.split("?")[0],
     ogDescription,
     heading,
     visibleText,
     carouselNext,
-    photos,
+    video: videoOnly,
+    photos: videoOnly ? [] : photos,
   };
 }
