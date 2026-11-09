@@ -32,6 +32,15 @@ async function fresh(urlPath: string, sourceMtime: number) {
   }
 }
 
+const IMAGE_UPLOAD = new Set(["jpg", "png", "webp", "gif"]);
+
+/** A scan or photo is stored as a viewing JPEG. A PDF and other documents stay as uploaded. */
+export async function prepareCertificateUpload(buffer: Buffer, ext: string) {
+  if (!IMAGE_UPLOAD.has(ext)) return { ext, bytes: buffer };
+  const pair = await jpegPair(buffer);
+  return { ext: "jpg", bytes: pair.view };
+}
+
 async function jpegPair(source: Buffer) {
   const view = await sharp(source, { failOn: "none", animated: false })
     .rotate()
@@ -106,6 +115,14 @@ async function previewOf(clean: string, kind: "image" | "pdf") {
   const job = buildPreviews(clean, kind).finally(() => inflight.delete(clean));
   inflight.set(clean, job);
   return job;
+}
+
+/** Writes the thumbnail and the viewing JPEG next to a file that is already on disk. */
+export async function storeCertificatePreviews(publicPath: string) {
+  const clean = trainerMediaPath(publicPath);
+  const kind = certificateKind(publicPath);
+  if (!clean || (kind !== "image" && kind !== "pdf")) return null;
+  return previewOf(clean, kind);
 }
 
 export async function presentCertificates(items: TrainerCertificate[]): Promise<TrainerDocument[]> {

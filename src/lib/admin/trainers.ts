@@ -35,7 +35,6 @@ import type { UserRole } from "@/lib/auth/types";
 import { assertBelarusCity } from "@/lib/catalog/belarus-city.server";
 import { CERTIFICATE_CAPTION_MAX, MAX_TRAINER_CERTIFICATES, readCertificates, type TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { editorHtml, reviewPlainText, sanitizeReviewHtml } from "@/lib/catalog/review-html";
-import { shrinkImage } from "@/lib/images/tinify";
 import { removeImageSet, writeImageSet } from "@/lib/images/store";
 import { effectiveAudiences, getPublishedTrainer, PUBLISHED_TRAINERS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { joinTrainerName, trainerNameParts } from "@/lib/catalog/trainer-name";
@@ -196,13 +195,20 @@ async function editableTrainer(slug: string, user: { id: string; roles: UserRole
 
 async function writeTrainerFile(slug: string, folder: string, fileName: string, dataUrl: string) {
   const decoded = decodeCertificate(dataUrl, fileName);
-  const image = decoded.ext === "jpg" || decoded.ext === "png" || decoded.ext === "webp" || decoded.ext === "gif";
-  const buffer = image ? await shrinkImage(decoded.buffer) : decoded.buffer;
+  const { prepareCertificateUpload, storeCertificatePreviews } = await import("@/lib/catalog/certificate-preview.server");
+  const prepared = await prepareCertificateUpload(decoded.buffer, decoded.ext);
   const dir = path.join(process.cwd(), "public", "trainers", "admin", slug, folder);
   await mkdir(dir, { recursive: true });
-  const name = `${Date.now()}-${randomBytes(3).toString("hex")}.${decoded.ext}`;
-  await writeFile(path.join(dir, name), buffer);
-  return `/trainers/admin/${slug}/${folder}/${name}`;
+  const name = `${Date.now()}-${randomBytes(3).toString("hex")}.${prepared.ext}`;
+  const stored = `/trainers/admin/${slug}/${folder}/${name}`;
+  await writeFile(path.join(dir, name), prepared.bytes);
+  try {
+    await storeCertificatePreviews(stored);
+  } catch (error) {
+    const { logCaught } = await import("@/lib/log/logger");
+    logCaught("catalog", "catalog.certificate.preview", error, { target: stored });
+  }
+  return stored;
 }
 
 async function writeTrainerImage(slug: string, folder: string, image: string) {

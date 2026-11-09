@@ -22,6 +22,24 @@ test("a certificate path keeps its kind and the preview names", () => {
   assert.equal(trainerMediaPath("/uploads/card.pdf"), null);
 });
 
+test("a large scan is stored as a viewing jpeg", async () => {
+  const { prepareCertificateUpload } = await import("./certificate-preview.server");
+  const png = await sharp({
+    create: { width: 2400, height: 3200, channels: 3, background: { r: 240, g: 240, b: 236 } },
+  }).png().toBuffer();
+  assert.ok(png.length > 10_000);
+  const prepared = await prepareCertificateUpload(png, "png");
+  assert.equal(prepared.ext, "jpg");
+  assert.ok(prepared.bytes.length < png.length);
+  const meta = await sharp(prepared.bytes).metadata();
+  assert.equal(meta.format, "jpeg");
+  assert.ok((meta.width ?? 0) <= 1400);
+  assert.ok((meta.height ?? 0) <= 1800);
+  const pdf = await prepareCertificateUpload(Buffer.from("%PDF-1.4"), "pdf");
+  assert.equal(pdf.ext, "pdf");
+  assert.equal(pdf.bytes.toString(), "%PDF-1.4");
+});
+
 test("an image certificate becomes a small jpeg pair", async () => {
   const { presentCertificates } = await import("./certificate-preview.server");
   const dir = await mkdtemp(path.join(process.cwd(), "public", "trainers", "preview-test-"));
