@@ -1,0 +1,24 @@
+- generic [ref=f117e10]:
+  - generic [ref=f117e15]:
+    - generic [ref=f117e22]:
+      - generic [ref=f117e24]:
+        - link [ref=f117e26] [cursor=pointer]:
+          - /url: /ilya.kr4vchenko/
+        - generic [ref=f117e28]:
+          - link "Обо мне" [ref=f117e30] [cursor=pointer]:
+            - /url: /ilya.kr4vchenko/
+          - time [ref=f117e35]: 48w
+      - button "Pause" [ref=f117e37] [cursor=pointer]:
+        - img "Pause" [ref=f117e39]
+      - button "Menu" [ref=f117e41] [cursor=pointer]:
+        - img "Menu" [ref=f117e43]
+    - generic [ref=f117e48]:
+      - link [ref=f117e49]
+      - generic [ref=f117e50]: View as trenioby?
+      - generic [ref=f117e52]: ilya.kr4vchenko will be able to see that you viewed their story.
+      - button "View story" [ref=f117e55] [cursor=pointer]
+  - link "Instagram" [ref=f117e57] [cursor=pointer]:
+    - /url: /
+    - img "Instagram" [ref=f117e58]
+  - button "Close" [ref=f117e67] [cursor=pointer]:
+    - img "Close" [ref=f117e69]

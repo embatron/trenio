@@ -1,0 +1,32 @@
+- generic [ref=f81e10]:
+  - generic [ref=f81e15]:
+    - generic [ref=f81e24]:
+      - generic [ref=f81e26]:
+        - link [ref=f81e28] [cursor=pointer]:
+          - /url: /i_kasach/
+        - generic [ref=f81e29]:
+          - generic [ref=f81e30]:
+            - link "Обо мне" [ref=f81e32] [cursor=pointer]:
+              - /url: /i_kasach/
+            - time [ref=f81e37]: 150w
+          - link "Reels Watch full reel Right chevron" [ref=f81e39] [cursor=pointer]:
+            - /url: /p/C1HWrs0sHI7/
+            - generic [ref=f81e40]
+      - generic [ref=f81e48]:
+        - slider "Adjust volume" [ref=f81e49]:
+          - button "Audio is muted" [ref=f81e54] [cursor=pointer]:
+            - img "Audio is muted" [ref=f81e55]
+        - button "Pause" [ref=f81e57] [cursor=pointer]:
+          - img "Pause" [ref=f81e59]
+      - button "Menu" [ref=f81e61] [cursor=pointer]:
+        - img "Menu" [ref=f81e63]
+    - generic [ref=f81e68]:
+      - link [ref=f81e69]
+      - generic [ref=f81e70]: View as trenioby?
+      - generic [ref=f81e72]: i_kasach will be able to see that you viewed their story.
+      - button "View story" [ref=f81e75] [cursor=pointer]
+  - link "Instagram" [ref=f81e77] [cursor=pointer]:
+    - /url: /
+    - img "Instagram" [ref=f81e78]
+  - button "Close" [ref=f81e87] [cursor=pointer]:
+    - img "Close" [ref=f81e89]

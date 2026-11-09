@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-09T13:59:30.393Z",
+  "updatedAt": "2026-11-09T18:28:49.572Z",
   "profiles": [
     {
       "handle": "embatron.eth",
@@ -311,20 +311,6 @@
         "pinnedPosts"
       ],
       "file": "data/instagram-trainers/seku_bangura.json"
-    },
-    {
-      "handle": "anisenkova.fitness",
-      "slug": "anisenkova.fitness",
-      "fullName": "Анна Анисенкова",
-      "primarySport": "Фитнес",
-      "city": "Минск",
-      "status": "draft",
-      "missing": [
-        "phone",
-        "email",
-        "telegram"
-      ],
-      "file": "data/instagram-trainers/anisenkova.fitness.json"
     },
     {
       "handle": "yuragreben",
@@ -1986,6 +1972,36 @@
         "telegram"
       ],
       "file": "data/instagram-trainers/_grekkirill_19_.json"
+    },
+    {
+      "handle": "anisenkova.fitness",
+      "slug": "anisenkova.fitness",
+      "fullName": "Анна Анисенкова",
+      "primarySport": "Фитнес",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/anisenkova.fitness.json"
+    },
+    {
+      "handle": "kachan121972",
+      "slug": "kachan121972",
+      "fullName": "Игорь Качан",
+      "primarySport": "Йога",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/kachan121972.json"
     }
   ]
 }

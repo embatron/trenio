@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kachan121972/",
+  "handle": "kachan121972",
+  "slug": "kachan121972",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Игорь",
+  "lastName": "Качан",
+  "fullName": "Игорь Качан",
+  "gender": "male",
+  "nameQuotes": [
+    "Игорь Качан"
+  ],
+  "headline": "Тренер по йоге",
+  "sourceBio": "Минск.12.03.1972",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Игорь Качан Йога, Минск",
+  "threadsUrl": "",
+  "bio": "Я Игорь Качан. Я тренер по йоге в Минске.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kachan121972.jpg",
+  "photos": [
+    "/trainers/instagram/kachan121972.jpg",
+    "/trainers/instagram/kachan121972-g2.jpg",
+    "/trainers/instagram/kachan121972-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kachan121972/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

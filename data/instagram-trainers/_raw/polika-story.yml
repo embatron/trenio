@@ -1,0 +1,28 @@
+- generic [ref=f99e10]:
+  - generic [ref=f99e15]:
+    - generic [ref=f99e30]:
+      - generic [ref=f99e32]:
+        - link [ref=f99e34] [cursor=pointer]:
+          - /url: /po.li.ka/
+        - generic [ref=f99e35]:
+          - generic [ref=f99e36]:
+            - link "Обо мне😉" [ref=f99e38] [cursor=pointer]:
+              - /url: /po.li.ka/
+            - time [ref=f99e43]: 166w
+          - button "Translate See translation" [ref=f99e45] [cursor=pointer]:
+            - img "Translate" [ref=f99e47]
+            - generic [ref=f99e49]: See translation
+      - button "Pause" [ref=f99e51] [cursor=pointer]:
+        - img "Pause" [ref=f99e53]
+      - button "Menu" [ref=f99e55] [cursor=pointer]:
+        - img "Menu" [ref=f99e57]
+    - generic [ref=f99e62]:
+      - link [ref=f99e63]
+      - generic [ref=f99e64]: View as trenioby?
+      - generic [ref=f99e66]: po.li.ka will be able to see that you viewed their story.
+      - button "View story" [ref=f99e69] [cursor=pointer]
+  - link "Instagram" [ref=f99e71] [cursor=pointer]:
+    - /url: /
+    - img "Instagram" [ref=f99e72]
+  - button "Close" [ref=f99e81] [cursor=pointer]:
+    - img "Close" [ref=f99e83]

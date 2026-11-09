@@ -1,0 +1,36 @@
+- generic [ref=f100e10]:
+  - generic [ref=f100e13]:
+    - generic [ref=f100e15]:
+      - generic [ref=f100e25]:
+        - generic [ref=f100e27]:
+          - link [ref=f100e29] [cursor=pointer]:
+            - /url: /swimcoach.alexandra/
+          - generic [ref=f100e31]:
+            - link "Обо мне" [ref=f100e33] [cursor=pointer]:
+              - /url: /swimcoach.alexandra/
+            - time [ref=f100e38]: 28w
+        - generic [ref=f100e39]:
+          - slider "Adjust volume" [ref=f100e40]:
+            - button [ref=f100e45] [cursor=pointer]:
+              - img "Audio is muted" [ref=f100e46]
+          - button [active] [ref=f100e126] [cursor=pointer]:
+            - img "Play" [ref=f100e127]
+        - button [ref=f100e52] [cursor=pointer]:
+          - img "Menu" [ref=f100e54]
+      - generic [ref=f100e86]:
+        - group "Video player" [ref=f100e100]
+        - button [ref=f100e101] [cursor=pointer]
+      - generic [ref=f100e104]:
+        - textbox "Reply to swimcoach.alexandra..." [ref=f100e107]
+        - generic [ref=f100e108]:
+          - button [ref=f100e111] [cursor=pointer]:
+            - img "Like" [ref=f100e114]
+          - button [ref=f100e116] [cursor=pointer]:
+            - img "Direct" [ref=f100e118]
+    - button [ref=f100e122] [cursor=pointer]:
+      - img "Next" [ref=f100e124]
+  - link [ref=f100e68] [cursor=pointer]:
+    - /url: /
+    - img "Instagram" [ref=f100e69]
+  - button [ref=f100e78] [cursor=pointer]:
+    - img "Close" [ref=f100e80]

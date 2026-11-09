@@ -1,0 +1,284 @@
+- application [ref=f89e1]:
+  - iframe [aria-hidden] [ref=f89e525]
+  - iframe [aria-hidden] [ref=f89e526]
+  - banner "Панель меню" [ref=f89e2]:
+    - generic [ref=f89e5]:
+      - link "Главная страница Google Документов" [ref=f89e7] [cursor=pointer]:
+        - /url: https://docs.google.com/document/u/0/?authuser=0&usp=docs_web
+      - generic [ref=f89e14]:
+        - generic "How Zanvil logging works" [ref=f89e16]:
+          - generic [ref=f89e17]:
+            - generic: How Zanvil logging works
+            - textbox "Переименовать" [ref=f89e19]: How Zanvil logging works
+          - generic [ref=f89e20]:
+            - checkbox "Пометить" [ref=f89e528] [cursor=pointer]
+            - button "Переместить" [ref=f89e532] [cursor=pointer]
+            - 'button "Статус документа: Сохранено на Диске.." [ref=f89e22]':
+              - generic [ref=f89e23] [cursor=pointer]
+        - generic [ref=f89e30]:
+          - 'button "Последнее изменение: только что" [ref=f89e536] [cursor=pointer]'
+          - 'button "Показать все комментарии Новых комментариев: 0" [ref=f89e32] [cursor=pointer]'
+          - button "Вы можете присоединиться к видеовстрече здесь или показать ее участникам эту вкладку" [ref=f89e539] [cursor=pointer]
+          - generic [ref=f89e41]:
+            - button "Опубликовать. Все, у кого есть ссылка. Получить доступ к этому элементу может любой пользователь, обладающий ссылкой. Вход в службу не требуется." [ref=f89e540] [cursor=pointer]: Настройки доступа
+            - button "Быстро поделиться" [ref=f89e44] [cursor=pointer]
+          - generic [ref=f89e545]:
+            - link "Сменить план" [ref=f89e547] [cursor=pointer]
+            - tooltip [aria-hidden] [ref=f89e550]: Получить доступ к премиум-функциям
+          - generic [ref=f89e553]:
+            - generic:
+              - button "Попробовать Gemini" [ref=f89e560] [cursor=pointer]
+              - tooltip [aria-hidden] [ref=f89e563]: Попробовать Gemini
+          - 'button "Аккаунт Google: Eugene Sokolov (eakull@gmail.com)" [ref=f89e48] [cursor=pointer]'
+    - generic [ref=f89e50]:
+      - menubar [ref=f89e52]:
+        - menuitem "Файл" [ref=f89e53] [cursor=pointer]
+        - menuitem "Правка" [ref=f89e54] [cursor=pointer]
+        - menuitem "Вид" [ref=f89e55] [cursor=pointer]
+        - menuitem "Вставка" [ref=f89e56] [cursor=pointer]
+        - menuitem "Формат" [ref=f89e57] [cursor=pointer]
+        - menuitem "Инструменты" [ref=f89e58] [cursor=pointer]
+        - menuitem "Расширения" [ref=f89e59] [cursor=pointer]
+        - menuitem "Справка" [ref=f89e60] [cursor=pointer]
+      - generic [ref=f89e61]:
+        - generic [ref=f89e62]:
+          - toolbar "Поиск по меню (Option+/)" [ref=f89e63]:
+            - combobox "Меню" [ref=f89e65]
+          - toolbar "Основной" [ref=f89e66]:
+            - button "Отменить (⌘Z)" [ref=f89e67] [cursor=pointer]
+            - button "Повторить (⌘Y)" [ref=f89e72] [cursor=pointer]
+            - button "Печать (⌘P)" [ref=f89e77] [cursor=pointer]
+            - button "Проверка грамматики и орфографии (⌘+Option+X)" [ref=f89e82] [cursor=pointer]
+            - button "Копировать форматирование" [ref=f89e87] [cursor=pointer]
+            - combobox "Масштаб" [ref=f89e92] [cursor=pointer]:
+              - option "Список Масштаб. Выбран пункт 100%." [selected] [ref=f89e95]:
+                - textbox "Масштаб" [ref=f89e96]: 100%
+            - separator [disabled] [ref=f89e100]
+            - listbox "Стили" [ref=f89e101] [cursor=pointer]:
+              - option "Список Стили. Выбран пункт Обычный текст." [selected] [ref=f89e564]: Обычный текст
+            - separator [disabled] [ref=f89e108]
+            - listbox "Шрифт" [ref=f89e109] [cursor=pointer]:
+              - option "Список Шрифт. Выбран пункт Arial." [selected] [ref=f89e565]: Arial
+            - separator [disabled] [ref=f89e116]
+            - button "Уменьшить размер шрифта (⌘+Shift+запятая)" [ref=f89e117] [cursor=pointer]
+            - combobox "Размер шрифта" [ref=f89e122] [cursor=pointer]:
+              - option "Список Размер шрифта. Выбран пункт 11." [selected] [ref=f89e566]:
+                - textbox "Размер шрифта" [ref=f89e126]: "11"
+            - button "Увеличить размер шрифта (⌘+Shift+точка)" [ref=f89e127] [cursor=pointer]
+            - separator [disabled] [ref=f89e132]
+            - button "Полужирный (⌘B)" [ref=f89e133] [cursor=pointer]
+            - button "Курсив (⌘I)" [ref=f89e138] [cursor=pointer]
+            - button "Подчеркнутый (⌘U)" [ref=f89e143] [cursor=pointer]
+            - button "Цвет текста" [ref=f89e148] [cursor=pointer]
+            - button "Цвет фона текста" [ref=f89e155] [cursor=pointer]
+            - separator [disabled] [ref=f89e162]
+            - button "Вставить ссылку (⌘K)" [ref=f89e163] [cursor=pointer]
+            - button "Добавить комментарий (⌘+Option+M)" [ref=f89e168] [cursor=pointer]
+            - button "Вставить изображение" [ref=f89e567] [cursor=pointer]
+            - separator [disabled] [ref=f89e173]
+            - button "Выравнивание и отступы" [ref=f89e174] [cursor=pointer]
+            - button "Интервалы между абзацами или строками" [ref=f89e183] [cursor=pointer]
+            - button "Контрольный список (⌘+Shift+9)" [ref=f89e189] [cursor=pointer]
+            - button "Меню с контрольным списком" [ref=f89e194] [cursor=pointer]
+            - button "Маркированный список (⌘+Shift+8)" [ref=f89e200] [cursor=pointer]
+            - button "Меню с маркированным списком" [ref=f89e205] [cursor=pointer]
+            - button "Нумерованный список (⌘+Shift+7)" [ref=f89e211] [cursor=pointer]
+            - button "Меню с нумерованным списком" [ref=f89e216] [cursor=pointer]
+            - button "Уменьшить отступ (⌘+левая скобка)" [ref=f89e222] [cursor=pointer]
+            - button "Увеличить отступ (⌘+правая скобка)" [ref=f89e227] [cursor=pointer]
+            - button "Очистить форматирование (⌘обратная косая черта)" [ref=f89e232] [cursor=pointer]
+            - separator [disabled] [ref=f89e237]
+            - button "Развернуть" [disabled] [ref=f89e250] [cursor=pointer]
+        - toolbar "Режим и вид" [ref=f89e257]:
+          - button "Режим \"Редактировать\"" [ref=f89e573] [cursor=pointer]:
+            - generic [ref=f89e259]: Редактировать
+          - separator [disabled] [ref=f89e262]
+          - button "Скрыть меню (Ctrl+Shift+F)" [ref=f89e263] [cursor=pointer]
+    - generic [ref=f89e268]:
+      - complementary "Боковая панель" [ref=f89e269]:
+        - tablist [ref=f89e577]:
+          - tab "Календарь":
+            - generic [ref=f89e272] [cursor=pointer]
+          - tab "Google Keep":
+            - generic [ref=f89e273] [cursor=pointer]
+          - tab "Задачи":
+            - generic [ref=f89e274] [cursor=pointer]
+          - tab "Контакты":
+            - generic [ref=f89e275] [cursor=pointer]
+          - tab "Карты":
+            - generic [ref=f89e276] [cursor=pointer]
+          - separator [disabled] [ref=f89e578]
+          - tab "Установить дополнения":
+            - generic [ref=f89e579] [cursor=pointer]
+      - generic:
+        - button "Скрыть боковую панель":
+          - generic [ref=f89e580] [cursor=pointer]
+  - generic [ref=f89e279]:
+    - generic [ref=f89e284]:
+      - generic [ref=f89e285]: "22"
+      - generic [ref=f89e290]: "21"
+      - generic [ref=f89e295]: "20"
+      - generic [ref=f89e300]: "19"
+      - generic [ref=f89e305]: "18"
+      - generic [ref=f89e310]: "17"
+      - generic [ref=f89e315]: "16"
+      - generic [ref=f89e320]: "15"
+      - generic [ref=f89e325]: "14"
+      - generic [ref=f89e330]: "13"
+      - generic [ref=f89e335]: "12"
+      - generic [ref=f89e340]: "11"
+      - generic [ref=f89e345]: "10"
+      - generic [ref=f89e350]: "9"
+      - generic [ref=f89e355]: "8"
+      - generic [ref=f89e360]: "7"
+      - generic [ref=f89e365]: "6"
+      - generic [ref=f89e370]: "5"
+      - generic [ref=f89e375]: "4"
+      - generic [ref=f89e380]: "3"
+      - generic [ref=f89e385]: "2"
+      - generic [ref=f89e390]: "1"
+      - generic [ref=f89e399]: "1"
+      - generic [ref=f89e404]: "2"
+      - generic [ref=f89e409]: "3"
+      - generic [ref=f89e414]: "4"
+      - generic [ref=f89e419]: "5"
+      - generic [ref=f89e424]: "6"
+      - generic [ref=f89e429]: "7"
+      - generic [ref=f89e434]: "8"
+      - generic [ref=f89e439]: "9"
+      - generic [ref=f89e444]: "10"
+      - generic [ref=f89e449]: "11"
+      - generic [ref=f89e454]: "12"
+      - generic [ref=f89e459]: "13"
+      - generic [ref=f89e464]: "14"
+      - generic [ref=f89e469]: "15"
+      - generic [ref=f89e474]: "16"
+      - generic [ref=f89e479]: "17"
+      - generic [ref=f89e484]: "18"
+      - generic [ref=f89e489]: "19"
+      - generic [ref=f89e494]: "20"
+      - generic [ref=f89e499]: "21"
+    - generic [ref=f89e514]:
+      - generic:
+        - generic [ref=f89e518]:
+          - button [aria-hidden]
+        - generic:
+          - list
+      - button "Нажмите, чтобы выбрать границы" [ref=f89e597] [cursor=pointer]
+      - dialog "Встроенная плавающая кнопка действия" [ref=f89e598] [cursor=pointer]:
+        - generic [ref=f89e599]:
+          - button "Добавить комментарий" [ref=f89e601]
+          - button "Добавить эмодзи" [ref=f89e605]
+    - generic [ref=f89e614]:
+      - generic [ref=f89e615]: "30"
+      - generic [ref=f89e620]: "29"
+      - generic [ref=f89e625]: "28"
+      - generic [ref=f89e630]: "27"
+      - generic [ref=f89e635]: "26"
+      - generic [ref=f89e640]: "25"
+      - generic [ref=f89e645]: "24"
+      - generic [ref=f89e650]: "23"
+      - generic [ref=f89e655]: "22"
+      - generic [ref=f89e660]: "21"
+      - generic [ref=f89e665]: "20"
+      - generic [ref=f89e670]: "19"
+      - generic [ref=f89e675]: "18"
+      - generic [ref=f89e680]: "17"
+      - generic [ref=f89e685]: "16"
+      - generic [ref=f89e690]: "15"
+      - generic [ref=f89e695]: "14"
+      - generic [ref=f89e700]: "13"
+      - generic [ref=f89e705]: "12"
+      - generic [ref=f89e710]: "11"
+      - generic [ref=f89e715]: "10"
+      - generic [ref=f89e720]: "9"
+      - generic [ref=f89e725]: "8"
+      - generic [ref=f89e730]: "7"
+      - generic [ref=f89e735]: "6"
+      - generic [ref=f89e740]: "5"
+      - generic [ref=f89e745]: "4"
+      - generic [ref=f89e750]: "3"
+      - generic [ref=f89e755]: "2"
+      - generic [ref=f89e760]: "1"
+      - generic [ref=f89e769]: "1"
+      - generic [ref=f89e774]: "2"
+      - generic [ref=f89e779]: "3"
+      - generic [ref=f89e784]: "4"
+      - generic [ref=f89e789]: "5"
+      - generic [ref=f89e794]: "6"
+      - generic [ref=f89e799]: "7"
+      - generic [ref=f89e804]: "8"
+      - generic [ref=f89e809]: "9"
+      - generic [ref=f89e814]: "10"
+      - generic [ref=f89e819]: "11"
+      - generic [ref=f89e824]: "12"
+      - generic [ref=f89e829]: "13"
+      - generic [ref=f89e834]: "14"
+      - generic [ref=f89e839]: "15"
+      - generic [ref=f89e844]: "16"
+      - generic [ref=f89e849]: "17"
+      - generic [ref=f89e854]: "18"
+      - generic [ref=f89e859]: "19"
+      - generic [ref=f89e864]: "20"
+      - generic [ref=f89e869]: "21"
+      - generic [ref=f89e874]: "22"
+      - generic [ref=f89e879]: "23"
+      - generic [ref=f89e884]: "24"
+      - generic [ref=f89e889]: "25"
+      - generic [ref=f89e894]: "26"
+      - generic [ref=f89e899]: "27"
+      - generic [ref=f89e904]: "28"
+      - generic [ref=f89e909]: "29"
+    - generic "Вкладки в документе" [ref=f89e931]:
+      - button "Скрыть вкладки и их структуру" [ref=f89e933] [cursor=pointer]:
+        - button [disabled] [ref=f89e934]:
+          - button "Назад" [disabled] [ref=f89e938]
+      - generic [ref=f89e944]:
+        - generic [ref=f89e946]:
+          - heading "Вкладки в документе" [level=2] [ref=f89e947]
+          - button "Добавить вкладку" [ref=f89e950]
+        - tree "Вкладки в документе" [ref=f89e954]:
+          - generic [ref=f89e956] [cursor=pointer]:
+            - treeitem "Вкладка 1" [selected] [ref=f89e957]:
+              - button "Параметры вкладки" [ref=f89e967]
+            - menu [ref=f89e971]:
+              - menuitem [ref=f89e972]:
+                - generic "How Zanvil logging works, уровень 1" [ref=f89e977]: How Zanvil logging works
+              - menuitem [ref=f89e979]:
+                - generic "What the log records, уровень 2" [ref=f89e984]: What the log records
+              - menuitem [ref=f89e986]:
+                - generic "From a request to a stored line, уровень 2" [ref=f89e991]: From a request to a stored line
+              - menuitem [ref=f89e993]:
+                - generic "Levels, уровень 2" [ref=f89e998]: Levels
+              - menuitem [ref=f89e1000]:
+                - generic "Fields on the line, уровень 2" [ref=f89e1005]: Fields on the line
+              - menuitem [ref=f89e1007]:
+                - generic "Commit, уровень 2" [ref=f89e1012]: Commit
+              - menuitem [ref=f89e1014]:
+                - generic "Where to read a line, уровень 2" [ref=f89e1019]: Where to read a line
+              - menuitem [ref=f89e1021]:
+                - generic "Provider bodies and secrets, уровень 2" [ref=f89e1026]: Provider bodies and secrets
+              - menuitem [ref=f89e1028]:
+                - generic "Calls to BVNK, уровень 2" [ref=f89e1033]: Calls to BVNK
+              - menuitem [ref=f89e1035]:
+                - generic "The automatic HTTP line, уровень 2" [ref=f89e1040]: The automatic HTTP line
+              - menuitem [ref=f89e1042]:
+                - generic "Status changes, уровень 2" [ref=f89e1047]: Status changes
+              - menuitem [ref=f89e1049]:
+                - generic "Who started an action, уровень 2" [ref=f89e1054]: Who started an action
+              - menuitem [ref=f89e1056]:
+                - generic "Incoming webhooks, уровень 2" [ref=f89e1061]: Incoming webhooks
+              - menuitem [ref=f89e1063]:
+                - generic "Every LOG code, уровень 2" [ref=f89e1068]: Every LOG code
+              - menuitem [ref=f89e1070]:
+                - generic "Events that are not LOG codes, уровень 2" [ref=f89e1075]: Events that are not LOG codes
+              - menuitem [ref=f89e1077]:
+                - generic "What this document leaves out, уровень 2" [ref=f89e1082]: What this document leaves out
+  - iframe [active] [ref=f89e522]:
+    - textbox "Содержание документа" [active] [ref=f90e1]
+    - group
+  - link "Включить программу чтения с экрана" [ref=f89e523] [cursor=pointer]:
+    - /url: "#"
+  - region [ref=f89e524]: Чтобы включить программу чтения с экрана, нажмите ⌘+Option+Z. Для просмотра списка быстрых клавиш нажмите ⌘косая черта.
+  - generic [ref=f89e1084]: Баннер скрыт
+  - region

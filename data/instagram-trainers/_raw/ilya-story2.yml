@@ -1,0 +1,40 @@
+- generic [ref=f117e4]:
+  - generic [ref=f117e97]:
+    - generic [ref=f117e100]:
+      - link "Instagram" [ref=f117e105] [cursor=pointer]:
+        - /url: /
+        - img "Instagram" [ref=f117e110]
+      - generic [ref=f117e113]:
+        - link "Home" [ref=f117e118] [cursor=pointer]:
+          - /url: /
+        - link "Reels" [ref=f117e128] [cursor=pointer]:
+          - /url: /reels/
+        - link "Messages Direct messaging - 1 new notification link" [ref=f117e140] [cursor=pointer]:
+          - /url: /direct/inbox/
+        - link "Search" [ref=f117e154] [cursor=pointer]:
+          - /url: /explore/
+        - link "Notifications" [ref=f117e166] [cursor=pointer]:
+          - /url: "#"
+        - link "New post" [ref=f117e177] [cursor=pointer]:
+          - /url: "#"
+        - link "Professional dashboard" [ref=f117e187] [cursor=pointer]:
+          - /url: "#"
+        - link "trenioby's profile picture" [ref=f117e199] [cursor=pointer]:
+          - /url: /trenioby/
+      - generic [ref=f117e206]:
+        - link "Settings" [ref=f117e209] [cursor=pointer]:
+          - /url: "#"
+        - link "Also from Meta" [ref=f117e217] [cursor=pointer]:
+          - /url: "#"
+    - generic [ref=f117e225]:
+      - main [ref=f117e226]:
+        - generic [ref=f117e227]
+      - contentinfo [ref=f117e1034]:
+        - generic [ref=f117e1035]
+  - button "Messages - 1 new notification" [ref=f117e1098] [cursor=pointer]:
+    - generic "Messages - 1 new notification" [ref=f117e1099]:
+      - generic [ref=f117e1100]:
+        - generic [ref=f117e1102]
+        - generic [ref=f117e1109]: Messages
+      - button "User avatar Анастасия Веремей | Фитнес-тренер • Минск" [ref=f117e1112]:
+        - img "User avatar" [ref=f117e1115]

@@ -1,0 +1,59 @@
+- generic [ref=f81e4]:
+  - generic [ref=f81e135]:
+    - generic [ref=f81e138]:
+      - link "Instagram" [ref=f81e143] [cursor=pointer]:
+        - /url: /
+        - img "Instagram" [ref=f81e148]
+      - generic [ref=f81e151]:
+        - link "Home" [ref=f81e156] [cursor=pointer]:
+          - /url: /
+          - img "Home" [ref=f81e161]
+        - link "Reels" [ref=f81e166] [cursor=pointer]:
+          - /url: /reels/
+          - img "Reels" [ref=f81e171]
+        - link "Messages" [ref=f81e178] [cursor=pointer]:
+          - /url: /direct/inbox/
+          - img "Messages" [ref=f81e183]
+        - link "Search" [ref=f81e189] [cursor=pointer]:
+          - /url: /explore/
+          - img "Search" [ref=f81e194]
+        - link "Notifications" [ref=f81e201] [cursor=pointer]:
+          - /url: "#"
+          - img "Notifications" [ref=f81e206]
+        - link "New post" [ref=f81e212] [cursor=pointer]:
+          - /url: "#"
+          - img "New post" [ref=f81e217]
+        - link "Professional dashboard" [ref=f81e222] [cursor=pointer]:
+          - /url: "#"
+          - img "Professional dashboard" [ref=f81e227]
+        - link "trenioby's profile picture" [ref=f81e234] [cursor=pointer]:
+          - /url: /trenioby/
+          - link "trenioby's profile picture" [ref=f81e239]
+      - generic [ref=f81e241]:
+        - link "Settings" [ref=f81e244] [cursor=pointer]:
+          - /url: "#"
+          - img "Settings" [ref=f81e249]
+        - link "Also from Meta" [ref=f81e252] [cursor=pointer]:
+          - /url: "#"
+          - img "Also from Meta" [ref=f81e257]
+    - generic [ref=f81e260]:
+      - main [ref=f81e261]:
+        - generic [ref=f81e262]:
+          - generic [ref=f81e264]
+          - generic [ref=f81e840]
+      - contentinfo [ref=f81e1080]:
+        - generic [ref=f81e1081]:
+          - generic [ref=f81e1083]
+          - generic [ref=f81e1132]
+  - button "Messages" [ref=f81e1144] [cursor=pointer]:
+    - generic "Messages" [ref=f81e1145]:
+      - generic [ref=f81e1146]:
+        - img "Messages" [ref=f81e1149]
+        - generic [ref=f81e1152]: Messages
+      - generic [ref=f81e1153]:
+        - button "User avatar Карен•Тренер •Тайский бокс• Кикбоксинг• Классический бокс•" [ref=f81e1155]:
+          - img "User avatar" [ref=f81e1158]
+        - button "User avatar Igor Bugaenko" [ref=f81e1160]:
+          - img "User avatar" [ref=f81e1163]
+        - button "User avatar ТРЕНЕР ПО ПЛАВАНИЮ | ОТКРЫТАЯ ВОДА МИНСК" [ref=f81e1165]:
+          - img "User avatar" [ref=f81e1168]
