@@ -63,6 +63,7 @@ export const signupSchema = z.object({
   email: z.string().trim().email("Введите корректный e-mail"),
   password: z.string().min(1, "Введите пароль").max(128),
   honeypot: honeypotSchema,
+  returnPath: z.string().max(200).optional(),
 });
 
 export const signupCredentialsSchema = z.object({
@@ -157,7 +158,7 @@ export type PublicUser = {
   /** Instagram handle of a trainer or club. Empty for everyone else. */
   nick: string;
   emailVerified: boolean;
-  /** Phone or Telegram signup still needs a real mailbox and a chosen password. */
+  /** Telegram signup still needs a real mailbox. A confirmed phone does not. */
   needsCredentials: boolean;
   /** Magic-link trainer still has to choose a password in the cabinet. */
   needsDoorPassword: boolean;

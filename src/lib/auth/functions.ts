@@ -3,7 +3,8 @@ import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
 
 import { AuthError, isAuthError } from "@/lib/auth/errors";
-import { getPostLoginPath, hasAnyRole, isStaff } from "@/lib/auth/roles";
+import { destinationAfterAuth } from "@/lib/auth/return-path";
+import { hasAnyRole, isStaff } from "@/lib/auth/roles";
 import {
   forgotPasswordSchema,
   loginSchema,
@@ -65,7 +66,7 @@ import {
   signupWithTelegramWebApp,
   signupWithTelegramWidget,
 } from "@/auth/signup-channels";
-import { phoneStandsInForMailbox } from "@/lib/auth/auth-decisions";
+import { mailboxStillRequired } from "@/lib/auth/auth-decisions";
 import { isPendingSignupEmail } from "@/lib/auth/pending-email";
 import { staffNeedsTotp } from "@/lib/auth/staff-totp";
 import {
@@ -105,15 +106,16 @@ import { clearSessionCookie, clearTotpTicketCookie, readSessionToken, readTotpTi
 import type { LogOutcome } from "@/lib/log/policy";
 
 function toPublicUser(user: SessionUser): PublicUser {
-  const needsCredentials = isPendingSignupEmail(user.email) && !phoneStandsInForMailbox(user);
+  const placeholder = isPendingSignupEmail(user.email);
+  const needsCredentials = mailboxStillRequired(user);
   return {
     id: user.id,
-    email: needsCredentials ? "" : user.email,
+    email: placeholder ? "" : user.email,
     firstName: user.firstName,
     lastName: user.lastName,
     avatarPath: user.avatarPath,
     nick: "",
-    emailVerified: needsCredentials ? false : user.emailVerified,
+    emailVerified: placeholder ? false : user.emailVerified,
     needsCredentials,
     needsDoorPassword: user.needsPassword && user.lastSignupIntent === "trainer_claim",
     roles: user.roles,
@@ -168,7 +170,7 @@ async function finishLogin(
   return {
     ok: true as const,
     user: toPublicUser(user),
-    redirectTo: getPostLoginPath(user.roles),
+    redirectTo: destinationAfterAuth(user.roles, null),
   };
 }
 
@@ -352,7 +354,7 @@ export const signupFn = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     try {
       const result = await signupWithEmail(
-        { email: data.email, password: data.password },
+        { email: data.email, password: data.password, returnPath: data.returnPath },
         { ...getRequestMeta(), honeypot: data.honeypot },
       );
       void writeLog({

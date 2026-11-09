@@ -13,6 +13,17 @@ export function phoneStandsInForMailbox(user: {
     && isPendingSignupEmail(user.email);
 }
 
+/**
+ * A confirmed Belarus mobile is a login channel on its own.
+ * The placeholder mailbox stays until the person chooses to add a real one.
+ */
+export function mailboxStillRequired(user: {
+  email: string;
+  phoneVerified: boolean;
+}): boolean {
+  return isPendingSignupEmail(user.email) && !user.phoneVerified;
+}
+
 /** Public email signup never opens a session. An unverified row can be refreshed. */
 export function decideEmailSignup(kind: EmailSignupKind): "create" | "refresh" | "notice" {
   if (kind === "none") return "create";

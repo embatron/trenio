@@ -19,22 +19,30 @@ import {
   requestSmsLoginFn,
 } from "@/lib/auth/functions";
 import { BY_PHONE_COUNTRY_PREFIX, OTP_CODE_LENGTH } from "@/lib/auth/phone";
-import { safeReturnPath } from "@/lib/auth/return-path";
+import { destinationAfterAuth } from "@/lib/auth/return-path";
+import type { UserRole } from "@/lib/auth/types";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
 export const Route = createFileRoute("/auth/login")({
-  validateSearch: (search: Record<string, unknown>): { redirect?: string; google?: string; yandex?: string } => {
+  validateSearch: (search: Record<string, unknown>): { redirect?: string; google?: string; yandex?: string; browse?: "1" } => {
     const redirect = typeof search.redirect === "string" ? search.redirect : undefined;
     const reason = (value: unknown) =>
       value === "failed" || value === "deleted" || value === "blocked" || value === "taken" ? value : undefined;
     const google = reason(search.google);
     const yandex = reason(search.yandex);
-    return { ...(redirect ? { redirect } : {}), ...(google ? { google } : {}), ...(yandex ? { yandex } : {}) };
+    const browse = search.browse === "1" ? "1" as const : undefined;
+    return {
+      ...(redirect ? { redirect } : {}),
+      ...(google ? { google } : {}),
+      ...(yandex ? { yandex } : {}),
+      ...(browse ? { browse } : {}),
+    };
   },
   beforeLoad: async ({ context, search }) => {
     if (context.user) {
-      const next = safeReturnPath(search.redirect);
-      throw next ? redirect({ href: next }) : redirect({ to: "/" });
+      throw redirect({
+        href: destinationAfterAuth(context.user.roles, search.redirect, search.browse === "1"),
+      });
     }
   },
   head: () => ({
@@ -72,7 +80,7 @@ function LoginPage() {
   const requestSms = useAuthServerFn(requestSmsLoginFn);
   const confirmSms = useAuthServerFn(confirmSmsLoginFn);
   const router = useRouter();
-  const { redirect: returnPath, google, yandex } = Route.useSearch();
+  const { redirect: returnPath, google, yandex, browse } = Route.useSearch();
   const providerNotice = (reason: string | undefined, name: "Google" | "Яндекс") =>
     reason === "deleted"
       ? "Этот аккаунт удалён. Войдите паролем и восстановите его."
@@ -86,20 +94,18 @@ function LoginPage() {
   const googleMessage = providerNotice(yandex, "Яндекс") ?? providerNotice(google, "Google");
   const { error, pending, run, redirectTo, setError } = useAuthSubmit();
 
-  const goAfterLogin = async (result: { redirectTo?: string; totpRequired?: boolean } | null) => {
+  const goAfterLogin = async (
+    result: { redirectTo?: string; totpRequired?: boolean; user?: { roles: UserRole[] } } | null,
+  ) => {
     if (result?.totpRequired) {
       await router.invalidate();
       redirectTo("/auth/totp");
       return;
     }
-    const next = safeReturnPath(returnPath) ?? result?.redirectTo;
-    if (!next) return;
+    if (!result) return;
+    const next = destinationAfterAuth(result.user?.roles ?? [], returnPath, browse === "1");
     await router.invalidate();
-    if (safeReturnPath(returnPath)) {
-      window.location.assign(next);
-      return;
-    }
-    redirectTo(next);
+    window.location.assign(next);
   };
 
   const sendSms = async (form: HTMLFormElement) => {
@@ -153,8 +159,8 @@ function LoginPage() {
           </div>
 
           <div className="auth-google-slot">
-            <GoogleLoginButton returnPath={returnPath} />
-            <YandexLoginButton returnPath={returnPath} />
+            <GoogleLoginButton returnPath={returnPath} browse={browse === "1"} />
+            <YandexLoginButton returnPath={returnPath} browse={browse === "1"} />
             <div className="auth-or" aria-hidden="true">или</div>
           </div>
 
@@ -309,7 +315,16 @@ function LoginPage() {
           ) : null}
 
           <p className="auth-foot">
-            Ещё нет аккаунта? <Link to="/auth/signup">Зарегистрироваться</Link>
+            Ещё нет аккаунта?{" "}
+            <Link
+              to="/auth/signup"
+              search={{
+                ...(returnPath ? { redirect: returnPath } : {}),
+                ...(browse ? { browse } : {}),
+              }}
+            >
+              Зарегистрироваться
+            </Link>
           </p>
         </div>
       </main>

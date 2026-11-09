@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { accountPathForTrainer, deniedCabinetTarget, getPostLoginPath } from "@/lib/auth/roles";
+import { destinationAfterAuth } from "@/lib/auth/return-path";
 import type { UserRole } from "@/lib/auth/types";
 
 const user: UserRole[] = ["user"];
@@ -10,6 +11,17 @@ const club: UserRole[] = ["club"];
 const admin: UserRole[] = ["admin"];
 const superadmin: UserRole[] = ["superadmin"];
 const staffTrainer: UserRole[] = ["admin", "trainer"];
+
+test("a plain client returns to the page they left", () => {
+  assert.equal(destinationAfterAuth(user, "/trainers/sergey.the.champ", true), "/trainers/sergey.the.champ");
+  assert.equal(destinationAfterAuth(user, "/", true), "/");
+  assert.equal(destinationAfterAuth(user, null, true), "/");
+  assert.equal(destinationAfterAuth(user, "/auth/login", true), "/");
+  assert.equal(destinationAfterAuth(trainer, "/trainers/sergey.the.champ", true), "/me");
+  assert.equal(destinationAfterAuth(trainer, "/trainers/sergey.the.champ"), "/trainers/sergey.the.champ");
+  assert.equal(destinationAfterAuth(trainer, "/me"), "/me");
+  assert.equal(destinationAfterAuth(admin, "/map", true), "/admin");
+});
 
 test("a client opens the profile after login", () => {
   assert.equal(getPostLoginPath(user), "/account");

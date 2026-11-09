@@ -11,7 +11,7 @@ import { logCaught, writeLog } from "@/lib/log/logger";
 
 const COOKIE = "trenio_google_oauth";
 
-function readPacked(header: string | null): { state: string; redirect: string; door: boolean } | null {
+function readPacked(header: string | null): { state: string; redirect: string; door: boolean; browse: boolean } | null {
   if (!header) return null;
   const raw = header.split(";").map((part) => part.trim()).find((part) => part.startsWith(`${COOKIE}=`));
   if (!raw) return null;
@@ -20,9 +20,10 @@ function readPacked(header: string | null): { state: string; redirect: string; d
       state?: unknown;
       redirect?: unknown;
       door?: unknown;
+      browse?: unknown;
     };
     if (typeof parsed.state !== "string" || typeof parsed.redirect !== "string") return null;
-    return { state: parsed.state, redirect: parsed.redirect, door: parsed.door === true };
+    return { state: parsed.state, redirect: parsed.redirect, door: parsed.door === true, browse: parsed.browse === true };
   } catch {
     return null;
   }
@@ -44,10 +45,11 @@ function clearCookie(): string {
   return `${COOKIE}=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax${secure}`;
 }
 
-function toLogin(reason: string | null, back: string | null) {
+function toLogin(reason: string | null, back: string | null, browse = false) {
   const params = new URLSearchParams();
   if (reason) params.set("google", reason);
   if (back) params.set("redirect", back);
+  if (browse) params.set("browse", "1");
   const query = params.toString();
   return new Response(null, {
     status: 302,
@@ -66,18 +68,20 @@ export const Route = createFileRoute("/auth/google/callback")({
         const url = new URL(request.url);
         const packed = readPacked(request.headers.get("cookie"));
         const back = safeReturnPath(packed?.redirect);
-        if (url.searchParams.get("error") === "access_denied") return toLogin(null, back);
-        if (!packed || packed.state !== url.searchParams.get("state")) return toLogin("failed", back);
+        const browse = packed?.browse === true;
+        if (url.searchParams.get("error") === "access_denied") return toLogin(null, back, browse);
+        if (!packed || packed.state !== url.searchParams.get("state")) return toLogin("failed", back, browse);
         const code = url.searchParams.get("code")?.trim() ?? "";
-        if (!code) return toLogin("failed", back);
+        if (!code) return toLogin("failed", back, browse);
         try {
           const identity = await googleIdentityFromCode(code);
-          if (!identity) return toLogin("failed", back);
+          if (!identity) return toLogin("failed", back, browse);
           const result = await openGoogleAccount(identity, back, {
             ipAddress: clientIpFromHeaders(request.headers.get("x-real-ip")),
             userAgent: request.headers.get("user-agent"),
+            browse,
           });
-          if (result.kind === "refuse") return toLogin(result.reason === "invalid" ? "failed" : result.reason, back);
+          if (result.kind === "refuse") return toLogin(result.reason === "invalid" ? "failed" : result.reason, back, browse);
           await applyExternalPortrait(result.userId, identity.avatarUrl, "auth.login.google");
           const doorClaim = packed.door
             ? await claimDoorAfterGoogle({
@@ -122,7 +126,7 @@ export const Route = createFileRoute("/auth/google/callback")({
           return new Response(null, { status: 302, headers });
         } catch (error) {
           logCaught("auth", "auth.login.google", error);
-          return toLogin("failed", back);
+          return toLogin("failed", back, browse);
         }
       },
     },

@@ -6,10 +6,12 @@ import { AuthStyles } from "@/components/auth-styles";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { confirmSignupEmailFn } from "@/lib/auth/functions";
+import { destinationAfterAuth, isPlainClient } from "@/lib/auth/return-path";
 import { NOINDEX_NOFOLLOW } from "@/lib/seo/head";
 
 const searchSchema = z.object({
   token: z.string().optional(),
+  next: z.string().optional(),
 });
 
 export const Route = createFileRoute("/auth/confirm-email")({
@@ -30,6 +32,7 @@ export const Route = createFileRoute("/auth/confirm-email")({
 
 function ConfirmEmailPage() {
   const { token } = Route.useLoaderData();
+  const { next } = Route.useSearch();
   const router = useRouter();
   const confirm = useAuthServerFn(confirmSignupEmailFn);
   const { error, pending, run } = useAuthSubmit();
@@ -61,9 +64,13 @@ function ConfirmEmailPage() {
                   async (result) => {
                     if (!result) return;
                     setDone(true);
-                    const next = "totpRequired" in result && result.totpRequired ? "/auth/totp" : result.redirectTo;
+                    const landed = "totpRequired" in result && result.totpRequired
+                      ? "/auth/totp"
+                      : "user" in result && isPlainClient(result.user.roles)
+                        ? destinationAfterAuth(result.user.roles, next, false)
+                        : result.redirectTo;
                     await router.invalidate();
-                    if (next) window.location.assign(next);
+                    if (landed) window.location.assign(landed);
                   },
                 );
               }}

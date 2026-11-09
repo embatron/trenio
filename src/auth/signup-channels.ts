@@ -22,6 +22,7 @@ import { emailVerificationTokens, userRoles, users, type User } from "@/db/schem
 import { decideEmailSignup, decideSmsSignup } from "@/lib/auth/auth-decisions";
 import { AuthError } from "@/lib/auth/errors";
 import { isPendingSignupEmail, isReservedAccountEmail, pendingSignupEmail } from "@/lib/auth/pending-email";
+import { safeReturnPath } from "@/lib/auth/return-path";
 import { OTP_RESEND_SECONDS, storedBelarusPhone, validateBelarusMobile, normalizeBelarusMobile } from "@/lib/auth/phone";
 import { belarusPhoneEquals } from "@/lib/auth/phone-match";
 import { renderLetter } from "@/lib/mail/letter";
@@ -194,8 +195,13 @@ async function sendSignupLetter(email: string, url: string | null, notice: boole
   });
 }
 
+function signupProofUrl(url: string, returnPath: string | null): string {
+  if (!returnPath) return url;
+  return `${url}&next=${encodeURIComponent(returnPath)}`;
+}
+
 export async function signupWithEmail(
-  input: { email: string; password: string },
+  input: { email: string; password: string; returnPath?: string | null },
   meta: LoginMeta,
   profile: { firstName?: string; lastName?: string; intent?: "client_signup" | "trainer_create" } = {},
 ): Promise<{ message: string }> {
@@ -221,6 +227,7 @@ export async function signupWithEmail(
   const decision = decideEmailSignup(kind);
   const passwordHash = await hashPassword(input.password);
   const db = getDb();
+  const back = safeReturnPath(input.returnPath);
 
   try {
     if (decision === "create") {
@@ -239,7 +246,7 @@ export async function signupWithEmail(
         .returning();
       await db.insert(userRoles).values({ userId: created.id, role: "user" });
       const proof = await issueSignupEmailProof(created.id);
-      await sendSignupLetter(email, proof.url, false, trainer);
+      await sendSignupLetter(email, signupProofUrl(proof.url, back), false, trainer);
     } else if (decision === "refresh" && existing) {
       const trainer = profile.intent === "trainer_create";
       await db.update(users).set({
@@ -254,7 +261,7 @@ export async function signupWithEmail(
         updatedAt: new Date(),
       }).where(eq(users.id, existing.id));
       const proof = await issueSignupEmailProof(existing.id);
-      await sendSignupLetter(email, proof.url, false, trainer);
+      await sendSignupLetter(email, signupProofUrl(proof.url, back), false, trainer);
     } else {
       await sendSignupLetter(email, null, true);
     }

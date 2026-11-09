@@ -9,10 +9,9 @@ import { trainerProfiles, userRoles, users, type User } from "@/db/schema";
 import { rememberOAuthNames } from "@/auth/oauth-profile";
 import { decideYandexLink } from "@/lib/auth/auth-decisions";
 import { isReservedAccountEmail } from "@/lib/auth/pending-email";
-import { getPostLoginPath } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
 import type { YandexIdentity } from "@/lib/auth/yandex-identity";
-import { safeReturnPath } from "@/lib/auth/return-path";
+import { destinationAfterAuth } from "@/lib/auth/return-path";
 
 export type YandexLoginResult =
   | { kind: "session"; token: string; redirectTo: string; created: boolean; email: string; userId: string }
@@ -38,7 +37,7 @@ function refuseReason(user: User | null): "deleted" | "blocked" | "taken" {
 export async function openYandexAccount(
   identity: YandexIdentity,
   returnPath: string | null,
-  meta: { ipAddress?: string | null; userAgent?: string | null },
+  meta: { ipAddress?: string | null; userAgent?: string | null; browse?: boolean },
 ): Promise<YandexLoginResult> {
   const email = normalizeEmail(identity.email);
   if (isReservedAccountEmail(email)) return { kind: "refuse", reason: "invalid" };
@@ -113,7 +112,7 @@ export async function openYandexAccount(
   return {
     kind: "session",
     token: opened.token,
-    redirectTo: safeReturnPath(returnPath) ?? getPostLoginPath(roles),
+    redirectTo: destinationAfterAuth(roles, returnPath, meta.browse),
     created,
     email,
     userId: fresh.id,

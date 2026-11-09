@@ -21,12 +21,16 @@ import {
 } from "@/lib/auth/functions";
 import { BY_PHONE_COUNTRY_PREFIX, OTP_CODE_LENGTH } from "@/lib/auth/phone";
 import { getPostLoginPath } from "@/lib/auth/roles";
-import { safeReturnPath } from "@/lib/auth/return-path";
+import { destinationAfterAuth } from "@/lib/auth/return-path";
+import type { UserRole } from "@/lib/auth/types";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
 export const Route = createFileRoute("/auth/signup")({
-  validateSearch: (search: Record<string, unknown>): { redirect?: string } =>
-    typeof search.redirect === "string" ? { redirect: search.redirect } : {},
+  validateSearch: (search: Record<string, unknown>): { redirect?: string; browse?: "1" } => {
+    const redirect = typeof search.redirect === "string" ? search.redirect : undefined;
+    const browse = search.browse === "1" ? "1" as const : undefined;
+    return { ...(redirect ? { redirect } : {}), ...(browse ? { browse } : {}) };
+  },
   beforeLoad: async ({ context }) => {
     if (!context.user) return;
     if (context.user.needsCredentials) {
@@ -71,7 +75,7 @@ function SignupPage() {
   const requestSms = useAuthServerFn(requestSmsSignupFn);
   const confirmSms = useAuthServerFn(confirmSmsSignupFn);
   const router = useRouter();
-  const { redirect: returnPath } = Route.useSearch();
+  const { redirect: returnPath, browse } = Route.useSearch();
   const { error, pending, run, redirectTo, setError } = useAuthSubmit();
   const acceptPrivacy = (value: boolean) => {
     setAccepted(value);
@@ -79,21 +83,17 @@ function SignupPage() {
   };
 
   const goAfterSignup = async (
-    result: { redirectTo?: string; user?: { needsCredentials?: boolean } } | null,
+    result: { redirectTo?: string; user?: { needsCredentials?: boolean; roles?: UserRole[] } } | null,
   ) => {
-    if (result?.user?.needsCredentials) {
+    if (!result) return;
+    if (result.user?.needsCredentials) {
       await router.invalidate();
-      redirectTo(result.redirectTo ?? "/account");
+      redirectTo("/auth/credentials");
       return;
     }
-    const next = safeReturnPath(returnPath) ?? result?.redirectTo;
-    if (!next) return;
+    const next = destinationAfterAuth(result.user?.roles ?? [], returnPath, browse === "1");
     await router.invalidate();
-    if (safeReturnPath(returnPath)) {
-      window.location.assign(next);
-      return;
-    }
-    redirectTo(next);
+    window.location.assign(next);
   };
 
   const sendSms = async (form: HTMLFormElement) => {
@@ -153,11 +153,13 @@ function SignupPage() {
           <div className="auth-google-slot">
             <GoogleLoginButton
               returnPath={returnPath}
+              browse={browse === "1"}
               disabled={!accepted}
               onBlocked={() => setError("Примите политику конфиденциальности.")}
             />
             <YandexLoginButton
               returnPath={returnPath}
+              browse={browse === "1"}
               disabled={!accepted}
               onBlocked={() => setError("Примите политику конфиденциальности.")}
             />
@@ -184,6 +186,7 @@ function SignupPage() {
                         email,
                         password,
                         honeypot: honeypotFromForm(event.currentTarget),
+                        returnPath,
                       },
                     }),
                   async (result) => {
@@ -315,7 +318,16 @@ function SignupPage() {
           ) : null}
 
           <p className="auth-foot">
-            Уже есть аккаунт? <Link to="/auth/login">Войти</Link>
+            Уже есть аккаунт?{" "}
+            <Link
+              to="/auth/login"
+              search={{
+                ...(returnPath ? { redirect: returnPath } : {}),
+                ...(browse ? { browse } : {}),
+              }}
+            >
+              Войти
+            </Link>
           </p>
         </div>
       </main>

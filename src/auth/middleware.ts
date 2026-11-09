@@ -4,12 +4,11 @@ import { findValidSession } from "@/auth/service";
 import type { SessionUser } from "@/auth/service";
 import { readSessionToken } from "@/auth/session";
 import { AuthError } from "@/lib/auth/errors";
-import { phoneStandsInForMailbox } from "@/lib/auth/auth-decisions";
-import { isPendingSignupEmail } from "@/lib/auth/pending-email";
+import { mailboxStillRequired } from "@/lib/auth/auth-decisions";
 import { staffNeedsTotp } from "@/lib/auth/staff-totp";
 
 function assertAccountReady(user: SessionUser) {
-  if (isPendingSignupEmail(user.email) && !phoneStandsInForMailbox(user)) {
+  if (mailboxStillRequired(user)) {
     throw new AuthError("Сначала подтвердите почту и сохраните пароль.", "FORBIDDEN");
   }
   if (user.needsPassword && user.lastSignupIntent === "trainer_claim") {

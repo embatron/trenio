@@ -136,7 +136,7 @@ AGENTS.md             # Entry point для агентов
 | `/auth/yandex`          | `auth.yandex.ts`           | Начало входа через Яндекс. Возврат на `/auth/yandex/callback` |
 | `/auth/signup`          | `auth.signup.tsx`          | Регистрация по почте, Google, Яндексу или телефону. Почта отвечает одной фразой и ждёт кнопку в письме. Telegram на форме скрыт |
 | `/auth/confirm-email`   | `auth.confirm-email.tsx`   | Кнопка подтверждения почты из письма регистрации |
-| `/auth/credentials`     | `auth.credentials.tsx`     | Почта и пароль после телефона или Telegram |
+| `/auth/credentials`     | `auth.credentials.tsx`     | Почта и пароль, если аккаунт ещё без телефона и без почты (Telegram). Подтверждённый телефон эту стену не ставит |
 | `/auth/password`        | `auth.password.tsx`        | Пароль после ссылки в кабинет тренера |
 | `/auth/totp`            | `auth.totp.tsx`            | Запас на потом. Сейчас вход туда возвращает в кабинет, код из приложения не спрашивается |
 | `/auth/forgot-password` | `auth.forgot-password.tsx` | Сброс пароля по e-mail или SMS                                |

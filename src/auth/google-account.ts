@@ -10,9 +10,8 @@ import { rememberOAuthNames } from "@/auth/oauth-profile";
 import { decideGoogleLink } from "@/lib/auth/auth-decisions";
 import type { GoogleIdentity } from "@/lib/auth/google-identity";
 import { isReservedAccountEmail } from "@/lib/auth/pending-email";
-import { getPostLoginPath } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
-import { safeReturnPath } from "@/lib/auth/return-path";
+import { destinationAfterAuth } from "@/lib/auth/return-path";
 
 export type GoogleLoginResult =
   | { kind: "session"; token: string; redirectTo: string; created: boolean; email: string; userId: string }
@@ -38,7 +37,7 @@ function refuseReason(user: User | null): "deleted" | "blocked" | "taken" {
 export async function openGoogleAccount(
   identity: GoogleIdentity,
   returnPath: string | null,
-  meta: { ipAddress?: string | null; userAgent?: string | null },
+  meta: { ipAddress?: string | null; userAgent?: string | null; browse?: boolean },
 ): Promise<GoogleLoginResult> {
   const email = normalizeEmail(identity.email);
   if (isReservedAccountEmail(email)) return { kind: "refuse", reason: "invalid" };
@@ -112,7 +111,7 @@ export async function openGoogleAccount(
   return {
     kind: "session",
     token: opened.token,
-    redirectTo: safeReturnPath(returnPath) ?? getPostLoginPath(roles),
+    redirectTo: destinationAfterAuth(roles, returnPath, meta.browse),
     created,
     email,
     userId: fresh.id,

@@ -9,6 +9,7 @@ import { getAdminShellFn } from "@/lib/admin/shell";
 import { logoutFn } from "@/lib/auth/functions";
 import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { getCabinetPath, hasAnyRole, isStaff } from "@/lib/auth/roles";
+import { safeReturnPath } from "@/lib/auth/return-path";
 import type { UserRole } from "@/lib/auth/types";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { pluralRu } from "@/lib/ru-plural";
@@ -719,6 +720,15 @@ function useStaffMenuCounts(enabled: boolean) {
   return enabled ? counts : {};
 }
 
+/** Header sign-in. `browse` keeps a trainer in the cabinet and returns a client to this page. */
+function useBrowseLoginSearch(): { redirect?: string; browse: "1" } {
+  const here = useRouterState({
+    select: (state) => `${state.location.pathname}${state.location.searchStr}`,
+  });
+  const redirect = safeReturnPath(here);
+  return redirect ? { redirect, browse: "1" } : { browse: "1" };
+}
+
 function AccountButton() {
   const { user } = useRouteContext({ from: "__root__" });
   const staffCounts = useStaffMenuCounts(Boolean(user && isStaff(user.roles)));
@@ -729,6 +739,7 @@ function AccountButton() {
   const pointerType = useRef("mouse");
   const holdClosed = useRef(false);
   const logout = useAuthServerFn(logoutFn);
+  const loginSearch = useBrowseLoginSearch();
   const messaging = useMessaging();
   const { keys, ready } = useFavorites();
   const face = useLiveAvatar(user?.id, user?.avatarPath);
@@ -759,7 +770,7 @@ function AccountButton() {
 
   if (!user) {
     return (
-      <Link to="/auth/login" className="icon-btn" aria-label="Войти" title="Войти">
+      <Link to="/auth/login" search={loginSearch} className="icon-btn" aria-label="Войти" title="Войти">
         <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
       </Link>
     );
@@ -1028,6 +1039,7 @@ function MegaPin() {
 
 function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { user } = useRouteContext({ from: "__root__" });
+  const loginSearch = useBrowseLoginSearch();
   const [sportsOpen, setSportsOpen] = useState(false);
   const [citiesOpen, setCitiesOpen] = useState(false);
   useEffect(() => {
@@ -1118,8 +1130,8 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
                 </li>
               ) : (
                 <>
-                  <li><Link className="mega-link mega-link--text" to="/auth/signup" onClick={onClose}>Создать аккаунт</Link></li>
-                  <li><Link className="mega-link mega-link--text" to="/auth/login" onClick={onClose}>Войти</Link></li>
+                  <li><Link className="mega-link mega-link--text" to="/auth/signup" search={loginSearch} onClick={onClose}>Создать аккаунт</Link></li>
+                  <li><Link className="mega-link mega-link--text" to="/auth/login" search={loginSearch} onClick={onClose}>Войти</Link></li>
                 </>
               )}
             </ul>

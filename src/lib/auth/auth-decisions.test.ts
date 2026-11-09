@@ -8,6 +8,7 @@ import {
   decideYandexLink,
   decideSmsSignup,
   gateAllowsPath,
+  mailboxStillRequired,
   phoneStandsInForMailbox,
 } from "./auth-decisions";
 import { STAFF_TOTP_REQUIRED, staffNeedsTotp, staffTotpAtLogin } from "./staff-totp";
@@ -17,6 +18,13 @@ test("email signup does not enter an existing mailbox", () => {
   assert.equal(decideEmailSignup("unverified"), "refresh");
   assert.equal(decideEmailSignup("verified"), "notice");
   assert.equal(decideEmailSignup("blocked"), "notice");
+});
+
+test("a confirmed phone is enough, and Telegram still needs a mailbox", () => {
+  const pending = "pending.00000000-0000-4000-8000-000000000000@users.trenio.invalid";
+  assert.equal(mailboxStillRequired({ email: pending, phoneVerified: true }), false);
+  assert.equal(mailboxStillRequired({ email: pending, phoneVerified: false }), true);
+  assert.equal(mailboxStillRequired({ email: "client@example.com", phoneVerified: false }), false);
 });
 
 test("a short-link phone stands in for a mailbox", () => {

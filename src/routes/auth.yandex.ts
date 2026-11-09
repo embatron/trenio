@@ -14,10 +14,11 @@ function cookie(value: string, maxAge: number): string {
   return `${COOKIE}=${encodeURIComponent(value)}; HttpOnly; Path=/; Max-Age=${maxAge}; SameSite=Lax${secure}`;
 }
 
-function loginRedirect(reason: string, back: string | null) {
+function loginRedirect(reason: string, back: string | null, browse = false) {
   const url = new URL("/auth/login", "https://trenio.by");
   url.searchParams.set("yandex", reason);
   if (back) url.searchParams.set("redirect", back);
+  if (browse) url.searchParams.set("browse", "1");
   return new Response(null, {
     status: 302,
     headers: { location: `${url.pathname}${url.search}`, "cache-control": "private, no-store" },
@@ -31,7 +32,8 @@ export const Route = createFileRoute("/auth/yandex")({
         const url = new URL(request.url);
         const back = safeReturnPath(url.searchParams.get("redirect"));
         const door = url.searchParams.get("door") === "1";
-        if (!yandexConfigured()) return loginRedirect("failed", back);
+        const browse = url.searchParams.get("browse") === "1";
+        if (!yandexConfigured()) return loginRedirect("failed", back, browse);
         const ip = clientIpFromHeaders(request.headers.get("x-real-ip"));
         const limit = await consumeRateLimit(`yandex:ip:${ip}`, 15 * 60_000, 12);
         if (!limit.ok) {
@@ -42,10 +44,10 @@ export const Route = createFileRoute("/auth/yandex")({
             outcome: "denied",
             message: RATE_LIMITED_MESSAGE,
           });
-          return loginRedirect("failed", back);
+          return loginRedirect("failed", back, browse);
         }
         const state = newYandexState();
-        const packed = Buffer.from(JSON.stringify({ state, redirect: back ?? "", door })).toString("base64url");
+        const packed = Buffer.from(JSON.stringify({ state, redirect: back ?? "", door, browse })).toString("base64url");
         return new Response(null, {
           status: 302,
           headers: {
