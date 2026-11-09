@@ -48,7 +48,6 @@
 | `admin.sync_trainers` | The laptop synced trainer cards, catalog status, and message marks. The row stores counts or one handle, not the card text or the short link |
 | `admin.trainer_invite` | Staff copied the trainer's short link. The row stores the slug, not the link. A published profile is `denied` |
 | `admin.trainer_invite_sent` | The copied short link was marked sent. The row stores the slug, not the link |
-| `admin.trainer_note` | Staff saved a trainer note. The row stores the slug, not the note text |
 | `admin.trainer_remove` | A trainer profile was removed from the portal. The row stores the slug |
 | `trainer.add` / `trainer.sync` | A trainer card was inserted, or an import updated an existing card. The row stores the slug, status, and source. Card text stays out |
 | `trainer.appear` / `trainer.withdraw` | The card entered or left the public catalog. Timestamp is `created_at` |

@@ -274,6 +274,7 @@ body.is-search-docked .site-header__search {
   text-transform: none; color: var(--muted);
 }
 .mega-col ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 2px; }
+.mega-link .trainer-name { flex-direction: row; align-items: baseline; flex-wrap: wrap; gap: 0.35em; }
 .mega-link {
   display: flex; align-items: center; gap: 8px;
   min-height: 44px; margin: 0 -12px; padding: 8px 12px;

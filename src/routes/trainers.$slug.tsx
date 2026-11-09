@@ -466,6 +466,9 @@ const CSS = `
   .profile-identity__name { font-size: 24px; }
   .similar-trainers__track { grid-template-columns: 1fr; }
 }
+@media (max-width: 767px) {
+  .similar-trainers__track { gap: calc(var(--layout-gap) * 0.95); }
+}
 
 `;
 

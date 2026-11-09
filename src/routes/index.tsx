@@ -854,7 +854,7 @@ function Index() {
       telegram: trainer.telegram,
       email: trainer.email,
     };
-  }).sort(compareByPopularity);
+  }).sort(compareByPopularity).slice(0, 16);
   useEffect(() => {
     const siteHeader = document.querySelector<HTMLElement>("#site-header");
     if (!siteHeader) return;
@@ -905,7 +905,7 @@ function Index() {
             {trainers.length === 0 ? (
               <CatalogEmpty title="Тренеров в Минске пока нет" />
             ) : (
-              <div className="trainer-grid">
+              <div className="trainer-grid trainer-grid--home">
                 {trainers.map((t) => (
                   <CatalogTrainerCard key={t.slug} trainer={t} />
                 ))}

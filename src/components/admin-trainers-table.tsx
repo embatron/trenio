@@ -5,9 +5,8 @@ import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { UserAvatar } from "@/components/user-avatar";
 import { TrainerName } from "@/components/trainer-name";
 import { TablePager, useTablePage } from "@/components/table-pager";
-import { accountConfirmations } from "@/lib/admin/account-channel";
+import { confirmedAccountValue } from "@/lib/admin/account-channel";
 import { TRAINER_PUBLISH_LABEL, type AdminTrainer } from "@/lib/admin/trainers";
-import { TrainerNoteCell } from "@/components/admin-trainer-note";
 import { TrainerEditDialog } from "@/components/admin-trainer-page";
 import { issueTrainerInviteFn, markTrainerInviteSentFn } from "@/lib/catalog/trainer-magic";
 import { authErrorMessage } from "@/lib/auth/errors";
@@ -22,7 +21,7 @@ import { outreachHello, outreachWithSiteLink } from "@/lib/site-texts/defaults";
 
 const TRAINER_PAGE_SIZE = 20;
 type TrainerPublishTab = "unpublished" | "published";
-type TrainerSort = "date-desc" | "date-asc" | "reviews" | "rating" | "popularity" | "sent" | "link" | "visit" | "seen" | "note";
+type TrainerSort = "date-desc" | "date-asc" | "reviews" | "rating" | "popularity" | "sent" | "link" | "visit" | "seen";
 
 const dateFormat = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short", year: "numeric" });
 const addedFormat = new Intl.DateTimeFormat("en-GB", {
@@ -106,33 +105,16 @@ function confirmedCabinetPhone(trainer: AdminTrainer) {
   return formatBelarusPhone(account.phone);
 }
 
-/** Account column: each confirmed channel and the value that was confirmed. */
-function accountLines(trainer: AdminTrainer) {
-  return accountConfirmations(trainer.account);
-}
-
 function accountTitle(trainer: AdminTrainer) {
   if (!trainer.account) return "В каталоге есть карточка, но пользователь ещё не зарегистрировался и не забрал профиль";
-  const lines = accountLines(trainer);
-  if (lines.length === 0) return "Аккаунт есть, почта и телефон не подтверждены";
-  return lines.map((line) => `${line.channel}: ${line.value}`).join(". ");
+  const value = confirmedAccountValue(trainer.account);
+  if (!value) return "Аккаунт есть, почта и телефон не подтверждены";
+  return value;
 }
 
 function AccountCell({ trainer }: { trainer: AdminTrainer }) {
   if (!trainer.account) return "Аккаунт не создан";
-  const lines = accountLines(trainer);
-  if (lines.length === 0) return "не подтверждён";
-  return (
-    <span className="cabinet-account">
-      {lines.map((line) => (
-        <span key={line.channel}>
-          <span className="cabinet-account__channel">{line.channel}</span>
-          {" "}
-          {line.value}
-        </span>
-      ))}
-    </span>
-  );
+  return confirmedAccountValue(trainer.account) || "не подтверждён";
 }
 
 function categoryLabels(slugs: string[]) {
@@ -360,7 +342,6 @@ function searchHaystack(trainer: AdminTrainer) {
     audienceLabels(trainer.audiences),
     formats.join(" "),
     TRAINER_PUBLISH_LABEL[trainer.status],
-    trainer.staffNote,
     trainer.outreachSentAt ? "сообщение отправлено" : "сообщение не отправлено",
     trainer.inviteSentAt ? "ссылка отправлена" : "ссылка не отправлена",
     trainer.doorEnteredAt ? "был заходил" : "не заходил",
@@ -372,7 +353,7 @@ function searchHaystack(trainer: AdminTrainer) {
     account?.name ?? "",
     account?.email ?? "",
     account ? displayAccountLogin(account.email) : "аккаунт не создан",
-    ...accountLines(trainer).flatMap((line) => [line.channel, line.value]),
+    confirmedAccountValue(account),
     account?.phone ?? "",
     account?.phone.replace(/\D/g, "") ?? "",
   ].join(" ").toLocaleLowerCase("ru").replaceAll("ё", "е");
@@ -404,11 +385,6 @@ function sortTrainers(rows: AdminTrainer[], sort: TrainerSort) {
       const right = b.lastLoginAt ? Date.parse(b.lastLoginAt) : 0;
       return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
     }
-    if (sort === "note") {
-      const left = a.staffNoteAt ? Date.parse(a.staffNoteAt) : 0;
-      const right = b.staffNoteAt ? Date.parse(b.staffNoteAt) : 0;
-      return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
-    }
     const left = a.createdAt ? Date.parse(a.createdAt) : 0;
     const right = b.createdAt ? Date.parse(b.createdAt) : 0;
     if (!left && !right) return byName(a, b);
@@ -437,7 +413,6 @@ const SORT_OPTIONS: Array<{ id: TrainerSort; label: string }> = [
   { id: "link", label: "Сначала со ссылкой" },
   { id: "visit", label: "Сначала зашедшие" },
   { id: "seen", label: "Сначала недавно на сайте" },
-  { id: "note", label: "Сначала с заметкой" },
 ];
 
 export function AdminTrainersTable({
@@ -452,26 +427,20 @@ export function AdminTrainersTable({
   const [query, setQuery] = useState("");
   const [publishTab, setPublishTab] = useState<TrainerPublishTab>("unpublished");
   const [editSlug, setEditSlug] = useState<string | null>(null);
-  const [notePatch, setNotePatch] = useState<Record<string, { body: string; at: string; count: number }>>({});
   const [linkPatch, setLinkPatch] = useState<Record<string, string>>({});
   const listed = useMemo(
     () => {
       const patched = trainers.map((trainer) => {
-        const note = notePatch[trainer.slug];
         const link = linkPatch[trainer.slug];
-        if (!note && !link) return trainer;
-        return {
-          ...trainer,
-          ...(note ? { staffNote: note.body, staffNoteAt: note.at, staffNoteCount: note.count } : {}),
-          ...(link ? { inviteSentAt: link } : {}),
-        };
+        if (!link) return trainer;
+        return { ...trainer, inviteSentAt: link };
       });
       if (list === "unvisited") return patched.filter((trainer) => !trainer.doorEnteredAt);
       if (list === "published") return patched.filter((trainer) => trainer.status === "published");
       if (list === "unclear") return patched.filter(isUnclearTrainer);
       return patched;
     },
-    [trainers, notePatch, linkPatch, list],
+    [trainers, linkPatch, list],
   );
   const [category, setCategory] = useState("");
   const [sport, setSport] = useState("");
@@ -481,7 +450,6 @@ export function AdminTrainersTable({
   const [message, setMessage] = useState<"" | "sent" | "unsent">("");
   const [link, setLink] = useState<"" | "sent" | "unsent">("");
   const [visit, setVisit] = useState<"" | "yes" | "no">("");
-  const [note, setNote] = useState<"" | "yes" | "no">("");
   const [sort, setSort] = useState<TrainerSort>("date-desc");
   const sportOptions = useMemo(
     () => listSecondLevelSports().filter((item) => !category || item.parentSlug === category),
@@ -502,8 +470,6 @@ export function AdminTrainersTable({
       if (link === "unsent" && trainer.inviteSentAt) return false;
       if (visit === "yes" && !trainer.doorEnteredAt) return false;
       if (visit === "no" && trainer.doorEnteredAt) return false;
-      if (note === "yes" && trainer.staffNoteCount < 1) return false;
-      if (note === "no" && trainer.staffNoteCount > 0) return false;
       if (tokens.length) {
         const haystack = searchHaystack(trainer);
         if (!tokens.every((token) => haystack.includes(token))) return false;
@@ -513,7 +479,7 @@ export function AdminTrainersTable({
     const unpublished = sortTrainers(rows.filter((trainer) => trainer.status !== "published"), sort);
     const published = sortTrainers(rows.filter((trainer) => trainer.status === "published"), sort);
     return { unpublished, published };
-  }, [listed, query, category, sport, city, format, audience, message, link, visit, note, sort]);
+  }, [listed, query, category, sport, city, format, audience, message, link, visit, sort]);
   const visible = list === "published"
     ? visibleBuckets.published
     : list === "unvisited" || list === "unclear"
@@ -526,7 +492,7 @@ export function AdminTrainersTable({
         : visibleBuckets.unpublished;
   const pager = useTablePage(
     visible,
-    `${query}|${category}|${sport}|${city}|${format}|${audience}|${message}|${link}|${visit}|${note}|${sort}|${publishTab}`,
+    `${query}|${category}|${sport}|${city}|${format}|${audience}|${message}|${link}|${visit}|${sort}|${publishTab}`,
     TRAINER_PAGE_SIZE,
   );
 
@@ -559,7 +525,7 @@ export function AdminTrainersTable({
           <input
             type="search"
             value={query}
-            placeholder="Имя, телефон, город, спорт, аккаунт, Instagram, заметка"
+            placeholder="Имя, телефон, город, спорт, аккаунт, Instagram"
             onChange={(event) => setQuery(event.target.value)}
           />
         </label>
@@ -646,14 +612,6 @@ export function AdminTrainersTable({
           </label>
         )}
         <label>
-          <span>Заметка</span>
-          <select value={note} onChange={(event) => setNote(event.target.value as "" | "yes" | "no")}>
-            <option value="">Все</option>
-            <option value="yes">Есть</option>
-            <option value="no">Нет</option>
-          </select>
-        </label>
-        <label>
           <span>Сортировка</span>
           <select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}>
             {SORT_OPTIONS.filter((option) => {
@@ -689,7 +647,6 @@ export function AdminTrainersTable({
                 <th>Рейтинг</th>
                 <th>Аккаунт</th>
                 <th>Посещение</th>
-                <th>Заметка</th>
               </tr>
             </thead>
             <tbody>
@@ -737,17 +694,6 @@ export function AdminTrainersTable({
                   </td>
                   <td title={trainer.lastLoginAt ? `Последнее посещение сайта ${visitedOn(trainer.lastLoginAt)}` : "На сайт ещё не заходил"}>
                     {trainer.lastLoginAt ? visitedOn(trainer.lastLoginAt) : "—"}
-                  </td>
-                  <td className="is-note">
-                    {trainer.id ? (
-                      <TrainerNoteCell
-                        slug={trainer.slug}
-                        name={trainer.fullName || trainer.slug}
-                        note={trainer.staffNote}
-                        count={trainer.staffNoteCount}
-                        onSaved={(body, at, count) => setNotePatch((current) => ({ ...current, [trainer.slug]: { body, at, count } }))}
-                      />
-                    ) : "—"}
                   </td>
                 </tr>
               ))}

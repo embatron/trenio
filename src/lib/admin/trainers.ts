@@ -21,14 +21,12 @@ import {
   sessions,
   trainerProfiles,
   trainerReviews,
-  trainerStaffNotes,
   userRoles,
   users,
   type TrainerSportRecord,
 } from "@/db/schema";
 import { assertStaff, hiddenStaffIds } from "@/lib/admin/access";
 import { AuthError } from "@/lib/auth/errors";
-import { accountNick } from "@/lib/auth/login-name";
 import { formatBelarusPhone, validateBelarusMobile } from "@/lib/auth/phone";
 import { isStaff } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
@@ -73,8 +71,10 @@ export type AdminTrainerAccount = {
   name: string;
   email: string;
   emailVerified: boolean;
+  emailVerifiedAt: string | null;
   phone: string;
   phoneVerified: boolean;
+  phoneVerifiedAt: string | null;
   status: string;
   roles: UserRole[];
 };
@@ -111,10 +111,6 @@ export type AdminTrainer = {
   catalog: boolean;
   account: AdminTrainerAccount | null;
   offerAccepted: boolean;
-  /** Latest staff note. Empty when nobody has written one. */
-  staffNote: string;
-  staffNoteAt: string;
-  staffNoteCount: number;
   /** When the first Instagram message was sent. Empty until then. */
   outreachSentAt: string;
   /** When staff copied the short link. Empty until that click. */
@@ -321,7 +317,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
     assertStaff(context.user.roles);
     await ensureTrainerDoorSchema();
     const db = getDb();
-    const [profileRows, ratingRows, interest, noteRows] = await Promise.all([
+    const [profileRows, ratingRows, interest] = await Promise.all([
       db
       .select({
         id: trainerProfiles.id,
@@ -382,25 +378,8 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         .where(eq(trainerReviews.status, "published"))
         .groupBy(trainerReviews.trainerSlug),
       loadTrainerInterest(),
-      db
-        .select({
-          profileId: trainerStaffNotes.profileId,
-          body: trainerStaffNotes.body,
-          createdAt: trainerStaffNotes.createdAt,
-        })
-        .from(trainerStaffNotes)
-        .orderBy(desc(trainerStaffNotes.createdAt)),
     ]);
     const ratings = new Map(ratingRows.map((row) => [row.slug, { reviews: Number(row.reviews), average: Number(row.average) }]));
-    const latestNote = new Map<string, { body: string; at: string; count: number }>();
-    for (const note of noteRows) {
-      const current = latestNote.get(note.profileId);
-      if (!current) {
-        latestNote.set(note.profileId, { body: note.body, at: note.createdAt.toISOString(), count: 1 });
-      } else {
-        current.count += 1;
-      }
-    }
 
     const ownerIds = profileRows.flatMap((row) => (row.ownerId ? [row.ownerId] : []));
     const roleRows = ownerIds.length
@@ -463,9 +442,6 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       })),
       catalog: isCatalog(row.slug),
       offerAccepted: row.offerAcceptedAt != null,
-      staffNote: latestNote.get(row.id)?.body ?? "",
-      staffNoteAt: latestNote.get(row.id)?.at ?? "",
-      staffNoteCount: latestNote.get(row.id)?.count ?? 0,
       outreachSentAt: row.outreachSentAt?.toISOString() ?? "",
       inviteSentAt: row.inviteSentAt?.toISOString() ?? "",
       doorEnteredAt: row.doorEnteredAt?.toISOString() ?? "",
@@ -478,8 +454,10 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
             name: [row.ownerFirstName, row.ownerLastName].filter(Boolean).join(" "),
             email: row.email ?? "",
             emailVerified: row.accountEmailVerifiedAt != null,
+            emailVerifiedAt: row.accountEmailVerifiedAt?.toISOString() ?? null,
             phone: row.accountPhone ?? "",
             phoneVerified: row.accountPhoneVerifiedAt != null,
+            phoneVerifiedAt: row.accountPhoneVerifiedAt?.toISOString() ?? null,
             status: row.accountStatus ?? "",
             roles: rolesByUser.get(row.ownerId) ?? [],
           }
@@ -528,9 +506,6 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       catalog: true,
       account: null,
       offerAccepted: false,
-      staffNote: "",
-      staffNoteAt: "",
-      staffNoteCount: 0,
       outreachSentAt: "",
       inviteSentAt: "",
       doorEnteredAt: "",
@@ -936,12 +911,6 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
       target: row.slug,
     });
     const mergedLogs = mergeJournal(logs, journal);
-    const noteRowsForProfile = await db
-      .select({ body: trainerStaffNotes.body, createdAt: trainerStaffNotes.createdAt })
-      .from(trainerStaffNotes)
-      .where(eq(trainerStaffNotes.profileId, row.id))
-      .orderBy(desc(trainerStaffNotes.createdAt));
-    const latestNote = noteRowsForProfile[0];
     const fill = popularityChecklist({
       photo: row.avatarPath,
       photos: row.photos,
@@ -1000,9 +969,6 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         }),
         catalog: isCatalog(row.slug),
         offerAccepted: row.offerAcceptedAt != null,
-        staffNote: latestNote?.body ?? "",
-        staffNoteAt: latestNote?.createdAt.toISOString() ?? "",
-        staffNoteCount: noteRowsForProfile.length,
         outreachSentAt: row.outreachSentAt?.toISOString() ?? "",
         inviteSentAt: row.inviteSentAt?.toISOString() ?? "",
         doorEnteredAt: row.doorEnteredAt?.toISOString() ?? "",
@@ -1015,8 +981,10 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
               name: [owner.firstName, owner.lastName].filter(Boolean).join(" "),
               email: owner.email,
               emailVerified: owner.emailVerifiedAt != null,
+              emailVerifiedAt: owner.emailVerifiedAt?.toISOString() ?? null,
               phone: owner.phone ?? "",
               phoneVerified: owner.phoneVerifiedAt != null,
+              phoneVerifiedAt: owner.phoneVerifiedAt?.toISOString() ?? null,
               status: owner.status,
               roles,
             }
@@ -1228,97 +1196,4 @@ export const confirmAdminTrainerPhoneCodeFn = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const ownerId = await linkedOwnerId(data.slug, context.user.roles);
     return confirmAccountPhoneCode(ownerId, data.phone, data.code, null);
-  });
-
-const staffNoteSchema = z.object({
-  slug: slugSchema,
-  body: z.string().max(4000),
-});
-
-function staffNoteBody(raw: string) {
-  const body = raw.replace(/\r\n/g, "\n").trim();
-  const length = [...new Intl.Segmenter("ru", { granularity: "grapheme" }).segment(body)].length;
-  if (length < 1) throw new AuthError("Напишите заметку.", "VALIDATION");
-  if (length > 1000) throw new AuthError("Заметка — не длиннее 1000 символов.", "VALIDATION");
-  return body;
-}
-
-export type TrainerStaffNote = {
-  id: string;
-  body: string;
-  createdAt: string;
-  author: string;
-};
-
-function noteAuthor(email: string | null) {
-  return email ? accountNick(email) : "Сотрудник";
-}
-
-async function staffNotesForSlug(slug: string) {
-  const db = getDb();
-  const [profile] = await db
-    .select({ id: trainerProfiles.id, slug: trainerProfiles.slug })
-    .from(trainerProfiles)
-    .where(eq(trainerProfiles.slug, slug))
-    .limit(1);
-  if (!profile) return null;
-  const rows = await db
-    .select({
-      id: trainerStaffNotes.id,
-      body: trainerStaffNotes.body,
-      createdAt: trainerStaffNotes.createdAt,
-      email: users.email,
-    })
-    .from(trainerStaffNotes)
-    .leftJoin(users, eq(users.id, trainerStaffNotes.authorUserId))
-    .where(eq(trainerStaffNotes.profileId, profile.id))
-    .orderBy(desc(trainerStaffNotes.createdAt));
-  return {
-    profileId: profile.id,
-    notes: rows.map((row) => ({
-      id: row.id,
-      body: row.body,
-      createdAt: row.createdAt.toISOString(),
-      author: noteAuthor(row.email),
-    })),
-  };
-}
-
-export const getTrainerStaffNotesFn = createServerFn({ method: "GET" })
-  .middleware([requireAuthMiddleware])
-  .validator(z.object({ slug: slugSchema }))
-  .handler(async ({ data, context }): Promise<TrainerStaffNote[]> => {
-    assertStaff(context.user.roles);
-    const found = await staffNotesForSlug(data.slug);
-    if (!found) throw new AuthError("Профиль не найден.", "VALIDATION");
-    return found.notes;
-  });
-
-export const saveTrainerStaffNoteFn = createServerFn({ method: "POST" })
-  .middleware([requireAuthMiddleware])
-  .validator(staffNoteSchema)
-  .handler(async ({ data, context }) => {
-    assertStaff(context.user.roles);
-    const body = staffNoteBody(data.body);
-    const db = getDb();
-    const found = await staffNotesForSlug(data.slug);
-    if (!found) throw new AuthError("Профиль не найден.", "VALIDATION");
-    if (found.notes[0]?.body === body) return { note: body, at: found.notes[0].createdAt, notes: found.notes };
-    await db.insert(trainerStaffNotes).values({
-      profileId: found.profileId,
-      authorUserId: context.user.id,
-      body,
-    });
-    void writeLog({
-      level: "info",
-      domain: "admin",
-      action: "admin.trainer_note",
-      outcome: "success",
-      message: "Заметка по тренеру сохранена.",
-      actorUserId: context.user.id,
-      target: data.slug,
-    });
-    const next = await staffNotesForSlug(data.slug);
-    const latest = next?.notes[0];
-    return { note: latest?.body ?? body, at: latest?.createdAt ?? new Date().toISOString(), notes: next?.notes ?? [] };
   });

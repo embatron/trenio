@@ -214,6 +214,9 @@ const CSS = `
   .mobile-contact-bar { display: block; }
   .club-sidebar .contact-actions, .club-sidebar .contact-reveal { display: none; }
 }
+@media (max-width: 767px) {
+  .club-trainer-grid { gap: calc(14px * 0.95); }
+}
 `;
 
 type TabKey = "about" | "prices" | "directions" | "trainers" | "reviews";

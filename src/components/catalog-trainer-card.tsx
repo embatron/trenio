@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { FavoriteButton } from "@/components/favorite-button";
 import { ShareProfileButton } from "@/components/share-profile";
@@ -44,14 +44,18 @@ export function CatalogTrainerCard({
   /** Child sport of the list that opened this card. Omitted on a general list. */
   fromSport?: string;
 }) {
+  const cardRef = useRef<HTMLElement>(null);
   useEffect(() => {
     if (!countImpression) return;
+    const node = cardRef.current;
+    if (node && getComputedStyle(node).display === "none") return;
     noteTrainerCardImpression(trainer.slug);
   }, [countImpression, trainer.slug]);
 
   const price = statedTrainerPrice(trainer.price);
   return (
     <article
+      ref={cardRef}
       className={`trainer-card${marked ? " is-marked" : ""}`}
       data-map-trainer={trainer.slug}
       onMouseEnter={onHover ? () => onHover(trainer.slug) : undefined}

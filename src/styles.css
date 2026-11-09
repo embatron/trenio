@@ -586,6 +586,16 @@ input.is-locked {
     height: 12px;
   }
 }
+/* Phone trainer cards sit 5% closer. The home tile shows 12 of the 16. */
+@media (max-width: 767px) {
+  .trainer-grid,
+  .cat-grid,
+  .favorites-grid,
+  .sr-grid {
+    gap: calc(var(--layout-gap) * 0.95);
+  }
+  .trainer-grid--home > :nth-child(n + 13) { display: none; }
+}
 /* Trainer catalogs stay two-up on a phone. One column only on the narrowest screens. */
 @media (max-width: 359px) {
   .trainer-grid,

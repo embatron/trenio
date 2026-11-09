@@ -2,30 +2,32 @@ import { displayAccountLogin } from "@/lib/auth/login-name";
 import { isPendingSignupEmail } from "@/lib/auth/pending-email";
 import { formatBelarusPhone } from "@/lib/auth/phone";
 
-/** A trainer confirms the account by mailbox or by a Belarus mobile. Either one is enough. */
-export type AccountConfirmation = {
-  channel: "Почта" | "Телефон";
-  value: string;
-};
-
-type ConfirmedAccount = {
+export type ConfirmedAccount = {
   email: string;
-  emailVerified: boolean;
+  emailVerifiedAt: string | null;
   phone: string;
-  phoneVerified: boolean;
+  phoneVerifiedAt: string | null;
 };
 
-/** Channels the owner has actually confirmed, mailbox first. An unverified value stays out. */
-export function accountConfirmations(account: ConfirmedAccount | null): AccountConfirmation[] {
-  if (!account) return [];
-  const lines: AccountConfirmation[] = [];
-  if (account.emailVerified && account.email && !isPendingSignupEmail(account.email)) {
-    const value = displayAccountLogin(account.email);
-    if (value && value !== "не указана") lines.push({ channel: "Почта", value });
+function confirmedAt(value: string | null) {
+  if (!value) return Number.POSITIVE_INFINITY;
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : Number.POSITIVE_INFINITY;
+}
+
+/** The mailbox or Belarus mobile that first confirmed the account. Empty when neither is confirmed. */
+export function confirmedAccountValue(account: ConfirmedAccount | null): string {
+  if (!account) return "";
+  const email = account.email.trim();
+  const phone = formatBelarusPhone(account.phone);
+  const emailReady = Boolean(email) && !isPendingSignupEmail(email) && Number.isFinite(Date.parse(account.emailVerifiedAt ?? ""));
+  const phoneReady = Boolean(phone) && Number.isFinite(Date.parse(account.phoneVerifiedAt ?? ""));
+  if (emailReady && phoneReady) {
+    return confirmedAt(account.emailVerifiedAt) <= confirmedAt(account.phoneVerifiedAt)
+      ? displayAccountLogin(email)
+      : phone;
   }
-  if (account.phoneVerified) {
-    const value = formatBelarusPhone(account.phone);
-    if (value) lines.push({ channel: "Телефон", value });
-  }
-  return lines;
+  if (emailReady) return displayAccountLogin(email);
+  if (phoneReady) return phone;
+  return "";
 }

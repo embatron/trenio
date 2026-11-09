@@ -3,7 +3,7 @@ import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { trainerProfiles } from "./trainer-profiles";
 
-/** Staff notes on a trainer. Each save is a new row, so the history stays. */
+/** Old staff notes. The admin tables no longer read or write this table. Rows stay. */
 export const trainerStaffNotes = pgTable(
   "trainer_staff_notes",
   {
