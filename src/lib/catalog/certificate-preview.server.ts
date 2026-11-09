@@ -1,5 +1,7 @@
 import { stat, writeFile } from "node:fs/promises";
+import { createRequire } from "node:module";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 
 import sharp from "sharp";
 
@@ -11,6 +13,9 @@ import {
   trainerMediaPath,
   type TrainerDocument,
 } from "@/lib/catalog/certificate-preview";
+import { logCaught } from "@/lib/log/logger";
+
+const require = createRequire(import.meta.url);
 
 const inflight = new Map<string, Promise<{ thumb: string; view: string }>>();
 
@@ -41,10 +46,14 @@ async function jpegPair(source: Buffer) {
 }
 
 async function pdfPage(bytes: Buffer) {
-  const [{ getDocument }, { createCanvas }] = await Promise.all([
+  const [{ getDocument, GlobalWorkerOptions }, { createCanvas }] = await Promise.all([
     import("pdfjs-dist/legacy/build/pdf.mjs"),
     import("@napi-rs/canvas"),
   ]);
+  // The production bundle sits in dist/ and looks for pdf.worker.mjs beside itself.
+  GlobalWorkerOptions.workerSrc = pathToFileURL(
+    require.resolve("pdfjs-dist/legacy/build/pdf.worker.mjs"),
+  ).href;
   const task = getDocument({
     data: new Uint8Array(bytes),
     isEvalSupported: false,
@@ -116,7 +125,8 @@ export async function presentCertificates(items: TrainerCertificate[]): Promise<
     try {
       const preview = await previewOf(clean, kind);
       return { ...document, thumb: preview.thumb, view: preview.view };
-    } catch {
+    } catch (error) {
+      logCaught("catalog", "catalog.certificate.preview", error, { target: clean });
       return document;
     }
   }));
