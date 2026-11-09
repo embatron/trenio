@@ -11,6 +11,7 @@ import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
 import {
   audienceLabels,
   getPublishedTrainer,
+  similarTrainers,
   sportLine,
   TRAINER_FORMAT_OPTIONS,
   type PublishedTrainer,
@@ -143,7 +144,7 @@ function toTrainer(
     ownComment,
     createdAt: trainer.createdAt,
     updatedAt: trainer.updatedAt,
-    similar: catalog.filter((item) => item.slug !== trainer.slug).slice(0, 3).map((item) => {
+    similar: similarTrainers(catalog, trainer).map((item) => {
       const rating = ratingFor(item.slug, ratings);
       return {
         slug: item.slug,
