@@ -13,10 +13,11 @@ import {
   getPublishedTrainer,
   similarTrainers,
   sportLine,
+  trainerBreadcrumbSport,
   TRAINER_FORMAT_OPTIONS,
   type PublishedTrainer,
 } from "@/lib/catalog/published-trainers";
-import { ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
+import { compareByPopularity, popularityChecklist, ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
 import { NEGOTIABLE_PRICE_LABEL, listTrainerPricesFn, priceForCard, type TrainerPriceMap } from "@/lib/catalog/trainer-price";
 import {
   createTrainerReviewFn,
@@ -61,6 +62,7 @@ type Trainer = {
   sportLabel: string;
   sportDatives: string[];
   primarySport: { slug: string; parentSlug: string; label: string };
+  sportRefs: Array<{ slug: string; parentSlug: string; label: string }>;
   city: { slug: string; label: string };
   about: string[];
   sessions: string;
@@ -103,6 +105,31 @@ function toTrainer(
   const formatLabel = (format: PublishedTrainer["formats"][number]) =>
     TRAINER_FORMAT_OPTIONS.find((option) => option.id === format)?.label ?? format;
   const sessionPrice = priceForCard(trainer.slug, trainer.priceFrom, prices);
+  const rankCatalog = (item: PublishedTrainer) => {
+    const rating = ratingFor(item.slug, ratings);
+    const fill = popularityChecklist({
+      photo: item.photo,
+      bio: item.bio,
+      sports: item.sports,
+      experience: item.experience,
+      price: item.priceFrom,
+      formats: item.formats,
+      city: item.city.label,
+      phone: item.phone,
+      instagram: item.instagram,
+      telegram: item.telegram,
+      email: item.email,
+    });
+    return {
+      name: item.name,
+      rating: rating.rating,
+      reviews: rating.reviews,
+      views: rating.views,
+      saves: rating.saves,
+      cardFilled: fill.card,
+      contactsFilled: fill.contacts,
+    };
+  };
   return {
     slug: trainer.slug,
     name: trainer.name,
@@ -112,6 +139,7 @@ function toTrainer(
     sportLabel: sportLine(trainer),
     sportDatives: trainerSportDatives(trainer.sports),
     primarySport: trainer.primarySport,
+    sportRefs: trainer.sports,
     city: trainer.city,
     about: [trainer.bio],
     sessions: "",
@@ -144,7 +172,7 @@ function toTrainer(
     ownComment,
     createdAt: trainer.createdAt,
     updatedAt: trainer.updatedAt,
-    similar: similarTrainers(catalog, trainer).map((item) => {
+    similar: similarTrainers(catalog, trainer, 3, (left, right) => compareByPopularity(rankCatalog(left), rankCatalog(right))).map((item) => {
       const rating = ratingFor(item.slug, ratings);
       return {
         slug: item.slug,
@@ -229,6 +257,12 @@ export const Route = createFileRoute("/trainers/$slug")({
     });
     return seo;
   },
+  validateSearch: (search: Record<string, unknown>) => ({
+    sport: typeof search.sport === "string" && /^[a-z0-9-]{1,30}$/.test(search.sport) ? search.sport : undefined,
+    mail: typeof search.mail === "string" ? search.mail : undefined,
+    door: typeof search.door === "string" ? search.door : undefined,
+    created: search.created === "1" || search.created === 1 ? 1 : undefined,
+  }),
   component: TrainerPage,
 });
 
@@ -742,6 +776,11 @@ function TrainerPage() {
         : null;
   const reviewLabel = t.reviews.length === 0 ? "Сделать первый отзыв" : "Добавить отзыв";
   const staff = Boolean(user && isStaff(user.roles));
+  const { sport: fromSport } = Route.useSearch();
+  const crumbSport = trainerBreadcrumbSport(
+    { primarySport: t.primarySport, sports: t.sportRefs },
+    fromSport,
+  );
   const searchStr = useRouterState({ select: (state) => state.location.searchStr });
   const openingMail = new URLSearchParams(searchStr).get("mail");
   const magicDoor = Boolean(editor?.magicDoor) && !isOwner && !openingMail;
@@ -920,10 +959,10 @@ function TrainerPage() {
               )}
             </li>
             <li>
-              {t.primarySport.parentSlug === t.primarySport.slug ? (
-                <Link to="/categories/$slug" params={{ slug: t.primarySport.slug }}>{t.primarySport.label}</Link>
+              {crumbSport.parentSlug === crumbSport.slug ? (
+                <Link to="/categories/$slug" params={{ slug: crumbSport.slug }}>{crumbSport.label}</Link>
               ) : (
-                <Link to="/categories/$parentSlug/$childSlug" params={{ parentSlug: t.primarySport.parentSlug, childSlug: t.primarySport.slug }}>{t.primarySport.label}</Link>
+                <Link to="/categories/$parentSlug/$childSlug" params={{ parentSlug: crumbSport.parentSlug, childSlug: crumbSport.slug }}>{crumbSport.label}</Link>
               )}
             </li>
             <li className="is-current" aria-current="page">{t.name}</li>

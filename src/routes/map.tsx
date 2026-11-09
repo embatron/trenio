@@ -35,6 +35,7 @@ function MapListedCard({
   delay,
   city,
   onHover,
+  fromSport,
 }: {
   trainer: MapTrainer;
   marked: boolean;
@@ -42,6 +43,7 @@ function MapListedCard({
   delay: string;
   city: string;
   onHover: (slug: string | null | ((current: string | null) => string | null)) => void;
+  fromSport?: string;
 }) {
   useEffect(() => () => {
     onHover((current) => (current === trainer.slug ? null : current));
@@ -51,6 +53,7 @@ function MapListedCard({
       <CatalogTrainerCard
         marked={marked}
         onHover={onHover}
+        fromSport={fromSport}
         trainer={{
           slug: trainer.slug,
           name: trainer.name,
@@ -819,6 +822,9 @@ export function CatalogMapScreen({
                         const index = start + offset;
                         const settled = seenPeopleRef.current.has(trainer.slug);
                         if (!settled) seenPeopleRef.current.add(trainer.slug);
+                        const fromSport = selectedSports.length === 1 && selectedSports[0].level === 2
+                          ? selectedSports[0].slug
+                          : undefined;
                         return (
                           <MapListedCard
                             key={trainer.slug}
@@ -828,6 +834,7 @@ export function CatalogMapScreen({
                             delay={`${Math.min(index, 11) * 40}ms`}
                             city={cardCity(trainer)}
                             onHover={setCardSlug}
+                            fromSport={fromSport}
                           />
                         );
                       })}

@@ -35,11 +35,14 @@ export function CatalogTrainerCard({
   marked = false,
   countImpression = true,
   onHover,
+  fromSport,
 }: {
   trainer: CatalogTrainerCardData;
   marked?: boolean;
   countImpression?: boolean;
   onHover?: (slug: string | null) => void;
+  /** Child sport of the list that opened this card. Omitted on a general list. */
+  fromSport?: string;
 }) {
   useEffect(() => {
     if (!countImpression) return;
@@ -54,7 +57,13 @@ export function CatalogTrainerCard({
       onMouseEnter={onHover ? () => onHover(trainer.slug) : undefined}
       onMouseLeave={onHover ? () => onHover(null) : undefined}
     >
-      <Link className="trainer-card__hit" to="/trainers/$slug" params={{ slug: trainer.slug }} aria-label={trainer.name} />
+      <Link
+        className="trainer-card__hit"
+        to="/trainers/$slug"
+        params={{ slug: trainer.slug }}
+        search={{ sport: fromSport || undefined }}
+        aria-label={trainer.name}
+      />
       <div className="trainer-card__media">
         <PhotoImage className="trainer-card__photo" src={trainer.photo} alt={trainer.name} preset="card" width={480} height={600} loading="lazy" />
         {trainer.badge ? <span className="trainer-card__badge">{trainer.badge}</span> : null}

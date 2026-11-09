@@ -55,6 +55,16 @@ export function trainersMatchingCategory(trainers: readonly PublishedTrainer[], 
   );
 }
 
+/** The sport crumb. The first sport stays, unless this visit names another sport on the card. */
+export function trainerBreadcrumbSport(
+  trainer: Pick<PublishedTrainer, "primarySport" | "sports">,
+  fromSlug: string | null | undefined,
+): PublishedSport {
+  const requested = fromSlug?.trim() ?? "";
+  if (!requested) return trainer.primarySport;
+  return trainer.sports.find((sport) => sport.slug === requested) ?? trainer.primarySport;
+}
+
 /** Category pages this card appears on: each sport and its parent direction. */
 export function trainerCategorySlugs(trainer: Pick<PublishedTrainer, "sports">): string[] {
   const slugs = new Set<string>();
@@ -65,25 +75,23 @@ export function trainerCategorySlugs(trainer: Pick<PublishedTrainer, "sports">):
   return [...slugs];
 }
 
-/** Up to three other published cards from the same categories. The same sport comes first. */
+/** Up to three other published cards from the same categories, in the catalog rank. */
 export function similarTrainers(
   catalog: readonly PublishedTrainer[],
   trainer: PublishedTrainer,
   limit = 3,
+  compare: (left: PublishedTrainer, right: PublishedTrainer) => number = () => 0,
 ): PublishedTrainer[] {
   const categories = trainerCategorySlugs(trainer);
   if (categories.length === 0) return [];
-  const ownSports = new Set(trainer.sports.map((sport) => sport.slug).filter(Boolean));
   const ranked = catalog.flatMap((item, index) => {
     if (item.slug === trainer.slug) return [];
     const sharesCategory = categories.some((slug) =>
       item.sports.some((sport) => sport.slug === slug || sport.parentSlug === slug),
     );
-    if (!sharesCategory) return [];
-    const sameSport = item.sports.some((sport) => ownSports.has(sport.slug));
-    return [{ item, index, sameSport }];
+    return sharesCategory ? [{ item, index }] : [];
   });
-  ranked.sort((left, right) => Number(right.sameSport) - Number(left.sameSport) || left.index - right.index);
+  ranked.sort((left, right) => compare(left.item, right.item) || left.index - right.index);
   return ranked.slice(0, limit).map((row) => row.item);
 }
 

@@ -1831,7 +1831,11 @@ export function CategoryCatalogPage({
             ) : (
               <div className="cat-grid">
                 {filtered.map((t) => (
-                  <CatalogTrainerCard key={t.slug} trainer={t} />
+                  <CatalogTrainerCard
+                    key={t.slug}
+                    trainer={t}
+                    fromSport={selectedSports.length === 1 && selectedSports[0].level === 2 ? selectedSports[0].slug : undefined}
+                  />
                 ))}
               </div>
             )}
