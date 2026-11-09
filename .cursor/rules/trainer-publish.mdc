@@ -1,11 +1,17 @@
 ---
-description: Email confirmation publishes a draft; the trainer can hide it
+description: A mailbox or a Belarus mobile publishes a draft; either one is enough
 alwaysApply: true
 ---
 
 # Trainer publish
 
 An imported profile stays `draft` until the trainer confirms a mailbox or a Belarus mobile. Mailbox confirmation is the letter sent to the address they typed, or Google or Yandex on the same short link. A mobile confirmation is the SMS code on that same short link. Opening `/hi/{code}` alone does not publish the card. The trainer can hide the page from the cabinet. A later confirmation does not publish a hidden or archived card.
+
+## Either channel is enough
+
+The two confirmation channels are a mailbox and a Belarus mobile. They work as either-or. One confirmed channel activates the account. Both may be confirmed later; that does not replace the first.
+
+The admin trainer lists (`/admin/trainers`, drafts, active, unclear) column «Аккаунт» names each confirmed channel and the value that was confirmed. A mailbox shows «Почта» and the address. A mobile shows «Телефон» and the number. A card with only one of them is complete. No account yet is «Аккаунт не создан». An account with neither channel confirmed is «не подтверждён».
 
 Import, a server copy, the short-link visit, and the password step do not publish it. The confirmed mailbox or the confirmed mobile does.
 
@@ -17,6 +23,15 @@ Import, a server copy, the short-link visit, and the password step do not publis
 - Let the trainer set the page to hidden in the cabinet.
 
 ## Do not
+
+```ts
+// wrong: the account column keeps only the phone, so a mailbox confirmation looks empty
+return formatBelarusPhone(account.phone) || "не указан";
+
+// right: the channel and the confirmed value; one channel is enough
+if (account.emailVerified) lines.push({ channel: "Почта", value: email });
+if (account.phoneVerified) lines.push({ channel: "Телефон", value: phone });
+```
 
 ```ts
 // wrong: the short-link visit publishes the draft

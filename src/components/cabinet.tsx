@@ -773,6 +773,8 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-table--trainers .cabinet-rating.is-empty { color: var(--muted); font-weight: var(--fw-ui); }
 .cabinet-table--trainers .cabinet-rating.is-empty svg { fill: none; stroke: var(--muted); stroke-width: var(--icon-stroke); }
 .cabinet-table--trainers .cabinet-rating__count { color: var(--muted); font-weight: var(--fw-ui); }
+.cabinet-table--trainers .cabinet-account { display: grid; gap: 2px; justify-items: start; max-width: 220px; font-size: 13px; line-height: 1.25; overflow-wrap: anywhere; }
+.cabinet-table--trainers .cabinet-account__channel { color: var(--muted); }
 .cabinet-table--trainers .cabinet-social { display: inline-flex; align-items: center; justify-content: flex-start; }
 .cabinet-table--trainers .cabinet-social__link { width: 44px; height: 44px; display: grid; place-items: center; color: inherit; }
 .cabinet-table--trainers .cabinet-social__link svg { width: 22px; height: 22px; overflow: visible; }

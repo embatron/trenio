@@ -73,6 +73,7 @@ export type AdminTrainerAccount = {
   lastName: string;
   name: string;
   email: string;
+  emailVerified: boolean;
   phone: string;
   phoneVerified: boolean;
   status: string;
@@ -347,6 +348,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         doorEnteredAt: trainerProfiles.doorEnteredAt,
         ownerId: users.id,
         email: users.email,
+        accountEmailVerifiedAt: users.emailVerifiedAt,
         ownerFirstName: users.firstName,
         ownerLastName: users.lastName,
         accountPhone: users.phone,
@@ -461,6 +463,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
             lastName: row.ownerLastName ?? "",
             name: [row.ownerFirstName, row.ownerLastName].filter(Boolean).join(" "),
             email: row.email ?? "",
+            emailVerified: row.accountEmailVerifiedAt != null,
             phone: row.accountPhone ?? "",
             phoneVerified: row.accountPhoneVerifiedAt != null,
             status: row.accountStatus ?? "",
@@ -824,6 +827,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
             .select({
               id: users.id,
               email: users.email,
+              emailVerifiedAt: users.emailVerifiedAt,
               firstName: users.firstName,
               lastName: users.lastName,
               phone: users.phone,
@@ -997,6 +1001,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
               lastName: owner.lastName ?? "",
               name: [owner.firstName, owner.lastName].filter(Boolean).join(" "),
               email: owner.email,
+              emailVerified: owner.emailVerifiedAt != null,
               phone: owner.phone ?? "",
               phoneVerified: owner.phoneVerifiedAt != null,
               status: owner.status,

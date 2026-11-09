@@ -543,6 +543,7 @@ npm run format
 | `.cursor/agents/seo.md` | Субагент SEO: правит публичные страницы и рекомендует только то, что меняет индекс, запрос или доверие |
 | `.cursor/rules/seo.mdc` | Публичный документ через `seoHead`; канонический адрес `https://trenio.by`; один GA4 и одна Метрика |
 | `.cursor/rules/site-mail.mdc` | Публичная почта `trenioby@gmail.com` (`SITE_EMAIL`). Служебные письма — Postfix, From `Trenio <noreply@trenio.by>`, приветствие `trenio.by`. Почта `bronxgym.by` идёт своим клиентом |
+| `.cursor/rules/trainer-publish.mdc` | Черновик публикует подтверждённая почта или мобильный. Достаточно одного. В колонке «Аккаунт» — способ и подтверждённое значение |
 | `.cursor/commands/hooks.md` | Slash-команда `/hooks` — сетка, иконки, PWA, mobile, docs             |
 | `.cursor/commands/logging.md` | Slash-команда `/logging` — проверка логгеров и пробная запись |
 | `.cursor/commands/diagnosis.md` | Slash-команда `/diagnosis` — причина сбоя по журналу |

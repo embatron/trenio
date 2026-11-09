@@ -5,6 +5,7 @@ import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { UserAvatar } from "@/components/user-avatar";
 import { TrainerName } from "@/components/trainer-name";
 import { TablePager, useTablePage } from "@/components/table-pager";
+import { accountConfirmations } from "@/lib/admin/account-channel";
 import { TRAINER_PUBLISH_LABEL, type AdminTrainer } from "@/lib/admin/trainers";
 import { TrainerNoteCell } from "@/components/admin-trainer-note";
 import { TrainerEditDialog } from "@/components/admin-trainer-page";
@@ -105,10 +106,33 @@ function confirmedCabinetPhone(trainer: AdminTrainer) {
   return formatBelarusPhone(account.phone);
 }
 
-/** Account column: the owner's phone, not the mailbox. */
-function accountPhoneLabel(trainer: AdminTrainer) {
+/** Account column: each confirmed channel and the value that was confirmed. */
+function accountLines(trainer: AdminTrainer) {
+  return accountConfirmations(trainer.account);
+}
+
+function accountTitle(trainer: AdminTrainer) {
+  if (!trainer.account) return "В каталоге есть карточка, но пользователь ещё не зарегистрировался и не забрал профиль";
+  const lines = accountLines(trainer);
+  if (lines.length === 0) return "Аккаунт есть, почта и телефон не подтверждены";
+  return lines.map((line) => `${line.channel}: ${line.value}`).join(". ");
+}
+
+function AccountCell({ trainer }: { trainer: AdminTrainer }) {
   if (!trainer.account) return "Аккаунт не создан";
-  return formatBelarusPhone(trainer.account.phone) || "не указан";
+  const lines = accountLines(trainer);
+  if (lines.length === 0) return "не подтверждён";
+  return (
+    <span className="cabinet-account">
+      {lines.map((line) => (
+        <span key={line.channel}>
+          <span className="cabinet-account__channel">{line.channel}</span>
+          {" "}
+          {line.value}
+        </span>
+      ))}
+    </span>
+  );
 }
 
 function categoryLabels(slugs: string[]) {
@@ -348,7 +372,7 @@ function searchHaystack(trainer: AdminTrainer) {
     account?.name ?? "",
     account?.email ?? "",
     account ? displayAccountLogin(account.email) : "аккаунт не создан",
-    accountPhoneLabel(trainer),
+    ...accountLines(trainer).flatMap((line) => [line.channel, line.value]),
     account?.phone ?? "",
     account?.phone.replace(/\D/g, "") ?? "",
   ].join(" ").toLocaleLowerCase("ru").replaceAll("ё", "е");
@@ -708,8 +732,8 @@ export function AdminTrainersTable({
                   <td>{trainer.createdAt ? addedOn(trainer.createdAt) : "—"}</td>
                   <td><TrainerStars rating={trainer.rating} reviews={trainer.reviews} /></td>
                   <td title={`Рейтинг ${trainer.popularity} из 100`}>{Number.isInteger(trainer.popularity) ? trainer.popularity : trainer.popularity.toFixed(1)}</td>
-                  <td title={trainer.account ? "Телефон аккаунта, привязанного к карточке" : "В каталоге есть карточка, но пользователь ещё не зарегистрировался и не забрал профиль"}>
-                    {accountPhoneLabel(trainer)}
+                  <td title={accountTitle(trainer)}>
+                    <AccountCell trainer={trainer} />
                   </td>
                   <td title={trainer.lastLoginAt ? `Последнее посещение сайта ${visitedOn(trainer.lastLoginAt)}` : "На сайт ещё не заходил"}>
                     {trainer.lastLoginAt ? visitedOn(trainer.lastLoginAt) : "—"}
