@@ -367,15 +367,16 @@ html.is-staff-layout {
   }
 }
 .trainer-card__body { display: flex; flex-direction: column; gap: 8px; padding: 16px 16px 18px; }
-.trainer-card__head { display: flex; flex-wrap: nowrap; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.trainer-card__head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
 .trainer-name { display: flex; flex-direction: column; align-items: flex-start; gap: 0; min-width: 0; max-width: 100%; }
 .trainer-name__line { display: block; min-width: 0; max-width: 100%; overflow: visible; text-overflow: clip; white-space: normal; overflow-wrap: anywhere; }
-.trainer-card__name { flex: 1 1 auto; margin: 0; min-width: 0; font-size: 13px; line-height: 1.2; letter-spacing: 0; font-weight: var(--fw-title); color: var(--dark); transition: color 0.16s ease; }
-.trainer-card__name .trainer-name { flex-direction: column; align-items: flex-start; gap: 0; }
+.trainer-card__name { grid-column: 1 / -1; grid-row: 1; margin: 0; min-width: 0; font-size: 13px; line-height: 1.2; letter-spacing: 0; font-weight: var(--fw-title); color: var(--dark); transition: color 0.16s ease; }
+.trainer-card__name .trainer-name { flex-direction: column; align-items: flex-start; gap: 0; width: 100%; }
+.trainer-card__name .trainer-name__line:first-child { padding-right: 44px; }
 .trainer-card__name .trainer-name__line { overflow: visible; text-overflow: clip; white-space: normal; overflow-wrap: break-word; }
 .trainer-card:hover .trainer-card__name,
 .trainer-card:focus-visible .trainer-card__name { color: var(--primary); }
-.trainer-card__rating { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 4px; color: var(--dark); font-size: 13px; font-weight: var(--fw-title); white-space: nowrap; }
+.trainer-card__rating { grid-column: 2; grid-row: 1; justify-self: end; z-index: 1; display: inline-flex; align-items: center; gap: 4px; color: var(--dark); font-size: 13px; font-weight: var(--fw-title); white-space: nowrap; }
 .trainer-card__rating svg { width: 13px; height: 13px; fill: #ffb400; stroke: none; }
 .trainer-card__rating span { color: var(--muted); font-weight: var(--fw-ui); }
 .trainer-card__rating--empty { color: var(--muted); }
