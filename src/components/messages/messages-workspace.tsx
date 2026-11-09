@@ -340,11 +340,11 @@ export const DIRECT_CSS = `
 .direct-list a.is-active .trainer-name__line, .direct-list button.direct-list__row.is-active .trainer-name__line { color: var(--primary); }
 .direct-list__aside { color: var(--muted); font-weight: var(--fw-ui); }
 .direct-list__text { display: grid; min-width: 0; flex: 1; }
-.direct-list__text strong { color: var(--dark); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.direct-list__text strong { color: var(--dark); min-width: 0; overflow: visible; white-space: normal; overflow-wrap: anywhere; }
 .direct-list .trainer-name,
-.direct-thread__head .trainer-name { flex-direction: row; flex-wrap: nowrap; gap: 0.35em; }
+.direct-thread__head .trainer-name { flex-direction: row; flex-wrap: wrap; gap: 0.35em; max-width: 100%; }
 .direct-list .trainer-name__line,
-.direct-thread__head .trainer-name__line { display: inline; width: auto; overflow: visible; text-overflow: clip; white-space: nowrap; }
+.direct-thread__head .trainer-name__line { display: inline; width: auto; max-width: 100%; overflow: visible; text-overflow: clip; white-space: normal; }
 .direct-list__text em { color: var(--muted); font-style: normal; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .direct-list__meta { display: grid; justify-items: end; gap: 4px; color: var(--muted); font-size: 12px; }
 .direct-list__when { display: inline-flex; align-items: center; justify-content: flex-end; gap: 3px; }
@@ -484,12 +484,12 @@ export const DIRECT_CSS = `
 .direct.is-mobile.is-thread .direct-thread__who { overflow: hidden; }
 .direct.is-mobile.is-thread .direct-thread__who > * { min-width: 0; max-width: 100%; }
 .direct.is-mobile.is-thread .direct-thread__who a.cabinet-id__line { display: flex; min-width: 0; max-width: 100%; }
-.direct.is-mobile.is-thread .direct-thread__who a.cabinet-id__line > strong { flex: 1 1 0; width: 0; min-width: 0; overflow: hidden; }
-.direct.is-mobile.is-thread .direct-thread__who > strong { display: block; min-width: 0; max-width: 100%; overflow: hidden; }
-.direct.is-mobile.is-thread .direct-thread__who .trainer-name { width: 100%; min-width: 0; max-width: 100%; overflow: hidden; }
-.direct.is-mobile.is-thread .direct-thread__who .trainer-name__line { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.direct.is-mobile.is-thread .direct-thread__who a.cabinet-id__line > strong { flex: 1 1 auto; width: auto; min-width: 0; overflow: visible; white-space: normal; overflow-wrap: anywhere; }
+.direct.is-mobile.is-thread .direct-thread__who > strong { display: block; min-width: 0; max-width: 100%; overflow: visible; white-space: normal; overflow-wrap: anywhere; }
+.direct.is-mobile.is-thread .direct-thread__who .trainer-name { width: 100%; min-width: 0; max-width: 100%; overflow: visible; }
+.direct.is-mobile.is-thread .direct-thread__who .trainer-name__line { min-width: 0; overflow: visible; text-overflow: clip; white-space: normal; }
 .direct.is-mobile.is-thread .direct-thread__who a.direct-thread__trainer { min-width: 0; max-width: 100%; }
-.direct.is-mobile.is-thread .direct-thread__who a.direct-thread__trainer > strong { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.direct.is-mobile.is-thread .direct-thread__who a.direct-thread__trainer > strong { display: block; min-width: 0; overflow: visible; white-space: normal; overflow-wrap: anywhere; }
 .direct.is-mobile.is-thread .direct-composer,
 .direct.is-mobile.is-thread .direct-composer__box,
 .direct.is-mobile.is-thread .direct-composer__bar,

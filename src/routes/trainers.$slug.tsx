@@ -284,7 +284,9 @@ const CSS = `
 .profile-layout { display: grid; grid-template-columns: var(--aside-w) minmax(0, 1fr); gap: 32px; align-items: start; }
 .profile-main { position: relative; display: grid; gap: 22px; min-width: 0; }
 .profile-tools { position: absolute; top: 0; right: 0; z-index: 2; display: flex; }
-.profile-main.has-tools .profile-identity { padding-right: 96px; }
+.profile-main.has-tools .profile-identity { padding-right: 52px; }
+.profile-main.has-tools:has(.profile-tools > :nth-child(2)) .profile-identity { padding-right: 96px; }
+.profile-main.has-tools:has(.profile-tools > :nth-child(3)) .profile-identity { padding-right: 140px; }
 .profile-aside { position: sticky; top: 96px; align-self: start; min-width: 0; }
 .profile-aside__card { display: flex; flex-direction: column; border-radius: var(--card-radius); overflow: hidden; background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); box-shadow: 0 14px 42px rgba(var(--dark-rgb),0.07); }
 
@@ -336,10 +338,10 @@ const CSS = `
 .profile-intro { min-width: 0; }
 .profile-identity__sport { margin: 0 0 6px; font-size: 15px; font-weight: var(--fw-title); letter-spacing: -0.01em; text-transform: none; color: var(--primary-dark); }
 .profile-identity__sport-name { color: var(--primary); }
-.profile-identity__title { display: flex; align-items: center; flex-wrap: nowrap; gap: 0 2px; margin: 0 0 12px; }
-.profile-identity__name { min-width: 0; margin: 0; font-size: var(--fs-page); font-weight: var(--fw-heading); letter-spacing: -0.035em; color: var(--dark); line-height: 1.05; }
-.profile-identity__name .trainer-name { flex-wrap: nowrap; }
-.profile-identity__name .trainer-name__line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.profile-identity__title { display: flex; align-items: flex-start; flex-wrap: nowrap; gap: 0 2px; margin: 0 0 12px; }
+.profile-identity__name { min-width: 0; flex: 1 1 auto; margin: 0; font-size: var(--fs-page); font-weight: var(--fw-heading); letter-spacing: -0.035em; color: var(--dark); line-height: 1.05; }
+.profile-identity__name .trainer-name { flex-direction: column; align-items: flex-start; max-width: 100%; }
+.profile-identity__name .trainer-name__line { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
 .profile-edit { width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0; background: transparent; border-radius: 50%; color: var(--dark); font: inherit; text-decoration: none; cursor: pointer; }
 .profile-edit:hover { background: rgba(var(--dark-rgb), 0.04); color: var(--primary); }
 .profile-edit svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
@@ -442,7 +444,7 @@ const CSS = `
 .review-note a:hover { text-decoration: underline; }
 .profile-created__row { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .profile-created__row > div { min-width: 0; display: grid; gap: 2px; flex: 1; }
-.profile-created__row strong { color: var(--dark); font-size: 16px; }
+.profile-created__row strong { color: var(--dark); font-size: 16px; overflow-wrap: anywhere; }
 .profile-created__row span { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .profile-created__edit { width: 44px; height: 44px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 50%; color: var(--dark); text-decoration: none; }
 .profile-created__edit:hover { color: var(--primary); }

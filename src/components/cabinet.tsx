@@ -589,6 +589,12 @@ a.cabinet-stat:hover { border-color: var(--primary); }
 .cabinet-stat__switch button:hover { color: var(--primary-dark); }
 .cabinet-stat__figure + .cabinet-stat__figure { margin-top: 12px; }
 .cabinet-stat__note { display: block; margin-top: 2px; }
+.cabinet-stat__leaders { list-style: none; margin: 2px 0 0; padding: 0; }
+.cabinet-stat__leaders li { margin: 0; }
+.cabinet-stat .cabinet-stat__who { display: flex; align-items: center; gap: 2px; width: fit-content; max-width: 100%; min-height: 44px; margin-top: 0; color: var(--dark); font-size: 15px; font-weight: var(--fw-title); line-height: 1.3; text-decoration: none; overflow-wrap: anywhere; }
+.cabinet-stat a.cabinet-stat__who:hover,
+.cabinet-stat a.cabinet-stat__who:hover .cabinet-id__open { color: var(--primary); }
+.cabinet-stat .cabinet-stat__who .cabinet-id__open { color: var(--dark); font-size: 0; }
 .cabinet-stat--brand { background: var(--primary); border-color: transparent; }
 .cabinet-stat--brand strong,
 .cabinet-stat--brand span,
@@ -760,7 +766,7 @@ a.cabinet-row__link:hover strong { color: var(--primary); }
 .cabinet-table--trainers .cabinet-person { display: grid; grid-template-columns: 44px minmax(0, 240px); align-items: center; column-gap: 8px; width: max-content; }
 .cabinet-table--trainers .cabinet-row-actions { justify-content: center; gap: 0; }
 .cabinet-table--trainers .cabinet-person__text { min-width: 0; max-width: 240px; }
-.cabinet-table--trainers .cabinet-person__text strong { display: block; white-space: nowrap; overflow: visible; text-overflow: clip; }
+.cabinet-table--trainers .cabinet-person__text strong { display: block; white-space: normal; overflow: visible; overflow-wrap: anywhere; }
 .cabinet-table--trainers .cabinet-person__meta { display: block; max-width: 240px; white-space: normal; overflow-wrap: anywhere; }
 .cabinet-table--trainers .cabinet-person__text { display: flex; flex-direction: column; justify-content: center; gap: 1px; line-height: 1.15; }
 .cabinet-table--trainers .cabinet-person__text strong { line-height: 1.15; }

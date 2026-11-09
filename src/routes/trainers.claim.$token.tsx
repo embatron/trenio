@@ -193,7 +193,7 @@ function ClaimPage() {
 const CLAIM_CSS = `
 .claim-preview { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; }
 .claim-preview img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; }
-.claim-preview strong, .claim-preview span { display: block; }
+.claim-preview strong, .claim-preview span { display: block; overflow-wrap: anywhere; }
 .claim-preview span { color: var(--muted); font-size: 14px; }
 .claim-hello { color: var(--primary); }
 .auth-card__head .auth-sub + .auth-sub { margin-top: 10px; }

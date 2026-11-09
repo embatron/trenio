@@ -158,7 +158,7 @@ const CSS = `
 .club-trainer-card__photo-wrap { aspect-ratio: 4/3; overflow: hidden; background: linear-gradient(160deg, var(--neutral-bg), var(--line)); }
 .club-trainer-card__photo { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 .club-trainer-card__body { display: grid; gap: 4px; padding: 12px 14px 14px; }
-.club-trainer-card__name { margin: 0; font-size: 15px; font-weight: var(--fw-title); color: var(--dark); letter-spacing: -0.02em; }
+.club-trainer-card__name { margin: 0; font-size: 15px; font-weight: var(--fw-title); color: var(--dark); letter-spacing: -0.02em; overflow-wrap: anywhere; }
 .club-trainer-card__sport { margin: 0; font-size: 13px; font-weight: var(--fw-title); color: var(--primary-dark); }
 .club-trainer-card__meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 4px; font-size: 13px; font-weight: var(--fw-ui); color: var(--muted); }
 .club-trainer-card__price { color: var(--dark); white-space: nowrap; }
