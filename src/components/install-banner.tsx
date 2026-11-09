@@ -14,6 +14,7 @@ type BeforeInstallPromptEvent = Event & {
 
 const PHONE = "(max-width: 767px)";
 const INSTALLED_KEY = "trenio-app-installed";
+const DISMISSED_KEY = "trenio-install-dismissed";
 const INSTALLED_MODES = ["standalone", "minimal-ui", "fullscreen", "window-controls-overlay"];
 
 function rememberInstalled() {
@@ -27,6 +28,22 @@ function rememberInstalled() {
 function storedInstalled(): boolean {
   try {
     return localStorage.getItem(INSTALLED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function rememberDismissed() {
+  try {
+    localStorage.setItem(DISMISSED_KEY, "1");
+  } catch {
+    /* private mode keeps the decision for this launch only */
+  }
+}
+
+function storedDismissed(): boolean {
+  try {
+    return localStorage.getItem(DISMISSED_KEY) === "1";
   } catch {
     return false;
   }
@@ -57,12 +74,16 @@ export function InstallBanner() {
         hideInstalled();
         return;
       }
-      if (storedInstalled()) return;
+      if (storedInstalled() || storedDismissed()) return;
       setPlace(phone.matches ? "browser" : null);
     };
     if (launchedInstalled()) hideInstalled();
     const timer = window.setTimeout(showBrowser, 800);
     const onPrompt = (event: Event) => {
+      if (storedDismissed()) {
+        event.preventDefault();
+        return;
+      }
       if (storedInstalled() || launchedInstalled()) return;
       event.preventDefault();
       setPromptEvent(event as BeforeInstallPromptEvent);
@@ -102,7 +123,7 @@ export function InstallBanner() {
           setPlace(null);
           return;
         }
-        if (storedInstalled()) return;
+        if (storedInstalled() || storedDismissed()) return;
         if (status) setPlace("telegram");
       };
       webApp.checkHomeScreenStatus(apply);
@@ -136,31 +157,48 @@ export function InstallBanner() {
       <style>{BANNER_CSS}</style>
       <div className="install-banner">
         <p>{phrase}</p>
-        {steps ? null : (
+        <div className="install-banner__actions">
+          {steps ? null : (
+            <button
+              type="button"
+              className="install-banner__install"
+              onClick={() => {
+                if (place === "telegram") {
+                  getTelegramWebApp()?.addToHomeScreen?.();
+                  return;
+                }
+                if (promptEvent) {
+                  void promptEvent.prompt().then(() => {
+                    void promptEvent.userChoice.then((choice) => {
+                      if (choice.outcome === "accepted") {
+                        rememberInstalled();
+                        setPlace(null);
+                      }
+                    });
+                  });
+                  return;
+                }
+                setSteps(/iPhone|iPad|iPod/.test(navigator.userAgent) ? "ios" : "menu");
+              }}
+            >
+              Установить
+            </button>
+          )}
           <button
             type="button"
+            className="install-banner__close"
+            aria-label="Закрыть"
             onClick={() => {
-              if (place === "telegram") {
-                getTelegramWebApp()?.addToHomeScreen?.();
-                return;
-              }
-              if (promptEvent) {
-                void promptEvent.prompt().then(() => {
-                  void promptEvent.userChoice.then((choice) => {
-                    if (choice.outcome === "accepted") {
-                      rememberInstalled();
-                      setPlace(null);
-                    }
-                  });
-                });
-                return;
-              }
-              setSteps(/iPhone|iPad|iPod/.test(navigator.userAgent) ? "ios" : "menu");
+              rememberDismissed();
+              setSteps(null);
+              setPlace(null);
             }}
           >
-            Установить
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
           </button>
-        )}
+        </div>
       </div>
     </>
   );
@@ -185,8 +223,13 @@ const BANNER_CSS = `
   font-size: 13px;
   line-height: 1.35;
 }
-.install-banner button {
+.install-banner__actions {
+  display: flex;
+  align-items: center;
   flex: 0 0 auto;
+  gap: 4px;
+}
+.install-banner__install {
   min-height: 44px;
   padding: 0 14px;
   border: 0;
@@ -199,4 +242,26 @@ const BANNER_CSS = `
   line-height: 1;
   cursor: pointer;
 }
+.install-banner__close {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.install-banner__close svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--icon-stroke);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.install-banner__close:hover { color: var(--dark); }
 `;
