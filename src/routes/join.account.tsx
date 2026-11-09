@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AuthStyles } from "@/components/auth-styles";
 import { HoneypotField, honeypotFromForm } from "@/components/auth/honeypot-field";
 import { PasswordStrength } from "@/components/auth/password-strength";
+import { CabinetNotice } from "@/components/cabinet";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { AuthAlert, useAuthServerFn, useAuthSubmit } from "@/lib/auth/use-auth-form";
 import { hasAnyRole, isStaff } from "@/lib/auth/roles";
@@ -20,9 +21,9 @@ export const Route = createFileRoute("/join/account")({
   },
   head: () => ({
     meta: [
-      { title: "Аккаунт тренера — Я ищу тренера на trenio.by" },
+      { title: "Создать профиль тренера — Я ищу тренера на trenio.by" },
       NOINDEX_FOLLOW,
-      { name: "description", content: "Кабинет тренера без Instagram: имя, почта и пароль." },
+      { name: "description", content: "Профиль тренера без Instagram: имя, почта и пароль. Подтверждение приходит на почту." },
     ],
   }),
   component: TrainerAccountPage,
@@ -41,10 +42,10 @@ function TrainerAccountPage() {
             <span aria-hidden="true">/</span>
             <Link to="/join/trainer">Тренерам</Link>
             <span aria-hidden="true">/</span>
-            <span className="is-current" aria-current="page">Аккаунт</span>
+            <span className="is-current" aria-current="page">Профиль</span>
           </nav>
           <div className="auth-card__head">
-            <h1 className="auth-title">Аккаунт без Instagram</h1>
+            <h1 className="auth-title">Создать профиль тренера (без Instagram)</h1>
             <p className="auth-sub">
               Имя, фамилия, почта и пароль. Карточка останется черновиком, пока ты сам её не опубликуешь.
             </p>
@@ -59,6 +60,19 @@ function TrainerAccountPage() {
         .join-account__crumbs a:hover { color: var(--primary); }
         .join-account .auth-check { align-items: center; min-height: 44px; }
         .join-account .auth-check input { width: 22px; height: 22px; margin-top: 0; flex: 0 0 auto; }
+        .join-account .auth-foot { margin-top: 4px; }
+        .join-account a.auth-login {
+          display: grid; place-items: center; width: 100%; min-height: 50px; margin-top: 4px;
+          border-radius: var(--radius-control); border: 1px solid rgba(var(--primary-rgb), 0.3);
+          background: transparent; color: var(--primary); font-size: 15px; font-weight: var(--fw-title);
+          letter-spacing: -0.01em; text-decoration: none;
+        }
+        .join-account a.auth-login:hover { background: rgba(var(--primary-rgb), 0.06); }
+        .join-account .cabinet-modal { position: fixed; inset: 0; z-index: 420; display: grid; place-items: center; overflow: auto; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: rgba(var(--dark-rgb), 0.45); }
+        .join-account .cabinet-modal__card { width: min(440px, 100%); display: grid; gap: 12px; padding: 20px; border-radius: var(--card-radius); background: var(--white); }
+        .join-account .cabinet-modal__card h2 { margin: 0; font-size: 18px; color: var(--dark); }
+        .join-account .cabinet-modal__card p { margin: 0; color: var(--text); line-height: 1.45; }
+        .join-account .cabinet-modal__card button { justify-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
         @media (max-width: 767px) {
           .join-account__crumbs { font-size: 12px; gap: 6px; }
         }
@@ -78,8 +92,10 @@ function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [privacy, setPrivacy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [popup, setPopup] = useState(false);
 
   return (
+    <>
     <form
       className="auth-form"
       onSubmit={(event) => {
@@ -105,7 +121,10 @@ function SignupForm() {
             },
           }),
           (result) => {
-            if (result && "message" in result) setNotice(result.message);
+            if (result && "message" in result) {
+              setNotice("Мы отправили письмо со ссылкой. Откройте его и подтвердите создание аккаунта. После этого откроется кабинет, где можно заполнить профиль.");
+              setPopup(true);
+            }
           },
         );
       }}
@@ -147,10 +166,18 @@ function SignupForm() {
           </button>
         </>
       )}
-      <p className="auth-sub">
-        Уже есть аккаунт? <Link to="/auth/login" search={{ redirect: "/join/account" }}>Войти</Link>
-      </p>
     </form>
+    {popup && notice ? (
+      <CabinetNotice
+        title="Проверьте почту"
+        message={notice}
+        onClose={() => setPopup(false)}
+      />
+    ) : null}
+    <Link to="/auth/login" search={{ redirect: "/join/account" }} className="auth-login">
+      У меня уже есть аккаунт
+    </Link>
+    </>
   );
 }
 
@@ -201,11 +228,11 @@ function NameFields({
     <>
       <label className="auth-field">
         <span className="auth-field__label">Имя</span>
-        <input required autoComplete="given-name" value={firstName} onChange={(event) => onFirst(event.target.value)} />
+        <input type="text" required autoComplete="given-name" value={firstName} onChange={(event) => onFirst(event.target.value)} />
       </label>
       <label className="auth-field">
         <span className="auth-field__label">Фамилия</span>
-        <input required autoComplete="family-name" value={lastName} onChange={(event) => onLast(event.target.value)} />
+        <input type="text" required autoComplete="family-name" value={lastName} onChange={(event) => onLast(event.target.value)} />
       </label>
     </>
   );

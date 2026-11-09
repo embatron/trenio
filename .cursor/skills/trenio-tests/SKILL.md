@@ -25,7 +25,7 @@ Unit tests use `node:test` via `npm test`. Browser checks use Playwright via `np
 - Home and login do not raise `pageerror`.
 - `/join/trainer` with an empty Instagram stays on the form. A filled honeypot still shows «Спасибо», and `form.welcome` is `denied` with `reason: honeypot`. The trap string and the typed handle are absent from that row.
 - A real Instagram submit writes `form.welcome` `success`. `target` is the handle. `context` is only `{ channel: "instagram" }`. The spec then deletes that `trainer_welcomes` row.
-- «У меня нет Instagram» is one link to `/join/account`. The heading is «Аккаунт без Instagram». It does not write `form.welcome`.
+- «У меня нет Instagram» is one link to `/join/account`. The heading is «Создать профиль тренера (без Instagram)». It does not write `form.welcome`. A successful submit opens a popup that asks the person to confirm the account from the email. The letter then opens `/me/profile`.
 - `+375 17 123-45-67` on the Instagram form stays on the form. A landline is not a stored mobile. `src/lib/auth/phone.test.ts` checks that every spelling of one mobile becomes that same stored string.
 - Opening `/hi/{code}?mail=` does not create an account. The button does, in one POST, and a second open says the link is already spent. `e2e/fixtures.ts` loads dev assets from the app under test when the HTML points them at `trenio.local`.
 
