@@ -9,6 +9,7 @@ import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import { effectiveAudiences, type PublishedTrainer } from "@/lib/catalog/published-trainers";
 import { MAX_TRAINER_SPORTS } from "@/lib/catalog/sport-taxonomy";
+import { popularityChecklist } from "@/lib/catalog/trainer-popularity";
 import { logCaught } from "@/lib/log/logger";
 
 type SportSource = { slug?: string; parentSlug?: string; label?: string };
@@ -21,6 +22,7 @@ export type CatalogTrainerSource = {
   avatarPath: string;
   photos: string[];
   bio: string;
+  about: string[] | null;
   sports: SportSource[] | null;
   primarySport: SportSource | null;
   audiences: Array<"adult" | "teen" | "kid"> | null;
@@ -31,6 +33,7 @@ export type CatalogTrainerSource = {
   createdSource: string;
   address: string | null;
   trainingPlaces: Array<{ city?: string; address?: string; district?: string }> | null;
+  certificates: Array<string | { path?: string }> | null;
   priceFrom: number | null;
   experienceYears: number;
   phone: string;
@@ -109,7 +112,31 @@ export function catalogTrainerFromSources(
     experience: row.experienceYears,
     priceFrom: row.priceFrom ?? 0,
     district: row.district,
+    ...catalogRank(row, account, label),
   };
+}
+
+/** The same 0–100 parts the cabinet uses. Hidden contacts still count once they are saved. */
+function catalogRank(row: CatalogTrainerSource, account: CatalogTrainerAccount, city: string) {
+  const fill = popularityChecklist({
+    photo: row.avatarPath,
+    photos: row.photos,
+    bio: row.bio,
+    about: row.about ?? [],
+    sports: row.sports ?? [],
+    experience: row.experienceYears,
+    price: row.priceFrom,
+    formats: row.formats ?? [],
+    city,
+    places: row.trainingPlaces ?? [],
+    address: row.address,
+    certificates: row.certificates ?? [],
+    phone: row.phone,
+    instagram: cabinetInstagram(row),
+    telegram: row.telegram,
+    email: row.ownerUserId ? account.email ?? "" : row.email,
+  });
+  return { cardFilled: fill.card, contactsFilled: fill.contacts };
 }
 
 /** Published profiles for the homepage, a city page, and a sport section. */
@@ -124,6 +151,7 @@ export const listCatalogTrainersFn = createServerFn({ method: "GET" }).handler(a
         avatarPath: trainerProfiles.avatarPath,
         photos: trainerProfiles.photos,
         bio: trainerProfiles.bio,
+        about: trainerProfiles.about,
         sports: trainerProfiles.sports,
         primarySport: trainerProfiles.primarySport,
         audiences: trainerProfiles.audiences,
@@ -134,6 +162,7 @@ export const listCatalogTrainersFn = createServerFn({ method: "GET" }).handler(a
         createdSource: trainerProfiles.createdSource,
         address: trainerProfiles.address,
         trainingPlaces: trainerProfiles.trainingPlaces,
+        certificates: trainerProfiles.certificates,
         priceFrom: trainerProfiles.priceFrom,
         experienceYears: trainerProfiles.experienceYears,
         phone: trainerProfiles.phone,

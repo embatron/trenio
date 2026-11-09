@@ -12,6 +12,7 @@ function source(overrides: Partial<CatalogTrainerSource> = {}): CatalogTrainerSo
     avatarPath: "",
     photos: ["/trainers/coach.jpg"],
     bio: "Занятия в зале.",
+    about: null,
     sports: [{ slug: "kikboksing", parentSlug: "edinoborstva", label: "Кикбоксинг" }],
     primarySport: { slug: "kikboksing", parentSlug: "edinoborstva", label: "Кикбоксинг" },
     audiences: ["adult"],
@@ -22,6 +23,7 @@ function source(overrides: Partial<CatalogTrainerSource> = {}): CatalogTrainerSo
     createdSource: "import",
     address: "",
     trainingPlaces: [],
+    certificates: null,
     priceFrom: null,
     experienceYears: 4,
     phone: "+375291112233",
@@ -66,4 +68,23 @@ test("verified phone, telegram, and login email stay on the catalog card", () =>
   assert.match(trainer.phone, /29/);
   assert.equal(trainer.email, "owner@example.com");
   assert.equal(trainer.telegram, "@coach");
+});
+
+test("catalog rank keeps the whole card, including a contact the public page still hides", () => {
+  const trainer = catalogTrainerFromSources(
+    source({
+      about: ["Разминка, техника и работа в парах."],
+      address: "улица Сурганова, 32",
+      certificates: [{ path: "/trainers/coach-diploma.jpg" }],
+    }),
+    {
+      email: "owner@example.com",
+      emailVerifiedAt: null,
+      phone: "+375291112233",
+      phoneVerifiedAt: null,
+    },
+  );
+  assert.equal(trainer.phone, "");
+  assert.equal(trainer.cardFilled, 9);
+  assert.equal(trainer.contactsFilled, 4);
 });

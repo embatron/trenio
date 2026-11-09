@@ -38,6 +38,10 @@ export type PublishedTrainer = {
   /** Price of one session, BYN. Two or three digits. */
   priceFrom: number;
   district: string;
+  /** Filled card fields, 0–10. Present on a row loaded for the catalog. */
+  cardFilled?: number;
+  /** Filled contacts, 0–4. Present on a row loaded for the catalog. */
+  contactsFilled?: number;
   /** ISO timestamps. Present on a row loaded from the database. */
   createdAt?: string;
   updatedAt?: string;

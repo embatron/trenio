@@ -20,5 +20,6 @@ export const getTrainerCertificatesFn = createServerFn({ method: "GET" })
       .limit(1);
     const stored = row?.photos ?? [];
     const photos = (stored.length > 0 ? stored : row?.avatarPath ? [row.avatarPath] : []).slice(0, 9);
-    return { certificates: readCertificates(row?.certificates), photos };
+    const { presentCertificates } = await import("@/lib/catalog/certificate-preview.server");
+    return { certificates: await presentCertificates(readCertificates(row?.certificates)), photos };
   });

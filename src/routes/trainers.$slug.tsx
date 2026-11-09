@@ -40,7 +40,8 @@ import { compactReviewHtml, reviewPlainText } from "@/lib/catalog/review-html";
 import { CatalogTrainerCard, type CatalogTrainerCardData } from "@/components/catalog-trainer-card";
 import { TrainerName } from "@/components/trainer-name";
 import { TrainerRating } from "@/components/trainer-rating";
-import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
+import { TrainerDocuments } from "@/components/trainer-documents";
+import type { TrainerDocument } from "@/lib/catalog/certificate-preview";
 import { getTrainerCertificatesFn } from "@/lib/catalog/trainer-certificates";
 import { cityCatalogBySlug } from "@/lib/catalog/city-pages";
 import { trainerDocumentPhrase, trainerSeoHead } from "@/lib/seo/trainer";
@@ -83,7 +84,7 @@ type Trainer = {
   photo: string;
   badge?: string;
   reviews: PublicTrainerReview[];
-  certificates: TrainerCertificate[];
+  certificates: TrainerDocument[];
   ownStatus: "pending" | "published" | "rejected" | null;
   ownComment: string | null;
   similar: CatalogTrainerCardData[];
@@ -99,7 +100,7 @@ function toTrainer(
   prices: TrainerPriceMap,
   ownStatus: Trainer["ownStatus"],
   ownComment: string | null,
-  certificates: TrainerCertificate[],
+  certificates: TrainerDocument[],
   catalog: PublishedTrainer[],
 ): Trainer {
   const formatLabel = (format: PublishedTrainer["formats"][number]) =>
@@ -126,8 +127,8 @@ function toTrainer(
       reviews: rating.reviews,
       views: rating.views,
       saves: rating.saves,
-      cardFilled: fill.card,
-      contactsFilled: fill.contacts,
+      cardFilled: item.cardFilled ?? fill.card,
+      contactsFilled: item.contactsFilled ?? fill.contacts,
     };
   };
   return {
@@ -367,11 +368,6 @@ const CSS = `
 .profile-text { margin: 0; color: var(--text); font-size: 15px; line-height: 1.65; font-weight: 500; }
 .profile-text + .profile-text { margin-top: 12px; }
 .profile-text.review-html p + p { margin-top: 12px; }
-.cert-list { display: grid; gap: 2px; margin: 0; padding: 0 0 0 1.15em; list-style: disc; }
-.cert-list li { margin: 0; min-width: 0; }
-.cert-list a { display: inline-flex; align-items: center; gap: 6px; padding: 2px 0; color: var(--primary); font-size: 15px; font-weight: var(--fw-title); line-height: 1.35; text-decoration: none; }
-.cert-list a:hover { text-decoration: underline; }
-.cert-list svg { width: 16px; height: 16px; flex: 0 0 auto; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .profile-taxonomy { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
 .profile-taxonomy__group { display: grid; gap: 8px; }
 .profile-taxonomy__tags { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -1094,25 +1090,7 @@ function TrainerPage() {
                     <ReviewHtml html={compactReviewHtml(t.sessions)} className="profile-text" />
                   </div>
                 ) : null}
-                {t.certificates.length > 0 ? (
-                  <div className="profile-copy">
-                    <h2 className="profile-heading">Сертификаты и дипломы</h2>
-                    <ul className="cert-list">
-                      {t.certificates.map((item) => (
-                        <li key={item.path}>
-                          <a href={item.path} target="_blank" rel="noopener noreferrer">
-                            {item.caption}
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-                              <path d="M14 5h5v5" />
-                              <path d="M19 5l-8 8" />
-                              <path d="M17 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h5" />
-                            </svg>
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
+                {t.certificates.length > 0 ? <TrainerDocuments items={t.certificates} /> : null}
 
                 <ul className="profile-taxonomy" aria-label="Характеристики тренера">
                   {t.taxonomy.main.length > 0 ? (

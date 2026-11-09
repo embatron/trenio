@@ -24,10 +24,13 @@ export default defineConfig({
       serverDir: "dist/server",
       publicDir: "dist/client",
     },
+    externals: {
+      external: ["pdfjs-dist", "@napi-rs/canvas"],
+    },
   },
   vite: {
     ssr: {
-      external: ["ip-location-api", "sharp", "tinify"],
+      external: ["ip-location-api", "sharp", "tinify", "pdfjs-dist", "@napi-rs/canvas"],
     },
     plugins: [serveUploadFiles()],
     server: {

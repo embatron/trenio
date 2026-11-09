@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { createServerFn } from "@tanstack/react-start";
@@ -215,8 +215,16 @@ async function writeTrainerImage(slug: string, folder: string, image: string) {
 }
 
 async function removeTrainerFile(_slug: string, stored: string) {
-  if (!stored.startsWith("/trainers/admin/") || stored.includes("..")) return;
-  await removeImageSet(path.join(process.cwd(), "public", stored));
+  const clean = stored.split("?")[0];
+  if (!clean.startsWith("/trainers/") || clean.includes("..")) return;
+  const absolute = path.join(process.cwd(), "public", clean);
+  const base = absolute.replace(/\.[a-z0-9]+$/i, "");
+  await Promise.all([
+    unlink(`${base}-doc-thumb.jpg`).catch(() => undefined),
+    unlink(`${base}-doc-view.jpg`).catch(() => undefined),
+  ]);
+  if (!clean.startsWith("/trainers/admin/")) return;
+  await removeImageSet(absolute);
 }
 
 function storedAbout(value: string) {
