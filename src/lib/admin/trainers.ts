@@ -121,6 +121,8 @@ export type AdminTrainer = {
   inviteSentAt: string;
   /** First open of the short link. Empty until that visit. */
   doorEnteredAt: string;
+  /** Last time the owner signed in. Empty when the card has no account or they have not signed in. */
+  lastLoginAt: string;
 };
 
 const CYR: Record<string, string> = {
@@ -350,6 +352,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         accountPhone: users.phone,
         accountPhoneVerifiedAt: users.phoneVerifiedAt,
         accountStatus: users.status,
+        lastLoginAt: users.lastLoginAt,
       })
       .from(trainerProfiles)
       .leftJoin(users, eq(users.id, trainerProfiles.ownerUserId)),
@@ -450,6 +453,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       outreachSentAt: row.outreachSentAt?.toISOString() ?? "",
       inviteSentAt: row.inviteSentAt?.toISOString() ?? "",
       doorEnteredAt: row.doorEnteredAt?.toISOString() ?? "",
+      lastLoginAt: row.ownerId && !hidden.has(row.ownerId) && row.lastLoginAt ? row.lastLoginAt.toISOString() : "",
       account: row.ownerId && !hidden.has(row.ownerId)
         ? {
             id: row.ownerId,
@@ -513,6 +517,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       outreachSentAt: "",
       inviteSentAt: "",
       doorEnteredAt: "",
+      lastLoginAt: "",
     }));
 
     const savedOutreach = await loadSiteText("instagram_message");
@@ -984,6 +989,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         outreachSentAt: row.outreachSentAt?.toISOString() ?? "",
         inviteSentAt: row.inviteSentAt?.toISOString() ?? "",
         doorEnteredAt: row.doorEnteredAt?.toISOString() ?? "",
+        lastLoginAt: owner?.lastLoginAt ? owner.lastLoginAt.toISOString() : "",
         account: owner
           ? {
               id: owner.id,

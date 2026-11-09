@@ -21,7 +21,7 @@ import { outreachHello, outreachWithSiteLink } from "@/lib/site-texts/defaults";
 
 const TRAINER_PAGE_SIZE = 20;
 type TrainerPublishTab = "unpublished" | "published";
-type TrainerSort = "date-desc" | "date-asc" | "reviews" | "rating" | "popularity" | "sent" | "link" | "visit" | "note";
+type TrainerSort = "date-desc" | "date-asc" | "reviews" | "rating" | "popularity" | "sent" | "link" | "visit" | "seen" | "note";
 
 const dateFormat = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short", year: "numeric" });
 const addedFormat = new Intl.DateTimeFormat("en-GB", {
@@ -29,6 +29,15 @@ const addedFormat = new Intl.DateTimeFormat("en-GB", {
   day: "2-digit",
   month: "2-digit",
   year: "2-digit",
+});
+const visitedFormat = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Europe/Minsk",
+  day: "2-digit",
+  month: "2-digit",
+  year: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
 });
 const STAR_PATH = "M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z";
 
@@ -80,6 +89,13 @@ function PublishMark({ status }: { status: AdminTrainer["status"] }) {
 
 function addedOn(iso: string) {
   return addedFormat.format(new Date(iso));
+}
+
+/** Last sign-in, Minsk time, `ДД/ММ/ГГ ЧЧ:ММ`. */
+function visitedOn(iso: string) {
+  const parts = visitedFormat.formatToParts(new Date(iso));
+  const pick = (type: Intl.DateTimeFormatPartTypes) => parts.find((part) => part.type === type)?.value ?? "";
+  return `${pick("day")}/${pick("month")}/${pick("year")} ${pick("hour")}:${pick("minute")}`;
 }
 
 /** Cabinet phone that the owner added and confirmed. The contacts column keeps the digits off the icon. */
@@ -324,6 +340,7 @@ function searchHaystack(trainer: AdminTrainer) {
     trainer.outreachSentAt ? "сообщение отправлено" : "сообщение не отправлено",
     trainer.inviteSentAt ? "ссылка отправлена" : "ссылка не отправлена",
     trainer.doorEnteredAt ? "был заходил" : "не заходил",
+    trainer.lastLoginAt ? visitedOn(trainer.lastLoginAt) : "",
     trainer.createdAt ? addedOn(trainer.createdAt) : "",
     trainer.rating,
     String(trainer.reviews),
@@ -358,6 +375,11 @@ function sortTrainers(rows: AdminTrainer[], sort: TrainerSort) {
       const right = b.doorEnteredAt ? Date.parse(b.doorEnteredAt) : 0;
       return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
     }
+    if (sort === "seen") {
+      const left = a.lastLoginAt ? Date.parse(a.lastLoginAt) : 0;
+      const right = b.lastLoginAt ? Date.parse(b.lastLoginAt) : 0;
+      return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
+    }
     if (sort === "note") {
       const left = a.staffNoteAt ? Date.parse(a.staffNoteAt) : 0;
       const right = b.staffNoteAt ? Date.parse(b.staffNoteAt) : 0;
@@ -390,6 +412,7 @@ const SORT_OPTIONS: Array<{ id: TrainerSort; label: string }> = [
   { id: "sent", label: "Сначала с сообщением" },
   { id: "link", label: "Сначала со ссылкой" },
   { id: "visit", label: "Сначала зашедшие" },
+  { id: "seen", label: "Сначала недавно на сайте" },
   { id: "note", label: "Сначала с заметкой" },
 ];
 
@@ -641,6 +664,7 @@ export function AdminTrainersTable({
                 <th>Оценка</th>
                 <th>Рейтинг</th>
                 <th>Аккаунт</th>
+                <th>Посещение</th>
                 <th>Заметка</th>
               </tr>
             </thead>
@@ -686,6 +710,9 @@ export function AdminTrainersTable({
                   <td title={`Рейтинг ${trainer.popularity} из 100`}>{Number.isInteger(trainer.popularity) ? trainer.popularity : trainer.popularity.toFixed(1)}</td>
                   <td title={trainer.account ? "Телефон аккаунта, привязанного к карточке" : "В каталоге есть карточка, но пользователь ещё не зарегистрировался и не забрал профиль"}>
                     {accountPhoneLabel(trainer)}
+                  </td>
+                  <td title={trainer.lastLoginAt ? `Последнее посещение сайта ${visitedOn(trainer.lastLoginAt)}` : "На сайт ещё не заходил"}>
+                    {trainer.lastLoginAt ? visitedOn(trainer.lastLoginAt) : "—"}
                   </td>
                   <td className="is-note">
                     {trainer.id ? (
