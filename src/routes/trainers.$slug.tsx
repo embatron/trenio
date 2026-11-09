@@ -6,7 +6,6 @@ import { UserAvatar } from "@/components/user-avatar";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { isStaff } from "@/lib/auth/roles";
-import { formatBelarusPhone } from "@/lib/auth/phone";
 import { trainerSportDatives } from "@/lib/catalog/sport-taxonomy";
 import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
 import {
@@ -32,11 +31,10 @@ import { ShareProfileButton } from "@/components/share-profile";
 import { TrainerAddressMap } from "@/components/trainer-address-map";
 import { TrainerContactIcons } from "@/components/messages/trainer-contact-icons";
 import { getPublicTrainerContactsFn, type PublicTrainerContacts } from "@/lib/catalog/trainer-contacts";
-import { recordTrainerContactClick } from "@/lib/catalog/trainer-contact-client";
 import { recordTrainerProfileViewFn } from "@/lib/catalog/trainer-views";
 import { ReviewEditor } from "@/components/review-editor";
 import { ReviewExcerpt, ReviewHtml } from "@/components/review-html";
-import { reviewPlainText } from "@/lib/catalog/review-html";
+import { compactReviewHtml, reviewPlainText } from "@/lib/catalog/review-html";
 import { CatalogTrainerCard, type CatalogTrainerCardData } from "@/components/catalog-trainer-card";
 import { TrainerName } from "@/components/trainer-name";
 import { TrainerRating } from "@/components/trainer-rating";
@@ -331,6 +329,7 @@ const CSS = `
 .profile-heading { margin: 0; font-size: 14px; font-weight: var(--fw-title); letter-spacing: 0.01em; text-transform: none; color: var(--muted); }
 .profile-text { margin: 0; color: var(--text); font-size: 15px; line-height: 1.65; font-weight: 500; }
 .profile-text + .profile-text { margin-top: 12px; }
+.profile-text.review-html p + p { margin-top: 12px; }
 .cert-list { display: grid; gap: 2px; margin: 0; padding: 0 0 0 1.15em; list-style: disc; }
 .cert-list li { margin: 0; min-width: 0; }
 .cert-list a { display: inline-flex; align-items: center; gap: 6px; padding: 2px 0; color: var(--primary); font-size: 15px; font-weight: var(--fw-title); line-height: 1.35; text-decoration: none; }
@@ -421,10 +420,6 @@ const CSS = `
 .similar-trainers__track { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--layout-gap); }
 .similar-trainers .trainer-name { flex-direction: column; align-items: flex-start; gap: 0; }
 
-.mobile-contact-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 200; padding: 10px var(--layout-gutter) calc(10px + env(safe-area-inset-bottom, 0px)); background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); border-top: 1px solid var(--line); display: none; }
-.mobile-contact-bar__inner { max-width: 600px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.mobile-contact-bar__write { grid-column: 1 / -1; }
-
 @media (prefers-reduced-motion: reduce) {
   .photo-slider__viewport, .photo-thumbs { scroll-behavior: auto; }
 }
@@ -432,8 +427,7 @@ const CSS = `
 @media (max-width: 960px) {
   .profile-layout { grid-template-columns: 1fr; gap: 22px; }
   .profile-aside { position: static; }
-  .mobile-contact-bar { display: block; }
-  .trainer-page__inner { padding-block: clamp(16px, 3vw, 20px) clamp(72px, 12vw, 110px); }
+  .trainer-page__inner { padding-block: clamp(16px, 3vw, 20px) clamp(32px, 6vw, 56px); }
 }
 @media (max-width: 640px) {
   .profile-identity__name { font-size: 24px; }
@@ -488,10 +482,6 @@ function insertReviewSnippet(html: string, snippet: string) {
   return `${html} ${safe}`;
 }
 const EDIT_ICON = "M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z";
-
-function phoneHref(phone: string) {
-  return `tel:${phone.replace(/[^\d+]/g, "")}`;
-}
 
 function ReviewForm({ slug, onClose, onSent }: { slug: string; onClose: () => void; onSent: () => void }) {
   const router = useRouter();
@@ -742,8 +732,6 @@ function TrainerPage() {
   const viewportRef = useRef<HTMLDivElement>(null);
   const thumbsRef = useRef<HTMLUListElement>(null);
   const [reviewsShown, setReviewsShown] = useState(5);
-  const [phoneVisible, setPhoneVisible] = useState(false);
-  const shownPhone = formatBelarusPhone(contacts.phone) || contacts.phone;
   const [reviewFormOpen, setReviewFormOpen] = useState(false);
   const [reviewSent, setReviewSent] = useState(false);
   const ownNote = t.ownStatus === "rejected"
@@ -1052,18 +1040,16 @@ function TrainerPage() {
 
             <div className="profile-body">
               <section className="profile-block">
-                {t.about.some((paragraph) => paragraph.trim()) ? (
+                {reviewPlainText(t.about.join("")) ? (
                   <div className="profile-copy">
                     <h2 className="profile-heading">Обо мне</h2>
-                    {t.about.filter((paragraph) => paragraph.trim()).map((paragraph, index) => (
-                      <p key={index} className="profile-text">{paragraph}</p>
-                    ))}
+                    <ReviewHtml html={compactReviewHtml(t.about.join(""))} className="profile-text" />
                   </div>
                 ) : null}
-                {t.sessions.trim() ? (
+                {reviewPlainText(t.sessions) ? (
                   <div className="profile-copy">
                     <h2 className="profile-heading">О занятиях</h2>
-                    <ReviewHtml html={t.sessions} className="profile-text" />
+                    <ReviewHtml html={compactReviewHtml(t.sessions)} className="profile-text" />
                   </div>
                 ) : null}
                 {t.certificates.length > 0 ? (
@@ -1231,18 +1217,6 @@ function TrainerPage() {
         </article>
         </div>
       </main>
-
-      {contacts.phone ? <div className="mobile-contact-bar" aria-label="Телефон">
-        <div className="mobile-contact-bar__inner" style={{ gridTemplateColumns: "1fr" }}>
-          {phoneVisible ? (
-            <a className="btn btn--primary" href={phoneHref(shownPhone)} onClick={() => recordTrainerContactClick(t.slug, "phone")}>{shownPhone}</a>
-          ) : (
-            <button className="btn btn--primary" type="button" onClick={() => setPhoneVisible(true)}>
-              Показать телефон
-            </button>
-          )}
-        </div>
-      </div> : null}
 
       <SiteFooter />
       {user?.needsDoorPassword && !user.needsCredentials ? <DoorPasswordDialog /> : null}
