@@ -1,0 +1,74 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/_dmitry0_/",
+  "handle": "_dmitry0_",
+  "slug": "_dmitry0_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дмитрий",
+  "lastName": "Ющенко",
+  "fullName": "Дмитрий Ющенко",
+  "gender": "male",
+  "nameQuotes": [
+    "Дмитрий Ющенко"
+  ],
+  "headline": "Тренер по лёгкой атлетике",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Дмитрий Ющенко (легкая атлетика)",
+  "threadsUrl": "",
+  "bio": "Я Дмитрий Ющенко. Моё направление — лёгкая атлетика.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "legkaya-atletika",
+      "parentSlug": "beg",
+      "label": "Лёгкая атлетика",
+      "evidence": "Лёгкая атлетика"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "legkaya-atletika",
+    "parentSlug": "beg",
+    "label": "Лёгкая атлетика"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/_dmitry0_.jpg",
+  "photos": [
+    "/trainers/instagram/_dmitry0_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/_dmitry0_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

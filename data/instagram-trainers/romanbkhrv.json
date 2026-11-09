@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/romanbkhrv/",
+  "handle": "romanbkhrv",
+  "slug": "romanbkhrv",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Роман",
+  "lastName": "Бахуров",
+  "fullName": "Роман Бахуров",
+  "gender": "male",
+  "nameQuotes": [
+    "Роман Бахуров"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "Entrepreneur Founder @kroplia.swim 👨‍💻 Host & Organizer @22rt_trackday @dragracingbelarus 🗣️ Interviewer @racingby @stayki_drift 🎤 Car enthusiast 🏎️ kroplia-swim.by",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "https://www.instagram.com/romanbkhrv/ Роман Бахуров - тренер по плаванию - дети, подростки, Минск У всех индивидуально и в группе",
+  "threadsUrl": "",
+  "bio": "Я Роман Бахуров, тренер по плаванию в Минске. Занимаюсь с детьми и с подростками. Занятия провожу индивидуально и в группе.",
+  "about": [
+    "Занятия провожу индивидуально и в группе."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "Плавание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "kid",
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/romanbkhrv.jpg",
+  "photos": [
+    "/trainers/instagram/romanbkhrv.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/romanbkhrv/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

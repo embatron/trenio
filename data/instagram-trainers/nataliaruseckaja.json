@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/nataliaruseckaja/",
+  "handle": "nataliaruseckaja",
+  "slug": "nataliaruseckaja",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Наталия",
+  "lastName": "Русецкая",
+  "fullName": "Наталия Русецкая",
+  "gender": "female",
+  "nameQuotes": [
+    "Наталия Русецкая"
+  ],
+  "headline": "Тренер по танцам и хореографии",
+  "sourceBio": "Руководитель студии танцев и здоровых физических нагрузок ,,Балетка,, педагог-хореограф, профессиональный тренер",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "https://www.instagram.com/nataliaruseckaja/ Наталия Русецкая танцы, современный танец, hiphop, high heels",
+  "threadsUrl": "",
+  "bio": "Я Наталия Русецкая, педагог-хореограф и профессиональный тренер. Руковожу студией танцев Балетка. Веду танцы, современный танец, hiphop и high heels.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    },
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "High Heels"
+    },
+    {
+      "slug": "klassika",
+      "parentSlug": "tancy",
+      "label": "Балет",
+      "evidence": "Балет"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/nataliaruseckaja.jpg",
+  "photos": [
+    "/trainers/instagram/nataliaruseckaja.jpg",
+    "/trainers/instagram/nataliaruseckaja-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/nataliaruseckaja/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

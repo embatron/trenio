@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/anastasiia_7444/",
+  "handle": "anastasiia_7444",
+  "slug": "anastasiia_7444",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анастасия",
+  "lastName": "",
+  "fullName": "Анастасия",
+  "gender": "female",
+  "nameQuotes": [
+    "Анастасия"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "https://www.instagram.com/anastasiia_7444/ Анастасия, тренер по плаванию, дети подростки, Минск. У всех индивидуально и в группе",
+  "threadsUrl": "",
+  "bio": "Я Анастасия, тренер по плаванию в Минске. Занимаюсь с детьми и с подростками. Занятия провожу индивидуально и в группе.",
+  "about": [
+    "Занятия провожу индивидуально и в группе."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/anastasiia_7444/p/DagSIFkMCIa/",
+      "caption": "Полетели 🏃‍♀️✨ @shagai.bel @sportclub.by ⚡️"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "Плавание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "kid",
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/anastasiia_7444.jpg",
+  "photos": [
+    "/trainers/instagram/anastasiia_7444.jpg",
+    "/trainers/instagram/anastasiia_7444-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/anastasiia_7444/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

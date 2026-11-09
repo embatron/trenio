@@ -1,0 +1,96 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/polly_dolly_123/",
+  "handle": "polly_dolly_123",
+  "slug": "polly_dolly_123",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Полина",
+  "lastName": "Пальчевская",
+  "fullName": "Полина Пальчевская",
+  "gender": "female",
+  "nameQuotes": [
+    "Полина Пальчевская"
+  ],
+  "headline": "Тренер по high heels",
+  "sourceBio": "Хореограф/тренер/танцовщица 💃🏻 Индивидуальные и групповые занятия👯‍♀️ Веду тут 👉 @tandem_dance_by @adrenalin.nalibokskaya @grayana.studio",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Полина Пальчевская https://www.instagram.com/polly_dolly_123?dlrf=M25zOGZ5NWcyZWJt - современные танцы, танцы на каблуках (переименуй на сайте это на heels или high heels)",
+  "threadsUrl": "",
+  "bio": "Я Полина Пальчевская, тренер по high heels. Веду современные танцы и танцы на каблуках. Я хореограф и тренер.",
+  "about": [
+    "Занятия провожу индивидуально и в группе."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/polly_dolly_123/reel/DdHi6rsKDk8/",
+      "caption": "Танцую тут 💞 Научу танцевать на каблуках👠 Провожу Индивидуальные занятия, для подробностей пишите в лс💌"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "танцы на каблуках"
+    },
+    {
+      "slug": "sovremennye",
+      "parentSlug": "tancy",
+      "label": "Современные танцы",
+      "evidence": "Современные танцы"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "high-heels",
+    "parentSlug": "tancy",
+    "label": "High Heels"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/polly_dolly_123.jpg",
+  "photos": [
+    "/trainers/instagram/polly_dolly_123.jpg",
+    "/trainers/instagram/polly_dolly_123-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/polly_dolly_123/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

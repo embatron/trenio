@@ -1,0 +1,100 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/rusalochka_swim/",
+  "handle": "rusalochka_swim",
+  "slug": "rusalochka_swim",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анастасия",
+  "lastName": "Шкулева",
+  "fullName": "Анастасия Шкулева",
+  "gender": "female",
+  "nameQuotes": [
+    "Анастасия Шкулева"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "Тренер МСМК | Минск",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Анастасия Шкулева",
+  "threadsUrl": "",
+  "bio": "Я Анастасия Шкулева, тренер по плаванию в Минске. Веду синхронное и классическое плавание. Занимаюсь с детьми и со взрослыми.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/rusalochka_swim/p/Db7hYS_uxeL/",
+      "caption": "Привет👋 Давайте знакомиться. Меня зовут Анастасия, и я тренер по плаванию, который знает о воде абсолютно всё. Прежде чем учить других, я прошла этот путь сама. Вода — это моя стихия и моя жизнь. Мастер спорта международного класса по синхронному плаванию."
+    },
+    {
+      "url": "https://www.instagram.com/rusalochka_swim/reel/DU-Vy1oArm3/",
+      "caption": "Магия начинается с первого гребка. Стань легендой бассейна вместе с нами! Набор в школу плавания в разгаре."
+    },
+    {
+      "url": "https://www.instagram.com/rusalochka_swim/p/DRhNJ9gjI_L/",
+      "caption": "Добро пожаловать в Rusalochka_swim. В нашем клубе открыт набор на групповые и индивидуальные тренировки! Мы верим, что плавание — это полезная многофункциональная активность, которая доступна каждому, независимо от возраста и уровня подготовки. Наша миссия — научить вас или вашего ребенка уверенно и безопасно чувствовать себя в воде."
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "Плавание"
+    },
+    {
+      "slug": "sinhronnoe",
+      "parentSlug": "plavanie",
+      "label": "Синхронное плавание",
+      "evidence": "Синхронное плавание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/rusalochka_swim.jpg",
+  "photos": [
+    "/trainers/instagram/rusalochka_swim.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/rusalochka_swim/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

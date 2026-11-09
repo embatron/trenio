@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/rovalexs/",
+  "handle": "rovalexs",
+  "slug": "rovalexs",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Аляксей",
+  "lastName": "Роўда",
+  "fullName": "Аляксей Роўда",
+  "gender": "male",
+  "nameQuotes": [
+    "Аляксей Роўда"
+  ],
+  "headline": "Тренер по бегу",
+  "sourceBio": "Хочаце займацца бегам, але не ведаеце з чаго пачаць? Звяртайцеся - будзем бегаць па плану, з падтрымкай тренера і з задавальненнем!",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Аляксей Роўда",
+  "threadsUrl": "",
+  "bio": "Я Аляксей Роўда, тренер по бегу для любителей.",
+  "about": [
+    "Будем бегать по плану, с поддержкой тренера."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "beg",
+      "parentSlug": "beg",
+      "label": "Бег",
+      "evidence": "Бег"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "beg",
+    "parentSlug": "beg",
+    "label": "Бег"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/rovalexs.jpg",
+  "photos": [
+    "/trainers/instagram/rovalexs.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/rovalexs/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

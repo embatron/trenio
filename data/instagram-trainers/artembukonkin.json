@@ -1,0 +1,95 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/artembukonkin/",
+  "handle": "artembukonkin",
+  "slug": "artembukonkin",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Артём",
+  "lastName": "Буконкин",
+  "fullName": "Артём Буконкин",
+  "gender": "male",
+  "nameQuotes": [
+    "Артём Буконкин"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "⚡️Фитнес-тренер с опытом работы более 5-ти лет ❓Помогу разобраться , что и как делать в тренажереом зале",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Артём Буконкин",
+  "threadsUrl": "",
+  "bio": "Я Артём Буконкин, фитнес-тренер в Минске.",
+  "about": [
+    "Помогаю разобраться, что и как делать в зале."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/artembukonkin/reel/DfYIxMoo0F3/",
+      "caption": "Делай жим в тренажере правильно Подпишись , тут много полезного",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/artembukonkin/reel/DesNNr7IKC3/",
+      "caption": "ФОРМУЛА СЖИГАНИЯ ЖИРА Почему ты НЕ худеешь (даже если делаешь кардио) Ошибки: Кардио ПЕРЕД тренировкой Сначала силовая Кардио после Тренируйся умнее",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/artembukonkin/reel/DfGCxYKIHBA/",
+      "caption": "Не делай так В первом варианте ты травмируешь плечи Во втором грамотно прокачиваешь дельтовидные мышцы",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/artembukonkin.jpg",
+  "photos": [
+    "/trainers/instagram/artembukonkin.jpg",
+    "/trainers/instagram/artembukonkin-g2.jpg",
+    "/trainers/instagram/artembukonkin-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/artembukonkin/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/dasha_yaromenka/",
+  "handle": "dasha_yaromenka",
+  "slug": "dasha_yaromenka",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дарья",
+  "lastName": "Еременко",
+  "fullName": "Дарья Еременко",
+  "gender": "female",
+  "nameQuotes": [
+    "Дарья Еременко"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Персональные тренировки Пилатес (осанка, восстановление после родов)",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Дарья Еременко",
+  "threadsUrl": "",
+  "bio": "Я Дарья Еременко, фитнес-тренер в Минске. Веду персональные тренировки и пилатес: осанка и восстановление после родов.",
+  "about": [
+    "Веду персональные тренировки. На пилатесе работаем над осанкой и восстановлением после родов."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/dasha_yaromenka/reel/C9SOItdohVJ/",
+      "caption": "Привет! Я Даша, фитнес тренер. Тут всё о грамотном восстановлении после родов, построению тела мечты и сбалансированном питании",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/dasha_yaromenka/p/CBpYy5enTz7/",
+      "caption": "Твоя мотивация! Фотографии слева я сделала ровно в тот день, когда впервые пошла в тренажёрный зал. Это было лето 2015, мне 19 лет. Придя домой я начала сама изучать все в интернете, что касается питания и тренировок.",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/dasha_yaromenka/reel/C86-xbYo4np/",
+      "caption": "Мамочки, рассказывайте какое у вас новое хобби появилось",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "тренажёрный зал"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "reabilitaciya",
+      "parentSlug": "reabilitaciya",
+      "label": "Реабилитация",
+      "evidence": "восстановление"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/dasha_yaromenka.jpg",
+  "photos": [
+    "/trainers/instagram/dasha_yaromenka.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/dasha_yaromenka/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/fitwithdashaa",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email"
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/oxitujer/",
+  "handle": "oxitujer",
+  "slug": "oxitujer",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Валерия",
+  "lastName": "",
+  "fullName": "Валерия",
+  "gender": "female",
+  "nameQuotes": [
+    "Валерия"
+  ],
+  "headline": "Тренер по большому теннису",
+  "sourceBio": "TENNIS COACH",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Валерия",
+  "threadsUrl": "",
+  "bio": "Я Валерия, тренер по большому теннису.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/oxitujer/p/CL3fWeCBmzA/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/oxitujer/p/CpnLXeLIK_F/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/oxitujer/p/DLXuZRAt0KQ/",
+      "caption": "",
+      "imageText": [
+        "БЕЛОРУССКИЙ ГОСУДАРСТВЕННЫЙ УНИВЕРСИТЕТ ФИЗИЧЕСКОЙ КУЛЬТУРЫ"
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "bolshoj-tennis",
+      "parentSlug": "raketki",
+      "label": "Большой теннис",
+      "evidence": "tennis"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bolshoj-tennis",
+    "parentSlug": "raketki",
+    "label": "Большой теннис"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [
+    "Беларуская"
+  ],
+  "avatarPath": "/trainers/instagram/oxitujer.jpg",
+  "photos": [
+    "/trainers/instagram/oxitujer.jpg",
+    "/trainers/instagram/oxitujer-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/oxitujer/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/minsk_badminton/",
+  "handle": "minsk_badminton",
+  "slug": "minsk_badminton",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Марина",
+  "lastName": "Бадминтон",
+  "fullName": "Марина Бадминтон",
+  "gender": "female",
+  "nameQuotes": [
+    "Марина Бадминтон"
+  ],
+  "headline": "Тренер по бадминтону",
+  "sourceBio": "Мастер спорта💪🏼 🔹EX Начальник национальной команды🇧🇾🏸 🔹Дипломированный специалист 👩🏽‍🎓",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "https://www.instagram.com/minsk_badminton/ тренер по бадминтону, Марина Бадминтон",
+  "threadsUrl": "",
+  "bio": "Я Марина Бадминтон, тренер по бадминтону в Минске. Я мастер спорта, EX начальник национальной команды.",
+  "about": [
+    "Запись идёт на тренировку."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "badminton",
+      "parentSlug": "raketki",
+      "label": "Бадминтон",
+      "evidence": "Бадминтон"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "badminton",
+    "parentSlug": "raketki",
+    "label": "Бадминтон"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/minsk_badminton.jpg",
+  "photos": [
+    "/trainers/instagram/minsk_badminton.jpg",
+    "/trainers/instagram/minsk_badminton-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/minsk_badminton/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/MF_100_100",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

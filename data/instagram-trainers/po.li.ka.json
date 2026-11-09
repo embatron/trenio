@@ -1,0 +1,112 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/po.li.ka/",
+  "handle": "po.li.ka",
+  "slug": "po.li.ka",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Полина",
+  "lastName": "Дудко",
+  "fullName": "Полина Дудко",
+  "gender": "female",
+  "nameQuotes": [
+    "Полина Дудко"
+  ],
+  "headline": "Тренер по карате",
+  "sourceBio": "Вдохновляю и тренирую более 10 лет 2-й Дан, черный пояс",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Полина Дудко",
+  "threadsUrl": "",
+  "bio": "Я Полина Дудко, топ-тренер по карате в Минске. Вдохновляю и тренирую более 10 лет. У меня 2-й дан, черный пояс.",
+  "about": [
+    "На тренировках заряженная атмосфера. Я работаю с детьми от 4 лет: для самых маленьких это игра и движение, для ребят постарше техника и дисциплина. Требую дисциплину и правильность выполнения."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/po.li.ka/p/Db7mpvICHMt/",
+      "caption": "Привет! Я Полина — Топ-тренер по карате. Я в карате больше 20 лет — с 4 лет на татами, папа-тренер, так что это моя жизнь. Сейчас у меня 2 Дан, тренерский стаж — 10+ лет. Работаю с детьми и подростками (от 4 до 17 лет) и со взрослыми. Для каждого возраста — свой подход: малышам — игра и движение, ребятам постарше — техника и дисциплина. Со мной можно поработать: в группе, индивидуально.",
+      "imageText": [
+        "ТОП-ТРЕНЕР ПО КАРАТЕ",
+        "Тренерский Стаж 10+ лет",
+        "Шотокан – мой стиль, моя философия",
+        "Я – Полина.",
+        "как я работаю с детьми от 4-5 лет",
+        "Я В КАРАТЕ С 4 ЛЕТ",
+        "На тренировках — заряженная атмосфера, могу и пошутить",
+        "Но при этом требую дисциплину и правильность выполнения",
+        "Я знаю, как говорить с детьми на их языке.",
+        "кто пришёл в зал впервые и боится.",
+        "КАРАТЕ ДЛЯ ДЕТЕЙ — ЭТО ХАРАКТЕР!",
+        "Я работаю с детьми от 4 лет.",
+        "Для самых маленьких — игра, движение, знакомство с телом через весёлые упражнения",
+        "Для ребят постарше — техника, дисциплина, работа над собой",
+        "Правильную базу с первых занятий",
+        "Не просто бил — а чувствовал."
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/po.li.ka/reel/C1KE1EXoPeu/",
+      "caption": "Топ-тренер по карате в Минске. Стаж в карате у меня 20 лет и нет, я не ошиблась в цифрах",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "karate",
+      "parentSlug": "edinoborstva",
+      "label": "Карате",
+      "evidence": "Карате"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "karate",
+    "parentSlug": "edinoborstva",
+    "label": "Карате"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": 10,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid",
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/po.li.ka.jpg",
+  "photos": [
+    "/trainers/instagram/po.li.ka.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/po.li.ka/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

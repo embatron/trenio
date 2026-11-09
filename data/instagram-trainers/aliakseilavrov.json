@@ -1,0 +1,97 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/aliakseilavrov/",
+  "handle": "aliakseilavrov",
+  "slug": "aliakseilavrov",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алексей",
+  "lastName": "Лавров",
+  "fullName": "Алексей Лавров",
+  "gender": "male",
+  "nameQuotes": [
+    "Алексей Лавров"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "FITNESS ONLINE/ цех красивых 🍑 тренирую в @academy_mma_minsk ОНЛАЙН ВЕДЕНИЕ ПЛАН ПИТАНИЯ ТРЕНИРОВКИ 🏆Чемпион WАВВА 🥇🥈Grand Prix Luber,NBC",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Алексей Лавров",
+  "threadsUrl": "",
+  "bio": "Я Алексей Лавров, тренер по фитнесу в Минске. Работаю онлайн и офлайн.",
+  "about": [
+    "Веду онлайн-ведение и тренировки. Составляю план питания."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/aliakseilavrov/p/DKrxQQIoTEC/",
+      "caption": "Ещё одно фото с турнира NBC 12 category men's physique Never give up",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    },
+    {
+      "slug": "mma",
+      "parentSlug": "edinoborstva",
+      "label": "MMA",
+      "evidence": "MMA"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/aliakseilavrov.jpg",
+  "photos": [
+    "/trainers/instagram/aliakseilavrov.jpg",
+    "/trainers/instagram/aliakseilavrov-g2.jpg",
+    "/trainers/instagram/aliakseilavrov-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/aliakseilavrov/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

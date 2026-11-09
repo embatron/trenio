@@ -1,0 +1,101 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/elsakov_ivan/",
+  "handle": "elsakov_ivan",
+  "slug": "elsakov_ivan",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Иван",
+  "lastName": "Елсаков",
+  "fullName": "Иван Елсаков",
+  "gender": "male",
+  "nameQuotes": [
+    "Иван Елсаков"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "Персональный тренер",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Иван Елсаков",
+  "threadsUrl": "",
+  "bio": "Я Иван Елсаков, персональный тренер по боксу. Веду единоборства и силовые тренировки. В спорте я больше 40 лет.",
+  "about": [
+    "Занятия веду как персональный тренер."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/elsakov_ivan/p/DRR4hn_DCRF/",
+      "caption": "Меня зовут Иван, мне 49 лет, я — Мастер спорта и профессиональный тренер по фитнесу. Обучаю бойцовским тренировкам Workout, провожу индивидуальные и групповые занятия с элементами бокса и приемами единоборств. Эффективные тренировки для любого уровня. Улучшение выносливости, силы и координации. Работа с техникой бокса и боевых искусств."
+    }
+  ],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    },
+    {
+      "slug": "silovoj-trening",
+      "parentSlug": "fitnes",
+      "label": "Силовой тренинг",
+      "evidence": "силовые тренировки"
+    },
+    {
+      "slug": "edinoborstva",
+      "parentSlug": "edinoborstva",
+      "label": "Единоборства",
+      "evidence": "Единоборства"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/elsakov_ivan.jpg",
+  "photos": [
+    "/trainers/instagram/elsakov_ivan.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/elsakov_ivan/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

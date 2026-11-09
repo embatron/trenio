@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/nadezhdakoba/",
+  "handle": "nadezhdakoba",
+  "slug": "nadezhdakoba",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Надежда",
+  "lastName": "Коба",
+  "fullName": "Надежда Коба",
+  "gender": "female",
+  "nameQuotes": [
+    "Надежда Коба"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "https://www.instagram.com/nadezhdakoba?srtk=YTl4amFsNnUxdHk1 Надежда Коба - тренер по плаванию, дети, подростки, Минск У всех индивидуально и в группе",
+  "threadsUrl": "",
+  "bio": "Я Надежда Коба, тренер по плаванию в Минске. Занимаюсь с детьми и с подростками. Занятия провожу индивидуально и в группе.",
+  "about": [
+    "Занятия провожу индивидуально и в группе."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "Плавание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "kid",
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/nadezhdakoba.jpg",
+  "photos": [
+    "/trainers/instagram/nadezhdakoba.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/nadezhdakoba/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

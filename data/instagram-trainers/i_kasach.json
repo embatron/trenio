@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/i_kasach/",
+  "handle": "i_kasach",
+  "slug": "i_kasach",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ирина",
+  "lastName": "Касач",
+  "fullName": "Ирина Касач",
+  "gender": "female",
+  "nameQuotes": [
+    "Ирина Касач"
+  ],
+  "headline": "Тренер по йоге",
+  "sourceBio": "Мастер игры | Более 50 авторских игр Преподаватель кундалини-йоги Мой канал о йоге",
+  "sourceAbout": [
+    "КТО МЫ?"
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Ирина Касач",
+  "threadsUrl": "",
+  "bio": "Я Ирина Касач, преподаватель кундалини-йоги. Веду канал о йоге.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/i_kasach.jpg",
+  "photos": [
+    "/trainers/instagram/i_kasach.jpg",
+    "/trainers/instagram/i_kasach-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/i_kasach/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

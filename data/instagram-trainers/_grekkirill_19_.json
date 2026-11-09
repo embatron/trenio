@@ -1,0 +1,106 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/_grekkirill_19_/",
+  "handle": "_grekkirill_19_",
+  "slug": "_grekkirill_19_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Кирилл",
+  "lastName": "Грек",
+  "fullName": "Кирилл Грек",
+  "gender": "male",
+  "nameQuotes": [
+    "Кирилл Грек"
+  ],
+  "headline": "Тренер по кикбоксингу",
+  "sourceBio": "Тренер по кикбоксингу",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кирилл Грек",
+  "threadsUrl": "",
+  "bio": "Я Кирилл Грек, тренер по кикбоксингу. Веду индивидуальные тренировки по тайскому боксу и кикбоксингу.",
+  "about": [
+    "Веду индивидуальные тренировки по тайскому боксу и кикбоксингу. Занимаюсь с людьми любого возраста."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/_grekkirill_19_/p/Dd1t92wNQEj/",
+      "caption": "Твой личный путь к силе. Индивидуальные тренировки — это не просто «персональный тренер». Это твое время, твоя техника и твой результат. Работа над ошибками, которые не видно в группе. Записывайся на индивидуальную тренировку по тайскому боксу и кикбоксингу по адресу: Минск, проспект Победителей, 129.",
+      "imageText": [
+        "ПРИГЛАШАЮ НА ИНДИВИДУАЛЬНЫЕ ТРЕНИРОВКИ ПО ТАЙСКОМУ БОКСУ И КИКБОКСИНГУ",
+        "Людей любого возраста и с любым уровнем подготовки.",
+        "ДЕТИ • ПОДРОСТКИ ВЗРОСЛЫЕ"
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    },
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "Тайский бокс"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "kikboksing",
+    "parentSlug": "edinoborstva",
+    "label": "Кикбоксинг"
+  },
+  "city": "Минск",
+  "address": "проспект Победителей, 129",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid",
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/_grekkirill_19_.jpg",
+  "photos": [
+    "/trainers/instagram/_grekkirill_19_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/_grekkirill_19_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

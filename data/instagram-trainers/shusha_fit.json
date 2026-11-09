@@ -1,0 +1,100 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/shusha_fit/",
+  "handle": "shusha_fit",
+  "slug": "shusha_fit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алёна",
+  "lastName": "Шуша",
+  "fullName": "Алёна Шуша",
+  "gender": "female",
+  "nameQuotes": [
+    "Алёна Шуша"
+  ],
+  "headline": "Тренер по осанке",
+  "sourceBio": "Персональная работа с телом через силовые тренировки Индивидуальные программы • сопровождение• онлайн Минск ( ст.м Молодежная) / работа по всему миру",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Алёна Шуша",
+  "threadsUrl": "",
+  "bio": "Я Алёна Шуша, тренер по осанке в Минске. Веду силовые тренировки в тренажерном зале, в том числе для ягодиц. Программы составляю индивидуально и онлайн.",
+  "about": [
+    "Персональная работа идёт через силовые тренировки. Программы составляю индивидуально."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/shusha_fit/reel/DaYhr7esoMw/",
+      "caption": "Работаем!"
+    },
+    {
+      "url": "https://www.instagram.com/shusha_fit/reel/DaLYNJ_M8Is/",
+      "caption": "Если полить и подкормить, то мышцы быстрее вырастут"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "silovoj-trening",
+      "parentSlug": "fitnes",
+      "label": "Силовой тренинг",
+      "evidence": "силовые тренировки"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "тренажёрный зал"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "osanka",
+    "parentSlug": "reabilitaciya",
+    "label": "Осанка"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/shusha_fit.jpg",
+  "photos": [
+    "/trainers/instagram/shusha_fit.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/shusha_fit/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

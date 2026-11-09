@@ -1,0 +1,89 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/fit_ullie/",
+  "handle": "fit_ullie",
+  "slug": "fit_ullie",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ульяна",
+  "lastName": "",
+  "fullName": "Ульяна",
+  "gender": "female",
+  "nameQuotes": [
+    "Ульяна"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Группы: сила, пилатес, степ аэробика, МФР",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Ульяна",
+  "threadsUrl": "",
+  "bio": "Я Ульяна, фитнес-тренер в Минске. Веду группы: сила, пилатес, степ аэробика, МФР. В зале: похудение, набор ММ, послеродовое восстан-ие.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "МФР"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/fit_ullie.jpg",
+  "photos": [
+    "/trainers/instagram/fit_ullie.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/fit_ullie/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

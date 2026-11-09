@@ -1,0 +1,88 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/osip_1996/",
+  "handle": "osip_1996",
+  "slug": "osip_1996",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александр",
+  "lastName": "Осипов",
+  "fullName": "Александр Осипов",
+  "gender": "male",
+  "nameQuotes": [
+    "Александр Осипов"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Iron Lion Cup по бодибилдингу",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Александр Осипов",
+  "threadsUrl": "",
+  "bio": "Я Александр Осипов, тренер в Минске. Я чемпион Iron Lion Cup по бодибилдингу. Я МС WRPF.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/osip_1996/p/DeR7BMgN_tU/",
+      "caption": "Приглашаю на персональные тренировки в фитнес-клуб. Минск, пр Независимости, 32А, стр. 2"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "bodibilding",
+      "label": "Бодибилдинг",
+      "quote": "бодибилдингу"
+    }
+  ],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Минск",
+  "address": "пр Независимости, 32А, стр. 2",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/osip_1996.jpg",
+  "photos": [
+    "/trainers/instagram/osip_1996.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/osip_1996/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

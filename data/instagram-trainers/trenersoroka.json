@@ -1,0 +1,119 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/trenersoroka/",
+  "handle": "trenersoroka",
+  "slug": "trenersoroka",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Павел",
+  "lastName": "Сорока",
+  "fullName": "Павел Сорока",
+  "gender": "male",
+  "nameQuotes": [
+    "Павел Сорока"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "🏆 IRON LION CUP 2025 🥈 Чемпионат РБ 2025 🏆 Чемпионат РБ 2026 🔹Индивидуальные тренировки и онлайн ведение 🔹Программы тренировок и питания",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Павел Сорока",
+  "threadsUrl": "",
+  "bio": "Я Павел Сорока, тренер по фитнесу. Веду индивидуальные тренировки и онлайн-ведение.",
+  "about": [
+    "Составляю программы тренировок и питания."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/trenersoroka/p/DXtkmgmgpKf/",
+      "caption": "Вот наконец-то я созрел написать пост про прошедшие соревнования 25-го апреля….да-да В прошлом году мне не хватило совсем чуть-чуть чтобы стать чемпионом, но я бы им и не стал, оставив это так. В этом году подготовка далась очень тяжело, нечего тут скрывать, много жизненных моментов, да и в целом было не легко, но в этом и есть весь кайф, когда пройдя этот путь, ты смотришь с оглядкой и понимаешь «Да, я это сделал!» Хочу выразить слова благодарности моему тренеру @lesha_glushko , ты как никто знаешь свое дело на 200%, местами ты очень строгий, но так должно быть да и если бы ты сам не проходил все это, а у тебя пусть горааааздо тяжелее, то тут только одно «Спасибо тебе Мужик» Безумно дорог Так же хочу сказать спасибо моей любимой Маме Вы даже представить себе не можете как сильно она помогла, если бы не она, то этой победы могло бы и не быть! Так же отдельное спасибо @malyarevich_anton мужик тут без лишних снов «Спасибо тебе», а так же большое спасибо всем тем, кто поддерживал меня, переживал и помогал, всех Вас очень ценю и безумно благодарен каждому, обнял Вас всех",
+      "imageText": [
+        "39 ЧЕМПИОНАТ РЕСПУБЛИКИ БЕЛАРУСЬ ПО БОДИБИЛДИНГУ И ФИТНЕСУ",
+        "ГРОДНО 2026"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/trenersoroka/p/DWiIqyfDFLV/",
+      "caption": "Это пост будет не совсем обычный, не про спорт,а просто нового члена семьи о котором я очень давно мечтал. Я сорвался и полетел за ним, а ехать пришлось аж за 250 км от Минска!",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/trenersoroka/p/DJnwhb9o8JM/",
+      "caption": "Наконец-то у меня появилось вдохновение чтобы сделать отчет по прошедшему турниру 15-ый «Iron Lion cup” в котором я принял участие 10-го мая Чтобы хотелось сказать, я очень сильно хотел получить этот кубок и делал для этого все, что говорил мне @lesha_glushko, за что ему нереально большое спасибо",
+      "imageText": [
+        "ТУРНИР ПО БОДИБИЛДИНГУ И ФИТНЕСУ",
+        "МОГИЛЁВСКИЙ"
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "bodibilding",
+      "label": "Бодибилдинг",
+      "quote": "ПО БОДИБИЛДИНГУ И ФИТНЕСУ"
+    }
+  ],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "",
+  "address": "",
+  "cityCandidates": [
+    "Снов",
+    "Беларусь",
+    "Гродно",
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/trenersoroka.jpg",
+  "photos": [
+    "/trainers/instagram/trenersoroka.jpg",
+    "/trainers/instagram/trenersoroka-g2.jpg",
+    "/trainers/instagram/trenersoroka-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/trenersoroka/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "city",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

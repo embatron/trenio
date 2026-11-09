@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kotovich_yuliya/",
+  "handle": "kotovich_yuliya",
+  "slug": "kotovich_yuliya",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлия",
+  "lastName": "Котович",
+  "fullName": "Юлия Котович",
+  "gender": "female",
+  "nameQuotes": [
+    "Юлия Котович",
+    "Котович Юлия"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Personal Coach ▪️Из уставшего фитнес-инструктора - в эксперта ▪️Психология, дыхание и биомеханика для твоих топ-результатов ▪️ Обучаю тренеров расти в чеке и скилах",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Юлия Котович",
+  "threadsUrl": "",
+  "bio": "Я Юлия Котович, ментор тренеров. Из уставшего фитнес-инструктора я стала экспертом. Обучаю тренеров.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "",
+  "address": "",
+  "cityCandidates": [
+    "Рабочий",
+    "Новая"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kotovich_yuliya.jpg",
+  "photos": [
+    "/trainers/instagram/kotovich_yuliya.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kotovich_yuliya/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "city",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

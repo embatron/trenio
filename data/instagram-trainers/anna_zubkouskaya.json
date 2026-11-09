@@ -1,0 +1,107 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/anna_zubkouskaya/",
+  "handle": "anna_zubkouskaya",
+  "slug": "anna_zubkouskaya",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анна",
+  "lastName": "Зубковская",
+  "fullName": "Анна Зубковская",
+  "gender": "female",
+  "nameQuotes": [
+    "Анна Зубковская"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Персональные тренировки для девушек Привожу тело в форму не только к лету",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Анна Зубковская",
+  "threadsUrl": "",
+  "bio": "Я Анна Зубковская, фитнес-тренер. Веду персональные тренировки для девушек. Вела тренерскую деятельность по фехтованию.",
+  "about": [
+    "Веду персональные тренировки для девушек. Помогаю другим становиться лучше и передаю знания."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/anna_zubkouskaya/p/DboApm8DXlw/",
+      "caption": "Познакомимся ближе",
+      "imageText": [
+        "пришла на фехтование и пропала.",
+        "Настоящая жизнь началась в 12, когда я оказалась в Минске.",
+        "График без поблажек: утро, зал, учеба, и снова зал.",
+        "Эта дисциплина научила меня брать на себя ответственность и не искать лёгких путей",
+        "После обучения в Минске, я переехала в Гомель и стала тренером этих замечательных деток",
+        "Продолжала тренерскую деятельность по фехтованию",
+        "Но параллельно уже начала интересоваться фитнесом и силовыми тренировками",
+        "И я влюбилась. Влюбилась в зал",
+        "Следующим логичным шагом стало обучение на персонального фитнес-тренера.",
+        "Для меня это не просто сертификат — это возможность оставаться в тонусе самой и помогать другим становиться лучше.",
+        "Моя страсть — учиться и передавать знания, делать жизнь вокруг людей легче, осознаннее и здоровее."
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "fehtovanie",
+      "parentSlug": "klub",
+      "label": "Фехтование",
+      "evidence": "Фехтование"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "",
+  "address": "",
+  "cityCandidates": [
+    "Гомель",
+    "Минск",
+    "Утро"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/anna_zubkouskaya.jpg",
+  "photos": [
+    "/trainers/instagram/anna_zubkouskaya.jpg",
+    "/trainers/instagram/anna_zubkouskaya-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 2,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 1
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/anna_zubkouskaya/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "city",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

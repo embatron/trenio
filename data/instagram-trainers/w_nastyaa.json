@@ -1,0 +1,105 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/w_nastyaa/",
+  "handle": "w_nastyaa",
+  "slug": "w_nastyaa",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анастасия",
+  "lastName": "Веремей",
+  "fullName": "Анастасия Веремей",
+  "gender": "female",
+  "nameQuotes": [
+    "Анастасия Веремей"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "МС по вольной борьбе 18+ лет в спорте | 6 лет в фитнесе Красивое тело без боли и крайностей",
+  "sourceAbout": [
+    "Меня зовут Анастасия Веремей МС по вольной борьбе, 12 лет в спорте"
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Анастасия Веремей",
+  "threadsUrl": "",
+  "bio": "Я Анастасия Веремей, фитнес-тренер. Я МС по вольной борьбе. В спорте я 18+ лет, и 6 лет из них в фитнесе.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/w_nastyaa/reel/Dau9TfjgjfW/",
+      "caption": "Я Настя — персональный фитнес-тренер 🤍 В спорте я уже больше 18 лет: 12 лет — вольная борьба и звание мастера спорта. Позже я пришла в фитнес и уже 6 лет помогаю людям менять тело и самочувствие без крайностей. Когда я сама прошла путь большого спорта, я поняла главное: результат не должен достигаться через боль, жесткие ограничения и «ломание» себя. Именно поэтому я стала тренером — чтобы показать, что можно по-другому. Сейчас я работаю с людьми, которые хотят: — снизить вес без жестких диет — укрепить тело и чувствовать силу — избавиться от болей в спине и коленях — улучшить осанку и общее самочувствие Мой подход — бережный, системный и адаптированный под Вас. Без перегрузок, но с реальным результатом. Форматы работы: — персональные тренировки в зале — онлайн-тренировки — полное онлайн-сопровождение с контролем тренировок и питания Если Вы хотите сильное и здоровое тело без тренировок «через боль» — это можно сделать комфортно! Напишите мне в директ слово «СТАРТ», и мы обсудим Вашу цель 🫶🏻"
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "borba",
+      "label": "Борьба",
+      "quote": "вольной борьбе"
+    }
+  ],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "",
+  "address": "",
+  "cityCandidates": [
+    "Минск",
+    "Борьба",
+    "Цель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/w_nastyaa.jpg",
+  "photos": [
+    "/trainers/instagram/w_nastyaa.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/w_nastyaa/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "city",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

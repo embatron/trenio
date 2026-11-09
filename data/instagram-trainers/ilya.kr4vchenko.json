@@ -1,0 +1,122 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ilya.kr4vchenko/",
+  "handle": "ilya.kr4vchenko",
+  "slug": "ilya.kr4vchenko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Илья",
+  "lastName": "Кравченко",
+  "fullName": "Илья Кравченко",
+  "gender": "male",
+  "nameQuotes": [
+    "Илья Кравченко"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Тренировки в зале/онлайн Помогаю похудеть и набрать мышечную массу",
+  "sourceAbout": [
+    "ОБО МНЕ"
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Илья Кравченко Минск",
+  "threadsUrl": "",
+  "bio": "Я Кравченко, фитнес-тренер в Минске. Веду тренировки в зале и онлайн. Помогаю похудеть и набрать мышечную массу.",
+  "about": [
+    "Веду персональные тренировки в зале и онлайн. Помогаю похудеть и набрать мышечную массу. Работаю с питанием."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/ilya.kr4vchenko/p/DWBkRTyDiRS/",
+      "caption": "Персональные тренировки в зале! Уважаемые клиенты, приглашаю вас к себе на тренировки. Место проведения: Фитнес-клуб — современный зал. Индивидуальный подход к достижению ваших фитнес-целей: восстановление, развитие силы, коррекция фигуры. Широкий арсенал упражнений — силовые рамы, кардиозона.",
+      "imageText": [
+        "Твой персональный тренер.",
+        "Кравченко Илья",
+        "Опыт работы 3 года.",
+        "Снижение веса и гипертрофия мышц.",
+        "Улучшение физических качеств и работа с питанием.",
+        "Поддержка и индивидуальный подход к каждому человеку.",
+        "Минск, ул. Кальварийская 33"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/ilya.kr4vchenko/p/DdWHXvdDoso/",
+      "caption": "",
+      "imageText": [
+        "КЕЙС Андрея",
+        "-10кг жира",
+        "+5кг мышц"
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    },
+    {
+      "slug": "reabilitaciya",
+      "parentSlug": "reabilitaciya",
+      "label": "Реабилитация",
+      "evidence": "восстановление"
+    },
+    {
+      "slug": "figura",
+      "parentSlug": "fitnes",
+      "label": "Коррекция фигуры",
+      "evidence": "Коррекция фигуры"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Минск",
+  "address": "Кальварийская улица, 33",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ilya.kr4vchenko.jpg",
+  "photos": [
+    "/trainers/instagram/ilya.kr4vchenko.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ilya.kr4vchenko/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}
