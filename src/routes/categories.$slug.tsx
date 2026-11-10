@@ -701,6 +701,8 @@ a.cat-pill { text-decoration: none; }
 .cat-results__head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--layout-gap); margin-bottom: var(--layout-gap); }
 .cat-results__count { font-size: 15px; color: var(--muted); font-weight: var(--fw-ui); }
 .cat-results__count b { color: var(--dark); font-weight: var(--fw-title); }
+.cat-results__map { display: inline-flex; align-items: center; min-height: 44px; margin-left: 6px; color: var(--primary); font-weight: var(--fw-heading); text-decoration: none; }
+.cat-results__map:hover { color: var(--primary-dark); }
 .cat-results__sort { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
 .cat-results__sort select { min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-control); font: inherit; font-size: 14px; background: var(--white); cursor: pointer; font-weight: var(--fw-heading); color: var(--dark); }
 .cat-grid { align-items: stretch; }
@@ -974,6 +976,22 @@ export function CategoryCatalogPage({
     if (q && !parts.includes(q)) parts.push(q);
     return parts.join(", ");
   }, [selectedCities, cityQuery]);
+
+  const mapCitySlug = useMemo(() => {
+    if (cityCatalog) return cityCatalog.slug;
+    const names = [...selectedCities];
+    const typed = cityQuery.trim();
+    if (typed) {
+      const resolved = resolveBelarusCity(typed) ?? typed;
+      const folded = resolved.toLowerCase().replaceAll("ё", "е");
+      if (!names.some((name) => name.toLowerCase().replaceAll("ё", "е") === folded)) names.push(resolved);
+    }
+    const slugs = [...new Set(names.flatMap((name) => {
+      const slug = cityCatalogSlug(resolveBelarusCity(name) ?? name);
+      return slug ? [slug] : [];
+    }))];
+    return slugs.length === 1 ? slugs[0] : undefined;
+  }, [cityCatalog, selectedCities, cityQuery]);
 
   const filtered = useMemo(() => {
     let list = allTrainers.filter((t) => {
@@ -1283,7 +1301,7 @@ export function CategoryCatalogPage({
                 {" "}
                 <Link
                   to="/map"
-                  search={{ sports: mapSports ?? mapDirection, city: cityCatalog?.slug }}
+                  search={{ sports: mapSports ?? mapDirection, city: mapCitySlug }}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -1753,6 +1771,16 @@ export function CategoryCatalogPage({
             <div className="cat-results__head">
               <div className="cat-results__count">
                 <b>{filtered.length}</b> {pluralRu(filtered.length, "тренер", "тренера", "тренеров")}{locationSummary ? ` · ${locationSummary}` : ""}
+                {" "}
+                <Link
+                  className="cat-results__map"
+                  to="/map"
+                  search={{ sports: mapSports ?? mapDirection, city: mapCitySlug }}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  (смотреть на карте)
+                </Link>
               </div>
               <label className="cat-results__sort">
                 Сортировка:
@@ -1847,7 +1875,7 @@ export function CategoryCatalogPage({
               </div>
               <Link
                 to="/map"
-                search={{ sports: mapDirection, city: cityCatalog?.slug }}
+                search={{ sports: mapDirection, city: mapCitySlug }}
               >
                 Открыть карту
               </Link>
