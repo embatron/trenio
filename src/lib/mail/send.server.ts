@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
 
+import { appOrigin } from "@/lib/app-origin";
 import { writeLog } from "@/lib/log/logger";
 
 export type OutboundMail = {
@@ -15,7 +16,7 @@ export const MAIL_FROM_DEFAULT = "Trenio <noreply@trenio.by>";
 const SENDMAIL_PATH = () => process.env.SENDMAIL_PATH?.trim() || "/usr/sbin/sendmail";
 
 function appUrl() {
-  return (process.env.APP_URL ?? "http://trenio.local").replace(/\/$/, "");
+  return appOrigin();
 }
 
 export function mailAppUrl() {

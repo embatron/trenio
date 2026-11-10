@@ -1,0 +1,32 @@
+---
+description: Local trenio.local address, Apache ports, and the Vite dev server
+alwaysApply: true
+---
+
+# Local development
+
+The local site is `http://trenio.local`. `/etc/hosts` has both lines: `127.0.0.9 trenio.local` and `::1 trenio.local`. The IPv4 address must exist on `lo0`. Without `127.0.0.9` the browser waits and then fails. Without the `::1` line, macOS sends the IPv6 lookup for `.local` to mDNS, that resolver is not reachable, and every dual-stack lookup waits 5 seconds.
+
+The launch daemon `local.loopback.alias` runs `/usr/local/libexec/loopback-alias.sh` at boot and whenever `/etc/hosts` changes. The script adds `127.0.0.9` to `lo0` when it is missing, and it writes either hosts line back when that line is missing. Do not remove the daemon. Do not point the IPv4 name at another address. Do not make the script exit before the hosts check: `127.0.0.9` is usually already present, and an early exit would leave a deleted `::1` line unrestored.
+
+## Ports
+
+Apache (Homebrew `httpd`) listens on 80 and 8080. Vite listens on 8081 with `strictPort`. `trenio.local.conf` proxies the name, including the HMR socket, to `127.0.0.1:8081`.
+
+Do not bind Vite to 80 or 8080. Do not stop Apache to free 8080. Do not restart the other vhosts on that Apache (pim, cactus) for a Trenio change. The vhost logs must stay writable by the user who runs `brew services`. Do not point `ErrorLog` back at a root-owned file.
+
+`APP_URL` and every fallback use `appOrigin()` in `src/lib/app-origin.ts` (`http://trenio.local`). Do not send a local callback or letter to port 8080.
+
+## Database
+
+Docker Compose publishes Postgres on 5433. When Docker is not running, this laptop's catalog is Homebrew Postgres on `127.0.0.1:5432`. Point `DATABASE_URL` at the server that is listening and has the data. Do not leave it on a refused port, and do not print the URL.
+
+```ts
+// wrong: the dev server takes Apache's port
+server: { port: 8080 }
+const base = "http://127.0.0.1:8080";
+
+// right
+server: { port: 8081, strictPort: true }
+const base = appOrigin();
+```

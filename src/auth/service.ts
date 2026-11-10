@@ -4,6 +4,7 @@ import path from "node:path";
 
 import { and, desc, eq, gt, isNotNull, isNull, ne } from "drizzle-orm";
 
+import { LOCAL_APP_ORIGIN } from "@/lib/app-origin";
 import { belarusPhoneEquals } from "@/lib/auth/phone-match";
 
 import { getDb } from "@/db";
@@ -1512,7 +1513,7 @@ export async function getSessionUserFromToken(
 }
 
 function getAppUrl() {
-  return process.env.APP_URL ?? "http://localhost:8080";
+  return process.env.APP_URL ?? LOCAL_APP_ORIGIN;
 }
 
 function notifyFactorChange(user: User, text: string) {

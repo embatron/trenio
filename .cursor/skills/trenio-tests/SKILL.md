@@ -8,7 +8,7 @@ description: >-
 
 # Tests
 
-Unit tests use `node:test` via `npm test`. Browser checks use Playwright via `npm run test:e2e`. The app under test is `PLAYWRIGHT_BASE_URL` or `http://127.0.0.1:8080`. Playwright reuses a server that is already running.
+Unit tests use `node:test` via `npm test`. Browser checks use Playwright via `npm run test:e2e`. The app under test is `PLAYWRIGHT_BASE_URL` or `http://127.0.0.1:8081`. Playwright reuses a server that is already running.
 
 ## Run
 

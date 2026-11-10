@@ -42,6 +42,7 @@ import {
 } from "@/lib/catalog/published-trainers";
 import { MAX_TRAINER_SPORTS, trainerSportSlugs, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
+import { appOrigin } from "@/lib/app-origin";
 import { placesFromProfile, placesShape, savedWithMapNotice } from "@/lib/geo/schemas";
 import { logCaught, maskPhone, writeLog } from "@/lib/log/logger";
 
@@ -50,7 +51,7 @@ const EDIT_COOKIE = "trenio_trainer_edit";
 const LINK_MAX_AGE = 60 * 30;
 
 function requestOrigin() {
-  const fallback = (process.env.APP_URL ?? "http://trenio.local").replace(/\/$/, "");
+  const fallback = appOrigin();
   try {
     return new URL(getRequest().url).origin;
   } catch {

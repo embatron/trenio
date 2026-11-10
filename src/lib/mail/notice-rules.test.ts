@@ -60,8 +60,8 @@ test("the telegram button opens the mini app on https and a plain link otherwise
   const secure = telegramThreadButton("https://trenio.by/me/messages/abc");
   assert.equal(secure?.inline_keyboard[0]?.[0]?.text, "Открыть переписку");
   assert.deepEqual(secure?.inline_keyboard[0]?.[0]?.web_app, { url: "https://trenio.by/me/messages/abc" });
-  const local = telegramThreadButton("http://127.0.0.1:8080/me/messages/abc");
-  assert.equal(local?.inline_keyboard[0]?.[0]?.url, "http://127.0.0.1:8080/me/messages/abc");
+  const local = telegramThreadButton("http://trenio.local/me/messages/abc");
+  assert.equal(local?.inline_keyboard[0]?.[0]?.url, "http://trenio.local/me/messages/abc");
   assert.equal(telegramThreadButton("/me/messages/abc"), null);
 });
 

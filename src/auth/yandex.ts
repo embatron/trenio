@@ -1,5 +1,6 @@
 import { randomBytes } from "node:crypto";
 
+import { appOrigin } from "@/lib/app-origin";
 import { readYandexIdentity, type YandexIdentity } from "@/lib/auth/yandex-identity";
 
 const TOKEN_URL = "https://oauth.yandex.ru/token";
@@ -12,7 +13,7 @@ export function yandexConfigured(): boolean {
 }
 
 export function yandexRedirectUri(): string {
-  const base = (process.env.APP_URL ?? "http://127.0.0.1:8080").replace(/\/$/, "");
+  const base = appOrigin();
   return `${base}/auth/yandex/callback`;
 }
 

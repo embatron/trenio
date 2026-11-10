@@ -34,8 +34,11 @@ export default defineConfig({
     },
     plugins: [serveUploadFiles()],
     server: {
-      // Public URL is http://trenio.local when Apache on :80 proxies to this server.
-      // Set VITE_DEV_ORIGIN when Apache is not in front (it listens on :8080 here).
+      // Apache listens on 80 and 8080. This dev server stays on 8081, and
+      // trenio.local.conf proxies the public name, including the HMR socket.
+      // Set VITE_DEV_ORIGIN only when that proxy is not in front.
+      port: 8081,
+      strictPort: true,
       allowedHosts: ["trenio.local", "localhost", "127.0.0.1"],
       ...(process.env.VITE_DEV_ORIGIN
         ? { origin: process.env.VITE_DEV_ORIGIN }

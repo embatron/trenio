@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 
-/** Database of the process already listening on 8080. Falls back to `.env` when none is found. */
+/** Database of the process already listening on 8081. Falls back to `.env` when none is found. */
 export function scriptEnv(): NodeJS.ProcessEnv {
   const url = serverDatabaseUrl();
   return url ? { ...process.env, DATABASE_URL: url } : process.env;
@@ -8,8 +8,8 @@ export function scriptEnv(): NodeJS.ProcessEnv {
 
 function serverDatabaseUrl(): string | undefined {
   try {
-    const listing = execFileSync("lsof", ["-nP", "-iTCP:8080", "-sTCP:LISTEN"], { encoding: "utf8" });
-    const line = listing.split("\n").find((item) => item.includes(":8080") && item.includes("LISTEN"));
+    const listing = execFileSync("lsof", ["-nP", "-iTCP:8081", "-sTCP:LISTEN"], { encoding: "utf8" });
+    const line = listing.split("\n").find((item) => item.includes(":8081") && item.includes("LISTEN"));
     const pid = line?.trim().split(/\s+/)[1];
     if (!pid) return undefined;
     const env = execFileSync("ps", ["eww", "-p", pid], { encoding: "utf8" });

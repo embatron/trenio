@@ -1,5 +1,6 @@
 import { createPublicKey, createVerify, randomBytes } from "node:crypto";
 
+import { appOrigin } from "@/lib/app-origin";
 import { mergeGoogleProfile, readGoogleIdentity, type GoogleIdentity } from "@/lib/auth/google-identity";
 
 type Jwk = { kid: string; kty: string; n: string; e: string; alg?: string };
@@ -16,7 +17,7 @@ export function googleConfigured(): boolean {
 }
 
 export function googleRedirectUri(): string {
-  const base = (process.env.APP_URL ?? "http://127.0.0.1:8080").replace(/\/$/, "");
+  const base = appOrigin();
   return `${base}/auth/google/callback`;
 }
 
