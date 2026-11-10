@@ -327,8 +327,8 @@ src/routes/offline.tsx
 | `public/logo-mail.png`                    | Тот же знак для писем: белый фон, без прозрачности, чтобы почтовый клиент не рисовал его чёрным |
 | `public/logo-on-dark.webp`                | Тот же знак для тёмного подвала: белый `trenio`, коралловый `.by`                              |
 | `public/logo-knockout.webp`               | Белый знак поверх кораллового героя категории                                                  |
-| `public/favicon.ico`, `public/favicon-32.png`, `public/favicon-16.png`, `public/apple-touch-icon.png` | Знак из `logo-mark.png`: вкладка без белого поля, Apple touch на тёплом белом |
-| `public/icons/icon-192.png`, `icon-512.png` | Те же PWA-иконки, фон `#fffafa`, знак занимает 86% стороны |
+| `public/favicon.svg`, `public/favicon.ico`, `public/favicon-32.png`, `public/favicon-16.png`, `public/apple-touch-icon.png` | Круглый знак сайта. Тот же файл стоит вместо фото, если у аккаунта нет портрета |
+| `public/icons/icon-192.png`, `icon-512.png` | Те же круглые PWA-иконки на весь квадрат |
 | `public/manifest.webmanifest`             | Имя, `theme_color`, `display: standalone`, иконки 192/512                                      |
 | `public/images/categories/*-card.webp`    | Карточки «Категории спорта» на главной (~720×480 WebP)                                        |
 | `public/images/categories/*.webp`         | Featured image родительских категорий на `/categories/$slug` (~960×640 WebP)                    |

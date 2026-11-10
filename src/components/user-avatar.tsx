@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 
 import { PhotoImage } from "@/components/photo-image";
 
-/** Same mark as the site icon. Shown when a portrait is missing or will not load. */
-export const DEFAULT_AVATAR_SRC = "/favicon-32.png";
+/** Circle logo. Shown when a portrait is missing or will not load. */
+export const DEFAULT_AVATAR_SRC = "/favicon.svg";
 
 export function UserAvatar({
   name,
