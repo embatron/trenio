@@ -380,10 +380,9 @@ const CSS = `
 .profile-taxonomy__tags { display: flex; flex-wrap: wrap; gap: 8px; }
 .taxonomy-tag { padding: 7px 12px; border-radius: 999px; background: var(--light-bg); color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); line-height: 1.2; }
 .taxonomy-tag--brand { background: var(--primary); color: var(--white); }
-a.taxonomy-tag,
-a.taxonomy-tag:hover,
-a.taxonomy-tag:focus,
-a.taxonomy-tag:focus-visible { text-decoration: none; cursor: inherit; }
+a.taxonomy-tag { text-decoration: none; cursor: pointer; transition: background-color 0.16s ease, color 0.16s ease; }
+a.taxonomy-tag--brand:hover,
+a.taxonomy-tag--brand:focus-visible { background: var(--primary-dark); color: var(--white); text-decoration: none; }
 .profile-note { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; font-weight: 500; }
 .profile-reach .trainer-contacts { margin-left: 0; gap: 4px; flex-wrap: wrap; }
 .profile-reach .trainer-contacts__link { width: 56px; height: 56px; }
