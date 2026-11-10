@@ -4,6 +4,7 @@ import { and, eq } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { trainerProfiles, users } from "@/db/schema";
+import { isStandInAccountName } from "@/lib/auth/phone-label";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import { writeImageSet } from "@/lib/images/store";
 import { logCaught, writeLog } from "@/lib/log/logger";
@@ -17,7 +18,7 @@ export function oauthNamePatch(
   const patch: { firstName?: string; lastName?: string } = {};
   const first = incoming.firstName.trim();
   const last = incoming.lastName.trim();
-  const missingFirst = !current.firstName.trim() || current.firstName.trim() === PLACEHOLDER;
+  const missingFirst = isStandInAccountName(current.firstName);
   if (first && first !== PLACEHOLDER && missingFirst) patch.firstName = first;
   if (last && !current.lastName?.trim()) patch.lastName = last;
   return patch;

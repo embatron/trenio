@@ -1,5 +1,6 @@
 import { AuthError } from "@/lib/auth/errors";
 import { isPendingSignupEmail } from "@/lib/auth/pending-email";
+import { compactBelarusPhone } from "@/lib/auth/phone-label";
 
 const NICK_DOMAIN = "nick.trenio.by";
 
@@ -27,8 +28,8 @@ export function resolveAccountLogin(value: string): string {
   return `${raw}@${NICK_DOMAIN}`;
 }
 
-export function displayAccountLogin(email: string): string {
-  if (isPendingSignupEmail(email)) return "не указана";
+export function displayAccountLogin(email: string, phone?: string | null): string {
+  if (isPendingSignupEmail(email)) return compactBelarusPhone(phone) || "не указана";
   const suffix = `@${NICK_DOMAIN}`;
   return email.endsWith(suffix) ? email.slice(0, -suffix.length) : email;
 }

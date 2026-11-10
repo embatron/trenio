@@ -22,6 +22,8 @@ import { emailVerificationTokens, userRoles, users, type User } from "@/db/schem
 import { decideEmailSignup, decideSmsSignup } from "@/lib/auth/auth-decisions";
 import { AuthError } from "@/lib/auth/errors";
 import { isPendingSignupEmail, isReservedAccountEmail, pendingSignupEmail } from "@/lib/auth/pending-email";
+import { phoneSignatureName } from "@/lib/auth/phone-label";
+import { plainUserPhoneSignature } from "@/lib/auth/phone-signature";
 import { safeReturnPath } from "@/lib/auth/return-path";
 import { OTP_RESEND_SECONDS, storedBelarusPhone, validateBelarusMobile, normalizeBelarusMobile } from "@/lib/auth/phone";
 import { belarusPhoneEquals } from "@/lib/auth/phone-match";
@@ -115,6 +117,7 @@ async function insertClient(input: {
   const now = new Date();
   const passwordHash = await hashPassword(randomBytes(32).toString("base64url"));
   const db = getDb();
+  const given = cleanName(input.firstName ?? "");
   const [user] = await db
     .insert(users)
     .values({
@@ -123,7 +126,7 @@ async function insertClient(input: {
       phone: input.phone ?? null,
       phoneVerifiedAt: input.phoneVerified ? now : null,
       passwordHash,
-      firstName: cleanName(input.firstName ?? "") || PLACEHOLDER_NAME,
+      firstName: phoneSignatureName(given, input.phoneVerified ? input.phone : null) || given || PLACEHOLDER_NAME,
       lastName: cleanName(input.lastName ?? "") || null,
       status: "active",
       lastSignupIntent: "client_signup",
@@ -139,12 +142,14 @@ async function markPhoneVerified(user: User, phone375: string): Promise<User> {
   const stored = storedBelarusPhone(phone375);
   if (!stored) return user;
   const now = new Date();
+  const signature = await plainUserPhoneSignature(user.id, user.firstName, stored);
   const [fresh] = await getDb()
     .update(users)
     .set({
       phone: stored,
       phoneVerifiedAt: user.phoneVerifiedAt ?? now,
       status: user.status === "pending_verification" ? "active" : user.status,
+      ...(signature ? { firstName: signature } : {}),
       updatedAt: now,
     })
     .where(eq(users.id, user.id))

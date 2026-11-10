@@ -6,6 +6,7 @@ import { CabinetModal } from "@/components/cabinet";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { TrainerCardFields, type TrainerCardValues } from "@/components/trainer-card-fields";
 import { TrainerName } from "@/components/trainer-name";
+import { displayAccountLogin } from "@/lib/auth/login-name";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import {
   addAdminTrainerCertificateFn,
@@ -372,7 +373,7 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
           <div><dt>Откуда карточка</dt><dd>{facts.createdSource}</dd></div>
           <div><dt>Instagram</dt><dd>{facts.instagramHandle || "—"}</dd></div>
           <div><dt>Telegram</dt><dd>{facts.telegram || "—"}</dd></div>
-          <div><dt>Почта в карточке</dt><dd>{facts.email || "—"}</dd></div>
+          <div><dt>Почта в карточке</dt><dd>{displayAccountLogin(facts.email, facts.accountPhone) || "—"}</dd></div>
           <div><dt>Создана</dt><dd>{formatWhen(facts.createdAt)}</dd></div>
           <div><dt>Изменена</dt><dd>{formatWhen(facts.updatedAt)}</dd></div>
           <div><dt>Забрана</dt><dd>{formatWhen(facts.claimedAt)}</dd></div>
@@ -399,7 +400,7 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
                   ) : "—"}
                 </dd>
               </div>
-              <div><dt>Почта</dt><dd>{facts.accountEmail}</dd></div>
+              <div><dt>Почта</dt><dd>{displayAccountLogin(facts.accountEmail, facts.accountPhone) || "—"}</dd></div>
               <div><dt>Телефон аккаунта</dt><dd>{facts.accountPhone || "—"}</dd></div>
               <div><dt>Роли</dt><dd>{facts.accountRoles.split(", ").filter(Boolean).map((role) => ROLE_LABELS[role as UserRole] ?? role).join(", ") || "—"}</dd></div>
               <div><dt>Статус аккаунта</dt><dd>{facts.accountStatus}</dd></div>

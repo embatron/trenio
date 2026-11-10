@@ -1,0 +1,33 @@
+---
+description: A confirmed Belarus mobile signs a plain user, and replaces the pending mailbox on screen
+alwaysApply: true
+---
+
+# Phone account
+
+A Belarus mobile confirmed by SMS is a real account. It does not wait for a mailbox. The stored login stays `pending.{id}@users.trenio.invalid` so a letter is never sent there. Screens do not show that address.
+
+## What a person sees
+
+- No chosen name yet: the given name is the mask `+37529.....51` (`maskedBelarusPhone`). The operator code stays, five digits become dots, the last two stay.
+- Where the pending mailbox would be shown (account row, review author, trainer account mail): the compact number `+375298516745` (`compactBelarusPhone` through `displayAccountLogin`). No spaces.
+- A name the person typed stays. Google or Yandex may still replace the mask, the same way they replace «Пользователь».
+- A trainer or club card is not renamed to the mask. Only a plain `user` with no trainer card takes it.
+- The journal does not gain the full number. Keep storing a real mailbox, or nothing, in `subject`.
+
+## Do
+
+```ts
+firstName: phoneSignatureName(current, phone) ?? current;
+caption: displayAccountLogin(email, phone);
+```
+
+## Do not
+
+```ts
+// wrong: the pending mailbox is the label
+<span>{user.email}</span>
+
+// wrong: a confirmed phone is still the placeholder
+firstName: "Пользователь";
+```

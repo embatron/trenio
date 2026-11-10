@@ -69,7 +69,7 @@ export function AdminAccountPage({ account }: { account: AdminAccountDetail }) {
                 <strong>
                   <TrainerName firstName={account.firstName} lastName={account.lastName} empty="Без имени" />
                 </strong>
-                <span>{displayAccountLogin(account.email)}</span>
+                <span>{displayAccountLogin(account.email, account.phone)}</span>
               </div>
             </div>
           </div>
@@ -80,7 +80,7 @@ export function AdminAccountPage({ account }: { account: AdminAccountDetail }) {
             </div>
             <div>
               <dt>Почта</dt>
-              <dd>{displayAccountLogin(account.email)}</dd>
+              <dd>{displayAccountLogin(account.email, account.phone)}</dd>
             </div>
             <div>
               <dt>Телефон</dt>

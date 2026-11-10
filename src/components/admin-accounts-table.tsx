@@ -27,7 +27,7 @@ function searchHaystack(account: AdminAccount) {
     displayUserId(account.id),
     account.name,
     account.email,
-    displayAccountLogin(account.email),
+    displayAccountLogin(account.email, account.phone),
     account.phone,
     account.phone.replace(/\D/g, ""),
     account.roles.map((role) => ROLE_LABELS[role]).join(" "),
@@ -159,7 +159,7 @@ export function AdminAccountsTable({ accounts }: { accounts: AdminAccount[] }) {
                                 <TrainerName firstName={account.firstName} lastName={account.lastName} empty="Без имени" />
                               </strong>
                             </Link>
-                            <span className="cabinet-person__meta">{displayAccountLogin(account.email)}</span>
+                            <span className="cabinet-person__meta">{displayAccountLogin(account.email, account.phone)}</span>
                           </div>
                           <div className="cabinet-row-actions">
                             <Link

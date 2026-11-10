@@ -6,6 +6,7 @@ import { and, desc, eq, gt, isNotNull, isNull, ne } from "drizzle-orm";
 
 import { LOCAL_APP_ORIGIN } from "@/lib/app-origin";
 import { belarusPhoneEquals } from "@/lib/auth/phone-match";
+import { plainUserPhoneSignature } from "@/lib/auth/phone-signature";
 
 import { getDb } from "@/db";
 import {
@@ -1045,9 +1046,15 @@ export async function confirmAccountPhoneCode(
 
   const previous = await findUserById(userId);
   const now = new Date();
+  const signature = previous ? await plainUserPhoneSignature(userId, previous.firstName, stored) : null;
   await db
     .update(users)
-    .set({ phone: stored, phoneVerifiedAt: now, updatedAt: now })
+    .set({
+      phone: stored,
+      phoneVerifiedAt: now,
+      ...(signature ? { firstName: signature } : {}),
+      updatedAt: now,
+    })
     .where(eq(users.id, userId));
   await db
     .update(trainerProfiles)

@@ -5,6 +5,7 @@ import { requireAuthMiddleware } from "@/auth/middleware";
 import { getDb } from "@/db";
 import { trainerProfiles, trainerReviews, users, type TrainerSportRecord } from "@/db/schema";
 import { assertStaff, hiddenStaffIds } from "@/lib/admin/access";
+import { displayAccountLogin } from "@/lib/auth/login-name";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
 import type { ReviewStatus } from "@/lib/catalog/trainer-reviews";
 
@@ -43,6 +44,7 @@ export const getAdminReviewsFn = createServerFn({ method: "GET" })
           authorName: trainerReviews.authorName,
           authorAvatar: users.avatarPath,
           authorEmail: users.email,
+          authorPhone: users.phone,
           rating: trainerReviews.rating,
           body: trainerReviews.body,
           status: trainerReviews.status,
@@ -78,7 +80,7 @@ export const getAdminReviewsFn = createServerFn({ method: "GET" })
           authorId: row.userId,
           authorName: row.authorName,
           authorAvatar: row.authorAvatar ?? "",
-          authorEmail: row.authorEmail ?? "",
+          authorEmail: displayAccountLogin(row.authorEmail ?? "", row.authorPhone),
           rating: row.rating,
           body: row.body,
           status: row.status,

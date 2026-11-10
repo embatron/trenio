@@ -73,4 +73,8 @@ test("a provider name fills only a placeholder", () => {
     oauthNamePatch({ firstName: "Анна", lastName: "Коваль" }, { firstName: "Евгений", lastName: "Соколов" }),
     {},
   );
+  assert.deepEqual(
+    oauthNamePatch({ firstName: "+37529.....45", lastName: null }, { firstName: "Евгений", lastName: "Соколов" }),
+    { firstName: "Евгений", lastName: "Соколов" },
+  );
 });

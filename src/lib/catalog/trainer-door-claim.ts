@@ -3,10 +3,9 @@ import { and, eq, isNull, ne } from "drizzle-orm";
 import { normalizeEmail } from "@/auth/password";
 import { getDb } from "@/db";
 import { trainerProfiles, userRoles, users } from "@/db/schema";
+import { isStandInAccountName } from "@/lib/auth/phone-label";
 import { writeLog } from "@/lib/log/logger";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
-
-const PLACEHOLDER_NAME = "Пользователь";
 const DOOR_PROFILE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DOOR_SLUG = /^[a-z0-9._]{1,30}$/;
 
@@ -45,7 +44,7 @@ export function doorAccountName(created: boolean, card: { firstName: string; las
   const firstName = card.firstName.trim();
   const lastName = card.lastName.trim();
   return {
-    ...(firstName && firstName !== PLACEHOLDER_NAME ? { firstName } : {}),
+    ...(firstName && !isStandInAccountName(firstName) ? { firstName } : {}),
     ...(lastName ? { lastName } : {}),
     lastSignupIntent: "trainer_claim" as const,
   };

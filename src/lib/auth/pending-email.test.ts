@@ -14,4 +14,5 @@ test("a phone signup mailbox is pending until the person saves a real one", () =
   assert.equal(isReservedAccountEmail("coach@nick.trenio.by"), true);
   assert.equal(isReservedAccountEmail("person@example.com"), false);
   assert.equal(displayAccountLogin(email), "не указана");
+  assert.equal(displayAccountLogin(email, "+375 29 851-67-45"), "+375298516745");
 });

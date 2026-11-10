@@ -8,6 +8,7 @@ import { CabinetNotice } from "@/components/cabinet";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { AuthAlert, useAuthServerFn, useAuthSubmit } from "@/lib/auth/use-auth-form";
 import { hasAnyRole, isStaff } from "@/lib/auth/roles";
+import { isStandInAccountName } from "@/lib/auth/phone-label";
 import { becomeTrainerFn, signupTrainerAccountFn } from "@/lib/catalog/trainer-account.functions";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
@@ -185,7 +186,7 @@ function UpgradeForm({ firstName: initialFirst, lastName: initialLast }: { first
   const become = useAuthServerFn(becomeTrainerFn);
   const router = useRouter();
   const { error, pending, run, redirectTo } = useAuthSubmit();
-  const [firstName, setFirstName] = useState(initialFirst === "Пользователь" ? "" : initialFirst);
+  const [firstName, setFirstName] = useState(isStandInAccountName(initialFirst) ? "" : initialFirst);
   const [lastName, setLastName] = useState(initialLast);
 
   return (

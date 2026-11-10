@@ -1,5 +1,6 @@
 import { and, eq, inArray } from "drizzle-orm";
 
+import { displayAccountLogin } from "@/lib/auth/login-name";
 import { getDb } from "@/db";
 import { userRoles, users, trainerProfiles } from "@/db/schema";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
@@ -28,14 +29,18 @@ export async function notifyStaffAboutReview(input: {
 }) {
   const trainer = getPublishedTrainer(input.trainerSlug)?.name ?? input.trainerSlug;
   const [author] = await getDb()
-    .select({ avatarPath: users.avatarPath })
+    .select({ avatarPath: users.avatarPath, phone: users.phone })
     .from(users)
     .where(eq(users.email, input.authorEmail))
     .limit(1);
   const letter = renderLetter({
     service: true,
     title: "Новый отзыв ждёт модерации",
-    person: { name: input.authorName, avatarUrl: author?.avatarPath, caption: input.authorEmail },
+    person: {
+      name: input.authorName,
+      avatarUrl: author?.avatarPath,
+      caption: displayAccountLogin(input.authorEmail, author?.phone),
+    },
     quote: reviewPlainText(input.body),
     lines: [`Тренер: ${trainer}`, `Оценка: ${input.rating} из 5`],
     action: { href: `${mailAppUrl()}/admin/reviews`, label: "Разобрать" },

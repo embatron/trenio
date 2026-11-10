@@ -352,7 +352,7 @@ function searchHaystack(trainer: AdminTrainer) {
     String(trainer.popularity),
     account?.name ?? "",
     account?.email ?? "",
-    account ? displayAccountLogin(account.email) : "аккаунт не создан",
+    account ? displayAccountLogin(account.email, account.phone) : "аккаунт не создан",
     confirmedAccountValue(account),
     account?.phone ?? "",
     account?.phone.replace(/\D/g, "") ?? "",
