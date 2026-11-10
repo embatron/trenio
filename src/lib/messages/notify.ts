@@ -3,6 +3,7 @@ import { and, eq, gt, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db";
 import { conversationReads, conversations, messages, trainerProfiles, userRoles, users } from "@/db/schema";
 import { isPendingSignupEmail } from "@/lib/auth/pending-email";
+import { storedGivenName } from "@/lib/auth/login-name";
 import { reviewPlainText } from "@/lib/catalog/review-html";
 import { writeLog } from "@/lib/log/logger";
 import { renderLetter } from "@/lib/mail/letter";
@@ -17,8 +18,9 @@ const ONLINE_MS = 30_000;
 
 const timers = new Map<string, ReturnType<typeof setTimeout>>();
 
-function personName(firstName: string, lastName: string | null) {
-  return [firstName, lastName].filter(Boolean).join(" ") || "Пользователь";
+function personName(firstName: string | null | undefined, lastName: string | null | undefined, email?: string | null) {
+  const given = storedGivenName(firstName, email);
+  return [given, lastName].filter(Boolean).join(" ") || "Пользователь";
 }
 
 function trainerName(fullName: string | null, firstName: string | null, lastName: string | null) {
@@ -96,7 +98,7 @@ async function deliver(input: {
     ? "Trenioby"
     : trainerSide
       ? trainerName(row.trainerFullName, row.trainerFirstName, row.trainerLastName)
-      : personName(row.userFirstName, row.userLastName);
+      : personName(row.userFirstName, row.userLastName, row.email);
 
   const [posted] = await db
     .select({ body: messages.body, senderId: messages.senderId })
@@ -105,7 +107,7 @@ async function deliver(input: {
     .limit(1);
   if (!posted) return;
   const [sender] = await db
-    .select({ firstName: users.firstName, lastName: users.lastName, avatarPath: users.avatarPath })
+    .select({ firstName: users.firstName, lastName: users.lastName, email: users.email, avatarPath: users.avatarPath })
     .from(users)
     .where(eq(users.id, posted.senderId))
     .limit(1);
@@ -115,7 +117,7 @@ async function deliver(input: {
     ? "Trenioby"
     : fromOwner
       ? trainerName(row.trainerFullName, row.trainerFirstName, row.trainerLastName)
-      : personName(sender?.firstName ?? "", sender?.lastName ?? null);
+      : personName(sender?.firstName ?? "", sender?.lastName ?? null, sender?.email);
   if (input.channel === "push") {
     if (row.pushMessages) {
       await sendMessagePushes(input.recipientId, {

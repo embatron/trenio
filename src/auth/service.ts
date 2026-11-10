@@ -45,7 +45,7 @@ import { cleanTelegramUsername, decideTelegramBind } from "@/lib/auth/telegram-l
 import { AuthError } from "@/lib/auth/errors";
 import { GOD_USER_ID, GOD_EMAIL, isGodLogin, isGodUser } from "@/lib/auth/god";
 import { parseTelegramHandle } from "@/lib/catalog/trainer-welcome";
-import { mailboxForNick, resolveAccountLogin } from "@/lib/auth/login-name";
+import { mailboxForNick, resolveAccountLogin, storedGivenName } from "@/lib/auth/login-name";
 import { writeImageSet } from "@/lib/images/store";
 import {
   normalizeBelarusMobile,
@@ -63,6 +63,7 @@ import type { MailKind } from "@/lib/mail/kinds";
 import { mailTransportReady, sendMail } from "@/lib/mail/send.server";
 import { hasAnyRole, signupRoleToIntent, type PublicSignupRole } from "@/lib/auth/roles";
 import { isPendingSignupEmail } from "@/lib/auth/pending-email";
+import { PHONE_SMS } from "@/lib/mail/notice-rules";
 import { staffTotpAtLogin } from "@/lib/auth/staff-totp";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import { writeLog, logCaught } from "@/lib/log/logger";
@@ -123,7 +124,7 @@ function toSessionUser(user: User, roles: UserRole[]): SessionUser {
   return {
     id: user.id,
     email: user.email,
-    firstName: user.firstName,
+    firstName: storedGivenName(user.firstName, user.email),
     lastName: user.lastName,
     avatarPath: versionedAvatar(user.avatarPath ?? "", user.updatedAt),
     emailVerified: user.emailVerifiedAt != null,
@@ -251,7 +252,12 @@ export async function createSession(
 
   if (isNewBrowserLogin({ incomingUserAgent: incomingAgent, liveUserAgents: live.map((row) => row.userAgent ?? "") })) {
     const [person] = await db
-      .select({ email: users.email, emailVerifiedAt: users.emailVerifiedAt })
+      .select({
+        email: users.email,
+        emailVerifiedAt: users.emailVerifiedAt,
+        phone: users.phone,
+        phoneVerifiedAt: users.phoneVerifiedAt,
+      })
       .from(users)
       .where(eq(users.id, userId))
       .limit(1);
@@ -259,6 +265,8 @@ export async function createSession(
       void sendNewBrowserNotice({
         email: person.email,
         emailVerifiedAt: person.emailVerifiedAt,
+        phone: person.phone,
+        phoneVerifiedAt: person.phoneVerifiedAt,
         actorUserId: userId,
       });
     }
@@ -381,7 +389,7 @@ export async function changeAccountPassword(
     await revokeAllUserSessions(userId);
   }
 
-  void notifyFactorChange(user, "Пароль изменён. Если это были не вы, напишите в поддержку.");
+  void notifyFactorChange(user, "Пароль изменён. Если это были не вы, напишите в поддержку.", PHONE_SMS.password);
   return { ok: true as const, message: "Пароль изменён." };
 }
 
@@ -958,7 +966,7 @@ export async function confirmAccountEmailCode(
     .where(eq(trainerProfiles.ownerUserId, userId));
   await revokeOtherUserSessions(userId, currentToken);
   if (previous) {
-    void notifyFactorChange(previous, "Почта аккаунта изменена. Если это не вы, напишите в поддержку.");
+    void notifyFactorChange(previous, "Почта аккаунта изменена. Если это не вы, напишите в поддержку.", PHONE_SMS.email);
   }
 
   return { ok: true as const, message: "Почта подтверждена." };
@@ -1062,7 +1070,7 @@ export async function confirmAccountPhoneCode(
     .where(eq(trainerProfiles.ownerUserId, userId));
   await revokeOtherUserSessions(userId, currentToken);
   if (previous) {
-    void notifyFactorChange(previous, "Телефон аккаунта изменён. Если это не вы, напишите в поддержку.");
+    void notifyFactorChange(previous, "Телефон аккаунта изменён. Если это не вы, напишите в поддержку.", PHONE_SMS.phone);
   }
 
   return { ok: true as const, message: "Телефон подтверждён." };
@@ -1166,7 +1174,7 @@ export async function bindTelegramLogin(
   const previous = await findUserById(userId);
   if (decision === "link" && previous) {
     await revokeOtherUserSessions(userId, currentToken);
-    void notifyFactorChange(previous, "К аккаунту привязан Telegram. Если это не вы, напишите в поддержку.");
+    void notifyFactorChange(previous, "К аккаунту привязан Telegram. Если это не вы, напишите в поддержку.", PHONE_SMS.telegramOn);
   }
   return {
     ok: true as const,
@@ -1212,7 +1220,7 @@ export async function unlinkAccountTelegram(userId: string, stepUpToken: string,
     .where(eq(users.id, userId));
   await revokeOtherUserSessions(userId, currentToken);
   if (previous) {
-    void notifyFactorChange(previous, "Telegram отвязан от аккаунта. Если это не вы, напишите в поддержку.");
+    void notifyFactorChange(previous, "Telegram отвязан от аккаунта. Если это не вы, напишите в поддержку.", PHONE_SMS.telegramOff);
   }
   return { ok: true as const, message: "Telegram отвязан." };
 }
@@ -1245,7 +1253,7 @@ async function storeVerifiedTrainerPhone(
   if (changed) {
     await revokeOtherUserSessions(userId, currentToken);
     if (previous) {
-      void notifyFactorChange(previous, "Телефон аккаунта изменён. Если это не вы, напишите в поддержку.");
+      void notifyFactorChange(previous, "Телефон аккаунта изменён. Если это не вы, напишите в поддержку.", PHONE_SMS.phone);
     }
   }
 }
@@ -1523,7 +1531,7 @@ function getAppUrl() {
   return process.env.APP_URL ?? LOCAL_APP_ORIGIN;
 }
 
-function notifyFactorChange(user: User, text: string) {
+function notifyFactorChange(user: User, text: string, sms: string) {
   if (user.emailVerifiedAt && !isPendingSignupEmail(user.email)) {
     const letter = renderLetter({
       service: true,
@@ -1543,7 +1551,7 @@ function notifyFactorChange(user: User, text: string) {
   }
   const phone = user.phoneVerifiedAt ? normalizeBelarusMobile(user.phone ?? "") : null;
   if (phone && isSmsByEnabled()) {
-    void sendQuickSms(phone, `Trenio.by: ${text}`).catch(() => undefined);
+    void sendQuickSms(phone, sms).catch(() => undefined);
   }
 }
 

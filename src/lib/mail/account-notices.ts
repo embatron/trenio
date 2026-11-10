@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { isSmsByEnabled, sendQuickSms } from "@/auth/sms";
 import { getDb } from "@/db";
 import { users } from "@/db/schema";
+import { isPendingSignupEmail } from "@/lib/auth/pending-email";
 import { normalizeBelarusMobile } from "@/lib/auth/phone";
 import { logCaught } from "@/lib/log/logger";
 import { renderLetter, mailSettingsUrl, type LetterPerson } from "@/lib/mail/letter";
@@ -10,6 +11,8 @@ import {
   ACCOUNT_CLOSED_LETTER,
   canReceiveMailbox,
   NEW_BROWSER_LETTER,
+  PHONE_SMS,
+  phoneNoticeInsteadOfMail,
   profileStatusNotice,
 } from "@/lib/mail/notice-rules";
 import { mailAppUrl, sendMail } from "@/lib/mail/send.server";
@@ -61,10 +64,12 @@ export async function sendVerifiedServiceMail(input: VerifiedLetter): Promise<bo
 export async function sendNewBrowserNotice(input: {
   email: string;
   emailVerifiedAt: Date | null;
+  phone: string | null;
+  phoneVerifiedAt: Date | null;
   actorUserId: string;
 }): Promise<void> {
   try {
-    await sendVerifiedServiceMail({
+    const sent = await sendVerifiedServiceMail({
       email: input.email,
       emailVerifiedAt: input.emailVerifiedAt,
       subject: NEW_BROWSER_LETTER.subject,
@@ -73,8 +78,15 @@ export async function sendNewBrowserNotice(input: {
       note: NEW_BROWSER_LETTER.note,
       action: { href: mailSettingsUrl(), label: NEW_BROWSER_LETTER.actionLabel },
     });
+    if (sent || !phoneNoticeInsteadOfMail(input)) return;
+    const phone = normalizeBelarusMobile(input.phone ?? "");
+    if (!phone || !isSmsByEnabled()) return;
+    await sendQuickSms(phone, PHONE_SMS.newBrowser);
   } catch (error) {
-    logCaught("email", "email.notice", error, { subject: input.email, actorUserId: input.actorUserId });
+    logCaught("email", "email.notice", error, {
+      subject: isPendingSignupEmail(input.email) ? null : input.email,
+      actorUserId: input.actorUserId,
+    });
   }
 }
 
@@ -127,6 +139,9 @@ export async function sendAccountClosedNotice(input: {
     if (!phone) return;
     await sendQuickSms(phone, ACCOUNT_CLOSED_LETTER.sms);
   } catch (error) {
-    logCaught("email", "email.notice", error, { subject: input.email, actorUserId: input.actorUserId });
+    logCaught("email", "email.notice", error, {
+      subject: isPendingSignupEmail(input.email) ? null : input.email,
+      actorUserId: input.actorUserId,
+    });
   }
 }

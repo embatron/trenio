@@ -10,6 +10,8 @@ import {
   messageMailAllowed,
   messageTelegramNoticeAllowed,
   NEW_BROWSER_LETTER,
+  PHONE_SMS,
+  phoneNoticeInsteadOfMail,
   profileStatusNotice,
   reviewReplyAudience,
   telegramThreadButton,
@@ -71,6 +73,29 @@ test("a new browser is a different agent while another session is still open", (
   assert.equal(isNewBrowserLogin({ incomingUserAgent: "Chrome", liveUserAgents: ["Chrome"] }), false);
   assert.equal(isNewBrowserLogin({ incomingUserAgent: " Firefox ", liveUserAgents: ["Chrome"] }), true);
   assert.equal(browserLabel("  Mozilla\nFirefox  "), "Mozilla Firefox");
+});
+
+test("a phone login gets one short safety SMS, not a chat or a review", () => {
+  const pending = "pending.11111111-1111-4111-8111-111111111111@users.trenio.invalid";
+  assert.equal(phoneNoticeInsteadOfMail({
+    email: pending,
+    emailVerifiedAt: null,
+    phone: "+375298516745",
+    phoneVerifiedAt: verified,
+  }), true);
+  assert.equal(phoneNoticeInsteadOfMail({
+    email: "person@example.com",
+    emailVerifiedAt: verified,
+    phone: "+375298516745",
+    phoneVerifiedAt: verified,
+  }), false);
+  assert.equal("message" in PHONE_SMS, false);
+  assert.equal("reviewPublished" in PHONE_SMS, false);
+  for (const text of Object.values(PHONE_SMS)) {
+    assert.equal([...text].length <= 70, true, text);
+    assert.match(text, /^Trenio\.by: /);
+  }
+  assert.equal(ACCOUNT_CLOSED_LETTER.sms, PHONE_SMS.accountClosed);
 });
 
 test("profile status and review replies name the person who should hear", () => {

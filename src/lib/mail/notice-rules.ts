@@ -1,9 +1,37 @@
 import { isPendingSignupEmail } from "@/lib/auth/pending-email";
+import { normalizeBelarusMobile } from "@/lib/auth/phone";
 
 /** A real mailbox the person has proved. Pending signup shells are not one. */
 export function canReceiveMailbox(email: string, emailVerifiedAt: Date | null): boolean {
   return Boolean(emailVerifiedAt) && !isPendingSignupEmail(email);
 }
+
+/**
+ * A phone login has no mailbox. Only an account-safety notice becomes one
+ * short SMS. A new message or a review stays quiet until a mailbox exists.
+ * A confirmed mailbox still gets the letter.
+ */
+export function phoneNoticeInsteadOfMail(input: {
+  email: string;
+  emailVerifiedAt: Date | null;
+  phone: string | null;
+  phoneVerifiedAt: Date | null;
+}): boolean {
+  return !canReceiveMailbox(input.email, input.emailVerifiedAt)
+    && input.phoneVerifiedAt != null
+    && Boolean(normalizeBelarusMobile(input.phone ?? ""));
+}
+
+/** One SMS segment. Cyrillic fits 70 characters. No message body and no link. */
+export const PHONE_SMS = {
+  newBrowser: "Trenio.by: вход с другого браузера",
+  accountClosed: "Trenio.by: аккаунт закрыт на 6 месяцев",
+  password: "Trenio.by: пароль изменён. Если не вы — в поддержку.",
+  email: "Trenio.by: почта изменена. Если не вы — в поддержку.",
+  phone: "Trenio.by: телефон изменён. Если не вы — в поддержку.",
+  telegramOn: "Trenio.by: Telegram привязан. Если не вы — в поддержку.",
+  telegramOff: "Trenio.by: Telegram отвязан. Если не вы — в поддержку.",
+} as const;
 
 /** Direct-message letter: the switch is on and the mailbox is verified. */
 export function messageMailAllowed(input: {
@@ -110,7 +138,7 @@ export const ACCOUNT_CLOSED_LETTER = {
     "Потом почта, имя и переписка удалятся.",
   ],
   actionLabel: "Войти",
-  sms: "Trenio.by: вы закрыли аккаунт на 6 месяцев. Вернуть его можно на странице входа.",
+  sms: PHONE_SMS.accountClosed,
 } as const;
 
 export function reviewReplyAudience(role: "trainer" | "author"): "author" | "owner" {

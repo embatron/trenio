@@ -15,6 +15,7 @@ import {
   type Conversation,
 } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
+import { storedGivenName } from "@/lib/auth/login-name";
 import { reviewPlainText, reviewTextLength, sanitizeReviewHtml } from "@/lib/catalog/review-html";
 import { isGodUser } from "@/lib/auth/god";
 import { isStaff } from "@/lib/auth/roles";
@@ -214,8 +215,9 @@ function isParticipant(actorId: string, row: ConversationAccess) {
   return actorId === row.userId || (row.ownerUserId != null && actorId === row.ownerUserId);
 }
 
-function personName(firstName: string, lastName: string | null | undefined) {
-  return [firstName, lastName].filter(Boolean).join(" ") || "Пользователь";
+function personName(firstName: string | null | undefined, lastName: string | null | undefined, email?: string | null) {
+  const given = storedGivenName(firstName, email);
+  return [given, lastName].filter(Boolean).join(" ") || "Пользователь";
 }
 
 function trainerLabel(fullName: string, firstName: string, lastName: string) {
@@ -802,6 +804,7 @@ export async function listConversations(
       hostAvatar: hostUsers.avatarPath,
       userFirstName: users.firstName,
       userLastName: users.lastName,
+      userEmail: users.email,
       userAvatar: users.avatarPath,
     })
     .from(conversations)
@@ -870,7 +873,7 @@ export async function listConversations(
   const faces = await facesByOwner(page.map((row) => row.userId));
   const items = page.map((row) => {
     const activity = iso(row.activityAt) ?? new Date(0).toISOString();
-    const clientName = personName(row.userFirstName, row.userLastName);
+    const clientName = personName(row.userFirstName, row.userLastName, row.userEmail);
     const trainer = listedTrainer(row);
     const face = faces.get(row.userId);
     const trainerHref = publicTrainerHref(trainer.slug, row.trainerStatus ?? "");
@@ -947,7 +950,7 @@ export async function listMessages(
     if (!prior) composeLimit = FIRST_MESSAGE_MAX_LENGTH;
   }
   const [user] = await getDb()
-    .select({ firstName: users.firstName, lastName: users.lastName, avatarPath: users.avatarPath })
+    .select({ firstName: users.firstName, lastName: users.lastName, email: users.email, avatarPath: users.avatarPath })
     .from(users)
     .where(eq(users.id, loaded.conversation.userId))
     .limit(1);
@@ -969,7 +972,7 @@ export async function listMessages(
     counterpart: getCounterparty({
       viewerId: actor.id,
       conversationUserId: loaded.conversation.userId,
-      userName: personName(user?.firstName ?? "", user?.lastName),
+      userName: personName(user?.firstName ?? "", user?.lastName, user?.email),
       userFirstName: user?.firstName ?? "",
       userLastName: user?.lastName ?? "",
       userAvatarPath: portraitPath(face?.avatarPath ?? "", user?.avatarPath ?? ""),
@@ -1079,14 +1082,14 @@ export async function reportMessage(actor: MessageActor, input: { conversationId
     return { ok: true as const, duplicate: true };
   }
   const [reporter] = await getDb()
-    .select({ firstName: users.firstName, lastName: users.lastName, avatarPath: users.avatarPath })
+    .select({ firstName: users.firstName, lastName: users.lastName, email: users.email, avatarPath: users.avatarPath })
     .from(users)
     .where(eq(users.id, actor.id))
     .limit(1);
   try {
     await notifyStaffAboutReport({
       conversationId: loaded.conversation.id,
-      reporterName: personName(reporter?.firstName, reporter?.lastName),
+      reporterName: personName(reporter?.firstName, reporter?.lastName, reporter?.email),
       reporterAvatar: reporter?.avatarPath ?? "",
       reporterSide,
       trainerName: trainerLabel(loaded.profile.fullName, loaded.profile.firstName, loaded.profile.lastName),
@@ -1116,6 +1119,7 @@ export async function listReports(actor: MessageActor): Promise<ReportRow[]> {
       reporterId: messageReports.reporterId,
       reporterFirstName: users.firstName,
       reporterLastName: users.lastName,
+      reporterEmail: users.email,
       trainerFullName: trainerProfiles.fullName,
       trainerFirstName: trainerProfiles.firstName,
       trainerLastName: trainerProfiles.lastName,
@@ -1143,7 +1147,7 @@ export async function listReports(actor: MessageActor): Promise<ReportRow[]> {
     conversationId: row.conversationId,
     conversationStatus: row.conversationStatus,
     reporterId: row.reporterId,
-    reporterName: personName(row.reporterFirstName, row.reporterLastName),
+    reporterName: personName(row.reporterFirstName, row.reporterLastName, row.reporterEmail),
     trainerName: listedTrainer(row).name,
     trainerSlug: listedTrainer(row).slug,
   }));
@@ -1229,7 +1233,17 @@ export async function unreadSummary(userId: string): Promise<MessagingSummary> {
             NULLIF(btrim(concat_ws(' ', p.first_name, p.last_name)), ''),
             'Тренер'
           )
-        ELSE COALESCE(NULLIF(btrim(concat_ws(' ', su.first_name, su.last_name)), ''), 'Пользователь')
+        ELSE COALESCE(NULLIF(btrim(concat_ws(' ',
+          CASE
+            WHEN btrim(coalesce(su.first_name, '')) IN ('', 'Пользователь')
+              AND su.email !~ '^pending\\.[0-9a-f-]{36}@users\\.trenio\\.invalid$'
+              AND su.email !~ '^deleted\\.[0-9a-f-]{36}@users\\.trenio\\.invalid$'
+              AND strpos(su.email, '@') > 1
+            THEN split_part(su.email, '@', 1)
+            ELSE su.first_name
+          END,
+          su.last_name
+        )), ''), 'Пользователь')
       END AS sender_name
     FROM messages m
     INNER JOIN conversations c ON c.id = m.conversation_id

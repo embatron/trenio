@@ -8,6 +8,7 @@ import { getDb } from "@/db";
 import { trainerProfiles, userRoles, users, type User } from "@/db/schema";
 import { rememberOAuthNames } from "@/auth/oauth-profile";
 import { decideYandexLink } from "@/lib/auth/auth-decisions";
+import { storedGivenName } from "@/lib/auth/login-name";
 import { isReservedAccountEmail } from "@/lib/auth/pending-email";
 import type { UserRole } from "@/lib/auth/types";
 import type { YandexIdentity } from "@/lib/auth/yandex-identity";
@@ -65,7 +66,7 @@ export async function openYandexAccount(
           email,
           passwordHash,
           emailVerifiedAt: new Date(),
-          firstName: identity.name,
+          firstName: storedGivenName(identity.name, email),
           lastName: identity.lastName || null,
           status: "active",
           lastSignupIntent: "client_signup",

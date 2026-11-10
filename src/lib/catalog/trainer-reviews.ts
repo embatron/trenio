@@ -7,6 +7,7 @@ import type { SessionUser } from "@/auth/service";
 import { getDb } from "@/db";
 import { trainerProfiles, trainerReviews, users, type TrainerReviewMessage } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
+import { storedGivenName } from "@/lib/auth/login-name";
 import { writeLog } from "@/lib/log/logger";
 import { isStaff } from "@/lib/auth/roles";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
@@ -102,8 +103,9 @@ function profileFace(row: { photos: string[] | null; avatarPath: string } | unde
 }
 
 function authorName(user: SessionUser) {
+  const given = storedGivenName(user.firstName, user.email);
   const last = user.lastName?.trim();
-  const name = last ? `${user.firstName} ${last.slice(0, 1)}.` : user.firstName;
+  const name = last ? `${given} ${last.slice(0, 1)}.` : given;
   return name.slice(0, 120);
 }
 

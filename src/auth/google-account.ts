@@ -9,6 +9,7 @@ import { trainerProfiles, userRoles, users, type User } from "@/db/schema";
 import { rememberOAuthNames } from "@/auth/oauth-profile";
 import { decideGoogleLink } from "@/lib/auth/auth-decisions";
 import type { GoogleIdentity } from "@/lib/auth/google-identity";
+import { storedGivenName } from "@/lib/auth/login-name";
 import { isReservedAccountEmail } from "@/lib/auth/pending-email";
 import type { UserRole } from "@/lib/auth/types";
 import { destinationAfterAuth } from "@/lib/auth/return-path";
@@ -65,7 +66,7 @@ export async function openGoogleAccount(
           email,
           passwordHash,
           emailVerifiedAt: new Date(),
-          firstName: identity.name,
+          firstName: storedGivenName(identity.name, email),
           lastName: identity.lastName?.trim() || null,
           status: "active",
           lastSignupIntent: "client_signup",

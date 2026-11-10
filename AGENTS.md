@@ -37,7 +37,7 @@
 11. **Site mail** — the public address is `trenioby@gmail.com` (`SITE_EMAIL`). Service mail uses local Postfix `sendmail` with `From: Trenio <noreply@trenio.by>` and greets as `trenio.by`. Mail for `bronxgym.by` stays on its own Postfix client. See `.cursor/rules/site-mail.mdc`.
 12. **Trainer publish** — a draft stays unpublished until the trainer confirms a mailbox or a Belarus mobile. Either one is enough. The mailbox is the letter, Google, or Yandex. The mobile is the SMS code. Opening the short link does not publish it. The trainer can hide the page from the cabinet. The admin «Аккаунт» column shows only the mailbox or the mobile that first confirmed the account, with no channel label. See `.cursor/rules/trainer-publish.mdc`.
 13. **Local site** — `http://trenio.local` is `127.0.0.9`, and `/etc/hosts` also has `::1 trenio.local` so the name does not wait 5 seconds on mDNS. The launch daemon `local.loopback.alias` restores both the address and those hosts lines. Apache owns ports 80 and 8080. Vite stays on 8081. Do not stop Apache or bind the dev server to 8080. See `.cursor/rules/local-dev.mdc`.
-14. **Phone account** — a confirmed Belarus mobile is a real login. A plain user with no chosen name is signed `+37529.....51`. Screens show `+375298516745` instead of the pending mailbox. The mailbox stays in the database. See `.cursor/rules/phone-account.mdc`.
+14. **Phone account** — a confirmed Belarus mobile is a real login. A plain user with no chosen name is signed `+37529.....51`. Screens show `+375298516745` instead of the pending mailbox. The mailbox stays in the database. A real mailbox with no chosen name is signed with the part before `@` (`dasafilon`). See `.cursor/rules/phone-account.mdc`.
 
 ## Stack quick reference
 

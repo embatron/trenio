@@ -22,6 +22,7 @@ import { emailVerificationTokens, userRoles, users, type User } from "@/db/schem
 import { decideEmailSignup, decideSmsSignup } from "@/lib/auth/auth-decisions";
 import { AuthError } from "@/lib/auth/errors";
 import { isPendingSignupEmail, isReservedAccountEmail, pendingSignupEmail } from "@/lib/auth/pending-email";
+import { storedGivenName } from "@/lib/auth/login-name";
 import { phoneSignatureName } from "@/lib/auth/phone-label";
 import { plainUserPhoneSignature } from "@/lib/auth/phone-signature";
 import { safeReturnPath } from "@/lib/auth/return-path";
@@ -243,7 +244,7 @@ export async function signupWithEmail(
           email,
           passwordHash,
           passwordSetAt: new Date(),
-          firstName: cleanName(profile.firstName) || PLACEHOLDER_NAME,
+          firstName: storedGivenName(cleanName(profile.firstName), email),
           lastName: cleanName(profile.lastName) || null,
           status: "pending_verification",
           lastSignupIntent: trainer ? "trainer_create" : "client_signup",
@@ -254,12 +255,13 @@ export async function signupWithEmail(
       await sendSignupLetter(email, signupProofUrl(proof.url, back), false, trainer);
     } else if (decision === "refresh" && existing) {
       const trainer = profile.intent === "trainer_create";
+      const nextFirst = storedGivenName(cleanName(profile.firstName) || existing.firstName, email);
       await db.update(users).set({
         passwordHash,
         passwordSetAt: new Date(),
         needsPassword: false,
+        ...(nextFirst !== existing.firstName ? { firstName: nextFirst } : {}),
         ...(trainer ? {
-          firstName: cleanName(profile.firstName) || existing.firstName,
           lastName: cleanName(profile.lastName) || existing.lastName,
           lastSignupIntent: "trainer_create" as const,
         } : {}),

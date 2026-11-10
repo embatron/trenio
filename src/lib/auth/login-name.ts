@@ -3,6 +3,8 @@ import { isPendingSignupEmail } from "@/lib/auth/pending-email";
 import { compactBelarusPhone } from "@/lib/auth/phone-label";
 
 const NICK_DOMAIN = "nick.trenio.by";
+const TOMBSTONE_EMAIL_RE = /^deleted\.[0-9a-f-]{36}@users\.trenio\.invalid$/i;
+const PLACEHOLDER_NAME = "Пользователь";
 
 /** A short nick that signs in to a real mailbox. The owner nick stays in the god-user check. */
 const MAILBOX_NICKS: Record<string, string> = {
@@ -26,6 +28,25 @@ export function resolveAccountLogin(value: string): string {
     throw new AuthError("Ник: латиница, цифры, точка или дефис, от 3 символов.", "VALIDATION");
   }
   return `${raw}@${NICK_DOMAIN}`;
+}
+
+/** The part before @. A pending or deleted shell has no public nick. */
+export function mailboxLocalName(email: string | null | undefined): string | null {
+  const raw = (email ?? "").trim().toLowerCase();
+  if (!raw.includes("@") || isPendingSignupEmail(raw) || TOMBSTONE_EMAIL_RE.test(raw)) return null;
+  const local = raw.slice(0, raw.indexOf("@")).trim();
+  if (!local || local.length > 100) return null;
+  return local;
+}
+
+/**
+ * A typed name stays. A phone mask stays. An empty name or «Пользователь»
+ * on a real mailbox becomes the part before @.
+ */
+export function storedGivenName(firstName: string | null | undefined, email: string | null | undefined): string {
+  const current = (firstName ?? "").trim();
+  if (current && current !== PLACEHOLDER_NAME) return current;
+  return mailboxLocalName(email) || current || PLACEHOLDER_NAME;
 }
 
 export function displayAccountLogin(email: string, phone?: string | null): string {

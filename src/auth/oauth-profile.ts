@@ -4,6 +4,7 @@ import { and, eq } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { trainerProfiles, users } from "@/db/schema";
+import { storedGivenName } from "@/lib/auth/login-name";
 import { isStandInAccountName } from "@/lib/auth/phone-label";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import { writeImageSet } from "@/lib/images/store";
@@ -31,13 +32,15 @@ export async function rememberOAuthNames(
 ) {
   const db = getDb();
   const [user] = await db
-    .select({ firstName: users.firstName, lastName: users.lastName, status: users.status })
+    .select({ firstName: users.firstName, lastName: users.lastName, status: users.status, email: users.email })
     .from(users)
     .where(eq(users.id, userId))
     .limit(1);
   if (!user || user.status === "deleted" || user.status === "suspended") return;
   const incomingName = { firstName: incoming.firstName, lastName: incoming.lastName ?? "" };
   const patch = oauthNamePatch(user, incomingName);
+  const named = storedGivenName(patch.firstName ?? user.firstName, user.email);
+  if (!patch.firstName && named !== user.firstName.trim()) patch.firstName = named;
   if (patch.firstName || patch.lastName) {
     await db.update(users).set({ ...patch, updatedAt: new Date() }).where(eq(users.id, userId));
   }
