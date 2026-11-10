@@ -36,10 +36,11 @@
 10. **Breadcrumbs** — the current page crumb uses `is-current` and `aria-current="page"`. Its color is `var(--primary)`. See `.cursor/rules/breadcrumbs.mdc`.
 11. **Site mail** — the public address is `trenioby@gmail.com` (`SITE_EMAIL`). Service mail uses local Postfix `sendmail` with `From: Trenio <noreply@trenio.by>` and greets as `trenio.by`. Mail for `bronxgym.by` stays on its own Postfix client. See `.cursor/rules/site-mail.mdc`.
 12. **Trainer publish** — a draft stays unpublished until the trainer confirms a mailbox or a Belarus mobile. Either one is enough. The mailbox is the letter, Google, or Yandex. The mobile is the SMS code. Opening the short link does not publish it. The trainer can hide the page from the cabinet. The admin «Аккаунт» column shows only the mailbox or the mobile that first confirmed the account, with no channel label. See `.cursor/rules/trainer-publish.mdc`.
+13. **Local site** — `http://trenio.local` is `127.0.0.9`, and `/etc/hosts` also has `::1 trenio.local` so the name does not wait 5 seconds on mDNS. The launch daemon `local.loopback.alias` restores both the address and those hosts lines. Apache owns ports 80 and 8080. Vite stays on 8081. Do not stop Apache or bind the dev server to 8080. See `.cursor/rules/local-dev.mdc`.
 
 ## Stack quick reference
 
-- Node **22+**, `npm run dev` (port 8080)
+- Node **22+**, `npm run dev` (Vite on 8081, public name `http://trenio.local`)
 - TanStack Start + Router, React 19, Tailwind v4, shadcn/ui
 - PostgreSQL via Drizzle (`npm run db:up`, `db:push`, `db:seed`)
 - Roles: `user`, `trainer`, `club`, `admin`, `superadmin`
@@ -54,6 +55,7 @@
 | `.cursor/skills/trenio-docs-sync/` | After tasks — sync documentation |
 | `.cursor/skills/trenio-instagram-trainers/` | Import public Instagram trainer profiles into drafts, apply operator notes and an attached Threads profile, choose still photos by composition and scroll past videos, read the words on pinned photos, judge an attached Threads profile the same way, geocode the street, write each draft to the local database and to the live site through `/api/sync/trainer`, and leave it unpublished. Command: `/import-instagram-trainers` |
 | `.cursor/skills/trenio-send-msgs/` | Send the first Instagram outreach from the signed-in `trenioby` account. Handles, a count, and other words written with the command are the scope. Commands: `/messages`, `/send-msgs` |
+| `.cursor/skills/trenio-send-claim/` | Send the application welcome: the page is ready, the given name is substituted, and that trainer's short link is included. Command: `/send-claim` |
 | `.cursor/skills/trenio-sync-trainers/` | Copy trainer cards, catalog status, and message marks between the laptop and the live site. Command: `/sync-trainers` |
 | `.cursor/skills/trenio-messages/` | Direct messages: who can write, composer, receipts, polling. Rule: `.cursor/rules/messages.mdc` |
 | `.cursor/skills/trenio-logging/` | Operational journal in `app_logs` and `trainer_journal`. Rows are kept. Command: `/logging`. Rule: `.cursor/rules/logging.mdc` |

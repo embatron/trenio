@@ -14,7 +14,7 @@
 
 **Разделение:** TECH_SPEC — _как устроен код_; PRODUCT — _что видит пользователь_; ACCOUNT_MODEL — _сущности и onboarding_.
 
-Cursor automation: `.cursor/rules/`, `.cursor/skills/`, субагент `seo`, slash-команды `/hooks`, `/logging`, `/diagnosis`, `/tests`, `/import-instagram-trainers` и `/sync-trainers` (см. TECH_SPEC §13). Журнал действий — [TECH_SPEC §4.8](./TECH_SPEC.md#48-журнал-действий).
+Cursor automation: `.cursor/rules/`, `.cursor/skills/`, субагент `seo`, slash-команды `/hooks`, `/logging`, `/diagnosis`, `/tests`, `/import-instagram-trainers`, `/sync-trainers` и `/send-claim` (см. TECH_SPEC §13). Журнал действий — [TECH_SPEC §4.8](./TECH_SPEC.md#48-журнал-действий).
 
 ## Стек и команды
 
@@ -32,7 +32,7 @@ cp .env.example .env
 npm run db:push     # применить схему
 npm run db:seed     # admin@, super@, client@trenio.by — пароль Pa55word!
 npm run settlements:import  # public/data/belarus-settlements.json (GeoNames BY)
-npm run dev          # http://trenio.local (Apache проксирует на порт 8080)
+npm run dev          # http://trenio.local (Apache на 80 проксирует на Vite 8081)
 npm run geoip:update # база GeoLite2 для города в фильтре категории
 npm run images:tinify # TinyPNG для уже лежащих картинок, кроме фото тренеров
 npm run build
@@ -44,7 +44,7 @@ npm run mail:install # колонки писем в users, без db:push
 npm run site:install # тексты писем и Instagram в site_texts, без db:push
 ```
 
-Локальный адрес — `http://trenio.local`. В `/etc/hosts` строка `127.0.0.9 trenio.local`. Apache (`trenio.local.conf`) проксирует этот хост на Vite `127.0.0.1:8080`, включая WebSocket для HMR.
+Локальный адрес — `http://trenio.local`. В `/etc/hosts` две строки: `127.0.0.9 trenio.local` и `::1 trenio.local`. Вторая нужна, чтобы macOS не ждал 5 секунд ответ mDNS на IPv6. Демон `local.loopback.alias` при загрузке и после правки `/etc/hosts` возвращает адрес `127.0.0.9` и обе строки. Apache слушает 80 и 8080, а `trenio.local.conf` проксирует этот хост на Vite `127.0.0.1:8081`, включая WebSocket для HMR.
 
 ## Auth и роли
 

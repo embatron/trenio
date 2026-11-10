@@ -8,6 +8,7 @@ import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
 import { instagramProfileSlug } from "@/lib/catalog/trainer-slugs";
 import { SITE_ORIGIN } from "@/lib/seo/site";
 import { writeLog } from "@/lib/log/logger";
+import { renderClaimInstagramMessage } from "@/lib/site-texts/defaults";
 import { relayDoorMark } from "@/lib/sync/relay";
 
 const DOOR_ALPHABET = "23456789abcdefghijkmnpqrstuvwxyz";
@@ -187,6 +188,49 @@ export async function listUnsentOutreach(): Promise<OutreachCandidate[]> {
       handle: row.handle,
       name: row.fullName.trim() || row.firstName.trim() || row.slug,
     }));
+}
+
+function claimBlock(status: string, outreachSentAt: Date | null) {
+  if (status === "published") return "published" as const;
+  if (status !== "draft") return "not-draft" as const;
+  if (outreachSentAt) return "sent" as const;
+  return null;
+}
+
+/** Application welcome: the given name and the short link stored on this draft. */
+export async function claimOutreachText(handle: string) {
+  await ensureTrainerDoorSchema();
+  const db = getDb();
+  const needle = handle.trim().replace(/^@/, "");
+  const [row] = await db
+    .select({
+      slug: trainerProfiles.slug,
+      firstName: trainerProfiles.firstName,
+      status: trainerProfiles.status,
+      outreachSentAt: trainerProfiles.outreachSentAt,
+    })
+    .from(trainerProfiles)
+    .where(eq(trainerProfiles.instagramHandle, needle))
+    .limit(1);
+  if (!row) return { ok: false as const, reason: "missing" as const };
+  const blocked = claimBlock(row.status, row.outreachSentAt);
+  if (blocked) return { ok: false as const, reason: blocked };
+  await ensurePublicDoorLink(row.slug);
+  const [fresh] = await db
+    .select({
+      firstName: trainerProfiles.firstName,
+      status: trainerProfiles.status,
+      outreachSentAt: trainerProfiles.outreachSentAt,
+      previewToken: trainerProfiles.previewToken,
+    })
+    .from(trainerProfiles)
+    .where(eq(trainerProfiles.slug, row.slug))
+    .limit(1);
+  if (!fresh) return { ok: false as const, reason: "missing" as const };
+  const stillBlocked = claimBlock(fresh.status, fresh.outreachSentAt);
+  if (stillBlocked) return { ok: false as const, reason: stillBlocked };
+  if (!isDoorCode(fresh.previewToken)) return { ok: false as const, reason: "link" as const };
+  return { ok: true as const, text: renderClaimInstagramMessage(fresh.firstName, doorUrl(fresh.previewToken)) };
 }
 
 /** Mark the first Instagram message sent and make the short link ready on both databases. */

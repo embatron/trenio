@@ -3,6 +3,7 @@ import test from "node:test";
 
 import { reviewTextLength } from "@/lib/catalog/review-html";
 import {
+  DEFAULT_CLAIM_INSTAGRAM_MESSAGE,
   DEFAULT_INSTAGRAM_MESSAGE,
   DEFAULT_USER_WELCOME,
   OUTREACH_SITE_LINK,
@@ -11,6 +12,7 @@ import {
   instagramGaps,
   outreachTemplate,
   parseUserWelcome,
+  renderClaimInstagramMessage,
   renderInstagramMessage,
   renderTrainerWelcome,
   userWelcomePartCount,
@@ -60,4 +62,18 @@ test("the first outreach message does not carry the short link", () => {
   assert.equal(linked.includes("/hi/"), false);
   assert.equal(DEFAULT_INSTAGRAM_MESSAGE.includes("{doorUrl}"), false);
   assert.equal(outreachTemplate("{hello}\n{doorUrl}"), DEFAULT_INSTAGRAM_MESSAGE);
+});
+
+test("the application letter substitutes the given name and that trainer's short link", () => {
+  const text = renderClaimInstagramMessage("Ирина", "https://trenio.by/hi/k4n8pq2w");
+  assert.match(text, /^Ирина, добрый день!/);
+  assert.match(text, /Мы увидели вашу заявку на https:\/\/trenio\.by и уже подготовили страницу\./);
+  assert.match(text, /опубликуйте в кабинете:\nhttps:\/\/trenio\.by\/hi\/k4n8pq2w/);
+  assert.match(text, /править текст, фото и остальные сведения/);
+  assert.equal(text.includes("{hello}"), false);
+  assert.equal(text.includes("{doorUrl}"), false);
+  assert.equal(text.includes("ОФП"), false);
+  assert.equal(renderClaimInstagramMessage("  ", "https://trenio.by/hi/k4n8pq2w").startsWith("Добрый день!"), true);
+  assert.match(DEFAULT_CLAIM_INSTAGRAM_MESSAGE, /\{hello\}/);
+  assert.match(DEFAULT_CLAIM_INSTAGRAM_MESSAGE, /\{doorUrl\}/);
 });

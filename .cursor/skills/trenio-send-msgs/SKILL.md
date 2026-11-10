@@ -12,6 +12,8 @@ description: >-
 
 The first message asks whether the trainer wants to join. It does not contain the short link. An admin copies that link afterwards from `/admin/trainers` and sends it by hand.
 
+The application letter, for a page that is already prepared, is `/send-claim`. Do not send that letter from this command.
+
 ## Arguments
 
 The text after `/messages` or `/send-msgs` is part of the command. Read it before opening Instagram. It chooses who is in this run.

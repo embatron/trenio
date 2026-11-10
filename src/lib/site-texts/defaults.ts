@@ -46,6 +46,29 @@ export const DEFAULT_INSTAGRAM_MESSAGE = [
   "Участие в проекте и дополнительное продвижение вашей анкеты абсолютно бесплатны.",
 ].join("\n");
 
+/**
+ * Instagram letter after an application, when the page is already prepared.
+ * `{hello}` is the given name. `{doorUrl}` is that trainer's short link.
+ * Do not add sports or other profile facts.
+ */
+export const DEFAULT_CLAIM_INSTAGRAM_MESSAGE = [
+  "{hello}",
+  "",
+  "Мы увидели вашу заявку на https://trenio.by и уже подготовили страницу.",
+  "",
+  "Откройте её, посмотрите, всё ли на месте, и опубликуйте в кабинете:",
+  "{doorUrl}",
+  "",
+  "После публикации страницу можно менять в любой момент: править текст, фото и остальные сведения и управлять тем, что видят посетители. Участие и продвижение анкеты бесплатные.",
+].join("\n");
+
+/** The application letter with this trainer's given name and short link. */
+export function renderClaimInstagramMessage(firstName: string, doorUrl: string) {
+  return DEFAULT_CLAIM_INSTAGRAM_MESSAGE
+    .replaceAll("{hello}", outreachHello(firstName))
+    .replaceAll("{doorUrl}", doorUrl);
+}
+
 /** The saved row still holds an older letter that includes the short link. Do not send that as the first message. */
 export function outreachTemplate(saved: string) {
   const body = saved.trim();

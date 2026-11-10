@@ -1,7 +1,7 @@
 import "dotenv/config";
 
 import { closeDb } from "../src/db";
-import { listUnsentOutreach, markOutreachSent, resolveOutreachScope } from "../src/lib/catalog/trainer-outreach";
+import { claimOutreachText, listUnsentOutreach, markOutreachSent, resolveOutreachScope } from "../src/lib/catalog/trainer-outreach";
 
 const command = process.argv[2] || "list";
 const handle = process.argv[3] || "";
@@ -21,13 +21,20 @@ async function main() {
     console.log(JSON.stringify(rows, null, 2));
     return;
   }
+  if (command === "text") {
+    if (!handle) throw new Error("Pass the Instagram handle.");
+    const result = await claimOutreachText(handle);
+    console.log(result.ok ? result.text : JSON.stringify(result));
+    if (!result.ok) process.exitCode = 1;
+    return;
+  }
   if (command === "mark") {
     if (!handle) throw new Error("Pass the Instagram handle.");
     const result = await markOutreachSent(handle);
     console.log(JSON.stringify(result));
     return;
   }
-  throw new Error("Use list or mark <handle>.");
+  throw new Error("Use list, text <handle>, or mark <handle>.");
 }
 
 main()
