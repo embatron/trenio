@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-09T18:28:49.572Z",
+  "updatedAt": "2026-11-10T11:54:37.710Z",
   "profiles": [
     {
       "handle": "embatron.eth",
@@ -156,20 +156,6 @@
         "pinnedPosts"
       ],
       "file": "data/instagram-trainers/sergey_korneev_91.json"
-    },
-    {
-      "handle": "usatov_yuri",
-      "slug": "usatov_yuri",
-      "fullName": "Юрий Усатов",
-      "primarySport": "Фитнес",
-      "city": "Минск",
-      "status": "draft",
-      "missing": [
-        "price",
-        "email",
-        "telegram"
-      ],
-      "file": "data/instagram-trainers/usatov_yuri.json"
     },
     {
       "handle": "1.manko",
@@ -659,7 +645,7 @@
       "handle": "coachboxing",
       "slug": "coachboxing",
       "fullName": "Константин Маханьков",
-      "primarySport": "MMA",
+      "primarySport": "Бокс и MMA",
       "city": "",
       "status": "draft",
       "missing": [
@@ -2002,6 +1988,37 @@
         "pinnedPosts"
       ],
       "file": "data/instagram-trainers/kachan121972.json"
+    },
+    {
+      "handle": "yurius_trainer",
+      "slug": "yurius_trainer",
+      "fullName": "Юрий Усатов",
+      "primarySport": "Фитнес",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/yurius_trainer.json"
+    },
+    {
+      "handle": "ira.lovefit",
+      "slug": "ira.lovefit",
+      "fullName": "Ирина Соколовская",
+      "primarySport": "ОФП",
+      "city": "",
+      "status": "draft",
+      "missing": [
+        "city",
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/ira.lovefit.json"
     }
   ]
 }

@@ -356,10 +356,10 @@ function matchCities(text: string, settlements: string[]): string[] {
     const city = byLength.find((name) => {
       const cityName = name.toLowerCase();
       const token = word.toLowerCase();
+      // «новый акк» is not the village Новый. A settlement name is capitalized.
+      if (word[0] === word[0].toLowerCase()) return false;
       if (token === cityName) return true;
       if (cityName.length < 4 || !token.startsWith(cityName)) return false;
-      // «любовью» is not the village Любовь. An inflected name is capitalized.
-      if (word[0] === word[0].toLowerCase()) return false;
       return /^(?:[еуаыию]|ом|ой|ах|ях|ою)$/iu.test(token.slice(cityName.length));
     });
     if (city) found.add(city);

@@ -14,13 +14,13 @@
     "Имя: Константин",
     "Фамилия: Маханьков"
   ],
-  "headline": "Тренер по MMA",
+  "headline": "Тренер по боксу и MMA",
   "sourceBio": "Master of Pedagogical Sciences Elite sport coach MMA,Boxing,Kickboxing Manager prof athletes",
   "sourceAbout": [],
   "sourceThreads": "",
   "operatorNotes": "Имя: Константин. Фамилия: Маханьков.",
   "threadsUrl": "",
-  "bio": "Меня зовут Константин Маханьков. Я мастер педагогических наук и тренер элитного спорта по MMA. Я менеджер профессиональных спортсменов.",
+  "bio": "Меня зовут Константин Маханьков. Я магистр педагогических наук и мастер спорта. Тренирую бокс и MMA. Я менеджер профессиональных спортсменов.",
   "about": [
     "В профиле есть записи о тренировках."
   ],
@@ -40,23 +40,23 @@
   ],
   "sports": [
     {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Всем БОКС"
+    },
+    {
       "slug": "mma",
       "parentSlug": "edinoborstva",
       "label": "MMA",
       "evidence": "MMA"
     }
   ],
-  "practicedSports": [
-    {
-      "slug": "boks",
-      "label": "Бокс",
-      "quote": "Всем БОКС"
-    }
-  ],
+  "practicedSports": [],
   "primarySport": {
-    "slug": "mma",
+    "slug": "boks",
     "parentSlug": "edinoborstva",
-    "label": "MMA"
+    "label": "Бокс"
   },
   "city": "",
   "address": "",
@@ -69,7 +69,8 @@
   "formats": [],
   "audiences": [
     "adult",
-    "kid"
+    "kid",
+    "teen"
   ],
   "languages": [],
   "avatarPath": "/trainers/instagram/coachboxing.jpg",

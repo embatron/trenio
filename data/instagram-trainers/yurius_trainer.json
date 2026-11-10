@@ -1,0 +1,86 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yurius_trainer/",
+  "handle": "yurius_trainer",
+  "slug": "yurius_trainer",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юрий",
+  "lastName": "Усатов",
+  "fullName": "Юрий Усатов",
+  "gender": "male",
+  "nameQuotes": [
+    "Усатов Юрий"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Fitness Trainer 🖐️ Помогу привести себя в форму 🔥 Мотивирую на результат ✌️ Заряжу позитивом 💯 Забочусь о Вашем здоровье 💪 Персональные тренировки",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кажется, что он аналог https://trenio.by/trainers/usatov_yuri. Нужно удалить https://trenio.by/trainers/usatov_yuri и поставить новый акк https://www.instagram.com/yurius_trainer/ для него",
+  "threadsUrl": "",
+  "bio": "Я Юрий Усатов. Я фитнес-тренер. Я провожу персональные тренировки.",
+  "about": [
+    "Я помогу привести себя в форму. Я мотивирую на результат и забочусь о здоровье. Тренировки у меня персональные."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "тренажёрный зал"
+    },
+    {
+      "slug": "trx",
+      "parentSlug": "fitnes",
+      "label": "TRX",
+      "evidence": "TRX"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yurius_trainer.jpg",
+  "photos": [
+    "/trainers/instagram/yurius_trainer.jpg",
+    "/trainers/instagram/yurius_trainer-g2.jpg",
+    "/trainers/instagram/yurius_trainer-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yurius_trainer/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}
