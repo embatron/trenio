@@ -14,8 +14,8 @@ import { resolveVisitorPlaceFn } from "@/lib/catalog/visitor-place";
 import {
   CategoryCatalogPage,
   categoryHeroLead,
-  categoryKeyword,
   categoryPageTitle,
+  categoryVoice,
   resolveChildCategory,
 } from "@/routes/categories.$slug";
 
@@ -42,12 +42,12 @@ export const Route = createFileRoute("/categories/$parentSlug/$childSlug")({
       return { meta: [{ title: siteTitle("Категория") }] };
     }
 
-    const keyword = categoryKeyword(category, params.parentSlug);
-    const title = categoryPageTitle(keyword);
+    const voice = categoryVoice(category, params.parentSlug);
+    const title = categoryPageTitle(voice.keyword, voice.po);
     const aliases = getSportTaxonomyChildInCategory(params.parentSlug, params.childSlug)?.aliases;
     const desc = categorySearchDescription(
       documentLead(title),
-      categoryHeroLead(keyword, [], aliases),
+      categoryHeroLead(voice.keyword, [], aliases, voice.po),
       aliases,
     );
     const path = `/categories/${params.parentSlug}/${params.childSlug}`;

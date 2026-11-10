@@ -7,7 +7,7 @@ import { ReviewHtml } from "@/components/review-html";
 import { UserAvatar } from "@/components/user-avatar";
 import { getAdminReviewsFn, type AdminReview } from "@/lib/admin/reviews";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
-import { getSportTaxonomyChild, listPublishedSportCategories, listSecondLevelSports } from "@/lib/catalog/sport-taxonomy";
+import { getSportTaxonomyChild, getTopLevelSportCategory, listPublishedSportCategories, listSecondLevelSports } from "@/lib/catalog/sport-taxonomy";
 import { REVIEW_STATUSES, setTrainerReviewStatusFn, type ReviewStatus as ReviewStatusValue } from "@/lib/catalog/trainer-reviews";
 
 type ReviewSort = "date-desc" | "date-asc" | "rating-desc" | "rating-asc";
@@ -81,7 +81,7 @@ function AdminReviewsPage() {
   );
   const visible = useMemo(() => {
     const rows = reviews.filter((review) => {
-      const parents = review.trainerSportSlugs.map((slug) => getSportTaxonomyChild(slug)?.parentSlug);
+      const parents = review.trainerSportSlugs.map((slug) => getSportTaxonomyChild(slug)?.parentSlug ?? (getTopLevelSportCategory(slug) ? slug : undefined));
       if (status && review.status !== status) return false;
       if (category && !parents.includes(category)) return false;
       if (sport && !review.trainerSportSlugs.includes(sport)) return false;

@@ -48,22 +48,16 @@
   ],
   "sports": [
     {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "фитнес"
+    },
+    {
       "slug": "ofp",
       "parentSlug": "fitnes",
       "label": "ОФП",
       "evidence": "ОФП"
-    },
-    {
-      "slug": "silovoj-trening",
-      "parentSlug": "fitnes",
-      "label": "Силовой тренинг",
-      "evidence": "Силовой тренинг"
-    },
-    {
-      "slug": "figura",
-      "parentSlug": "fitnes",
-      "label": "Коррекция фигуры",
-      "evidence": "Коррекция фигуры"
     },
     {
       "slug": "nutriciolog",
@@ -82,7 +76,8 @@
   "primarySport": {
     "slug": "ofp",
     "parentSlug": "fitnes",
-    "label": "ОФП"
+    "label": "ОФП",
+    "evidence": "ОФП"
   },
   "city": "",
   "address": "",

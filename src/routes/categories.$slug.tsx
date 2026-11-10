@@ -33,6 +33,7 @@ import {
   catalogSportById,
   catalogSportByName,
   catalogSportLocation,
+  catalogSportPhrase,
   filterCatalogSports,
   trainerMatchesSportSelection,
   type CatalogSport,
@@ -72,12 +73,12 @@ export const Route = createFileRoute("/categories/$slug")({
   },
   head: ({ params }) => {
     const c = resolveParentCategory(params.slug);
-    const keyword = categoryKeyword(c);
-    const title = categoryPageTitle(keyword);
+    const voice = categoryVoice(c);
+    const title = categoryPageTitle(voice.keyword, voice.po);
     const path = `/categories/${params.slug}`;
     const desc = categorySearchDescription(
       documentLead(title),
-      categoryHeroLead(keyword, categoryTopicLabels(c)),
+      categoryHeroLead(voice.keyword, categoryTopicLabels(c), [], voice.po),
       getTopLevelSportCategory(params.slug)?.aliases,
     );
     return categoryRouteHead({
@@ -284,16 +285,28 @@ function resolveParentCategory(slug: string): Category {
   return withAbout(CATEGORIES[slug] ?? fallbackCategory(slug));
 }
 
-/** Dative phrase after «по»: «командным играм», «футболу». */
+/** Dative phrase after «по»: «командным играм», «футболу». A bare genitive drops «по». */
 export function categoryKeyword(category: Pick<Category, "slug" | "titleGenitive">, parentSlug?: string) {
-  if (parentSlug) {
-    return getSportTaxonomyChildInCategory(parentSlug, category.slug)?.titleGenitive ?? category.titleGenitive;
-  }
-  return getTopLevelSportCategory(category.slug)?.titleGenitive ?? category.titleGenitive;
+  return categoryVoice(category, parentSlug).keyword;
 }
 
-export function categoryPageTitle(keyword: string) {
-  return siteTitle(`Найти тренера по ${keyword}`);
+export function categoryVoice(
+  category: Pick<Category, "slug" | "titleGenitive">,
+  parentSlug?: string,
+): { keyword: string; po: boolean } {
+  if (parentSlug) {
+    const child = getSportTaxonomyChildInCategory(parentSlug, category.slug);
+    if (child?.titleBare) return { keyword: child.titleBare, po: false };
+    return { keyword: child?.titleGenitive ?? category.titleGenitive, po: true };
+  }
+  return {
+    keyword: getTopLevelSportCategory(category.slug)?.titleGenitive ?? category.titleGenitive,
+    po: true,
+  };
+}
+
+export function categoryPageTitle(keyword: string, po = true) {
+  return siteTitle(`Найти тренера ${po ? `по ${keyword}` : keyword}`);
 }
 
 export function categoryTopicLabels(category: Pick<Category, "slug" | "subSports">, parentSlug?: string) {
@@ -312,15 +325,16 @@ function topicInSentence(item: string) {
   return first.toLowerCase() + item.slice(1);
 }
 
-export function categoryHeroLead(keyword: string, topics: string[], aliases: string[] = []) {
+export function categoryHeroLead(keyword: string, topics: string[], aliases: string[] = [], po = true) {
+  const name = po ? `по ${keyword}` : keyword;
   const list = topics.map(topicInSentence).join(", ");
   const extra = aliases
     .filter((alias) => alias.toLowerCase() !== keyword.toLowerCase())
     .slice(0, 2)
     .join(", ");
   const focus = list
-    ? `Тренеры по ${keyword} в Беларуси: ${list}.`
-    : `Тренеры по ${keyword} в Беларуси${extra ? `, в том числе ${extra}` : ""}.`;
+    ? `Тренеры ${name} в Беларуси: ${list}.`
+    : `Тренеры ${name} в Беларуси${extra ? `, в том числе ${extra}` : ""}.`;
   return `${focus} Подбор по городу, цене и формату — индивидуально или в группе, для взрослых и детей.`;
 }
 
@@ -839,13 +853,15 @@ export function CategoryCatalogPage({
     [category, cityCatalog, ratings, prices, trainers],
   );
   const parentSlug = parentCategory?.slug ?? category?.slug ?? "";
-  const keyword = category ? categoryKeyword(category, parentCategory?.slug) : "";
+  const voice = category ? categoryVoice(category, parentCategory?.slug) : { keyword: "", po: true };
+  const keyword = voice.keyword;
   const heroAliases = parentCategory && category
     ? (getSportTaxonomyChildInCategory(parentCategory.slug, category.slug)?.aliases ?? [])
     : [];
   const heroLead = category
-    ? categoryHeroLead(keyword, parentCategory ? [] : categoryTopicLabels(category), heroAliases)
+    ? categoryHeroLead(keyword, parentCategory ? [] : categoryTopicLabels(category), heroAliases, voice.po)
     : "";
+  const pageVoice = pageSport ? catalogSportPhrase(pageSport) : null;
   const topLevelCategory = parentSlug ? getTopLevelSportCategory(parentSlug) : undefined;
   const heroImage = pageSport
     ? getParentCategoryFeaturedImage(pageSport.parentSlug)
@@ -1283,18 +1299,18 @@ export function CategoryCatalogPage({
                   )}
                 </nav>
                 <h1 className="cat-hero__title">
-                  {pageSport && cityCatalog ? (
-                    <>Найти тренера по <em>{pageSport.titleGenitive}</em> в {cityCatalog.locative}</>
+                  {pageSport && cityCatalog && pageVoice ? (
+                    <>Найти тренера {pageVoice.po ? "по " : ""}<em>{pageVoice.keyword}</em> в {cityCatalog.locative}</>
                   ) : cityCatalog ? (
                     <>Найти тренера в <em>{cityCatalog.locative}</em></>
                   ) : (
-                    <>Найти тренера по <em>{keyword}</em></>
+                    <>Найти тренера {voice.po ? "по " : ""}<em>{keyword}</em></>
                   )}
                 </h1>
               </div>
               <p className="cat-hero__lead">
-                {pageSport && cityCatalog
-                  ? `Тренеры по ${pageSport.titleGenitive} в ${cityCatalog.locative}. Подбор по цене и формату — индивидуально или в группе, для взрослых и детей.`
+                {pageSport && cityCatalog && pageVoice
+                  ? `Тренеры ${pageVoice.po ? `по ${pageVoice.keyword}` : pageVoice.keyword} в ${cityCatalog.locative}. Подбор по цене и формату — индивидуально или в группе, для взрослых и детей.`
                   : cityCatalog
                     ? `Тренеры в ${cityCatalog.locative} по всем видам спорта. Подбор по направлению, цене и формату — индивидуально или в группе, для взрослых и детей.`
                     : heroLead}
@@ -1810,10 +1826,10 @@ export function CategoryCatalogPage({
                 <h3>
                   {allTrainers.length === 0 || category?.isEmpty
                     ? pageSport && cityCatalog
-                      ? `Тренеров по ${pageSport.titleGenitive} в ${cityCatalog.locative} пока нет`
+                      ? `Тренеров ${pageVoice?.po === false ? pageVoice.keyword : `по ${pageVoice?.keyword ?? pageSport.titleGenitive}`} в ${cityCatalog.locative} пока нет`
                       : cityCatalog
                         ? `Тренеров в ${cityCatalog.locative} пока нет`
-                        : `Тренеров по ${keyword} пока нет`
+                        : `Тренеров ${voice.po ? `по ${keyword}` : keyword} пока нет`
                     : "По вашим фильтрам ничего не нашлось"}
                 </h3>
                 <p>
@@ -1923,7 +1939,7 @@ export function CategoryCatalogPage({
 
           <section className="cat-cta">
             <div>
-              <h2>{pageSport && cityCatalog ? `Вы тренер по ${pageSport.titleGenitive} в ${cityCatalog.locative}?` : cityCatalog ? `Вы тренер в ${cityCatalog.locative}?` : `Вы тренер по ${keyword}?`}</h2>
+              <h2>{pageSport && cityCatalog && pageVoice ? `Вы тренер ${pageVoice.po ? `по ${pageVoice.keyword}` : pageVoice.keyword} в ${cityCatalog.locative}?` : cityCatalog ? `Вы тренер в ${cityCatalog.locative}?` : `Вы тренер ${voice.po ? `по ${keyword}` : keyword}?`}</h2>
               <p>{TRAINER_INVITE_LINE}</p>
             </div>
             <Link to="/join/trainer">Стать тренером</Link>

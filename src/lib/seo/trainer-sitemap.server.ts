@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 
 import { catalogPathsForSitemap, indexableCitySportPaths, type CitySportPresence } from "@/lib/catalog/catalog-sports";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
-import { MAX_TRAINER_SPORTS, trainerSportDatives } from "@/lib/catalog/sport-taxonomy";
+import { MAX_TRAINER_SPORTS, trainerIntroPhrase, trainerSportDatives, trainerSportRoles } from "@/lib/catalog/sport-taxonomy";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import { cardFace } from "@/lib/catalog/account-face";
 import { publicTrainerCityLabel } from "@/lib/catalog/trainer-city";
@@ -96,7 +96,7 @@ export async function listPublishedTrainerSitemapEntries(): Promise<SitemapTrain
       const phrase = trainerDocumentPhrase(trainerSportDatives(sports), {
         slug: cityCatalogSlug(label) || row.citySlug || "",
         label,
-      }, name);
+      }, name, trainerIntroPhrase(trainerSportRoles(sports)));
       const image = cardFace(row.avatarPath, row.photos)
         ? publicAssetUrl(trainerShareImagePath(row.slug, row.updatedAt.toISOString()))
         : null;

@@ -458,7 +458,7 @@ export function AdminTrainersTable({
   const visibleBuckets = useMemo(() => {
     const tokens = query.trim().toLocaleLowerCase("ru").replaceAll("ё", "е").split(/\s+/).filter(Boolean);
     const rows = listed.filter((trainer) => {
-      const parents = trainer.sportSlugs.map((slug) => getSportTaxonomyChild(slug)?.parentSlug);
+      const parents = trainer.sportSlugs.map((slug) => getSportTaxonomyChild(slug)?.parentSlug ?? (getTopLevelSportCategory(slug) ? slug : undefined));
       if (category && !parents.includes(category)) return false;
       if (sport && !trainer.sportSlugs.includes(sport)) return false;
       if (city && trainer.city !== city) return false;

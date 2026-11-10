@@ -1,7 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 
 import { trainerSportMenu } from "@/lib/catalog/catalog-sports";
-import { listSecondLevelSports, MAX_TRAINER_SPORTS } from "@/lib/catalog/sport-taxonomy";
+import { listSecondLevelSports, MAX_TRAINER_SPORTS, trainerSectionBySlug } from "@/lib/catalog/sport-taxonomy";
 import { pluralRu } from "@/lib/ru-plural";
 
 export function SportEntityInput({
@@ -13,7 +13,18 @@ export function SportEntityInput({
   onChange: (slugs: string[]) => void;
   max?: number;
 }) {
-  const sports = useMemo(() => listSecondLevelSports(), []);
+  const sports = useMemo(() => {
+    const children = listSecondLevelSports();
+    const seen = new Set<string>();
+    const sections = [];
+    for (const child of children) {
+      if (seen.has(child.parentSlug)) continue;
+      seen.add(child.parentSlug);
+      const section = trainerSectionBySlug(child.parentSlug);
+      if (section) sections.push({ slug: section.slug, label: section.label, parentSlug: section.slug, parentLabel: "Раздел" });
+    }
+    return [...children, ...sections];
+  }, []);
   const bySlug = useMemo(() => new Map(sports.map((sport) => [sport.slug, sport])), [sports]);
   const [query, setQuery] = useState("");
   const [openedSection, setOpenedSection] = useState<string | null>(null);
@@ -81,7 +92,9 @@ export function SportEntityInput({
         onKeyDown={(event) => {
           if (event.key === "Enter") {
             event.preventDefault();
-            if (choices[0]) add(choices[0].slug);
+            const section = menu.section && trainerSectionBySlug(menu.section.slug);
+            if (section && !known.includes(section.slug)) add(section.slug);
+            else if (choices[0]) add(choices[0].slug);
             else if (!query.trim() && menu.sections[0]) openSection(menu.sections[0].slug);
           }
           if (event.key === "Backspace" && query === "" && selected.length > 0) {
@@ -99,10 +112,28 @@ export function SportEntityInput({
         <ul className="entity-menu entity-menu--tall" id={listId} role="listbox">
           {menu.section ? (
             <li className="entity-menu__hint">
-              <p>{menu.section.label} — раздел сайта. Выберите вид внутри него.</p>
+              <p>{trainerSectionBySlug(menu.section.slug)
+                ? `${menu.section.label} — раздел. Его можно назначить целиком или выбрать вид внутри.`
+                : `${menu.section.label} — раздел. Выберите вид внутри него.`}</p>
               {query.trim() === "" ? (
                 <button type="button" onClick={() => setOpenedSection(null)}>Все разделы</button>
               ) : null}
+            </li>
+          ) : null}
+          {menu.section && trainerSectionBySlug(menu.section.slug) && !known.includes(menu.section.slug) ? (
+            <li>
+              <button
+                type="button"
+                role="option"
+                onPointerDown={(event) => {
+                  event.preventDefault();
+                  add(menu.section!.slug);
+                }}
+                onClick={() => add(menu.section!.slug)}
+              >
+                {menu.section.label}
+                <span>весь раздел</span>
+              </button>
             </li>
           ) : null}
           {menu.sections.map((section) => (
@@ -137,7 +168,7 @@ export function SportEntityInput({
               </button>
             </li>
           ))}
-          {menu.section && choices.length === 0 ? (
+          {menu.section && choices.length === 0 && (!trainerSectionBySlug(menu.section.slug) || known.includes(menu.section.slug)) ? (
             <li className="entity-menu__hint"><p>Все виды этого раздела уже выбраны.</p></li>
           ) : null}
         </ul>

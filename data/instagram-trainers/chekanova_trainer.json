@@ -41,12 +41,6 @@
       "evidence": "Бодибилдинг"
     },
     {
-      "slug": "figura",
-      "parentSlug": "fitnes",
-      "label": "Коррекция фигуры",
-      "evidence": "Коррекция фигуры"
-    },
-    {
       "slug": "fitnes",
       "parentSlug": "fitnes",
       "label": "Фитнес",
@@ -57,7 +51,8 @@
   "primarySport": {
     "slug": "krossfit",
     "parentSlug": "fitnes",
-    "label": "Кроссфит"
+    "label": "Кроссфит",
+    "evidence": "Кроссфит"
   },
   "city": "Брест",
   "address": "",

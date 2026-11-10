@@ -24,6 +24,8 @@ export type SportTaxonomyChild = {
   slug: string;
   label: string;
   titleGenitive?: string;
+  /** Genitive that follows «тренер» directly: «тренер тренажёрного зала». */
+  titleBare?: string;
   description?: string;
   aliases?: string[];
 };
@@ -97,13 +99,20 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Фитнес",
     titleGenitive: "фитнесу",
     iconKey: "gymFitness",
-    description: "ОФП, кроссфит, джампинг, TRX, тяжёлая атлетика, пауэрлифтинг, силовой тренинг, бодибилдинг, коррекция фигуры и питание.",
-    aliases: ["фитнес", "fitness", "тренажёрный зал", "тренажерка", "спортзал", "персональный тренер", "кардио", "тренировки 50+"],
+    description: "Тренажёрный зал, ОФП, кроссфит, джампинг, TRX, тяжёлая атлетика, пауэрлифтинг, силовой тренинг, бодибилдинг, коррекция фигуры и питание.",
+    aliases: ["фитнес", "fitness", "персональный тренер", "кардио", "тренировки 50+"],
     count: "",
     bg: "linear-gradient(135deg, #fff1d6 0%, #ffd08a 100%)",
     image: "/images/categories/fitnes-i-trenirovki-v-zale-card.webp",
     featuredImage: "/images/ideogram/fitness.png",
     children: [
+      {
+        slug: "trenazherka",
+        label: "Тренажёрный зал",
+        titleGenitive: "тренажёрному залу",
+        titleBare: "тренажёрного зала",
+        aliases: ["тренажерный зал", "тренажёрный зал", "тренажерка", "спортзал", "gym"],
+      },
       {
         slug: "ofp",
         label: "ОФП",
@@ -689,7 +698,7 @@ export function pickSearchAlias(keyword: string, aliases?: string[]) {
 export function categorySearchDescription(title: string, _lead: string, aliases?: string[]) {
   const pipe = title.lastIndexOf(" | ");
   const phrase = (pipe === -1 ? title : title.slice(0, pipe)).trim();
-  const keyword = phrase.replace(/^Найти тренера по\s+/i, "");
+  const keyword = phrase.replace(/^Найти тренера(?: по)?\s+/i, "");
   const extra = pickSearchAlias(keyword, aliases);
   const middle = extra ? ` ${extra.charAt(0).toUpperCase()}${extra.slice(1)}.` : "";
   return clipMeta(
@@ -724,8 +733,15 @@ export function listSecondLevelSports() {
     .sort((a, b) => a.label.localeCompare(b.label, "ru"));
 }
 
-/** A trainer card lists at most four second-level sports. */
+/** A trainer card lists at most four sports. A whole section counts as one. */
 export const MAX_TRAINER_SPORTS = 4;
+
+/** A published section whose slug is not already a sport, such as «fitnes» or «edinoborstva». */
+export function trainerSectionBySlug(slug: string) {
+  const section = getTopLevelSportCategory(slug);
+  if (!section || !isPublishedSportCategory(section) || getSportTaxonomyChild(slug)) return null;
+  return section;
+}
 
 /** After «по». An abbreviation stays in capitals. A normal name starts lowercase. */
 export function phraseAsWritten(value: string): string {
@@ -737,13 +753,47 @@ export function phraseAsWritten(value: string): string {
 
 /** Dative after «по»: «тренер по боксу». Abbreviations and indeclinable names stay as written. */
 export function sportDative(sport: { slug: string; label: string }): string {
-  return getSportTaxonomyChild(sport.slug)?.titleGenitive
-    ?? getTopLevelSportCategory(sport.slug)?.titleGenitive
+  const child = getSportTaxonomyChild(sport.slug);
+  const section = getTopLevelSportCategory(sport.slug);
+  if (section && sport.label.trim() === section.label && child?.label !== section.label) return section.titleGenitive;
+  return child?.titleGenitive
+    ?? section?.titleGenitive
     ?? phraseAsWritten(sport.label);
 }
 
+export type TrainerSportRole = {
+  text: string;
+  po: boolean;
+};
+
+/** Words after «Тренер». A bare genitive drops «по»: «тренажёрного зала». */
+export function trainerSportRoles(sports: Array<{ slug: string; label: string }>): TrainerSportRole[] {
+  return sports.slice(0, MAX_TRAINER_SPORTS).map((sport) => {
+    const bare = getSportTaxonomyChild(sport.slug)?.titleBare?.trim();
+    if (bare && sport.label.trim() === getSportTaxonomyChild(sport.slug)?.label) {
+      return { text: bare, po: false };
+    }
+    return { text: sportDative(sport), po: true };
+  });
+}
+
 export function trainerSportDatives(sports: Array<{ slug: string; label: string }>): string[] {
-  return sports.slice(0, MAX_TRAINER_SPORTS).map(sportDative);
+  return trainerSportRoles(sports).map((role) => role.text);
+}
+
+function joinRu(items: string[]): string {
+  if (items.length <= 1) return items[0] ?? "";
+  if (items.length === 2) return `${items[0]} и ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")} и ${items[items.length - 1]}`;
+}
+
+/** «Тренер по боксу и фитнесу» or «Тренер тренажёрного зала». */
+export function trainerIntroPhrase(roles: TrainerSportRole[]): string {
+  const list = roles.filter((role) => role.text.trim()).slice(0, MAX_TRAINER_SPORTS);
+  if (list.length === 0) return "Тренер";
+  if (list.every((role) => role.po)) return `Тренер по ${joinRu(list.map((role) => role.text))}`;
+  if (list.every((role) => !role.po)) return `Тренер ${joinRu(list.map((role) => role.text))}`;
+  return `Тренер ${joinRu(list.map((role) => (role.po ? `по ${role.text}` : role.text)))}`;
 }
 
 /** The profile line: one sport, «а и б», or «а, б и в». */
@@ -758,13 +808,17 @@ export function trainerByPhrase(datives: string[]): string {
 export function trainerSportsFromSlugs(slugs: string[]) {
   const unique = [...new Set(slugs.map((slug) => slug.trim()).filter(Boolean))];
   const sports = unique.flatMap((slug) => {
-    const sport = getSportTaxonomyChild(slug);
-    return sport ? [{ slug: sport.slug, parentSlug: sport.parentSlug, label: sport.label }] : [];
+    const child = getSportTaxonomyChild(slug);
+    if (child && isPublishedSportCategory(getTopLevelSportCategory(child.parentSlug))) {
+      return [{ slug: child.slug, parentSlug: child.parentSlug, label: child.label }];
+    }
+    const section = trainerSectionBySlug(slug);
+    return section ? [{ slug: section.slug, parentSlug: section.slug, label: section.label }] : [];
   });
   return { slugs: unique, sports };
 }
 
-/** Second-level sports only. A stored section such as «fitnes» is not a sport the trainer can keep. */
+/** Sports a trainer can keep: a second-level sport, or a whole section such as «fitnes». */
 export function trainerSportSlugs(slugs: string[]) {
   return trainerSportsFromSlugs(slugs).sports.map((sport) => sport.slug);
 }

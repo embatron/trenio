@@ -45,12 +45,6 @@
       "evidence": "Бодибилдинг"
     },
     {
-      "slug": "figura",
-      "parentSlug": "fitnes",
-      "label": "Коррекция фигуры",
-      "evidence": "Коррекция фигуры"
-    },
-    {
       "slug": "nutriciolog",
       "parentSlug": "pitanie",
       "label": "Питание",
@@ -67,7 +61,8 @@
   "primarySport": {
     "slug": "bodibilding",
     "parentSlug": "fitnes",
-    "label": "Бодибилдинг"
+    "label": "Бодибилдинг",
+    "evidence": "Бодибилдинг"
   },
   "city": "Полоцк",
   "address": "",

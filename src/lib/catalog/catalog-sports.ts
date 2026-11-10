@@ -14,6 +14,8 @@ export type CatalogSport = {
   parentSlug: string;
   label: string;
   titleGenitive: string;
+  /** Genitive that follows «тренер» directly. Empty when the phrase uses «по». */
+  titleBare: string;
   level: 1 | 2;
   parentLabel: string;
   aliases: string[];
@@ -34,6 +36,7 @@ function buildCatalogSports(): CatalogSport[] {
       parentSlug: category.slug,
       label: category.label,
       titleGenitive: category.titleGenitive,
+      titleBare: "",
       level: 1,
       parentLabel: category.label,
       aliases: category.aliases ?? [],
@@ -50,6 +53,7 @@ function buildCatalogSports(): CatalogSport[] {
         parentSlug: category.slug,
         label: child.label,
         titleGenitive: child.titleGenitive || child.label,
+        titleBare: child.titleBare ?? "",
         level: 2,
         parentLabel: category.label,
         aliases: child.aliases ?? [],
@@ -325,10 +329,17 @@ export function trainerMatchesSportSelection(
   });
 }
 
+export function catalogSportPhrase(sport: Pick<CatalogSport, "titleGenitive" | "titleBare">): { keyword: string; po: boolean } {
+  return sport.titleBare
+    ? { keyword: sport.titleBare, po: false }
+    : { keyword: sport.titleGenitive, po: true };
+}
+
 export function catalogPagePhrase(city: CityCatalogPage, sport: CatalogSport | null) {
-  return sport
-    ? `Найти тренера по ${sport.titleGenitive} в ${city.locative}`
-    : `Найти тренера в ${city.locative}`;
+  if (!sport) return `Найти тренера в ${city.locative}`;
+  const voice = catalogSportPhrase(sport);
+  const name = voice.po ? `по ${voice.keyword}` : voice.keyword;
+  return `Найти тренера ${name} в ${city.locative}`;
 }
 
 export function listCatalogSitemapPaths() {

@@ -25,6 +25,8 @@ export type TrainerSeoSource = {
   updatedAt?: string;
   /** Public catalog page. A draft, a preview, and a staff look stay out of the index and emit no graph. */
   index?: boolean;
+  /** Full role line when a sport drops «по», such as «Тренер тренажёрного зала». */
+  intro?: string;
 };
 
 /** Document phrase, without the site name: «Тренер по боксу Артём Романович в Минске». */
@@ -32,10 +34,11 @@ export function trainerDocumentPhrase(
   datives: string[],
   city: { slug: string; label: string },
   name = "",
+  intro = "",
 ) {
   const place = city.label.trim() ? cityIn(city.slug, city.label) : "Беларуси";
   const person = name.trim();
-  const sports = trainerByPhrase(datives);
+  const sports = intro.trim() || trainerByPhrase(datives);
   return person ? `${sports} ${person} в ${place}` : `${sports} в ${place}`;
 }
 
@@ -89,7 +92,7 @@ function sameAs(trainer: TrainerSeoSource) {
 }
 
 export function trainerSeoHead(trainer: TrainerSeoSource) {
-  const phrase = trainerDocumentPhrase(trainer.sportDatives, trainer.city, trainer.name);
+  const phrase = trainerDocumentPhrase(trainer.sportDatives, trainer.city, trainer.name, trainer.intro);
   const place = trainer.city.label.trim()
     ? cityIn(trainer.city.slug, trainer.city.label)
     : "Беларуси";

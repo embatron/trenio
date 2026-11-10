@@ -6,7 +6,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { isStaff } from "@/lib/auth/roles";
-import { trainerSportDatives } from "@/lib/catalog/sport-taxonomy";
+import { trainerIntroPhrase, trainerSportDatives, trainerSportRoles } from "@/lib/catalog/sport-taxonomy";
 import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
 import {
   audienceLabels,
@@ -62,6 +62,7 @@ type Trainer = {
   sports: string[];
   sportLabel: string;
   sportDatives: string[];
+  sportRoles: Array<{ text: string; po: boolean }>;
   primarySport: { slug: string; parentSlug: string; label: string };
   sportRefs: Array<{ slug: string; parentSlug: string; label: string }>;
   city: { slug: string; label: string };
@@ -139,6 +140,7 @@ function toTrainer(
     sports: trainer.sports.map((sport) => sport.label),
     sportLabel: sportLine(trainer),
     sportDatives: trainerSportDatives(trainer.sports),
+    sportRoles: trainerSportRoles(trainer.sports),
     primarySport: trainer.primarySport,
     sportRefs: trainer.sports,
     city: trainer.city,
@@ -243,6 +245,7 @@ export const Route = createFileRoute("/trainers/$slug")({
       name: t.name,
       sports: t.sports,
       sportDatives: t.sportDatives,
+      intro: trainerIntroPhrase(t.sportRoles),
       primarySport: t.primarySport,
       city: t.city,
       about: [t.about[0] ?? "", t.sessions],
@@ -1044,15 +1047,18 @@ function TrainerPage() {
             ) : null}
             <header className="profile-intro">
               <div className="profile-identity">
-                {t.sportDatives.length > 0 ? (
+                {t.sportRoles.length > 0 ? (
                   <p className="profile-identity__sport">
-                    Тренер по{" "}
-                    {t.sportDatives.map((sport, index) => {
-                      const sep = index === 0 ? "" : index === t.sportDatives.length - 1 ? " и " : ", ";
+                    Тренер{" "}
+                    {t.sportRoles.every((role) => role.po) ? "по " : null}
+                    {t.sportRoles.map((role, index) => {
+                      const sep = index === 0 ? "" : index === t.sportRoles.length - 1 ? " и " : ", ";
+                      const sharedPo = t.sportRoles.every((item) => item.po);
                       return (
-                        <span key={`${sport}-${index}`}>
+                        <span key={`${role.text}-${index}`}>
                           {sep}
-                          <span className="profile-identity__sport-name">{sport}</span>
+                          {!sharedPo && role.po ? "по " : ""}
+                          <span className="profile-identity__sport-name">{role.text}</span>
                         </span>
                       );
                     })}

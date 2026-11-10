@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { listCatalogSports, catalogSportByName, filterCatalogSports, filterTrainerSports, trainerSportMenu } from "./catalog-sports";
+import { listCatalogSports, catalogPagePhrase, catalogSportByName, catalogSportPhrase, filterCatalogSports, filterTrainerSports, trainerSportMenu } from "./catalog-sports";
+import { trainerIntroPhrase, trainerSportRoles, trainerSportsFromSlugs } from "./sport-taxonomy";
 import { BELARUS_CITIES, BELARUS_QUICK_CITIES, filterBelarusCities, resolveBelarusCity } from "./city-taxonomy";
 import { editDistance, foldSearchText, keyboardToLatin, keyboardToRussian } from "./query-flex";
 import { filterSportSuggestions, quickSportLabels } from "./sport-suggestions";
@@ -116,11 +117,11 @@ test("trainer sport field reads like the catalog and stores a real sport", () =>
   assert.equal(filterTrainerSports("mma")[0]?.label, "MMA");
   assert.equal(filterTrainerSports("crossfit")[0]?.label, "Кроссфит");
   assert.equal(filterTrainerSports("boxing")[0]?.label, "Бокс");
-  assert.equal(filterTrainerSports("фитнес").length, 10);
+  assert.equal(filterTrainerSports("фитнес").length, 11);
   assert.ok(filterTrainerSports("фитнес").every((sport) => sport.level === 2 && sport.parentSlug === "fitnes"));
   assert.ok(filterTrainerSports("фитнез").every((sport) => sport.level === 2 && sport.parentSlug === "fitnes"));
   assert.ok(filterTrainerSports("фитни").every((sport) => sport.level === 2 && sport.parentSlug === "fitnes"));
-  assert.equal(filterTrainerSports("фитни").length, 10);
+  assert.equal(filterTrainerSports("фитни").length, 11);
   assert.ok(filterTrainerSports("abnytc").every((sport) => sport.level === 2 && sport.parentSlug === "fitnes"));
   assert.ok(filterTrainerSports("fitness").every((sport) => sport.level === 2 && sport.parentSlug === "fitnes"));
   assert.equal(filterTrainerSports("yoga").some((sport) => sport.label === "Йога"), true);
@@ -128,7 +129,7 @@ test("trainer sport field reads like the catalog and stores a real sport", () =>
   assert.equal(trainerSportMenu("").sports.length, 0);
   assert.ok(trainerSportMenu("").sections.some((section) => section.label === "Фитнес"));
   assert.equal(trainerSportMenu("фитнес").section?.label, "Фитнес");
-  assert.equal(trainerSportMenu("фитнес").sports.length, 10);
+  assert.equal(trainerSportMenu("фитнес").sports.length, 11);
   assert.equal(trainerSportMenu("фитни").section?.label, "Фитнес");
   assert.equal(trainerSportMenu("крофит").sports[0]?.label, "Кроссфит");
   assert.equal(trainerSportMenu("крофит").section, null);
@@ -145,6 +146,38 @@ test("trainer sport field reads like the catalog and stores a real sport", () =>
     const typed = keyboardToLatin(folded);
     assert.equal(filterTrainerSports(typed)[0]?.id, catalogSportByName(typed)?.id, sport.label);
   }
+});
+
+test("a section can be stored, and the gym phrase drops по", () => {
+  assert.equal(catalogSportByName("фитнес")?.level, 1);
+  assert.equal(catalogSportByName("тренажерка")?.slug, "trenazherka");
+  assert.equal(catalogSportByName("спортзал")?.slug, "trenazherka");
+  assert.equal(trainerSportsFromSlugs(["fitnes"]).sports[0]?.label, "Фитнес");
+  assert.equal(trainerSportsFromSlugs(["edinoborstva"]).sports[0]?.label, "Единоборства");
+  assert.equal(trainerSportsFromSlugs(["yoga"]).sports[0]?.label, "Йога");
+  const gym = catalogSportByName("тренажерка");
+  assert.ok(gym);
+  assert.equal(catalogSportPhrase(gym).po, false);
+  assert.equal(catalogSportPhrase(gym).keyword, "тренажёрного зала");
+  assert.equal(
+    catalogPagePhrase({ locative: "Минске" } as never, gym),
+    "Найти тренера тренажёрного зала в Минске",
+  );
+  assert.equal(
+    trainerIntroPhrase(trainerSportRoles([{ slug: "fitnes", label: "Фитнес" }])),
+    "Тренер по фитнесу",
+  );
+  assert.equal(
+    trainerIntroPhrase(trainerSportRoles([{ slug: "trenazherka", label: "Тренажёрный зал" }])),
+    "Тренер тренажёрного зала",
+  );
+  assert.equal(
+    trainerIntroPhrase(trainerSportRoles([
+      { slug: "trenazherka", label: "Тренажёрный зал" },
+      { slug: "nutriciolog", label: "Питание" },
+    ])),
+    "Тренер тренажёрного зала и по питанию",
+  );
 });
 
 test("anti-patterns: noise, neighbours, and shared words do not pick a wrong name", () => {

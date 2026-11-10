@@ -38,12 +38,6 @@
       "evidence": "ОФП"
     },
     {
-      "slug": "silovoj-trening",
-      "parentSlug": "fitnes",
-      "label": "Силовой тренинг",
-      "evidence": "Силовой тренинг"
-    },
-    {
       "slug": "nutriciolog",
       "parentSlug": "fitnes",
       "label": "Питание",
@@ -54,7 +48,8 @@
   "primarySport": {
     "slug": "fitnes",
     "parentSlug": "fitnes",
-    "label": "Фитнес"
+    "label": "Фитнес",
+    "evidence": "Фитнес"
   },
   "city": "Минск",
   "address": "",

@@ -42,7 +42,7 @@ import { loadSiteText } from "@/lib/site-texts/store";
 import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
 import { popularityChecklist, popularityScore } from "@/lib/catalog/trainer-popularity";
 import { loadTrainerInterest, type TrainerInterest } from "@/lib/catalog/trainer-interest";
-import { getSportTaxonomyChild, listSecondLevelSports, MAX_TRAINER_SPORTS, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
+import { getSportTaxonomyChild, getTopLevelSportCategory, listSecondLevelSports, MAX_TRAINER_SPORTS, trainerSectionBySlug, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
 import { placesFromProfile, placesShape, savedWithMapNotice, type TrainerPlace } from "@/lib/geo/schemas";
 
@@ -137,12 +137,14 @@ const childSlugByLabel = new Map(listSecondLevelSports().map((sport) => [sport.l
 function sportSelection(records: Array<{ slug: string; label: string }>) {
   const slugs: string[] = [];
   for (const sport of records) {
-    const slug = getSportTaxonomyChild(sport.slug)?.slug ?? childSlugByLabel.get(sport.label.toLowerCase());
+    const slug = getSportTaxonomyChild(sport.slug)?.slug
+      ?? trainerSectionBySlug(sport.slug)?.slug
+      ?? childSlugByLabel.get(sport.label.toLowerCase());
     if (slug && !slugs.includes(slug)) slugs.push(slug);
   }
   return {
     sportSlugs: slugs,
-    sports: slugs.map((slug) => getSportTaxonomyChild(slug)?.label ?? slug).join(", "),
+    sports: slugs.map((slug) => getSportTaxonomyChild(slug)?.label ?? getTopLevelSportCategory(slug)?.label ?? slug).join(", "),
   };
 }
 

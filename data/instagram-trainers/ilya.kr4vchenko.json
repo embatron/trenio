@@ -67,19 +67,14 @@
       "parentSlug": "reabilitaciya",
       "label": "Реабилитация",
       "evidence": "восстановление"
-    },
-    {
-      "slug": "figura",
-      "parentSlug": "fitnes",
-      "label": "Коррекция фигуры",
-      "evidence": "Коррекция фигуры"
     }
   ],
   "practicedSports": [],
   "primarySport": {
     "slug": "fitnes",
     "parentSlug": "fitnes",
-    "label": "Фитнес"
+    "label": "Фитнес",
+    "evidence": "персональный тренер"
   },
   "city": "Минск",
   "address": "Кальварийская улица, 33",
