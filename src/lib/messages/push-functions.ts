@@ -58,7 +58,7 @@ export const dropPushSubscriptionFn = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
-/** Cabinet switch. On by default. Off deletes every phone subscription for this account. */
+/** Cabinet switch. On by default. Off deletes every browser subscription for this account. */
 export const setPushMessagesFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
   .validator(z.object({ enabled: z.boolean() }))
@@ -77,7 +77,7 @@ export const setPushMessagesFn = createServerFn({ method: "POST" })
       domain: "account",
       action: "account.push",
       outcome: "success",
-      message: data.enabled ? "Уведомления на телефон включены." : "Уведомления на телефон выключены.",
+      message: data.enabled ? "Уведомления в браузере включены." : "Уведомления в браузере выключены.",
       subject: context.user.email,
       actorUserId: context.user.id,
       context: { enabled: data.enabled },

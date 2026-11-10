@@ -189,11 +189,19 @@ export type ThreadResult = {
   nextCursor: MessageCursor | null;
 };
 
+/** Newest message someone else sent this account, without the text. */
+export type MessageNotice = {
+  conversationId: string;
+  messageId: number;
+  name: string;
+};
+
 export type MessagingSummary = {
   total: number;
   own: number;
   inbox: number;
   ownedSlugs: string[];
+  notice: MessageNotice | null;
 };
 
 export const EMPTY_MESSAGING: MessagingSummary = {
@@ -201,6 +209,7 @@ export const EMPTY_MESSAGING: MessagingSummary = {
   own: 0,
   inbox: 0,
   ownedSlugs: [],
+  notice: null,
 };
 
 export type ReportRow = {

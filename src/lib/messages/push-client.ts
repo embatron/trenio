@@ -1,8 +1,6 @@
 import { getTelegramWebApp } from "@/lib/telegram-webapp";
 
 const ASKED_KEY = "trenio-push-asked";
-const PHONE = "(max-width: 767px)";
-const INSTALLED_MODES = ["standalone", "minimal-ui", "fullscreen", "window-controls-overlay"];
 
 type PushSave = (input: { data: { endpoint: string; p256dh: string; auth: string } }) => Promise<unknown>;
 
@@ -11,15 +9,6 @@ export function canUsePush(): boolean {
   if (typeof window === "undefined") return false;
   if (getTelegramWebApp()?.initData?.trim()) return false;
   return "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
-}
-
-/** A phone or an installed app, where a new message should ask for a system notice. */
-export function phonePush(): boolean {
-  if (!canUsePush()) return false;
-  const nav = navigator as Navigator & { standalone?: boolean };
-  const installed = Boolean(nav.standalone)
-    || INSTALLED_MODES.some((mode) => window.matchMedia(`(display-mode: ${mode})`).matches);
-  return installed || window.matchMedia(PHONE).matches;
 }
 
 export function pushAlreadyAsked(): boolean {

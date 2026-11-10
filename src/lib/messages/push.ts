@@ -3,8 +3,9 @@ import webpush from "web-push";
 
 import { getDb } from "@/db";
 import { pushSubscriptions } from "@/db/schema";
-import { SITE_EMAIL } from "@/lib/seo/site";
 import { writeLog } from "@/lib/log/logger";
+import { ensurePushSchema } from "@/lib/messages/push-schema";
+import { SITE_EMAIL } from "@/lib/seo/site";
 
 export type MessagePush = {
   title: string;
@@ -24,10 +25,21 @@ export function pushPublicKey(): string | null {
   return vapid()?.publicKey ?? null;
 }
 
-/** System notification on phones that subscribed from the browser or the installed app. */
+/** System notification on browsers and installed apps that subscribed. */
 export async function sendMessagePushes(userId: string, payload: MessagePush): Promise<void> {
   const keys = vapid();
-  if (!keys) return;
+  if (!keys) {
+    void writeLog({
+      level: "warn",
+      domain: "message",
+      action: "message.push",
+      outcome: "skipped",
+      message: "Уведомление не отправлено: нет ключей VAPID.",
+      target: payload.tag,
+    });
+    return;
+  }
+  await ensurePushSchema();
   const rows = await getDb()
     .select({
       endpoint: pushSubscriptions.endpoint,
@@ -58,7 +70,7 @@ export async function sendMessagePushes(userId: string, payload: MessagePush): P
         domain: "message",
         action: "message.push",
         outcome: "failure",
-        message: "Телефон не принял уведомление о сообщении.",
+        message: "Браузер не принял уведомление о сообщении.",
         target: payload.tag,
         statusCode: status || null,
         error,
@@ -71,7 +83,7 @@ export async function sendMessagePushes(userId: string, payload: MessagePush): P
       domain: "message",
       action: "message.push",
       outcome: "success",
-      message: "Уведомление о сообщении ушло на телефон.",
+      message: "Уведомление о сообщении ушло в браузер.",
       target: payload.tag,
       context: { devices: sent },
     });

@@ -1213,5 +1213,48 @@ export async function unreadSummary(userId: string): Promise<MessagingSummary> {
   const own = asNumber(row?.own ?? 0);
   const inbox = asNumber(row?.inbox ?? 0);
   const owned = Array.isArray(row?.owned) ? row.owned.filter((slug) => typeof slug === "string") : [];
-  return { own, inbox, total: own + inbox, ownedSlugs: owned };
+  const [fresh] = await getDb().execute<{
+    message_id: number | string;
+    conversation_id: string;
+    sender_name: string | null;
+  }>(sql`
+    SELECT
+      m.id AS message_id,
+      m.conversation_id,
+      CASE
+        WHEN c.host_user_id IS NOT NULL AND m.sender_id = c.host_user_id THEN 'Trenioby'
+        WHEN p.owner_user_id IS NOT NULL AND m.sender_id = p.owner_user_id THEN
+          COALESCE(
+            NULLIF(btrim(p.full_name), ''),
+            NULLIF(btrim(concat_ws(' ', p.first_name, p.last_name)), ''),
+            'Тренер'
+          )
+        ELSE COALESCE(NULLIF(btrim(concat_ws(' ', su.first_name, su.last_name)), ''), 'Пользователь')
+      END AS sender_name
+    FROM messages m
+    INNER JOIN conversations c ON c.id = m.conversation_id
+    LEFT JOIN trainer_profiles p ON p.id = c.trainer_profile_id
+    LEFT JOIN users su ON su.id = m.sender_id
+    LEFT JOIN conversation_reads r ON r.conversation_id = c.id AND r.user_id = ${userId}::uuid
+    WHERE m.deleted_at IS NULL
+      AND m.sender_id <> ${userId}::uuid
+      AND (r.last_read_message_id IS NULL OR m.id > r.last_read_message_id)
+      AND (
+        c.user_id = ${userId}::uuid
+        OR (
+          (p.owner_user_id = ${userId}::uuid OR c.host_user_id = ${userId}::uuid)
+          AND c.user_id <> ${userId}::uuid
+        )
+      )
+    ORDER BY m.id DESC
+    LIMIT 1
+  `);
+  const notice = fresh?.conversation_id
+    ? {
+        conversationId: fresh.conversation_id,
+        messageId: asNumber(fresh.message_id),
+        name: (fresh.sender_name ?? "").trim() || "Пользователь",
+      }
+    : null;
+  return { own, inbox, total: own + inbox, ownedSlugs: owned, notice };
 }

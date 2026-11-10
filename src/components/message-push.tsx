@@ -7,13 +7,12 @@ import {
   canUsePush,
   disableDevicePush,
   enableDevicePush,
-  phonePush,
   pushAlreadyAsked,
   rememberPushAsked,
 } from "@/lib/messages/push-client";
 
 /**
- * Phone notices are on until the person turns them off in cabinet settings.
+ * Browser notices stay on until the person turns them off in cabinet settings.
  * The browser still needs one tap before it shows its own permission dialog.
  */
 export function MessagePush() {
@@ -31,7 +30,6 @@ export function MessagePush() {
       void disableDevicePush().catch(() => undefined);
       return;
     }
-    if (!phonePush()) return;
 
     void loadKey().then((result) => {
       if (cancelled || !result.publicKey) return;

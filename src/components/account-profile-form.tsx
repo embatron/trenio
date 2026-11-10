@@ -645,17 +645,22 @@ export function AccountProfileForm({
           <h3>Уведомления</h3>
           <div className="mail-pref">
             <div>
-              <p className="mail-pref__label">На телефон</p>
-              <p className="cabinet-note">Сообщение в уведомлениях, когда вам написали. Включено, пока не выключите здесь.</p>
+              <p className="mail-pref__label">В браузере</p>
+              <p className="cabinet-note">
+                Сообщение в уведомлениях, когда вам написали — на компьютере и на телефоне.
+                Включено, пока не выключите здесь.
+              </p>
               {pushDenied && pushOn ? (
-                <p className="cabinet-note">Браузер запретил уведомления. Разрешите их в настройках телефона.</p>
+                <p className="cabinet-note">
+                  Браузер запретил уведомления. Разрешите их в его настройках.
+                </p>
               ) : null}
             </div>
             <button
               type="button"
               role="switch"
               aria-checked={pushOn}
-              aria-label="На телефон"
+              aria-label="В браузере"
               className={`mail-switch${pushOn ? " is-on" : ""}`}
               disabled={pushPending}
               onClick={() => {

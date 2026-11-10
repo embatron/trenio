@@ -11,7 +11,8 @@ import { sendMessagePushes } from "@/lib/messages/push";
 import { recipientAllowsMail } from "@/lib/mail/preferences";
 import { mailAppUrl, sendMail } from "@/lib/mail/send.server";
 
-const DEBOUNCE_MS = 2 * 60_000;
+const LETTER_DEBOUNCE_MS = 2 * 60_000;
+const PUSH_DEBOUNCE_MS = 15_000;
 const ONLINE_MS = 30_000;
 
 const timers = new Map<string, ReturnType<typeof setTimeout>>();
@@ -25,7 +26,12 @@ function trainerName(fullName: string | null, firstName: string | null, lastName
   return (fullName ?? "").trim() || combined || "Тренер";
 }
 
-async function deliver(input: { conversationId: string; messageId: number; recipientId: string }) {
+async function deliver(input: {
+  conversationId: string;
+  messageId: number;
+  recipientId: string;
+  channel: "push" | "letter";
+}) {
   const db = getDb();
   const [newer] = await db
     .select({ id: messages.id })
@@ -110,6 +116,27 @@ async function deliver(input: { conversationId: string; messageId: number; recip
     : fromOwner
       ? trainerName(row.trainerFullName, row.trainerFirstName, row.trainerLastName)
       : personName(sender?.firstName ?? "", sender?.lastName ?? null);
+  if (input.channel === "push") {
+    if (row.pushMessages) {
+      await sendMessagePushes(input.recipientId, {
+        title: writerName,
+        body: "Вам написали на Trenio",
+        url,
+        tag: input.conversationId,
+      });
+    } else {
+      void writeLog({
+        level: "info",
+        domain: "message",
+        action: "message.push",
+        outcome: "skipped",
+        message: "Уведомление в браузере не отправлено: выключено в настройках.",
+        target: input.conversationId,
+      });
+    }
+    return;
+  }
+
   const quote = reviewPlainText(posted.body).trim() || "В сообщении нет текста, только вложение.";
   const letter = renderLetter({
     title: `${writerName} написал вам`,
@@ -150,24 +177,6 @@ async function deliver(input: { conversationId: string; messageId: number; recip
       subject: row.email,
       target: input.conversationId,
       context: { kind: "messages" },
-    });
-  }
-
-  if (row.pushMessages) {
-    await sendMessagePushes(input.recipientId, {
-      title: writerName,
-      body: "Вам написали на Trenio",
-      url,
-      tag: input.conversationId,
-    });
-  } else {
-    void writeLog({
-      level: "info",
-      domain: "message",
-      action: "message.push",
-      outcome: "skipped",
-      message: "Уведомление на телефон не отправлено: выключено в настройках.",
-      target: input.conversationId,
     });
   }
 
@@ -275,30 +284,39 @@ export async function notifyStaffAboutReport(input: {
   });
 }
 
-/** One notice per recipient after two quiet minutes. Later messages replace the timer. */
-export function scheduleMessageNotification(input: {
-  conversationId: string;
-  messageId: number;
-  recipientId: string;
-}) {
-  const key = `${input.conversationId}:${input.recipientId}`;
+function arm(
+  key: string,
+  delay: number,
+  run: () => Promise<void>,
+  conversationId: string,
+) {
   const previous = timers.get(key);
   if (previous) clearTimeout(previous);
   const timer = setTimeout(() => {
     timers.delete(key);
-    void deliver(input).catch(async (error) => {
-      const { writeLog } = await import("@/lib/log/logger");
+    void run().catch((error: unknown) => {
       void writeLog({
         level: "error",
         domain: "message",
         action: "message.notify",
         outcome: "failure",
         message: "Не удалось подготовить уведомление.",
-        target: input.conversationId,
+        target: conversationId,
         error,
       });
     });
-  }, DEBOUNCE_MS);
+  }, delay);
   timer.unref?.();
   timers.set(key, timer);
+}
+
+/** Push after a short quiet pause. Mail and Telegram wait two minutes. A later message replaces both timers. */
+export function scheduleMessageNotification(input: {
+  conversationId: string;
+  messageId: number;
+  recipientId: string;
+}) {
+  const base = `${input.conversationId}:${input.recipientId}`;
+  arm(base + ":push", PUSH_DEBOUNCE_MS, () => deliver({ ...input, channel: "push" }), input.conversationId);
+  arm(base + ":letter", LETTER_DEBOUNCE_MS, () => deliver({ ...input, channel: "letter" }), input.conversationId);
 }
