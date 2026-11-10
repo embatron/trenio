@@ -61,6 +61,12 @@ function MapListedCard({
           lastName: trainer.lastName,
           photo: trainer.photo,
           tags: trainer.tags,
+          sports: trainer.sportSlugs.map((slug, index) => ({
+            slug,
+            parentSlug: trainer.sportParents[index] ?? slug,
+            label: trainer.tags[index] ?? slug,
+          })),
+          citySlug: cityCatalogByName(trainer.city)?.slug ?? "",
           desc: "",
           rating: trainer.rating,
           reviews: trainer.reviews,

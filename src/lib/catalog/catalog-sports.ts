@@ -1,8 +1,9 @@
-import { listCityCatalogPages, type CityCatalogPage } from "@/lib/catalog/city-pages";
+import { cityCatalogBySlug, listCityCatalogPages, type CityCatalogPage } from "@/lib/catalog/city-pages";
 import { editDistance, foldSearchText, leadingTarget, queryReadings, rankTargets, type FlexTarget } from "@/lib/catalog/query-flex";
 import {
   TOP_LEVEL_SPORT_CATEGORIES,
   getTopLevelSportCategory,
+  trainerSectionBySlug,
 } from "@/lib/catalog/sport-taxonomy";
 
 /** Public origin for canonical URLs and the sitemap. */
@@ -297,6 +298,32 @@ export function catalogSportLocation(citySlug: string, sport: CatalogSport) {
   return {
     to: "/city/$slug/$sport" as const,
     params: { slug: citySlug, sport: sport.slug },
+  };
+}
+
+/** The catalog row for a sport stored on a trainer. A shared slug such as «yoga» stays the child. */
+export function catalogSportForStored(sport: { slug: string; parentSlug: string }): CatalogSport | null {
+  if (sport.parentSlug && sport.slug !== sport.parentSlug) {
+    return catalogSportById(`${sport.parentSlug}/${sport.slug}`) ?? catalogSportById(sport.slug);
+  }
+  if (trainerSectionBySlug(sport.slug)) return catalogSportById(sport.slug);
+  return catalogSportById(`${sport.parentSlug}/${sport.slug}`) ?? catalogSportById(sport.slug);
+}
+
+/** City and sport page for a tag on a trainer card. Without a catalog city, the sport page alone. */
+export function trainerSportCityLocation(citySlug: string, sport: { slug: string; parentSlug: string }) {
+  const catalog = catalogSportForStored(sport);
+  if (!catalog) return null;
+  if (citySlug && cityCatalogBySlug(citySlug)) return catalogSportLocation(citySlug, catalog);
+  if (catalog.level === 2) {
+    return {
+      to: "/categories/$parentSlug/$childSlug" as const,
+      params: { parentSlug: catalog.parentSlug, childSlug: catalog.slug },
+    };
+  }
+  return {
+    to: "/categories/$slug" as const,
+    params: { slug: catalog.slug },
   };
 }
 

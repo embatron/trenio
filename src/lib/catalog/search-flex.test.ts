@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { listCatalogSports, catalogPagePhrase, catalogSportByName, catalogSportPhrase, filterCatalogSports, filterTrainerSports, trainerSportMenu } from "./catalog-sports";
+import { listCatalogSports, catalogPagePhrase, catalogSportByName, catalogSportPhrase, filterCatalogSports, filterTrainerSports, trainerSportCityLocation, trainerSportMenu } from "./catalog-sports";
 import { trainerIntroPhrase, trainerSportRoles, trainerSportsFromSlugs } from "./sport-taxonomy";
 import { BELARUS_CITIES, BELARUS_QUICK_CITIES, filterBelarusCities, resolveBelarusCity } from "./city-taxonomy";
 import { editDistance, foldSearchText, keyboardToLatin, keyboardToRussian } from "./query-flex";
@@ -178,6 +178,22 @@ test("a section can be stored, and the gym phrase drops по", () => {
     ])),
     "Тренер тренажёрного зала и по питанию",
   );
+  assert.deepEqual(trainerSportCityLocation("minsk", { slug: "fitnes", parentSlug: "fitnes" }), {
+    to: "/city/$slug/$sport",
+    params: { slug: "minsk", sport: "fitnes" },
+  });
+  assert.deepEqual(trainerSportCityLocation("minsk", { slug: "yoga", parentSlug: "yoga" }), {
+    to: "/city/$slug/$sport/$child",
+    params: { slug: "minsk", sport: "yoga", child: "yoga" },
+  });
+  assert.deepEqual(trainerSportCityLocation("minsk", { slug: "trenazherka", parentSlug: "fitnes" }), {
+    to: "/city/$slug/$sport",
+    params: { slug: "minsk", sport: "trenazherka" },
+  });
+  assert.deepEqual(trainerSportCityLocation("", { slug: "fitnes", parentSlug: "fitnes" }), {
+    to: "/categories/$slug",
+    params: { slug: "fitnes" },
+  });
 });
 
 test("anti-patterns: noise, neighbours, and shared words do not pick a wrong name", () => {

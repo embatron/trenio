@@ -482,6 +482,8 @@ type TrainerCard = {
   sub: string;
   desc: string;
   tags: string[];
+  sports: Array<{ slug: string; parentSlug: string; label: string }>;
+  citySlug: string;
   rating: string;
   reviews: number;
   views: number;
@@ -527,6 +529,8 @@ function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, Train
     sub: trainer.primarySport.label,
     desc: trainer.bio,
     tags: trainer.sports.map((sport) => sport.label),
+    sports: trainer.sports.map((sport) => ({ slug: sport.slug, parentSlug: sport.parentSlug, label: sport.label })),
+    citySlug: trainer.city.slug,
     rating: rating.rating,
     reviews: rating.reviews,
     views: rating.views,

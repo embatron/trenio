@@ -20,6 +20,8 @@ type FavoriteCard = {
   city: string;
   district?: string;
   tags?: string[];
+  sports?: Array<{ slug: string; parentSlug: string; label: string }>;
+  citySlug?: string;
   experience?: number;
   price?: number | null;
   rating: string;
@@ -70,6 +72,8 @@ function toCard(
         city: face.city,
         district: face.district,
         tags: face.tags,
+        sports: face.sports,
+        citySlug: face.citySlug,
         experience: face.experience,
         price: priceForCard(face.slug, face.price ?? 0, prices),
         rating: rating.rating,
@@ -92,6 +96,8 @@ function toCard(
       city: trainer.city.label,
       district: trainer.district,
       tags: trainer.sports.map((sport) => sport.label),
+      sports: trainer.sports.map((sport) => ({ slug: sport.slug, parentSlug: sport.parentSlug, label: sport.label })),
+      citySlug: trainer.city.slug,
       experience: trainer.experience,
       price: priceForCard(trainer.slug, trainer.priceFrom, prices),
       rating: rating.rating,
@@ -176,6 +182,8 @@ export function FavoriteCards({
                 lastName: card.lastName,
                 photo: card.photo,
                 tags: card.tags ?? [],
+                sports: card.sports,
+                citySlug: card.citySlug,
                 desc: card.desc,
                 rating: card.rating,
                 reviews: card.reviews,

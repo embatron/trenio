@@ -839,6 +839,8 @@ function Index() {
       photo: trainer.photo,
       desc: trainer.bio,
       tags: trainer.sports.map((sport) => sport.label),
+      sports: trainer.sports.map((sport) => ({ slug: sport.slug, parentSlug: sport.parentSlug, label: sport.label })),
+      citySlug: trainer.city.slug,
       rating: rating.rating,
       reviews: rating.reviews,
       views: rating.views,

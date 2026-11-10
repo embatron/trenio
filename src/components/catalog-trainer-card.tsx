@@ -6,8 +6,15 @@ import { ShareProfileButton } from "@/components/share-profile";
 import { PhotoImage } from "@/components/photo-image";
 import { TrainerName } from "@/components/trainer-name";
 import { TrainerRating } from "@/components/trainer-rating";
+import { trainerSportCityLocation } from "@/lib/catalog/catalog-sports";
 import { noteTrainerCardImpression } from "@/lib/catalog/trainer-impression-client";
 import { NEGOTIABLE_PRICE_LABEL, statedTrainerPrice } from "@/lib/catalog/trainer-price";
+
+export type TrainerSportTag = {
+  slug: string;
+  parentSlug: string;
+  label: string;
+};
 
 export type CatalogTrainerCardData = {
   slug: string;
@@ -16,10 +23,13 @@ export type CatalogTrainerCardData = {
   lastName: string;
   photo: string;
   tags: string[];
+  /** Stored sports. Each name links to that sport in `citySlug`. */
+  sports?: TrainerSportTag[];
   desc: string;
   rating: string;
   reviews: number;
   city: string;
+  citySlug?: string;
   district?: string;
   experience?: number;
   price?: number | null;
@@ -83,7 +93,9 @@ export function CatalogTrainerCard({
           </h3>
           <TrainerRating rating={trainer.rating} reviews={trainer.reviews} />
         </div>
-        <p className="trainer-card__sport">{trainer.tags.join(", ")}</p>
+        <p className="trainer-card__sport">
+          <TrainerSportTags citySlug={trainer.citySlug ?? ""} sports={trainer.sports} tags={trainer.tags} />
+        </p>
         <p className="trainer-card__price">
           {price != null ? (
             <>
@@ -104,4 +116,46 @@ export function CatalogTrainerCard({
       </div>
     </article>
   );
+}
+
+export function TrainerSportLink({
+  citySlug,
+  sport,
+  className,
+}: {
+  citySlug: string;
+  sport: TrainerSportTag;
+  className?: string;
+}) {
+  const location = trainerSportCityLocation(citySlug, sport);
+  if (!location) return <span className={className}>{sport.label}</span>;
+  if (location.to === "/city/$slug/$sport/$child") {
+    return <Link className={className} to={location.to} params={location.params}>{sport.label}</Link>;
+  }
+  if (location.to === "/city/$slug/$sport") {
+    return <Link className={className} to={location.to} params={location.params}>{sport.label}</Link>;
+  }
+  if (location.to === "/categories/$parentSlug/$childSlug") {
+    return <Link className={className} to={location.to} params={location.params}>{sport.label}</Link>;
+  }
+  return <Link className={className} to={location.to} params={location.params}>{sport.label}</Link>;
+}
+
+function TrainerSportTags({
+  citySlug,
+  sports,
+  tags,
+}: {
+  citySlug: string;
+  sports: TrainerSportTag[] | undefined;
+  tags: string[];
+}) {
+  const linked = (sports ?? []).filter((sport) => sport.slug && sport.label);
+  if (linked.length === 0) return tags.join(", ");
+  return linked.map((sport, index) => (
+    <span key={`${sport.parentSlug}-${sport.slug}-${index}`}>
+      {index > 0 ? ", " : null}
+      <TrainerSportLink citySlug={citySlug} sport={sport} />
+    </span>
+  ));
 }

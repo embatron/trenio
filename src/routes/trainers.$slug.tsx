@@ -37,7 +37,7 @@ import { recordTrainerProfileViewFn } from "@/lib/catalog/trainer-views";
 import { ReviewEditor } from "@/components/review-editor";
 import { ReviewExcerpt, ReviewHtml } from "@/components/review-html";
 import { compactReviewHtml, reviewPlainText } from "@/lib/catalog/review-html";
-import { CatalogTrainerCard, type CatalogTrainerCardData } from "@/components/catalog-trainer-card";
+import { CatalogTrainerCard, TrainerSportLink, type CatalogTrainerCardData } from "@/components/catalog-trainer-card";
 import { TrainerName } from "@/components/trainer-name";
 import { TrainerRating } from "@/components/trainer-rating";
 import { TrainerDocuments } from "@/components/trainer-documents";
@@ -69,7 +69,7 @@ type Trainer = {
   about: string[];
   sessions: string;
   taxonomy: {
-    main: Array<{ label: string; accent?: boolean }>;
+    main: Array<{ slug: string; parentSlug: string; label: string; accent?: boolean }>;
     groups: Array<{ label: string; items: string[]; brand?: boolean }>;
   };
   note: string;
@@ -148,6 +148,8 @@ function toTrainer(
     sessions: "",
     taxonomy: {
       main: trainer.sports.map((sport) => ({
+        slug: sport.slug,
+        parentSlug: sport.parentSlug,
         label: sport.label,
       })),
       groups: [
@@ -185,6 +187,8 @@ function toTrainer(
         photo: item.photo,
         desc: item.bio,
         tags: item.sports.map((sport) => sport.label),
+        sports: item.sports.map((sport) => ({ slug: sport.slug, parentSlug: sport.parentSlug, label: sport.label })),
+        citySlug: item.city.slug,
         rating: rating.rating,
         reviews: rating.reviews,
         city: item.city.label,
@@ -376,6 +380,10 @@ const CSS = `
 .profile-taxonomy__tags { display: flex; flex-wrap: wrap; gap: 8px; }
 .taxonomy-tag { padding: 7px 12px; border-radius: 999px; background: var(--light-bg); color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); line-height: 1.2; }
 .taxonomy-tag--brand { background: var(--primary); color: var(--white); }
+a.taxonomy-tag,
+a.taxonomy-tag:hover,
+a.taxonomy-tag:focus,
+a.taxonomy-tag:focus-visible { text-decoration: none; cursor: inherit; }
 .profile-note { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; font-weight: 500; }
 .profile-reach .trainer-contacts { margin-left: 0; gap: 4px; flex-wrap: wrap; }
 .profile-reach .trainer-contacts__link { width: 56px; height: 56px; }
@@ -1107,7 +1115,12 @@ function TrainerPage() {
                       <h2 className="profile-heading">Я тренирую</h2>
                       <div className="profile-taxonomy__tags">
                         {t.taxonomy.main.map((tag) => (
-                          <span key={tag.label} className="taxonomy-tag taxonomy-tag--brand">{tag.label}</span>
+                          <TrainerSportLink
+                            key={`${tag.parentSlug}-${tag.slug}`}
+                            citySlug={t.city.slug}
+                            sport={tag}
+                            className="taxonomy-tag taxonomy-tag--brand"
+                          />
                         ))}
                       </div>
                     </li>

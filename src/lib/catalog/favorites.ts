@@ -81,6 +81,8 @@ export type FavoriteTrainerFace = {
   city: string;
   district: string;
   tags: string[];
+  sports: Array<{ slug: string; parentSlug: string; label: string }>;
+  citySlug: string;
   experience: number;
   price: number | null;
 };
@@ -102,6 +104,7 @@ export const favoriteTrainerFacesFn = createServerFn({ method: "POST" })
         photos: trainerProfiles.photos,
         bio: trainerProfiles.bio,
         city: trainerProfiles.city,
+        citySlug: trainerProfiles.citySlug,
         district: trainerProfiles.district,
         experienceYears: trainerProfiles.experienceYears,
         priceFrom: trainerProfiles.priceFrom,
@@ -121,8 +124,15 @@ export const favoriteTrainerFacesFn = createServerFn({ method: "POST" })
         line: tags.join(", ") || "Тренер",
         desc: row.bio,
         city: row.city,
+        citySlug: row.citySlug,
         district: row.district,
         tags,
+        sports: (row.sports ?? []).flatMap((sport) => {
+          const slug = sport.slug?.trim() ?? "";
+          const label = sport.label?.trim() || slug;
+          if (!slug || !label) return [];
+          return [{ slug, parentSlug: sport.parentSlug?.trim() || slug, label }];
+        }),
         experience: row.experienceYears,
         price: row.priceFrom,
       };

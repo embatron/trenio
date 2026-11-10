@@ -381,7 +381,13 @@ html.is-staff-layout {
 .trainer-card__rating span { color: var(--muted); font-weight: var(--fw-ui); }
 .trainer-card__rating--empty { color: var(--muted); }
 .trainer-card__rating--empty svg { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); }
-.trainer-card__sport { margin: 0; color: var(--muted); font-size: var(--fs-caption); line-height: 1.35; font-weight: var(--fw-body); }
+.trainer-card__sport { position: relative; z-index: 2; margin: 0; color: var(--muted); font-size: var(--fs-caption); line-height: 1.35; font-weight: var(--fw-body); }
+.trainer-card__sport a {
+  position: relative; z-index: 2; display: inline-flex; align-items: center; min-height: 44px;
+  margin-block: -12px; color: inherit; text-decoration: none;
+}
+.trainer-card__sport a:hover,
+.trainer-card__sport a:focus-visible { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; }
 .trainer-card__footer { display: flex; align-items: center; justify-content: flex-start; gap: 8px; margin-top: 2px; padding-top: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
 .trainer-card__location { display: inline-flex; align-items: center; gap: 5px; min-width: 0; max-width: 100%; color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); }
 .trainer-card__location svg { flex: 0 0 auto; width: 13px; height: 13px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
