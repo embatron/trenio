@@ -61,6 +61,7 @@ A new indexable info page uses `infoPageHead` (`AboutPage`, `ContactPage`, or `W
 - A claim that the catalog checks qualifications, certificates, or safety.
 - A URL that exists only as a filter.
 - A hand-written node in a route, or a `script:ld+json` meta tag.
+- `og:site_name`. Messengers print it above `og:title`, so the site name would lead every share. The page phrase is `og:title` and `twitter:title`. The site name stays on the document `<title>`.
 - `/blog`. `/clubs` stays out of the sitemap while `CLUBS_LIST` is empty.
 
 Canonical is absolute and has no query string. Filtered and private URLs stay out of `sitemap.xml`.

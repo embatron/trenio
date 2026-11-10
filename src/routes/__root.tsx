@@ -142,7 +142,6 @@ export const Route = createRootRouteWithContext<{
       { property: "og:description", content: "Тренеры в Беларуси по виду спорта и городу." },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "ru_BY" },
-      { property: "og:site_name", content: SITE_NAME },
       { property: "og:image", content: "https://trenio.by/og.png" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },

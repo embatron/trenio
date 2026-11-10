@@ -7,7 +7,13 @@ import { fileURLToPath } from "node:url";
 import { HOME_FAQ } from "@/lib/catalog/site-faq";
 import { catalogSportById } from "@/lib/catalog/catalog-sports";
 import { cityCatalogBySlug } from "@/lib/catalog/city-pages";
-import { categorySearchDescription, trainerByPhrase, trainerSportDatives } from "@/lib/catalog/sport-taxonomy";
+import {
+  categorySearchDescription,
+  getSportTaxonomyChildInCategory,
+  getTopLevelSportCategory,
+  trainerByPhrase,
+  trainerSportDatives,
+} from "@/lib/catalog/sport-taxonomy";
 import { catalogPageHead, categoryRouteHead, cityCatalogDescription } from "@/lib/seo/catalog";
 import { seoHead } from "@/lib/seo/head";
 import {
@@ -23,6 +29,7 @@ import {
   type SeoPageKind,
 } from "@/lib/seo/pages";
 import { robotsTxt } from "@/lib/seo/robots";
+import { documentLead, SITE_NAME, siteTitle } from "@/lib/seo/site";
 import { cityIn, clipMeta } from "@/lib/seo/text";
 import { publicAssetUrl, renderSitemapXml, trainerSitemapPath } from "@/lib/seo/sitemap";
 import { trainerDocumentPhrase, trainerSeoHead } from "@/lib/seo/trainer";
@@ -45,6 +52,16 @@ function graphTypes(head: HeadWithGraph) {
   };
   for (const script of head.scripts ?? []) walk(JSON.parse(script.children));
   return found;
+}
+
+function metaContent(head: { meta: Array<Record<string, unknown>> }, key: string, value: string) {
+  const item = head.meta.find((entry) => entry[key] === value);
+  return typeof item?.content === "string" ? item.content : "";
+}
+
+function documentTitle(head: { meta: Array<Record<string, unknown>> }) {
+  const item = head.meta.find((entry) => typeof entry.title === "string" && entry.title);
+  return typeof item?.title === "string" ? item.title : "";
 }
 
 function assertKind(kind: SeoPageKind, head: HeadWithGraph) {
@@ -89,6 +106,8 @@ test("public head uses an absolute canonical and a clipped description", () => {
     ogTitle && "content" in ogTitle ? ogTitle.content : "",
     "Найти тренера по боксу",
   );
+  assert.equal(metaContent(head, "name", "twitter:title"), "Найти тренера по боксу");
+  assert.equal(head.meta.some((item) => "property" in item && item.property === "og:site_name"), false);
   assert.equal(canonical?.href, "https://trenio.by/categories/edinoborstva/boks");
   assert.ok(graph);
   assert.equal(graph.children.includes("<"), false);
@@ -132,7 +151,9 @@ test("city and category snippets use the Belarus query, not an alias dump", () =
     cityTitle && "content" in cityTitle ? cityTitle.content : "",
     "Найти тренера по боксу в Бресте",
   );
+  assert.equal(head.meta.some((item) => "property" in item && item.property === "og:site_name"), false);
   const cityOnly = catalogPageHead(brest, null);
+  assert.equal(metaContent(cityOnly, "property", "og:title"), "Найти тренера в Бресте");
   const wordmark = cityOnly.meta.find((item) => "property" in item && item.property === "og:image");
   assert.equal(
     wordmark && "content" in wordmark ? wordmark.content : "",
@@ -454,6 +475,68 @@ test("a noindex page emits no JSON-LD", () => {
     () => seoHead({ title: "Без графа", description: "Индексируемая страница.", path: "/about" }),
     /no JSON-LD/,
   );
+});
+
+test("a category and its sport each lead the share card with their own phrase", () => {
+  const parent = getTopLevelSportCategory("raketki");
+  const child = getSportTaxonomyChildInCategory("raketki", "bolshoj-tennis");
+  assert.ok(parent);
+  assert.ok(child?.titleGenitive);
+
+  const headFor = (keyword: string, aliases: string[] | undefined, path: string) => {
+    const title = siteTitle(`Найти тренера по ${keyword}`);
+    return categoryRouteHead({
+      title,
+      description: categorySearchDescription(documentLead(title), "", aliases),
+      path,
+      parentSlug: "raketki",
+      faq: [],
+      crumbs: [
+        { name: "Главная", path: "/" },
+        { name: "Категории", path: "/categories" },
+        { name: parent.label, path: "/categories/raketki" },
+      ],
+    });
+  };
+
+  const section = headFor(parent.titleGenitive, parent.aliases, "/categories/raketki");
+  const sport = headFor(child.titleGenitive, child.aliases, "/categories/raketki/bolshoj-tennis");
+  const homeDescription =
+    "Тренеры в Беларуси по виду спорта и городу. Цена, формат и контакты: индивидуально или в группе, для себя или для ребёнка.";
+
+  assert.equal(
+    documentTitle(section),
+    "Найти тренера по теннису и играм с ракеткой | Я ищу тренера на trenio.by",
+  );
+  assert.equal(metaContent(section, "property", "og:title"), "Найти тренера по теннису и играм с ракеткой");
+  assert.equal(metaContent(section, "name", "twitter:title"), "Найти тренера по теннису и играм с ракеткой");
+  assert.equal(
+    metaContent(section, "name", "description"),
+    "Найти тренера по теннису и играм с ракеткой в Беларуси. Город, цена и формат — индивидуально или в группе, для взрослых и детей.",
+  );
+  assert.equal(metaContent(section, "property", "og:description"), metaContent(section, "name", "description"));
+
+  assert.equal(
+    documentTitle(sport),
+    "Найти тренера по большому теннису | Я ищу тренера на trenio.by",
+  );
+  assert.equal(metaContent(sport, "property", "og:title"), "Найти тренера по большому теннису");
+  assert.equal(metaContent(sport, "name", "twitter:title"), "Найти тренера по большому теннису");
+  assert.equal(
+    metaContent(sport, "name", "description"),
+    "Найти тренера по большому теннису в Беларуси. Теннис. Город, цена и формат — индивидуально или в группе, для взрослых и детей.",
+  );
+  assert.equal(metaContent(sport, "property", "og:description"), metaContent(sport, "name", "description"));
+  assert.equal(metaContent(sport, "name", "twitter:description"), metaContent(sport, "name", "description"));
+
+  assert.notEqual(metaContent(section, "property", "og:title"), metaContent(sport, "property", "og:title"));
+  assert.notEqual(metaContent(section, "name", "description"), metaContent(sport, "name", "description"));
+  assert.equal(metaContent(section, "name", "description") === homeDescription, false);
+  assert.equal(metaContent(sport, "name", "description") === homeDescription, false);
+  assert.equal(metaContent(section, "property", "og:title").includes(SITE_NAME), false);
+  assert.equal(metaContent(sport, "property", "og:title").includes(SITE_NAME), false);
+  assert.equal(section.meta.some((item) => "property" in item && item.property === "og:site_name"), false);
+  assert.equal(sport.meta.some((item) => "property" in item && item.property === "og:site_name"), false);
 });
 
 test("a category without a visible FAQ block does not emit FAQPage", () => {

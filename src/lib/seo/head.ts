@@ -89,7 +89,8 @@ export function seoHead(input: SeoHeadInput) {
             { property: "og:image:alt" as const, content: SITE_NAME },
           ]),
       { property: "og:locale", content: OG_LOCALE },
-      { property: "og:site_name", content: SITE_NAME },
+      // No og:site_name. Telegram prints that tag above og:title, so the site
+      // name would lead every share. The document title still ends with SITE_NAME.
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: shareTitle },
       { name: "twitter:description", content: shareDescription },

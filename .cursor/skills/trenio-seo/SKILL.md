@@ -62,7 +62,7 @@ Leave:
 
 These are the live gaps. Repeat one only when the task touches it.
 
-- The default share image is `/og.png`: the white wordmark on `#111827`, 1200×630. Every trainer page with a photo uses `/og/trainers/{slug}.jpg` for Open Graph, the Person image, and the sitemap. The file is chosen from that trainer's photos and is a 1200×630 baseline JPEG. A category, sport, or city-and-sport page uses `/og/categories/{parent}.jpg`: the section illustration fitted whole into the same frame. Messenger titles omit the site name. The document title still ends with it.
+- The default share image is `/og.png`: the white wordmark on `#111827`, 1200×630. Every trainer page with a photo uses `/og/trainers/{slug}.jpg` for Open Graph, the Person image, and the sitemap. The file is chosen from that trainer's photos and is a 1200×630 baseline JPEG. A category, sport, or city-and-sport page uses `/og/categories/{parent}.jpg`: the section illustration fitted whole into the same frame. Messenger titles omit the site name (`og:title` and `twitter:title` are `documentLead`). Do not emit `og:site_name`: clients put that tag on the first line of the card. The document title still ends with the site name.
 - There is no blog. Do not add `/blog` until an article is actually published.
 - `/clubs` is `noindex` while `CLUBS_LIST` is empty. Index it when a published club exists, and use the `SportsActivityLocation` graph already on `/clubs/$slug`.
 - City and category pages do not emit `ItemList` of trainers. Add it only from the trainers the page actually renders.
