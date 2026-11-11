@@ -6,7 +6,7 @@ import { closeDb, getDb } from "../src/db";
 import { trainerProfiles } from "../src/db/schema";
 import { writeLog } from "../src/lib/log/logger";
 import { applyTrainerPatch, listTrainerSyncHeads, readTrainerSync } from "../src/lib/sync/apply-card";
-import { cleanHandle } from "../src/lib/sync/policy";
+import { cleanHandle, isLocalOnlyTrainer } from "../src/lib/sync/policy";
 import { fetchTrainerCard, fetchTrainerHeads, pushMarks, pushTrainerPatch } from "../src/lib/sync/remote";
 import { isTrainerStatus, syncMove, type TrainerSyncHead } from "../src/lib/sync/trainers";
 
@@ -51,7 +51,7 @@ async function main() {
   const local = new Map(localRows.map((row) => [row.handle, row]));
   const live = new Map(remote.trainers.map((row) => asHead(row)).filter((row): row is TrainerSyncHead => Boolean(row)).map((row) => [row.handle, row]));
   const pause = () => new Promise((resolve) => setTimeout(resolve, 2100));
-  const handles = [...new Set([...local.keys(), ...live.keys()])].sort();
+  const handles = [...new Set([...local.keys(), ...live.keys()])].filter((handle) => !isLocalOnlyTrainer(handle)).sort();
   const counts = { pushed: 0, pulled: 0, status: 0, marks: 0, unchanged: 0 };
   const failed: Array<{ handle: string; reason: string }> = [];
 
@@ -107,7 +107,7 @@ async function main() {
       previewToken: trainerProfiles.previewToken,
     })
     .from(trainerProfiles);
-  const marks = await pushMarks(linkRows.filter((row) => row.handle.trim()).map((row) => ({
+  const marks = await pushMarks(linkRows.filter((row) => row.handle.trim() && !isLocalOnlyTrainer(row.handle)).map((row) => ({
     handle: row.handle,
     outreachSentAt: row.outreachSentAt?.toISOString() ?? null,
     inviteSentAt: row.inviteSentAt?.toISOString() ?? null,
@@ -116,7 +116,7 @@ async function main() {
   })));
   if (marks.status === "ok") {
     for (const [handle, token] of Object.entries(marks.tokens)) {
-      if (!token) continue;
+      if (!token || isLocalOnlyTrainer(handle)) continue;
       const row = linkRows.find((item) => item.handle === handle);
       if (!row || row.previewToken) continue;
       await getDb().update(trainerProfiles).set({ previewToken: token }).where(eq(trainerProfiles.instagramHandle, handle));

@@ -6,7 +6,7 @@ import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
 import { writeLog } from "@/lib/log/logger";
 
 import type { MarkPush } from "./remote";
-import { cleanHandle, nextStamp, nextToken } from "./policy";
+import { cleanHandle, isLocalOnlyTrainer, nextStamp, nextToken } from "./policy";
 
 export type AppliedMarks = {
   applied: number;
@@ -28,7 +28,7 @@ export async function listSyncMarks() {
     })
     .from(trainerProfiles);
   return rows
-    .filter((row) => row.handle.trim())
+    .filter((row) => row.handle.trim() && !isLocalOnlyTrainer(row.handle) && !isLocalOnlyTrainer(row.slug))
     .map((row) => ({
       handle: row.handle,
       slug: row.slug,
@@ -49,7 +49,7 @@ export async function applySyncMarks(marks: MarkPush[]): Promise<AppliedMarks> {
 
   for (const mark of marks.slice(0, 200)) {
     const handle = cleanHandle(mark.handle || "");
-    if (!handle) continue;
+    if (!handle || isLocalOnlyTrainer(mark.handle || "") || isLocalOnlyTrainer(handle)) continue;
     const [row] = await db
       .select({
         id: trainerProfiles.id,

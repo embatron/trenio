@@ -16,7 +16,7 @@ Copy trainer cards, catalog status, and message marks between the laptop databas
 
 ## Result
 
-- A trainer that existed on only one side now exists on both.
+- A trainer that existed on only one side now exists on both. `test-trener` stayed on the laptop.
 - The newer card text is on both sides. The same clock kept the live card.
 - A draft was not published by the sync. A status that was already published, hidden, or archived was copied onto the draft.
 - Empty message and link marks were filled. An empty visit on the laptop was filled from the live site. A visit recorded on the laptop stayed there. Marks that were already set stayed.

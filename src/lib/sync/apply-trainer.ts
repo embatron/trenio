@@ -9,7 +9,7 @@ import { trainerProfiles } from "@/db/schema";
 import { upsertImportedTrainer } from "@/db/trainer-profiles";
 import { writeLog } from "@/lib/log/logger";
 
-import { cleanHandle, looksLikeMedia, trainerFileName } from "./policy";
+import { cleanHandle, isLocalOnlyTrainer, looksLikeMedia, trainerFileName } from "./policy";
 
 const FILE_CAP = 2_500_000;
 const TOTAL_CAP = 24_000_000;
@@ -27,6 +27,9 @@ function mediaRoots() {
 export async function applySyncedTrainer(body: { draft?: DraftFile; files?: IncomingFile[] }) {
   const draft = body.draft;
   const handle = cleanHandle(draft?.handle || "");
+  if (isLocalOnlyTrainer(draft?.handle || "") || isLocalOnlyTrainer(draft?.slug || "") || isLocalOnlyTrainer(handle)) {
+    return { ok: false as const, reason: "local" as const };
+  }
   if (!draft || !handle || !draft.sourceUrl || !draft.firstName) {
     return { ok: false as const, reason: "draft" as const };
   }

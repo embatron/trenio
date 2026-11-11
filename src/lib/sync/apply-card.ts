@@ -12,7 +12,7 @@ import { stampTrainerPublished } from "@/lib/catalog/trainer-published";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
 import { writeLog } from "@/lib/log/logger";
 
-import { cleanHandle, looksLikeMedia, nextStamp, trainerFileName } from "./policy";
+import { cleanHandle, isLocalOnlyTrainer, looksLikeMedia, nextStamp, trainerFileName } from "./policy";
 import {
   incomingCardWins,
   isTrainerStatus,
@@ -119,7 +119,7 @@ export async function listTrainerSyncHeads() {
   const rows = await getDb().select().from(trainerProfiles);
   return rows.flatMap((row) => {
     const handle = cleanHandle(row.instagramHandle);
-    if (!handle) return [];
+    if (!handle || isLocalOnlyTrainer(handle) || isLocalOnlyTrainer(row.slug)) return [];
     return [headFrom(handle, row)];
   });
 }
@@ -127,7 +127,7 @@ export async function listTrainerSyncHeads() {
 export async function readTrainerSync(handle: string) {
   await ensureTrainerDoorSchema();
   const clean = cleanHandle(handle);
-  if (!clean) return null;
+  if (!clean || isLocalOnlyTrainer(clean)) return null;
   const [row] = await getDb()
     .select()
     .from(trainerProfiles)
@@ -214,6 +214,13 @@ function acceptSyncedDoor() {
 export async function applyTrainerPatch(patch: TrainerPatch, files: IncomingFile[], tie: Tie) {
   await ensureTrainerDoorSchema();
   const handle = cleanHandle(patch.handle);
+  if (
+    isLocalOnlyTrainer(patch.handle)
+    || isLocalOnlyTrainer(handle)
+    || (patch.card ? isLocalOnlyTrainer(patch.card.slug) : false)
+  ) {
+    return { ok: false as const, reason: "local" as const };
+  }
   if (!handle || !isTrainerStatus(patch.status) || !iso(patch.updatedAt)) {
     return { ok: false as const, reason: "card" as const };
   }
@@ -223,6 +230,9 @@ export async function applyTrainerPatch(patch: TrainerPatch, files: IncomingFile
     .from(trainerProfiles)
     .where(eq(trainerProfiles.instagramHandle, handle))
     .limit(1);
+  if (existing && isLocalOnlyTrainer(existing.slug)) {
+    return { ok: false as const, reason: "local" as const };
+  }
 
   if (!existing) {
     if (!patch.card) return { ok: false as const, reason: "missing" as const };

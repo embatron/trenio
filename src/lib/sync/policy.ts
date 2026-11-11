@@ -17,6 +17,17 @@ export function cleanHandle(value: string) {
   return instagramProfileSlug(value);
 }
 
+/**
+ * The laptop fixture `test-trener`. Cleaning drops the hyphen, so both spellings match.
+ * Sync must not copy this card, its photos, or its marks in either direction.
+ */
+const LOCAL_ONLY_HANDLES = new Set(["testtrener"]);
+
+export function isLocalOnlyTrainer(value: string) {
+  const raw = value.trim().toLowerCase();
+  return raw === "test-trener" || LOCAL_ONLY_HANDLES.has(cleanHandle(value));
+}
+
 /** A new timestamp fills an empty mark. An existing mark stays. */
 export function nextStamp(current: Date | null, incoming: unknown): Date | null {
   if (typeof incoming !== "string" || !incoming.trim()) return null;

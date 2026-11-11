@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { looksLikeMedia, nextStamp, nextToken, syncAuthorized, trainerFileName } from "./policy";
+import { isLocalOnlyTrainer, looksLikeMedia, nextStamp, nextToken, syncAuthorized, trainerFileName } from "./policy";
 
 test("the sync secret must match and stay at least 32 characters", () => {
   const secret = "a".repeat(32);
@@ -22,6 +22,14 @@ test("a short code is stored only when the card has none", () => {
   assert.equal(nextToken("abcdefgh", "23456789"), null);
   assert.equal(nextToken(null, "23456789"), "23456789");
   assert.equal(nextToken(null, "short"), null);
+});
+
+test("the local test trainer stays off the sync", () => {
+  assert.equal(isLocalOnlyTrainer("test-trener"), true);
+  assert.equal(isLocalOnlyTrainer("Test-Trener"), true);
+  assert.equal(isLocalOnlyTrainer("testtrener"), true);
+  assert.equal(isLocalOnlyTrainer("test_trener"), false);
+  assert.equal(isLocalOnlyTrainer("anna"), false);
 });
 
 test("a trainer file stays under that handle", () => {

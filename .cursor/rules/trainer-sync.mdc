@@ -1,0 +1,29 @@
+---
+description: The local test-trener card never leaves the laptop through trainer sync
+alwaysApply: true
+---
+
+# Trainer sync
+
+`/sync-trainers` copies trainer cards, catalog status, and message marks between the laptop and the live site. The local fixture `test-trener` is not part of that copy.
+
+## Hold back
+
+`test-trener` is the laptop's own trainer account. Its slug is `test-trener`. The sync handle drops the hyphen and becomes `testtrener`. Both names are the same card.
+
+Use `isLocalOnlyTrainer` from `src/lib/sync/policy.ts` before a list, a push, a pull, or a mark update. The sync API refuses the same card, so a second client cannot write it either.
+
+## Do
+
+```ts
+const handles = [...local.keys(), ...live.keys()].filter((handle) => !isLocalOnlyTrainer(handle));
+```
+
+## Do not
+
+```ts
+// wrong: the fixture rides along with the catalog
+await pushTrainerPatch(patchFrom(local.get("test-trener")));
+```
+
+Do not delete the local card to keep it off the live site. Leave it on the laptop and skip it.
