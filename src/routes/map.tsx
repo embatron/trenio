@@ -947,7 +947,9 @@ const PAGE_CSS = `
 .map-people .trainer-card__sport { font-size: var(--fs-caption); line-height: 1.3; font-weight: var(--fw-body); }
 .map-people .trainer-card__price { font-size: 13px; }
 .map-people .trainer-card__footer { margin-top: 0; padding-top: 8px; }
-.map-people .trainer-card__actions { top: 2px; right: 2px; gap: 0; }
+.map-people .trainer-card__actions { top: 2px; right: 2px; gap: 0; opacity: 0.85; transition: opacity 0.18s ease; }
+.map-people .trainer-card:hover .trainer-card__actions,
+.map-people .trainer-card:focus-within .trainer-card__actions { opacity: 1; }
 .map-people .trainer-card__like,
 .map-people .trainer-card__save,
 .map-people .trainer-card__write,
