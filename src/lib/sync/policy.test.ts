@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { isLocalOnlyTrainer, looksLikeMedia, nextStamp, nextToken, syncAuthorized, trainerFileName } from "./policy";
+import { isLocalOnlyRow, isLocalOnlyTrainer, localOnlyHandles, looksLikeMedia, nextStamp, nextToken, syncAuthorized, trainerFileName } from "./policy";
 
 test("the sync secret must match and stay at least 32 characters", () => {
   const secret = "a".repeat(32);
@@ -30,6 +30,12 @@ test("the local test trainer stays off the sync", () => {
   assert.equal(isLocalOnlyTrainer("testtrener"), true);
   assert.equal(isLocalOnlyTrainer("test_trener"), false);
   assert.equal(isLocalOnlyTrainer("anna"), false);
+  assert.equal(isLocalOnlyRow({ slug: "test-trener", handle: "fixturehandle" }), true);
+  assert.equal(isLocalOnlyRow({ slug: "anna", handle: "anna" }), false);
+  assert.deepEqual([...localOnlyHandles([
+    { slug: "test-trener", handle: "fixturehandle" },
+    { slug: "anna", handle: "anna" },
+  ])], ["fixturehandle"]);
 });
 
 test("a trainer file stays under that handle", () => {

@@ -9,9 +9,9 @@ alwaysApply: true
 
 ## Hold back
 
-`test-trener` is the laptop's own trainer account. Its slug is `test-trener`. The sync handle drops the hyphen and becomes `testtrener`. Both names are the same card.
+`test-trener` is the laptop's own trainer account. Its slug is `test-trener`. The names `test-trener` and `testtrener` are the same card. The Instagram handle on that row may be different, and that handle stays off the sync too.
 
-Use `isLocalOnlyTrainer` from `src/lib/sync/policy.ts` before a list, a push, a pull, or a mark update. The sync API refuses the same card, so a second client cannot write it either.
+Use `isLocalOnlyTrainer` and `isLocalOnlyRow` from `src/lib/sync/policy.ts` before a list, a push, a pull, or a mark update. The sync API refuses the same card, so a second client cannot write it either.
 
 ## Do
 

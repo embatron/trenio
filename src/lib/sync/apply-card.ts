@@ -133,7 +133,7 @@ export async function readTrainerSync(handle: string) {
     .from(trainerProfiles)
     .where(eq(trainerProfiles.instagramHandle, clean))
     .limit(1);
-  if (!row) return null;
+  if (!row || isLocalOnlyTrainer(row.slug)) return null;
   return { head: headFrom(clean, row), card: cardFromRow(row), files: filesFor(clean) };
 }
 

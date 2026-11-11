@@ -6,7 +6,7 @@ import { closeDb, getDb } from "../src/db";
 import { trainerProfiles } from "../src/db/schema";
 import { writeLog } from "../src/lib/log/logger";
 import { applyTrainerPatch, listTrainerSyncHeads, readTrainerSync } from "../src/lib/sync/apply-card";
-import { cleanHandle, isLocalOnlyTrainer } from "../src/lib/sync/policy";
+import { cleanHandle, isLocalOnlyRow, isLocalOnlyTrainer, localOnlyHandles } from "../src/lib/sync/policy";
 import { fetchTrainerCard, fetchTrainerHeads, pushMarks, pushTrainerPatch } from "../src/lib/sync/remote";
 import { isTrainerStatus, syncMove, type TrainerSyncHead } from "../src/lib/sync/trainers";
 
@@ -48,10 +48,16 @@ async function main() {
   }
   if (remote.status !== "ok") throw new Error("The live site did not send the trainer list.");
 
+  const reservedRows = await getDb()
+    .select({ handle: trainerProfiles.instagramHandle, slug: trainerProfiles.slug })
+    .from(trainerProfiles);
+  const reserved = localOnlyHandles(reservedRows);
   const local = new Map(localRows.map((row) => [row.handle, row]));
   const live = new Map(remote.trainers.map((row) => asHead(row)).filter((row): row is TrainerSyncHead => Boolean(row)).map((row) => [row.handle, row]));
   const pause = () => new Promise((resolve) => setTimeout(resolve, 2100));
-  const handles = [...new Set([...local.keys(), ...live.keys()])].filter((handle) => !isLocalOnlyTrainer(handle)).sort();
+  const handles = [...new Set([...local.keys(), ...live.keys()])]
+    .filter((handle) => !isLocalOnlyTrainer(handle) && !reserved.has(handle))
+    .sort();
   const counts = { pushed: 0, pulled: 0, status: 0, marks: 0, unchanged: 0 };
   const failed: Array<{ handle: string; reason: string }> = [];
 
@@ -102,12 +108,13 @@ async function main() {
   const linkRows = await getDb()
     .select({
       handle: trainerProfiles.instagramHandle,
+      slug: trainerProfiles.slug,
       outreachSentAt: trainerProfiles.outreachSentAt,
       inviteSentAt: trainerProfiles.inviteSentAt,
       previewToken: trainerProfiles.previewToken,
     })
     .from(trainerProfiles);
-  const marks = await pushMarks(linkRows.filter((row) => row.handle.trim() && !isLocalOnlyTrainer(row.handle)).map((row) => ({
+  const marks = await pushMarks(linkRows.filter((row) => row.handle.trim() && !isLocalOnlyRow(row)).map((row) => ({
     handle: row.handle,
     outreachSentAt: row.outreachSentAt?.toISOString() ?? null,
     inviteSentAt: row.inviteSentAt?.toISOString() ?? null,

@@ -6,7 +6,7 @@ import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
 import { writeLog } from "@/lib/log/logger";
 
 import type { MarkPush } from "./remote";
-import { cleanHandle, isLocalOnlyTrainer, nextStamp, nextToken } from "./policy";
+import { cleanHandle, isLocalOnlyRow, isLocalOnlyTrainer, nextStamp, nextToken } from "./policy";
 
 export type AppliedMarks = {
   applied: number;
@@ -28,7 +28,7 @@ export async function listSyncMarks() {
     })
     .from(trainerProfiles);
   return rows
-    .filter((row) => row.handle.trim() && !isLocalOnlyTrainer(row.handle) && !isLocalOnlyTrainer(row.slug))
+    .filter((row) => row.handle.trim() && !isLocalOnlyRow(row))
     .map((row) => ({
       handle: row.handle,
       slug: row.slug,
@@ -54,6 +54,7 @@ export async function applySyncMarks(marks: MarkPush[]): Promise<AppliedMarks> {
       .select({
         id: trainerProfiles.id,
         handle: trainerProfiles.instagramHandle,
+        slug: trainerProfiles.slug,
         outreachSentAt: trainerProfiles.outreachSentAt,
         inviteSentAt: trainerProfiles.inviteSentAt,
         previewToken: trainerProfiles.previewToken,
@@ -65,6 +66,7 @@ export async function applySyncMarks(marks: MarkPush[]): Promise<AppliedMarks> {
       missing.push(handle);
       continue;
     }
+    if (isLocalOnlyRow(row)) continue;
     // doorEnteredAt stays out of this patch. Opening /hi/{code} on this host is the only writer.
     const patch: {
       outreachSentAt?: Date;

@@ -28,7 +28,7 @@ Instagram outreach runs on the laptop, so the laptop database and the live site 
 - Publish a draft. A draft stays a draft. A status that is already published, hidden, or archived is copied onto the draft side.
 - Replace a message mark, a link mark, or a visit mark that is already set. An empty message or link mark is filled from the side that has it.
 - Copy a visit mark from the laptop to the live site. The visit is written only when `/hi/{code}` is opened on that host. The laptop fills an empty visit from the live site.
-- Copy `test-trener`. That card is the laptop fixture. Its sync handle is `testtrener`. Skip the card, the photos, and the marks in both directions. The rule is `.cursor/rules/trainer-sync.mdc`.
+- Copy `test-trener`. That card is the laptop fixture. Skip the row whose slug is `test-trener`, including a different Instagram handle on that row, its photos, and its marks, in both directions. The rule is `.cursor/rules/trainer-sync.mdc`.
 - Replace the live short link. The laptop adopts that code when its own is empty.
 - Print the card text, a phone, an email, or a token.
 

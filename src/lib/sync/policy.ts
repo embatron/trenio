@@ -28,6 +28,21 @@ export function isLocalOnlyTrainer(value: string) {
   return raw === "test-trener" || LOCAL_ONLY_HANDLES.has(cleanHandle(value));
 }
 
+/** The fixture row, even when its Instagram handle is not `test-trener`. */
+export function isLocalOnlyRow(row: { slug?: string | null; handle?: string | null }) {
+  return isLocalOnlyTrainer(row.slug ?? "") || isLocalOnlyTrainer(row.handle ?? "");
+}
+
+/** Instagram handles that belong to the laptop fixture and must stay out of the sync set. */
+export function localOnlyHandles(rows: Array<{ slug?: string | null; handle?: string | null }>) {
+  return new Set(
+    rows
+      .filter((row) => isLocalOnlyRow(row))
+      .map((row) => cleanHandle(row.handle ?? ""))
+      .filter(Boolean),
+  );
+}
+
 /** A new timestamp fills an empty mark. An existing mark stays. */
 export function nextStamp(current: Date | null, incoming: unknown): Date | null {
   if (typeof incoming !== "string" || !incoming.trim()) return null;
