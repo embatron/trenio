@@ -264,28 +264,57 @@ export function CabinetShell({
   const pageSig = items.map((item) => item.pages?.map((page) => `${page.id}:${page.badge ?? ""}`).join(",") ?? "").join("|");
   const [currentSection, setCurrentSection] = useState<string | null>(null);
   const spyPause = useRef(0);
+  const syncSection = useRef<() => void>(() => {});
   useEffect(() => {
     navRef.current?.querySelector(".is-active")?.scrollIntoView({ inline: "nearest", block: "nearest" });
   }, [active]);
   useEffect(() => {
     const ids = sectionKey ? sectionKey.split("|") : [];
-    setCurrentSection(ids[0] ?? null);
-    const nodes = ids
-      .map((id) => document.getElementById(id))
-      .filter((node): node is HTMLElement => node != null);
-    if (nodes.length === 0) return;
-    const seen = new Set<string>();
-    const observer = new IntersectionObserver((entries) => {
-      if (spyPause.current) return;
-      for (const entry of entries) {
-        if (entry.isIntersecting) seen.add(entry.target.id);
-        else seen.delete(entry.target.id);
+    if (!ids.length) {
+      setCurrentSection(null);
+      syncSection.current = () => {};
+      return;
+    }
+    let frame = 0;
+    const apply = () => {
+      const header = document.getElementById("site-header");
+      const line = (header ? header.getBoundingClientRect().bottom : 0) + 20;
+      let next = ids[0];
+      for (const id of ids) {
+        const node = document.getElementById(id);
+        if (node && node.getBoundingClientRect().top <= line) next = id;
       }
-      const next = ids.find((id) => seen.has(id));
-      if (next) setCurrentSection(next);
-    }, { rootMargin: "-18% 0px -55% 0px", threshold: [0, 0.25] });
-    for (const node of nodes) observer.observe(node);
-    return () => observer.disconnect();
+      const atEnd = window.scrollY > 8 && window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+      if (atEnd) {
+        for (const id of ids) {
+          const node = document.getElementById(id);
+          if (!node) continue;
+          const rect = node.getBoundingClientRect();
+          if (rect.bottom > line && rect.top < window.innerHeight) next = id;
+        }
+      }
+      setCurrentSection((current) => (current === next ? current : next));
+    };
+    syncSection.current = () => {
+      if (spyPause.current) return;
+      apply();
+    };
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        syncSection.current();
+      });
+    };
+    apply();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      syncSection.current = () => {};
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
   }, [sectionKey]);
   useLayoutEffect(() => {
     const root = navEl.current;
@@ -311,19 +340,25 @@ export function CabinetShell({
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const narrow = window.matchMedia("(max-width: 960px)").matches;
     const header = document.getElementById("site-header");
-    const headerH = header ? Math.ceil(header.getBoundingClientRect().height) : 96;
-    const sideH = narrow && sideRef.current ? Math.ceil(sideRef.current.getBoundingClientRect().height) : 0;
-    const top = Math.max(0, window.scrollY + target.getBoundingClientRect().top - headerH - sideH - 16);
-    const token = ++spyPause.current;
-    const release = () => {
-      window.setTimeout(() => {
-        if (spyPause.current === token) spyPause.current = 0;
-      }, 80);
+    const destination = () => {
+      const headerH = header ? Math.ceil(header.getBoundingClientRect().height) : 96;
+      const sideH = narrow && sideRef.current ? Math.ceil(sideRef.current.getBoundingClientRect().height) : 0;
+      return Math.max(0, window.scrollY + target.getBoundingClientRect().top - headerH - sideH - 16);
     };
+    let top = destination();
     if (header && top > 8) {
       header.classList.add("is-scrolled");
       if (!document.getElementById("search-dock-sentinel")) document.body.classList.add("is-search-docked");
+      top = destination();
     }
+    const token = ++spyPause.current;
+    const release = () => {
+      window.setTimeout(() => {
+        if (spyPause.current !== token) return;
+        spyPause.current = 0;
+        syncSection.current();
+      }, 80);
+    };
     if (reduce || Math.abs(top - window.scrollY) < 2) {
       window.scrollTo(0, top);
       release();
