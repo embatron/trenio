@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  type AnyPgColumn,
   bigint,
   check,
   index,
@@ -65,6 +66,8 @@ export const messages = pgTable(
       .references(() => users.id, { onDelete: "restrict" }),
     body: text("body").notNull(),
     clientId: uuid("client_id").notNull(),
+    /** The message this one quotes. Empty when it is not a reply. */
+    replyToId: bigint("reply_to_id", { mode: "number" }).references((): AnyPgColumn => messages.id, { onDelete: "set null" }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     editedAt: timestamp("edited_at", { withTimezone: true }),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
@@ -72,6 +75,7 @@ export const messages = pgTable(
   (table) => [
     uniqueIndex("messages_conversation_client_unique").on(table.conversationId, table.clientId),
     index("messages_conversation_created_idx").on(table.conversationId, table.createdAt.desc()),
+    index("messages_reply_to_idx").on(table.replyToId),
     check("messages_body_len", sql`char_length(btrim(${table.body})) <= 12000`),
   ],
 );

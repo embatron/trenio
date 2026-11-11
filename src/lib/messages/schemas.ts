@@ -46,6 +46,7 @@ export const messageCursorSchema = z.object({
 export const listConversationsSchema = z.object({
   view: z.enum(["own", "inbox", "staff"], { message: "Неизвестная лента." }),
   cursor: conversationCursorSchema.optional(),
+  query: z.string().trim().max(80, "Слишком длинный запрос.").optional(),
 });
 
 export const listMessagesSchema = z.object({
@@ -64,6 +65,7 @@ export const sendMessageSchema = z
     body: z.string().trim().max(MESSAGE_HTML_MAX_LENGTH, "Сообщение слишком длинное.").default(""),
     clientId: z.string().uuid("Некорректный идентификатор сообщения."),
     attachmentIds: z.array(z.string().uuid()).max(MESSAGE_ATTACHMENT_MAX_COUNT, "Можно прикрепить не больше 9 файлов.").default([]),
+    replyToId: z.number().int().positive().optional(),
   })
   .refine((value) => Boolean(value.conversationId || value.trainerProfileSlug), {
     message: "Не указана переписка.",
@@ -78,6 +80,11 @@ export const uploadMessageFileSchema = z.object({
   clientId: z.string().uuid(),
   fileName: z.string().trim().min(1, "Укажите имя файла.").max(180, "Имя файла слишком длинное."),
   dataUrl: z.string().min(1, "Файл не прочитан.").max(2_900_000, "Файл больше 2 МБ."),
+});
+
+export const editMessageSchema = z.object({
+  messageId: z.number().int().positive(),
+  body: z.string().trim().min(1, "Введите сообщение.").max(MESSAGE_HTML_MAX_LENGTH, "Сообщение слишком длинное."),
 });
 
 export const markConversationReadSchema = z.object({
@@ -144,6 +151,11 @@ export type ConversationListResult = {
   total?: number;
 };
 
+export type MessageQuoteDto = {
+  id: number;
+  preview: string;
+};
+
 export type MessageAttachmentDto = {
   id: string;
   name: string;
@@ -159,6 +171,10 @@ export type MessageDto = {
   body: string;
   clientId: string;
   createdAt: string;
+  editedAt: string | null;
+  /** The sender may still change the text. */
+  canEdit: boolean;
+  replyTo: MessageQuoteDto | null;
   deleted: boolean;
   mine: boolean;
   /** Client side of the thread is turquoise. The profile side is coral. */

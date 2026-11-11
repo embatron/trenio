@@ -70,6 +70,9 @@ export function MessageBubble({
   message,
   pending,
   onRetry,
+  onQuote,
+  onEdit,
+  onFocusQuote,
 }: {
   message: MessageDto & {
     status?: "sending" | "failed";
@@ -78,6 +81,9 @@ export function MessageBubble({
   };
   pending?: boolean;
   onRetry?: (message: MessageDto) => void;
+  onQuote?: () => void;
+  onEdit?: () => void;
+  onFocusQuote?: (id: number) => void;
 }) {
   const [zoom, setZoom] = useState<{ src: string; name: string } | null>(null);
   const mine = message.mine;
@@ -95,6 +101,12 @@ export function MessageBubble({
   return (
     <div className={`direct-row${mine ? " is-mine" : ""}`}>
       <div className={`direct-bubble is-${message.side}${mine ? " is-mine" : ""}${message.deleted ? " is-deleted" : ""}`}>
+        {!message.deleted && message.replyTo ? (
+          <button type="button" className="direct-quote" onClick={() => onFocusQuote?.(message.replyTo!.id)}>
+            <strong>Цитата</strong>
+            <span>{message.replyTo.preview}</span>
+          </button>
+        ) : null}
         {message.deleted ? <p>Сообщение удалено</p> : message.body ? <ReviewHtml className="direct-bubble__text" html={message.body} /> : null}
         {!message.deleted && message.attachments?.length ? (
           <div className="direct-files">
@@ -137,8 +149,15 @@ export function MessageBubble({
         ) : null}
         <div className="direct-bubble__meta">
           <time dateTime={message.createdAt}>{timeLabel(message.createdAt)}</time>
+          {message.editedAt ? <span className="direct-bubble__state">изменено</span> : null}
           {receipt ? <span className="direct-bubble__state">{receipt}</span> : null}
         </div>
+        {!message.deleted && (onQuote || onEdit) ? (
+          <div className="direct-bubble__actions">
+            {onQuote ? <button type="button" onClick={onQuote}>Ответить</button> : null}
+            {onEdit ? <button type="button" onClick={onEdit}>Изменить</button> : null}
+          </div>
+        ) : null}
         {failed ? (
           <button type="button" className="direct-bubble__retry" onClick={() => onRetry?.(message)}>
             Не отправилось. Повторить

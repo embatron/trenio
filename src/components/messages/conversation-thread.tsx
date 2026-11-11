@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { UserAvatar } from "@/components/user-avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { reviewTextLength } from "@/lib/catalog/review-html";
-import { REPORT_COMMENT_MAX_LENGTH, REPORT_REASONS, type MessageDto, type ThreadResult } from "@/lib/messages/schemas";
+import { REPORT_COMMENT_MAX_LENGTH, REPORT_REASONS, messagePreview, type MessageDto, type ThreadResult } from "@/lib/messages/schemas";
 import { firstUnreadMessageId, messageScrollTop } from "@/lib/messages/thread-scroll";
 
 function dayKey(iso: string) {
@@ -67,6 +67,7 @@ export function ConversationThread({
   loadingEarlier,
   onEarlier,
   onSend,
+  onEdit,
   onRetry,
   onReport,
   onBlock,
@@ -84,7 +85,8 @@ export function ConversationThread({
   hasEarlier: boolean;
   loadingEarlier: boolean;
   onEarlier: () => void;
-  onSend: (body: string, files: ComposerFile[]) => Promise<void>;
+  onSend: (body: string, files: ComposerFile[], replyToId?: number) => Promise<void>;
+  onEdit: (messageId: number, body: string) => Promise<void>;
   onRetry: (message: ThreadMessage) => void;
   onReport: (reason: (typeof REPORT_REASONS)[number]["id"], comment: string) => Promise<void>;
   onBlock: () => void;
@@ -96,6 +98,12 @@ export function ConversationThread({
 }) {
   const mobile = useIsMobile();
   const threadRoot = useRef<HTMLDivElement>(null);
+  const [reply, setReply] = useState<{ id: number; preview: string } | null>(null);
+  const [editing, setEditing] = useState<{ id: number; body: string } | null>(null);
+  useEffect(() => {
+    setReply(null);
+    setEditing(null);
+  }, [thread?.conversationId]);
   const [reportOpen, setReportOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
@@ -482,16 +490,46 @@ export function ConversationThread({
               return (
                 <div key={message.clientId || message.id} data-message-id={message.id}>
                   {split ? <p className="direct-day">{dayLabel(message.createdAt)}</p> : null}
-                  <MessageBubble message={message} onRetry={onRetry} />
+                  <MessageBubble
+                    message={message}
+                    onRetry={onRetry}
+                    onQuote={thread?.canWrite && !message.deleted && !message.status ? () => {
+                      setEditing(null);
+                      setReply({ id: message.id, preview: messagePreview(message.body) || "Вложение" });
+                    } : undefined}
+                    onEdit={thread?.canWrite && message.canEdit && message.body && !message.status ? () => {
+                      setReply(null);
+                      setEditing({ id: message.id, body: message.body });
+                    } : undefined}
+                    onFocusQuote={(id) => {
+                      const node = threadRoot.current?.querySelector(`[data-message-id="${id}"]`);
+                      if (!(node instanceof HTMLElement)) return;
+                      node.scrollIntoView({ block: "center", behavior: "smooth" });
+                    }}
+                  />
                 </div>
               );
             })}
           </div>
           <MessageComposer
+            key={`${thread.conversationId}:${editing?.id ?? "new"}`}
             limit={thread.composeLimit || 4000}
             disabled={!thread.canWrite || busy}
             hint={hint}
-            onSend={onSend}
+            editing={Boolean(editing)}
+            initialHtml={editing?.body ?? ""}
+            reply={reply}
+            onCancelReply={() => setReply(null)}
+            onCancelEdit={() => setEditing(null)}
+            onSend={async (body, files) => {
+              if (editing) {
+                await onEdit(editing.id, body);
+                setEditing(null);
+                return;
+              }
+              await onSend(body, files, reply?.id);
+              setReply(null);
+            }}
           />
           </div>
         </>

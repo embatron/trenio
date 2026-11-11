@@ -44,6 +44,8 @@ export function ConversationList({
   loadingMore,
   onMore,
   onOpen,
+  query = "",
+  onQuery,
 }: {
   view: "own" | "inbox" | "staff";
   items: ConversationListItem[];
@@ -54,10 +56,25 @@ export function ConversationList({
   loadingMore: boolean;
   onMore: () => void;
   onOpen?: (id: string) => void;
+  query?: string;
+  onQuery?: (value: string) => void;
 }) {
+  const searching = query.trim().length >= 2;
   return (
     <div className="direct-list">
       <h2>Сообщения</h2>
+      {onQuery ? (
+        <label className="direct-search">
+          <span className="direct-search__label">Поиск</span>
+          <input
+            type="search"
+            value={query}
+            placeholder="Имя или текст"
+            enterKeyHint="search"
+            onChange={(event) => onQuery(event.target.value)}
+          />
+        </label>
+      ) : null}
       {loading ? (
         <div className="direct-skeletons" aria-hidden="true">
           <span /><span /><span />
@@ -65,7 +82,7 @@ export function ConversationList({
       ) : error ? (
         <p className="direct-empty">{error}</p>
       ) : items.length === 0 ? (
-        <p className="direct-empty">{view === "own" ? "Сообщений пока нет — напишите тренеру с его карточки" : view === "staff" ? "Переписок пока нет" : "Сообщений пока нет"}</p>
+        <p className="direct-empty">{searching ? "Ничего не найдено" : view === "own" ? "Сообщений пока нет — напишите тренеру с его карточки" : view === "staff" ? "Переписок пока нет" : "Сообщений пока нет"}</p>
       ) : (
         <ul>
           {items.map((item) => {

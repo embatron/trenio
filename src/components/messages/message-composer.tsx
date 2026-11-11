@@ -22,14 +22,24 @@ export function MessageComposer({
   limit,
   disabled,
   hint,
+  editing = false,
+  initialHtml = "",
+  reply,
+  onCancelReply,
+  onCancelEdit,
   onSend,
 }: {
   limit: number;
   disabled: boolean;
   hint?: string | null;
+  editing?: boolean;
+  initialHtml?: string;
+  reply?: { preview: string } | null;
+  onCancelReply?: () => void;
+  onCancelEdit?: () => void;
   onSend: (body: string, files: ComposerFile[]) => Promise<void>;
 }) {
-  const [html, setHtml] = useState("");
+  const [html, setHtml] = useState(initialHtml);
   const [files, setFiles] = useState<ComposerFile[]>([]);
   const [fileError, setFileError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -104,6 +114,18 @@ export function MessageComposer({
     >
       {hint ? <p className="direct-composer__hint">{hint}</p> : null}
       {fileError ? <p className="direct-composer__hint">{fileError}</p> : null}
+      {reply ? (
+        <div className="direct-banner">
+          <span>Ответ: {reply.preview}</span>
+          <button type="button" onClick={onCancelReply} aria-label="Убрать цитату">×</button>
+        </div>
+      ) : null}
+      {editing ? (
+        <div className="direct-banner">
+          <span>Редактирование</span>
+          <button type="button" onClick={onCancelEdit} aria-label="Отменить правку">×</button>
+        </div>
+      ) : null}
       <div className="direct-composer__box">
         <MessageEditor
           value={html}
@@ -130,7 +152,7 @@ export function MessageComposer({
             className="direct-composer__attach"
             aria-label="Прикрепить файл"
             title="Прикрепить файл или вставить скриншот (Ctrl+V)"
-            disabled={disabled || busy}
+            disabled={disabled || busy || editing}
             onClick={() => input.current?.click()}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -150,7 +172,7 @@ export function MessageComposer({
           />
           <p className={`direct-composer__count${over ? " is-over" : ""}`}>{length}/{max}</p>
           <button type="submit" className="direct-composer__send" title="Ctrl+Enter или ⌘+Enter" disabled={disabled || busy || over || empty}>
-            {busy ? "…" : "Отправить"}
+            {busy ? "…" : editing ? "Сохранить" : "Отправить"}
           </button>
         </div>
       </div>

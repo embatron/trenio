@@ -30,6 +30,7 @@ import {
 import { removeMessageFile, writeMessageFile, writeMessagePreview } from "@/lib/messages/attachment-store";
 import { logCaught } from "@/lib/log/logger";
 import { notifyStaffAboutReport, scheduleMessageNotification } from "@/lib/messages/notify";
+import { messageEditable, messageSearchPattern, pickPairThread } from "@/lib/messages/pair";
 
 const hostUsers = alias(users, "conversation_hosts");
 import {
@@ -48,6 +49,7 @@ import {
   type MessageAttachmentDto,
   type MessageCursor,
   type MessageDto,
+  type MessageQuoteDto,
   type MessagingSummary,
   type ReportRow,
   type ThreadResult,
@@ -464,11 +466,86 @@ async function openOrCreate(actorId: string, profile: ProfileRow) {
   }
 }
 
+async function messageCounts(ids: string[]) {
+  const counts = new Map<string, number>();
+  if (ids.length === 0) return counts;
+  const rows = await getDb()
+    .select({
+      conversationId: messages.conversationId,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(messages)
+    .where(inArray(messages.conversationId, ids))
+    .groupBy(messages.conversationId);
+  for (const row of rows) counts.set(row.conversationId, Number(row.count));
+  return counts;
+}
+
+/** The same two accounts already share a thread, including the portal welcome. */
+async function openExistingPair(actorId: string, profile: ProfileRow) {
+  const ownerId = profile.ownerUserId;
+  if (!ownerId || ownerId === actorId) return null;
+  const rows = await getDb()
+    .select({
+      id: conversations.id,
+      trainerProfileId: conversations.trainerProfileId,
+      lastMessageAt: conversations.lastMessageAt,
+      createdAt: conversations.createdAt,
+      userHiddenAt: conversations.userHiddenAt,
+    })
+    .from(conversations)
+    .leftJoin(trainerProfiles, eq(trainerProfiles.id, conversations.trainerProfileId))
+    .where(and(
+      eq(conversations.status, "open"),
+      or(
+        and(
+          eq(conversations.userId, actorId),
+          or(eq(conversations.hostUserId, ownerId), eq(trainerProfiles.ownerUserId, ownerId)),
+        ),
+        and(
+          eq(conversations.userId, ownerId),
+          or(eq(conversations.hostUserId, actorId), eq(trainerProfiles.ownerUserId, actorId)),
+        ),
+      ),
+    ));
+  const counts = await messageCounts(rows.map((row) => row.id));
+  const picked = pickPairThread(
+    rows.map((row) => ({
+      id: row.id,
+      trainerProfileId: row.trainerProfileId,
+      messages: counts.get(row.id) ?? 0,
+      activityAt: (row.lastMessageAt ?? row.createdAt).getTime(),
+    })),
+    profile.id,
+  );
+  if (!picked) return null;
+  if (picked.dropIds.length > 0) {
+    const [files, reports] = await Promise.all([
+      getDb().select({ conversationId: messageAttachments.conversationId }).from(messageAttachments).where(inArray(messageAttachments.conversationId, picked.dropIds)),
+      getDb().select({ conversationId: messageReports.conversationId }).from(messageReports).where(inArray(messageReports.conversationId, picked.dropIds)),
+    ]);
+    const busy = new Set([...files, ...reports].map((row) => row.conversationId));
+    const safe = picked.dropIds.filter((id) => !busy.has(id));
+    if (safe.length > 0) {
+      await getDb().delete(conversations).where(inArray(conversations.id, safe)).catch((error) => {
+        logCaught("message", "message.ensure", error, { target: picked.keepId });
+      });
+    }
+  }
+  const kept = rows.find((row) => row.id === picked.keepId);
+  if (kept?.userHiddenAt) {
+    await getDb().update(conversations).set({ userHiddenAt: null }).where(eq(conversations.id, kept.id));
+  }
+  return { id: picked.keepId, dropped: picked.dropIds.length };
+}
+
 export async function ensureConversation(actor: MessageActor, trainerProfileSlug: string) {
   const profile = await profileBySlug(trainerProfileSlug);
   if (!profile) throw new AuthError("Профиль не найден.", "VALIDATION");
+  const paired = await openExistingPair(actor.id, profile);
+  if (paired) return { conversationId: paired.id, dropped: paired.dropped };
   const conversation = await openOrCreate(actor.id, profile);
-  return { conversationId: conversation.id };
+  return { conversationId: conversation.id, dropped: 0 };
 }
 
 async function attachmentDtos(messageIds: number[]) {
@@ -499,6 +576,23 @@ async function attachmentDtos(messageIds: number[]) {
   return grouped;
 }
 
+function quotePreview(body: string, deleted: boolean) {
+  if (deleted) return "Сообщение удалено";
+  return messagePreview(body) || "Вложение";
+}
+
+async function quotesById(ids: number[]) {
+  const unique = [...new Set(ids)];
+  const map = new Map<number, { id: number; body: string; deletedAt: Date | null }>();
+  if (unique.length === 0) return map;
+  const rows = await getDb()
+    .select({ id: messages.id, body: messages.body, deletedAt: messages.deletedAt })
+    .from(messages)
+    .where(inArray(messages.id, unique));
+  for (const row of rows) map.set(asNumber(row.id), { id: asNumber(row.id), body: row.body, deletedAt: row.deletedAt });
+  return map;
+}
+
 async function toMessageDto(row: {
   id: number | string;
   conversationId: string;
@@ -506,18 +600,24 @@ async function toMessageDto(row: {
   body: string;
   clientId: string;
   createdAt: Date | string;
+  editedAt?: Date | string | null;
   deletedAt: Date | string | null;
-}, actor: MessageActor, conversationUserId: string, staffSeesBody: boolean, readUpTo: number | null, files: MessageAttachmentDto[] = []): Promise<MessageDto> {
+  replyToId?: number | string | null;
+}, actor: MessageActor, conversationUserId: string, staffSeesBody: boolean, readUpTo: number | null, files: MessageAttachmentDto[] = [], quote?: MessageQuoteDto | null): Promise<MessageDto> {
   const deleted = row.deletedAt != null;
   const id = asNumber(row.id);
   const mine = row.senderId === actor.id;
+  const createdAt = iso(row.createdAt) ?? new Date(0).toISOString();
   return {
     id,
     conversationId: row.conversationId,
     senderId: row.senderId,
     body: deleted && !staffSeesBody ? "" : row.body,
     clientId: row.clientId,
-    createdAt: iso(row.createdAt) ?? new Date(0).toISOString(),
+    createdAt,
+    editedAt: iso(row.editedAt ?? null),
+    canEdit: messageEditable(createdAt, mine, deleted),
+    replyTo: deleted && !staffSeesBody ? null : quote ?? null,
     deleted,
     mine,
     side: row.senderId === conversationUserId ? "user" : "trainer",
@@ -631,7 +731,7 @@ export async function uploadMessageFile(
 
 export async function sendMessage(
   actor: MessageActor,
-  input: { conversationId?: string; trainerProfileSlug?: string; body: string; clientId: string; attachmentIds?: string[] },
+  input: { conversationId?: string; trainerProfileSlug?: string; body: string; clientId: string; attachmentIds?: string[]; replyToId?: number },
 ) {
   let conversationId = input.conversationId;
   if (!conversationId) {
@@ -680,6 +780,18 @@ export async function sendMessage(
       await assertDailyTrainerOutreach(actor.id, loaded.conversation.trainerProfileId);
     }
   }
+  let replyToId: number | null = null;
+  if (input.replyToId) {
+    const [target] = await getDb()
+      .select({ id: messages.id, conversationId: messages.conversationId, deletedAt: messages.deletedAt })
+      .from(messages)
+      .where(eq(messages.id, input.replyToId))
+      .limit(1);
+    if (!target || target.conversationId !== conversationId || target.deletedAt) {
+      throw new AuthError("Нельзя ответить на это сообщение.", "VALIDATION");
+    }
+    replyToId = asNumber(target.id);
+  }
   assertSendRate(actor.id);
   const saved = await getDb().transaction(async (tx) => {
     const inserted = await tx
@@ -689,6 +801,7 @@ export async function sendMessage(
         senderId: actor.id,
         body: stored,
         clientId: input.clientId,
+        replyToId,
       })
       .onConflictDoNothing({ target: [messages.conversationId, messages.clientId] })
       .returning();
@@ -741,9 +854,79 @@ export async function sendMessage(
   }
 
   const files = await attachmentDtos([asNumber(saved.row.id)]);
+  const quoteId = saved.row.replyToId == null ? null : asNumber(saved.row.replyToId);
+  const quotes = await quotesById(quoteId == null ? [] : [quoteId]);
+  const quoted = quoteId == null ? null : quotes.get(quoteId);
   return {
-    message: await toMessageDto(saved.row, actor, loaded.conversation.userId, false, null, files.get(asNumber(saved.row.id)) ?? []),
+    message: await toMessageDto(
+      saved.row,
+      actor,
+      loaded.conversation.userId,
+      false,
+      null,
+      files.get(asNumber(saved.row.id)) ?? [],
+      quoted ? { id: quoted.id, preview: quotePreview(quoted.body, quoted.deletedAt != null) } : null,
+    ),
     duplicate: saved.duplicate,
+  };
+}
+
+export async function editMessage(actor: MessageActor, input: { messageId: number; body: string }) {
+  const [row] = await getDb().select().from(messages).where(eq(messages.id, input.messageId)).limit(1);
+  if (!row || row.deletedAt) throw new AuthError("Сообщение не найдено.", "VALIDATION");
+  if (row.senderId !== actor.id) throw new AuthError("Можно изменить только своё сообщение.", "FORBIDDEN");
+  const createdAt = iso(row.createdAt) ?? "";
+  if (!messageEditable(createdAt, true, false)) {
+    throw new AuthError("Сообщение можно изменить в течение 15 минут.", "VALIDATION");
+  }
+  const loaded = await requireConversation(actor, row.conversationId, "write");
+  const html = sanitizeReviewHtml(input.body);
+  const plain = reviewPlainText(html);
+  if (!plain) throw new AuthError("Введите сообщение.", "VALIDATION");
+  if (html.length > MESSAGE_HTML_MAX_LENGTH) throw new AuthError("Сообщение слишком длинное.", "VALIDATION");
+  let limit = MESSAGE_MAX_LENGTH;
+  if (actor.id === loaded.conversation.userId) {
+    const [prior] = await getDb()
+      .select({ id: messages.id })
+      .from(messages)
+      .where(and(
+        eq(messages.conversationId, row.conversationId),
+        eq(messages.senderId, actor.id),
+        isNull(messages.deletedAt),
+        sql`${messages.id} < ${asNumber(row.id)}`,
+      ))
+      .limit(1);
+    if (!prior) limit = FIRST_MESSAGE_MAX_LENGTH;
+  }
+  if (reviewTextLength(html) > limit) {
+    throw new AuthError(
+      limit === FIRST_MESSAGE_MAX_LENGTH
+        ? `Первое сообщение тренеру — не длиннее ${FIRST_MESSAGE_MAX_LENGTH} символов.`
+        : `Сообщение не длиннее ${MESSAGE_MAX_LENGTH} символов.`,
+      "VALIDATION",
+    );
+  }
+  const [saved] = await getDb()
+    .update(messages)
+    .set({ body: html, editedAt: new Date() })
+    .where(eq(messages.id, asNumber(row.id)))
+    .returning();
+  if (!saved) throw new AuthError("Не удалось изменить сообщение.", "VALIDATION");
+  const files = await attachmentDtos([asNumber(saved.id)]);
+  const quoteId = saved.replyToId == null ? null : asNumber(saved.replyToId);
+  const quotes = await quotesById(quoteId == null ? [] : [quoteId]);
+  const quoted = quoteId == null ? null : quotes.get(quoteId);
+  const readUpTo = await counterpartReadUpTo(actor, loaded.conversation, loaded.profile.ownerUserId);
+  return {
+    message: await toMessageDto(
+      saved,
+      actor,
+      loaded.conversation.userId,
+      false,
+      readUpTo,
+      files.get(asNumber(saved.id)) ?? [],
+      quoted ? { id: quoted.id, preview: quotePreview(quoted.body, quoted.deletedAt != null) } : null,
+    ),
   };
 }
 
@@ -765,7 +948,7 @@ const activityAt = sql<Date>`COALESCE(${conversations.lastMessageAt}, ${conversa
 
 export async function listConversations(
   actor: MessageActor,
-  input: { view: "own" | "inbox" | "staff"; cursor?: ConversationCursor },
+  input: { view: "own" | "inbox" | "staff"; cursor?: ConversationCursor; query?: string },
 ): Promise<ConversationListResult> {
   if (input.view === "staff" && !isStaff(actor.roles)) {
     throw new AuthError("Недостаточно прав.", "FORBIDDEN");
@@ -786,6 +969,25 @@ export async function listConversations(
     const at = new Date(input.cursor.at);
     if (Number.isNaN(at.getTime())) throw new AuthError("Некорректная страница.", "VALIDATION");
     filters.push(sql`(${activityAt}, ${conversations.id}) < (${at.toISOString()}::timestamptz, ${input.cursor.id}::uuid)`);
+  }
+  const pattern = messageSearchPattern(input.query);
+  if (pattern) {
+    filters.push(sql`(
+      ${users.firstName} ILIKE ${pattern} ESCAPE '\\'
+      OR coalesce(${users.lastName}, '') ILIKE ${pattern} ESCAPE '\\'
+      OR (${users.firstName} || ' ' || coalesce(${users.lastName}, '')) ILIKE ${pattern} ESCAPE '\\'
+      OR coalesce(${trainerProfiles.fullName}, '') ILIKE ${pattern} ESCAPE '\\'
+      OR coalesce(${trainerProfiles.firstName}, '') ILIKE ${pattern} ESCAPE '\\'
+      OR coalesce(${trainerProfiles.lastName}, '') ILIKE ${pattern} ESCAPE '\\'
+      OR coalesce(${hostUsers.firstName}, '') ILIKE ${pattern} ESCAPE '\\'
+      OR (${hostUsers.firstName} || ' ' || coalesce(${hostUsers.lastName}, '')) ILIKE ${pattern} ESCAPE '\\'
+      OR EXISTS (
+        SELECT 1 FROM messages AS found
+        WHERE found.conversation_id = ${conversations.id}
+          AND found.deleted_at IS NULL
+          AND found.body ILIKE ${pattern} ESCAPE '\\'
+      )
+    )`);
   }
   const rows = await getDb()
     .select({
@@ -958,10 +1160,12 @@ export async function listMessages(
   const trainerHref = publicTrainerHref(loaded.profile.slug, loaded.profile.status);
   const oldest = page[page.length - 1];
   const messageIds = page.map((row) => asNumber(row.id));
-  const [readUpTo, viewerReadMessageId, files] = await Promise.all([
+  const replyIds = page.flatMap((row) => row.replyToId == null ? [] : [asNumber(row.replyToId)]);
+  const [readUpTo, viewerReadMessageId, files, quotes] = await Promise.all([
     counterpartReadUpTo(actor, loaded.conversation, loaded.profile.ownerUserId),
     viewerReadUpTo(actor.id, loaded.conversation.id),
     attachmentDtos(messageIds),
+    quotesById(replyIds),
   ]);
   return {
     conversationId: loaded.conversation.id,
@@ -992,7 +1196,18 @@ export async function listMessages(
     canReport: isParticipant(actor.id, loaded.access),
     composeLimit,
     viewerReadMessageId,
-    messages: await Promise.all(page.map((row) => toMessageDto(row, actor, loaded.conversation.userId, staff, readUpTo, files.get(asNumber(row.id)) ?? []))),
+    messages: await Promise.all(page.map((row) => {
+      const quoted = row.replyToId == null ? null : quotes.get(asNumber(row.replyToId));
+      return toMessageDto(
+        row,
+        actor,
+        loaded.conversation.userId,
+        staff,
+        readUpTo,
+        files.get(asNumber(row.id)) ?? [],
+        quoted ? { id: quoted.id, preview: quotePreview(quoted.body, quoted.deletedAt != null) } : null,
+      );
+    })),
     nextCursor: hasMore && oldest
       ? { createdAt: iso(oldest.createdAt) ?? new Date(0).toISOString(), id: asNumber(oldest.id) }
       : null,

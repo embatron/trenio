@@ -16,6 +16,7 @@ import {
   blockPairFn,
   closeConversationFn,
   dismissReportFn,
+  editMessageFn,
   ensureConversationFn,
   listConversationsFn,
   listMessagesFn,
@@ -106,6 +107,7 @@ function StaffThreads() {
   const listFn = useServerFn(listConversationsFn);
   const messagesFn = useServerFn(listMessagesFn);
   const sendFn = useServerFn(sendMessageFn);
+  const editFn = useServerFn(editMessageFn);
   const uploadFn = useServerFn(uploadMessageFileFn);
   const markFn = useServerFn(markConversationReadFn);
   const blockFn = useServerFn(blockPairFn);
@@ -117,9 +119,20 @@ function StaffThreads() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
+  useEffect(() => {
+    const timer = window.setTimeout(() => setSearch(searchInput.trim()), 300);
+    return () => window.clearTimeout(timer);
+  }, [searchInput]);
+  useEffect(() => {
+    setExtra([]);
+    setCursor(undefined);
+  }, [search]);
   const list = useQuery({
-    queryKey: ["conversations", "staff"],
-    queryFn: () => listFn({ data: { view: "staff" } }),
+    queryKey: ["conversations", "staff", search],
+    queryFn: () => listFn({ data: { view: "staff", query: search.length >= 2 ? search : undefined } }),
+    placeholderData: (previous) => previous,
     refetchInterval: visiblePollInterval(CONVERSATION_POLL_MS),
     refetchIntervalInBackground: false,
   });
@@ -178,7 +191,7 @@ function StaffThreads() {
   const messages: ThreadMessage[] = (thread.data?.messages ?? []).slice().reverse();
   const openIndex = openId ? items.findIndex((item) => item.id === openId) : -1;
 
-  async function send(body: string, files: ComposerFile[] = []) {
+  async function send(body: string, files: ComposerFile[] = [], replyToId?: number) {
     if (!openId || !thread.data?.canWrite) return;
     const clientId = newMessageClientId();
     setBusy(true);
@@ -192,7 +205,7 @@ function StaffThreads() {
         });
         attachmentIds.push(saved.id);
       }
-      await sendFn({ data: { conversationId: openId, body, clientId, attachmentIds } });
+      await sendFn({ data: { conversationId: openId, body, clientId, attachmentIds, replyToId } });
       await thread.refetch();
       await list.refetch();
     } catch (err) {
@@ -224,15 +237,17 @@ function StaffThreads() {
         view="staff"
         items={items}
         activeId={openId}
-        loading={list.isPending}
+        loading={list.isPending && !list.data}
         error={list.error ? authErrorMessage(list.error) : null}
         hasMore={Boolean(next)}
         loadingMore={loadingMore}
+        query={searchInput}
+        onQuery={setSearchInput}
         onOpen={setOpenId}
         onMore={() => {
           if (!next) return;
           setLoadingMore(true);
-          void listFn({ data: { view: "staff", cursor: next } })
+          void listFn({ data: { view: "staff", cursor: next, query: search.length >= 2 ? search : undefined } })
             .then((page) => {
               setExtra((current) => [...current, ...page.items]);
               setCursor(page.nextCursor);
@@ -251,6 +266,17 @@ function StaffThreads() {
         loadingEarlier={false}
         onEarlier={() => undefined}
         onSend={send}
+        onEdit={async (messageId, body) => {
+          setError(null);
+          try {
+            await editFn({ data: { messageId, body } });
+            await thread.refetch();
+            await list.refetch();
+          } catch (err) {
+            setError(authErrorMessage(err));
+            throw err;
+          }
+        }}
         onRetry={() => undefined}
         onReport={async () => undefined}
         onBlock={() => void act(() => blockFn({ data: { conversationId: openId! } }), "Пара заблокирована, диалог закрыт")}
@@ -395,6 +421,7 @@ function ReportQueue({
             loadingEarlier={false}
             onEarlier={() => undefined}
             onSend={async () => undefined}
+            onEdit={async () => undefined}
             onRetry={() => undefined}
             onReport={async () => undefined}
             onBlock={() => void act(opened.id, () => blockFn({ data: { conversationId: opened.conversationId } }), "Пара заблокирована, диалог закрыт")}

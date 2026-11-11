@@ -92,6 +92,23 @@ const STATEMENTS = [
    BEFORE INSERT OR UPDATE OF slug ON trainer_profiles
    FOR EACH ROW EXECUTE FUNCTION reject_trenioby_trainer_slug()`,
   "COMMENT ON COLUMN conversations.host_user_id IS 'Админ портала в приветственном диалоге. Карточки тренера у этого диалога нет.'",
+  "ALTER TABLE messages ADD COLUMN IF NOT EXISTS reply_to_id bigint REFERENCES messages(id) ON DELETE SET NULL",
+  "CREATE INDEX IF NOT EXISTS messages_reply_to_idx ON messages (reply_to_id)",
+  "COMMENT ON COLUMN messages.reply_to_id IS 'Цитата: сообщение того же диалога, на которое ответили.'",
+  `DELETE FROM conversations AS card
+   WHERE card.trainer_profile_id IS NOT NULL
+     AND NOT EXISTS (SELECT 1 FROM messages AS message WHERE message.conversation_id = card.id)
+     AND NOT EXISTS (SELECT 1 FROM message_attachments AS file WHERE file.conversation_id = card.id)
+     AND NOT EXISTS (SELECT 1 FROM message_reports AS report WHERE report.conversation_id = card.id)
+     AND EXISTS (
+       SELECT 1
+       FROM conversations AS portal
+       JOIN trainer_profiles AS profile ON profile.id = card.trainer_profile_id
+       WHERE portal.host_user_id = card.user_id
+         AND portal.user_id = profile.owner_user_id
+         AND portal.status = 'open'
+         AND portal.id <> card.id
+     )`,
 ];
 
 async function main() {

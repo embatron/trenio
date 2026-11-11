@@ -10,6 +10,7 @@ import { z } from "zod";
 import {
   conversationIdSchema,
   dismissReportSchema,
+  editMessageSchema,
   EMPTY_MESSAGING,
   ensureConversationSchema,
   listConversationsSchema,
@@ -26,6 +27,7 @@ import {
   blockPair,
   closeConversation,
   dismissReport,
+  editMessage,
   ensureConversation,
   hideConversation,
   listConversations,
@@ -104,6 +106,7 @@ export const ensureConversationFn = createServerFn({ method: "POST" })
       const result = await ensureConversation(context.user, data.trainerProfileSlug);
       logMessage("message.ensure", context.user.id, "Переписка открыта.", result.conversationId, {
         trainer: data.trainerProfileSlug,
+        dropped: result.dropped,
       });
       return result;
     } catch (error) {
@@ -121,12 +124,30 @@ export const sendMessageFn = createServerFn({ method: "POST" })
       logMessage("message.send", context.user.id, "Сообщение сохранено.", target, {
         chars: data.body.length,
         files: data.attachmentIds.length,
+        reply: Boolean(data.replyToId),
       });
       return result;
     } catch (error) {
       rethrowMessage(error, "message.send", context.user.id, target, {
         chars: data.body.length,
         files: data.attachmentIds.length,
+      });
+    }
+  });
+
+export const editMessageFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(editMessageSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      const result = await editMessage(context.user, data);
+      logMessage("message.edit", context.user.id, "Сообщение изменено.", result.message.conversationId, {
+        chars: data.body.length,
+      });
+      return result;
+    } catch (error) {
+      rethrowMessage(error, "message.edit", context.user.id, String(data.messageId), {
+        chars: data.body.length,
       });
     }
   });

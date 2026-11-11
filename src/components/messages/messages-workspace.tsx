@@ -12,6 +12,7 @@ import type { ComposerFile } from "@/components/messages/message-composer";
 import { authErrorMessage } from "@/lib/auth/errors";
 import {
   blockPairFn,
+  editMessageFn,
   listConversationsFn,
   listMessagesFn,
   markConversationReadFn,
@@ -63,6 +64,7 @@ export function MessagesWorkspace({
   const listFn = useServerFn(listConversationsFn);
   const messagesFn = useServerFn(listMessagesFn);
   const sendFn = useServerFn(sendMessageFn);
+  const editFn = useServerFn(editMessageFn);
   const uploadFn = useServerFn(uploadMessageFileFn);
   const markFn = useServerFn(markConversationReadFn);
   const blockFn = useServerFn(blockPairFn);
@@ -77,10 +79,18 @@ export function MessagesWorkspace({
   const [actionError, setActionError] = useState<string | null>(null);
   const [limitOpen, setLimitOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setSearch(searchInput.trim()), 300);
+    return () => window.clearTimeout(timer);
+  }, [searchInput]);
 
   const listQuery = useQuery({
-    queryKey: ["conversations", view],
-    queryFn: () => listFn({ data: { view } }),
+    queryKey: ["conversations", view, search],
+    queryFn: () => listFn({ data: { view, query: search.length >= 2 ? search : undefined } }),
+    placeholderData: (previous) => previous,
     refetchInterval: visiblePollInterval(CONVERSATION_POLL_MS),
     refetchIntervalInBackground: false,
     refetchOnWindowFocus: true,
@@ -97,7 +107,7 @@ export function MessagesWorkspace({
   useEffect(() => {
     setExtraItems([]);
     setListCursor(undefined);
-  }, [view]);
+  }, [view, search]);
 
   useEffect(() => {
     setOlder([]);
@@ -171,7 +181,7 @@ export function MessagesWorkspace({
   });
   const nextMessageCursor = messageCursor === undefined ? threadQuery.data?.nextCursor ?? null : messageCursor;
 
-  async function send(body: string, files: ComposerFile[] = [], clientId?: string) {
+  async function send(body: string, files: ComposerFile[] = [], clientId?: string, replyToId?: number) {
     if (!conversationId) return;
     const id = clientId ?? newMessageClientId();
     const optimistic: ThreadMessage = {
@@ -185,6 +195,9 @@ export function MessagesWorkspace({
       mine: true,
       side: threadQuery.data?.counterpart.kind === "user" ? "trainer" : "user",
       receipt: null,
+      editedAt: null,
+      canEdit: false,
+      replyTo: replyToId ? { id: replyToId, preview: "Цитата" } : null,
       attachments: [],
       pendingNames: files.map((file) => file.name),
       localFiles: files,
@@ -201,7 +214,7 @@ export function MessagesWorkspace({
         });
         attachmentIds.push(saved.id);
       }
-      await sendFn({ data: { conversationId, body, clientId: id, attachmentIds } });
+      await sendFn({ data: { conversationId, body, clientId: id, attachmentIds, replyToId } });
       await threadQuery.refetch();
       setPending((current) => current.filter((item) => item.clientId !== id));
       await listQuery.refetch();
@@ -260,14 +273,16 @@ export function MessagesWorkspace({
         view={view}
         items={items}
         activeId={conversationId}
-        loading={listQuery.isPending}
+        loading={listQuery.isPending && !listQuery.data}
         error={listError}
         hasMore={Boolean(nextListCursor)}
         loadingMore={loadingMore}
+        query={searchInput}
+        onQuery={setSearchInput}
         onMore={() => {
           if (!nextListCursor) return;
           setLoadingMore(true);
-          void listFn({ data: { view, cursor: nextListCursor } })
+          void listFn({ data: { view, cursor: nextListCursor, query: search.length >= 2 ? search : undefined } })
             .then((page) => {
               setExtraItems((current) => mergeById(current, page.items));
               setListCursor(page.nextCursor);
@@ -295,8 +310,20 @@ export function MessagesWorkspace({
             .catch((error) => setActionError(authErrorMessage(error)))
             .finally(() => setLoadingEarlier(false));
         }}
-        onSend={(body, files) => send(body, files)}
-        onRetry={(message) => void send(message.body, message.localFiles ?? [], message.clientId)}
+        onSend={(body, files, replyToId) => send(body, files, undefined, replyToId)}
+        onEdit={async (messageId, body) => {
+          if (!conversationId) return;
+          setActionError(null);
+          try {
+            await editFn({ data: { messageId, body } });
+            await threadQuery.refetch();
+            await listQuery.refetch();
+          } catch (error) {
+            setActionError(authErrorMessage(error));
+            throw error;
+          }
+        }}
+        onRetry={(message) => void send(message.body, message.localFiles ?? [], message.clientId, message.replyTo?.id)}
         onReport={async (reason, comment) => {
           if (!conversationId) return;
           const result = await reportFn({ data: { conversationId, reason, comment } });
@@ -330,7 +357,19 @@ export const DIRECT_CSS = `
 .cabinet-card > .direct { border: 0; border-radius: 0; background: transparent; }
 .direct-list, .direct-thread { min-width: 0; min-height: 0; }
 .direct-list { display: flex; flex-direction: column; border-bottom: 1px solid var(--line); }
-.direct-list h2 { margin: 0; padding: 14px 16px; font-size: 16px; color: var(--dark); }
+.direct-list h2 { margin: 0; padding: 14px 16px 8px; font-size: 16px; color: var(--dark); }
+.direct-search { display: grid; gap: 4px; margin: 0 12px 8px; }
+.direct-search__label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.direct-search input { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 12px; padding: 0 12px; background: var(--white); color: var(--dark); font: inherit; font-size: 16px; }
+.direct-banner { display: flex; align-items: center; gap: 8px; margin: 0 12px 8px; min-height: 44px; padding: 6px 8px 6px 12px; border-radius: 12px; background: var(--light-bg); color: var(--dark); font-size: 13px; }
+.direct-banner span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.direct-banner button { flex: 0 0 44px; width: 44px; height: 44px; border: 0; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; }
+.direct-quote { display: grid; gap: 2px; width: 100%; min-height: 44px; margin: 0 0 6px; padding: 6px 8px; border: 0; border-left: 2px solid currentColor; border-radius: 8px; background: rgba(255, 255, 255, 0.45); color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.direct-quote strong { font-size: 12px; font-weight: var(--fw-ui); }
+.direct-quote span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.direct-bubble__actions { display: flex; gap: 4px; margin-top: 2px; }
+.direct-bubble__actions button { min-height: 44px; min-width: 44px; padding: 0 8px; border: 0; background: transparent; color: inherit; font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer; }
+.direct-log [data-message-id] { scroll-margin-top: 12px; }
 .direct-list ul { list-style: none; margin: 0; padding: 0; overflow: auto; }
 .direct-list a, .direct-list button.direct-list__row { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 64px; padding: 8px 12px; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; text-decoration: none; cursor: pointer; transition: background-color 0.15s ease; }
 .direct-list a:hover, .direct-list button.direct-list__row:hover { background: rgba(var(--dark-rgb), 0.04); }
