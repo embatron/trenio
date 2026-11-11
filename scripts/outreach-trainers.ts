@@ -30,7 +30,7 @@ async function main() {
   }
   if (command === "mark") {
     if (!handle) throw new Error("Pass the Instagram handle.");
-    const result = await markOutreachSent(handle);
+    const result = await markOutreachSent(handle, { link: process.argv[4] === "claim" });
     console.log(JSON.stringify(result));
     return;
   }

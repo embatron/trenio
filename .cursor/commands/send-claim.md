@@ -6,7 +6,7 @@ Send the prepared-page letter from the `trenioby` Instagram account. The letter 
 
 - Follow `.cursor/skills/trenio-send-claim/SKILL.md` for the whole run.
 - The letter is `DEFAULT_CLAIM_INSTAGRAM_MESSAGE`. Do not send the cold outreach from `/send-msgs`, and do not add sports or other profile facts.
-- A sent message sets «Сообщение». The short link is inside this letter. Copying the link in the admin table is still what sets «Ссылка».
+- A sent letter sets «Сообщение» and «Ссылка». The short link is inside the letter. `mark {handle} claim` writes both. Copying the link in the admin table still sets «Ссылка» when the letter was not sent this way.
 
 ## Arguments
 
@@ -24,7 +24,7 @@ The rest of this message is the scope. Do not message every unmarked draft when 
 3. List the scope with `IG_ACCOUNT=trenioby` and `scripts/outreach-trainers.ts list`.
 4. For each handle, run `scripts/outreach-trainers.ts text {handle}`. Send that text only when it is the letter. `published`, `sent`, `not-draft`, `missing`, and `link` mean do not type. The short link in the letter is the one stored on that draft.
 5. Send only when the open profile is that handle, the row is still an unmarked draft, and the thread is empty. If this letter is already in the thread, mark it and do not type again. If Instagram will not accept the message until this account follows, click Follow once and then send. Do not follow when Message is already there.
-6. Run `scripts/outreach-trainers.ts mark {handle}` after a send or a confirmed existing letter.
+6. Run `scripts/outreach-trainers.ts mark {handle} claim` after a send or a confirmed existing letter. That sets «Сообщение» and «Ссылка».
 7. After the batch, run `scripts/sync-remote.ts marks`.
 8. On a checkpoint, stop the batch.
 9. Report each handle. Close the Playwright page.
@@ -35,5 +35,5 @@ The rest of this message is the scope. Do not message every unmarked draft when 
 - A published trainer and a trainer who already received a message were skipped.
 - Each letter uses that trainer's given name and the short link just read from that draft. No sport or other profile fact was added.
 - Follow was clicked only when Instagram required it before the message could be sent.
-- Each handled draft has a message mark on the laptop and on the live site, or a stated reason it was skipped.
+- Each handled draft has the message mark and the link mark on the laptop and on the live site, or a stated reason it was skipped.
 - The profile stays a draft.

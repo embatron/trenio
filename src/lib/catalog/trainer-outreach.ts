@@ -233,11 +233,16 @@ export async function claimOutreachText(handle: string) {
   return { ok: true as const, text: renderClaimInstagramMessage(fresh.firstName, doorUrl(fresh.previewToken)) };
 }
 
-/** Mark the first Instagram message sent and make the short link ready on both databases. */
-export async function markOutreachSent(handle: string) {
+/**
+ * Mark the first Instagram message on both databases.
+ * The application welcome also carries the short link, so `link` sets «Ссылка».
+ * The cold outreach leaves that column to the copy button.
+ */
+export async function markOutreachSent(handle: string, options?: { link?: boolean }) {
   await ensureTrainerDoorSchema();
   const db = getDb();
   const needle = handle.trim().replace(/^@/, "");
+  const withLink = options?.link === true;
   const [row] = await db
     .select({
       id: trainerProfiles.id,
@@ -245,36 +250,58 @@ export async function markOutreachSent(handle: string) {
       handle: trainerProfiles.instagramHandle,
       status: trainerProfiles.status,
       outreachSentAt: trainerProfiles.outreachSentAt,
+      inviteSentAt: trainerProfiles.inviteSentAt,
     })
     .from(trainerProfiles)
     .where(eq(trainerProfiles.instagramHandle, needle))
     .limit(1);
   if (!row) return { ok: false as const, reason: "missing" as const };
   if (row.status !== "draft") return { ok: false as const, reason: "not-draft" as const };
-  if (row.outreachSentAt) {
+  const needOutreach = !row.outreachSentAt;
+  const needLink = withLink && !row.inviteSentAt;
+  if (!needOutreach && !needLink) {
     await ensurePublicDoorLink(row.slug);
     return { ok: true as const, already: true as const };
   }
   const url = await ensurePublicDoorLink(row.slug);
   const sentAt = new Date();
-  await db.update(trainerProfiles).set({ outreachSentAt: sentAt }).where(eq(trainerProfiles.id, row.id));
+  const patch: { outreachSentAt?: Date; inviteSentAt?: Date } = {};
+  if (needOutreach) patch.outreachSentAt = sentAt;
+  if (needLink) patch.inviteSentAt = sentAt;
+  await db.update(trainerProfiles).set(patch).where(eq(trainerProfiles.id, row.id));
   const code = url.split("/hi/")[1] ?? "";
   const mirrored = await relayDoorMark({
     handle: row.handle || row.slug,
     token: code,
-    outreachAt: sentAt.toISOString(),
+    outreachAt: (patch.outreachSentAt ?? row.outreachSentAt)?.toISOString(),
+    linkAt: patch.inviteSentAt?.toISOString(),
   });
   if (!mirrored.ok) {
-    await db.update(trainerProfiles).set({ outreachSentAt: null }).where(eq(trainerProfiles.id, row.id));
+    const undo: { outreachSentAt?: null; inviteSentAt?: null } = {};
+    if (patch.outreachSentAt) undo.outreachSentAt = null;
+    if (patch.inviteSentAt) undo.inviteSentAt = null;
+    await db.update(trainerProfiles).set(undo).where(eq(trainerProfiles.id, row.id));
     return { ok: false as const, reason: "mirror" as const };
   }
-  void writeLog({
-    level: "info",
-    domain: "admin",
-    action: "admin.trainer_outreach",
-    outcome: "success",
-    message: "Первое сообщение в Instagram отмечено отправленным.",
-    target: row.slug,
-  });
+  if (patch.outreachSentAt) {
+    void writeLog({
+      level: "info",
+      domain: "admin",
+      action: "admin.trainer_outreach",
+      outcome: "success",
+      message: "Первое сообщение в Instagram отмечено отправленным.",
+      target: row.slug,
+    });
+  }
+  if (patch.inviteSentAt) {
+    void writeLog({
+      level: "info",
+      domain: "admin",
+      action: "admin.trainer_invite_sent",
+      outcome: "success",
+      message: "Короткая ссылка отмечена отправленной.",
+      target: row.slug,
+    });
+  }
   return { ok: true as const, already: false as const };
 }

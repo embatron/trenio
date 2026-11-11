@@ -44,11 +44,13 @@ IG_ACCOUNT=trenioby ./node_modules/.bin/tsx --env-file=.env scripts/outreach-tra
 - Send only from `https://www.instagram.com/{handle}/` while that row is still an unmarked draft.
 - Send only into an empty thread. If this same letter is already there, mark it sent and do not type again. If any other message is already in the thread, skip it and say so.
 - Click Follow or «Подписаться» only when Instagram will not open the composer until this account follows. That is a missing Message button, or a dialog that asks for a follow before the message can be sent. Click it once, wait until Message or «Написать» appears, then send. If Message is already on the profile, do not follow. If the button still does not appear, skip the profile. Do not click Like or Comment.
-- After a real send, or after finding this letter already in the thread:
+- After a real send, or after finding this letter already in the thread, set both first marks. «Сообщение» is the letter. «Ссылка» is the short link inside it:
 
 ```bash
-IG_ACCOUNT=trenioby ./node_modules/.bin/tsx --env-file=.env scripts/outreach-trainers.ts mark {handle}
+IG_ACCOUNT=trenioby ./node_modules/.bin/tsx --env-file=.env scripts/outreach-trainers.ts mark {handle} claim
 ```
+
+`mark` without `claim` is the cold outreach and leaves «Ссылка» empty.
 
 - Then `scripts/sync-remote.ts marks`.
 - Pause about 45 seconds between profiles.
@@ -58,7 +60,7 @@ IG_ACCOUNT=trenioby ./node_modules/.bin/tsx --env-file=.env scripts/outreach-tra
 
 - Rewrite the letter, list sports, or fill a field the template does not name.
 - Use the cold `instagram_message` text for this command.
-- Mark the link column. That column changes only when an admin copies the link in the trainer table.
+- Leave «Ссылка» empty. This letter contains the short link, so `mark {handle} claim` sets it together with «Сообщение».
 - Message a published, hidden, or archived card, or a draft that already has a message mark.
 - Type a short link that `text` did not just print for this handle.
 - Follow a profile that already shows Message.
