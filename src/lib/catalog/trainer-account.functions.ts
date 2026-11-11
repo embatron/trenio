@@ -12,6 +12,7 @@ import { AuthError } from "@/lib/auth/errors";
 import { profileNameSchema } from "@/lib/auth/schemas";
 import { hasAnyRole, isStaff } from "@/lib/auth/roles";
 import { openManualTrainerAccount } from "@/lib/catalog/trainer-account";
+import { buildTrainerSignupDraft, trainerBasicsInputSchema } from "@/lib/catalog/trainer-signup-draft";
 import { writeLog } from "@/lib/log/logger";
 
 const trainerSignupSchema = profileNameSchema.extend({
@@ -20,6 +21,7 @@ const trainerSignupSchema = profileNameSchema.extend({
   passwordConfirm: z.string().min(1).max(128),
   privacy: z.boolean().refine((value) => value, { message: "Примите политику конфиденциальности." }),
   honeypot: z.string().max(200).optional().default(""),
+  ...trainerBasicsInputSchema.shape,
 });
 
 function requestMeta() {
@@ -36,10 +38,16 @@ export const signupTrainerAccountFn = createServerFn({ method: "POST" })
     }
     try {
       const tripped = Boolean(data.honeypot.trim());
+      const basics = tripped ? null : await buildTrainerSignupDraft(data);
       const result = await signupWithEmail(
         { email: data.email, password: data.password },
         { ...requestMeta(), honeypot: data.honeypot },
-        { firstName: data.firstName, lastName: data.lastName, intent: "trainer_create" },
+        {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          intent: "trainer_create",
+          ...(basics ? { draft: JSON.stringify(basics) } : {}),
+        },
       );
       void writeLog({
         level: tripped ? "warn" : "info",
@@ -49,7 +57,9 @@ export const signupTrainerAccountFn = createServerFn({ method: "POST" })
         message: tripped ? "Заявка кабинета отклонена." : "Запрошено письмо кабинета тренера.",
         subject: tripped ? null : data.email,
         route: "/join/account",
-        context: tripped ? { reason: "honeypot" } : { intent: "trainer_create" },
+        context: tripped
+          ? { reason: "honeypot" }
+          : { intent: "trainer_create", city: basics?.city, sports: basics?.sports.length ?? 0 },
       });
       return { ok: true as const, message: result.message };
     } catch (error) {
@@ -69,7 +79,7 @@ export const signupTrainerAccountFn = createServerFn({ method: "POST" })
     }
   });
 
-const becomeSchema = profileNameSchema;
+const becomeSchema = profileNameSchema.extend(trainerBasicsInputSchema.shape);
 
 export const becomeTrainerFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
@@ -81,6 +91,7 @@ export const becomeTrainerFn = createServerFn({ method: "POST" })
     if (hasAnyRole(context.user.roles, ["trainer"])) {
       return { ok: true as const, redirectTo: "/me/profile" };
     }
+    const basics = await buildTrainerSignupDraft(data);
     const db = getDb();
     await db.update(users).set({
       firstName: data.firstName,
@@ -93,7 +104,7 @@ export const becomeTrainerFn = createServerFn({ method: "POST" })
       email: context.user.email,
       firstName: data.firstName,
       lastName: data.lastName,
-    });
+    }, basics);
     void writeLog({
       level: "info",
       domain: "account",

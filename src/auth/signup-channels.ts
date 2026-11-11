@@ -188,7 +188,7 @@ async function sendSignupLetter(email: string, url: string | null, notice: boole
     lead: notice
       ? "Кто-то указал этот адрес при регистрации на trenio.by. Если это были не вы, ничего делать не нужно."
       : trainer
-        ? "Откройте ссылку и подтвердите почту. Затем откроется кабинет, где можно заполнить профиль."
+        ? "Откройте ссылку и подтвердите почту. Затем откроется кабинет с заполненным профилем."
         : "Остался один шаг, чтобы пользоваться trenio.by.",
     action: url ? { href: url, label: "Подтвердить почту" } : undefined,
     note: notice ? undefined : "Ссылка действует сутки. Если вы не регистрировались, не открывайте её.",
@@ -209,7 +209,12 @@ function signupProofUrl(url: string, returnPath: string | null): string {
 export async function signupWithEmail(
   input: { email: string; password: string; returnPath?: string | null },
   meta: LoginMeta,
-  profile: { firstName?: string; lastName?: string; intent?: "client_signup" | "trainer_create" } = {},
+  profile: {
+    firstName?: string;
+    lastName?: string;
+    intent?: "client_signup" | "trainer_create";
+    draft?: string;
+  } = {},
 ): Promise<{ message: string }> {
   if (honeypotTripped(meta)) return { message: SIGNUP_EMAIL_MESSAGE };
   const email = normalizeEmail(input.email);
@@ -248,6 +253,7 @@ export async function signupWithEmail(
           lastName: cleanName(profile.lastName) || null,
           status: "pending_verification",
           lastSignupIntent: trainer ? "trainer_create" : "client_signup",
+          ...(trainer && profile.draft ? { trainerSignupDraft: profile.draft } : {}),
         })
         .returning();
       await db.insert(userRoles).values({ userId: created.id, role: "user" });
@@ -264,6 +270,7 @@ export async function signupWithEmail(
         ...(trainer ? {
           lastName: cleanName(profile.lastName) || existing.lastName,
           lastSignupIntent: "trainer_create" as const,
+          ...(profile.draft ? { trainerSignupDraft: profile.draft } : {}),
         } : {}),
         updatedAt: new Date(),
       }).where(eq(users.id, existing.id));

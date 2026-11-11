@@ -85,6 +85,8 @@ export const users = pgTable(
     mailMarketing: boolean("mail_marketing").notNull().default(false),
     /** System notice on a phone when someone writes in Сообщения. On until the person turns it off. */
     pushMessages: boolean("push_messages").notNull().default(true),
+    /** Basic trainer card from /join/account, applied when the confirmation letter is opened. */
+    trainerSignupDraft: text("trainer_signup_draft"),
   },
   (table) => [
     uniqueIndex("users_email_unique").on(table.email),

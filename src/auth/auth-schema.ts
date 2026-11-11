@@ -19,6 +19,7 @@ const STATEMENTS = [
   "ALTER TABLE users ADD COLUMN IF NOT EXISTS totp_enabled_at timestamptz",
   "ALTER TABLE users ADD COLUMN IF NOT EXISTS totp_recovery_hashes text",
   "ALTER TABLE users ADD COLUMN IF NOT EXISTS push_messages boolean NOT NULL DEFAULT true",
+  "ALTER TABLE users ADD COLUMN IF NOT EXISTS trainer_signup_draft text",
   "ALTER TABLE email_verification_tokens ADD COLUMN IF NOT EXISTS attempt_count integer NOT NULL DEFAULT 0",
   `CREATE TABLE IF NOT EXISTS auth_rate_buckets (
     bucket_key varchar(420) PRIMARY KEY,

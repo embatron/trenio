@@ -289,10 +289,6 @@ body.is-search-docked .site-header__search {
 .mega-link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 @media (min-width: 768px) {
   .mega-grid > .mega-col:not(.mega-col__hero) { gap: 8px; }
-  .mega-grid > .mega-col:not(.mega-col__hero) .mega-link {
-    min-height: 34px;
-    padding-block: 4px;
-  }
 }
 .mega-mark {
   width: 16px; height: 16px; flex: 0 0 auto;
