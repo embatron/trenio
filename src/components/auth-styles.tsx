@@ -126,10 +126,11 @@ const AUTH_CSS = `
 @media (max-width: 600px) {
   .auth-card { padding: 28px 22px; }
   .auth-title { font-size: 26px; }
+  .auth-field input[type="text"], .auth-field input[type="email"], .auth-field input[type="password"], .auth-field input[type="tel"] { font-size: 16px; }
   .auth-form--grid { grid-template-columns: 1fr; }
   .auth-roleswitch { grid-template-columns: 1fr; }
   .auth-roleswitch--3 { grid-template-columns: 1fr; }
-  .auth-role--compact { min-height: 40px; padding: 8px 10px; }
+  .auth-role--compact { min-height: 44px; padding: 8px 10px; }
 }
 `;
 

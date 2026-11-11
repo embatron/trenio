@@ -1,4 +1,4 @@
-// upgrade path: PartyKit self-hosted, schema unchanged.
+// Live updates go out on /messages/live. Writes stay these functions.
 import { createServerFn } from "@tanstack/react-start";
 
 import { requireAuthMiddleware, requireSessionMiddleware } from "@/auth/middleware";
@@ -25,10 +25,12 @@ import { reviewTextLength } from "@/lib/catalog/review-html";
 import { writeLog } from "@/lib/log/logger";
 import {
   blockPair,
+  unblockPair,
   closeConversation,
   dismissReport,
   editMessage,
   ensureConversation,
+  deleteConversationForViewer,
   hideConversation,
   listConversations,
   listMessages,
@@ -205,6 +207,19 @@ export const reopenConversationFn = createServerFn({ method: "POST" })
     }
   });
 
+export const deleteConversationFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(conversationIdSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      const result = await deleteConversationForViewer(context.user, data.conversationId);
+      logMessage("message.clear", context.user.id, "Переписка удалена у этого аккаунта.", data.conversationId);
+      return result;
+    } catch (error) {
+      rethrowMessage(error, "message.clear", context.user.id, data.conversationId);
+    }
+  });
+
 export const hideConversationFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
   .validator(conversationIdSchema)
@@ -271,6 +286,19 @@ export const blockPairFn = createServerFn({ method: "POST" })
       return result;
     } catch (error) {
       rethrowMessage(error, "message.block", context.user.id, data.conversationId);
+    }
+  });
+
+export const unblockPairFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(conversationIdSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      const result = await unblockPair(context.user, data.conversationId);
+      logMessage("message.unblock", context.user.id, "Пара разблокирована.", data.conversationId);
+      return result;
+    } catch (error) {
+      rethrowMessage(error, "message.unblock", context.user.id, data.conversationId);
     }
   });
 

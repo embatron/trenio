@@ -1,11 +1,14 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 
+import { sameList } from "@/lib/cabinet/live";
+
 import { listFavoritesFn, toggleFavoriteFn, type FavoriteTarget } from "@/lib/catalog/favorites";
 
 type FavoritesState = {
   keys: string[];
   ready: boolean;
   toggle: (target: FavoriteTarget) => void;
+  replaceKeys: (keys: string[]) => void;
 };
 
 const FavoritesContext = createContext<FavoritesState | null>(null);
@@ -19,6 +22,7 @@ export function FavoritesProvider({ userId, children }: { userId: string | null;
   const [ready, setReady] = useState(!userId);
   const keysRef = useRef(keys);
   const requestId = useRef(0);
+  const pending = useRef(0);
   keysRef.current = keys;
 
   useEffect(() => {
@@ -44,8 +48,14 @@ export function FavoritesProvider({ userId, children }: { userId: string | null;
     };
   }, [userId]);
 
+  const replaceKeys = useCallback((keys: string[]) => {
+    if (pending.current > 0) return;
+    setKeys((current) => (sameList(current, keys) ? current : keys));
+  }, []);
+
   const toggle = useCallback((target: FavoriteTarget) => {
     const id = ++requestId.current;
+    pending.current += 1;
     const key = favoriteKey(target);
     const previous = keysRef.current;
     const next = previous.includes(key) ? previous.filter((item) => item !== key) : [key, ...previous];
@@ -56,17 +66,20 @@ export function FavoritesProvider({ userId, children }: { userId: string | null;
       })
       .catch(() => {
         if (requestId.current !== id) return;
-        void listFavoritesFn()
+        return listFavoritesFn()
           .then((result) => {
             if (requestId.current === id) setKeys(result.keys);
           })
           .catch(() => {
             if (requestId.current === id) setKeys(previous);
           });
+      })
+      .finally(() => {
+        pending.current = Math.max(0, pending.current - 1);
       });
   }, []);
 
-  return <FavoritesContext.Provider value={{ keys, ready, toggle }}>{children}</FavoritesContext.Provider>;
+  return <FavoritesContext.Provider value={{ keys, ready, toggle, replaceKeys }}>{children}</FavoritesContext.Provider>;
 }
 
 export function useFavorites() {

@@ -1,6 +1,7 @@
 import { useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 
+import { MESSAGE_ENVELOPE } from "@/components/messages/direct-mark";
 import { TELEGRAM_NAV, TELEGRAM_SUPPORT_URL, activeTelegramNavPath } from "@/lib/telegram/nav";
 import { ensureTelegramWebApp, getTelegramWebApp, openTelegramAccount, prepareTelegramWebApp } from "@/lib/telegram-webapp";
 
@@ -15,7 +16,7 @@ const NAV_ICONS: Record<string, { paths: readonly string[]; pin?: boolean; plus?
   },
   categories: { paths: ["M4 4h7v7H4z", "M13 4h7v7h-7z", "M4 13h7v7H4z", "M13 13h7v7h-7z"] },
   map: { paths: ["M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z"], pin: true },
-  messages: { paths: ["M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z", "M4 6l8 6 8-6"] },
+  messages: { paths: [MESSAGE_ENVELOPE] },
   account: { paths: ["M4 10.5 12 4l8 6.5V20H4z", "M10 20v-6h4v6"] },
   me: { paths: ["M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z", "M4 21a8 8 0 0 1 16 0"] },
   join: { plus: true, paths: [] },

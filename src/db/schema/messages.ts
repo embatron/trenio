@@ -35,8 +35,16 @@ export const conversations = pgTable(
     status: conversationStatusEnum("status").notNull().default("open"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     lastMessageAt: timestamp("last_message_at", { withTimezone: true }),
-    /** Unused. A participant cannot hide or delete a thread. Kept so existing rows stay valid. */
+    /** Unused. A participant cannot hide a thread. Kept so existing rows stay valid. */
     userHiddenAt: timestamp("user_hidden_at", { withTimezone: true }),
+    /** The client (`user_id`) cleared this thread for themselves. The other side keeps it. */
+    userDeletedAt: timestamp("user_deleted_at", { withTimezone: true }),
+    /** The profile owner or the portal host cleared this thread for themselves. */
+    peerDeletedAt: timestamp("peer_deleted_at", { withTimezone: true }),
+    /** The client opened this thread again after clearing it. Old messages stay hidden. */
+    userRevivedAt: timestamp("user_revived_at", { withTimezone: true }),
+    /** The profile owner or the portal host opened this thread again after clearing it. */
+    peerRevivedAt: timestamp("peer_revived_at", { withTimezone: true }),
   },
   (table) => [
     uniqueIndex("conversations_open_pair_unique")

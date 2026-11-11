@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { FavoriteButton } from "@/components/favorite-button";
+import { ReviewStars } from "@/components/review-stars";
 import { TrainerContactIcons } from "@/components/messages/trainer-contact-icons";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { pluralRu } from "@/lib/ru-plural";
@@ -84,8 +85,8 @@ const CSS = `
 .gallery-nav--prev { left: 12px; } .gallery-nav--next { right: 12px; }
 .gallery-nav svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .gallery-save { position: absolute; top: 12px; right: 12px; z-index: 2; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(255,255,255,0.92); color: var(--muted); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
-.gallery-save.is-saved { color: var(--primary); }
-.gallery-save svg { width: 20px; height: 20px; fill: currentColor; }
+.gallery-save.is-saved, .gallery-save:hover, .gallery-save:focus-visible { color: var(--primary); }
+.gallery-save svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .gallery-thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 .gallery-thumb { width: 70px; height: 70px; padding: 0; border: 2px solid transparent; border-radius: var(--radius-tile); overflow: hidden; cursor: pointer; background: var(--line); opacity: 0.75; transition: opacity 0.16s, border-color 0.16s, transform 0.16s; }
 .gallery-thumb:hover { opacity: 0.95; }
@@ -109,9 +110,8 @@ const CSS = `
 .club-rating__link { color: var(--primary-dark); font-weight: var(--fw-ui); text-decoration: none; cursor: pointer; background: none; border: 0; padding: 0; }
 .club-rating__link:hover { text-decoration: underline; }
 .club-hero__save { width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--neutral-bg); color: var(--muted); cursor: pointer; display: grid; place-items: center; justify-self: end; align-self: start; }
-.club-hero__save.is-saved { color: var(--primary); }
+.club-hero__save.is-saved, .club-hero__save:hover, .club-hero__save:focus-visible { color: var(--primary); }
 .club-hero__save svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.club-hero__save.is-saved svg { fill: currentColor; }
 .club-hero__stats { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .club-stat { padding: 7px 12px; border-radius: 999px; background: var(--neutral-bg); color: var(--dark); font-size: 13px; font-weight: var(--fw-ui); }
 .club-stat--accent { background: rgba(var(--primary-rgb),0.1); color: var(--primary-dark); }
@@ -227,16 +227,6 @@ const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "trainers", label: "Тренеры" },
   { key: "reviews", label: "Отзывы" },
 ];
-
-function ReviewStars({ rating }: { rating: number }) {
-  return (
-    <span className="review-item__stars" aria-label={`Оценка ${rating} из 5`}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} viewBox="0 0 24 24" className={i < rating ? "" : "is-empty"}><path d="M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z" /></svg>
-      ))}
-    </span>
-  );
-}
 
 function ClubPage() {
   const { club: c } = Route.useLoaderData() as { club: Club };

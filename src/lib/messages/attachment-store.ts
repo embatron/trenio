@@ -42,6 +42,16 @@ export function messagePreviewPath(conversationId: string, id: string) {
   return file;
 }
 
+/** True when sharp can read a real frame. A header with no picture is false. */
+export async function imageDecodes(bytes: Uint8Array) {
+  try {
+    const meta = await sharp(Buffer.from(bytes), { failOn: "error", animated: false }).metadata();
+    return (meta.width ?? 0) > 0 && (meta.height ?? 0) > 0;
+  } catch {
+    return false;
+  }
+}
+
 /** A small JPEG for the chat. The original file stays beside it. */
 export async function writeMessagePreview(conversationId: string, id: string, bytes: Uint8Array) {
   const prepared = await sharp(Buffer.from(bytes), { failOn: "none", animated: false })

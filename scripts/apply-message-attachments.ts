@@ -109,6 +109,14 @@ const STATEMENTS = [
          AND portal.status = 'open'
          AND portal.id <> card.id
      )`,
+  "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS user_deleted_at timestamptz",
+  "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS peer_deleted_at timestamptz",
+  "COMMENT ON COLUMN conversations.user_deleted_at IS 'Клиент удалил переписку у себя. У собеседника она остаётся.'",
+  "COMMENT ON COLUMN conversations.peer_deleted_at IS 'Владелец профиля или админ портала удалил переписку у себя. У собеседника она остаётся.'",
+  "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS user_revived_at timestamptz",
+  "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS peer_revived_at timestamptz",
+  "COMMENT ON COLUMN conversations.user_revived_at IS 'Клиент снова открыл диалог после удаления у себя. Старые сообщения скрыты.'",
+  "COMMENT ON COLUMN conversations.peer_revived_at IS 'Владелец профиля или админ портала снова открыл диалог после удаления у себя.'",
 ];
 
 async function main() {

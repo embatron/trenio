@@ -2,6 +2,8 @@ import { createFileRoute, getRouteApi } from "@tanstack/react-router";
 import { useEffect, useLayoutEffect, useState } from "react";
 
 import { CabinetModal } from "@/components/cabinet";
+import { PageStatusCard } from "@/components/trainer-cabinet-pulse";
+import { TrainerContactStatus } from "@/components/trainer-contact-status";
 import { TrainerProfileForm } from "@/components/trainer-profile-form";
 
 const meRoute = getRouteApi("/me");
@@ -9,7 +11,7 @@ const meRoute = getRouteApi("/me");
 export const Route = createFileRoute("/me/profile")({
   head: () => ({
     meta: [
-      { title: "Мой профиль · Я ищу тренера на trenio.by" },
+      { title: "Моя страница · Я ищу тренера на trenio.by" },
       { name: "description", content: "Публичная карточка тренера." },
       { name: "robots", content: "noindex,follow" },
     ],
@@ -67,22 +69,29 @@ function MeProfilePage() {
   if (!trainer) {
     return (
       <article className="cabinet-card">
-        <h2>Мой профиль</h2>
+        <h2>Моя страница</h2>
         <p className="cabinet-empty">Карточка в каталоге к этому аккаунту пока не привязана.</p>
       </article>
     );
   }
 
   return (
-    <article
-      className={enterCard ? "cabinet-card profile-card-enter" : "cabinet-card"}
-      onAnimationEnd={() => {
-        try { localStorage.setItem("trenio-trainer-profile-card", "1"); } catch { /* ignore */ }
-      }}
-    >
-      <h2>Мой профиль</h2>
-      <TrainerProfileForm profile={trainer} />
-      <ActivationWelcome />
-    </article>
+    <>
+      <PageStatusCard status={trainer.pageStatus} />
+      <article className="cabinet-card" id="trainer-contact-block">
+        <h2>Что уже есть</h2>
+        <TrainerContactStatus profile={trainer} />
+      </article>
+      <article
+        className={enterCard ? "cabinet-card profile-card-enter" : "cabinet-card"}
+        onAnimationEnd={() => {
+          try { localStorage.setItem("trenio-trainer-profile-card", "1"); } catch { /* ignore */ }
+        }}
+      >
+        <h2>Моя страница</h2>
+        <TrainerProfileForm profile={trainer} />
+        <ActivationWelcome />
+      </article>
+    </>
   );
 }

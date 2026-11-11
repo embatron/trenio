@@ -87,8 +87,8 @@ const FORM_CSS = `
   .catalog-search .search-intent { gap: 6px 12px; margin-bottom: 12px; font-size: 13px; }
   .catalog-search .intent-group { gap: 4px; }
   .catalog-search .audience-tab, .catalog-search .format-tab {
-    min-height: 32px;
-    padding: 3px 10px;
+    min-height: 44px;
+    padding: 6px 10px;
     font-size: 13px;
     line-height: 1.25;
   }

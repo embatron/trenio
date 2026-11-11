@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, redirect, useRouterState } from "@tanstack/rea
 import { useState } from "react";
 
 import { CabinetShell, type AccountSectionPath, type CabinetIcon } from "@/components/cabinet";
+import { useCabinetLive } from "@/components/cabinet-live";
 import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
 import { logoutFn } from "@/lib/auth/functions";
@@ -43,6 +44,7 @@ function AccountLayout() {
   const { user } = Route.useRouteContext();
   const { cabinet } = Route.useLoaderData();
   const messaging = useMessaging();
+  const live = useCabinetLive();
   const { keys, ready } = useFavorites();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [pending, setPending] = useState(false);
@@ -57,8 +59,8 @@ function AccountLayout() {
       ? "messages"
       : SECTIONS.find((item) => pathname === item.to)?.id ?? "profile";
   const items = SECTIONS.map((item) => {
-    if (item.id === "messages") return { ...item, badge: messaging.own };
-    if (item.id === "reviews") return { ...item, badge: cabinet.reviews.length };
+    if (item.id === "messages") return { ...item, badge: messaging.total };
+    if (item.id === "reviews") return { ...item, badge: live ? live.accountReviews : cabinet.reviews.length };
     if (item.id === "bookings") return { ...item, badge: 0 };
     if (item.id === "favorites") return { ...item, badge: ready ? keys.length : undefined };
     return item;

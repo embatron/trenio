@@ -1,11 +1,10 @@
 import { createFileRoute, Outlet, redirect, useRouterState } from "@tanstack/react-router";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
+import { useLayoutEffect, useState } from "react";
 
 import { CabinetShell, cabinetPathMatches, type AdminSectionPath, type CabinetIcon, type CabinetNavPage } from "@/components/cabinet";
+import { useCabinetLive } from "@/components/cabinet-live";
 import { useMessaging } from "@/components/messages/messages-live";
 import { getAdminShellFn } from "@/lib/admin/shell";
-import { MESSAGE_SCAN_MS } from "@/lib/messages/polling";
 import { logoutFn } from "@/lib/auth/functions";
 import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { deniedCabinetTarget, ROLE_LABELS } from "@/lib/auth/roles";
@@ -59,49 +58,14 @@ function AdminLayout() {
   const { user } = Route.useRouteContext();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [pending, setPending] = useState(false);
-  const [counts, setCounts] = useState(loaded);
-  const shell = useServerFn(getAdminShellFn);
-  const shellRef = useRef(shell);
-  shellRef.current = shell;
   const logout = useAuthServerFn(logoutFn);
   const face = useLiveAvatar(user?.id, user?.avatarPath);
   const messaging = useMessaging();
+  const live = useCabinetLive();
+  const counts = live?.staff ?? loaded;
   useLayoutEffect(() => {
     document.documentElement.classList.add("is-staff-layout");
     return () => document.documentElement.classList.remove("is-staff-layout");
-  }, []);
-  useEffect(() => {
-    setCounts(loaded);
-  }, [loaded]);
-  useEffect(() => {
-    let stop = false;
-    let timer = 0;
-    const tick = async () => {
-      if (document.visibilityState === "hidden") return;
-      try {
-        const next = await shellRef.current();
-        if (!stop) setCounts(next);
-      } catch {
-        /* keep the last counts */
-      }
-    };
-    const loop = () => {
-      timer = window.setTimeout(() => {
-        void tick().finally(() => {
-          if (!stop) loop();
-        });
-      }, MESSAGE_SCAN_MS);
-    };
-    const onVisible = () => {
-      if (document.visibilityState === "visible") void tick();
-    };
-    document.addEventListener("visibilitychange", onVisible);
-    loop();
-    return () => {
-      stop = true;
-      window.clearTimeout(timer);
-      document.removeEventListener("visibilitychange", onVisible);
-    };
   }, []);
   if (!user) return null;
 

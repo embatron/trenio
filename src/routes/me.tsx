@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, redirect, useRouterState } from "@tanstack/rea
 import { useState } from "react";
 
 import { CabinetShell, type CabinetIcon, type MeSectionPath } from "@/components/cabinet";
+import { useCabinetLive } from "@/components/cabinet-live";
 import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
 import { TRAINER_PROFILE_SECTIONS } from "@/components/trainer-card-fields";
@@ -16,12 +17,19 @@ import { listOwnTrainerReviewsFn, listTrainerRatingSummariesFn } from "@/lib/cat
 import { getOwnTrainerViewStatsFn } from "@/lib/catalog/trainer-views";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
-const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: MeSectionPath; sections?: typeof TRAINER_PROFILE_SECTIONS }> = [
+const ME_PAGE_SECTIONS = [
+  { id: "trainer-page-status", label: "Статус" },
+  { id: "trainer-contact-block", label: "Контакты" },
+  ...TRAINER_PROFILE_SECTIONS,
+];
+
+const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: MeSectionPath; sections?: typeof ME_PAGE_SECTIONS }> = [
   { id: "overview", label: "Общая панель", icon: "overview", to: "/me" },
+  { id: "stats", label: "Моя статистика", icon: "stats", to: "/me/stats" },
+  { id: "profile", label: "Моя страница", icon: "trainers", to: "/me/profile", sections: ME_PAGE_SECTIONS },
   { id: "messages", label: "Мои сообщения", icon: "messages", to: "/me/messages" },
-  { id: "profile", label: "Мой профиль", icon: "trainers", to: "/me/profile", sections: TRAINER_PROFILE_SECTIONS },
-  { id: "contacts", label: "Мои контакты", icon: "contacts", to: "/me/contacts" },
   { id: "reviews", label: "Мои отзывы", icon: "reviews", to: "/me/reviews" },
+  { id: "likes", label: "Мои лайкосы", icon: "likes", to: "/me/likes" },
   { id: "favorites", label: "Избранное", icon: "favorites", to: "/me/favorites" },
   { id: "settings", label: "Настройки", icon: "profile", to: "/me/settings" },
 ];
@@ -53,8 +61,9 @@ export const Route = createFileRoute("/me")({
 
 function MeLayout() {
   const { user } = Route.useRouteContext();
-  const { trainer, reviews } = Route.useLoaderData();
+  const { trainer, reviews, views } = Route.useLoaderData();
   const messaging = useMessaging();
+  const live = useCabinetLive();
   const { keys, ready } = useFavorites();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [pending, setPending] = useState(false);
@@ -69,9 +78,10 @@ function MeLayout() {
       ? "overview"
       : SECTIONS.find((item) => pathname === item.to)?.id ?? "overview";
   const face = trainer?.photos[0] || trainer?.avatarPath || accountFace || null;
-  const items = SECTIONS.filter((item) => (item.id !== "profile" && item.id !== "contacts") || trainer).map((item) => {
+  const items = SECTIONS.filter((item) => item.id !== "profile" || trainer).map((item) => {
     if (item.id === "messages") return { ...item, badge: messaging.total };
-    if (item.id === "reviews") return { ...item, badge: reviews.length };
+    if (item.id === "reviews") return { ...item, badge: live ? live.trainerReviews : reviews.length };
+    if (item.id === "likes") return { ...item, badge: live ? live.trainerLikes : views?.likes.total ?? 0 };
     if (item.id === "favorites") return { ...item, badge: ready ? keys.length : undefined };
     if (item.id !== "profile") return item;
     return active === "profile" ? item : { ...item, sections: undefined };

@@ -6,6 +6,7 @@ import {
   compactReviewHtml,
   pastedReviewHtml,
   reviewExcerpt,
+  reviewPlainText,
   reviewTextLength,
   reviewVisibleText,
   sanitizeReviewHtml,
@@ -56,6 +57,15 @@ test("pastedReviewHtml prefers cleaned HTML and falls back to plain text", () =>
     "Обычный текст<br>вторая",
   );
   assert.equal(pastedReviewHtml("", "3 < 4 & 5"), "3 &lt; 4 &amp; 5");
+});
+
+test("a message of only invisible characters is empty", () => {
+  assert.equal(reviewPlainText("\u200B\u200C\u200D\uFEFF\u2060"), "");
+  assert.equal(reviewPlainText("<p>\u200B</p>"), "");
+  assert.equal(reviewTextLength("\u200B"), 0);
+  assert.equal(reviewVisibleText("\u00AD\u200B"), "");
+  assert.equal(reviewPlainText("привет\u200B").includes("привет"), true);
+  assert.equal(reviewTextLength("👨‍👩‍👧"), 1);
 });
 
 test("reviewExcerpt keeps a short review and cuts a long one on a word", () => {

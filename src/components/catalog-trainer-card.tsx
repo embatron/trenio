@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 
+import { AccountLikeButton } from "@/components/account-like-button";
 import { FavoriteButton } from "@/components/favorite-button";
+import { CardDirectLink } from "@/components/messages/card-direct-link";
 import { ShareProfileButton } from "@/components/share-profile";
 import { PhotoImage } from "@/components/photo-image";
 import { TrainerName } from "@/components/trainer-name";
@@ -28,6 +30,8 @@ export type CatalogTrainerCardData = {
   desc: string;
   rating: string;
   reviews: number;
+  /** Catalog points from 0 to 100. Shown when the list is ordered by that score. */
+  catalogScore?: number;
   city: string;
   citySlug?: string;
   district?: string;
@@ -82,7 +86,9 @@ export function CatalogTrainerCard({
         <PhotoImage className="trainer-card__photo" src={trainer.photo} alt={trainer.name} preset="card" width={480} height={600} loading="lazy" />
         {trainer.badge ? <span className="trainer-card__badge">{trainer.badge}</span> : null}
         <div className="trainer-card__actions">
+          <AccountLikeButton slug={trainer.slug} className="trainer-card__like" />
           <FavoriteButton target={{ type: "trainer", slug: trainer.slug }} className="trainer-card__save" />
+          <CardDirectLink slug={trainer.slug} className="trainer-card__write" />
           <ShareProfileButton slug={trainer.slug} className="trainer-card__share" />
         </div>
       </div>
@@ -112,6 +118,11 @@ export function CatalogTrainerCard({
             </svg>
             <span>{trainer.city}</span>
           </span>
+          {typeof trainer.catalogScore === "number" ? (
+            <span className="trainer-card__rank" aria-label={`Рейтинг в каталоге ${trainer.catalogScore} из 100`}>
+              рейтинг {trainer.catalogScore}
+            </span>
+          ) : null}
         </div>
       </div>
     </article>

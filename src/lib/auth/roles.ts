@@ -32,11 +32,11 @@ export function signupRoleToIntent(role: PublicSignupRole): SignupIntent {
   }
 }
 
-export function hasRole(userRoles: UserRole[], role: UserRole): boolean {
+export function hasRole(userRoles: readonly UserRole[], role: UserRole): boolean {
   return userRoles.includes(role);
 }
 
-export function hasAnyRole(userRoles: UserRole[], roles: UserRole[]): boolean {
+export function hasAnyRole(userRoles: readonly UserRole[], roles: readonly UserRole[]): boolean {
   return roles.some((role) => userRoles.includes(role));
 }
 
@@ -45,7 +45,7 @@ export function hasMinimumRole(userRoles: UserRole[], minimum: UserRole): boolea
   return userRoles.some((role) => ROLE_RANK[role] >= minRank);
 }
 
-export function isStaff(userRoles: UserRole[]): boolean {
+export function isStaff(userRoles: readonly UserRole[]): boolean {
   return hasAnyRole(userRoles, ["admin", "superadmin"]);
 }
 

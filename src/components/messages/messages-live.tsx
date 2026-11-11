@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useRouteContext } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
@@ -8,8 +9,9 @@ import { hasAnyRole } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
 import { redirectToLogin } from "@/lib/auth/return-path";
 import { unreadCountFn } from "@/lib/messages/functions";
+import { bindTypingSender, noteCabinet, noteRemoteTyping } from "@/lib/messages/live-client";
 import { nextMessageAnnounce } from "@/lib/messages/notice";
-import { MESSAGE_SCAN_MS } from "@/lib/messages/polling";
+import { MESSAGE_SOCKET_FALLBACK_MS } from "@/lib/messages/polling";
 import { EMPTY_MESSAGING, type MessageNotice, type MessagingSummary } from "@/lib/messages/schemas";
 
 const MessagesLiveContext = createContext<MessagingSummary>(EMPTY_MESSAGING);
@@ -50,7 +52,30 @@ function announceIncoming(
   });
 }
 
-/** Keeps the header and sidebar counts current while the tab is open. */
+function applyFrame(queryClient: ReturnType<typeof useQueryClient>, raw: string, refresh: () => void) {
+  let frame: { type?: string; conversationId?: string; on?: boolean };
+  try {
+    frame = JSON.parse(raw) as typeof frame;
+  } catch {
+    return;
+  }
+  if (frame.type === "cabinet") {
+    noteCabinet();
+    return;
+  }
+  if (frame.type === "typing" && frame.conversationId) {
+    noteRemoteTyping(frame.conversationId, frame.on === true);
+    return;
+  }
+  if (frame.type === "thread" && frame.conversationId) {
+    void queryClient.invalidateQueries({ queryKey: ["conversations"] });
+    void queryClient.invalidateQueries({ queryKey: ["messages", frame.conversationId] });
+    return;
+  }
+  if (frame.type === "unread") refresh();
+}
+
+/** Keeps the open dialog current over one websocket, and the header count with it. */
 export function MessagesLive({
   userId,
   initial,
@@ -60,12 +85,15 @@ export function MessagesLive({
   initial: MessagingSummary;
   children: ReactNode;
 }) {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const { user } = useRouteContext({ from: "__root__" });
   const [summary, setSummary] = useState(initial);
   const unread = useServerFn(unreadCountFn);
   const unreadRef = useRef(unread);
   unreadRef.current = unread;
+  const queryRef = useRef(queryClient);
+  queryRef.current = queryClient;
   const routerRef = useRef(router);
   routerRef.current = router;
   const rolesRef = useRef(user?.roles ?? []);
@@ -74,6 +102,7 @@ export function MessagesLive({
   pushRef.current = user?.pushMessages !== false;
   const seenRef = useRef<number | null>(null);
   const seenUserRef = useRef<string | null>(null);
+  const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     setSummary(userId ? initial : EMPTY_MESSAGING);
@@ -94,8 +123,10 @@ export function MessagesLive({
   useEffect(() => {
     if (!userId) return;
     let stop = false;
-    let timer = 0;
-    const tick = async () => {
+    let retry = 0;
+    let retryTimer = 0;
+    let fallback = 0;
+    const refresh = async () => {
       if (document.visibilityState === "hidden") return;
       try {
         const next = await unreadRef.current({ data: {} });
@@ -118,28 +149,62 @@ export function MessagesLive({
       } catch (error) {
         if (isAuthorizationRequired(error)) {
           stop = true;
+          socketRef.current?.close();
           redirectToLogin();
-          return;
         }
-        /* keep the last count; the next pass retries */
       }
     };
-    const loop = () => {
-      timer = window.setTimeout(() => {
-        void tick().finally(() => {
-          if (!stop) loop();
-        });
-      }, MESSAGE_SCAN_MS);
+    const refreshOpen = () => {
+      void refresh();
+      void queryRef.current.invalidateQueries({ queryKey: ["conversations"] });
+      void queryRef.current.invalidateQueries({ queryKey: ["messages"] });
+    };
+    const unbind = bindTypingSender((conversationId, on) => {
+      const socket = socketRef.current;
+      if (!socket || socket.readyState !== WebSocket.OPEN) return;
+      socket.send(JSON.stringify({ type: "typing", conversationId, on }));
+    });
+    const connect = () => {
+      if (stop) return;
+      const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const socket = new WebSocket(`${proto}//${window.location.host}/messages/live`);
+      socketRef.current = socket;
+      socket.onopen = () => {
+        retry = 0;
+        window.clearInterval(fallback);
+        fallback = 0;
+        refreshOpen();
+      };
+      socket.onmessage = (event) => {
+        if (typeof event.data === "string") applyFrame(queryRef.current, event.data, () => void refresh());
+      };
+      socket.onclose = () => {
+        if (socketRef.current === socket) socketRef.current = null;
+        if (stop) return;
+        if (!fallback) {
+          fallback = window.setInterval(() => {
+            if (document.visibilityState === "hidden") return;
+            refreshOpen();
+          }, MESSAGE_SOCKET_FALLBACK_MS);
+        }
+        const wait = Math.min(1000 * 2 ** retry, 15_000);
+        retry = Math.min(retry + 1, 4);
+        retryTimer = window.setTimeout(connect, wait);
+      };
     };
     const onVisible = () => {
-      if (document.visibilityState === "visible") void tick();
+      if (document.visibilityState === "visible") refreshOpen();
     };
     document.addEventListener("visibilitychange", onVisible);
-    loop();
+    connect();
     return () => {
       stop = true;
-      window.clearTimeout(timer);
+      unbind();
+      window.clearTimeout(retryTimer);
+      window.clearInterval(fallback);
       document.removeEventListener("visibilitychange", onVisible);
+      socketRef.current?.close();
+      socketRef.current = null;
     };
   }, [userId]);
 

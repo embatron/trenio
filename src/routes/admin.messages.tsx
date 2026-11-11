@@ -14,6 +14,8 @@ import { authErrorMessage } from "@/lib/auth/errors";
 import { newMessageClientId } from "@/lib/messages/attachments";
 import {
   blockPairFn,
+  deleteConversationFn,
+  unblockPairFn,
   closeConversationFn,
   dismissReportFn,
   editMessageFn,
@@ -25,7 +27,6 @@ import {
   sendMessageFn,
   uploadMessageFileFn,
 } from "@/lib/messages/functions";
-import { CONVERSATION_POLL_MS, THREAD_POLL_MS, visiblePollInterval } from "@/lib/messages/polling";
 import type { ConversationCursor, ConversationListItem, ReportRow } from "@/lib/messages/schemas";
 
 const STATUS_LABEL = {
@@ -75,8 +76,6 @@ function AdminMessagesPage() {
   const threads = useQuery({
     queryKey: ["conversations", "staff"],
     queryFn: () => conversationsFn({ data: { view: "staff" } }),
-    refetchInterval: visiblePollInterval(CONVERSATION_POLL_MS),
-    refetchIntervalInBackground: false,
   });
   const reports = useQuery({
     queryKey: ["reports"],
@@ -111,6 +110,8 @@ function StaffThreads() {
   const uploadFn = useServerFn(uploadMessageFileFn);
   const markFn = useServerFn(markConversationReadFn);
   const blockFn = useServerFn(blockPairFn);
+  const deleteFn = useServerFn(deleteConversationFn);
+  const unblockFn = useServerFn(unblockPairFn);
   const [openId, setOpenId] = useState<string | null>(conversation || null);
   const [opening, setOpening] = useState(Boolean(trainer));
   const [quiet, setQuiet] = useState(false);
@@ -133,15 +134,11 @@ function StaffThreads() {
     queryKey: ["conversations", "staff", search],
     queryFn: () => listFn({ data: { view: "staff", query: search.length >= 2 ? search : undefined } }),
     placeholderData: (previous) => previous,
-    refetchInterval: visiblePollInterval(CONVERSATION_POLL_MS),
-    refetchIntervalInBackground: false,
   });
   const thread = useQuery({
     queryKey: ["messages", openId, "staff"],
     queryFn: () => messagesFn({ data: { conversationId: openId! } }),
     enabled: Boolean(openId),
-    refetchInterval: visiblePollInterval(THREAD_POLL_MS),
-    refetchIntervalInBackground: false,
   });
   const items = useMemo(() => {
     const first = list.data?.items ?? [];
@@ -279,7 +276,13 @@ function StaffThreads() {
         }}
         onRetry={() => undefined}
         onReport={async () => undefined}
-        onBlock={() => void act(() => blockFn({ data: { conversationId: openId! } }), "Пара заблокирована, диалог закрыт")}
+        onBlock={() => void act(() => blockFn({ data: { conversationId: openId! } }), "Сообщения в этом диалоге остановлены")}
+        onUnblock={() => void act(() => unblockFn({ data: { conversationId: openId! } }), "Диалог снова открыт")}
+        onDelete={() => {
+          if (!openId) return;
+          const id = openId;
+          void act(() => deleteFn({ data: { conversationId: id } }), "Диалог удалён").then(() => setOpenId(null));
+        }}
         busy={busy}
         onBack={() => setOpenId(null)}
         onDismiss={() => {
@@ -306,6 +309,7 @@ function ReportQueue({
   const messagesFn = useServerFn(listMessagesFn);
   const dismissFn = useServerFn(dismissReportFn);
   const blockFn = useServerFn(blockPairFn);
+  const unblockFn = useServerFn(unblockPairFn);
   const closeFn = useServerFn(closeConversationFn);
   const [status, setStatus] = useState<"" | ReportRow["status"]>("");
   const [openId, setOpenId] = useState<string | null>(null);
@@ -395,7 +399,7 @@ function ReportQueue({
                         <button type="button" onClick={() => setOpenId(row.id)}>Открыть</button>
                         <button type="button" disabled={busy === row.id || row.status === "dismissed"} onClick={() => void act(row.id, () => dismissFn({ data: { reportId: row.id } }))}>Отклонить</button>
                         <button type="button" disabled={busy === row.id} onClick={() => void act(row.id, () => closeFn({ data: { conversationId: row.conversationId } }))}>Закрыть</button>
-                        <button type="button" disabled={busy === row.id} onClick={() => void act(row.id, () => blockFn({ data: { conversationId: row.conversationId } }), "Пара заблокирована, диалог закрыт")}>Блок</button>
+                        <button type="button" disabled={busy === row.id} onClick={() => void act(row.id, () => blockFn({ data: { conversationId: row.conversationId } }), "Сообщения в этом диалоге остановлены")}>Блок</button>
                       </div>
                     </td>
                   </tr>
@@ -424,7 +428,9 @@ function ReportQueue({
             onEdit={async () => undefined}
             onRetry={() => undefined}
             onReport={async () => undefined}
-            onBlock={() => void act(opened.id, () => blockFn({ data: { conversationId: opened.conversationId } }), "Пара заблокирована, диалог закрыт")}
+            onBlock={() => void act(opened.id, () => blockFn({ data: { conversationId: opened.conversationId } }), "Сообщения в этом диалоге остановлены")}
+            onUnblock={() => void act(opened.id, () => unblockFn({ data: { conversationId: opened.conversationId } }), "Диалог снова открыт")}
+            onDelete={() => undefined}
             busy={busy === opened.id}
           />
         </div>

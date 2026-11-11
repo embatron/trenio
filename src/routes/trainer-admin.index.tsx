@@ -130,7 +130,6 @@ function TrainerCabinetPage() {
             phone={cabinet.phone}
             phoneVerified={cabinet.phoneVerified}
             profilePhoto={profileFace}
-            telegram={hasAnyRole(user.roles, ["trainer", "club"])}
           />
         </article>
       ) : null}

@@ -4,7 +4,7 @@ import { getDb } from "@/db";
 import { trainerContactClicks } from "@/db/schema";
 import { logCaught } from "@/lib/log/logger";
 
-export const CONTACT_CLICK_KINDS = ["phone", "instagram", "telegram"] as const;
+export const CONTACT_CLICK_KINDS = ["phone", "instagram", "telegram", "message"] as const;
 export type ContactClickKind = (typeof CONTACT_CLICK_KINDS)[number];
 
 /** Two taps in this window are one click. */

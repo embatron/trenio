@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, redirect, useRouteContext, useRouter, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { CabinetModal } from "@/components/cabinet";
+import { ReviewStars, STAR_PATH } from "@/components/review-stars";
 import { PhotoImage } from "@/components/photo-image";
 import { UserAvatar } from "@/components/user-avatar";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
@@ -17,7 +18,7 @@ import {
   TRAINER_FORMAT_OPTIONS,
   type PublishedTrainer,
 } from "@/lib/catalog/published-trainers";
-import { compareByPopularity, popularityChecklist, ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
+import { compareByPopularity, popularityChecklist, popularityScore, ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
 import { NEGOTIABLE_PRICE_LABEL, listTrainerPricesFn, priceForCard, type TrainerPriceMap } from "@/lib/catalog/trainer-price";
 import {
   createTrainerReviewFn,
@@ -28,6 +29,8 @@ import {
   type TrainerReviewSummary,
 } from "@/lib/catalog/trainer-reviews";
 import { CabinetNotice } from "@/components/cabinet";
+import { AccountLikeButton } from "@/components/account-like-button";
+import { CardDirectLink } from "@/components/messages/card-direct-link";
 import { FavoriteButton } from "@/components/favorite-button";
 import { ShareProfileButton } from "@/components/share-profile";
 import { TrainerAddressMap } from "@/components/trainer-address-map";
@@ -126,8 +129,13 @@ function toTrainer(
       name: item.name,
       rating: rating.rating,
       reviews: rating.reviews,
+      positiveReviews: rating.positiveReviews,
+      recentPositiveReviews: rating.recentPositiveReviews,
       views: rating.views,
+      engaged: rating.engaged,
       saves: rating.saves,
+      likes: rating.likes,
+      likePace: rating.likePace,
       cardFilled: item.cardFilled ?? fill.card,
       contactsFilled: item.contactsFilled ?? fill.contacts,
     };
@@ -191,6 +199,11 @@ function toTrainer(
         citySlug: item.city.slug,
         rating: rating.rating,
         reviews: rating.reviews,
+        catalogScore: popularityScore({
+          ...rating,
+          cardFilled: item.cardFilled ?? 0,
+          contactsFilled: item.contactsFilled ?? 0,
+        }),
         city: item.city.label,
         district: item.district,
         experience: item.experience,
@@ -265,7 +278,12 @@ export const Route = createFileRoute("/trainers/$slug")({
     });
     return seo;
   },
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): {
+    sport?: string;
+    mail?: string;
+    door?: string;
+    created?: 1;
+  } => ({
     sport: typeof search.sport === "string" && /^[a-z0-9-]{1,30}$/.test(search.sport) ? search.sport : undefined,
     mail: typeof search.mail === "string" ? search.mail : undefined,
     door: typeof search.door === "string" ? search.door : undefined,
@@ -275,7 +293,7 @@ export const Route = createFileRoute("/trainers/$slug")({
 });
 
 const CSS = `
-.trainer-page { background: var(--white); --aside-w: minmax(360px, 38%); }
+.trainer-page { background: var(--light-bg); --aside-w: minmax(360px, 38%); }
 .trainer-page__inner { padding-block: var(--layout-section-y) clamp(40px, 6vw, 72px); }
 
 .breadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 24px; padding: 0; list-style: none; font-size: 13px; font-weight: var(--fw-title); color: var(--muted); }
@@ -299,19 +317,22 @@ const CSS = `
 .profile-aside__card { display: flex; flex-direction: column; border-radius: var(--card-radius); overflow: hidden; background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); box-shadow: 0 14px 42px rgba(var(--dark-rgb),0.07); }
 
 .photo-slider { position: relative; }
-.photo-slider__frame { position: relative; aspect-ratio: 4/5; overflow: hidden; background: linear-gradient(160deg, var(--neutral-bg), var(--line)); }
+.photo-slider__frame { position: relative; aspect-ratio: 4/5; overflow: hidden; background: var(--white); }
 .photo-slider__viewport { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .photo-slider__viewport::-webkit-scrollbar { display: none; }
 .photo-slider__slide { flex: 0 0 100%; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; }
 .photo-slider__slide img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; user-select: none; }
 .photo-slider__badge { position: absolute; top: 12px; left: 12px; z-index: 2; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,0.94); color: var(--primary-dark); font-size: 11px; font-weight: var(--fw-title); letter-spacing: 0.02em; text-transform: uppercase; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
-.profile-actions { position: absolute; top: 10px; right: 10px; z-index: 2; display: flex; flex-direction: column; gap: 8px; }
-.profile-save, .profile-share { width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255,255,255,0.92); color: var(--muted); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
-.profile-save.is-saved, .profile-share:hover, .profile-share:focus-visible { color: var(--primary); }
-.profile-save svg { width: 20px; height: 20px; fill: currentColor; }
-.profile-share svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
-.photo-slider__nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.92); color: var(--dark); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); z-index: 2; }
-.photo-slider__nav--prev { left: 10px; } .photo-slider__nav--next { right: 10px; }
+.profile-actions { position: absolute; top: 10px; right: 10px; z-index: 3; display: flex; flex-direction: column; gap: 8px; }
+.profile-like, .profile-save, .profile-write, .profile-share { position: relative; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255,255,255,0.82); color: var(--muted); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.06); transition: color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease; text-decoration: none; }
+.profile-like:hover, .profile-like:focus-visible, .profile-save:hover, .profile-save:focus-visible, .profile-write:hover, .profile-write:focus-visible, .profile-share:hover, .profile-share:focus-visible { background: rgba(255,255,255,0.94); color: var(--dark); box-shadow: 0 8px 22px rgba(var(--primary-rgb), 0.16); }
+.profile-like.is-liked, .profile-like.is-liked:hover, .profile-like.is-liked:focus-visible, .profile-save.is-saved, .profile-save.is-saved:hover, .profile-save.is-saved:focus-visible { color: var(--primary); background: rgba(255,255,255,0.94); }
+.profile-like svg, .profile-save svg, .profile-write svg, .profile-share svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.photo-slider__nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.82); color: rgba(17, 24, 39, 0.78); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.06); z-index: 2; transition: color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease; }
+.photo-slider__nav:hover, .photo-slider__nav:focus-visible { background: rgba(255,255,255,0.94); color: var(--dark); box-shadow: 0 8px 22px rgba(var(--primary-rgb), 0.16); }
+.photo-slider__nav--prev { left: 10px; }
+/* Four 44px actions plus gaps end at 210px. Keep the next arrow's center below that column. */
+.photo-slider__nav--next { right: 10px; top: max(50%, 240px); }
 .photo-slider__nav svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .photo-thumbs { display: flex; gap: 8px; margin: 0; padding: 10px 12px 12px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; background: var(--white); list-style: none; }
 .photo-thumbs::-webkit-scrollbar { display: none; }
@@ -319,7 +340,7 @@ const CSS = `
 .photo-thumbs button.is-active { border-color: var(--primary); }
 .photo-thumbs img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
 
-.contact-panel { padding: 4px 18px 18px; background: var(--white); }
+.contact-panel { padding: 4px 18px 18px; background: var(--light-bg); }
 .contact-prices { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px 14px; margin: 0 0 14px; }
 .contact-prices[data-groups="1"] { grid-template-columns: minmax(0, 1fr); }
 .contact-prices__group { display: grid; gap: 8px; align-content: start; }
@@ -350,8 +371,8 @@ const CSS = `
 .profile-identity__name { min-width: 0; flex: 1 1 auto; margin: 0; font-size: var(--fs-page); font-weight: var(--fw-heading); letter-spacing: -0.035em; color: var(--dark); line-height: 1.05; }
 .profile-identity__name .trainer-name { flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 0.28em; max-width: 100%; }
 .profile-identity__name .trainer-name__line { width: min(100%, max-content); max-width: 100%; white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
-.profile-edit { width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0; background: transparent; border-radius: 50%; color: var(--dark); font: inherit; text-decoration: none; cursor: pointer; }
-.profile-edit:hover { background: rgba(var(--dark-rgb), 0.04); color: var(--primary); }
+.profile-edit { width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0; background: transparent; border-radius: 50%; color: rgba(17, 24, 39, 0.72); font: inherit; text-decoration: none; cursor: pointer; transition: color 0.18s ease, background 0.18s ease; }
+.profile-edit:hover { background: rgba(var(--primary-rgb), 0.08); color: var(--primary); }
 .profile-edit svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .review-reply__open { align-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--primary-dark); font: inherit; font-size: 14px; font-weight: var(--fw-title); cursor: pointer; }
 .profile-identity__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
@@ -385,7 +406,10 @@ a.taxonomy-tag--brand:hover,
 a.taxonomy-tag--brand:focus-visible { background: var(--primary-dark); color: var(--white); text-decoration: none; }
 .profile-note { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; font-weight: 500; }
 .profile-reach .trainer-contacts { margin-left: 0; gap: 4px; flex-wrap: wrap; }
-.profile-reach .trainer-contacts__link { width: 56px; height: 56px; }
+.profile-reach .trainer-contacts__link { width: 56px; height: 56px; opacity: 0.82; transition: opacity 0.18s ease, background 0.18s ease, color 0.18s ease; }
+.profile-reach .trainer-contacts__link:hover, .profile-reach .trainer-contacts__link:focus-visible { opacity: 1; }
+.profile-reach .trainer-contacts__link--line:not(.trainer-contacts__link--send):hover,
+.profile-reach .trainer-contacts__link--line:not(.trainer-contacts__link--send):focus-visible { background: rgba(var(--primary-rgb), 0.08); }
 .profile-reach .trainer-contacts__link svg { width: 28px; height: 28px; }
 .profile-reach .trainer-contacts__link--phone { width: auto; padding: 0 18px 0 14px; gap: 10px; border-radius: 999px; display: inline-flex; }
 .profile-reach .trainer-contacts__phone { font-size: 16px; font-weight: var(--fw-title); letter-spacing: -0.02em; white-space: nowrap; }
@@ -505,17 +529,6 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
-function ReviewStars({ rating }: { rating: number }) {
-  return (
-    <span className="review-item__stars" aria-label={`Оценка ${rating} из 5`}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} viewBox="0 0 24 24" className={i < rating ? "" : "is-empty"}><path d="M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z" /></svg>
-      ))}
-    </span>
-  );
-}
-
-const STAR_PATH = "M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 22.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z";
 const REVIEW_SNIPPETS = [
   "Объясняет спокойно и понятно.",
   "На занятии было комфортно.",
@@ -1006,7 +1019,9 @@ function TrainerPage() {
                   </div>
                   {t.badge && <span className="photo-slider__badge">{t.badge}</span>}
                   <div className="profile-actions">
+                    <AccountLikeButton slug={t.slug} className="profile-like" />
                     <FavoriteButton target={{ type: "trainer", slug: t.slug }} className="profile-save" />
+                    <CardDirectLink slug={t.slug} className="profile-write" />
                     <ShareProfileButton slug={t.slug} className="profile-share" />
                   </div>
                   {photos.length > 1 ? (

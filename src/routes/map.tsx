@@ -80,7 +80,7 @@ function MapListedCard({
 }
 
 export const Route = createFileRoute("/map")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): { sports?: string; city?: string } => ({
     sports: typeof search.sports === "string" ? search.sports : undefined,
     city: typeof search.city === "string" ? search.city : undefined,
   }),
@@ -948,11 +948,15 @@ const PAGE_CSS = `
 .map-people .trainer-card__price { font-size: 13px; }
 .map-people .trainer-card__footer { margin-top: 0; padding-top: 8px; }
 .map-people .trainer-card__actions { top: 2px; right: 2px; gap: 0; }
+.map-people .trainer-card__like,
 .map-people .trainer-card__save,
+.map-people .trainer-card__write,
 .map-people .trainer-card__share {
   width: 44px; height: 44px; background: transparent; box-shadow: none;
 }
+.map-people .trainer-card__like svg,
 .map-people .trainer-card__save svg,
+.map-people .trainer-card__write svg,
 .map-people .trainer-card__share svg {
   width: 28px; height: 28px; padding: 7px; border-radius: 50%; box-sizing: border-box;
   background: rgba(255, 255, 255, 0.92); box-shadow: 0 4px 12px rgba(var(--dark-rgb), 0.12);

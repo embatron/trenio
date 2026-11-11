@@ -1,4 +1,4 @@
-const ALLOWED = new Set(["b", "strong", "i", "em", "ul", "ol", "li", "p", "br", "a"]);
+const ALLOWED = new Set(["b", "strong", "i", "em", "u", "s", "code", "pre", "span", "ul", "ol", "li", "p", "br", "a"]);
 
 /** Block tags from a paste become paragraphs. The editor only stores the allowed set. */
 const BLOCK_AS_P = new Set([
@@ -42,10 +42,15 @@ export function sanitizeReviewHtml(raw: string): string {
     .replace(/<\/?[a-z0-9]+:[^>]*>/gi, "");
 
   let openAnchors = 0;
+  let spoilers = 0;
   return withoutDanger.replace(
     /<\/?([a-z0-9]+)([^>]*)>/gi,
     (match, tagName: string, attrs: string) => {
       const tag = tagName.toLowerCase();
+      if (tag === "pre" || tag === "code") {
+        if (match.startsWith("</")) return `</${tag}>`;
+        return `<${tag}>`;
+      }
       if (BLOCK_AS_P.has(tag)) return match.startsWith("</") ? "</p>" : "<p>";
       if (!ALLOWED.has(tag)) return "";
       if (tag === "a") {
@@ -59,6 +64,18 @@ export function sanitizeReviewHtml(raw: string): string {
         if (!/^https?:\/\//i.test(value) && !/^mailto:/i.test(value)) return "";
         openAnchors += 1;
         return `<a href="${escapeAttr(value)}" rel="nofollow noopener">`;
+      }
+      if (tag === "span") {
+        if (match.startsWith("</")) {
+          if (spoilers === 0) return "";
+          spoilers -= 1;
+          return "</span>";
+        }
+        if (/\bclass\s*=\s*["']tg-spoiler["']/.test(attrs)) {
+          spoilers += 1;
+          return `<span class="tg-spoiler">`;
+        }
+        return "";
       }
       if (match.startsWith("</")) return `</${tag}>`;
       if (tag === "br") return "<br>";
@@ -138,8 +155,13 @@ export function reviewTextLength(html: string): number {
   return [...graphemes.segment(reviewPlainText(html))].length;
 }
 
+/** Format, control, and other characters that do not show a glyph. */
+function hasVisibleMessageText(value: string) {
+  return /[^\p{Cf}\p{Cc}\s\u00AD\u034F\u115F\u1160\u17B4\u17B5\u3164\uFFA0]/u.test(value);
+}
+
 export function reviewPlainText(html: string): string {
-  return sanitizeReviewHtml(html)
+  const text = sanitizeReviewHtml(html)
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/(p|li|div)>/gi, "\n")
     .replace(/<[^>]+>/g, "")
@@ -151,4 +173,5 @@ export function reviewPlainText(html: string): string {
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+  return hasVisibleMessageText(text) ? text : "";
 }

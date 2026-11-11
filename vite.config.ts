@@ -4,8 +4,9 @@
 //     componentTagger (dev-only), VITE_* env injection, @ path alias, React/TanStack dedupe,
 //     error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
-import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { defineConfig, type LovableViteTanstackOptions } from "@lovable.dev/vite-tanstack-config";
 
+import { messageLiveDev } from "./src/vite/message-live";
 import { serveUploadFiles } from "./src/vite/serve-upload-files";
 
 
@@ -19,6 +20,8 @@ export default defineConfig({
   // the Lovable helper builds a Cloudflare worker.
   nitro: {
     preset: "node-server",
+    serverDir: "./server",
+    features: { websocket: true },
     output: {
       dir: "dist",
       serverDir: "dist/server",
@@ -27,12 +30,12 @@ export default defineConfig({
     externals: {
       external: ["pdfjs-dist", "@napi-rs/canvas"],
     },
-  },
+  } as Exclude<LovableViteTanstackOptions["nitro"], boolean | undefined>,
   vite: {
     ssr: {
       external: ["ip-location-api", "sharp", "tinify", "pdfjs-dist", "@napi-rs/canvas"],
     },
-    plugins: [serveUploadFiles()],
+    plugins: [serveUploadFiles(), messageLiveDev()],
     // The client dependency scan follows server imports. Bundling the native
     // canvas addon fails the whole pre-bundle, and then every browser module
     // waits forever. These packages stay external, same as the SSR build.

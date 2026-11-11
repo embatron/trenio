@@ -16,6 +16,7 @@ import {
 import { minskToday } from "@/lib/catalog/trainer-periods";
 import { visitorId } from "@/lib/catalog/trainer-visitor";
 import { logCaught } from "@/lib/log/logger";
+import { publishCabinet } from "@/lib/messages/live-hub";
 
 /** One click on the public phone, Instagram, or Telegram. The owner is not stored. */
 export const recordTrainerContactClickFn = createServerFn({ method: "POST" })
@@ -51,6 +52,7 @@ export const recordTrainerContactClickFn = createServerFn({ method: "POST" })
         kind: data.kind,
         day: minskToday(),
       });
+      publishCabinet([profile.ownerUserId]);
       return { ok: true as const };
     } catch (error) {
       logCaught("catalog", "catalog.contact", error, { target: data.slug });

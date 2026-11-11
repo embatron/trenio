@@ -118,7 +118,7 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
             if (reviewPlainText(values.bio)) setBioInvalid(false);
             setForm((current) => ({ ...current, ...values }));
           }}
-          mode="profile"
+          mode="full"
           photos={media?.photos ?? null}
           certificates={media?.certificates ?? null}
           phone={{

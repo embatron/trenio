@@ -12,6 +12,8 @@ import type { ComposerFile } from "@/components/messages/message-composer";
 import { authErrorMessage } from "@/lib/auth/errors";
 import {
   blockPairFn,
+  deleteConversationFn,
+  unblockPairFn,
   editMessageFn,
   listConversationsFn,
   listMessagesFn,
@@ -20,7 +22,6 @@ import {
   sendMessageFn,
   uploadMessageFileFn,
 } from "@/lib/messages/functions";
-import { CONVERSATION_POLL_MS, THREAD_POLL_MS, visiblePollInterval } from "@/lib/messages/polling";
 import { newMessageClientId } from "@/lib/messages/attachments";
 import { DAILY_TRAINER_LIMIT_MESSAGE, type ConversationCursor, type ConversationListItem, type MessageCursor, type MessageDto } from "@/lib/messages/schemas";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -45,10 +46,13 @@ export function MessagesWorkspace({
   view,
   conversationId,
   openError,
+  holdOpen = false,
 }: {
   view: "own" | "inbox";
   conversationId: string | null;
   openError?: string | null;
+  /** A card click is still resolving its own dialog. Do not open the newest row. */
+  holdOpen?: boolean;
 }) {
   const mobile = useIsMobile();
   const router = useRouter();
@@ -68,6 +72,8 @@ export function MessagesWorkspace({
   const uploadFn = useServerFn(uploadMessageFileFn);
   const markFn = useServerFn(markConversationReadFn);
   const blockFn = useServerFn(blockPairFn);
+  const deleteFn = useServerFn(deleteConversationFn);
+  const unblockFn = useServerFn(unblockPairFn);
   const reportFn = useServerFn(reportMessageFn);
   const [extraItems, setExtraItems] = useState<ConversationListItem[]>([]);
   const [listCursor, setListCursor] = useState<ConversationCursor | null | undefined>(undefined);
@@ -91,17 +97,11 @@ export function MessagesWorkspace({
     queryKey: ["conversations", view, search],
     queryFn: () => listFn({ data: { view, query: search.length >= 2 ? search : undefined } }),
     placeholderData: (previous) => previous,
-    refetchInterval: visiblePollInterval(CONVERSATION_POLL_MS),
-    refetchIntervalInBackground: false,
-    refetchOnWindowFocus: true,
   });
   const threadQuery = useQuery({
     queryKey: ["messages", conversationId],
     queryFn: () => messagesFn({ data: { conversationId: conversationId! } }),
     enabled: Boolean(conversationId),
-    refetchInterval: visiblePollInterval(THREAD_POLL_MS),
-    refetchIntervalInBackground: false,
-    refetchOnWindowFocus: true,
   });
 
   useEffect(() => {
@@ -155,14 +155,14 @@ export function MessagesWorkspace({
   );
   const latestId = items[0]?.id ?? null;
   useEffect(() => {
-    if (quietLists.has(view) || mobile || conversationId || openError || trainerHold || listQuery.isPending || !latestId) return;
+    if (quietLists.has(view) || mobile || conversationId || openError || holdOpen || trainerHold || listQuery.isPending || !latestId) return;
     if (window.matchMedia("(max-width: 767px)").matches) return;
     void navigate({
       to: view === "own" ? "/account/messages/$conversationId" : "/me/messages/$conversationId",
       params: { conversationId: latestId },
       replace: true,
     });
-  }, [mobile, conversationId, openError, trainerHold, listQuery.isPending, latestId, view, navigate]);
+  }, [mobile, conversationId, openError, holdOpen, trainerHold, listQuery.isPending, latestId, view, navigate]);
   const nextListCursor = listCursor === undefined ? listQuery.data?.nextCursor ?? null : listCursor;
   const serverMessages = threadQuery.data?.messages ?? [];
   const confirmed = new Set(serverMessages.map((message) => message.clientId));
@@ -257,8 +257,14 @@ export function MessagesWorkspace({
   }, [limitMessage]);
   const threadPath = view === "own" ? "/account/messages/$conversationId" : "/me/messages/$conversationId";
   const listPath = view === "own" ? "/account/messages" : "/me/messages";
+  useEffect(() => {
+    const thread = threadQuery.data;
+    if (!conversationId || !thread || thread.conversationId !== conversationId || thread.listed) return;
+    quietLists.add(view);
+    void navigate({ to: listPath });
+  }, [conversationId, threadQuery.data, view, navigate, listPath]);
   const openAt = (id: string) => {
-    void navigate({ to: threadPath, params: { conversationId: id } });
+    void navigate({ to: threadPath, params: { conversationId: id }, search: {} });
   };
   const openIndex = conversationId ? items.findIndex((item) => item.id === conversationId) : -1;
   const previousId = openIndex > 0 ? items[openIndex - 1]?.id ?? null : null;
@@ -329,7 +335,23 @@ export function MessagesWorkspace({
           const result = await reportFn({ data: { conversationId, reason, comment } });
           toast(result.duplicate ? "Вы уже жаловались на эту переписку." : "Жалоба отправлена. Администратор получит письмо.");
         }}
-        onBlock={() => void run(() => blockFn({ data: { conversationId: conversationId! } }), "Пара заблокирована, диалог закрыт")}
+        onBlock={() => void run(() => blockFn({ data: { conversationId: conversationId! } }), "Сообщения в этом диалоге остановлены")}
+        onUnblock={() => void run(() => unblockFn({ data: { conversationId: conversationId! } }), "Диалог снова открыт")}
+        onDelete={() => {
+          if (!conversationId || busy) return;
+          setBusy(true);
+          setActionError(null);
+          void deleteFn({ data: { conversationId } })
+            .then(async () => {
+              toast("Диалог удалён");
+              quietLists.add(view);
+              await listQuery.refetch();
+              void router.invalidate();
+              await navigate({ to: listPath });
+            })
+            .catch((error) => setActionError(authErrorMessage(error)))
+            .finally(() => setBusy(false));
+        }}
         busy={busy}
         onBack={mobile ? () => void navigate({ to: listPath }) : undefined}
         onDismiss={() => {
@@ -364,11 +386,15 @@ export const DIRECT_CSS = `
 .direct-banner { display: flex; align-items: center; gap: 8px; margin: 0 12px 8px; min-height: 44px; padding: 6px 8px 6px 12px; border-radius: 12px; background: var(--light-bg); color: var(--dark); font-size: 13px; }
 .direct-banner span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .direct-banner button { flex: 0 0 44px; width: 44px; height: 44px; border: 0; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; }
-.direct-quote { display: grid; gap: 2px; width: 100%; min-height: 44px; margin: 0 0 6px; padding: 6px 8px; border: 0; border-left: 2px solid currentColor; border-radius: 8px; background: rgba(255, 255, 255, 0.45); color: inherit; font: inherit; text-align: left; cursor: pointer; }
-.direct-quote strong { font-size: 12px; font-weight: var(--fw-ui); }
-.direct-quote span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
-.direct-bubble__actions { display: flex; gap: 4px; margin-top: 2px; }
-.direct-bubble__actions button { min-height: 44px; min-width: 44px; padding: 0 8px; border: 0; background: transparent; color: inherit; font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer; }
+.direct-banner--quote { min-height: 36px; margin: 0 12px 4px; padding: 0 0 0 8px; gap: 6px; border-radius: 0; background: transparent; border-left: 2px solid var(--primary); color: var(--muted); font-size: 12px; line-height: 1.3; }
+.direct-banner--quote svg { flex: 0 0 16px; width: 16px; height: 16px; color: var(--primary); }
+.direct-quote { display: block; width: 15em; max-width: 100%; margin: 0 0 2px; padding: 0 0 0 6px; border: 0; border-left: 2px solid rgba(var(--dark-rgb), 0.22); border-radius: 0; background: transparent; color: inherit; font: inherit; font-size: 11px; line-height: 1.25; text-align: left; opacity: 0.68; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.direct-bubble__reply { flex: 0 0 44px; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--muted); cursor: pointer; }
+.direct-bubble__reply:hover { color: var(--primary); background: rgba(var(--primary-rgb), 0.08); }
+.direct-bubble__edit { position: relative; flex: 0 0 auto; width: 22px; height: 22px; margin-right: auto; padding: 0; border: 0; background: transparent; color: inherit; opacity: 0.62; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.direct-bubble__edit::before { content: ""; position: absolute; inset: -11px; }
+.direct-bubble__edit svg { width: 16px; height: 16px; display: block; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.direct-bubble__edit:hover { opacity: 1; color: var(--primary); }
 .direct-log [data-message-id] { scroll-margin-top: 12px; }
 .direct-list ul { list-style: none; margin: 0; padding: 0; overflow: auto; }
 .direct-list a, .direct-list button.direct-list__row { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 64px; padding: 8px 12px; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; text-decoration: none; cursor: pointer; transition: background-color 0.15s ease; }
@@ -393,7 +419,14 @@ export const DIRECT_CSS = `
 .direct-receipt__label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .direct-unread { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--primary); color: #fff; font-size: 11px; font-weight: var(--fw-title); line-height: 20px; text-align: center; }
 .direct-thread { display: flex; flex-direction: column; }
-.direct-thread__pane { display: flex; flex-direction: column; flex: 1; min-height: 0; animation: direct-switch 0.24s ease; }
+.direct-thread__pane { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; animation: direct-switch 0.24s ease; }
+.direct-unblock {
+  position: absolute; z-index: 4; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  min-height: 44px; padding: 0 18px; border: 1px solid var(--line); border-radius: 999px;
+  background: var(--white); color: var(--dark); box-shadow: 0 10px 28px rgba(var(--dark-rgb), 0.16);
+  font: inherit; font-size: 14px; font-weight: 400; cursor: pointer; white-space: nowrap;
+}
+.direct-unblock:hover { color: var(--primary); border-color: var(--primary); }
 .direct-thread__head { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--line); }
 .direct-thread__identity { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
 .direct-person__face { display: flex; flex: 0 0 auto; border-radius: 50%; }
@@ -408,6 +441,7 @@ export const DIRECT_CSS = `
 .direct-thread__who a.cabinet-id__line:hover .cabinet-id__open { color: var(--primary); }
 .direct-thread__head .trainer-name__line { color: var(--dark); font-size: inherit; }
 .direct-thread__who { min-width: 0; flex: 1; display: grid; }
+.direct-thread__typing { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.2; }
 .direct-thread__who a { display: inline-flex; align-items: center; max-width: 100%; }
 .direct-thread__who a.direct-thread__trainer { min-height: 28px; }
 .direct-switch { display: flex; flex: 0 0 auto; }
@@ -419,11 +453,16 @@ export const DIRECT_CSS = `
 .direct-back { position: relative; margin-right: 0; gap: 2px; padding: 0 10px 0 8px; flex: 0 0 auto; }
 .direct-log { flex: 1; min-height: 0; overflow: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; overflow-anchor: none; }
 .direct-day { align-self: center; margin: 8px 0; color: var(--muted); font-size: 12px; }
-.direct-row { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; max-width: 100%; overflow-anchor: none; }
-.direct-row.is-mine { align-items: flex-end; }
-.direct-bubble { max-width: min(100%, 460px); padding: 10px 12px; border-radius: 16px; background: var(--neutral-bg); color: var(--dark); }
+.direct-row { display: flex; flex-direction: row; align-items: flex-end; justify-content: flex-start; gap: 2px; max-width: 100%; overflow-anchor: none; }
+.direct-row.is-mine { justify-content: flex-end; }
+.direct-row:has(.direct-bubble__reply) .direct-bubble { max-width: min(calc(100% - 48px), 460px); }
+.direct-bubble { max-width: min(100%, 460px); min-width: 0; padding: 8px 12px 6px; border-radius: 16px 16px 16px 6px; background: var(--neutral-bg); color: var(--dark); }
+.direct-row.is-mine .direct-bubble { border-radius: 16px 16px 6px 16px; }
 .direct-bubble.is-user { background: #d7f4f1; }
 .direct-bubble.is-trainer { background: #fde8e6; }
+.direct-bubble.is-user.is-quoted { background: #c4ebe6; }
+.direct-bubble.is-trainer.is-quoted { background: #f6d4d0; }
+.direct-bubble.is-quoted:not(.is-user):not(.is-trainer) { background: #efe8e4; }
 .direct-bubble.is-user .review-html a { color: #0f766e; }
 .direct-bubble.is-trainer .review-html a { color: var(--primary-dark); }
 .direct-bubble p, .direct-bubble__text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; color: inherit; }
@@ -434,11 +473,18 @@ export const DIRECT_CSS = `
 .direct-bubble .review-html p:has(> br:only-child) { min-height: 1.2em; }
 .direct-bubble .review-html :is(b, strong) { font-weight: 700; }
 .direct-bubble .review-html :is(i, em) { font-style: italic; }
+.direct-bubble .review-html u { text-decoration: underline; }
+.direct-bubble .review-html s { text-decoration: line-through; }
+.direct-bubble .review-html code, .direct-bubble .review-html pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.92em; }
+.direct-bubble .review-html code { padding: 0 4px; border-radius: 4px; background: rgba(0, 0, 0, 0.06); }
+.direct-bubble .review-html pre { margin: 4px 0 0; padding: 6px 8px; border-radius: 8px; background: rgba(0, 0, 0, 0.06); white-space: pre-wrap; }
+.direct-bubble .tg-spoiler { background: rgba(0, 0, 0, 0.72); color: transparent; border-radius: 4px; cursor: pointer; }
+.direct-bubble .tg-spoiler.is-open { background: transparent; color: inherit; }
 .direct-bubble .review-html ul, .direct-bubble .review-html ol { margin: 0.45em 0; padding-left: 1.2em; }
 .direct-bubble .review-html ul { list-style: disc; }
 .direct-bubble .review-html ol { list-style: decimal; }
 .direct-bubble .review-html li + li { margin-top: 0.25em; }
-.direct-bubble__meta { display: flex; justify-content: flex-end; align-items: baseline; gap: 8px; margin-top: 4px; }
+.direct-bubble__meta { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 2px; }
 .direct-bubble__meta time, .direct-bubble__meta .direct-bubble__state { margin: 0; font-size: 11px; opacity: 0.85; }
 .direct-bubble.is-deleted { opacity: 0.7; font-style: italic; }
 .direct-bubble__retry { min-height: 44px; border: 0; background: transparent; color: var(--muted); padding: 0 4px; }
@@ -447,11 +493,12 @@ export const DIRECT_CSS = `
 .direct-thread__actions button.direct-icon:hover { color: var(--dark); background: rgba(var(--dark-rgb), 0.05); }
 .direct-menu { position: relative; }
 .direct-thread__actions .direct-menu__btn {
-  width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 50%;
-  background: transparent; color: var(--dark); font-size: 24px; font-weight: 700; line-height: 1;
+  width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 999px;
+  background: transparent; color: var(--muted); font-weight: 400; line-height: 1;
   justify-content: center;
 }
-.direct-thread__actions .direct-menu__btn:hover { background: rgba(var(--dark-rgb), 0.06); }
+.direct-thread__actions .direct-menu__btn svg { width: 20px; height: 20px; display: block; }
+.direct-thread__actions .direct-menu__btn:hover { color: var(--dark); background: rgba(var(--dark-rgb), 0.05); }
 .direct-menu__list {
   position: absolute; top: calc(100% + 4px); right: 0; z-index: 6; min-width: 180px; padding: 6px;
   border: 1px solid var(--line); border-radius: 12px; background: var(--white);
@@ -459,21 +506,37 @@ export const DIRECT_CSS = `
 }
 .direct-thread__actions .direct-menu__list button {
   width: 100%; min-height: 44px; padding: 0 12px; border: 0; border-radius: 8px;
-  background: transparent; color: var(--dark); font: inherit; font-weight: var(--fw-ui); justify-content: flex-start;
+  background: transparent; color: var(--dark); font-size: 14px; font-weight: 400; justify-content: flex-start;
 }
 .direct-thread__actions .direct-menu__list button:hover { background: rgba(var(--primary-rgb), 0.08); color: var(--primary); }
-.direct-composer { width: 100%; padding: 0; border-top: 1px solid var(--line); }
-.direct-composer__box { width: 100%; border: 0; border-radius: 0; background: var(--white); overflow: hidden; }
-.direct-editor, .direct-editor .rsw-editor { width: 100%; border: 0; border-radius: 0; min-height: 0; box-shadow: none; }
-.direct-composer__bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 12px; border-top: 1px solid var(--line); background: var(--light-bg); }
-.direct-composer__send { margin-left: auto; background: var(--primary); color: #fff; border-color: transparent; }
-.direct-composer__send:disabled, .direct-thread__actions button:disabled { opacity: 0.55; cursor: default; }
+.direct-cleared { margin: 8px 16px 12px; text-align: center; color: var(--muted); font-size: 13px; line-height: 1.4; }
+.direct-composer { position: relative; width: 100%; padding: 8px 10px 10px; border-top: 1px solid var(--line); background: var(--white); }
+.direct-composer__row { display: flex; align-items: flex-end; gap: 6px; }
+.direct-composer__pill { flex: 1; min-width: 0; display: flex; align-items: flex-end; border-radius: 22px; background: var(--neutral-bg); }
+.direct-composer__send { flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px; background: var(--primary); color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color 0.2s ease, transform 0.2s ease; }
+.direct-composer__send:hover:not(:disabled), .direct-composer__send:focus-visible:not(:disabled) { background: var(--primary-dark); transform: translate(2px, -2px); }
+.direct-composer__send svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+@media (prefers-reduced-motion: reduce) {
+  .direct-composer__send { transition: none; }
+}
+.direct-composer__send:disabled, .direct-thread__actions button:disabled { opacity: 0.45; cursor: default; }
 .direct-composer__count, .direct-composer__hint, .direct-empty { margin: 0; color: var(--muted); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
-.direct-composer__hint { margin: 0; padding: 6px 12px 0; }
+.direct-composer__hint { margin: 0; padding: 0 4px 6px; }
+.direct-composer__count { padding: 0 8px 4px; text-align: right; }
 .direct-composer__count.is-over { color: var(--primary); }
-.direct-composer__attach { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--dark); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
-.direct-composer__attach svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
-.direct-composer__attach:disabled { opacity: 0.55; cursor: default; }
+.direct-composer__attach, .direct-emoji { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.direct-composer__attach svg, .direct-emoji svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.direct-composer__attach:disabled, .direct-emoji:disabled { opacity: 0.45; cursor: default; }
+.direct-field-wrap { position: relative; flex: 1; min-width: 0; display: flex; align-items: flex-end; }
+.direct-field { flex: 1; min-width: 0; min-height: 44px; max-height: 120px; overflow: auto; padding: 11px 4px 11px 14px; font: inherit; font-size: 16px; font-weight: 400; line-height: 1.35; color: var(--dark); outline: none; white-space: pre-wrap; overflow-wrap: anywhere; }
+.direct-field__placeholder { position: absolute; left: 14px; top: 11px; color: var(--muted); font-size: 16px; font-weight: 400; line-height: 1.35; pointer-events: none; user-select: none; }
+.direct-field :is(b, strong) { font-weight: 700; }
+.direct-field :is(i, em) { font-style: italic; }
+.direct-field u { text-decoration: underline; }
+.direct-field s { text-decoration: line-through; }
+.direct-field code, .direct-field pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.92em; }
+.direct-emoji__panel { position: absolute; left: 0; right: 0; bottom: calc(100% + 8px); z-index: 40; width: auto; max-width: 360px; margin-left: auto; }
+.direct.is-mobile.is-thread .direct-emoji__panel { left: var(--layout-gutter); right: var(--layout-gutter); max-width: none; margin-left: 0; }
 .direct-draft { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 8px 12px 0; }
 .direct-draft li { display: flex; align-items: center; gap: 8px; max-width: 100%; min-height: 44px; padding: 4px 8px 4px 4px; border: 1px solid var(--line); border-radius: 12px; background: var(--light-bg); }
 .direct-draft li.is-image { position: relative; width: 96px; height: 96px; padding: 0; overflow: hidden; }
@@ -498,10 +561,13 @@ export const DIRECT_CSS = `
 @keyframes direct-pulse { from { background-position: 100% 0; } to { background-position: -100% 0; } }
 .direct-report-form { display: grid; gap: 12px; }
 .direct-report-form label { display: grid; gap: 6px; color: var(--dark); font-size: 14px; font-weight: var(--fw-ui); }
-.direct-report-form select, .direct-report-form textarea { width: 100%; border: 1px solid var(--line); border-radius: 12px; font: inherit; font-size: 14px; background: var(--white); color: var(--dark); }
+.direct-report-form select, .direct-report-form textarea { width: 100%; border: 1px solid var(--line); border-radius: 12px; font: inherit; font-size: 16px; background: var(--white); color: var(--dark); }
 .direct-report-form select { min-height: 44px; padding: 0 12px; }
 .direct-report-form textarea { min-height: 120px; padding: 12px 14px; resize: vertical; }
 .direct-report-form p { margin: 0; color: var(--muted); font-size: 13px; text-align: right; }
+.direct-report-form p.direct-report-form__note { color: var(--dark); font-size: 14px; font-weight: var(--fw-body); line-height: 1.45; text-align: left; }
+.direct-report-form__actions { display: flex; gap: 8px; }
+.direct-report-form__actions button { flex: 1; box-sizing: border-box; min-height: 44px; justify-content: center; }
 .direct-report-form p.is-over { color: var(--primary); }
 .direct-report-form button.direct-report-form__send { justify-content: center; border-color: transparent; background: var(--primary); color: #fff; }
 .direct-report-form button.direct-report-form__send:disabled { opacity: 0.55; cursor: default; }
@@ -530,19 +596,18 @@ export const DIRECT_CSS = `
 .direct.is-mobile.is-thread .direct-thread__who a.direct-thread__trainer { min-width: 0; max-width: 100%; }
 .direct.is-mobile.is-thread .direct-thread__who a.direct-thread__trainer > strong { display: block; min-width: 0; overflow: visible; white-space: normal; overflow-wrap: anywhere; }
 .direct.is-mobile.is-thread .direct-composer,
-.direct.is-mobile.is-thread .direct-composer__box,
-.direct.is-mobile.is-thread .direct-composer__bar,
 .direct.is-mobile.is-thread .direct-log { background: var(--white); }
 @media (max-width: 767px) {
   .direct-switch { display: none; }
 }
 .direct.is-mobile.is-thread .direct-thread__actions { flex: 0 0 auto; margin-left: 0; flex-wrap: nowrap; }
-.direct.is-mobile .direct-editor .rsw-ce { font-size: 16px; }
 .direct.is-mobile.is-thread .direct-log,
-.direct.is-mobile.is-thread .direct-composer__bar,
+.direct.is-mobile.is-thread .direct-composer,
 .direct.is-mobile.is-thread .direct-draft,
 .direct.is-mobile.is-thread .direct-composer__hint { padding-inline: var(--layout-gutter); }
-.direct.is-mobile .direct-editor .rsw-ce { min-height: 56px; max-height: 120px; }
+@media (min-width: 768px) {
+  .direct-field, .direct-field__placeholder { font-size: 14px; }
+}
 body:has(.direct.is-mobile.is-thread) { overflow: hidden; }
 @keyframes direct-switch { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes direct-sheet { from { transform: translateX(100%); } to { transform: none; } }

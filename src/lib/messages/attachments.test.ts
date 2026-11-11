@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { imageDecodes } from "@/lib/messages/attachment-store";
 import {
   ATTACHMENT_BAD_TYPE,
   ATTACHMENT_TOO_BIG,
@@ -39,6 +40,7 @@ test("a message id is a uuid when randomUUID is missing", () => {
 test("Enter sends the text that is already in the editor", () => {
   assert.equal(composerBody("Уже на экране", ""), "Уже на экране");
   assert.equal(composerBody("<p><br></p>", "из состояния"), "из состояния");
+  assert.equal(composerBody("\u200B\u200B", "из состояния"), "из состояния");
   assert.equal(composerBody(undefined, "из состояния"), "из состояния");
 });
 
@@ -54,15 +56,19 @@ test("a screenshot png is an image and a renamed executable is not", () => {
   if (!lie.ok) assert.equal(lie.message, ATTACHMENT_BAD_TYPE);
 });
 
-test("documents are accepted only when the bytes match the extension", () => {
+test("a gif header without a picture does not decode", async () => {
+  assert.equal(await imageDecodes(new TextEncoder().encode("GIF89a")), false);
+  assert.equal(await imageDecodes(new TextEncoder().encode("GIF89a<script>alert(1)</script>")), false);
+  const pixel = Uint8Array.from(Buffer.from("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", "base64"));
+  assert.equal(await imageDecodes(pixel), true);
+});
+
+test("a pdf is accepted and an office file is not", () => {
   assert.equal(sniffAttachment(bytes([0x25, 0x50, 0x44, 0x46, 0x2d]), "sheet.pdf", "application/pdf").ok, true);
-  assert.equal(sniffAttachment(bytes(OLE), "diploma.doc", "application/msword").ok, true);
-  assert.equal(sniffAttachment(bytes(OLE), "table.xls", "application/vnd.ms-excel").ok, true);
-  const docx = sniffAttachment(bytes(ZIP, "word/document.xml"), "notes.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-  assert.equal(docx.ok && docx.file.ext, "docx");
-  const xlsx = sniffAttachment(bytes(ZIP, "xl/workbook.xml"), "plan.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-  assert.equal(xlsx.ok && xlsx.file.ext, "xlsx");
-  assert.equal(sniffAttachment(bytes(ZIP, "word/document.xml"), "plan.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet").ok, false);
+  assert.equal(sniffAttachment(bytes(OLE), "diploma.doc", "application/msword").ok, false);
+  assert.equal(sniffAttachment(bytes(OLE), "table.xls", "application/vnd.ms-excel").ok, false);
+  assert.equal(sniffAttachment(bytes(ZIP, "word/document.xml"), "notes.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document").ok, false);
+  assert.equal(sniffAttachment(bytes(ZIP, "xl/workbook.xml"), "plan.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet").ok, false);
   assert.equal(sniffAttachment(bytes([0x3c, 0x68, 0x74, 0x6d, 0x6c]), "page.html", "text/html").ok, false);
 });
 
@@ -74,6 +80,7 @@ test("a message may be files without text, and ten files are refused", () => {
   assert.equal(parsed.body, "");
   assert.equal(parsed.attachmentIds.length, 1);
   assert.throws(() => sendMessageSchema.parse({ conversationId: id, clientId: other, body: "   ", attachmentIds: [] }));
+  assert.throws(() => sendMessageSchema.parse({ conversationId: id, clientId: "not-a-uuid", body: "привет" }));
   assert.throws(() => sendMessageSchema.parse({
     conversationId: id,
     clientId: other,
@@ -81,7 +88,7 @@ test("a message may be files without text, and ten files are refused", () => {
   }));
 });
 
-test("the tenth file and a file over 2 MiB are refused", () => {
+test("the tenth file and a file over 5 MiB are refused", () => {
   assert.equal(clientAttachmentIssue({ name: "a.png", type: "image/png", size: 10 }, 9), ATTACHMENT_TOO_MANY);
   assert.equal(clientAttachmentIssue({ name: "a.png", type: "image/png", size: MESSAGE_ATTACHMENT_MAX_BYTES + 1 }, 0), ATTACHMENT_TOO_BIG);
   assert.equal(clientAttachmentIssue({ name: "a.png", type: "image/png", size: MESSAGE_ATTACHMENT_MAX_BYTES }, 8), null);

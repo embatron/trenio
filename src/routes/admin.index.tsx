@@ -1,6 +1,9 @@
-import { useState, type ReactNode } from "react";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
 
+import { useCabinetTick } from "@/components/cabinet-live";
+
+import { MESSAGE_ENVELOPE } from "@/components/messages/direct-mark";
 import { getAdminOverviewFn } from "@/lib/admin/overview";
 import type { TrainerViewPeriod } from "@/lib/catalog/trainer-periods";
 import { pluralRu } from "@/lib/ru-plural";
@@ -83,6 +86,14 @@ function OpenMark() {
 
 function AdminOverviewPage() {
   const data = Route.useLoaderData();
+  const tick = useCabinetTick();
+  const router = useRouter();
+  const seen = useRef(0);
+  useEffect(() => {
+    if (tick === 0 || tick === seen.current) return;
+    seen.current = tick;
+    void router.invalidate();
+  }, [tick, router]);
   const [popularMode, setPopularMode] = useState<PulseMode>("day");
   const [messageMode, setMessageMode] = useState<PulseMode>("day");
   const [reviewMode, setReviewMode] = useState<PulseMode>("day");
@@ -121,7 +132,7 @@ function AdminOverviewPage() {
         </div>
         <div className="cabinet-stat">
           <StatMark>
-            <path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 6l8 6 8-6" />
+            <path d={MESSAGE_ENVELOPE} />
           </StatMark>
           <PeriodSwitch value={messageMode} label="Период сообщений" onChange={setMessageMode} />
           <CountFigure

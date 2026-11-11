@@ -3,7 +3,7 @@ import { mkdir, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { createServerFn } from "@tanstack/react-start";
-import { and, avg, count, desc, eq, inArray } from "drizzle-orm";
+import { and, avg, count, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { requireAuthMiddleware } from "@/auth/middleware";
@@ -40,8 +40,9 @@ import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
 import { outreachTemplate } from "@/lib/site-texts/defaults";
 import { loadSiteText } from "@/lib/site-texts/store";
 import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
-import { popularityChecklist, popularityScore } from "@/lib/catalog/trainer-popularity";
-import { loadTrainerInterest, type TrainerInterest } from "@/lib/catalog/trainer-interest";
+import { popularityChecklist, popularityScore, recentReviewStart } from "@/lib/catalog/trainer-popularity";
+import { emptyTrainerInterest, loadTrainerInterest, type TrainerInterest } from "@/lib/catalog/trainer-interest";
+import { stampTrainerPublished } from "@/lib/catalog/trainer-published";
 import { getSportTaxonomyChild, getTopLevelSportCategory, listSecondLevelSports, MAX_TRAINER_SPORTS, trainerSectionBySlug, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
 import { placesFromProfile, placesShape, savedWithMapNotice, type TrainerPlace } from "@/lib/geo/schemas";
@@ -287,21 +288,25 @@ const saveSchema = z.object({
 
 function trainerStats(
   slug: string,
-  ratings: Map<string, { reviews: number; average: number }>,
+  ratings: Map<string, { reviews: number; positiveReviews: number; recentPositiveReviews: number; average: number }>,
   interest: Record<string, TrainerInterest>,
   fill: { card: number; contacts: number },
 ) {
   const row = ratings.get(slug);
   const reviews = row?.reviews ?? 0;
+  const positiveReviews = row?.positiveReviews ?? 0;
+  const recentPositiveReviews = row?.recentPositiveReviews ?? 0;
   const average = row?.average ?? 0;
   const rating = reviews > 0 && Number.isFinite(average) ? average.toFixed(1) : "0";
-  const signal = interest[slug] ?? { views: 0, saves: 0 };
+  const signal = interest[slug] ?? emptyTrainerInterest;
   return {
     reviews,
     rating,
     popularity: popularityScore({
       rating,
       reviews,
+      positiveReviews,
+      recentPositiveReviews,
       ...signal,
       cardFilled: fill.card,
       contactsFilled: fill.contacts,
@@ -319,6 +324,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
     assertStaff(context.user.roles);
     await ensureTrainerDoorSchema();
     const db = getDb();
+    const recentSince = recentReviewStart();
     const [profileRows, ratingRows, interest] = await Promise.all([
       db
       .select({
@@ -374,6 +380,10 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         .select({
           slug: trainerReviews.trainerSlug,
           reviews: count(),
+          positiveReviews: sql<number>`count(*) filter (where ${trainerReviews.rating} >= 4)`,
+          recentPositiveReviews: sql<number>`count(*) filter (
+            where ${and(gte(trainerReviews.rating, 4), gte(trainerReviews.createdAt, recentSince))}
+          )`,
           average: avg(trainerReviews.rating),
         })
         .from(trainerReviews)
@@ -381,7 +391,12 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         .groupBy(trainerReviews.trainerSlug),
       loadTrainerInterest(),
     ]);
-    const ratings = new Map(ratingRows.map((row) => [row.slug, { reviews: Number(row.reviews), average: Number(row.average) }]));
+    const ratings = new Map(ratingRows.map((row) => [row.slug, {
+      reviews: Number(row.reviews),
+      positiveReviews: Number(row.positiveReviews),
+      recentPositiveReviews: Number(row.recentPositiveReviews),
+      average: Number(row.average),
+    }]));
 
     const ownerIds = profileRows.flatMap((row) => (row.ownerId ? [row.ownerId] : []));
     const roleRows = ownerIds.length
@@ -678,6 +693,7 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       throw failure;
     }
 
+    await stampTrainerPublished(data.slug);
     logTrainerPresence({
       created: !existing,
       previous: existing?.status ?? null,
@@ -792,12 +808,20 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
     const db = getDb();
     const [row] = await db.select().from(trainerProfiles).where(eq(trainerProfiles.slug, data.slug)).limit(1);
     if (!row) return null;
+    const recentSince = recentReviewStart();
 
     const hidden = await hiddenStaffIds(context.user.roles);
     const ownerVisible = Boolean(row.ownerUserId) && !hidden.has(row.ownerUserId ?? "");
     const [ratingRows, reviewRows, owner, roleRows, interest] = await Promise.all([
       db
-        .select({ reviews: count(), average: avg(trainerReviews.rating) })
+        .select({
+          reviews: count(),
+          positiveReviews: sql<number>`count(*) filter (where ${trainerReviews.rating} >= 4)`,
+          recentPositiveReviews: sql<number>`count(*) filter (
+            where ${and(gte(trainerReviews.rating, 4), gte(trainerReviews.createdAt, recentSince))}
+          )`,
+          average: avg(trainerReviews.rating),
+        })
         .from(trainerReviews)
         .where(and(eq(trainerReviews.trainerSlug, row.slug), eq(trainerReviews.status, "published"))),
       db
@@ -865,6 +889,8 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
       : [[], [], [], []];
 
     const reviews = Number(ratingRows[0]?.reviews ?? 0);
+    const positiveReviews = Number(ratingRows[0]?.positiveReviews ?? 0);
+    const recentPositiveReviews = Number(ratingRows[0]?.recentPositiveReviews ?? 0);
     const average = Number(ratingRows[0]?.average ?? 0);
     const version = row.updatedAt.getTime();
     const roles = roleRows.map((item) => item.role);
@@ -965,7 +991,9 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         popularity: popularityScore({
           rating: reviews > 0 ? average.toFixed(1) : "0",
           reviews,
-          ...(interest[row.slug] ?? { views: 0, saves: 0 }),
+          positiveReviews,
+          recentPositiveReviews,
+          ...(interest[row.slug] ?? emptyTrainerInterest),
           cardFilled: fill.card,
           contactsFilled: fill.contacts,
         }),

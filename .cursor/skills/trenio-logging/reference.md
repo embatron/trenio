@@ -55,6 +55,8 @@
 | `catalog.list` | Published catalog list failed. Success is not stored |
 | `catalog.sitemap` | The sitemap could not read published trainer profiles. The rest of the file is still served. Success is not stored |
 | `catalog.contact` | A phone, Instagram, or Telegram click could not be stored. Success is not stored. The row has the slug, not the phone number |
+| `catalog.like` | A user or a trainer liked or unliked a published trainer card. The row stores the slug and whether the like is on. The list of the viewer's own likes and the trainer cabinet history are not stored. Who liked whom, and when, stays in `account_likes` |
+| `catalog.live` | A cabinet pull of likes, favorites, or statistics failed. Success is not stored |
 | `catalog.share` | The messenger card could not be drawn. A missing trainer photo or category picture is a 404 and is not stored |
 | `catalog.claim` | Welcome-link side effect failed |
 | `system.ready` / `system.unhandled` / `system.ssr` / `system.purge` / `system.probe` | Process and unhandled errors |

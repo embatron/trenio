@@ -8,7 +8,7 @@ import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { CategoryCatalogPage } from "@/routes/categories.$slug";
 
 export const Route = createFileRoute("/city/$slug/")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): { sports?: string } => ({
     sports: typeof search.sports === "string" ? search.sports : undefined,
   }),
   beforeLoad: ({ params, search }) => {

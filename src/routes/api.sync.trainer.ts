@@ -59,7 +59,7 @@ export const Route = createFileRoute("/api/sync/trainer")({
           if (!patch) return Response.json({ ok: false }, { status: 400, headers: PRIVATE });
           const saved = await applyTrainerPatch(patch, body.files ?? [], "existing");
           if (!saved.ok) return Response.json({ ok: false }, { status: 400, headers: PRIVATE });
-          return Response.json({ ok: true, handle: patch.handle, ...saved }, { headers: PRIVATE });
+          return Response.json({ ...saved, handle: patch.handle }, { headers: PRIVATE });
         }
         if (!body?.draft) return Response.json({ ok: false }, { status: 400, headers: PRIVATE });
         const saved = await applySyncedTrainer(body);

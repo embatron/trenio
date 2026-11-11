@@ -14,23 +14,25 @@ import {
   users,
   type Conversation,
 } from "@/db/schema";
-import { AuthError } from "@/lib/auth/errors";
+import { AuthError, isAuthError } from "@/lib/auth/errors";
 import { storedGivenName } from "@/lib/auth/login-name";
 import { reviewPlainText, reviewTextLength, sanitizeReviewHtml } from "@/lib/catalog/review-html";
 import { isGodUser } from "@/lib/auth/god";
 import { isStaff } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
 import {
+  ATTACHMENT_BAD_TYPE,
   ATTACHMENT_TOO_MANY,
   ATTACHMENT_UNREADABLE,
   MESSAGE_ATTACHMENT_MAX_COUNT,
   decodeAttachmentDataUrl,
   sniffAttachment,
 } from "@/lib/messages/attachments";
-import { removeMessageFile, writeMessageFile, writeMessagePreview } from "@/lib/messages/attachment-store";
+import { imageDecodes, removeMessageFile, writeMessageFile, writeMessagePreview } from "@/lib/messages/attachment-store";
 import { logCaught } from "@/lib/log/logger";
 import { notifyStaffAboutReport, scheduleMessageNotification } from "@/lib/messages/notify";
-import { messageEditable, messageSearchPattern, pickPairThread } from "@/lib/messages/pair";
+import { publishThread } from "@/lib/messages/live-hub";
+import { messageEditable, messagePersonMatches, messageSearchPattern, pickPairThread, preferClickedProfile } from "@/lib/messages/pair";
 
 const hostUsers = alias(users, "conversation_hosts");
 import {
@@ -95,6 +97,10 @@ export function assertConversationAccess(actor: MessageActor, row: ConversationA
   if (mode === "reopen") {
     if (!staff) throw new AuthError("Открыть переписку может только администратор.", "FORBIDDEN");
     return;
+  }
+  if (mode === "block") {
+    if (participant || staff) return;
+    throw new AuthError("Заблокировать переписку может только её участник.", "FORBIDDEN");
   }
   if (!staff) throw new AuthError("Недостаточно прав.", "FORBIDDEN");
 }
@@ -217,6 +223,77 @@ function isParticipant(actorId: string, row: ConversationAccess) {
   return actorId === row.userId || (row.ownerUserId != null && actorId === row.ownerUserId);
 }
 
+type ClearStamps = { userId: string; userDeletedAt: Date | null; peerDeletedAt: Date | null };
+
+function viewerDeletedAt(actorId: string, row: ClearStamps, ownerUserId: string | null) {
+  if (actorId === row.userId) return row.userDeletedAt;
+  if (ownerUserId != null && actorId === ownerUserId && actorId !== row.userId) return row.peerDeletedAt;
+  return null;
+}
+
+function counterpartDeletedAt(actorId: string, row: ClearStamps, ownerUserId: string | null) {
+  if (actorId === row.userId) return row.peerDeletedAt;
+  if (ownerUserId != null && actorId === ownerUserId && actorId !== row.userId) return row.userDeletedAt;
+  return null;
+}
+
+/** A message stays visible when this account has not cleared the thread, or it arrived after that clear. */
+function messageAfterClear(actorId: string) {
+  return sql`m.created_at > COALESCE(
+    CASE
+      WHEN c.user_id = ${actorId}::uuid THEN c.user_deleted_at
+      WHEN c.user_id <> ${actorId}::uuid
+        AND (p.owner_user_id = ${actorId}::uuid OR c.host_user_id = ${actorId}::uuid)
+      THEN c.peer_deleted_at
+      ELSE NULL
+    END,
+    '-infinity'::timestamptz
+  )`;
+}
+
+/** A stored message this account can still see. */
+function keptAfterClear(actorId: string) {
+  return sql`EXISTS (
+    SELECT 1 FROM messages AS kept
+    WHERE kept.conversation_id = ${conversations.id}
+      AND kept.deleted_at IS NULL
+      AND kept.created_at > CASE
+        WHEN ${conversations.userId} = ${actorId}::uuid THEN COALESCE(${conversations.userDeletedAt}, '-infinity'::timestamptz)
+        ELSE COALESCE(${conversations.peerDeletedAt}, '-infinity'::timestamptz)
+      END
+  )`;
+}
+
+/**
+ * Hide a cleared thread that has nothing newer, unless this account opened it again.
+ * The other account does not see a thread that never received a message.
+ */
+function stillListedFor(actorId: string) {
+  const clearedAndQuiet = sql`(
+    (
+      ${conversations.userId} = ${actorId}::uuid
+      AND ${conversations.userDeletedAt} IS NOT NULL
+      AND (${conversations.userRevivedAt} IS NULL OR ${conversations.userRevivedAt} <= ${conversations.userDeletedAt})
+    )
+    OR (
+      ${conversations.userId} <> ${actorId}::uuid
+      AND (${trainerProfiles.ownerUserId} = ${actorId}::uuid OR ${conversations.hostUserId} = ${actorId}::uuid)
+      AND ${conversations.peerDeletedAt} IS NOT NULL
+      AND (${conversations.peerRevivedAt} IS NULL OR ${conversations.peerRevivedAt} <= ${conversations.peerDeletedAt})
+    )
+  ) AND NOT ${keptAfterClear(actorId)}`;
+  const neverArrived = sql`(
+    ${conversations.userId} <> ${actorId}::uuid
+    AND (${trainerProfiles.ownerUserId} = ${actorId}::uuid OR ${conversations.hostUserId} = ${actorId}::uuid)
+    AND NOT ${keptAfterClear(actorId)}
+    AND NOT (
+      ${conversations.peerRevivedAt} IS NOT NULL
+      AND (${conversations.peerDeletedAt} IS NULL OR ${conversations.peerRevivedAt} > ${conversations.peerDeletedAt})
+    )
+  )`;
+  return sql`NOT (${clearedAndQuiet}) AND NOT (${neverArrived})`;
+}
+
 function personName(firstName: string | null | undefined, lastName: string | null | undefined, email?: string | null) {
   const given = storedGivenName(firstName, email);
   return [given, lastName].filter(Boolean).join(" ") || "Пользователь";
@@ -290,7 +367,7 @@ async function assertDailyTrainerOutreach(userId: string, trainerProfileId: stri
   const [row] = await getDb()
     .select({
       trainers: sql<number>`count(distinct ${conversations.trainerProfileId})::int`,
-      includes: sql<boolean>`coalesce(bool_or(${conversations.trainerProfileId} = ${trainerProfileId}), false)`,
+      includes: sql<boolean | string>`coalesce(bool_or(${conversations.trainerProfileId} = ${trainerProfileId}), false)`,
     })
     .from(messages)
     .innerJoin(conversations, eq(messages.conversationId, conversations.id))
@@ -408,6 +485,29 @@ async function loadConversation(conversationId: string) {
   return { conversation, profile, access: accessFrom(conversation, profile, blocked) };
 }
 
+function partyIds(loaded: { conversation: { userId: string }; profile: { ownerUserId: string | null } }) {
+  const ids = [loaded.conversation.userId];
+  if (loaded.profile.ownerUserId) ids.push(loaded.profile.ownerUserId);
+  return ids;
+}
+
+function notifyThread(loaded: { conversation: { id: string; userId: string }; profile: { ownerUserId: string | null } }) {
+  try {
+    publishThread(loaded.conversation.id, partyIds(loaded));
+  } catch (error) {
+    logCaught("message", "message.live", error, { target: loaded.conversation.id });
+  }
+}
+
+/** Participant ids when this account is one of the two people. Staff who only read get nothing. */
+export async function liveParticipants(conversationId: string, actorId: string) {
+  const loaded = await loadConversation(conversationId);
+  if (!loaded) return null;
+  const ids = partyIds(loaded);
+  if (!ids.includes(actorId)) return null;
+  return ids;
+}
+
 export async function requireConversation(actor: MessageActor, conversationId: string, mode: AccessMode) {
   const loaded = await loadConversation(conversationId);
   if (!loaded) {
@@ -510,7 +610,7 @@ async function openExistingPair(actorId: string, profile: ProfileRow) {
     ));
   const counts = await messageCounts(rows.map((row) => row.id));
   const picked = pickPairThread(
-    rows.map((row) => ({
+    preferClickedProfile(rows, profile.id).map((row) => ({
       id: row.id,
       trainerProfileId: row.trainerProfileId,
       messages: counts.get(row.id) ?? 0,
@@ -539,11 +639,43 @@ async function openExistingPair(actorId: string, profile: ProfileRow) {
   return { id: picked.keepId, dropped: picked.dropIds.length };
 }
 
+/** This account and this card, open first, otherwise the latest closed session. */
+async function findExactThread(actorId: string, profileId: string) {
+  const rows = await getDb()
+    .select()
+    .from(conversations)
+    .where(and(eq(conversations.userId, actorId), eq(conversations.trainerProfileId, profileId)))
+    .orderBy(desc(sql`COALESCE(${conversations.lastMessageAt}, ${conversations.createdAt})`));
+  return rows.find((row) => row.status === "open") ?? rows[0] ?? null;
+}
+
+/** Opening the same person again shows the draft. Messages from before the clear stay hidden. */
+async function reviveViewer(actorId: string, conversationId: string) {
+  const loaded = await loadConversation(conversationId);
+  if (!loaded || !isParticipant(actorId, loaded.access)) return;
+  const mine = actorId === loaded.conversation.userId;
+  await getDb()
+    .update(conversations)
+    .set(mine ? { userRevivedAt: new Date() } : { peerRevivedAt: new Date() })
+    .where(eq(conversations.id, conversationId));
+}
+
 export async function ensureConversation(actor: MessageActor, trainerProfileSlug: string) {
   const profile = await profileBySlug(trainerProfileSlug);
   if (!profile) throw new AuthError("Профиль не найден.", "VALIDATION");
+  const exact = await findExactThread(actor.id, profile.id);
+  if (exact) {
+    if (exact.userHiddenAt) {
+      await getDb().update(conversations).set({ userHiddenAt: null }).where(eq(conversations.id, exact.id));
+    }
+    await reviveViewer(actor.id, exact.id);
+    return { conversationId: exact.id, dropped: 0 };
+  }
   const paired = await openExistingPair(actor.id, profile);
-  if (paired) return { conversationId: paired.id, dropped: paired.dropped };
+  if (paired) {
+    await reviveViewer(actor.id, paired.id);
+    return { conversationId: paired.id, dropped: paired.dropped };
+  }
   const conversation = await openOrCreate(actor.id, profile);
   return { conversationId: conversation.id, dropped: 0 };
 }
@@ -666,10 +798,19 @@ async function readyAttachments(actorId: string, conversationId: string, clientI
   return rows;
 }
 
+const MESSAGE_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function assertMessageUuid(value: string | undefined, message: string) {
+  if (!value || !MESSAGE_UUID.test(value)) throw new AuthError(message, "VALIDATION");
+}
+
 export async function uploadMessageFile(
   actor: MessageActor,
   input: { id: string; conversationId: string; clientId: string; fileName: string; dataUrl: string },
 ) {
+  assertMessageUuid(input.id, "Файл не найден. Прикрепите его ещё раз.");
+  assertMessageUuid(input.conversationId, "Нет доступа к этой переписке.");
+  assertMessageUuid(input.clientId, "Некорректный идентификатор сообщения.");
   await requireConversation(actor, input.conversationId, "write");
   const [existing] = await getDb()
     .select({
@@ -702,13 +843,20 @@ export async function uploadMessageFile(
     .from(messageAttachments)
     .where(and(eq(messageAttachments.conversationId, input.conversationId), eq(messageAttachments.clientId, input.clientId)));
   if (Number(countRow?.count ?? 0) >= MESSAGE_ATTACHMENT_MAX_COUNT) throw new AuthError(ATTACHMENT_TOO_MANY, "VALIDATION");
+  if (sniffed.file.kind === "image" && !(await imageDecodes(decoded.bytes))) {
+    throw new AuthError(ATTACHMENT_BAD_TYPE, "VALIDATION");
+  }
   const minute = await consumeRateLimit(`msg:file:${actor.id}`, 60_000, 30);
   if (!minute.ok) throw new AuthError(`Слишком много файлов. Подождите ${minute.retryAfterSec} с.`, "RATE_LIMITED");
-  const byteSize = await writeMessageFile(input.conversationId, input.id, sniffed.file.ext, decoded.bytes);
-  if (sniffed.file.kind === "image") {
-    await writeMessagePreview(input.conversationId, input.id, decoded.bytes).catch((error) => {
-      logCaught("message", "message.file", error, { target: input.conversationId });
-    });
+  let byteSize = 0;
+  try {
+    byteSize = await writeMessageFile(input.conversationId, input.id, sniffed.file.ext, decoded.bytes);
+    if (sniffed.file.kind === "image") await writeMessagePreview(input.conversationId, input.id, decoded.bytes);
+  } catch (error) {
+    await removeMessageFile(input.conversationId, input.id, sniffed.file.ext);
+    if (isAuthError(error)) throw error;
+    logCaught("message", "message.file", error, { target: input.conversationId });
+    throw new AuthError(ATTACHMENT_BAD_TYPE, "VALIDATION");
   }
   try {
     await getDb().insert(messageAttachments).values({
@@ -733,6 +881,8 @@ export async function sendMessage(
   actor: MessageActor,
   input: { conversationId?: string; trainerProfileSlug?: string; body: string; clientId: string; attachmentIds?: string[]; replyToId?: number },
 ) {
+  assertMessageUuid(input.clientId, "Некорректный идентификатор сообщения.");
+  if (input.conversationId) assertMessageUuid(input.conversationId, "Не указана переписка.");
   let conversationId = input.conversationId;
   if (!conversationId) {
     if (!input.trainerProfileSlug) throw new AuthError("Не указана переписка.", "VALIDATION");
@@ -792,7 +942,7 @@ export async function sendMessage(
     }
     replyToId = asNumber(target.id);
   }
-  assertSendRate(actor.id);
+  await assertSendRate(actor.id);
   const saved = await getDb().transaction(async (tx) => {
     const inserted = await tx
       .insert(messages)
@@ -851,6 +1001,7 @@ export async function sendMessage(
         recipientId,
       });
     }
+    notifyThread(loaded);
   }
 
   const files = await attachmentDtos([asNumber(saved.row.id)]);
@@ -912,6 +1063,7 @@ export async function editMessage(actor: MessageActor, input: { messageId: numbe
     .where(eq(messages.id, asNumber(row.id)))
     .returning();
   if (!saved) throw new AuthError("Не удалось изменить сообщение.", "VALIDATION");
+  notifyThread(loaded);
   const files = await attachmentDtos([asNumber(saved.id)]);
   const quoteId = saved.replyToId == null ? null : asNumber(saved.replyToId);
   const quotes = await quotesById(quoteId == null ? [] : [quoteId]);
@@ -946,6 +1098,50 @@ function lastMessageReceipt(
 
 const activityAt = sql<Date>`COALESCE(${conversations.lastMessageAt}, ${conversations.createdAt})`;
 
+function conversationViewFilter(actor: MessageActor, view: "own" | "inbox" | "staff") {
+  if (view === "own") return eq(conversations.userId, actor.id);
+  if (view === "inbox") {
+    return or(
+      eq(conversations.userId, actor.id),
+      eq(trainerProfiles.ownerUserId, actor.id),
+      eq(conversations.hostUserId, actor.id),
+    );
+  }
+  return undefined;
+}
+
+/** Conversations whose given name or surname survives a human typing error. */
+async function conversationIdsByPerson(
+  actor: MessageActor,
+  view: "own" | "inbox" | "staff",
+  query: string,
+) {
+  const viewFilter = conversationViewFilter(actor, view);
+  const rows = await getDb()
+    .select({
+      id: conversations.id,
+      userFirstName: users.firstName,
+      userLastName: users.lastName,
+      trainerFullName: trainerProfiles.fullName,
+      trainerFirstName: trainerProfiles.firstName,
+      trainerLastName: trainerProfiles.lastName,
+      hostFirstName: hostUsers.firstName,
+      hostLastName: hostUsers.lastName,
+    })
+    .from(conversations)
+    .leftJoin(trainerProfiles, eq(trainerProfiles.id, conversations.trainerProfileId))
+    .leftJoin(hostUsers, eq(hostUsers.id, conversations.hostUserId))
+    .innerJoin(users, eq(users.id, conversations.userId))
+    .where(viewFilter);
+  return rows.filter((row) => {
+    const trainerName = row.trainerFullName?.trim()
+      || [row.trainerFirstName, row.trainerLastName].filter(Boolean).join(" ");
+    return messagePersonMatches(query, [row.userFirstName, row.userLastName])
+      || messagePersonMatches(query, [trainerName])
+      || messagePersonMatches(query, [row.hostFirstName, row.hostLastName]);
+  }).map((row) => row.id);
+}
+
 export async function listConversations(
   actor: MessageActor,
   input: { view: "own" | "inbox" | "staff"; cursor?: ConversationCursor; query?: string },
@@ -957,14 +1153,9 @@ export async function listConversations(
     throw new AuthError("Нет доступа к перепискам профиля.", "FORBIDDEN");
   }
   const filters = [];
-  if (input.view === "own") filters.push(eq(conversations.userId, actor.id));
-  if (input.view === "inbox") {
-    filters.push(or(
-      eq(conversations.userId, actor.id),
-      eq(trainerProfiles.ownerUserId, actor.id),
-      eq(conversations.hostUserId, actor.id),
-    ));
-  }
+  const viewFilter = conversationViewFilter(actor, input.view);
+  if (viewFilter) filters.push(viewFilter);
+  if (input.view !== "staff") filters.push(stillListedFor(actor.id));
   if (input.cursor) {
     const at = new Date(input.cursor.at);
     if (Number.isNaN(at.getTime())) throw new AuthError("Некорректная страница.", "VALIDATION");
@@ -972,8 +1163,13 @@ export async function listConversations(
   }
   const pattern = messageSearchPattern(input.query);
   if (pattern) {
+    const nameIds = await conversationIdsByPerson(actor, input.view, input.query ?? "");
+    const byName = nameIds.length > 0
+      ? sql`${conversations.id} IN (${sql.join(nameIds.map((id) => sql`${id}::uuid`), sql`, `)})`
+      : sql`false`;
     filters.push(sql`(
-      ${users.firstName} ILIKE ${pattern} ESCAPE '\\'
+      ${byName}
+      OR ${users.firstName} ILIKE ${pattern} ESCAPE '\\'
       OR coalesce(${users.lastName}, '') ILIKE ${pattern} ESCAPE '\\'
       OR (${users.firstName} || ' ' || coalesce(${users.lastName}, '')) ILIKE ${pattern} ESCAPE '\\'
       OR coalesce(${trainerProfiles.fullName}, '') ILIKE ${pattern} ESCAPE '\\'
@@ -986,6 +1182,19 @@ export async function listConversations(
         WHERE found.conversation_id = ${conversations.id}
           AND found.deleted_at IS NULL
           AND found.body ILIKE ${pattern} ESCAPE '\\'
+          AND (
+            ${input.view === "staff"}
+            OR found.created_at > COALESCE(
+              CASE
+                WHEN ${conversations.userId} = ${actor.id}::uuid THEN ${conversations.userDeletedAt}
+                WHEN ${conversations.userId} <> ${actor.id}::uuid
+                  AND (${trainerProfiles.ownerUserId} = ${actor.id}::uuid OR ${conversations.hostUserId} = ${actor.id}::uuid)
+                THEN ${conversations.peerDeletedAt}
+                ELSE NULL
+              END,
+              '-infinity'::timestamptz
+            )
+          )
       )
     )`);
   }
@@ -1033,8 +1242,11 @@ export async function listConversations(
         m.body,
         (SELECT count(*)::int FROM message_attachments a WHERE a.message_id = m.id) AS files
       FROM messages m
+      INNER JOIN conversations c ON c.id = m.conversation_id
+      LEFT JOIN trainer_profiles p ON p.id = c.trainer_profile_id
       WHERE m.conversation_id IN (${sql.join(ids.map((id) => sql`${id}::uuid`), sql`, `)})
         AND m.deleted_at IS NULL
+        AND (${input.view === "staff"} OR ${messageAfterClear(actor.id)})
       ORDER BY m.conversation_id, m.created_at DESC, m.id DESC
     `);
     for (const row of previewRows) {
@@ -1055,12 +1267,15 @@ export async function listConversations(
     const unreadRows = await getDb().execute<{ conversationId: string; count: number }>(sql`
       SELECT m.conversation_id AS "conversationId", count(*)::int AS count
       FROM messages m
+      INNER JOIN conversations c ON c.id = m.conversation_id
+      LEFT JOIN trainer_profiles p ON p.id = c.trainer_profile_id
       LEFT JOIN conversation_reads r
         ON r.conversation_id = m.conversation_id AND r.user_id = ${actor.id}::uuid
       WHERE m.conversation_id IN (${sql.join(ids.map((id) => sql`${id}::uuid`), sql`, `)})
         AND m.deleted_at IS NULL
         AND m.sender_id <> ${actor.id}::uuid
         AND (r.last_read_message_id IS NULL OR m.id > r.last_read_message_id)
+        AND (${input.view === "staff"} OR ${messageAfterClear(actor.id)})
       GROUP BY m.conversation_id
     `);
     for (const row of unreadRows) unread.set(row.conversationId, asNumber(row.count));
@@ -1115,12 +1330,42 @@ export async function listConversations(
   };
 }
 
+/** The sentence is only for a side that still has a message from before the other person cleared the thread. */
+async function keptHistoryBeforeClear(actorId: string, row: ClearStamps & { id: string }, ownerUserId: string | null) {
+  const theirs = counterpartDeletedAt(actorId, row, ownerUserId);
+  if (!theirs) return false;
+  const mine = viewerDeletedAt(actorId, row, ownerUserId);
+  const [hit] = await getDb().execute<{ ok: boolean | string }>(sql`
+    SELECT EXISTS (
+      SELECT 1 FROM messages AS kept
+      WHERE kept.conversation_id = ${row.id}::uuid
+        AND kept.deleted_at IS NULL
+        AND kept.created_at <= ${theirs.toISOString()}::timestamptz
+        AND kept.created_at > ${mine ? sql`${mine.toISOString()}::timestamptz` : sql`'-infinity'::timestamptz`}
+    ) AS ok
+  `);
+  const ok = hit?.ok;
+  return ok === true || ok === "t" || ok === "true";
+}
+
+async function conversationListedFor(actorId: string, conversationId: string) {
+  const [hit] = await getDb()
+    .select({ id: conversations.id })
+    .from(conversations)
+    .leftJoin(trainerProfiles, eq(trainerProfiles.id, conversations.trainerProfileId))
+    .where(and(eq(conversations.id, conversationId), stillListedFor(actorId)))
+    .limit(1);
+  return Boolean(hit);
+}
+
 export async function listMessages(
   actor: MessageActor,
   input: { conversationId: string; cursor?: MessageCursor },
 ): Promise<ThreadResult> {
   const loaded = await requireConversation(actor, input.conversationId, "read");
   const filters = [eq(messages.conversationId, input.conversationId)];
+  const clearedAt = viewerDeletedAt(actor.id, loaded.conversation, loaded.profile.ownerUserId);
+  if (clearedAt) filters.push(sql`${messages.createdAt} > ${clearedAt.toISOString()}::timestamptz`);
   if (input.cursor) {
     const at = new Date(input.cursor.createdAt);
     if (Number.isNaN(at.getTime())) throw new AuthError("Некорректная страница.", "VALIDATION");
@@ -1189,11 +1434,15 @@ export async function listMessages(
       trainerHref,
     }),
     canWrite,
+    blocked: loaded.access.blocked,
     canClose: allows(actor, loaded.access, "close"),
     canReopen: allows(actor, loaded.access, "reopen"),
     canBlock: Boolean(loaded.conversation.trainerProfileId) && allows(actor, loaded.access, "block"),
     canHide: false,
     canReport: isParticipant(actor.id, loaded.access),
+    canDelete: isParticipant(actor.id, loaded.access),
+    deletedByCounterpart: await keptHistoryBeforeClear(actor.id, loaded.conversation, loaded.profile.ownerUserId),
+    listed: await conversationListedFor(actor.id, loaded.conversation.id),
     composeLimit,
     viewerReadMessageId,
     messages: await Promise.all(page.map((row) => {
@@ -1243,6 +1492,7 @@ export async function markConversationRead(actor: MessageActor, input: { convers
   if (actor.id === loaded.conversation.userId && loaded.conversation.userHiddenAt) {
     await getDb().update(conversations).set({ userHiddenAt: null }).where(eq(conversations.id, input.conversationId));
   }
+  notifyThread(loaded);
   return { ok: true as const };
 }
 
@@ -1250,6 +1500,7 @@ export async function closeConversation(actor: MessageActor, conversationId: str
   const loaded = await requireConversation(actor, conversationId, "close");
   await getDb().update(conversations).set({ status: "closed" }).where(eq(conversations.id, loaded.conversation.id));
   await reviewOpenReports(loaded.conversation.id);
+  notifyThread(loaded);
   return { ok: true as const };
 }
 
@@ -1263,11 +1514,29 @@ export async function reopenConversation(actor: MessageActor, conversationId: st
     }
     throw error;
   }
+  notifyThread(loaded);
   return { ok: true as const };
 }
 
 export async function hideConversation(_actor: MessageActor, _conversationId: string) {
-  throw new AuthError("Переписку нельзя скрыть или удалить.", "VALIDATION");
+  throw new AuthError("Переписку нельзя скрыть.", "VALIDATION");
+}
+
+/** Clear the thread for this account only. The other participant keeps every message. */
+export async function deleteConversationForViewer(actor: MessageActor, conversationId: string) {
+  const loaded = await requireConversation(actor, conversationId, "read");
+  if (!isParticipant(actor.id, loaded.access)) {
+    throw new AuthError("Удалить диалог может только участник.", "FORBIDDEN");
+  }
+  const mine = actor.id === loaded.conversation.userId;
+  await getDb()
+    .update(conversations)
+    .set(mine
+      ? { userDeletedAt: new Date(), userRevivedAt: null }
+      : { peerDeletedAt: new Date(), peerRevivedAt: null })
+    .where(eq(conversations.id, loaded.conversation.id));
+  notifyThread(loaded);
+  return { ok: true as const };
 }
 
 export async function reportMessage(actor: MessageActor, input: { conversationId: string; reason: string; comment: string }) {
@@ -1397,6 +1666,23 @@ export async function blockPair(actor: MessageActor, conversationId: string) {
     .onConflictDoNothing();
   await getDb().update(conversations).set({ status: "closed" }).where(eq(conversations.id, conversationId));
   await reviewOpenReports(conversationId);
+  notifyThread(loaded);
+  return { ok: true as const };
+}
+
+export async function unblockPair(actor: MessageActor, conversationId: string) {
+  const loaded = await requireConversation(actor, conversationId, "block");
+  if (!loaded.conversation.trainerProfileId) {
+    throw new AuthError("Этот диалог нельзя разблокировать.", "VALIDATION");
+  }
+  await getDb()
+    .delete(blockedPairs)
+    .where(and(
+      eq(blockedPairs.userId, loaded.conversation.userId),
+      eq(blockedPairs.trainerProfileId, loaded.conversation.trainerProfileId),
+    ));
+  await getDb().update(conversations).set({ status: "open" }).where(eq(conversations.id, conversationId));
+  notifyThread(loaded);
   return { ok: true as const };
 }
 
@@ -1411,6 +1697,7 @@ export async function unreadSummary(userId: string): Promise<MessagingSummary> {
         WHERE c.user_id = ${userId}::uuid
           AND m.deleted_at IS NULL
           AND m.sender_id <> ${userId}::uuid
+          AND m.created_at > COALESCE(c.user_deleted_at, '-infinity'::timestamptz)
           AND (r.last_read_message_id IS NULL OR m.id > r.last_read_message_id)
       ) AS own,
       (
@@ -1423,6 +1710,7 @@ export async function unreadSummary(userId: string): Promise<MessagingSummary> {
           AND c.user_id <> ${userId}::uuid
           AND m.deleted_at IS NULL
           AND m.sender_id <> ${userId}::uuid
+          AND m.created_at > COALESCE(c.peer_deleted_at, '-infinity'::timestamptz)
           AND (r.last_read_message_id IS NULL OR m.id > r.last_read_message_id)
       ) AS inbox,
       COALESCE((
@@ -1467,6 +1755,13 @@ export async function unreadSummary(userId: string): Promise<MessagingSummary> {
     LEFT JOIN conversation_reads r ON r.conversation_id = c.id AND r.user_id = ${userId}::uuid
     WHERE m.deleted_at IS NULL
       AND m.sender_id <> ${userId}::uuid
+      AND m.created_at > COALESCE(
+        CASE
+          WHEN c.user_id = ${userId}::uuid THEN c.user_deleted_at
+          ELSE c.peer_deleted_at
+        END,
+        '-infinity'::timestamptz
+      )
       AND (r.last_read_message_id IS NULL OR m.id > r.last_read_message_id)
       AND (
         c.user_id = ${userId}::uuid

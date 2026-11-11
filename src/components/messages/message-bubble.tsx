@@ -15,6 +15,17 @@ const LINE_ICON = {
   strokeLinejoin: "round",
 } as const;
 
+export function ReplyIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+      <path d="M9 14 4 9l5-5" style={LINE_ICON} />
+      <path d="M4 9h11a4 4 0 0 1 4 4v6" style={LINE_ICON} />
+    </svg>
+  );
+}
+
+const EDIT_ICON = "M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z";
+
 function LineIcon({ paths }: { paths: string[] }) {
   return (
     <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
@@ -73,6 +84,7 @@ export function MessageBubble({
   onQuote,
   onEdit,
   onFocusQuote,
+  quoted,
 }: {
   message: MessageDto & {
     status?: "sending" | "failed";
@@ -84,6 +96,8 @@ export function MessageBubble({
   onQuote?: () => void;
   onEdit?: () => void;
   onFocusQuote?: (id: number) => void;
+  /** This message is quoted by another one in the thread. */
+  quoted?: boolean;
 }) {
   const [zoom, setZoom] = useState<{ src: string; name: string } | null>(null);
   const mine = message.mine;
@@ -98,12 +112,24 @@ export function MessageBubble({
         ? "Прочитано"
         : "Доставлено";
 
+  const replyButton = onQuote ? (
+    <button type="button" className="direct-bubble__reply" onClick={onQuote} aria-label="Ответить">
+      <ReplyIcon />
+    </button>
+  ) : null;
+
   return (
     <div className={`direct-row${mine ? " is-mine" : ""}`}>
-      <div className={`direct-bubble is-${message.side}${mine ? " is-mine" : ""}${message.deleted ? " is-deleted" : ""}`}>
+      {mine ? replyButton : null}
+      <div
+        className={`direct-bubble is-${message.side}${mine ? " is-mine" : ""}${message.deleted ? " is-deleted" : ""}${quoted ? " is-quoted" : ""}`}
+        onClick={(event) => {
+          const spoiler = (event.target as HTMLElement).closest?.(".tg-spoiler");
+          if (spoiler) spoiler.classList.toggle("is-open");
+        }}
+      >
         {!message.deleted && message.replyTo ? (
-          <button type="button" className="direct-quote" onClick={() => onFocusQuote?.(message.replyTo!.id)}>
-            <strong>Цитата</strong>
+          <button type="button" className="direct-quote" onClick={() => onFocusQuote?.(message.replyTo!.id)} aria-label="Перейти к сообщению">
             <span>{message.replyTo.preview}</span>
           </button>
         ) : null}
@@ -148,22 +174,24 @@ export function MessageBubble({
           </div>
         ) : null}
         <div className="direct-bubble__meta">
+          {!message.deleted && onEdit ? (
+            <button type="button" className="direct-bubble__edit" onClick={onEdit} aria-label="Изменить">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                <path d={EDIT_ICON} style={LINE_ICON} />
+              </svg>
+            </button>
+          ) : null}
           <time dateTime={message.createdAt}>{timeLabel(message.createdAt)}</time>
           {message.editedAt ? <span className="direct-bubble__state">изменено</span> : null}
           {receipt ? <span className="direct-bubble__state">{receipt}</span> : null}
         </div>
-        {!message.deleted && (onQuote || onEdit) ? (
-          <div className="direct-bubble__actions">
-            {onQuote ? <button type="button" onClick={onQuote}>Ответить</button> : null}
-            {onEdit ? <button type="button" onClick={onEdit}>Изменить</button> : null}
-          </div>
-        ) : null}
         {failed ? (
           <button type="button" className="direct-bubble__retry" onClick={() => onRetry?.(message)}>
             Не отправилось. Повторить
           </button>
         ) : null}
       </div>
+      {mine ? null : replyButton}
       {zoom ? <ImageLightbox key={zoom.src} zoom={zoom} onClose={() => setZoom(null)} /> : null}
     </div>
   );

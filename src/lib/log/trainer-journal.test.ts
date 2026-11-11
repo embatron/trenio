@@ -24,6 +24,7 @@ test("trainer account actions are kept only when the actor is a trainer", () => 
 test("catalog noise and message polls are not a trainer account journal", () => {
   assert.equal(trainerJournalKind("map.area"), "no");
   assert.equal(trainerJournalKind("catalog.list"), "no");
+  assert.equal(trainerJournalKind("catalog.like"), "no");
   assert.equal(trainerJournalKind("message.list"), "no");
   assert.equal(trainerJournalKind("message.send"), "no");
   assert.equal(trainerJournalKind("system.purge"), "no");

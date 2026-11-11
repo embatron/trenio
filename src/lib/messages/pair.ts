@@ -1,3 +1,5 @@
+import { rankTargets } from "@/lib/catalog/query-flex";
+
 /** Own message stays editable for this long after it is stored. */
 export const MESSAGE_EDIT_MS = 15 * 60 * 1000;
 
@@ -12,6 +14,15 @@ export type PairCandidate = {
  * One pair of accounts keeps a single thread.
  * A thread that already has messages wins. An empty duplicate is dropped.
  */
+/** The clicked card's own thread wins over another dialog of the same two accounts. */
+export function preferClickedProfile<T extends { trainerProfileId: string | null }>(
+  rows: T[],
+  profileId: string,
+): T[] {
+  const exact = rows.filter((row) => row.trainerProfileId === profileId);
+  return exact.length > 0 ? exact : rows;
+}
+
 export function pickPairThread(
   rows: PairCandidate[],
   profileId: string,
@@ -43,4 +54,20 @@ export function messageSearchPattern(raw: string | undefined) {
   const cleaned = raw?.trim().slice(0, 80) ?? "";
   if (cleaned.length < 2) return null;
   return `%${cleaned.replace(/[\\%_]/g, (char) => `\\${char}`)}%`;
+}
+
+/**
+ * A typed given name or surname still matches when the person swapped the
+ * keyboard layout, mixed Latin and Cyrillic lookalikes, skipped a space,
+ * or mistyped one letter.
+ */
+export function messagePersonMatches(query: string, parts: Array<string | null | undefined>): boolean {
+  const cleaned = query.trim();
+  if (cleaned.length < 2) return false;
+  const label = parts
+    .map((part) => part?.replace(/\s+/g, " ").trim() ?? "")
+    .filter((part) => part.length > 0)
+    .join(" ");
+  if (label.length < 2) return false;
+  return rankTargets(cleaned, [label], (item) => ({ label: item })).length > 0;
 }

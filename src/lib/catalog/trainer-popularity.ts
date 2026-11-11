@@ -1,36 +1,76 @@
 export type TrainerRatingSnapshot = {
   rating: string;
   reviews: number;
-  /** Published-profile opens in the current Europe/Minsk month. The owner is not included. */
+  /** Published reviews rated 4 or 5. Low ratings never increase the review-volume part. */
+  positiveReviews: number;
+  /** Published reviews rated 4 or 5 during the last 180 days. */
+  recentPositiveReviews: number;
+  /** 90-day opens used for the response score, after a new card's missing days are filled in. */
   views: number;
-  /** People who saved this trainer card. */
+  /** Contact visitors plus published reviews in that window, after the same fill. */
+  engaged: number;
+  /** Opens before that fill. The cabinet shows this count. */
+  opens: number;
+  /** Contacts and reviews before that fill. */
+  engagedRaw: number;
   saves: number;
+  /** Like weight. A like older than half a year counts as half. */
+  likes: number;
+  /** Like rows standing now, for the label. */
+  likesShown: number;
+  /** Likes from the last 20 days, after a new card's missing days are filled in. */
+  likePace: number;
+  /** Those likes before the fill. */
+  likePaceRaw: number;
+  /** True when this card is younger than 60 days and the window was filled from the catalog average. */
+  coldStart: boolean;
 };
 
 /**
  * Caps a trainer can read. The parts add up to 100.
- * The trainer fills the card and the contacts, at most 30.
- * Users bring the other 70 through ratings, reviews, visits, and saves.
- * The first of those events still weigh more.
+ * The trainer fills the card (18) and the contacts (5).
+ * Quality is the star score (20), positive-review count (23), and recent positive reviews (3).
+ * Activity is the response rate (11), saves (4), like weight (7), and likes over 20 days (9).
+ * The first reviews, saves, and likes still weigh more than the later ones.
  */
 export const POPULARITY_LIMITS = {
   cardFields: 10,
-  cardEach: 2,
-  card: 20,
+  cardEach: 1.8,
+  card: 18,
   contactFields: 4,
-  contacts: 10,
-  self: 30,
-  rating: 25,
-  reviews: 15,
-  views: 20,
-  saves: 10,
+  contacts: 5,
+  self: 23,
+  rating: 20,
+  reviews: 23,
+  recentReviews: 3,
+  views: 11,
+  saves: 4,
+  likes: 7,
+  likePace: 9,
   reviewCap: 20,
-  viewCap: 15,
+  recentReviewCap: 5,
+  recentReviewDays: 180,
+  /** Pretend opens mixed into the response rate, so a handful of visits cannot fill it. */
+  viewPrior: 30,
+  /** Adjusted response rate that fills the response part. */
+  viewRate: 0.25,
   saveCap: 5,
+  likeCap: 10,
+  likePaceCap: 12,
+  /** Reviews mixed into the star average before it is trusted. */
+  ratingPriorCount: 7,
+  /** Catalog-neutral stars. A short sample is pulled toward this. */
+  ratingPrior: 4,
+  /** Smoothed or raw average below this earns nothing for the star part. */
+  ratingFloor: 3,
+  likeHalfDays: 180,
+  responseWindowDays: 90,
+  likePaceDays: 20,
+  coldStartDays: 60,
 } as const;
 
-/** Four contacts share 10 points. The steps stay whole numbers: 3, then 5, 8, and 10. */
-const CONTACT_POINTS = [0, 3, 5, 8, 10] as const;
+/** Four contacts share 5 points: 2, then 3, 4, and 5. The first contact is worth the most. */
+const CONTACT_POINTS = [0, 2, 3, 4, 5] as const;
 
 export function contactPoints(filled: number) {
   const index = Math.min(CONTACT_POINTS.length - 1, Math.max(0, Math.trunc(filled)));
@@ -42,8 +82,11 @@ export type PopularityParts = {
   contacts: number;
   rating: number;
   reviews: number;
+  recentReviews: number;
   views: number;
   saves: number;
+  likes: number;
+  likePace: number;
   total: number;
 };
 
@@ -85,7 +128,22 @@ export type PopularitySource = {
   email?: string;
 };
 
-const emptySnapshot: TrainerRatingSnapshot = { rating: "0", reviews: 0, views: 0, saves: 0 };
+const emptySnapshot: TrainerRatingSnapshot = {
+  rating: "0",
+  reviews: 0,
+  positiveReviews: 0,
+  recentPositiveReviews: 0,
+  views: 0,
+  engaged: 0,
+  opens: 0,
+  engagedRaw: 0,
+  saves: 0,
+  likes: 0,
+  likesShown: 0,
+  likePace: 0,
+  likePaceRaw: 0,
+  coldStart: false,
+};
 
 export function ratingFor(
   slug: string,
@@ -94,19 +152,72 @@ export function ratingFor(
   return ratings?.[slug] ?? emptySnapshot;
 }
 
-export function minskMonthStart(now = new Date()) {
-  const today = new Intl.DateTimeFormat("en-CA", {
+export function minskDate(now = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", {
     timeZone: "Europe/Minsk",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
   }).format(now);
-  return `${today.slice(0, 8)}01`;
+}
+
+/** Inclusive start of a Minsk calendar window that ends today. `days` is the length, so 90 includes today. */
+export function minskWindowStart(days: number, now = new Date()) {
+  const [year, month, day] = minskDate(now).split("-").map(Number);
+  const utc = new Date(Date.UTC(year, (month ?? 1) - 1, day ?? 1));
+  utc.setUTCDate(utc.getUTCDate() - Math.max(0, days - 1));
+  return utc.toISOString().slice(0, 10);
+}
+
+export function minskMonthStart(now = new Date()) {
+  return `${minskDate(now).slice(0, 8)}01`;
+}
+
+export function recentReviewStart(now = new Date()) {
+  return new Date(now.getTime() - POPULARITY_LIMITS.recentReviewDays * 86_400_000);
+}
+
+/** Whole Minsk calendar days from `from` through today. */
+export function minskAgeDays(from: Date, now = new Date()) {
+  const start = Date.parse(`${minskDate(from)}T00:00:00Z`);
+  const today = Date.parse(`${minskDate(now)}T00:00:00Z`);
+  if (!Number.isFinite(start) || !Number.isFinite(today)) return null;
+  return Math.max(0, Math.round((today - start) / 86_400_000));
+}
+
+/**
+ * A new card may not have lived through the requested window.
+ * The missing days count as the catalog average, so a new card is not stuck at zero
+ * under trainers who have had the whole window.
+ */
+export function imputeWindow(
+  raw: number,
+  catalogMean: number,
+  ageDays: number | null,
+  windowDays: number = POPULARITY_LIMITS.responseWindowDays,
+) {
+  const value = Number.isFinite(raw) ? Math.max(0, raw) : 0;
+  const mean = Number.isFinite(catalogMean) ? Math.max(0, catalogMean) : 0;
+  const window = Number.isFinite(windowDays) ? Math.max(1, windowDays) : POPULARITY_LIMITS.responseWindowDays;
+  if (
+    ageDays == null
+    || !Number.isFinite(ageDays)
+    || ageDays >= POPULARITY_LIMITS.coldStartDays
+    || ageDays >= window
+  ) return value;
+  const age = Math.min(window, Math.max(0, ageDays));
+  const missing = (window - age) / window;
+  if (missing <= 0) return value;
+  return value + mean * missing;
 }
 
 function ratingValue(rating: string) {
   const value = Number(rating);
   return Number.isFinite(value) && value > 0 ? value : 0;
+}
+
+function safeCount(value: number) {
+  return Number.isFinite(value) && value > 0 ? Math.floor(value) : 0;
 }
 
 function byName(a: { name: string }, b: { name: string }) {
@@ -115,9 +226,44 @@ function byName(a: { name: string }, b: { name: string }) {
 
 /** Logarithmic volume: the first events add more than the later ones, and the cap fills the part. */
 function logPoints(value: number, cap: number, max: number) {
-  if (value <= 0 || cap <= 0 || max <= 0) return 0;
-  const ratio = Math.log(1 + value) / Math.log(1 + cap);
+  const clean = Number.isFinite(value) && value > 0 ? value : 0;
+  if (clean <= 0 || !Number.isFinite(cap) || cap <= 0 || !Number.isFinite(max) || max <= 0) return 0;
+  const ratio = Math.log(1 + clean) / Math.log(1 + cap);
   return Math.round(max * Math.min(1, ratio));
+}
+
+/**
+ * Star points from the published average.
+ * No reviews, or a raw average below 3.0, score 0.
+ * Otherwise the average shrinks toward 4.0 until there are enough reviews:
+ * smoothed = (n / (n + 7)) × average + (7 / (n + 7)) × 4.0.
+ * 3.0 → 0, 4.0 → half, 5.0 → the full part, and the line between those points is straight.
+ * One 5.0 therefore lands near 4.0, not on the ceiling.
+ */
+export function ratingPoints(average: number, reviews: number) {
+  const n = safeCount(reviews);
+  if (n <= 0 || !Number.isFinite(average) || average < POPULARITY_LIMITS.ratingFloor) return 0;
+  const stars = Math.min(5, average);
+  const k = POPULARITY_LIMITS.ratingPriorCount;
+  const smoothed = (n / (n + k)) * stars + (k / (n + k)) * POPULARITY_LIMITS.ratingPrior;
+  if (smoothed < POPULARITY_LIMITS.ratingFloor) return 0;
+  const span = Math.min(5, smoothed);
+  return Math.round(POPULARITY_LIMITS.rating * (span - POPULARITY_LIMITS.ratingFloor) / (5 - POPULARITY_LIMITS.ratingFloor));
+}
+
+/**
+ * Response points. Opens alone do not score.
+ * adjusted = engaged / (opens + 30). Engaged is contact visitors plus new reviews over 90 days.
+ * 0 → 0. A quarter (0.25) fills the part. The line between is straight.
+ * One open that becomes a contact stays near the bottom.
+ */
+export function responsePoints(opens: number, engaged: number) {
+  const seen = Number.isFinite(opens) ? Math.max(0, opens) : 0;
+  const done = Number.isFinite(engaged) ? Math.max(0, engaged) : 0;
+  if (seen <= 0 || done <= 0) return 0;
+  const adjusted = done / (seen + POPULARITY_LIMITS.viewPrior);
+  const ratio = Math.min(1, adjusted / POPULARITY_LIMITS.viewRate);
+  return Math.round(POPULARITY_LIMITS.views * ratio);
 }
 
 function visibleText(value: string | null | undefined) {
@@ -166,52 +312,72 @@ export function popularityChecklist(source: PopularitySource): PopularityCheckli
   return { card, contacts, ...flags };
 }
 
+export type PopularityInput = {
+  rating: string;
+  reviews: number;
+  positiveReviews?: number;
+  recentPositiveReviews?: number;
+  views?: number;
+  engaged?: number;
+  saves?: number;
+  likes?: number;
+  likePace?: number;
+  cardFilled?: number;
+  contactsFilled?: number;
+};
+
 /**
  * Catalog rank from 0 to 100.
- * A filled card and added contacts are at most 30 points.
- * Ratings, reviews, monthly visits, and saves bring the other 70, with diminishing returns.
+ * A filled card is 20. Contacts are at most 5.
+ * Stars use the shrunk average. Review count, saves, like weight, and the 20-day likes use a logarithm.
+ * The response part is the share of opens that became a contact or a review, not the open count.
  */
-export function popularityParts(item: {
-  rating: string;
-  reviews: number;
-  views?: number;
-  saves?: number;
-  cardFilled?: number;
-  contactsFilled?: number;
-}): PopularityParts {
-  const cardFilled = Math.min(POPULARITY_LIMITS.cardFields, Math.max(0, item.cardFilled ?? 0));
-  const contactsFilled = Math.min(POPULARITY_LIMITS.contactFields, Math.max(0, item.contactsFilled ?? 0));
-  const card = cardFilled * POPULARITY_LIMITS.cardEach;
+export function popularityParts(item: PopularityInput): PopularityParts {
+  const reviewCount = safeCount(item.reviews);
+  const positiveReviewCount = Math.min(
+    reviewCount,
+    safeCount(item.positiveReviews ?? reviewCount),
+  );
+  const recentPositiveReviewCount = Math.min(
+    positiveReviewCount,
+    safeCount(item.recentPositiveReviews ?? 0),
+  );
+  const rawCardFilled = Number.isFinite(item.cardFilled) ? item.cardFilled ?? 0 : 0;
+  const rawContactsFilled = Number.isFinite(item.contactsFilled) ? item.contactsFilled ?? 0 : 0;
+  const cardFilled = Math.min(POPULARITY_LIMITS.cardFields, Math.max(0, Math.floor(rawCardFilled)));
+  const contactsFilled = Math.min(POPULARITY_LIMITS.contactFields, Math.max(0, Math.floor(rawContactsFilled)));
+  const card = Math.round(cardFilled * POPULARITY_LIMITS.cardEach);
   const contacts = contactPoints(contactsFilled);
-  const rating = item.reviews > 0
-    ? Math.round(POPULARITY_LIMITS.rating * Math.min(ratingValue(item.rating), 5) / 5)
-    : 0;
-  const reviews = logPoints(item.reviews, POPULARITY_LIMITS.reviewCap, POPULARITY_LIMITS.reviews);
-  const views = logPoints(item.views ?? 0, POPULARITY_LIMITS.viewCap, POPULARITY_LIMITS.views);
+  const rating = ratingPoints(ratingValue(item.rating), reviewCount);
+  const reviews = logPoints(positiveReviewCount, POPULARITY_LIMITS.reviewCap, POPULARITY_LIMITS.reviews);
+  const recentReviews = logPoints(
+    recentPositiveReviewCount,
+    POPULARITY_LIMITS.recentReviewCap,
+    POPULARITY_LIMITS.recentReviews,
+  );
+  const views = responsePoints(item.views ?? 0, item.engaged ?? 0);
   const saves = logPoints(item.saves ?? 0, POPULARITY_LIMITS.saveCap, POPULARITY_LIMITS.saves);
-  return { card, contacts, rating, reviews, views, saves, total: card + contacts + rating + reviews + views + saves };
+  const likes = logPoints(item.likes ?? 0, POPULARITY_LIMITS.likeCap, POPULARITY_LIMITS.likes);
+  const likePace = logPoints(item.likePace ?? 0, POPULARITY_LIMITS.likePaceCap, POPULARITY_LIMITS.likePace);
+  return {
+    card,
+    contacts,
+    rating,
+    reviews,
+    recentReviews,
+    views,
+    saves,
+    likes,
+    likePace,
+    total: card + contacts + rating + reviews + recentReviews + views + saves + likes + likePace,
+  };
 }
 
-export function popularityScore(item: {
-  rating: string;
-  reviews: number;
-  views?: number;
-  saves?: number;
-  cardFilled?: number;
-  contactsFilled?: number;
-}) {
+export function popularityScore(item: PopularityInput) {
   return popularityParts(item).total;
 }
 
-export function compareByPopularity<T extends {
-  name: string;
-  rating: string;
-  reviews: number;
-  views: number;
-  saves: number;
-  cardFilled?: number;
-  contactsFilled?: number;
-}>(a: T, b: T) {
+export function compareByPopularity<T extends PopularityInput & { name: string }>(a: T, b: T) {
   const byScore = popularityScore(b) - popularityScore(a);
   if (byScore !== 0) return byScore;
   return byName(a, b);

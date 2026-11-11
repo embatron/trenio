@@ -15,6 +15,7 @@ import { AuthError } from "@/lib/auth/errors";
 import { copyCardFaceToAccount } from "@/lib/catalog/account-face";
 import { markLogged, writeLog } from "@/lib/log/logger";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
+import { stampTrainerPublished } from "@/lib/catalog/trainer-published";
 import { renderLetter } from "@/lib/mail/letter";
 import { sendMail } from "@/lib/mail/send.server";
 import { SITE_EMAIL } from "@/lib/seo/site";
@@ -105,6 +106,7 @@ export const setOwnTrainerPageStatusFn = createServerFn({ method: "POST" })
         status: data.status,
         updatedAt: new Date(),
       }).where(eq(trainerProfiles.id, row.id));
+      await stampTrainerPublished(row.slug);
     }
     logTrainerPresence({
       created: false,
@@ -385,6 +387,7 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       });
     }
 
+    await stampTrainerPublished(profileSlug);
     await copyCardFaceToAccount(context.user.id, storedAvatar, photos ?? existing?.photos);
     logTrainerPresence({
       created: !existing,

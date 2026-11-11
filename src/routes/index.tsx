@@ -5,7 +5,7 @@ import { SportIcon } from "@/components/sport-icon";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
-import { compareByPopularity, popularityChecklist, ratingFor } from "@/lib/catalog/trainer-popularity";
+import { compareByPopularity, popularityChecklist, popularityScore, ratingFor } from "@/lib/catalog/trainer-popularity";
 import { homeStatFrame, homeStatLabels } from "@/lib/catalog/home-stat-labels";
 import { getHomeStatsFn, type HomeStats } from "@/lib/catalog/home-stats";
 import { listTrainerPricesFn, priceForCard } from "@/lib/catalog/trainer-price";
@@ -369,33 +369,6 @@ const CSS = `
 }
 html:has(.trenio-root),
 body:has(.trenio-root) { background: var(--white); }
-.trenio-root > .site-header {
-  position: sticky; top: 0; z-index: 300;
-  background: transparent;
-  backdrop-filter: none; -webkit-backdrop-filter: none;
-  box-shadow: none;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  border-bottom: 1px solid transparent;
-}
-body.is-search-docked .trenio-root > .site-header,
-.trenio-root > .site-header.is-scrolled {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%);
-  box-shadow: 0 1px 0 rgba(var(--dark-rgb), 0.06), 0 10px 36px rgba(var(--dark-rgb), 0.05);
-  border-bottom-color: rgba(var(--primary-rgb), 0.12);
-}
-.site-header__inner {
-  width: 100%; max-width: var(--layout-max); margin: 0 auto; padding: 28px var(--layout-gutter);
-  display: flex; align-items: center; justify-content: space-between; gap: 20px;
-}
-.site-header__search {
-  flex: 1; min-width: 0; max-width: none; max-height: none; opacity: 0; visibility: hidden; overflow: hidden; pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-body.is-search-docked .site-header__search {
-  max-width: none; max-height: none; opacity: 1; visibility: visible; overflow: visible; pointer-events: auto;
-  display: flex; align-items: center; justify-content: flex-start;
-}
 .hero-top {
   min-height: 60vh;
   margin-top: calc(var(--header-clearance) * -1);
@@ -438,12 +411,11 @@ body.is-search-docked .site-header__search {
 .hero-title { margin: 0 0 36px; font-size: var(--fs-display); line-height: 1.12; letter-spacing: -0.04em; font-weight: var(--fw-heading); color: var(--dark); }
 .search-block--hero .search-intent { margin-bottom: 16px; }
 .search-dock-sentinel { width: 100%; height: 1px; margin: 0; pointer-events: none; }
-.site-header__nav { flex: 0 0 auto; }
 .search-intent { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 0 auto 18px; color: var(--muted); font-size: 16px; font-weight: var(--fw-title); }
 .intent-group { display: inline-flex; align-items: center; flex-wrap: wrap; justify-content: center; gap: 7px; }
 .intent-label { color: var(--muted); font-weight: var(--fw-heading); }
 .audience-tab {
-  border: 0; background: rgba(255, 255, 255, 0.7); border-radius: 999px; padding: 7px 12px;
+  min-height: 44px; border: 0; background: rgba(255, 255, 255, 0.7); border-radius: 999px; padding: 7px 12px;
   font-size: 15px; font-weight: var(--fw-title); color: var(--muted); opacity: 0.5; cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease, opacity 0.18s ease, transform 0.18s ease;
 }
@@ -606,7 +578,6 @@ body.is-search-docked .site-header__search {
   .search-block--header { width: min(100%, 700px); }
 }
 @media (max-width: 960px) {
-  .site-header__inner { padding: 24px var(--layout-gutter); }
   .hero-top { min-height: 60vh; padding: var(--header-clearance) 0 32px; }
   .nav-links { gap: 24px; font-size: 14px; }
   .search-block { max-width: 100%; }
@@ -617,12 +588,9 @@ body.is-search-docked .site-header__search {
   .search-block--header, .search-block--header .search-shell { width: 100%; }
 }
 @media (max-width: 767px) {
-  body.is-search-docked .site-header__search { display: none; }
-}
-@media (max-width: 767px) {
   .search-intent { gap: 6px 12px; font-size: 13px; }
   .intent-group { gap: 4px; }
-  .audience-tab, .format-tab { padding: 3px 10px; font-size: 13px; line-height: 1.25; }
+  .audience-tab, .format-tab { min-height: 44px; padding: 6px 10px; font-size: 13px; line-height: 1.25; }
   .audience-tab.is-active { box-shadow: none; }
 }
 @media (max-width: 767px) {
@@ -843,10 +811,28 @@ function Index() {
       citySlug: trainer.city.slug,
       rating: rating.rating,
       reviews: rating.reviews,
+      positiveReviews: rating.positiveReviews,
+      recentPositiveReviews: rating.recentPositiveReviews,
       views: rating.views,
+      engaged: rating.engaged,
       saves: rating.saves,
+      likes: rating.likes,
+      likePace: rating.likePace,
       cardFilled: trainer.cardFilled ?? fill.card,
       contactsFilled: trainer.contactsFilled ?? fill.contacts,
+      catalogScore: popularityScore({
+        rating: rating.rating,
+        reviews: rating.reviews,
+        positiveReviews: rating.positiveReviews,
+        recentPositiveReviews: rating.recentPositiveReviews,
+        views: rating.views,
+        engaged: rating.engaged,
+        saves: rating.saves,
+        likes: rating.likes,
+        likePace: rating.likePace,
+        cardFilled: trainer.cardFilled ?? fill.card,
+        contactsFilled: trainer.contactsFilled ?? fill.contacts,
+      }),
       price: priceForCard(trainer.slug, trainer.priceFrom, prices),
       city: trainer.city.label,
       district: trainer.district,
@@ -920,7 +906,7 @@ function Index() {
               <h2 className="section-title" id="popular-heading">
                 Категории спорта
               </h2>
-              <Link className="section-link" to="/categories/">
+              <Link className="section-link" to="/categories">
                 Все категории
               </Link>
             </div>

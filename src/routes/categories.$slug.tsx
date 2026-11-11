@@ -19,7 +19,7 @@ import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
 import { matchesCatalogAudience, TRAINER_FORMAT_OPTIONS, trainersMatchingCategory, type PublishedTrainer } from "@/lib/catalog/published-trainers";
-import { compareByPopularity, compareByRating, compareByReviews, popularityChecklist, ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
+import { compareByPopularity, compareByRating, compareByReviews, popularityChecklist, popularityScore, ratingFor, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
 import { compareTrainerPrice, listTrainerPricesFn, priceForCard, type TrainerPriceMap } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { categoryRouteHead } from "@/lib/seo/catalog";
@@ -478,6 +478,8 @@ function fallbackCategory(slug: string): Category {
 type TrainerCard = {
   slug: string;
   name: string;
+  firstName: string;
+  lastName: string;
   photo: string;
   sub: string;
   desc: string;
@@ -486,8 +488,14 @@ type TrainerCard = {
   citySlug: string;
   rating: string;
   reviews: number;
+  positiveReviews: number;
+  recentPositiveReviews: number;
   views: number;
+  engaged: number;
   saves: number;
+  likes: number;
+  likePace: number;
+  catalogScore: number;
   cardFilled: number;
   contactsFilled: number;
   price: number | null;
@@ -533,10 +541,28 @@ function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, Train
     citySlug: trainer.city.slug,
     rating: rating.rating,
     reviews: rating.reviews,
+    positiveReviews: rating.positiveReviews,
+    recentPositiveReviews: rating.recentPositiveReviews,
     views: rating.views,
+    engaged: rating.engaged,
     saves: rating.saves,
+    likes: rating.likes,
+    likePace: rating.likePace,
     cardFilled: trainer.cardFilled ?? fill.card,
     contactsFilled: trainer.contactsFilled ?? fill.contacts,
+    catalogScore: popularityScore({
+      rating: rating.rating,
+      reviews: rating.reviews,
+      positiveReviews: rating.positiveReviews,
+      recentPositiveReviews: rating.recentPositiveReviews,
+      views: rating.views,
+      engaged: rating.engaged,
+      saves: rating.saves,
+      likes: rating.likes,
+      likePace: rating.likePace,
+      cardFilled: trainer.cardFilled ?? fill.card,
+      contactsFilled: trainer.contactsFilled ?? fill.contacts,
+    }),
     price: priceForCard(trainer.slug, trainer.priceFrom, prices),
     city: trainer.city.label,
     district: trainer.district,
@@ -592,8 +618,8 @@ const PAGE_CSS = `
 .cat-child-nav__tile {
   min-width: 0;
   width: auto;
-  min-height: calc(44px * 0.9);
-  padding: calc(6px * 0.9) calc(12px * 0.9);
+  min-height: 44px;
+  padding: 6px 12px;
   border-radius: 999px;
   background: var(--white);
   border: 1.5px solid var(--line);
@@ -806,7 +832,7 @@ a.cat-pill { text-decoration: none; }
   .cat-cta { grid-template-columns: 1fr; padding: var(--layout-block-gap) var(--layout-gap); }
 }
 @media (max-width: 767px) {
-  .cat-child-nav__tile, .cat-pill { min-height: 32px; padding: 4px 10px; font-size: 13px; line-height: 1.25; }
+  .cat-child-nav__tile, .cat-pill { min-height: 44px; padding: 6px 10px; font-size: 13px; line-height: 1.25; }
 }
 @media (max-width: 640px) {
   .cat-hero .layout-container:has(.cat-hero__photo) { grid-template-columns: 1fr; }
@@ -1283,7 +1309,7 @@ export function CategoryCatalogPage({
                     )
                   ) : (
                     <>
-                      <Link to="/categories/" activeOptions={{ exact: true }}>Категории</Link>
+                      <Link to="/categories" activeOptions={{ exact: true }}>Категории</Link>
                       <span aria-hidden="true">/</span>
                       {parentCategory ? (
                         <>

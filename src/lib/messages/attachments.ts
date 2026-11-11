@@ -1,11 +1,11 @@
 import { reviewPlainText } from "@/lib/catalog/review-html";
 
-/** One file in a message. Nine files, each at most 2 MiB. */
-export const MESSAGE_ATTACHMENT_MAX_BYTES = 2 * 1024 * 1024;
+/** One file in a message. Nine files, each at most 5 MiB. */
+export const MESSAGE_ATTACHMENT_MAX_BYTES = 5 * 1024 * 1024;
 export const MESSAGE_ATTACHMENT_MAX_COUNT = 9;
 
-export const ATTACHMENT_TOO_BIG = "Файл больше 2 МБ.";
-export const ATTACHMENT_BAD_TYPE = "Можно прикрепить фото (JPG, PNG, WEBP, GIF), PDF, DOC, DOCX, XLS или XLSX.";
+export const ATTACHMENT_TOO_BIG = "Файл больше 5 МБ.";
+export const ATTACHMENT_BAD_TYPE = "Можно прикрепить фото (JPG, PNG, WEBP, GIF) или PDF.";
 export const ATTACHMENT_TOO_MANY = "Можно прикрепить не больше 9 файлов.";
 export const ATTACHMENT_EMPTY = "Файл пустой.";
 export const ATTACHMENT_UNREADABLE = "Файл не прочитан.";
@@ -16,10 +16,6 @@ const TYPES = [
   { ext: "webp", mime: "image/webp", kind: "image" },
   { ext: "gif", mime: "image/gif", kind: "image" },
   { ext: "pdf", mime: "application/pdf", kind: "file" },
-  { ext: "doc", mime: "application/msword", kind: "file" },
-  { ext: "docx", mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", kind: "file" },
-  { ext: "xls", mime: "application/vnd.ms-excel", kind: "file" },
-  { ext: "xlsx", mime: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", kind: "file" },
 ] as const;
 
 export type AttachmentKind = "image" | "file";
@@ -86,12 +82,7 @@ function startsWith(bytes: Uint8Array, signature: number[]) {
   return signature.every((value, index) => bytes[index] === value);
 }
 
-function asciiIncludes(bytes: Uint8Array, needle: string) {
-  const text = new TextDecoder("latin1").decode(bytes);
-  return text.includes(needle);
-}
-
-type Detected = "jpg" | "png" | "webp" | "gif" | "pdf" | "ole" | "zip";
+type Detected = "jpg" | "png" | "webp" | "gif" | "pdf";
 
 function detect(bytes: Uint8Array): Detected | null {
   if (startsWith(bytes, [0xff, 0xd8, 0xff])) return "jpg";
@@ -106,8 +97,6 @@ function detect(bytes: Uint8Array): Detected | null {
     && bytes[11] === 0x50
   ) return "webp";
   if (startsWith(bytes, [0x25, 0x50, 0x44, 0x46])) return "pdf";
-  if (startsWith(bytes, [0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1])) return "ole";
-  if (startsWith(bytes, [0x50, 0x4b, 0x03, 0x04])) return "zip";
   return null;
 }
 
@@ -127,11 +116,6 @@ export function sniffAttachment(bytes: Uint8Array, fileName: string, declaredMim
   const mime = normalizeMime(declaredMime);
   let resolved: AttachmentExt | null = null;
   if (found === "jpg" || found === "png" || found === "webp" || found === "gif" || found === "pdf") resolved = found;
-  if (found === "ole") resolved = ext === "xls" || mime === BY_EXT.get("xls")?.mime ? "xls" : ext === "doc" || mime === BY_EXT.get("doc")?.mime ? "doc" : null;
-  if (found === "zip") {
-    if ((ext === "docx" || mime === BY_EXT.get("docx")?.mime) && asciiIncludes(bytes, "word/")) resolved = "docx";
-    else if ((ext === "xlsx" || mime === BY_EXT.get("xlsx")?.mime) && asciiIncludes(bytes, "xl/")) resolved = "xlsx";
-  }
   if (!resolved) return { ok: false, message: ATTACHMENT_BAD_TYPE };
   const spec = BY_EXT.get(resolved);
   if (!spec) return { ok: false, message: ATTACHMENT_BAD_TYPE };

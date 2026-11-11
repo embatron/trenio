@@ -32,6 +32,16 @@ function trainerName(slug: string) {
   return PUBLISHED_TRAINERS.find((trainer) => trainer.slug === slug)?.name ?? slug;
 }
 
+export const getAccountMenuCountsFn = createServerFn({ method: "GET" })
+  .middleware([requireAuthMiddleware])
+  .handler(async ({ context }) => {
+    const [row] = await getDb()
+      .select({ total: count() })
+      .from(trainerReviews)
+      .where(eq(trainerReviews.userId, context.user.id));
+    return { reviews: Number(row?.total ?? 0) };
+  });
+
 export const getUserCabinetFn = createServerFn({ method: "GET" })
   .middleware([requireAuthMiddleware])
   .handler(async ({ context }): Promise<UserCabinet> => {

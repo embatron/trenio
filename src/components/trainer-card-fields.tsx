@@ -82,6 +82,7 @@ export const TRAINER_PROFILE_SECTIONS = [
   { id: "trainer-docs", label: "Документы" },
   { id: "trainer-work", label: "Тренировки" },
   { id: "trainer-places", label: "Адреса" },
+  { id: "trainer-contacts", label: "Контакты" },
 ] as const;
 
 function ProfileSection({
@@ -91,7 +92,7 @@ function ProfileSection({
   plain,
   children,
 }: {
-  id: (typeof TRAINER_PROFILE_SECTIONS)[number]["id"] | "trainer-contacts";
+  id: (typeof TRAINER_PROFILE_SECTIONS)[number]["id"];
   title: string;
   tone?: "place";
   plain?: boolean;

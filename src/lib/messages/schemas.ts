@@ -79,7 +79,7 @@ export const uploadMessageFileSchema = z.object({
   conversationId: z.string().uuid(),
   clientId: z.string().uuid(),
   fileName: z.string().trim().min(1, "Укажите имя файла.").max(180, "Имя файла слишком длинное."),
-  dataUrl: z.string().min(1, "Файл не прочитан.").max(2_900_000, "Файл больше 2 МБ."),
+  dataUrl: z.string().min(1, "Файл не прочитан.").max(7_200_000, "Файл больше 5 МБ."),
 });
 
 export const editMessageSchema = z.object({
@@ -193,11 +193,19 @@ export type ThreadResult = {
   /** Published card of the profile this thread is about. */
   trainerHref: string | null;
   canWrite: boolean;
+  /** This client account cannot message this trainer profile. Other dialogs stay open. */
+  blocked: boolean;
   canClose: boolean;
   canReopen: boolean;
   canBlock: boolean;
   canHide: boolean;
   canReport: boolean;
+  /** A participant may clear the thread for themselves. The other side keeps it. */
+  canDelete: boolean;
+  /** The other participant cleared their copy, and this side still has a message from before that. */
+  deletedByCounterpart: boolean;
+  /** This account's dialog list includes the thread. An empty draft belongs only to the person who opened it. */
+  listed: boolean;
   composeLimit: number;
   /** Viewer's own read cursor. Null when this account has never marked the thread. */
   viewerReadMessageId: number | null;

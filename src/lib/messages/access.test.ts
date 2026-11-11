@@ -63,14 +63,19 @@ test("closed, blocked and unpublished threads reject new messages", () => {
   );
 });
 
-test("only the profile owner and staff can close; only staff can reopen or block", () => {
+test("only the profile owner and staff can close; only staff can reopen", () => {
   assert.throws(() => assertConversationAccess(actor(userId, ["user"]), openRow, "close"), AuthError);
   assert.doesNotThrow(() => assertConversationAccess(actor(ownerId, ["club"]), openRow, "close"));
   assert.doesNotThrow(() => assertConversationAccess(actor(staffId, ["admin"]), openRow, "close"));
   assert.throws(() => assertConversationAccess(actor(ownerId, ["trainer"]), openRow, "reopen"), AuthError);
   assert.doesNotThrow(() => assertConversationAccess(actor(staffId, ["superadmin"]), openRow, "reopen"));
-  assert.throws(() => assertConversationAccess(actor(ownerId, ["trainer"]), openRow, "block"), AuthError);
+});
+
+test("either participant or staff can block the pair, and a stranger cannot", () => {
+  assert.doesNotThrow(() => assertConversationAccess(actor(userId, ["user"]), openRow, "block"));
+  assert.doesNotThrow(() => assertConversationAccess(actor(ownerId, ["trainer"]), openRow, "block"));
   assert.doesNotThrow(() => assertConversationAccess(actor(staffId, ["admin"]), openRow, "block"));
+  assert.throws(() => assertConversationAccess(actor(strangerId, ["user"]), openRow, "block"), AuthError);
 });
 
 test("canMessage rejects self, unpublished and blocked profiles", () => {

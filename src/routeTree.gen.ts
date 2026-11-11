@@ -35,10 +35,12 @@ import { Route as AccountIndexRouteImport } from './routes/account.index'
 import { Route as TrainersReviseRouteImport } from './routes/trainers.revise'
 import { Route as TrainersSlugRouteImport } from './routes/trainers.$slug'
 import { Route as TrainerAdminMessagesRouteImport } from './routes/trainer-admin.messages'
+import { Route as MeStatsRouteImport } from './routes/me.stats'
 import { Route as MeSettingsRouteImport } from './routes/me.settings'
 import { Route as MeReviewsRouteImport } from './routes/me.reviews'
 import { Route as MeProfileRouteImport } from './routes/me.profile'
 import { Route as MeMessagesRouteImport } from './routes/me.messages'
+import { Route as MeLikesRouteImport } from './routes/me.likes'
 import { Route as MeFavoritesRouteImport } from './routes/me.favorites'
 import { Route as MeContactsRouteImport } from './routes/me.contacts'
 import { Route as JoinTrainerRouteImport } from './routes/join.trainer'
@@ -232,6 +234,11 @@ const TrainerAdminMessagesRoute = TrainerAdminMessagesRouteImport.update({
   path: '/messages',
   getParentRoute: () => TrainerAdminRoute,
 } as any)
+const MeStatsRoute = MeStatsRouteImport.update({
+  id: '/stats',
+  path: '/stats',
+  getParentRoute: () => MeRoute,
+} as any)
 const MeSettingsRoute = MeSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -250,6 +257,11 @@ const MeProfileRoute = MeProfileRouteImport.update({
 const MeMessagesRoute = MeMessagesRouteImport.update({
   id: '/messages',
   path: '/messages',
+  getParentRoute: () => MeRoute,
+} as any)
+const MeLikesRoute = MeLikesRouteImport.update({
+  id: '/likes',
+  path: '/likes',
   getParentRoute: () => MeRoute,
 } as any)
 const MeFavoritesRoute = MeFavoritesRouteImport.update({
@@ -622,10 +634,12 @@ export interface FileRoutesByFullPath {
   '/join/trainer': typeof JoinTrainerRoute
   '/me/contacts': typeof MeContactsRoute
   '/me/favorites': typeof MeFavoritesRoute
+  '/me/likes': typeof MeLikesRoute
   '/me/messages': typeof MeMessagesRouteWithChildren
   '/me/profile': typeof MeProfileRoute
   '/me/reviews': typeof MeReviewsRoute
   '/me/settings': typeof MeSettingsRoute
+  '/me/stats': typeof MeStatsRoute
   '/trainer-admin/messages': typeof TrainerAdminMessagesRouteWithChildren
   '/trainers/$slug': typeof TrainersSlugRoute
   '/trainers/revise': typeof TrainersReviseRoute
@@ -709,10 +723,12 @@ export interface FileRoutesByTo {
   '/join/trainer': typeof JoinTrainerRoute
   '/me/contacts': typeof MeContactsRoute
   '/me/favorites': typeof MeFavoritesRoute
+  '/me/likes': typeof MeLikesRoute
   '/me/messages': typeof MeMessagesRouteWithChildren
   '/me/profile': typeof MeProfileRoute
   '/me/reviews': typeof MeReviewsRoute
   '/me/settings': typeof MeSettingsRoute
+  '/me/stats': typeof MeStatsRoute
   '/trainer-admin/messages': typeof TrainerAdminMessagesRouteWithChildren
   '/trainers/$slug': typeof TrainersSlugRoute
   '/trainers/revise': typeof TrainersReviseRoute
@@ -803,10 +819,12 @@ export interface FileRoutesById {
   '/join/trainer': typeof JoinTrainerRoute
   '/me/contacts': typeof MeContactsRoute
   '/me/favorites': typeof MeFavoritesRoute
+  '/me/likes': typeof MeLikesRoute
   '/me/messages': typeof MeMessagesRouteWithChildren
   '/me/profile': typeof MeProfileRoute
   '/me/reviews': typeof MeReviewsRoute
   '/me/settings': typeof MeSettingsRoute
+  '/me/stats': typeof MeStatsRoute
   '/trainer-admin/messages': typeof TrainerAdminMessagesRouteWithChildren
   '/trainers/$slug': typeof TrainersSlugRoute
   '/trainers/revise': typeof TrainersReviseRoute
@@ -899,10 +917,12 @@ export interface FileRouteTypes {
     | '/join/trainer'
     | '/me/contacts'
     | '/me/favorites'
+    | '/me/likes'
     | '/me/messages'
     | '/me/profile'
     | '/me/reviews'
     | '/me/settings'
+    | '/me/stats'
     | '/trainer-admin/messages'
     | '/trainers/$slug'
     | '/trainers/revise'
@@ -986,10 +1006,12 @@ export interface FileRouteTypes {
     | '/join/trainer'
     | '/me/contacts'
     | '/me/favorites'
+    | '/me/likes'
     | '/me/messages'
     | '/me/profile'
     | '/me/reviews'
     | '/me/settings'
+    | '/me/stats'
     | '/trainer-admin/messages'
     | '/trainers/$slug'
     | '/trainers/revise'
@@ -1079,10 +1101,12 @@ export interface FileRouteTypes {
     | '/join/trainer'
     | '/me/contacts'
     | '/me/favorites'
+    | '/me/likes'
     | '/me/messages'
     | '/me/profile'
     | '/me/reviews'
     | '/me/settings'
+    | '/me/stats'
     | '/trainer-admin/messages'
     | '/trainers/$slug'
     | '/trainers/revise'
@@ -1359,6 +1383,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrainerAdminMessagesRouteImport
       parentRoute: typeof TrainerAdminRoute
     }
+    '/me/stats': {
+      id: '/me/stats'
+      path: '/stats'
+      fullPath: '/me/stats'
+      preLoaderRoute: typeof MeStatsRouteImport
+      parentRoute: typeof MeRoute
+    }
     '/me/settings': {
       id: '/me/settings'
       path: '/settings'
@@ -1385,6 +1416,13 @@ declare module '@tanstack/react-router' {
       path: '/messages'
       fullPath: '/me/messages'
       preLoaderRoute: typeof MeMessagesRouteImport
+      parentRoute: typeof MeRoute
+    }
+    '/me/likes': {
+      id: '/me/likes'
+      path: '/likes'
+      fullPath: '/me/likes'
+      preLoaderRoute: typeof MeLikesRouteImport
       parentRoute: typeof MeRoute
     }
     '/me/favorites': {
@@ -1932,20 +1970,24 @@ const MeMessagesRouteWithChildren = MeMessagesRoute._addFileChildren(
 interface MeRouteChildren {
   MeContactsRoute: typeof MeContactsRoute
   MeFavoritesRoute: typeof MeFavoritesRoute
+  MeLikesRoute: typeof MeLikesRoute
   MeMessagesRoute: typeof MeMessagesRouteWithChildren
   MeProfileRoute: typeof MeProfileRoute
   MeReviewsRoute: typeof MeReviewsRoute
   MeSettingsRoute: typeof MeSettingsRoute
+  MeStatsRoute: typeof MeStatsRoute
   MeIndexRoute: typeof MeIndexRoute
 }
 
 const MeRouteChildren: MeRouteChildren = {
   MeContactsRoute: MeContactsRoute,
   MeFavoritesRoute: MeFavoritesRoute,
+  MeLikesRoute: MeLikesRoute,
   MeMessagesRoute: MeMessagesRouteWithChildren,
   MeProfileRoute: MeProfileRoute,
   MeReviewsRoute: MeReviewsRoute,
   MeSettingsRoute: MeSettingsRoute,
+  MeStatsRoute: MeStatsRoute,
   MeIndexRoute: MeIndexRoute,
 }
 

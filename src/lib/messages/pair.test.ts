@@ -1,7 +1,20 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { messageEditable, messageSearchPattern, pickPairThread } from "@/lib/messages/pair";
+import { messageEditable, messagePersonMatches, messageSearchPattern, pickPairThread, preferClickedProfile } from "@/lib/messages/pair";
+
+test("the clicked card stays open when another thread of the pair has more messages", () => {
+  const rows = [
+    { id: "other", trainerProfileId: "other-card", messages: 4 },
+    { id: "clicked", trainerProfileId: "clicked-card", messages: 0 },
+  ];
+  assert.deepEqual(preferClickedProfile(rows, "clicked-card").map((row) => row.id), ["clicked"]);
+});
+
+test("a pair with no thread for the clicked card stays intact", () => {
+  const rows = [{ id: "welcome", trainerProfileId: null, messages: 1 }];
+  assert.equal(preferClickedProfile(rows, "clicked-card").length, 1);
+});
 
 test("an existing welcome wins over the empty card thread of the same two people", () => {
   const picked = pickPairThread(
@@ -48,4 +61,21 @@ test("search waits for two characters and escapes like wildcards", () => {
   assert.equal(messageSearchPattern(" a "), null);
   assert.equal(messageSearchPattern("ви"), "%ви%");
   assert.equal(messageSearchPattern("100%"), "%100\\%%");
+});
+
+test("a name still matches after a layout swap, a lookalike, a missing space, or a typo", () => {
+  const katya = ["Катя", "Лисина"];
+  assert.equal(messagePersonMatches("к", katya), false);
+  assert.equal(messagePersonMatches("катя", katya), true);
+  assert.equal(messagePersonMatches("лисина", katya), true);
+  assert.equal(messagePersonMatches("катя лисина", katya), true);
+  assert.equal(messagePersonMatches("катялисина", katya), true);
+  assert.equal(messagePersonMatches("rfnz", katya), true);
+  assert.equal(messagePersonMatches("кати", katya), true);
+  assert.equal(messagePersonMatches("актя", katya), true);
+  assert.equal(messagePersonMatches("лиcина", katya), true);
+  assert.equal(messagePersonMatches("лисиан", katya), true);
+  assert.equal(messagePersonMatches("ольга", katya), false);
+  assert.equal(messagePersonMatches("морозз", ["Павел", "Мороз"]), true);
+  assert.equal(messagePersonMatches("алена", ["Алёна", "Соболь"]), true);
 });

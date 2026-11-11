@@ -65,7 +65,6 @@ async function pdfPage(bytes: Buffer) {
   ).href;
   const task = getDocument({
     data: new Uint8Array(bytes),
-    isEvalSupported: false,
     useSystemFonts: true,
     verbosity: 0,
   });

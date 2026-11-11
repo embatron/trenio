@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
@@ -7,6 +7,8 @@ import { getDb } from "@/db";
 import { trainerProfiles, userFavorites } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
+import { favoriteKeysFor } from "@/lib/catalog/favorite-keys.server";
+import { publishCabinet } from "@/lib/messages/live-hub";
 
 const favoriteSchema = z.object({
   type: z.enum(["trainer", "club"]),
@@ -19,19 +21,10 @@ function favoriteKey(target: { type: string; slug: string }) {
   return `${target.type}:${target.slug}`;
 }
 
-async function keysFor(userId: string) {
-  const rows = await getDb()
-    .select({ type: userFavorites.targetType, slug: userFavorites.targetSlug })
-    .from(userFavorites)
-    .where(eq(userFavorites.userId, userId))
-    .orderBy(desc(userFavorites.createdAt));
-  return rows.map(favoriteKey);
-}
-
 export const listFavoritesFn = createServerFn({ method: "GET" })
   .middleware([requireAuthMiddleware])
   .handler(async ({ context }) => {
-    const keys = await keysFor(context.user.id);
+    const keys = await favoriteKeysFor(context.user.id);
     return { keys, count: keys.length };
   });
 
@@ -66,7 +59,17 @@ export const toggleFavoriteFn = createServerFn({ method: "POST" })
       });
     }
 
-    const keys = await keysFor(context.user.id);
+    const keys = await favoriteKeysFor(context.user.id);
+    let ownerId: string | null = null;
+    if (data.type === "trainer") {
+      const [card] = await db
+        .select({ ownerUserId: trainerProfiles.ownerUserId })
+        .from(trainerProfiles)
+        .where(eq(trainerProfiles.slug, data.slug))
+        .limit(1);
+      ownerId = card?.ownerUserId ?? null;
+    }
+    publishCabinet([context.user.id, ownerId]);
     return { saved: !existing, keys, count: keys.length };
   });
 

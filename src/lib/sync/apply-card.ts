@@ -8,6 +8,7 @@ import { getDb } from "@/db";
 import { claimPathFor } from "@/db/trainer-profiles";
 import { trainerProfiles } from "@/db/schema";
 import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
+import { stampTrainerPublished } from "@/lib/catalog/trainer-published";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
 import { writeLog } from "@/lib/log/logger";
 
@@ -245,6 +246,7 @@ export async function applyTrainerPatch(patch: TrainerPatch, files: IncomingFile
       doorEnteredAt: acceptSyncedDoor() && iso(patch.doorEnteredAt) ? new Date(patch.doorEnteredAt as string) : null,
       updatedAt: new Date(patch.updatedAt),
     });
+    await stampTrainerPublished(slug);
     logTrainerPresence({
       created: true,
       previous: null,
@@ -299,6 +301,7 @@ export async function applyTrainerPatch(patch: TrainerPatch, files: IncomingFile
 
   if (Object.keys(values).length > 0) {
     await db.update(trainerProfiles).set(values).where(eq(trainerProfiles.id, existing.id));
+    await stampTrainerPublished(existing.slug);
     if (values.status && values.status !== existing.status) {
       logTrainerPresence({
         created: false,

@@ -10,6 +10,7 @@ import { ensureTrainerImpressionTable } from "@/lib/catalog/trainer-impression-s
 import { minskToday } from "@/lib/catalog/trainer-periods";
 import { visitorId } from "@/lib/catalog/trainer-visitor";
 import { logCaught } from "@/lib/log/logger";
+import { publishCabinet } from "@/lib/messages/live-hub";
 
 const slugSchema = z.string().trim().regex(/^[a-z0-9._-]{1,30}$/);
 
@@ -41,6 +42,7 @@ export const recordTrainerCardImpressionsFn = createServerFn({ method: "POST" })
         .insert(trainerCardImpressions)
         .values(visible.map((profile) => ({ profileId: profile.id, visitorId: visitor, day })))
         .onConflictDoNothing();
+      publishCabinet(visible.map((profile) => profile.ownerUserId));
       return { ok: true as const };
     } catch (error) {
       logCaught("catalog", "catalog.impression", error);

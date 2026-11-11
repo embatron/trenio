@@ -170,15 +170,15 @@ function fuzzyRank(query: string, phrase: string, offset: number): { rank: numbe
   if (budget === 0) return null;
   const tokens = [phrase, ...wordsOf(phrase)];
   let best: { distance: number; whole: boolean } | null = null;
-  tokens.forEach((token, index) => {
-    if (token.length < 2 || Math.abs(token.length - query.length) > budget) return;
+  for (const [index, token] of tokens.entries()) {
+    if (token.length < 2 || Math.abs(token.length - query.length) > budget) continue;
     const distance = editDistance(query, token, budget);
-    if (distance == null || distance === 0) return;
+    if (distance == null || distance === 0) continue;
     const whole = index === 0;
     if (!best || distance < best.distance || (distance === best.distance && whole && !best.whole)) {
       best = { distance, whole };
     }
-  });
+  }
   if (!best) return null;
   return { rank: FUZZY_RANK + offset, distance: best.distance, whole: best.whole };
 }
@@ -205,7 +205,7 @@ function bestHit(readings: string[], target: FlexTarget, fuzzy: boolean): FlexHi
       if (!found) continue;
       const hit: FlexHit = {
         rank: found.rank,
-        distance: "distance" in found ? found.distance : 0,
+        distance: "distance" in found && typeof found.distance === "number" ? found.distance : 0,
         labelGap,
         whole: found.whole,
         prefix: commonPrefix(reading, text),

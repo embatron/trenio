@@ -270,11 +270,11 @@ test("a trainer document names the person, the sport, and the city", () => {
     priceLines: ["35 BYN"],
   });
   const longDescription = long.meta.find((item) => "name" in item && item.name === "description");
-  const longText = longDescription && "content" in longDescription ? longDescription.content : "";
+  const longText = longDescription && "content" in longDescription ? longDescription.content ?? "" : "";
   assert.match(longText, /^Тренер по кикбоксингу, боксу и общефизической подготовке Владимир Антипенко в Минске\./);
   assert.match(longText, /Кикбоксинг и бокс/);
   const longOg = long.meta.find((item) => "property" in item && item.property === "og:description");
-  const longShare = longOg && "content" in longOg ? longOg.content : "";
+  const longShare = longOg && "content" in longOg ? longOg.content ?? "" : "";
   assert.match(longShare, /^Владимир Минск/);
   assert.equal(longShare.startsWith("Тренер по"), false);
   assert.ok(longShare.length <= 170);

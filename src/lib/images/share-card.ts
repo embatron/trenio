@@ -174,7 +174,7 @@ async function frameSample(bytes: Buffer) {
   return { width, height, rgb, cols, rows, oriented };
 }
 
-function baselineCard(input: sharp.Sharp) {
+function baselineCard(input: ReturnType<typeof sharp>) {
   return input
     .resize({
       width: SHARE_CARD_WIDTH,

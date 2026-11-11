@@ -1,11 +1,8 @@
-import { createFileRoute, Outlet, redirect, useNavigate, useParams } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
+import { createFileRoute, Outlet, redirect, useParams } from "@tanstack/react-router";
 
 import { MessagesWorkspace } from "@/components/messages/messages-workspace";
-import { authErrorMessage } from "@/lib/auth/errors";
+import { useOpenTrainerThread } from "@/components/messages/open-trainer-thread";
 import { hasAnyRole } from "@/lib/auth/roles";
-import { ensureConversationFn } from "@/lib/messages/functions";
 
 export const Route = createFileRoute("/account/messages")({
   beforeLoad: ({ context, location, search }) => {
@@ -35,37 +32,15 @@ function AccountMessagesPage() {
   const params = useParams({ strict: false });
   const conversationId = typeof params.conversationId === "string" ? params.conversationId : null;
   const validId = conversationId && /^[0-9a-f-]{36}$/i.test(conversationId) ? conversationId : null;
-  const navigate = useNavigate();
-  const ensure = useServerFn(ensureConversationFn);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!trainer) return;
-    let cancelled = false;
-    setError(null);
-    void ensure({ data: { trainerProfileSlug: trainer } })
-      .then((result) => {
-        if (cancelled) return;
-        void navigate({
-          to: "/account/messages/$conversationId",
-          params: { conversationId: result.conversationId },
-          replace: true,
-        });
-      })
-      .catch((err) => {
-        if (!cancelled) setError(authErrorMessage(err));
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [trainer]);
+  const opened = useOpenTrainerThread(trainer, "/account/messages/$conversationId", validId);
 
   return (
     <>
       <MessagesWorkspace
         view="own"
         conversationId={validId}
-        openError={conversationId && !validId ? "Переписка не найдена." : error}
+        openError={conversationId && !validId ? "Переписка не найдена." : opened.error}
+        holdOpen={opened.hold}
       />
       <Outlet />
     </>

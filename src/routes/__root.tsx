@@ -17,7 +17,10 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { installClientLogReporter, reportClientEvent } from "@/lib/log/client-reporter";
 import { CatalogMiss } from "@/components/catalog-miss";
 import { TelegramAppChrome } from "@/components/telegram-tab-bar";
+import { AccountLikesProvider } from "@/components/account-likes-store";
 import { FavoritesProvider } from "@/components/favorites-store";
+import { canPlaceAccountLike } from "@/lib/catalog/account-like-rules";
+import { CabinetLive } from "@/components/cabinet-live";
 import { MessagesLive } from "@/components/messages/messages-live";
 import { CopyLinkToast } from "@/components/share-profile";
 import { Toaster } from "@/components/ui/sonner";
@@ -199,13 +202,17 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <FavoritesProvider userId={user?.id ?? null}>
-        <MessagesLive userId={user?.id ?? null} initial={messaging}>
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-          <TelegramAppChrome />
-          <Toaster />
-          <CopyLinkToast />
-        </MessagesLive>
+        <AccountLikesProvider userId={user?.id ?? null} enabled={Boolean(user && canPlaceAccountLike(user.roles))}>
+          <MessagesLive userId={user?.id ?? null} initial={messaging}>
+            <CabinetLive userId={user?.id ?? null}>
+              {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+              <Outlet />
+              <TelegramAppChrome />
+              <Toaster />
+              <CopyLinkToast />
+            </CabinetLive>
+          </MessagesLive>
+        </AccountLikesProvider>
       </FavoritesProvider>
     </QueryClientProvider>
   );

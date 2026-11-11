@@ -2,6 +2,7 @@ import { createFileRoute, getRouteApi, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { CabinetModal, ReviewStatus } from "@/components/cabinet";
+import { useCabinetLive, useCabinetReload } from "@/components/cabinet-live";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { ReviewHtml } from "@/components/review-html";
 
@@ -24,6 +25,8 @@ function formatDate(value: string) {
 
 function AccountReviewsPage() {
   const { cabinet } = accountRoute.useLoaderData();
+  const live = useCabinetLive();
+  useCabinetReload(live ? live.accountReviews : null, cabinet.reviews.length);
   const [rejectNote, setRejectNote] = useState<string | null>(null);
   const pager = useTablePage(cabinet.reviews);
 

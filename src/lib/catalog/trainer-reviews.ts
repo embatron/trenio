@@ -1,4 +1,4 @@
-import { and, avg, count, desc, eq, inArray } from "drizzle-orm";
+import { and, avg, count, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
@@ -9,12 +9,13 @@ import { trainerProfiles, trainerReviews, users, type TrainerReviewMessage } fro
 import { AuthError } from "@/lib/auth/errors";
 import { storedGivenName } from "@/lib/auth/login-name";
 import { writeLog } from "@/lib/log/logger";
+import { publishCabinet } from "@/lib/messages/live-hub";
 import { isStaff } from "@/lib/auth/roles";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
-import { loadTrainerInterest } from "@/lib/catalog/trainer-interest";
+import { emptyTrainerInterest, loadTrainerInterest } from "@/lib/catalog/trainer-interest";
 import { notifyAuthorAboutReview, notifyReviewReply, notifyStaffAboutReview, notifyTrainerAboutPublishedReview } from "@/lib/catalog/review-mail.server";
 import { reviewPlainText, sanitizeReviewHtml } from "@/lib/catalog/review-html";
-import type { TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
+import { recentReviewStart, type TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
 
 export const REVIEW_STATUSES = ["pending", "published", "rejected"] as const;
 export type ReviewStatus = (typeof REVIEW_STATUSES)[number];
@@ -150,11 +151,16 @@ function summarize(rows: Array<{ rating: number }>): TrainerReviewSummary {
 }
 
 export const listTrainerRatingSummariesFn = createServerFn({ method: "GET" }).handler(async () => {
+  const recentSince = recentReviewStart();
   const [rows, interest] = await Promise.all([
     getDb()
       .select({
         slug: trainerReviews.trainerSlug,
         reviews: count(),
+        positiveReviews: sql<number>`count(*) filter (where ${trainerReviews.rating} >= 4)`,
+        recentPositiveReviews: sql<number>`count(*) filter (
+          where ${and(gte(trainerReviews.rating, 4), gte(trainerReviews.createdAt, recentSince))}
+        )`,
         average: avg(trainerReviews.rating),
       })
       .from(trainerReviews)
@@ -164,16 +170,27 @@ export const listTrainerRatingSummariesFn = createServerFn({ method: "GET" }).ha
   ]);
 
   const summaries: Record<string, TrainerRatingSnapshot> = {};
-  const blank = (slug: string): TrainerRatingSnapshot => {
-    const signal = interest[slug] ?? { views: 0, saves: 0 };
-    return { rating: "0", reviews: 0, views: signal.views, saves: signal.saves };
-  };
+  const blank = (slug: string): TrainerRatingSnapshot => ({
+    rating: "0",
+    reviews: 0,
+    positiveReviews: 0,
+    recentPositiveReviews: 0,
+    ...(interest[slug] ?? emptyTrainerInterest),
+  });
   for (const slug of Object.keys(interest)) summaries[slug] = blank(slug);
   for (const row of rows) {
     const reviews = Number(row.reviews);
+    const positiveReviews = Number(row.positiveReviews);
+    const recentPositiveReviews = Number(row.recentPositiveReviews);
     const average = Number(row.average);
     if (!Number.isFinite(reviews) || reviews <= 0 || !Number.isFinite(average)) continue;
-    summaries[row.slug] = { ...blank(row.slug), rating: average.toFixed(1), reviews };
+    summaries[row.slug] = {
+      ...blank(row.slug),
+      rating: average.toFixed(1),
+      reviews,
+      positiveReviews: Number.isFinite(positiveReviews) ? positiveReviews : 0,
+      recentPositiveReviews: Number.isFinite(recentPositiveReviews) ? recentPositiveReviews : 0,
+    };
   }
   return summaries;
 });
@@ -294,6 +311,7 @@ export const createTrainerReviewFn = createServerFn({ method: "POST" })
     if (inserted.length === 0) {
       throw new AuthError("Вы уже оставили отзыв об этом тренере.", "VALIDATION");
     }
+    publishCabinet([context.user.id, card?.ownerUserId]);
 
     try {
       await notifyStaffAboutReview({
@@ -371,6 +389,12 @@ export const setTrainerReviewStatusFn = createServerFn({ method: "POST" })
       .update(trainerReviews)
       .set({ status: data.status, moderationNote: note })
       .where(eq(trainerReviews.id, existing.id));
+    const [owner] = await db
+      .select({ ownerUserId: trainerProfiles.ownerUserId })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.slug, existing.trainerSlug))
+      .limit(1);
+    publishCabinet([existing.userId, owner?.ownerUserId]);
 
     const [author] = await db.select({ email: users.email }).from(users).where(eq(users.id, existing.userId)).limit(1);
     if (author?.email) {

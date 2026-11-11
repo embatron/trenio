@@ -181,7 +181,11 @@ export function clubBreadcrumbs(club: ClubSeoSource): SeoCrumb[] {
 
 export function clubPageHead(club: ClubSeoSource | null | undefined) {
   if (!club) {
-    return { meta: [{ title: siteTitle("Клуб") }, { name: "robots", content: "noindex, follow" }] };
+    return {
+      meta: [{ title: siteTitle("Клуб") }, { name: "robots", content: "noindex, follow" }],
+      links: [],
+      scripts: [],
+    };
   }
   const path = `/clubs/${club.slug}`;
   return seoHead({

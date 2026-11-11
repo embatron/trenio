@@ -113,7 +113,7 @@ function webAppQuery(authDate: number, id: number): string {
 }
 
 function widgetUser(authDate: number, id: number) {
-  const fields: Record<string, string | number> = {
+  const fields = {
     id,
     first_name: "Кейс",
     auth_date: authDate,
@@ -310,7 +310,7 @@ describe("auth cases", { concurrency: false }, () => {
     createdUsers.push(user.id);
     const oldSession = await createSession(user.id);
     const taken = await openGoogleAccount(
-      { sub: `sub-${stamp}`, email: address, name: "Гугл" },
+      { sub: `sub-${stamp}`, email: address, name: "Гугл", lastName: "", avatarUrl: null },
       null,
       {},
     );
@@ -325,7 +325,7 @@ describe("auth cases", { concurrency: false }, () => {
     await getDb().update(users).set({ googleSub: "owned-sub" }).where(eq(users.id, other.id));
     const before = (await findUserById(other.id))?.passwordHash;
     const refused = await openGoogleAccount(
-      { sub: "other-sub", email: other.email, name: "Чужой" },
+      { sub: "other-sub", email: other.email, name: "Чужой", lastName: "", avatarUrl: null },
       null,
       {},
     );
@@ -449,7 +449,7 @@ describe("auth cases", { concurrency: false }, () => {
     createdProfiles.push(profile.id);
 
     const opened = await openGoogleAccount(
-      { sub: `sub-door-${stamp}`, email: address, name: "Гугл" },
+      { sub: `sub-door-${stamp}`, email: address, name: "Гугл", lastName: "", avatarUrl: null },
       null,
       {},
     );
@@ -533,7 +533,7 @@ describe("auth cases", { concurrency: false }, () => {
       .returning();
     createdProfiles.push(ownedCard.id);
     const again = await openGoogleAccount(
-      { sub: `sub-card-${stamp}`, email: owned.email, name: "Карта" },
+      { sub: `sub-card-${stamp}`, email: owned.email, name: "Карта", lastName: "", avatarUrl: null },
       null,
       {},
     );

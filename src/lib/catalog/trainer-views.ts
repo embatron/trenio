@@ -1,25 +1,20 @@
 import { createServerFn } from "@tanstack/react-start";
-import { and, count, eq, gte, ne } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { getSessionUserFromToken } from "@/auth/service";
 import { readSessionToken } from "@/auth/session";
 import { requireAuthMiddleware } from "@/auth/middleware";
 import { getDb } from "@/db";
-import { trainerProfileViews, trainerProfiles, userFavorites } from "@/db/schema";
-import { contactClickDailyCounts, type ContactClickKind } from "@/lib/catalog/trainer-contact-clicks";
-import { impressionDailyCounts } from "@/lib/catalog/trainer-impression-store";
+import { trainerProfileViews, trainerProfiles } from "@/db/schema";
+import { publishCabinet } from "@/lib/messages/live-hub";
 import {
-  emptyFavoriteStats,
-  emptyViewStats,
-  favoriteStats,
   minskToday,
-  periodSpans,
-  statsFromDaily,
   type TrainerFavoriteStats,
   type TrainerViewPeriod,
   type TrainerViewStats,
 } from "@/lib/catalog/trainer-periods";
+import { loadOwnTrainerPulse, loadTrainerMenuCounts } from "@/lib/catalog/trainer-views.server";
 import { visitorId } from "@/lib/catalog/trainer-visitor";
 
 export type { TrainerFavoriteStats, TrainerViewPeriod, TrainerViewStats };
@@ -28,6 +23,7 @@ export type TrainerContactStats = {
   phone: TrainerViewStats;
   instagram: TrainerViewStats;
   telegram: TrainerViewStats;
+  message: TrainerViewStats;
 };
 
 export type TrainerCabinetPulse = {
@@ -35,36 +31,8 @@ export type TrainerCabinetPulse = {
   favorites: TrainerFavoriteStats;
   impressions: TrainerViewStats;
   contacts: TrainerContactStats;
+  likes: TrainerFavoriteStats;
 };
-
-const emptyContacts: TrainerContactStats = {
-  phone: emptyViewStats,
-  instagram: emptyViewStats,
-  telegram: emptyViewStats,
-};
-
-const emptyPulse: TrainerCabinetPulse = {
-  visits: emptyViewStats,
-  favorites: emptyFavoriteStats,
-  impressions: emptyViewStats,
-  contacts: emptyContacts,
-};
-
-function contactsFromDaily(
-  rows: Array<{ day: string; kind: ContactClickKind; total: number }>,
-  today: string,
-): TrainerContactStats {
-  const pick = (kind: ContactClickKind) =>
-    statsFromDaily(
-      rows.filter((row) => row.kind === kind).map(({ day, total }) => ({ day, total })),
-      today,
-    );
-  return {
-    phone: pick("phone"),
-    instagram: pick("instagram"),
-    telegram: pick("telegram"),
-  };
-}
 
 /** One visit per browser per Minsk day. The profile owner is not counted. */
 export const recordTrainerProfileViewFn = createServerFn({ method: "POST" })
@@ -89,44 +57,15 @@ export const recordTrainerProfileViewFn = createServerFn({ method: "POST" })
       .insert(trainerProfileViews)
       .values({ profileId: profile.id, visitorId: visitorId(), day: minskToday() })
       .onConflictDoNothing();
+    publishCabinet([profile.ownerUserId]);
     return { ok: true as const };
   });
 
 export const getOwnTrainerViewStatsFn = createServerFn({ method: "GET" })
   .middleware([requireAuthMiddleware])
-  .handler(async ({ context }): Promise<TrainerCabinetPulse> => {
-    const db = getDb();
-    const [profile] = await db
-      .select({ id: trainerProfiles.id, slug: trainerProfiles.slug, ownerUserId: trainerProfiles.ownerUserId })
-      .from(trainerProfiles)
-      .where(eq(trainerProfiles.ownerUserId, context.user.id))
-      .limit(1);
-    if (!profile) return emptyPulse;
+  .handler(async ({ context }): Promise<TrainerCabinetPulse> => loadOwnTrainerPulse(context.user.id));
 
-    const today = minskToday();
-    const earliest = periodSpans(today).month.previous.start;
-    const [viewRows, saveRows, impressionRows, contactRows] = await Promise.all([
-      db
-        .select({ day: trainerProfileViews.day, total: count() })
-        .from(trainerProfileViews)
-        .where(and(eq(trainerProfileViews.profileId, profile.id), gte(trainerProfileViews.day, earliest)))
-        .groupBy(trainerProfileViews.day),
-      db
-        .select({ createdAt: userFavorites.createdAt })
-        .from(userFavorites)
-        .where(and(
-          eq(userFavorites.targetType, "trainer"),
-          eq(userFavorites.targetSlug, profile.slug),
-          ...(profile.ownerUserId ? [ne(userFavorites.userId, profile.ownerUserId)] : []),
-        )),
-      impressionDailyCounts(profile.id, earliest),
-      contactClickDailyCounts(profile.id, earliest),
-    ]);
-
-    return {
-      visits: statsFromDaily(viewRows.map((row) => ({ day: row.day, total: Number(row.total) })), today),
-      favorites: favoriteStats(saveRows.map((row) => row.createdAt.getTime()), today),
-      impressions: statsFromDaily(impressionRows, today),
-      contacts: contactsFromDaily(contactRows, today),
-    };
-  });
+/** Sidebar counts for the header menu: reviews on the card, and likes from other accounts. */
+export const getTrainerMenuCountsFn = createServerFn({ method: "GET" })
+  .middleware([requireAuthMiddleware])
+  .handler(async ({ context }) => loadTrainerMenuCounts(context.user.id));

@@ -4,11 +4,12 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
-import { MESSAGE_SCAN_MS } from "@/lib/messages/polling";
 import { getAdminShellFn } from "@/lib/admin/shell";
+import { useCabinetLive } from "@/components/cabinet-live";
 import { logoutFn } from "@/lib/auth/functions";
 import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { getCabinetPath, hasAnyRole, isStaff } from "@/lib/auth/roles";
+import { getAccountMenuCountsFn } from "@/lib/cabinet";
 import { safeReturnPath } from "@/lib/auth/return-path";
 import type { UserRole } from "@/lib/auth/types";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
@@ -17,11 +18,13 @@ import { BELARUS_OBLAST_CENTERS } from "@/lib/catalog/city-taxonomy";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { InstagramIcon, TelegramIcon, ThreadsIcon } from "@/components/brand-icons";
+import { MESSAGE_ENVELOPE } from "@/components/messages/direct-mark";
 import { InstallBanner } from "@/components/install-banner";
 import { MessagePush } from "@/components/message-push";
 import { UserAvatar } from "@/components/user-avatar";
 import { TrainerName } from "@/components/trainer-name";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
+import { getTrainerMenuCountsFn } from "@/lib/catalog/trainer-views";
 import { TRAINER_INVITE_LINE } from "@/lib/catalog/trainer-welcome";
 import { SITE_EMAIL, SITE_INSTAGRAM_URL, SITE_THREADS_URL } from "@/lib/seo/site";
 import { PORTAL_TELEGRAM_URL } from "@/lib/site-texts/defaults";
@@ -40,10 +43,10 @@ const CHROME_CSS = `
 }
 body.is-search-docked .site-header,
 .site-header.is-scrolled {
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%);
-  box-shadow: 0 1px 0 rgba(var(--dark-rgb), 0.04), 0 8px 28px rgba(var(--dark-rgb), 0.05);
-  border-bottom-color: rgba(var(--dark-rgb), 0.06);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: 0 1px 0 rgba(var(--dark-rgb), 0.06), 0 10px 36px rgba(var(--dark-rgb), 0.05);
+  border-bottom-color: rgba(var(--primary-rgb), 0.12);
 }
 .site-header.is-menu-open,
 body.is-search-docked .site-header.is-menu-open {
@@ -140,7 +143,6 @@ body.is-search-docked .site-header__search {
 }
 .favorite-count.has-items .favorite-count__n { background: var(--primary); color: #fff; }
 .favorite-count.has-items { color: var(--primary); }
-.favorite-count.has-items svg { fill: currentColor; }
 .account-face {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   min-width: 44px; min-height: 44px; max-width: 210px;
@@ -169,7 +171,7 @@ body.is-search-docked .site-header__search {
 }
 .account-menu__item svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
 .account-menu__item:hover { background: var(--white); color: var(--primary-dark); }
-.account-menu__count { margin-left: auto; min-width: 1.5em; color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); font-variant-numeric: tabular-nums; line-height: 1; text-align: right; }
+.account-menu__count { margin-left: auto; min-width: 1.5em; color: var(--muted); font-size: 11px; font-weight: var(--fw-ui); font-variant-numeric: tabular-nums; line-height: 1; text-align: right; }
 .account-menu__count.is-hot { color: var(--primary); }
 .account-menu__rule { height: 1px; margin: 4px 8px; background: rgba(var(--primary-rgb), 0.16); }
 .account-menu__logout { color: var(--muted); }
@@ -587,7 +589,7 @@ type AdminMenuTo =
   | "/admin/finance"
   | "/admin/settings"
   | "/admin/site";
-type MeMenuTo = "/me" | "/me/messages" | "/me/reviews" | "/me/favorites" | "/me/profile" | "/me/settings";
+type MeMenuTo = "/me" | "/me/stats" | "/me/messages" | "/me/reviews" | "/me/likes" | "/me/favorites" | "/me/profile" | "/me/settings";
 
 type HeaderMenuItem =
   | { id: string; label: string; kind: "account"; to: AccountMenuTo }
@@ -605,9 +607,11 @@ const ACCOUNT_MENU: HeaderMenuItem[] = [
 
 const TRAINER_MENU: HeaderMenuItem[] = [
   { id: "overview", label: "Общая панель", kind: "me", to: "/me" },
+  { id: "stats", label: "Моя статистика", kind: "me", to: "/me/stats" },
+  { id: "profile", label: "Моя страница", kind: "me", to: "/me/profile" },
   { id: "messages", label: "Мои сообщения", kind: "me", to: "/me/messages" },
-  { id: "profile", label: "Мой профиль", kind: "me", to: "/me/profile" },
   { id: "reviews", label: "Мои отзывы", kind: "me", to: "/me/reviews" },
+  { id: "likes", label: "Мои лайкосы", kind: "me", to: "/me/likes" },
   { id: "favorites", label: "Избранное", kind: "me", to: "/me/favorites" },
   { id: "settings", label: "Настройки", kind: "me", to: "/me/settings" },
 ];
@@ -637,21 +641,27 @@ const ADMIN_MENU: HeaderMenuItem[] = [
   { id: "site", label: "Сайт", kind: "admin", to: "/admin/site" },
 ];
 
-function headerMenuFor(roles: UserRole[]): HeaderMenuItem[] {
+function headerMenuFor(roles: UserRole[], ownedSlugs: string[]): HeaderMenuItem[] {
   if (isStaff(roles)) return ADMIN_MENU;
-  if (hasAnyRole(roles, ["trainer", "club"])) return TRAINER_MENU;
+  if (hasAnyRole(roles, ["trainer", "club"])) return trainerMenu(ownedSlugs);
   return ACCOUNT_MENU;
 }
 
 /** The user-icon menu stays on the cabinet's first level. Subpages stay in the cabinet. */
-function faceMenuFor(roles: UserRole[]): HeaderMenuItem[] {
+function faceMenuFor(roles: UserRole[], ownedSlugs: string[]): HeaderMenuItem[] {
   if (isStaff(roles)) return ADMIN_FACE_MENU;
-  return headerMenuFor(roles);
+  return headerMenuFor(roles, ownedSlugs);
 }
 
-function MenuCount({ count }: { count?: number }) {
+function trainerMenu(ownedSlugs: string[]) {
+  const hasCard = ownedSlugs.length > 0;
+  return TRAINER_MENU.filter((item) => hasCard || item.id !== "profile");
+}
+
+function MenuCount({ count, hot }: { count?: number; hot?: boolean }) {
   if (typeof count !== "number") return null;
-  return <span className={`account-menu__count${count > 0 ? " is-hot" : ""}`}>{count > 99 ? "99+" : count}</span>;
+  const brand = (hot ?? true) && count > 0;
+  return <span className={`account-menu__count${brand ? " is-hot" : ""}`}>{count > 99 ? "99+" : count}</span>;
 }
 
 function menuCounts(
@@ -659,17 +669,20 @@ function menuCounts(
   own: number,
   inbox: number,
   favorites: number | undefined,
-  staff: { welcomesOpen?: number; draftsOpen?: number; publishedCount?: number; unclearCount?: number },
+  staff: { welcomesOpen?: number; draftsOpen?: number; publishedCount?: number; unclearCount?: number; reviewsPending?: number },
+  trainer: { reviews?: number; likes?: number },
+  account: { reviews?: number },
 ): Record<string, number | undefined> {
   const messages = own + inbox;
-  if (isStaff(roles)) return { messages, welcomes: staff.welcomesOpen, drafts: staff.draftsOpen, active: staff.publishedCount, unclear: staff.unclearCount };
-  if (hasAnyRole(roles, ["trainer", "club"])) return { messages, favorites };
-  return { messages, bookings: 0, favorites };
+  if (isStaff(roles)) return { messages, welcomes: staff.welcomesOpen, drafts: staff.draftsOpen, active: staff.publishedCount, unclear: staff.unclearCount, reviews: staff.reviewsPending };
+  if (hasAnyRole(roles, ["trainer", "club"])) return { messages, reviews: trainer.reviews, likes: trainer.likes, favorites };
+  return { messages, reviews: account.reviews, bookings: 0, favorites };
 }
 
 function HeaderMenuLink({ item, count, onNavigate }: { item: HeaderMenuItem; count?: number; onNavigate: () => void }) {
   const props = { className: "account-menu__item", onClick: onNavigate };
-  const body = <><span>{item.label}</span><MenuCount count={count} /></>;
+  const hot = item.id === "messages";
+  const body = <><span>{item.label}</span><MenuCount count={count} hot={hot} /></>;
   if (item.kind === "me") {
     return <Link to={item.to} activeOptions={item.to === "/me" ? { exact: true } : undefined} {...props}>{body}</Link>;
   }
@@ -683,37 +696,27 @@ function useStaffMenuCounts(enabled: boolean) {
   const shell = useServerFn(getAdminShellFn);
   const shellRef = useRef(shell);
   shellRef.current = shell;
-  const [counts, setCounts] = useState<{ welcomesOpen?: number; draftsOpen?: number; publishedCount?: number; unclearCount?: number }>({});
+  const [counts, setCounts] = useState<{ welcomesOpen?: number; draftsOpen?: number; publishedCount?: number; unclearCount?: number; reviewsPending?: number }>({});
 
   useEffect(() => {
     if (!enabled) return;
     let stop = false;
-    let timer = 0;
     const tick = async () => {
       if (document.visibilityState === "hidden") return;
       try {
         const next = await shellRef.current();
-        if (!stop) setCounts({ welcomesOpen: next.welcomesOpen, draftsOpen: next.draftsOpen, publishedCount: next.publishedCount, unclearCount: next.unclearCount });
+        if (!stop) setCounts({ welcomesOpen: next.welcomesOpen, draftsOpen: next.draftsOpen, publishedCount: next.publishedCount, unclearCount: next.unclearCount, reviewsPending: next.reviewsPending });
       } catch {
-        /* keep the last count */
+        /* the live pull keeps the last counters */
       }
     };
     void tick();
-    const loop = () => {
-      timer = window.setTimeout(() => {
-        void tick().finally(() => {
-          if (!stop) loop();
-        });
-      }, MESSAGE_SCAN_MS);
-    };
     const onVisible = () => {
       if (document.visibilityState === "visible") void tick();
     };
     document.addEventListener("visibilitychange", onVisible);
-    loop();
     return () => {
       stop = true;
-      window.clearTimeout(timer);
       document.removeEventListener("visibilitychange", onVisible);
     };
   }, [enabled]);
@@ -721,13 +724,83 @@ function useStaffMenuCounts(enabled: boolean) {
   return enabled ? counts : {};
 }
 
-/** Header sign-in. `browse` keeps a trainer in the cabinet and returns a client to this page. */
+function useTrainerMenuCounts(enabled: boolean, refresh: boolean) {
+  const load = useServerFn(getTrainerMenuCountsFn);
+  const loadRef = useRef(load);
+  loadRef.current = load;
+  const [counts, setCounts] = useState<{ reviews?: number; likes?: number }>({});
+
+  useEffect(() => {
+    if (!enabled) return;
+    let stop = false;
+    const tick = async () => {
+      try {
+        const next = await loadRef.current();
+        if (!stop) setCounts(next);
+      } catch {
+        /* keep the last count */
+      }
+    };
+    void tick();
+    const onVisible = () => {
+      if (document.visibilityState === "visible") void tick();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      stop = true;
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [enabled, refresh]);
+
+  return enabled ? counts : {};
+}
+
+function useAccountMenuCounts(enabled: boolean, refresh: boolean) {
+  const load = useServerFn(getAccountMenuCountsFn);
+  const loadRef = useRef(load);
+  loadRef.current = load;
+  const [counts, setCounts] = useState<{ reviews?: number }>({});
+
+  useEffect(() => {
+    if (!enabled) return;
+    let stop = false;
+    const tick = async () => {
+      try {
+        const next = await loadRef.current();
+        if (!stop) setCounts(next);
+      } catch {
+        /* keep the last count */
+      }
+    };
+    void tick();
+    const onVisible = () => {
+      if (document.visibilityState === "visible") void tick();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      stop = true;
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [enabled, refresh]);
+
+  return enabled ? counts : {};
+}
 function useBrowseLoginSearch(): { redirect?: string; browse: "1" } {
   const here = useRouterState({
     select: (state) => `${state.location.pathname}${state.location.searchStr}`,
   });
   const redirect = safeReturnPath(here);
   return redirect ? { redirect, browse: "1" } : { browse: "1" };
+}
+
+function useCabinetMenuCounts() {
+  const live = useCabinetLive();
+  if (!live) return { trainer: null, account: null, staff: null };
+  return {
+    trainer: { reviews: live.trainerReviews, likes: live.trainerLikes },
+    account: { reviews: live.accountReviews },
+    staff: live.staff,
+  };
 }
 
 function AccountButton() {
@@ -742,6 +815,9 @@ function AccountButton() {
   const logout = useAuthServerFn(logoutFn);
   const loginSearch = useBrowseLoginSearch();
   const messaging = useMessaging();
+  const cabinetCounts = useCabinetMenuCounts();
+  const trainerCounts = useTrainerMenuCounts(Boolean(user && hasAnyRole(user.roles, ["trainer", "club"])), open);
+  const accountCounts = useAccountMenuCounts(Boolean(user && !isStaff(user.roles) && !hasAnyRole(user.roles, ["trainer", "club"])), open);
   const { keys, ready } = useFavorites();
   const face = useLiveAvatar(user?.id, user?.avatarPath);
 
@@ -778,13 +854,15 @@ function AccountButton() {
   }
 
   const name = [user.firstName, user.lastName].filter(Boolean).join(" ");
-  const items = faceMenuFor(user.roles);
+  const items = faceMenuFor(user.roles, messaging.ownedSlugs);
   const counts = menuCounts(
     user.roles,
     messaging.own,
     messaging.inbox,
     ready ? keys.length : undefined,
-    staffCounts,
+    cabinetCounts.staff ?? staffCounts,
+    cabinetCounts.trainer ?? trainerCounts,
+    cabinetCounts.account ?? accountCounts,
   );
   const show = () => {
     if (holdClosed.current) return;
@@ -970,6 +1048,9 @@ function MegaAccount({ menuOpen, onClose }: { menuOpen: boolean; onClose: () => 
   const [pending, setPending] = useState(false);
   const logout = useAuthServerFn(logoutFn);
   const messaging = useMessaging();
+  const cabinetCounts = useCabinetMenuCounts();
+  const trainerCounts = useTrainerMenuCounts(Boolean(user && hasAnyRole(user.roles, ["trainer", "club"])), open);
+  const accountCounts = useAccountMenuCounts(Boolean(user && !isStaff(user.roles) && !hasAnyRole(user.roles, ["trainer", "club"])), open);
   const { keys, ready } = useFavorites();
   const face = useLiveAvatar(user?.id, user?.avatarPath);
   useEffect(() => {
@@ -979,13 +1060,15 @@ function MegaAccount({ menuOpen, onClose }: { menuOpen: boolean; onClose: () => 
 
   const name = [user.firstName, user.lastName].filter(Boolean).join(" ");
   const label = user.nick || name || "Кабинет";
-  const items = headerMenuFor(user.roles);
+  const items = headerMenuFor(user.roles, messaging.ownedSlugs);
   const counts = menuCounts(
     user.roles,
     messaging.own,
     messaging.inbox,
     ready ? keys.length : undefined,
-    staffCounts,
+    cabinetCounts.staff ?? staffCounts,
+    cabinetCounts.trainer ?? trainerCounts,
+    cabinetCounts.account ?? accountCounts,
   );
 
   return (
@@ -1227,7 +1310,7 @@ function MessageCount() {
   const shown = messaging.total;
   const label = `Сообщения, ${shown}`;
   const className = `icon-btn favorite-count message-count${shown > 0 ? " has-items" : ""}`;
-  const icon = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM4 6l8 6 8-6" /></svg>;
+  const icon = <svg viewBox="0 0 24 24" aria-hidden="true"><path d={MESSAGE_ENVELOPE} /></svg>;
   const count = <span className="favorite-count__n">{shown > 99 ? "99+" : shown}</span>;
   if (staff) {
     return <Link to="/admin/messages" className={className} aria-label={label} title="Сообщения">{icon}{count}</Link>;
@@ -1372,7 +1455,7 @@ export function SiteFooter() {
               <div className="site-footer__links">
                 <Link to="/">Тренеры</Link>
                 <Link to="/map" search={{ sports: undefined, city: undefined }}>На карте</Link>
-                <Link to="/categories/">Категории</Link>
+                <Link to="/categories">Категории</Link>
               </div>
             </div>
             <div className="site-footer__col">

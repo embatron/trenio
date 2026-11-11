@@ -1,17 +1,28 @@
 import type { ReactNode } from "react";
-import { Link, type LinkProps } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import type { CategoryRouteRef } from "@/lib/catalog/sport-taxonomy";
 
-type CategoryLinkProps = Omit<LinkProps, "to" | "params" | "children"> & {
+type CategoryLinkProps = {
   route: CategoryRouteRef;
   children: ReactNode;
+  className?: string;
+  activeOptions?: { exact?: boolean };
+  "aria-current"?: "page";
 };
 
-export function CategoryLink({ route, children, ...props }: CategoryLinkProps) {
+export function CategoryLink({
+  route,
+  children,
+  className,
+  activeOptions,
+  "aria-current": current,
+}: CategoryLinkProps) {
   if (route.childSlug) {
     return (
       <Link
-        {...props}
+        className={className}
+        activeOptions={activeOptions}
+        aria-current={current}
         to="/categories/$parentSlug/$childSlug"
         params={{ parentSlug: route.parentSlug, childSlug: route.childSlug }}
       >
@@ -21,7 +32,13 @@ export function CategoryLink({ route, children, ...props }: CategoryLinkProps) {
   }
 
   return (
-    <Link {...props} to="/categories/$slug" params={{ slug: route.parentSlug }}>
+    <Link
+      className={className}
+      activeOptions={activeOptions}
+      aria-current={current}
+      to="/categories/$slug"
+      params={{ slug: route.parentSlug }}
+    >
       {children}
     </Link>
   );

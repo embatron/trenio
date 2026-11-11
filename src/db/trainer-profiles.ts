@@ -203,6 +203,7 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
 
   const claimToken = existing?.claimToken ?? newClaimToken();
   const claimPath = existing?.claimPath ?? claimPathFor(claimToken);
+  const audiences: Array<"adult" | "teen" | "kid"> = draft.audiences?.length ? draft.audiences : ["adult"];
   const values = {
     slug,
     instagramHandle: slug,
@@ -223,7 +224,7 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
     pinnedPosts: draft.pinned ?? [],
     sports: draft.sports ?? [],
     primarySport: draft.primarySport ?? null,
-    audiences: draft.audiences?.length ? draft.audiences : ["adult"],
+    audiences,
     formats: draft.formats ?? [],
     city: draft.city,
     citySlug: draft.citySlug || cityCatalogSlug(draft.city) || "",

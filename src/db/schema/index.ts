@@ -8,6 +8,7 @@ export * from "./trainer-card-impressions";
 export * from "./trainer-contact-clicks";
 export * from "./trainer-reviews";
 export * from "./user-favorites";
+export * from "./account-likes";
 export * from "./messages";
 export * from "./push-subscriptions";
 export * from "./trainer-welcomes";

@@ -1,9 +1,26 @@
 import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 
 /** Database of the process already listening on 8081. Falls back to `.env` when none is found. */
 export function scriptEnv(): NodeJS.ProcessEnv {
-  const url = serverDatabaseUrl();
+  const url = serverDatabaseUrl() ?? process.env.DATABASE_URL ?? fileDatabaseUrl();
   return url ? { ...process.env, DATABASE_URL: url } : process.env;
+}
+
+function fileDatabaseUrl(): string | undefined {
+  try {
+    const line = readFileSync(".env", "utf8")
+      .split("\n")
+      .find((item) => item.startsWith("DATABASE_URL="));
+    if (!line) return undefined;
+    let value = line.slice("DATABASE_URL=".length).trim();
+    if ((value.startsWith("\"") && value.endsWith("\"")) || (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+    return value || undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 function serverDatabaseUrl(): string | undefined {

@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { UserAvatar } from "@/components/user-avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { reviewTextLength } from "@/lib/catalog/review-html";
+import { notifyTyping, remoteTyping, subscribeTyping } from "@/lib/messages/live-client";
 import { REPORT_COMMENT_MAX_LENGTH, REPORT_REASONS, messagePreview, type MessageDto, type ThreadResult } from "@/lib/messages/schemas";
 import { firstUnreadMessageId, messageScrollTop } from "@/lib/messages/thread-scroll";
 
@@ -71,6 +72,8 @@ export function ConversationThread({
   onRetry,
   onReport,
   onBlock,
+  onUnblock,
+  onDelete,
   busy,
   onBack,
   onDismiss,
@@ -90,6 +93,8 @@ export function ConversationThread({
   onRetry: (message: ThreadMessage) => void;
   onReport: (reason: (typeof REPORT_REASONS)[number]["id"], comment: string) => Promise<void>;
   onBlock: () => void;
+  onUnblock: () => void;
+  onDelete: () => void;
   busy: boolean;
   onBack?: () => void;
   onDismiss?: () => void;
@@ -98,6 +103,14 @@ export function ConversationThread({
 }) {
   const mobile = useIsMobile();
   const threadRoot = useRef<HTMLDivElement>(null);
+  const [, setTypingTick] = useState(0);
+  useEffect(() => subscribeTyping(() => setTypingTick((value) => value + 1)), []);
+  const typing = Boolean(thread?.conversationId && remoteTyping(thread.conversationId));
+  const liveConversationId = thread?.conversationId ?? null;
+  useEffect(() => {
+    if (!liveConversationId) return;
+    return () => notifyTyping(liveConversationId, false);
+  }, [liveConversationId]);
   const [reply, setReply] = useState<{ id: number; preview: string } | null>(null);
   const [editing, setEditing] = useState<{ id: number; body: string } | null>(null);
   useEffect(() => {
@@ -105,6 +118,9 @@ export function ConversationThread({
     setEditing(null);
   }, [thread?.conversationId]);
   const [reportOpen, setReportOpen] = useState(false);
+  const [blockOpen, setBlockOpen] = useState(false);
+  const [unblockOpen, setUnblockOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
   const [reason, setReason] = useState<(typeof REPORT_REASONS)[number]["id"]>(REPORT_REASONS[0].id);
@@ -308,14 +324,16 @@ export function ConversationThread({
 
   const listPath = view === "own" ? "/account/messages" : "/me/messages";
   const hint = thread && !thread.canWrite
-      ? thread.status === "closed"
-        ? "Переписка закрыта. Новые сообщения не отправляются."
-        : "Сейчас нельзя отправить сообщение."
+      ? thread.blocked
+        ? "Сообщения в этом диалоге остановлены. Другие диалоги не затронуты."
+        : thread.status === "closed"
+          ? "Переписка закрыта. Новые сообщения не отправляются."
+          : "Сейчас нельзя отправить сообщение."
       : null;
 
   const profileHref = thread?.counterpart.href ?? null;
   const trainerCardHref = thread?.counterpart.kind === "user" ? thread.trainerHref : null;
-  const showMenu = Boolean(thread && (thread.canBlock || thread.canReport));
+  const showMenu = Boolean(thread && (thread.canBlock || thread.canReport || thread.canDelete));
   const name = thread ? (
     <TrainerName firstName={thread.counterpart.firstName} lastName={thread.counterpart.lastName} empty={thread.counterpart.name} />
   ) : null;
@@ -363,6 +381,7 @@ export function ConversationThread({
                     Тренер: {thread.trainerName}
                   </OpenProfile>
                 ) : null}
+                {typing ? <p className="direct-thread__typing" aria-live="polite">печатает…</p> : null}
               </div>
             </div>
             <div className="direct-thread__actions">
@@ -390,18 +409,25 @@ export function ConversationThread({
                     aria-label="Ещё"
                     onClick={() => setMoreOpen((open) => !open)}
                   >
-                    …
+                    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                      <path d="M6 12h.01M12 12h.01M18 12h.01" style={{ fill: "none", stroke: "currentColor", strokeWidth: "var(--icon-stroke)", strokeLinecap: "round" }} />
+                    </svg>
                   </button>
                   {moreOpen ? (
                     <div className="direct-menu__list" role="menu">
-                      {thread.canBlock ? (
-                        <button type="button" role="menuitem" disabled={busy} onClick={() => { setMoreOpen(false); onBlock(); }}>
-                          Заблокировать
-                        </button>
-                      ) : null}
                       {thread.canReport ? (
                         <button type="button" role="menuitem" onClick={() => { setMoreOpen(false); setReportOpen(true); }}>
                           Пожаловаться
+                        </button>
+                      ) : null}
+                      {thread.canBlock && !thread.blocked ? (
+                        <button type="button" role="menuitem" disabled={busy} onClick={() => { setMoreOpen(false); setBlockOpen(true); }}>
+                          Заблокировать
+                        </button>
+                      ) : null}
+                      {thread.canDelete ? (
+                        <button type="button" role="menuitem" disabled={busy} onClick={() => { setMoreOpen(false); setDeleteOpen(true); }}>
+                          Удалить диалог
                         </button>
                       ) : null}
                     </div>
@@ -467,7 +493,86 @@ export function ConversationThread({
               </form>
             </DialogContent>
           </Dialog>
+          <Dialog open={blockOpen} onOpenChange={setBlockOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Заблокировать переписку</DialogTitle>
+              </DialogHeader>
+              <form
+                className="direct-report-form"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  if (busy) return;
+                  setBlockOpen(false);
+                  onBlock();
+                }}
+              >
+                <p className="direct-report-form__note">
+                  {thread?.counterpart.kind === "user"
+                    ? `${thread.counterpart.name} не сможет писать вам, и вы не сможете писать в этот диалог. Аккаунт останется активным для других тренеров.`
+                    : `Вы и ${thread?.counterpart.name ?? "собеседник"} больше не сможете писать в этот диалог. Остальные диалоги останутся открыты.`}
+                </p>
+                <div className="direct-report-form__actions">
+                  <button type="button" onClick={() => setBlockOpen(false)}>Отмена</button>
+                  <button type="submit" className="direct-report-form__send" disabled={busy}>Заблокировать</button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+          <Dialog open={unblockOpen} onOpenChange={setUnblockOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Разблокировать переписку</DialogTitle>
+              </DialogHeader>
+              <form
+                className="direct-report-form"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  if (busy) return;
+                  setUnblockOpen(false);
+                  onUnblock();
+                }}
+              >
+                <p className="direct-report-form__note">
+                  Вы и {thread.counterpart.name} снова сможете писать в этот диалог.
+                </p>
+                <div className="direct-report-form__actions">
+                  <button type="button" onClick={() => setUnblockOpen(false)}>Отмена</button>
+                  <button type="submit" className="direct-report-form__send" disabled={busy}>Разблокировать</button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+          <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Удалить диалог</DialogTitle>
+              </DialogHeader>
+              <form
+                className="direct-report-form"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  if (busy) return;
+                  setDeleteOpen(false);
+                  onDelete();
+                }}
+              >
+                <p className="direct-report-form__note">
+                  Переписка пропадёт только у вас и исчезнет из списка. У {thread.counterpart.name} она останется.
+                </p>
+                <div className="direct-report-form__actions">
+                  <button type="button" onClick={() => setDeleteOpen(false)}>Отмена</button>
+                  <button type="submit" className="direct-report-form__send" disabled={busy}>Удалить</button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
           <div key={thread.conversationId} className="direct-thread__pane">
+            {thread.blocked && thread.canBlock ? (
+              <button type="button" className="direct-unblock" onClick={() => setUnblockOpen(true)}>
+                Разблокировать
+              </button>
+            ) : null}
           <div
             className="direct-log"
             ref={scroller}
@@ -483,15 +588,17 @@ export function ConversationThread({
                 {loadingEarlier ? "Загрузка…" : "Более ранние сообщения"}
               </button>
             ) : null}
-            {messages.length === 0 ? <p className="direct-empty">Напишите первое сообщение</p> : null}
+            {messages.length === 0 && !thread.deletedByCounterpart ? <p className="direct-empty">Напишите первое сообщение</p> : null}
             {messages.map((message, index) => {
               const previous = messages[index - 1];
               const split = !previous || dayKey(previous.createdAt) !== dayKey(message.createdAt);
+              const quoted = messages.some((item) => item.replyTo?.id === message.id);
               return (
                 <div key={message.clientId || message.id} data-message-id={message.id}>
                   {split ? <p className="direct-day">{dayLabel(message.createdAt)}</p> : null}
                   <MessageBubble
                     message={message}
+                    quoted={quoted}
                     onRetry={onRetry}
                     onQuote={thread?.canWrite && !message.deleted && !message.status ? () => {
                       setEditing(null);
@@ -510,6 +617,7 @@ export function ConversationThread({
                 </div>
               );
             })}
+            {thread.deletedByCounterpart ? <p className="direct-cleared">Переписка была удалена пользователем</p> : null}
           </div>
           <MessageComposer
             key={`${thread.conversationId}:${editing?.id ?? "new"}`}
@@ -521,7 +629,9 @@ export function ConversationThread({
             reply={reply}
             onCancelReply={() => setReply(null)}
             onCancelEdit={() => setEditing(null)}
+            onActivity={(on) => notifyTyping(thread.conversationId, on)}
             onSend={async (body, files) => {
+              notifyTyping(thread.conversationId, false);
               if (editing) {
                 await onEdit(editing.id, body);
                 setEditing(null);
