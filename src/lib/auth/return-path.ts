@@ -1,4 +1,4 @@
-import { getPostLoginPath, hasAnyRole } from "@/lib/auth/roles";
+import { accountPathForTrainer, getPostLoginPath, hasAnyRole, isStaff, staffMessagesTarget } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
 
 /** The session is gone. The person has to sign in again. */
@@ -12,8 +12,8 @@ export function isPlainClient(roles: readonly UserRole[]): boolean {
 /**
  * Where to open after a successful sign-in.
  * A plain client returns to the page they left. With nowhere to return, that is the catalog.
- * A trainer, club, or staff member keeps the cabinet. `browse` is the header link:
- * it remembers the public page for a client and does not pull a trainer out of the cabinet.
+ * A trainer, club, or staff member keeps the cabinet. A message return stays on that dialog.
+ * `browse` is the header link: it remembers the public page for a client and does not pull a trainer out of the cabinet.
  */
 export function destinationAfterAuth(
   roles: readonly UserRole[],
@@ -24,7 +24,17 @@ export function destinationAfterAuth(
   const page = back && !back.startsWith("/auth/") ? back : null;
   if (!isPlainClient(roles)) {
     if (browse) return getPostLoginPath(roles as UserRole[]);
-    return page ?? getPostLoginPath(roles as UserRole[]);
+    if (page) {
+      const split = page.indexOf("?");
+      const pathname = split === -1 ? page : page.slice(0, split);
+      const search = split === -1 ? "" : page.slice(split);
+      if (pathname.startsWith("/account/messages")) {
+        if (hasAnyRole(roles as UserRole[], ["trainer", "club"])) return accountPathForTrainer(pathname, search);
+        if (isStaff(roles as UserRole[])) return staffMessagesTarget(pathname, search);
+      }
+      return page;
+    }
+    return getPostLoginPath(roles as UserRole[]);
   }
   return page ?? "/";
 }

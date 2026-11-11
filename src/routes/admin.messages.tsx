@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -16,6 +16,7 @@ import {
   blockPairFn,
   closeConversationFn,
   dismissReportFn,
+  ensureConversationFn,
   listConversationsFn,
   listMessagesFn,
   listReportsFn,
@@ -33,6 +34,16 @@ const STATUS_LABEL = {
 } as const;
 
 export const Route = createFileRoute("/admin/messages")({
+  validateSearch: (search: Record<string, unknown>) => {
+    const trainer = typeof search.trainer === "string" ? search.trainer.trim().slice(0, 30) : "";
+    const conversation = typeof search.conversation === "string" && /^[0-9a-f-]{36}$/i.test(search.conversation)
+      ? search.conversation
+      : "";
+    return {
+      ...(trainer ? { trainer } : {}),
+      ...(conversation ? { conversation } : {}),
+    };
+  },
   head: () => ({
     meta: [
       { title: "Сообщения · кабинет администратора · Я ищу тренера на trenio.by" },
@@ -88,6 +99,9 @@ function AdminMessagesPage() {
 }
 
 function StaffThreads() {
+  const { trainer, conversation } = Route.useSearch();
+  const navigate = useNavigate();
+  const ensure = useServerFn(ensureConversationFn);
   const mobile = useIsMobile();
   const listFn = useServerFn(listConversationsFn);
   const messagesFn = useServerFn(listMessagesFn);
@@ -95,7 +109,8 @@ function StaffThreads() {
   const uploadFn = useServerFn(uploadMessageFileFn);
   const markFn = useServerFn(markConversationReadFn);
   const blockFn = useServerFn(blockPairFn);
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(conversation || null);
+  const [opening, setOpening] = useState(Boolean(trainer));
   const [quiet, setQuiet] = useState(false);
   const [extra, setExtra] = useState<ConversationListItem[]>([]);
   const [cursor, setCursor] = useState<ConversationCursor | null | undefined>(undefined);
@@ -122,9 +137,38 @@ function StaffThreads() {
   }, [list.data?.items, extra]);
   const latestId = items[0]?.id ?? null;
   useEffect(() => {
-    if (quiet || mobile || openId || list.isPending || !latestId) return;
+    if (!trainer) return;
+    let cancelled = false;
+    setOpening(true);
+    setError(null);
+    void ensure({ data: { trainerProfileSlug: trainer } })
+      .then((result) => {
+        if (cancelled) return;
+        setOpenId(result.conversationId);
+        setOpening(false);
+        void navigate({
+          to: "/admin/messages",
+          search: { conversation: result.conversationId },
+          replace: true,
+        });
+      })
+      .catch((err) => {
+        if (!cancelled) setError(authErrorMessage(err));
+      })
+      .finally(() => {
+        if (!cancelled) setOpening(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [trainer, ensure, navigate]);
+  useEffect(() => {
+    if (conversation) setOpenId(conversation);
+  }, [conversation]);
+  useEffect(() => {
+    if (quiet || mobile || openId || opening || trainer || conversation || list.isPending || !latestId) return;
     setOpenId(latestId);
-  }, [quiet, mobile, openId, list.isPending, latestId]);
+  }, [quiet, mobile, openId, opening, trainer, conversation, list.isPending, latestId]);
   const newestId = thread.data?.messages[0]?.id ?? 0;
   useEffect(() => {
     if (!openId || !newestId || !thread.data?.canReport) return;

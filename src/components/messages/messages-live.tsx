@@ -24,7 +24,7 @@ function openIncoming(
   conversationId: string,
 ) {
   if (hasAnyRole(roles, ["admin", "superadmin"])) {
-    void router.navigate({ to: "/admin/messages" });
+    void router.navigate({ to: "/admin/messages", search: { conversation: conversationId } });
     return;
   }
   if (hasAnyRole(roles, ["trainer", "club"])) {

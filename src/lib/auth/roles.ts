@@ -65,18 +65,41 @@ export function getCabinetPath(roles: UserRole[]): "/admin" | "/me" | "/account"
   return "/account";
 }
 
+function trainerQuery(searchStr: string): string {
+  return new URLSearchParams(searchStr.replace(/^\?/, "")).get("trainer")?.trim().slice(0, 30) ?? "";
+}
+
 /** Trainer cabinet path that keeps the open thread and the `trainer` query. */
 export function accountPathForTrainer(pathname: string, searchStr = ""): string {
   const conversation = pathname.match(/^\/account\/messages\/([0-9a-f-]{36})\/?$/i)?.[1];
   if (conversation) return `/me/messages/${conversation}`;
   if (pathname.startsWith("/account/messages")) {
-    const trainer = new URLSearchParams(searchStr.replace(/^\?/, "")).get("trainer")?.trim().slice(0, 30) ?? "";
+    const trainer = trainerQuery(searchStr);
     return trainer ? `/me/messages?trainer=${encodeURIComponent(trainer)}` : "/me/messages";
   }
   if (pathname.startsWith("/account/reviews")) return "/me/reviews";
   if (pathname.startsWith("/account/favorites")) return "/me/favorites";
   if (pathname.startsWith("/account/settings")) return "/me/settings";
   return "/me";
+}
+
+/** Staff messages screen for a thread that started on the client messages path. */
+export function staffMessagesTarget(pathname: string, searchStr = ""): string {
+  const conversation = pathname.match(/^\/account\/messages\/([0-9a-f-]{36})\/?$/i)?.[1];
+  if (conversation) return `/admin/messages?conversation=${conversation}`;
+  const trainer = trainerQuery(searchStr);
+  return trainer ? `/admin/messages?trainer=${encodeURIComponent(trainer)}` : "/admin/messages";
+}
+
+/**
+ * Where a signed-in role opens a direct message.
+ * Staff land on the conversations tab with this trainer, not on the admin overview.
+ */
+export function directMessageHref(roles: UserRole[], slug: string): string {
+  const trainer = encodeURIComponent(slug);
+  if (hasAnyRole(roles, ["trainer", "club"])) return `/me/messages?trainer=${trainer}`;
+  if (isStaff(roles)) return `/admin/messages?trainer=${trainer}`;
+  return `/account/messages?trainer=${trainer}`;
 }
 
 /**
@@ -96,6 +119,10 @@ export function deniedCabinetTarget(
   if (area === "me") {
     if (hasAnyRole(roles, ["trainer", "club"])) return null;
     return isStaff(roles) ? "/admin" : "/";
+  }
+  if (pathname.startsWith("/account/messages")) {
+    if (hasAnyRole(roles, ["trainer", "club"])) return accountPathForTrainer(pathname, searchStr);
+    if (isStaff(roles)) return staffMessagesTarget(pathname, searchStr);
   }
   if (isStaff(roles)) return "/admin";
   if (hasAnyRole(roles, ["trainer", "club"])) return accountPathForTrainer(pathname, searchStr);

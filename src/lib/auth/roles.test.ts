@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { accountPathForTrainer, deniedCabinetTarget, getPostLoginPath } from "@/lib/auth/roles";
+import { accountPathForTrainer, deniedCabinetTarget, directMessageHref, getPostLoginPath } from "@/lib/auth/roles";
 import { destinationAfterAuth } from "@/lib/auth/return-path";
 import type { UserRole } from "@/lib/auth/types";
 
@@ -54,4 +54,21 @@ test("staff stay in /admin, and a trainer on the same account can still open /me
   assert.equal(deniedCabinetTarget("account", admin, "/account/settings"), "/admin");
   assert.equal(deniedCabinetTarget("me", staffTrainer), null);
   assert.equal(deniedCabinetTarget("account", staffTrainer, "/account/reviews"), "/admin");
+});
+
+test("a direct message opens that dialog for every role", () => {
+  assert.equal(directMessageHref(user, "anna"), "/account/messages?trainer=anna");
+  assert.equal(directMessageHref(trainer, "anna"), "/me/messages?trainer=anna");
+  assert.equal(directMessageHref(admin, "anna"), "/admin/messages?trainer=anna");
+  assert.equal(directMessageHref(staffTrainer, "anna"), "/me/messages?trainer=anna");
+  assert.equal(deniedCabinetTarget("account", admin, "/account/messages", "?trainer=anna"), "/admin/messages?trainer=anna");
+  assert.equal(
+    deniedCabinetTarget("account", admin, "/account/messages/11111111-1111-4111-8111-111111111111"),
+    "/admin/messages?conversation=11111111-1111-4111-8111-111111111111",
+  );
+  assert.equal(deniedCabinetTarget("account", staffTrainer, "/account/messages", "?trainer=anna"), "/me/messages?trainer=anna");
+  assert.equal(destinationAfterAuth(admin, "/account/messages?trainer=anna"), "/admin/messages?trainer=anna");
+  assert.equal(destinationAfterAuth(trainer, "/account/messages?trainer=anna"), "/me/messages?trainer=anna");
+  assert.equal(destinationAfterAuth(user, "/account/messages?trainer=anna"), "/account/messages?trainer=anna");
+  assert.equal(destinationAfterAuth(admin, "/map", true), "/admin");
 });
