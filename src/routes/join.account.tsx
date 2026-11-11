@@ -67,6 +67,8 @@ function TrainerAccountPage() {
         .join-account__crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 16px; color: var(--muted); font-size: 14px; }
         .join-account__crumbs a { color: var(--muted); text-decoration: none; }
         .join-account__crumbs a:hover { color: var(--primary); }
+        .join-account .join-names { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        .join-account .join-names > .auth-field { min-width: 0; }
         .join-account .join-basics { display: grid; gap: 16px; }
         .join-account .join-basics > div { display: grid; gap: 6px; }
         .join-account .auth-check { align-items: center; min-height: 44px; }
@@ -84,6 +86,9 @@ function TrainerAccountPage() {
         .join-account .cabinet-modal__card h2 { margin: 0; font-size: 18px; color: var(--dark); }
         .join-account .cabinet-modal__card p { margin: 0; color: var(--text); line-height: 1.45; }
         .join-account .cabinet-modal__card button { justify-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
+        @media (min-width: 768px) {
+          .join-account .join-names { grid-template-columns: 1fr 1fr; }
+        }
         @media (max-width: 767px) {
           .join-account__crumbs { font-size: 12px; gap: 6px; }
           .join-account .entity-input input,
@@ -271,16 +276,16 @@ function NameFields({
   onLast: (value: string) => void;
 }) {
   return (
-    <>
+    <div className="join-names">
       <label className="auth-field">
         <span className="auth-field__label">Имя</span>
         <input type="text" required autoComplete="given-name" value={firstName} onChange={(event) => onFirst(event.target.value)} />
       </label>
       <label className="auth-field">
-        <span className="auth-field__label">Фамилия, необязательно</span>
+        <span className="auth-field__label">Фамилия</span>
         <input type="text" autoComplete="family-name" value={lastName} onChange={(event) => onLast(event.target.value)} />
       </label>
-    </>
+    </div>
   );
 }
 
