@@ -322,11 +322,9 @@ const CSS = `
 .photo-slider__slide { flex: 0 0 100%; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; }
 .photo-slider__slide img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; user-select: none; }
 .photo-slider__badge { position: absolute; top: 12px; left: 12px; z-index: 2; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,0.94); color: var(--primary-dark); font-size: 11px; font-weight: var(--fw-title); letter-spacing: 0.02em; text-transform: uppercase; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
-.profile-actions { position: absolute; top: 10px; right: 10px; z-index: 3; display: flex; flex-direction: column; gap: 8px; }
-.profile-like, .profile-save, .profile-write, .profile-share { position: relative; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255,255,255,0.82); color: var(--muted); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.06); transition: color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease; text-decoration: none; }
-.profile-like:hover, .profile-like:focus-visible, .profile-save:hover, .profile-save:focus-visible, .profile-write:hover, .profile-write:focus-visible, .profile-share:hover, .profile-share:focus-visible { background: rgba(255,255,255,0.94); color: var(--dark); box-shadow: 0 8px 22px rgba(var(--primary-rgb), 0.16); }
-.profile-like.is-liked, .profile-like.is-liked:hover, .profile-like.is-liked:focus-visible, .profile-save.is-saved, .profile-save.is-saved:hover, .profile-save.is-saved:focus-visible { color: var(--primary); background: rgba(255,255,255,0.94); }
-.profile-like svg, .profile-save svg, .profile-write svg, .profile-share svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.profile-actions { position: absolute; top: 0; right: 0; z-index: 3; display: flex; flex-direction: column; gap: 0; opacity: 0.85; transition: opacity 0.18s ease; }
+.photo-slider:hover .profile-actions,
+.photo-slider:focus-within .profile-actions { opacity: 1; }
 .photo-slider__nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.82); color: rgba(17, 24, 39, 0.78); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.06); z-index: 2; transition: color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease; }
 .photo-slider__nav:hover, .photo-slider__nav:focus-visible { background: rgba(255,255,255,0.94); color: var(--dark); box-shadow: 0 8px 22px rgba(var(--primary-rgb), 0.16); }
 .photo-slider__nav--prev { left: 10px; }
@@ -1028,10 +1026,10 @@ function TrainerPage() {
                   </div>
                   {t.badge && <span className="photo-slider__badge">{t.badge}</span>}
                   <div className="profile-actions">
-                    <AccountLikeButton slug={t.slug} className="profile-like" />
-                    <FavoriteButton target={{ type: "trainer", slug: t.slug }} className="profile-save" />
-                    <CardDirectLink slug={t.slug} className="profile-write" />
-                    <ShareProfileButton slug={t.slug} className="profile-share" />
+                    <AccountLikeButton slug={t.slug} className="trainer-card__like profile-like" />
+                    <FavoriteButton target={{ type: "trainer", slug: t.slug }} className="trainer-card__save profile-save" />
+                    <CardDirectLink slug={t.slug} className="trainer-card__write profile-write" />
+                    <ShareProfileButton slug={t.slug} className="trainer-card__share profile-share" />
                   </div>
                   {photos.length > 1 ? (
                     <>

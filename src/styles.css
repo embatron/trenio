@@ -333,7 +333,11 @@ html.is-staff-layout {
 .trainer-card__actions {
   position: absolute; top: 0; right: 0; z-index: 2;
   display: flex; flex-direction: column; gap: 0;
+  opacity: 0.85;
+  transition: opacity 0.18s ease;
 }
+.trainer-card:hover .trainer-card__actions,
+.trainer-card:focus-within .trainer-card__actions { opacity: 1; }
 .trainer-card__like,
 .trainer-card__save,
 .trainer-card__write,
@@ -604,7 +608,15 @@ input.is-locked {
   .sr-grid .trainer-card__like svg,
   .sr-grid .trainer-card__save svg,
   .sr-grid .trainer-card__write svg,
-  .sr-grid .trainer-card__share svg {
+  .sr-grid .trainer-card__share svg,
+  .similar-trainers .trainer-card__like svg,
+  .similar-trainers .trainer-card__save svg,
+  .similar-trainers .trainer-card__write svg,
+  .similar-trainers .trainer-card__share svg,
+  .profile-actions .trainer-card__like svg,
+  .profile-actions .trainer-card__save svg,
+  .profile-actions .trainer-card__write svg,
+  .profile-actions .trainer-card__share svg {
     width: 28px;
     height: 28px;
     padding: 8px;
