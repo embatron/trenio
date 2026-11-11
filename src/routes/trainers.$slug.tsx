@@ -348,8 +348,8 @@ const CSS = `
 .profile-identity__sport-name { color: var(--primary); }
 .profile-identity__title { display: flex; align-items: flex-start; flex-wrap: nowrap; gap: 0 2px; margin: 0 0 12px; }
 .profile-identity__name { min-width: 0; flex: 1 1 auto; margin: 0; font-size: var(--fs-page); font-weight: var(--fw-heading); letter-spacing: -0.035em; color: var(--dark); line-height: 1.05; }
-.profile-identity__name .trainer-name { flex-direction: column; align-items: flex-start; max-width: 100%; }
-.profile-identity__name .trainer-name__line { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
+.profile-identity__name .trainer-name { flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 0.28em; max-width: 100%; }
+.profile-identity__name .trainer-name__line { width: min(100%, max-content); max-width: 100%; white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
 .profile-edit { width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0; background: transparent; border-radius: 50%; color: var(--dark); font: inherit; text-decoration: none; cursor: pointer; }
 .profile-edit:hover { background: rgba(var(--dark-rgb), 0.04); color: var(--primary); }
 .profile-edit svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
