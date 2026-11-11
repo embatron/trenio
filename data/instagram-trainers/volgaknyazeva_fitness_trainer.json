@@ -1,0 +1,98 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/volgaknyazeva_fitness_trainer/",
+  "handle": "volgaknyazeva_fitness_trainer",
+  "slug": "volgaknyazeva_fitness_trainer",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Вольга",
+  "lastName": "Князева",
+  "fullName": "Вольга Князева",
+  "gender": "female",
+  "nameQuotes": [
+    "Князева Вольга"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "♦️навучу жыць без болю ў спіне ♦️дапамагаю дзеткам з дыягназам 'скаліёз' ♦️ больш за 10 год у фітнэсе ♦️ дыпламаваны спецыяліст (БДУФК)",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Князева Вольга",
+  "threadsUrl": "",
+  "bio": "Я Вольга Князева, фитнес-тренер в Мінске. Учу жить без боли в спине и помогаю детям со сколиозом. В фитнесе больше 10 лет.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/volgaknyazeva_fitness_trainer/p/DfFW9ykAnj3/",
+      "caption": "Зараз я магу называць сябе сертыфікаваным спецыялістам у працы са скліёзам па метадзе SEAS Гэты метад мае пад сабою грунтоўную працу менавіта з хрыбетнікам і паляпшэннем/спыненнем у прагрэсіі скаліёза Шмат інструментаў, шмат ведаў Спадзяюся, што на практыке гэта будзе для мяне дапамогай як для інструктара . Бо дзетак з гэтым дыягназам шмат і дапамагчы ім як трэнерка вельмі хочацца - @volgaknyazeva_fitness_trainer on October 29, 2026",
+      "imageText": [
+        "Сертифікаваны спецыяліст у працы са СКАЛІЁЗАМ",
+        "Volga Kniazeva is certified First Level - SEAS. in Minsk, Belarus"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/volgaknyazeva_fitness_trainer/reel/DOYLgVaAkus/",
+      "caption": "Я — твая матывацыя есці без забаронаў і віны. Далучайся! Спасылка на мой асабісты ТГ-канал у шапцы профілю!",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/volgaknyazeva_fitness_trainer/p/DGxCH6co734/",
+      "caption": "Animal Flow Унікальная праграма, інструктарам якой я марыла стаць больш за паўгады. Сіла, каардынацыя, гнуткасць, ментальная праца - тыя якасці, якія прапрацоўваюцца падчас кожнага занятку. Быць інструктарам з такой крутой супольнасцю - гонар для мяне. -————————————————— Animal Flow is an uncial program . And i’m very happy to be the instructor of it. It’s the way, where you can always find your own professional growth. I’m very thankful to Mike Fitch @mikefitch.af , Eugenia Kabanova @evgenia_kabanova and Irina Volodina @irina.creafit for giving me knowledge and opportunity to develop myself and my clients in practice of Animal Flow 🙏 . . . . . #фитнес #тренерминск #спина #спинаупражнения #спинабезболи #сидячийобразжизни #поясница #фитнесборовляны #помогисебесам #помогупохудеть #помогуснизитьвес #правильнаяеда #любоюсвоюработу #люблюжизнь #радостьжизни #animalflow #верювчудо #наслаждайсяжизнью #наслаждайсямоментом #беларусь #беларускаямова - @volgaknyazeva_fitness_trainer on March 3, 2025",
+      "imageText": [
+        "сертифікаваны ІНСТРУКТАР ANIMAL FLOW"
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Мінск",
+  "address": "",
+  "cityCandidates": [
+    "Мінск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [
+    "Беларуская"
+  ],
+  "avatarPath": "/trainers/instagram/volgaknyazeva_fitness_trainer.jpg",
+  "photos": [
+    "/trainers/instagram/volgaknyazeva_fitness_trainer.jpg",
+    "/trainers/instagram/volgaknyazeva_fitness_trainer-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/volgaknyazeva_fitness_trainer/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/sa_smakam",
+    "website": "https://www.youtube.com/@Volgaknyazeva"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email"
+  ]
+}

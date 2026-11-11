@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/wadionex_t/",
+  "handle": "wadionex_t",
+  "slug": "wadionex_t",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Вадим",
+  "lastName": "Панов",
+  "fullName": "Вадим Панов",
+  "gender": "male",
+  "nameQuotes": [
+    "Вадим Панов"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "Спорт 🥊💪 Мотивация 💫 Юмор 👻",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Вадим Панов, тренер по боксу, Минск",
+  "threadsUrl": "",
+  "bio": "Я Вадим Панов, тренер по боксу в Минске.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/wadionex_t.jpg",
+  "photos": [
+    "/trainers/instagram/wadionex_t.jpg",
+    "/trainers/instagram/wadionex_t-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/wadionex_t/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

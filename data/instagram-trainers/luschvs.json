@@ -1,0 +1,101 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/luschvs/",
+  "handle": "luschvs",
+  "slug": "luschvs",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Всеволод",
+  "lastName": "Лущик",
+  "fullName": "Всеволод Лущик",
+  "gender": "male",
+  "nameQuotes": [
+    "Всеволод Лущик",
+    "Всеволод"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "MEN’S PHYSIQUE ATHLETE 🇧🇾 🥇 🥈 Open cup of Mogilev 🥈 Амбассадор @reckful.ru promo «Luch» Тренировки для парней и девушек DIRECT 📩 Всеволод Лущик",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Всеволод. Тренер по фитнесу. Бодибилдинг.",
+  "threadsUrl": "",
+  "bio": "Я Всеволод Лущик, тренер по фитнесу и бодибилдингу в Молодечно.",
+  "about": [
+    "Я провожу тренировки для парней и для девушек."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/p/DXpBy7pCPuB/",
+      "caption": "Мой первый соревновательный сезон весна 2026 ! Год подготовки пролетел незаметно и вот такую форму и результаты я смог показать . Кубок «железного льва» 🥈 дебют Чемпионат РБ пляжный бодибилдинг дебют 🥇 Чемпионат РБ пляжный бодибилдинг до 174 🥈 В первую очередь спасибо моему тренеру @a.perminov ,который подготовил и настроил на победу ! Тренеру по позированию @eav_smi сделал из корча человека) Мою жену❤️и всех родных❤️ Было не так трудно, как я себе это представлял 😅 Классный опыт и куча эмоций 💪🏻 В следующий раз планку ставим повыше ⬆️ Результатами я доволен! Как сказал тренер «с первого раза залететь и так заявить о себе не каждый может » 👌🏻 Работаем дальше ‼️",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/reel/DXRzMnkiNzL/",
+      "caption": "@reckful.ru со мной на протяжении всей подготовки ! Спасибо ,парни ❤️",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/reel/DXnBTZXAHDl/",
+      "caption": "Reckful с вами это было просто 😎😮‍💨",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "bodibilding",
+      "parentSlug": "fitnes",
+      "label": "Бодибилдинг",
+      "evidence": "Бодибилдинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Молодечно",
+  "address": "",
+  "cityCandidates": [
+    "Молодечно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/luschvs.jpg",
+  "photos": [
+    "/trainers/instagram/luschvs.jpg",
+    "/trainers/instagram/luschvs-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/luschvs/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

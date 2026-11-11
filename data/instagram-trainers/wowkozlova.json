@@ -1,0 +1,96 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/wowkozlova/",
+  "handle": "wowkozlova",
+  "slug": "wowkozlova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ариша",
+  "lastName": "Козлова",
+  "fullName": "Ариша Козлова",
+  "gender": "female",
+  "nameQuotes": [
+    "Ариша Козлова"
+  ],
+  "headline": "Тренер по фигурному катанию",
+  "sourceBio": "coach @figureskating.grodno my bb @wowbrandbyarinakozlova знаю,куда тебя послать ✈️ @sunflytour short-track speed skating & figure skating",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Ариша Козлова, Гродно, тренер по фигурному катанию, дети и подростки, пр.Янки Купалы, 87 Grodno",
+  "threadsUrl": "",
+  "bio": "Я Ариша Козлова, тренер по фигурному катанию в Гродно. Занимаюсь с детьми и подростками.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/p/DY5Qinmhm66/",
+      "caption": "live laugh love(me)",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/p/DKOmJQhsfFY/",
+      "caption": "sayyyyy sooo»»🎀",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/p/DXZsWs2F-kG/",
+      "caption": "Знакомьтесь-Беззубик🖤 это любовь с первого взгляда,клянусь",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "figurnoe-katanie",
+      "parentSlug": "zima",
+      "label": "Фигурное катание",
+      "evidence": "Фигурное катание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "figurnoe-katanie",
+    "parentSlug": "zima",
+    "label": "Фигурное катание"
+  },
+  "city": "Гродно",
+  "address": "проспект Янки Купалы, 87",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "kid",
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/wowkozlova.jpg",
+  "photos": [
+    "/trainers/instagram/wowkozlova.jpg",
+    "/trainers/instagram/wowkozlova-g2.jpg",
+    "/trainers/instagram/wowkozlova-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/wowkozlova/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

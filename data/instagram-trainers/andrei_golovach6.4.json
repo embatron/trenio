@@ -1,0 +1,94 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/andrei_golovach6.4/",
+  "handle": "andrei_golovach6.4",
+  "slug": "andrei_golovach6.4",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Андрей",
+  "lastName": "Головач",
+  "fullName": "Андрей Головач",
+  "gender": "male",
+  "nameQuotes": [
+    "Андрей Головач",
+    "Головач Андрей"
+  ],
+  "headline": "Тренер по пауэрлифтингу",
+  "sourceBio": "🙏Меняю людей, делаю лучше 🥇Чемпион РБ по пауэрлифтингу 🤌Опыт Тренировок более 17 лет 🔥Индивидуальный подход t.me/Arius_marz",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Головач Андрей, Минск, тот же адрес, фитнес, тренажерный зал, силовой тренинг, пауэрлифтинг. ул. Сурганова, 2а",
+  "threadsUrl": "",
+  "bio": "Я Андрей Головач, тренер по фитнесу, тренажерному залу, силовому тренингу и пауэрлифтингу в Минске. Я чемпион РБ по пауэрлифтингу. Опыт тренировок — более 17 лет.",
+  "about": [
+    "Тренировки проходят с индивидуальным подходом."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pauerlifting",
+      "parentSlug": "fitnes",
+      "label": "Пауэрлифтинг",
+      "evidence": "Пауэрлифтинг"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pauerlifting",
+    "parentSlug": "fitnes",
+    "label": "Пауэрлифтинг",
+    "evidence": "Пауэрлифтинг"
+  },
+  "city": "Минск",
+  "address": "улица Сурганова, 2А",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/andrei_golovach6.4.jpg",
+  "photos": [
+    "/trainers/instagram/andrei_golovach6.4.jpg",
+    "/trainers/instagram/andrei_golovach6.4-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/andrei_golovach6.4/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/Arius_marz",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

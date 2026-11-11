@@ -1,0 +1,96 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/sia.levkovich/",
+  "handle": "sia.levkovich",
+  "slug": "sia.levkovich",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александра",
+  "lastName": "Левкович",
+  "fullName": "Александра Левкович",
+  "gender": "female",
+  "nameQuotes": [
+    "Александра Левкович"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Это Александра Левкович, тренер по плаванию, Минск. Взрослые и дети, индивидуально и группы.",
+  "threadsUrl": "",
+  "bio": "Я Александра Левкович, тренер по плаванию в Минске. Занимаюсь со взрослыми и с детьми.",
+  "about": [
+    "Занимаюсь индивидуально и веду группы."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/sia.levkovich/p/DfM_w8oiLxQBs6xvT8DYCIHg6yojw1i8uzcpiQ0/",
+      "caption": "Потрясающе красивая осень и 3-летний Тимурка глазами талантливой @anastasiaserj 🍂✨",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/sia.levkovich/p/DSVBxsmD6ao4E_YsqXVebLHq_6xJfMB7OfrMPs0/",
+      "caption": "",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "Плавание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/sia.levkovich.jpg",
+  "photos": [
+    "/trainers/instagram/sia.levkovich.jpg",
+    "/trainers/instagram/sia.levkovich-g2.jpg",
+    "/trainers/instagram/sia.levkovich-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/sia.levkovich/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

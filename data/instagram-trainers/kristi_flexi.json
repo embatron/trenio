@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kristi_flexi/",
+  "handle": "kristi_flexi",
+  "slug": "kristi_flexi",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Кристина",
+  "lastName": "",
+  "fullName": "Кристина",
+  "gender": "female",
+  "nameQuotes": [
+    "Кристина"
+  ],
+  "headline": "Тренер по пилатесу",
+  "sourceBio": "pilates & yoga teacher",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кристина",
+  "threadsUrl": "",
+  "bio": "Я Кристина, преподаю пилатес и yoga.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Pilates"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kristi_flexi.jpg",
+  "photos": [
+    "/trainers/instagram/kristi_flexi.jpg",
+    "/trainers/instagram/kristi_flexi-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kristi_flexi/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

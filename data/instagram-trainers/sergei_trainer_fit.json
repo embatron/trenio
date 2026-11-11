@@ -1,0 +1,99 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/sergei_trainer_fit/",
+  "handle": "sergei_trainer_fit",
+  "slug": "sergei_trainer_fit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Сергей",
+  "lastName": "",
+  "fullName": "Сергей",
+  "gender": "male",
+  "nameQuotes": [
+    "Сергей"
+  ],
+  "headline": "Тренер по общефизической подготовке",
+  "sourceBio": "Хочешь создать лучшую версию себя-жду на тренировки в адреналин мах.. 🏋️‍♀️ персональный тренер 💪безопасность и техника 📩для записи в direct",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Сергей. там ОФП, силовой тренинг, коррекция фигуры, питание.",
+  "threadsUrl": "",
+  "bio": "Я персональный тренер. Жду на тренировки в адреналин мах и слежу за безопасностью и техникой. Веду ОФП, силовой тренинг, коррекцию фигуры и питание.",
+  "about": [
+    "Жду на тренировки и держу безопасность и технику."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
+    },
+    {
+      "slug": "silovoj-trening",
+      "parentSlug": "fitnes",
+      "label": "Силовой тренинг",
+      "evidence": "Силовой тренинг"
+    },
+    {
+      "slug": "figura",
+      "parentSlug": "fitnes",
+      "label": "Коррекция фигуры",
+      "evidence": "Коррекция фигуры"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "ofp",
+    "parentSlug": "fitnes",
+    "label": "ОФП"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/sergei_trainer_fit.jpg",
+  "photos": [
+    "/trainers/instagram/sergei_trainer_fit.jpg",
+    "/trainers/instagram/sergei_trainer_fit-g2.jpg",
+    "/trainers/instagram/sergei_trainer_fit-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/sergei_trainer_fit/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

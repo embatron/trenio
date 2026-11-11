@@ -1,0 +1,111 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/leon1d_coach/",
+  "handle": "leon1d_coach",
+  "slug": "leon1d_coach",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Леонид",
+  "lastName": "",
+  "fullName": "Леонид",
+  "gender": "male",
+  "nameQuotes": [
+    "Леонид"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "🎯Составлю программу под вашу цель и образ жизни 🍔Помощь с питанием - без жестких диет 🧑‍💻Работаю с подростками ⛷️Биатлон (11 лет) - КМС",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Леонид. Тренер по фитнесу.",
+  "threadsUrl": "",
+  "bio": "Я Леонид, тренер по фитнесу. Помогаю с питанием и работаю с подростками. Я кандидат в мастера спорта по биатлону.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/p/DeJdKOsC_94/",
+      "caption": "Привет! Меня зовут Леонид, я фитнес-инструктор тренажёрного зала «Адреналин.Восток». 11 лет я занимался биатлоном, уже 6 лет тренируюсь в зале и больше года помогаю другим достигать своих целей. В работе учитываю ваш образ жизни, уровень подготовки и пожелания. Помогу: • Составить программу тренировок под вашу цель. Вместе определим, чего вы хотите достичь. Я учту ваш опыт, график и особенности тренировок, подберу упражнения и нагрузку. • Наладить питание без строгих запретов и отказа от любимых угощений. Разберём ваши привычки и распорядок дня, обсудим, как сделать питание более сбалансированным и подходящим под вашу цель. • Освоить технику упражнений с нуля. На тренировках разберём основные движения и работу с тренажёрами, научимся правильно выполнять упражнения и подбирать подходящий вес. • Поработать над осанкой. Оценим привычные положения тела и подберём упражнения для укрепления мышц и развития подвижности. • Помочь подросткам развить необходимые физические качества. Подберу занятия с учётом возраста, опыта и целей. Главное — безопасная нагрузка, правильная техника и интерес к тренировкам. Буду рад помочь вам начать заниматься, стать сильнее и чувствовать себя лучше. Напишите и обсудим ваши цели!",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "biatlon",
+      "label": "Биатлон",
+      "quote": "биатлоном"
+    }
+  ],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "",
+  "address": "",
+  "cityCandidates": [
+    "Минск",
+    "Восток"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/leon1d_coach.jpg",
+  "photos": [
+    "/trainers/instagram/leon1d_coach.jpg",
+    "/trainers/instagram/leon1d_coach-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/leon1d_coach/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "city",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

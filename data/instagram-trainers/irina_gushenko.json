@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/irina_gushenko/",
+  "handle": "irina_gushenko",
+  "slug": "irina_gushenko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ирина",
+  "lastName": "Гущенко",
+  "fullName": "Ирина Гущенко",
+  "gender": "female",
+  "nameQuotes": [
+    "Ирина Гущенко"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Тренер по фитнесу г. Минск🏋 -индивидуальный подход - тренинг по запросу, физиологические ограничения （суставы）, корекция фигуры, ягодицы！",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Ирина Гущенко, фитнес, тренажерный зал, г. Минск, ул. Сурганова, 2а",
+  "threadsUrl": "",
+  "bio": "Я Ирина Гущенко, тренер по фитнесу в Минске.",
+  "about": [
+    "Веду тренинг по запросу и с индивидуальным подходом. Учитываю физиологические ограничения, в том числе по суставам."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Минск",
+  "address": "улица Сурганова, 2А",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/irina_gushenko.jpg",
+  "photos": [
+    "/trainers/instagram/irina_gushenko.jpg",
+    "/trainers/instagram/irina_gushenko-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/irina_gushenko/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

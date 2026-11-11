@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vika_krez/",
+  "handle": "vika_krez",
+  "slug": "vika_krez",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктория",
+  "lastName": "",
+  "fullName": "Виктория",
+  "gender": "female",
+  "nameQuotes": [
+    "Виктория"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "🔹location: Minsk,BLR 🔹fitness trainer (individual and group training) 🔹Coach of AGG 🔹AGG World Cup / AGG World championship (🇷🇺, 🇪🇸,🇨🇿,🇫🇮)",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Виктория",
+  "threadsUrl": "",
+  "bio": "Я Виктория, фитнес-тренер. Веду индивидуальные и групповые тренировки. Я тренер AGG. Есть Кубок мира и чемпионат мира по AGG.",
+  "about": [
+    "Тренировки бывают индивидуальными и групповыми."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "stretching"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vika_krez.jpg",
+  "photos": [
+    "/trainers/instagram/vika_krez.jpg",
+    "/trainers/instagram/vika_krez-g2.jpg",
+    "/trainers/instagram/vika_krez-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vika_krez/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

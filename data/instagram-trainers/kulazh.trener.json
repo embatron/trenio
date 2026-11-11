@@ -1,0 +1,96 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kulazh.trener/",
+  "handle": "kulazh.trener",
+  "slug": "kulazh.trener",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Илья",
+  "lastName": "Кулаженок",
+  "fullName": "Илья Кулаженок",
+  "gender": "male",
+  "nameQuotes": [
+    "Илья Кулаженок"
+  ],
+  "headline": "Тренер по тренажёрному залу",
+  "sourceBio": "Минус 5-10 кг за 2 месяца без диет и срывов | 150+ довольных клиентов",
+  "sourceAbout": [
+    "ИЛЬЯ КУЛАЖЕНОК. тренер тренажерного зала. тренерский стаж 8 лет. ИНДИВИДУАЛЬНЫЕ ТРЕНИРОВКИ / СПЛИТ ТРЕНИРОВКИ В МИНИГРУППАХ ДО 5 ЧЕЛОВЕК. РАБОТА СО СПИНОЙ И ОСАНКОЙ."
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Илья Кулаженок",
+  "threadsUrl": "",
+  "bio": "Я Илья Кулаженок, тренер тренажерного зала в Минске. Тренерский стаж 8 лет. За 2 месяца можно убрать 5-10 кг без диет и срывов.",
+  "about": [
+    "Веду индивидуальные тренировки и сплит-тренировки в мини-группах до 5 человек."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Минск",
+  "address": "Nalibokskaya, 2",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": 8,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kulazh.trener.jpg",
+  "photos": [
+    "/trainers/instagram/kulazh.trener.jpg",
+    "/trainers/instagram/kulazh.trener-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kulazh.trener/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}
