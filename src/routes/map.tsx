@@ -952,13 +952,13 @@ const PAGE_CSS = `
 .map-people .trainer-card__save,
 .map-people .trainer-card__write,
 .map-people .trainer-card__share {
-  width: 44px; height: 44px; background: transparent; box-shadow: none;
+  width: 34px; height: 34px; background: transparent; box-shadow: none;
 }
 .map-people .trainer-card__like svg,
 .map-people .trainer-card__save svg,
 .map-people .trainer-card__write svg,
 .map-people .trainer-card__share svg {
-  width: 28px; height: 28px; padding: 7px; border-radius: 50%; box-sizing: border-box;
+  width: 24px; height: 24px; padding: 5px; border-radius: 50%; box-sizing: border-box;
   background: rgba(255, 255, 255, 0.92); box-shadow: 0 4px 12px rgba(var(--dark-rgb), 0.12);
 }
 .map-people .trainer-card.is-marked { border-color: var(--primary); background: var(--primary); color: #fff; box-shadow: 0 12px 28px rgba(var(--primary-rgb), 0.28); }
