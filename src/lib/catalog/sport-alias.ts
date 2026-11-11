@@ -16,7 +16,7 @@ export function foldYo(value: string): string {
 
 function wordPattern(word: string): string {
   const lower = foldYo(word.toLowerCase());
-  if (/(?:ий|ый|ой|ая|яя)$/u.test(lower) && [...lower].length > 4) {
+  if (/(?:ий|ый|ой|ая|яя|ое|ее)$/u.test(lower) && [...lower].length > 4) {
     return `(?:${lower}|${lower.slice(0, -2)}(?:${ENDING}))`;
   }
   if (/[аеёиоуыэюя]$/u.test(lower) && [...lower].length >= 4) {

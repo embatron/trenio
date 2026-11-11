@@ -210,7 +210,8 @@ function noteBlob(raw: RawExtract): string {
 function noteNamePairs(note: string, settlements: string[]): Array<{ first: string; last: string }> {
   const cities = new Set(settlements.map((name) => name.toLowerCase()));
   const pairs: Array<{ first: string; last: string }> = [];
-  for (const match of note.matchAll(/(?<![\p{L}])([\p{Lu}][\p{Ll}]{1,})\s+([\p{Lu}][\p{Ll}]{1,})(?![\p{L}])/gu)) {
+  const noteForNames = note.replace(/(?<![\p{L}])Это\s+(?=[\p{Lu}])/gu, "");
+  for (const match of noteForNames.matchAll(/(?<![\p{L}])([\p{Lu}][\p{Ll}]{1,})\s+([\p{Lu}][\p{Ll}]{1,})(?![\p{L}])/gu)) {
     const first = match[1] || "";
     const last = match[2] || "";
     if (!first || !last || ROLE_WORDS.test(first) || ROLE_WORDS.test(last)) continue;
@@ -218,7 +219,7 @@ function noteNamePairs(note: string, settlements: string[]): Array<{ first: stri
     const sportWord = (word: string) => catalogPhrases().some((phrase) => phrase.label.toLowerCase() === word.toLowerCase() || phrase.alias.toLowerCase() === word.toLowerCase());
     if (sportWord(first) || sportWord(last)) continue;
     if (cities.has(first.toLowerCase()) || cities.has(last.toLowerCase())) continue;
-    const before = note.slice(Math.max(0, (match.index ?? 0) - 16), match.index ?? 0);
+    const before = noteForNames.slice(Math.max(0, (match.index ?? 0) - 16), match.index ?? 0);
     if (/(?:ул\.?|улиц\p{L}*|проспект|пр-т|пер\.|переул\p{L}*|бульвар)\s*$/iu.test(before)) continue;
     if (pairs.some((pair) => pair.first === first && pair.last === last)) continue;
     pairs.push({ first, last });
@@ -367,6 +368,17 @@ function matchCities(text: string, settlements: string[]): string[] {
   return [...found];
 }
 
+/** The word after a street mark is the street (пр. Янки Купалы), not the village of the same name. */
+function streetNameTokens(text: string): Set<string> {
+  const found = new Set<string>();
+  const re =
+    /(?:проспект\p{L}*|праспект\p{L}*|переул\p{L}*|завулак\p{L}*|бульвар\p{L}*|проезд\p{L}*|площад\p{L}*|плошч\p{L}*|набереж\p{L}*|шоссе|пр-т|(?<![\p{L}])пр\.|(?<![\p{L}])ул\.|(?<![\p{L}])вул\.)\s*([\p{Lu}][\p{Ll}]{3,})/gu;
+  for (const match of text.matchAll(re)) {
+    if (match[1]) found.add(match[1].toLowerCase());
+  }
+  return found;
+}
+
 function cityNamedAsPlace(text: string, city: string): boolean {
   const stem = city.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return new RegExp(`(?:в|г\\.|📍)\\s*${stem}(?:[еуаыию]|ом|ой|ах|ях|ою)?(?![\\p{L}])`, "iu").test(text);
@@ -440,7 +452,7 @@ function matchExperience(text: string): number | null {
 function matchFormats(text: string): Array<"individual" | "group"> {
   const formats: Array<"individual" | "group"> = [];
   if (/индивидуальн|персональн/iu.test(text)) formats.push("individual");
-  if (/группов|в групп/iu.test(text)) formats.push("group");
+  if (/группов|в групп|групп[аеуы]/iu.test(text)) formats.push("group");
   return formats;
 }
 
@@ -735,7 +747,9 @@ async function saveOne(rawPath: string, settlements: string[]) {
   const notedFirst = labeledName(note, "имя").concat(labeledName(note, "зовут"));
   const notedLast = labeledName(note, "фамилия");
   if (notedPairs.length > 1) fail(rawPath, `Operator note names several people: ${notedPairs.map((pair) => `${pair.first} ${pair.last}`).join(", ")}.`);
-  if (notedPair && (firstName !== notedPair.first || lastName !== notedPair.last)) {
+  const noteOrder = Boolean(notedPair) && firstName === notedPair.first && lastName === notedPair.last;
+  const noteReverse = Boolean(notedPair) && firstName === notedPair.last && lastName === notedPair.first;
+  if (notedPair && !noteOrder && !noteReverse) {
     fail(rawPath, `Operator note names ${notedPair.first} ${notedPair.last}.`);
   }
   if (!notedPair && notedFirst.length > 1) fail(rawPath, `Operator note names several given names: ${notedFirst.join(", ")}.`);
@@ -838,10 +852,14 @@ async function saveOne(rawPath: string, settlements: string[]) {
       .map((part) => cleanLine(part || "").toLowerCase())
       .filter((part) => part.length >= 4),
   );
-  let noteCities = matchCities(note, settlements);
-  const citiesBesidesTheName = noteCities.filter((name) => !nameTokens.has(name.toLowerCase()));
-  if (citiesBesidesTheName.length) noteCities = citiesBesidesTheName;
-  const pageCityHits = matchCities(pageCorpus, settlements);
+  // A surname that is also a village (Князева) is the person's name, not the city they named.
+  const notThePerson = (name: string) => !nameTokens.has(name.toLowerCase());
+  const notAStreet = (text: string) => {
+    const streets = streetNameTokens(text);
+    return (name: string) => !streets.has(name.toLowerCase());
+  };
+  const noteCities = matchCities(note, settlements).filter(notThePerson).filter(notAStreet(note));
+  const pageCityHits = matchCities(pageCorpus, settlements).filter(notThePerson).filter(notAStreet(pageCorpus));
   const pageCued = pageCityHits.filter((name) => cityNamedAsPlace(pageCorpus, name));
   const pageCities = pageCued.length === 1 ? pageCued : pageCityHits;
   let city = cleanLine(resolved.city || "");
