@@ -405,13 +405,14 @@ a.taxonomy-tag--brand:hover,
 a.taxonomy-tag--brand:focus-visible { background: var(--primary-dark); color: var(--white); text-decoration: none; }
 .profile-note { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; font-weight: 500; }
 .profile-reach .trainer-contacts { margin-left: 0; gap: 4px; flex-wrap: wrap; }
-.profile-reach .trainer-contacts__link { width: 56px; height: 56px; opacity: 0.82; transition: opacity 0.18s ease, background 0.18s ease, color 0.18s ease; }
+.profile-reach .trainer-contacts__link { width: 68px; height: 68px; opacity: 0.82; transition: opacity 0.18s ease, background 0.18s ease, color 0.18s ease; }
 .profile-reach .trainer-contacts__link:hover, .profile-reach .trainer-contacts__link:focus-visible { opacity: 1; }
 .profile-reach .trainer-contacts__link--line:not(.trainer-contacts__link--send):hover,
 .profile-reach .trainer-contacts__link--line:not(.trainer-contacts__link--send):focus-visible { background: rgba(var(--primary-rgb), 0.08); }
-.profile-reach .trainer-contacts__link svg { width: 28px; height: 28px; }
+.profile-reach .trainer-contacts__link svg { width: 34px; height: 34px; }
+.profile-reach .trainer-contacts__link--send svg { overflow: hidden; }
 .profile-reach .trainer-contacts__link--phone { width: auto; padding: 0 18px 0 14px; gap: 10px; border-radius: 999px; display: inline-flex; }
-.profile-reach .trainer-contacts__phone { font-size: 16px; font-weight: var(--fw-title); letter-spacing: -0.02em; white-space: nowrap; }
+.profile-reach .trainer-contacts__phone { font-size: 26px; font-weight: var(--fw-title); letter-spacing: -0.02em; line-height: 1; white-space: nowrap; }
 
 .profile-spotlight { display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 16px; align-items: center; padding: 18px 20px; border-radius: var(--card-radius); background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); box-shadow: 0 10px 32px rgba(var(--dark-rgb),0.05); }
 .profile-spotlight__logo { width: 56px; height: 56px; border-radius: var(--radius-tile); background: var(--dark); color: var(--white); display: grid; place-items: center; font-size: 18px; font-weight: var(--fw-heading); letter-spacing: -0.04em; }

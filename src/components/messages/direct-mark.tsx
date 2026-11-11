@@ -1,11 +1,13 @@
 /**
- * Outline paper plane. On a contact row it sits in a rounded square
- * the same size as the Instagram mark, so the stroke can stay large.
+ * Outline paper plane. On a contact row the coral square matches
+ * the Instagram mark, and the plane stays inside that square.
  */
 const PLANE = ["M21 3 14.7 21 11.1 12.9 3 9.3Z", "M21 3 11.1 12.9"] as const;
 
 export function DirectMark({ disc = false }: { disc?: boolean }) {
-  const plane = PLANE.map((d) => <path key={d} d={d} />);
+  const plane = PLANE.map((d) => (
+    <path key={d} d={d} vectorEffect={disc ? "non-scaling-stroke" : undefined} />
+  ));
   if (!disc) {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="var(--icon-stroke)" strokeLinecap="round" strokeLinejoin="round">
@@ -16,7 +18,14 @@ export function DirectMark({ disc = false }: { disc?: boolean }) {
   return (
     <svg viewBox="-1.5 -1.5 27 27" aria-hidden="true">
       <rect className="direct-mark__plate" x="0" y="0" width="24" height="24" rx="5.5" />
-      <g fill="none" stroke="#fff" strokeWidth="var(--icon-stroke)" strokeLinecap="round" strokeLinejoin="round">
+      <g
+        fill="none"
+        stroke="#fff"
+        strokeWidth="var(--icon-stroke)"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        transform="translate(12 12) scale(0.62) translate(-12 -12)"
+      >
         {plane}
       </g>
     </svg>
