@@ -134,7 +134,7 @@ function LoginPage() {
             Я — тренер
           </Link>
           <div className="auth-card__head">
-            <h1 className="auth-title">С возвращением</h1>
+            <h1 className="auth-title">Войти на сайт</h1>
           </div>
 
           <div className="auth-roleswitch" role="tablist" aria-label="Способ входа">
