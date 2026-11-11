@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/p_mikulich/",
+  "handle": "p_mikulich",
+  "slug": "p_mikulich",
+  "status": "draft",
+  "claimStatus": "claimed",
+  "createdSource": "import",
+  "firstName": "Павел",
+  "lastName": "Микулич",
+  "fullName": "Павел Микулич",
+  "gender": "male",
+  "nameQuotes": [
+    "Павел Микулич"
+  ],
+  "headline": "Тренер по тренажёрному залу",
+  "sourceBio": "Belarus 🇧🇾 Grodno",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Павел Микулич, Гродно, фитнес, тренажерный зал",
+  "threadsUrl": "",
+  "bio": "Я Павел Микулич, и в Гродно я веду фитнес и тренажерный зал.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/p_mikulich.jpg",
+  "photos": [
+    "/trainers/instagram/p_mikulich.jpg",
+    "/trainers/instagram/p_mikulich-g2.jpg",
+    "/trainers/instagram/p_mikulich-g3.jpg",
+    "/trainers/instagram/p_mikulich-g4.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 3,
+    "gallery": 3,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/p_mikulich/",
+    "phone": "",
+    "email": "p.v.mikulich@gmail.com",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

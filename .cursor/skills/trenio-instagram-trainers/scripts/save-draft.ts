@@ -824,7 +824,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
     if (!sport) fail(rawPath, `${label} slug ${slug || "empty"} is not a sport phrase in the profile, Threads, a pinned post, a pinned image, or the operator note.`);
     if (!quote || !includesNorm(evidence, quote)) fail(rawPath, `${label} quote for ${slug} is not in the source.`);
     const aliases = catalogPhrases().filter((phrase) => phrase.slug === slug).map((phrase) => phrase.alias);
-    const preparedQuote = prepareSportText(quote, settlements, aliases);
+    const preparedQuote = foldYo(prepareSportText(quote, settlements, aliases));
     if (!aliases.some((alias) => sportAliasRegex(alias).test(preparedQuote))) {
       fail(rawPath, `${label} quote for ${slug} does not contain that sport.`);
     }

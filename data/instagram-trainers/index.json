@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-11T12:03:45.594Z",
+  "updatedAt": "2026-11-11T14:12:48.639Z",
   "profiles": [
     {
       "handle": "embatron.eth",
@@ -2238,6 +2238,37 @@
         "telegram"
       ],
       "file": "data/instagram-trainers/michael_rehab.json"
+    },
+    {
+      "handle": "gleb_shutov_mma",
+      "slug": "gleb_shutov_mma",
+      "fullName": "Глеб Шутов",
+      "primarySport": "MMA",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/gleb_shutov_mma.json"
+    },
+    {
+      "handle": "p_mikulich",
+      "slug": "p_mikulich",
+      "fullName": "Павел Микулич",
+      "primarySport": "Тренажёрный зал",
+      "city": "Гродно",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/p_mikulich.json"
     }
   ]
 }
