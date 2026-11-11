@@ -134,7 +134,7 @@ AGENTS.md             # Entry point для агентов
 | `/auth/login`           | `auth.login.tsx`           | Вход: e-mail, Google, Яндекс, SMS. Telegram на форме скрыт    |
 | `/auth/google`          | `auth.google.ts`           | Начало входа через Google. Возврат на `/auth/google/callback` |
 | `/auth/yandex`          | `auth.yandex.ts`           | Начало входа через Яндекс. Возврат на `/auth/yandex/callback` |
-| `/auth/signup`          | `auth.signup.tsx`          | Регистрация по почте, Google, Яндексу или телефону. Почта отвечает одной фразой и ждёт кнопку в письме. Telegram на форме скрыт |
+| `/auth/signup`          | `auth.signup.tsx`          | Сверху кнопка «Создать аккаунт тренера» ведёт на `/join/trainer`, под ней разделитель. Ниже регистрация по почте, Google, Яндексу или телефону. Почта отвечает одной фразой и ждёт кнопку в письме. Telegram на форме скрыт |
 | `/auth/confirm-email`   | `auth.confirm-email.tsx`   | Кнопка подтверждения почты из письма регистрации |
 | `/auth/credentials`     | `auth.credentials.tsx`     | Почта и пароль, если аккаунт ещё без телефона и без почты (Telegram). Подтверждённый телефон эту стену не ставит |
 | `/auth/password`        | `auth.password.tsx`        | Пароль после ссылки в кабинет тренера |

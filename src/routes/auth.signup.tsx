@@ -126,6 +126,13 @@ function SignupPage() {
             <h1 className="auth-title">Создать аккаунт</h1>
           </div>
 
+          <div className="auth-trainer">
+            <Link to="/join/trainer" className="auth-submit auth-trainer__link">
+              Создать аккаунт тренера
+            </Link>
+            <div className="auth-or" aria-hidden="true">или</div>
+          </div>
+
           <div className="auth-roleswitch" role="tablist" aria-label="Способ регистрации">
             {(
               [

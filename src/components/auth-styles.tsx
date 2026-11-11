@@ -90,6 +90,12 @@ const AUTH_CSS = `
 .auth-resend:disabled { opacity: 0.6; cursor: not-allowed; text-decoration: none; }
 .auth-muted { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; text-align: center; }
 .auth-telegram { display: grid; justify-items: center; gap: 12px; }
+.auth-trainer { display: grid; gap: 16px; margin-bottom: 18px; }
+.auth-trainer__link {
+  display: flex; align-items: center; justify-content: center; width: 100%;
+  text-decoration: none; box-sizing: border-box;
+}
+.auth-trainer .auth-or { margin: 0; }
 .auth-google-slot { display: grid; gap: 12px; margin-top: -8px; margin-bottom: 16px; }
 .auth-or { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; margin: 4px 0; color: var(--muted); font-size: 13px; }
 .auth-google-slot .auth-or { margin: 0; }
