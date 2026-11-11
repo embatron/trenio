@@ -23,7 +23,7 @@ export type CatalogTrainerCardData = {
   lastName: string;
   photo: string;
   tags: string[];
-  /** Stored sports. Each name links to that sport in `citySlug`. */
+  /** Stored sports. The card shows the names as text. */
   sports?: TrainerSportTag[];
   desc: string;
   rating: string;
@@ -94,7 +94,7 @@ export function CatalogTrainerCard({
           <TrainerRating rating={trainer.rating} reviews={trainer.reviews} />
         </div>
         <p className="trainer-card__sport">
-          <TrainerSportTags citySlug={trainer.citySlug ?? ""} sports={trainer.sports} tags={trainer.tags} />
+          <TrainerSportTags sports={trainer.sports} tags={trainer.tags} />
         </p>
         <p className="trainer-card__price">
           {price != null ? (
@@ -142,20 +142,13 @@ export function TrainerSportLink({
 }
 
 function TrainerSportTags({
-  citySlug,
   sports,
   tags,
 }: {
-  citySlug: string;
   sports: TrainerSportTag[] | undefined;
   tags: string[];
 }) {
-  const linked = (sports ?? []).filter((sport) => sport.slug && sport.label);
-  if (linked.length === 0) return tags.join(", ");
-  return linked.map((sport, index) => (
-    <span key={`${sport.parentSlug}-${sport.slug}-${index}`}>
-      {index > 0 ? ", " : null}
-      <TrainerSportLink citySlug={citySlug} sport={sport} />
-    </span>
-  ));
+  const labels = (sports ?? []).map((sport) => sport.label.trim()).filter(Boolean);
+  if (labels.length === 0) return tags.join(", ");
+  return labels.join(", ");
 }
