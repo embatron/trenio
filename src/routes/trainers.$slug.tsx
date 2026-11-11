@@ -401,9 +401,12 @@ a.taxonomy-tag--brand:focus-visible { background: var(--primary-dark); color: va
 .review-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
 .review-item { display: grid; gap: 14px; padding: 18px 20px; border-radius: var(--card-radius); background: var(--white); border: 1px solid rgba(var(--dark-rgb), 0.06); box-shadow: 0 10px 32px rgba(var(--dark-rgb), 0.05); }
 .review-item__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
-.review-item__who { display: inline-flex; align-items: center; gap: 12px; min-width: 0; height: 40px; }
-.review-item__pair { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; min-width: 0; }
-.review-item__author { font-size: 18px; font-weight: var(--fw-title); letter-spacing: -0.02em; line-height: 40px; color: var(--dark); white-space: nowrap; }
+.review-item__who { display: inline-flex; align-items: center; gap: 12px; min-width: 0; min-height: 44px; }
+.review-item__pair { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 0; }
+.review-item__author { font-size: 18px; font-weight: var(--fw-title); letter-spacing: -0.02em; line-height: 1.2; color: var(--dark); white-space: nowrap; }
+a.review-item__author { display: inline-flex; align-items: center; min-height: 44px; color: inherit; text-decoration: none; }
+a.review-item__author:hover,
+a.review-item__author:focus-visible { color: var(--primary); }
 .review-item__date { color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); line-height: 40px; }
 .review-item__stars { display: inline-flex; align-items: center; justify-content: center; gap: 2px; height: 40px; flex: 0 0 auto; }
 .review-item__stars svg { width: 22px; height: 22px; display: block; fill: #ffb400; }
@@ -1196,7 +1199,18 @@ function TrainerPage() {
                         <span className="review-item__who">
                           <UserAvatar name={r.author} src={r.avatarPath} />
                           <span className="review-item__pair">
-                            <span className="review-item__author">{r.author}</span>
+                            {r.authorSlug ? (
+                              <Link
+                                className="review-item__author"
+                                to="/trainers/$slug"
+                                params={{ slug: r.authorSlug }}
+                                title="Открыть профиль"
+                              >
+                                {r.author}
+                              </Link>
+                            ) : (
+                              <span className="review-item__author">{r.author}</span>
+                            )}
                             <ReviewStars rating={r.rating} />
                           </span>
                         </span>

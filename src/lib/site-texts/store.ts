@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { siteTexts } from "@/db/schema";
 import { logCaught } from "@/lib/log/logger";
-import { SITE_TEXT_DEFAULTS, SITE_TEXT_KEYS, type SiteTextKey } from "@/lib/site-texts/defaults";
+import { resolvedSiteText, SITE_TEXT_KEYS, type SiteTextKey } from "@/lib/site-texts/defaults";
 
 let missingTableLogged = false;
 
@@ -19,14 +19,13 @@ export async function loadSiteText(key: SiteTextKey): Promise<string> {
       .from(siteTexts)
       .where(eq(siteTexts.key, key))
       .limit(1);
-    const body = row?.body?.trim();
-    return body || SITE_TEXT_DEFAULTS[key];
+    return resolvedSiteText(key, row?.body);
   } catch (error) {
     if (!missingTableLogged) {
       missingTableLogged = true;
       logCaught("admin", "admin.site_text", error, { target: key });
     }
-    return SITE_TEXT_DEFAULTS[key];
+    return resolvedSiteText(key);
   }
 }
 

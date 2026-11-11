@@ -1,4 +1,4 @@
-import { avg, count, desc, eq } from "drizzle-orm";
+import { and, avg, count, desc, eq, inArray } from "drizzle-orm";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
@@ -41,6 +41,8 @@ export type PublicReviewMessage = {
 export type PublicTrainerReview = {
   id: string;
   author: string;
+  /** Published profile of the author, when that person is another trainer. */
+  authorSlug: string | null;
   avatarPath: string;
   date: string;
   rating: number;
@@ -48,6 +50,32 @@ export type PublicTrainerReview = {
   messages: PublicReviewMessage[];
   isMine: boolean;
 };
+
+export type AuthorProfileLink = {
+  ownerUserId: string | null;
+  slug: string;
+  status: string;
+  updatedAt: Date;
+};
+
+/** The author's own published page. The profile under review is not a link to itself. */
+export function publishedAuthorSlug(
+  profiles: AuthorProfileLink[],
+  authorId: string,
+  pageSlug: string,
+) {
+  let best: AuthorProfileLink | null = null;
+  for (const profile of profiles) {
+    if (
+      profile.ownerUserId !== authorId ||
+      profile.status !== "published" ||
+      profile.slug === pageSlug
+    )
+      continue;
+    if (!best || profile.updatedAt > best.updatedAt) best = profile;
+  }
+  return best?.slug ?? null;
+}
 
 export type TrainerReviewSummary = {
   value: string;
@@ -183,12 +211,31 @@ export const listTrainerReviewsFn = createServerFn({ method: "GET" })
 
     const trainerAvatar = profileFace(profile);
     const published = rows.filter((row) => row.review.status === "published");
+    const authorIds = [...new Set(published.map((row) => row.review.userId))];
+    const authorProfiles =
+      authorIds.length === 0
+        ? []
+        : await db
+            .select({
+              ownerUserId: trainerProfiles.ownerUserId,
+              slug: trainerProfiles.slug,
+              status: trainerProfiles.status,
+              updatedAt: trainerProfiles.updatedAt,
+            })
+            .from(trainerProfiles)
+            .where(
+              and(
+                inArray(trainerProfiles.ownerUserId, authorIds),
+                eq(trainerProfiles.status, "published"),
+              ),
+            );
     const own = context.user ? rows.find((row) => row.review.userId === context.user?.id) : undefined;
     const reviews: PublicTrainerReview[] = published.map((row) => {
       const avatarPath = row.avatarPath ?? "";
       return {
         id: row.review.id,
         author: row.review.authorName,
+        authorSlug: publishedAuthorSlug(authorProfiles, row.review.userId, data.slug),
         avatarPath,
         date: dateFormat.format(row.review.createdAt),
         rating: row.review.rating,

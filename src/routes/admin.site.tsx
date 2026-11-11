@@ -67,7 +67,7 @@ function AdminSitePage() {
               },
               {
                 token: "{telegram}",
-                text: "Ссылка со словами «верификацию через Telegram». Она ведёт на https://t.me/TrenioByBot и открывает Mini App. Ставьте её внутри предложения: «пройди {telegram} и получи miniApp в своём телефоне».",
+                text: "Ссылка со словами «подключить Telegram». Она ведёт на https://t.me/TrenioByBot и открывает Mini App. Ставьте её внутри предложения: «Можно {telegram} и открывать Trenio.by как Mini App».",
               },
             ]}
           />

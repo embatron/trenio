@@ -8,13 +8,10 @@ export type SiteTextKey = (typeof SITE_TEXT_KEYS)[number];
 
 export const DEFAULT_TRAINER_WELCOME = [
   "{hello}",
-  "Я Trenioby и пишу тебе от портала trenio.by. Мы очень рады, что ты с нами. Хорошо, что ты теперь здесь.",
-  "trenio.by помогает людям в Беларуси найти тренера, а тебе — спокойно показать себя и свои тренировки. Здесь можно общаться, следить за своей популярностью и просто быть на связи.",
-  "Профиль стоит растить: живые отзывы, репутация, оценки. Чем понятнее и теплее страница, тем выше ты стоишь среди остальных.",
-  "Денег за размещение мы не берём, никакой оплаты за карточку нет.",
-  "В будущем хотим сделать запись на тренировки и постепенно заменить сервисы вроде YClients: расписание и клиенты рядом, в том же месте.",
-  "Если появится вопрос или захочется что-то сказать, пиши прямо в этот диалог.",
-  "Если ты хочешь, чтобы это приложение было постоянно в доступе, пройди {telegram} и получи miniApp в своём телефоне.",
+  "Добро пожаловать в Trenio.by — сервис, где люди находят тренеров, знакомятся с их подходом и задают вопросы напрямую.",
+  "Размещение профиля бесплатное. Чтобы страница лучше помогала тебе находить клиентов, добавь актуальные направления, адреса тренировок, фотографии и информацию о себе. Отзывы и заполненный профиль помогут людям быстрее принять решение.",
+  "Если появится вопрос или захочется что-то предложить, пиши прямо в этот диалог.",
+  "Также можно {telegram} и открывать Trenio.by как Mini App — тогда сервис всегда будет под рукой.",
 ].join("\n\n");
 
 export const DEFAULT_USER_WELCOME = [
@@ -82,6 +79,20 @@ export const SITE_TEXT_DEFAULTS: Record<SiteTextKey, string> = {
   instagram_message: DEFAULT_INSTAGRAM_MESSAGE,
 };
 
+/** Replace the two earlier trainer welcomes even when one is still saved in site_texts. */
+export function resolvedSiteText(key: SiteTextKey, saved?: string | null) {
+  const body = saved?.trim();
+  if (!body) return SITE_TEXT_DEFAULTS[key];
+  if (
+    key === "trainer_welcome" &&
+    (body.includes("Я админ нашего нового сервиса") ||
+      (body.includes("YClients") && body.includes("популярност")))
+  ) {
+    return DEFAULT_TRAINER_WELCOME;
+  }
+  return body;
+}
+
 function escapeText(value: string) {
   return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
@@ -100,7 +111,7 @@ export function outreachHello(firstName: string) {
 /** The in-app letter a new trainer receives. `{hello}` and `{telegram}` come from the saved text. */
 export function renderTrainerWelcome(firstName: string, template = DEFAULT_TRAINER_WELCOME) {
   const source = template.trim() || DEFAULT_TRAINER_WELCOME;
-  const telegram = `<a href="${PORTAL_TELEGRAM_URL}">верификацию через Telegram</a>`;
+  const telegram = `<a href="${PORTAL_TELEGRAM_URL}">подключить Telegram</a>`;
   const filled = escapeText(source)
     .replaceAll("{hello}", escapeText(welcomeHello(firstName)))
     .replaceAll("{telegram}", telegram);

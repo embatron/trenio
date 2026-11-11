@@ -5,6 +5,7 @@ import { reviewTextLength } from "@/lib/catalog/review-html";
 import {
   DEFAULT_CLAIM_INSTAGRAM_MESSAGE,
   DEFAULT_INSTAGRAM_MESSAGE,
+  DEFAULT_TRAINER_WELCOME,
   DEFAULT_USER_WELCOME,
   OUTREACH_SITE_LINK,
   outreachHello,
@@ -15,6 +16,7 @@ import {
   renderClaimInstagramMessage,
   renderInstagramMessage,
   renderTrainerWelcome,
+  resolvedSiteText,
   userWelcomePartCount,
 } from "./defaults";
 
@@ -25,6 +27,12 @@ test("the trainer letter keeps the saved words and the telegram link", () => {
   assert.match(plain, /Ждём тебя/);
   assert.match(html, /href="https:\/\/t\.me\/TrenioByBot"/);
   assert.ok(reviewTextLength(html) <= 4000);
+});
+
+test("an earlier saved trainer welcome yields the new default", () => {
+  const old = "{hello}\n\nЯ админ нашего нового сервиса.\n\nХотим заменить YClients и следить за популярностью.";
+  assert.equal(resolvedSiteText("trainer_welcome", old), DEFAULT_TRAINER_WELCOME);
+  assert.equal(resolvedSiteText("trainer_welcome", "Свой текст"), "Свой текст");
 });
 
 test("the user letter is the confirmation mail, in four parts", () => {
