@@ -6,7 +6,7 @@ import postgres from "postgres";
 
 import { scriptEnv } from "../../../e2e/app-db";
 import { AuthError } from "@/lib/auth/errors";
-import { blockPair, listReports, reportMessage, sendMessage, unblockPair, type MessageActor } from "@/lib/messages/service";
+import { blockPair, deleteConversationForViewer, listMessages, listReports, reportMessage, sendMessage, unblockPair, type MessageActor } from "@/lib/messages/service";
 
 const databaseUrl = scriptEnv().DATABASE_URL;
 if (databaseUrl) process.env.DATABASE_URL = databaseUrl;
@@ -180,6 +180,69 @@ test("reports from both sides survive a burst, and a block stops only that train
       await sql`delete from app_logs where target in (${conversationId ?? randomUUID()}, ${otherConversationId ?? randomUUID()})`;
     }
     await sql`delete from app_logs where actor_user_id in ${sql(ids)}`;
+    await sql`delete from user_roles where user_id in ${sql(ids)}`;
+    await sql`delete from users where id in ${sql(ids)}`;
+    await sql.end({ timeout: 5 });
+  }
+});
+
+test("a portal welcome cannot be reported, blocked, or deleted", async () => {
+  assert.ok(databaseUrl, "the dev server database");
+  const sql = postgres(databaseUrl!, { max: 1 });
+  const tag = randomUUID().slice(0, 8);
+  const trainerId = randomUUID();
+  const hostId = randomUUID();
+  const ids = [trainerId, hostId];
+  let conversationId: string | null = null;
+  try {
+    await sql`
+      insert into users (id, email, password_hash, password_set_at, email_verified_at, first_name, last_name, status, mail_messages)
+      values
+        (${trainerId}, ${`portal.trainer.${tag}@example.com`}, 'x', now(), now(), 'Анна', 'Коваль', 'active', false),
+        (${hostId}, ${`portal.host.${tag}@example.com`}, 'x', now(), now(), 'Trenioby', '', 'active', false)
+    `;
+    await sql`
+      insert into user_roles (user_id, role) values
+        (${trainerId}, 'trainer'),
+        (${hostId}, 'admin')
+    `;
+    const [conversation] = await sql<{ id: string }[]>`
+      insert into conversations (user_id, host_user_id, status, last_message_at)
+      values (${trainerId}, ${hostId}, 'open', now())
+      returning id
+    `;
+    conversationId = conversation.id;
+    const trainer: MessageActor = { id: trainerId, roles: ["trainer"] };
+    const host: MessageActor = { id: hostId, roles: ["admin"] };
+    const staff: MessageActor = { id: randomUUID(), roles: ["admin"] };
+    const refused = (error: unknown) => error instanceof AuthError;
+
+    const hostView = await listMessages(host, { conversationId: conversation.id });
+    const trainerView = await listMessages(trainer, { conversationId: conversation.id });
+    const staffView = await listMessages(staff, { conversationId: conversation.id });
+    assert.equal(hostView.canReport, false);
+    assert.equal(hostView.canBlock, false);
+    assert.equal(hostView.canDelete, false);
+    assert.equal(trainerView.canReport, false);
+    assert.equal(trainerView.canBlock, false);
+    assert.equal(trainerView.canDelete, false);
+    assert.equal(staffView.canReport, false);
+    assert.equal(staffView.canBlock, false);
+    assert.equal(staffView.canDelete, false);
+
+    await assert.rejects(
+      () => reportMessage(trainer, { conversationId: conversation.id, reason: "spam", comment: "это приветствие" }),
+      refused,
+    );
+    await assert.rejects(() => blockPair(staff, conversation.id), refused);
+    await assert.rejects(() => blockPair(host, conversation.id), refused);
+    await assert.rejects(() => deleteConversationForViewer(trainer, conversation.id), refused);
+    await assert.rejects(() => deleteConversationForViewer(host, conversation.id), refused);
+    const [row] = await sql<{ status: string }[]>`select status from conversations where id = ${conversation.id}`;
+    assert.equal(row.status, "open");
+  } finally {
+    if (conversationId) await sql`delete from conversations where id = ${conversationId}`;
+    await sql`delete from app_logs where actor_user_id in ${sql(ids)} or target = ${conversationId ?? randomUUID()}`;
     await sql`delete from user_roles where user_id in ${sql(ids)}`;
     await sql`delete from users where id in ${sql(ids)}`;
     await sql.end({ timeout: 5 });

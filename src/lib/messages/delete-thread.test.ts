@@ -297,7 +297,7 @@ test("a message that was removed does not leave a deleted-chat notice", async ()
   }
 });
 
-test("clearing the portal welcome keeps the letter for the other account", async () => {
+test("a portal welcome cannot be cleared by either side", async () => {
   assert.ok(databaseUrl, "the dev server database");
   const sql = postgres(databaseUrl!, { max: 1 });
   const box = await fixture(sql);
@@ -313,23 +313,17 @@ test("clearing the portal welcome keeps the letter for the other account", async
     `;
     assert.equal(has((await listConversations(box.trainer, { view: "inbox" })).items, conversation.id), true);
     assert.equal(has((await listConversations(box.host, { view: "inbox" })).items, conversation.id), true);
-
-    await deleteConversationForViewer(box.host, conversation.id);
+    const refused = (error: unknown) => error instanceof AuthError && error.message.includes("администратором");
+    await assert.rejects(() => deleteConversationForViewer(box.host, conversation.id), refused);
+    await assert.rejects(() => deleteConversationForViewer(box.trainer, conversation.id), refused);
     const trainerThread = await listMessages(box.trainer, { conversationId: conversation.id });
+    const hostThread = await listMessages(box.host, { conversationId: conversation.id });
     assert.equal(trainerThread.messages.length, 1);
-    assert.equal(trainerThread.deletedByCounterpart, true);
-    assert.equal(trainerThread.listed, true);
-    assert.equal(has((await listConversations(box.host, { view: "inbox" })).items, conversation.id), false);
+    assert.equal(hostThread.messages.length, 1);
+    assert.equal(trainerThread.canDelete, false);
+    assert.equal(hostThread.canDelete, false);
+    assert.equal(has((await listConversations(box.host, { view: "inbox" })).items, conversation.id), true);
     assert.equal(has((await listConversations(box.trainer, { view: "inbox" })).items, conversation.id), true);
-
-    await deleteConversationForViewer(box.trainer, conversation.id);
-    const trainerAfter = await listMessages(box.trainer, { conversationId: conversation.id });
-    const hostAfter = await listMessages(box.host, { conversationId: conversation.id });
-    assert.equal(trainerAfter.messages.length, 0);
-    assert.equal(trainerAfter.listed, false);
-    assert.equal(hostAfter.messages.length, 0);
-    assert.equal(hostAfter.deletedByCounterpart, false);
-    assert.equal(hostAfter.listed, false);
   } finally {
     await cleanup(sql, box);
     await sql.end({ timeout: 5 });
@@ -348,9 +342,13 @@ test("an empty portal draft does not show up for the host", async () => {
     `;
     assert.equal(has((await listConversations(box.trainer, { view: "inbox" })).items, conversation.id), true);
     assert.equal(has((await listConversations(box.host, { view: "inbox" })).items, conversation.id), false);
-    await deleteConversationForViewer(box.trainer, conversation.id);
+    await assert.rejects(
+      () => deleteConversationForViewer(box.trainer, conversation.id),
+      (error: unknown) => error instanceof AuthError && error.message.includes("администратором"),
+    );
     const hostThread = await listMessages(box.host, { conversationId: conversation.id });
     assert.equal(has((await listConversations(box.host, { view: "inbox" })).items, conversation.id), false);
+    assert.equal(has((await listConversations(box.trainer, { view: "inbox" })).items, conversation.id), true);
     assert.equal(hostThread.listed, false);
     assert.equal(hostThread.deletedByCounterpart, false);
     assert.equal(hostThread.messages.length, 0);

@@ -223,6 +223,11 @@ function isParticipant(actorId: string, row: ConversationAccess) {
   return actorId === row.userId || (row.ownerUserId != null && actorId === row.ownerUserId);
 }
 
+/** The welcome thread is with the portal admin. It has no trainer card. */
+function isPortalAdminThread(conversation: { hostUserId: string | null }) {
+  return conversation.hostUserId != null;
+}
+
 type ClearStamps = { userId: string; userDeletedAt: Date | null; peerDeletedAt: Date | null };
 
 function viewerDeletedAt(actorId: string, row: ClearStamps, ownerUserId: string | null) {
@@ -1439,8 +1444,8 @@ export async function listMessages(
     canReopen: allows(actor, loaded.access, "reopen"),
     canBlock: Boolean(loaded.conversation.trainerProfileId) && allows(actor, loaded.access, "block"),
     canHide: false,
-    canReport: isParticipant(actor.id, loaded.access),
-    canDelete: isParticipant(actor.id, loaded.access),
+    canReport: isParticipant(actor.id, loaded.access) && !isPortalAdminThread(loaded.conversation),
+    canDelete: isParticipant(actor.id, loaded.access) && !isPortalAdminThread(loaded.conversation),
     deletedByCounterpart: await keptHistoryBeforeClear(actor.id, loaded.conversation, loaded.profile.ownerUserId),
     listed: await conversationListedFor(actor.id, loaded.conversation.id),
     composeLimit,
@@ -1525,6 +1530,9 @@ export async function hideConversation(_actor: MessageActor, _conversationId: st
 /** Clear the thread for this account only. The other participant keeps every message. */
 export async function deleteConversationForViewer(actor: MessageActor, conversationId: string) {
   const loaded = await requireConversation(actor, conversationId, "read");
+  if (isPortalAdminThread(loaded.conversation)) {
+    throw new AuthError("Переписку с администратором нельзя удалить.", "FORBIDDEN");
+  }
   if (!isParticipant(actor.id, loaded.access)) {
     throw new AuthError("Удалить диалог может только участник.", "FORBIDDEN");
   }
@@ -1541,6 +1549,9 @@ export async function deleteConversationForViewer(actor: MessageActor, conversat
 
 export async function reportMessage(actor: MessageActor, input: { conversationId: string; reason: string; comment: string }) {
   const loaded = await requireConversation(actor, input.conversationId, "read");
+  if (isPortalAdminThread(loaded.conversation)) {
+    throw new AuthError("На переписку с администратором нельзя пожаловаться.", "FORBIDDEN");
+  }
   if (!isParticipant(actor.id, loaded.access)) {
     throw new AuthError("Пожаловаться может только участник переписки.", "FORBIDDEN");
   }
@@ -1657,8 +1668,13 @@ async function reviewOpenReports(conversationId: string) {
 
 export async function blockPair(actor: MessageActor, conversationId: string) {
   const loaded = await requireConversation(actor, conversationId, "block");
-  if (!loaded.conversation.trainerProfileId) {
-    throw new AuthError("Этот диалог нельзя заблокировать.", "VALIDATION");
+  if (isPortalAdminThread(loaded.conversation) || !loaded.conversation.trainerProfileId) {
+    throw new AuthError(
+      isPortalAdminThread(loaded.conversation)
+        ? "Переписку с администратором нельзя заблокировать."
+        : "Этот диалог нельзя заблокировать.",
+      "VALIDATION",
+    );
   }
   await getDb()
     .insert(blockedPairs)

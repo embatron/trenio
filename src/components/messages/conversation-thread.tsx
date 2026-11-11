@@ -508,9 +508,11 @@ export function ConversationThread({
                 }}
               >
                 <p className="direct-report-form__note">
-                  {thread?.counterpart.kind === "user"
-                    ? `${thread.counterpart.name} не сможет писать вам, и вы не сможете писать в этот диалог. Аккаунт останется активным для других тренеров.`
-                    : `Вы и ${thread?.counterpart.name ?? "собеседник"} больше не сможете писать в этот диалог. Остальные диалоги останутся открыты.`}
+                  {thread?.canReport
+                    ? thread.counterpart.kind === "user"
+                      ? `${thread.counterpart.name} не сможет писать вам, и вы не сможете писать в этот диалог. Аккаунт останется активным для других тренеров.`
+                      : `Вы и ${thread.counterpart.name} больше не сможете писать в этот диалог. Остальные диалоги останутся открыты.`
+                    : "Сообщения между участниками этого диалога остановятся. Остальные диалоги останутся открыты."}
                 </p>
                 <div className="direct-report-form__actions">
                   <button type="button" onClick={() => setBlockOpen(false)}>Отмена</button>
