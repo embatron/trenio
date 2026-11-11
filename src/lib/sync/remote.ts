@@ -1,5 +1,6 @@
 import type { TrainerPatch } from "./apply-card";
 import type { TrainerSyncHead } from "./trainers";
+import { readWelcomeSync, type WelcomeSync } from "./welcomes";
 
 export type MarkPush = {
   handle: string;
@@ -79,6 +80,23 @@ function remoteStatus(status: number, json: Record<string, unknown> | null, read
   if (status === 401) return "denied";
   if (status === 200 && json?.ok === true) return "ok";
   return "failed";
+}
+
+export async function fetchWelcomes(): Promise<{ status: PushStatus; welcomes: WelcomeSync[] }> {
+  if (process.env.NODE_ENV === "production") return { status: "ok", welcomes: [] };
+  try {
+    const { status, json } = await getJson("/api/sync/welcomes");
+    const result = remoteStatus(status, json, true);
+    const welcomes = Array.isArray(json?.welcomes)
+      ? json.welcomes.flatMap((row) => {
+          const welcome = readWelcomeSync(row);
+          return welcome ? [welcome] : [];
+        })
+      : [];
+    return { status: result, welcomes: result === "ok" ? welcomes : [] };
+  } catch {
+    return { status: "failed", welcomes: [] };
+  }
 }
 
 export async function fetchTrainerHeads(): Promise<{ status: PushStatus; trainers: TrainerSyncHead[] }> {

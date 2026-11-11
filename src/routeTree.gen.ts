@@ -93,6 +93,7 @@ import { Route as CategoryParentSlugChildSlugRouteImport } from './routes/catego
 import { Route as CategoriesParentSlugChildSlugRouteImport } from './routes/categories.$parentSlug.$childSlug'
 import { Route as AuthYandexCallbackRouteImport } from './routes/auth.yandex.callback'
 import { Route as AuthGoogleCallbackRouteImport } from './routes/auth.google.callback'
+import { Route as ApiSyncWelcomesRouteImport } from './routes/api.sync.welcomes'
 import { Route as ApiSyncTrainerRouteImport } from './routes/api.sync.trainer'
 import { Route as ApiSyncMarksRouteImport } from './routes/api.sync.marks'
 import { Route as AdminTrainersUnclearRouteImport } from './routes/admin.trainers.unclear'
@@ -530,6 +531,11 @@ const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
   path: '/callback',
   getParentRoute: () => AuthGoogleRoute,
 } as any)
+const ApiSyncWelcomesRoute = ApiSyncWelcomesRouteImport.update({
+  id: '/api/sync/welcomes',
+  path: '/api/sync/welcomes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSyncTrainerRoute = ApiSyncTrainerRouteImport.update({
   id: '/api/sync/trainer',
   path: '/api/sync/trainer',
@@ -657,6 +663,7 @@ export interface FileRoutesByFullPath {
   '/admin/trainers/unclear': typeof AdminTrainersUnclearRoute
   '/api/sync/marks': typeof ApiSyncMarksRoute
   '/api/sync/trainer': typeof ApiSyncTrainerRoute
+  '/api/sync/welcomes': typeof ApiSyncWelcomesRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
   '/auth/yandex/callback': typeof AuthYandexCallbackRoute
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
@@ -746,6 +753,7 @@ export interface FileRoutesByTo {
   '/admin/trainers/unclear': typeof AdminTrainersUnclearRoute
   '/api/sync/marks': typeof ApiSyncMarksRoute
   '/api/sync/trainer': typeof ApiSyncTrainerRoute
+  '/api/sync/welcomes': typeof ApiSyncWelcomesRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
   '/auth/yandex/callback': typeof AuthYandexCallbackRoute
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
@@ -842,6 +850,7 @@ export interface FileRoutesById {
   '/admin/trainers/unclear': typeof AdminTrainersUnclearRoute
   '/api/sync/marks': typeof ApiSyncMarksRoute
   '/api/sync/trainer': typeof ApiSyncTrainerRoute
+  '/api/sync/welcomes': typeof ApiSyncWelcomesRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
   '/auth/yandex/callback': typeof AuthYandexCallbackRoute
   '/categories/$parentSlug/$childSlug': typeof CategoriesParentSlugChildSlugRoute
@@ -940,6 +949,7 @@ export interface FileRouteTypes {
     | '/admin/trainers/unclear'
     | '/api/sync/marks'
     | '/api/sync/trainer'
+    | '/api/sync/welcomes'
     | '/auth/google/callback'
     | '/auth/yandex/callback'
     | '/categories/$parentSlug/$childSlug'
@@ -1029,6 +1039,7 @@ export interface FileRouteTypes {
     | '/admin/trainers/unclear'
     | '/api/sync/marks'
     | '/api/sync/trainer'
+    | '/api/sync/welcomes'
     | '/auth/google/callback'
     | '/auth/yandex/callback'
     | '/categories/$parentSlug/$childSlug'
@@ -1124,6 +1135,7 @@ export interface FileRouteTypes {
     | '/admin/trainers/unclear'
     | '/api/sync/marks'
     | '/api/sync/trainer'
+    | '/api/sync/welcomes'
     | '/auth/google/callback'
     | '/auth/yandex/callback'
     | '/categories/$parentSlug/$childSlug'
@@ -1189,6 +1201,7 @@ export interface RootRouteChildren {
   ClubsIndexRoute: typeof ClubsIndexRoute
   ApiSyncMarksRoute: typeof ApiSyncMarksRoute
   ApiSyncTrainerRoute: typeof ApiSyncTrainerRoute
+  ApiSyncWelcomesRoute: typeof ApiSyncWelcomesRoute
   CategoriesParentSlugChildSlugRoute: typeof CategoriesParentSlugChildSlugRoute
   CategoryParentSlugChildSlugRoute: typeof CategoryParentSlugChildSlugRoute
   MessagesFilesIdRoute: typeof MessagesFilesIdRoute
@@ -1789,6 +1802,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthGoogleCallbackRouteImport
       parentRoute: typeof AuthGoogleRoute
     }
+    '/api/sync/welcomes': {
+      id: '/api/sync/welcomes'
+      path: '/api/sync/welcomes'
+      fullPath: '/api/sync/welcomes'
+      preLoaderRoute: typeof ApiSyncWelcomesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/sync/trainer': {
       id: '/api/sync/trainer'
       path: '/api/sync/trainer'
@@ -2127,6 +2147,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClubsIndexRoute: ClubsIndexRoute,
   ApiSyncMarksRoute: ApiSyncMarksRoute,
   ApiSyncTrainerRoute: ApiSyncTrainerRoute,
+  ApiSyncWelcomesRoute: ApiSyncWelcomesRoute,
   CategoriesParentSlugChildSlugRoute: CategoriesParentSlugChildSlugRoute,
   CategoryParentSlugChildSlugRoute: CategoryParentSlugChildSlugRoute,
   MessagesFilesIdRoute: MessagesFilesIdRoute,

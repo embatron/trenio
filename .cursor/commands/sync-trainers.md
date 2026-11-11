@@ -12,7 +12,7 @@ Copy trainer cards, catalog status, and message marks between the laptop databas
 1. Read the skill.
 2. From the repo root, run `./node_modules/.bin/tsx --env-file=.env scripts/sync-trainers.ts`.
 3. If the result is `undeployed`, stop and say the live site does not have this sync yet.
-4. Report pushed cards, pulled cards, status changes, mark changes, unchanged trainers, and any failed handle.
+4. Report pushed cards, pulled cards, status changes, mark changes, unchanged trainers, applications added and updated, and any failed handle. Do not print an application.
 
 ## Result
 
@@ -21,3 +21,4 @@ Copy trainer cards, catalog status, and message marks between the laptop databas
 - A draft was not published by the sync. A status that was already published, hidden, or archived was copied onto the draft.
 - Empty message and link marks were filled. An empty visit on the laptop was filled from the live site. A visit recorded on the laptop stayed there. Marks that were already set stayed.
 - No Instagram message was sent.
+- Every application from the site is on the laptop. An application that exists only on the laptop stayed there. A site decision of done or rejected was copied. Phones and names were not printed.

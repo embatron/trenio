@@ -5,13 +5,13 @@ alwaysApply: true
 
 # Trainer sync
 
-`/sync-trainers` copies trainer cards, catalog status, and message marks between the laptop and the live site. The local fixture `test-trener` is not part of that copy.
+`/sync-trainers` copies trainer cards, catalog status, and message marks between the laptop and the live site. It also copies every trainer application from the live site onto the laptop. The local fixture `test-trener` is not part of that copy.
 
 ## Hold back
 
 `test-trener` is the laptop's own trainer account. Its slug is `test-trener`. The names `test-trener` and `testtrener` are the same card. The Instagram handle on that row may be different, and that handle stays off the sync too.
 
-Use `isLocalOnlyTrainer` and `isLocalOnlyRow` from `src/lib/sync/policy.ts` before a list, a push, a pull, or a mark update. The sync API refuses the same card, so a second client cannot write it either.
+Use `isLocalOnlyTrainer` and `isLocalOnlyRow` from `src/lib/sync/policy.ts` before a list, a push, a pull, or a mark update. The sync API refuses the same card, so a second client cannot write it either. An application whose Instagram is that fixture is skipped. Other applications are pulled from the site and are not pushed back.
 
 ## Do
 

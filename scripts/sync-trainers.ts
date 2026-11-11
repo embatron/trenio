@@ -6,8 +6,9 @@ import { closeDb, getDb } from "../src/db";
 import { trainerProfiles } from "../src/db/schema";
 import { writeLog } from "../src/lib/log/logger";
 import { applyTrainerPatch, listTrainerSyncHeads, readTrainerSync } from "../src/lib/sync/apply-card";
+import { applySyncWelcomes } from "../src/lib/sync/apply-welcomes";
 import { cleanHandle, isLocalOnlyRow, isLocalOnlyTrainer, localOnlyHandles } from "../src/lib/sync/policy";
-import { fetchTrainerCard, fetchTrainerHeads, pushMarks, pushTrainerPatch } from "../src/lib/sync/remote";
+import { fetchTrainerCard, fetchTrainerHeads, fetchWelcomes, pushMarks, pushTrainerPatch } from "../src/lib/sync/remote";
 import { isTrainerStatus, syncMove, type TrainerSyncHead } from "../src/lib/sync/trainers";
 
 function asHead(value: TrainerSyncHead | undefined): TrainerSyncHead | null {
@@ -130,16 +131,27 @@ async function main() {
     }
   }
 
+  const welcomes = await fetchWelcomes();
+  const welcomeCounts = welcomes.status === "ok"
+    ? await applySyncWelcomes(welcomes.welcomes)
+    : { added: 0, updated: 0 };
+
   await writeLog({
     level: failed.length ? "warn" : "info",
     domain: "admin",
     action: "admin.sync_trainers",
     outcome: failed.length ? "failure" : "success",
     message: "Карточки тренеров синхронизированы.",
-    context: { ...counts, failed: failed.length },
+    context: { ...counts, failed: failed.length, welcomes: welcomes.status, ...welcomeCounts },
   });
-  console.log(JSON.stringify({ ok: failed.length === 0 && marks.status === "ok", ...counts, failed, links: marks.status }));
-  if (failed.length || marks.status !== "ok") process.exitCode = 1;
+  console.log(JSON.stringify({
+    ok: failed.length === 0 && marks.status === "ok" && welcomes.status !== "failed" && welcomes.status !== "denied",
+    ...counts,
+    failed,
+    links: marks.status,
+    welcomes: { status: welcomes.status, ...welcomeCounts },
+  }));
+  if (failed.length || marks.status !== "ok" || welcomes.status === "failed" || welcomes.status === "denied") process.exitCode = 1;
 }
 
 main()

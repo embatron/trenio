@@ -46,6 +46,7 @@
 | `admin.sync_marks` | The laptop synced message, link, and visit marks. The row stores the count, not the short link |
 | `admin.sync_trainer` | The laptop synced one imported draft and its photos. The row stores the handle |
 | `admin.sync_trainers` | The laptop synced trainer cards, catalog status, and message marks. The row stores counts or one handle, not the card text or the short link |
+| `admin.sync_welcomes` | The laptop copied trainer applications from the live site. The row stores how many were added or updated, not the phone, Telegram, or Instagram |
 | `admin.trainer_invite` | Staff copied the trainer's short link. The row stores the slug, not the link. A published profile is `denied` |
 | `admin.trainer_invite_sent` | The copied short link was marked sent. The row stores the slug, not the link |
 | `admin.trainer_remove` | A trainer profile was removed from the portal. The row stores the slug |
