@@ -92,7 +92,7 @@ test("no Instagram opens the trainer account form", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Я сделаю свой аккаунт без Instagram" })).toHaveCount(0);
   await page.getByRole("link", { name: "У меня нет Instagram" }).click();
   await expect(page).toHaveURL(/\/join\/account$/);
-  await expect(page.getByRole("heading", { name: "Создать профиль тренера (без Instagram)" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Создать профиль тренера" })).toBeVisible();
   await expect(page.getByLabel("Имя")).toBeVisible();
   await expect(page.getByLabel("Фамилия")).toBeVisible();
   await expect(page.getByLabel("Email")).toBeVisible();
