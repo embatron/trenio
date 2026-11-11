@@ -73,14 +73,7 @@ function TrainerAccountPage() {
         .join-account .join-basics > div { display: grid; gap: 6px; }
         .join-account .auth-check { align-items: center; min-height: 44px; }
         .join-account .auth-check input { width: 22px; height: 22px; margin-top: 0; flex: 0 0 auto; }
-        .join-account .auth-foot { margin-top: 4px; }
-        .join-account a.auth-login {
-          display: grid; place-items: center; width: 100%; min-height: 50px; margin-top: 4px;
-          border-radius: var(--radius-control); border: 1px solid rgba(var(--primary-rgb), 0.3);
-          background: transparent; color: var(--primary); font-size: 15px; font-weight: var(--fw-title);
-          letter-spacing: -0.01em; text-decoration: none;
-        }
-        .join-account a.auth-login:hover { background: rgba(var(--primary-rgb), 0.06); }
+        .join-account .auth-foot a { display: inline-flex; align-items: center; min-height: 44px; }
         .join-account .cabinet-modal { position: fixed; inset: 0; z-index: 420; display: grid; place-items: center; overflow: auto; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: rgba(var(--dark-rgb), 0.45); }
         .join-account .cabinet-modal__card { width: min(440px, 100%); display: grid; gap: 12px; padding: 20px; border-radius: var(--card-radius); background: var(--white); }
         .join-account .cabinet-modal__card h2 { margin: 0; font-size: 18px; color: var(--dark); }
@@ -209,9 +202,11 @@ function SignupForm() {
         onClose={() => setPopup(false)}
       />
     ) : null}
-    <Link to="/auth/login" search={{ redirect: "/join/account" }} className="auth-login">
-      У меня уже есть аккаунт
-    </Link>
+    <p className="auth-foot">
+      <Link to="/auth/login" search={{ redirect: "/join/account" }}>
+        У меня уже есть аккаунт
+      </Link>
+    </p>
     </>
   );
 }
