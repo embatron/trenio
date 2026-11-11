@@ -7,6 +7,7 @@ import { CardDirectLink } from "@/components/messages/card-direct-link";
 import { ShareProfileButton } from "@/components/share-profile";
 import { PhotoImage } from "@/components/photo-image";
 import { TrainerName } from "@/components/trainer-name";
+import { TrainerRating } from "@/components/trainer-rating";
 import { trainerSportCityLocation } from "@/lib/catalog/catalog-sports";
 import { noteTrainerCardImpression } from "@/lib/catalog/trainer-impression-client";
 import { NEGOTIABLE_PRICE_LABEL, statedTrainerPrice } from "@/lib/catalog/trainer-price";
@@ -96,6 +97,7 @@ export function CatalogTrainerCard({
           <h3 className="trainer-card__name">
             <TrainerName firstName={trainer.firstName} lastName={trainer.lastName} />
           </h3>
+          <TrainerRating rating={trainer.rating} reviews={trainer.reviews} />
         </div>
         <p className="trainer-card__sport">
           <TrainerSportTags sports={trainer.sports} tags={trainer.tags} />

@@ -968,8 +968,11 @@ const PAGE_CSS = `
 .map-people .trainer-card.is-marked .trainer-card__sport,
 .map-people .trainer-card.is-marked .trainer-card__price,
 .map-people .trainer-card.is-marked .trainer-card__price small,
-.map-people .trainer-card.is-marked .trainer-card__location { color: #fff; }
+.map-people .trainer-card.is-marked .trainer-card__location,
+.map-people .trainer-card.is-marked .trainer-card__rating,
+.map-people .trainer-card.is-marked .trainer-card__rating span { color: #fff; }
 .map-people .trainer-card.is-marked .trainer-card__footer { border-top-color: rgba(255, 255, 255, 0.35); }
+.map-people .trainer-card.is-marked .trainer-card__rating svg { fill: #fff; stroke: #fff; }
 .cat-empty { padding: 28px 16px; text-align: center; border-radius: var(--card-radius); border: 1px solid rgba(var(--primary-rgb), 0.16); background: rgba(var(--primary-rgb), 0.04); display: grid; gap: 8px; justify-items: center; }
 .cat-empty h3 { margin: 0; font-size: 20px; font-weight: var(--fw-heading); color: var(--dark); }
 .cat-empty p { margin: 0; color: var(--muted); font-size: 14px; }
