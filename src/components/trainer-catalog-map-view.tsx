@@ -6,7 +6,6 @@ type TipStyle = CSSProperties & { "--people-max"?: string };
 import { MapZoom } from "@/components/map-zoom";
 import { PhotoImage } from "@/components/photo-image";
 import { TrainerName } from "@/components/trainer-name";
-import { TrainerRating } from "@/components/trainer-rating";
 import type { MapAreaFeature } from "@/lib/catalog/map-trainers";
 import { MAP_TOOLTIP_CAP } from "@/lib/catalog/map-limits";
 import { capMapFeatures } from "@/lib/catalog/map-window";
@@ -493,7 +492,6 @@ export function TrainerCatalogMapView({
                   )}
                   <span className="catalog-map__copy">
                     <TrainerName firstName={trainer.firstName} lastName={trainer.lastName} />
-                    <TrainerRating rating={trainer.rating} reviews={trainer.reviews} />
                     {trainer.tags.length > 0 ? <span className="catalog-map__sport">{trainer.tags.join(", ")}</span> : null}
                     <span className="catalog-map__price">{trainer.price > 0 ? `От ${trainer.price} BYN` : "договорная"}</span>
                   </span>

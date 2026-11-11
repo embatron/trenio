@@ -42,7 +42,6 @@ import { ReviewExcerpt, ReviewHtml } from "@/components/review-html";
 import { compactReviewHtml, reviewPlainText } from "@/lib/catalog/review-html";
 import { CatalogTrainerCard, TrainerSportLink, type CatalogTrainerCardData } from "@/components/catalog-trainer-card";
 import { TrainerName } from "@/components/trainer-name";
-import { TrainerRating } from "@/components/trainer-rating";
 import { TrainerDocuments } from "@/components/trainer-documents";
 import type { TrainerDocument } from "@/lib/catalog/certificate-preview";
 import { getTrainerCertificatesFn } from "@/lib/catalog/trainer-certificates";

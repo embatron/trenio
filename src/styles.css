@@ -417,18 +417,11 @@ html.is-staff-layout {
   .trainer-card__name { font-size: 14px; }
 }
 .trainer-card__name .trainer-name { flex-direction: column; align-items: flex-start; gap: 0; width: 100%; }
-.trainer-card__name .trainer-name__line:first-child { padding-right: 44px; }
 .trainer-card__name .trainer-name__line { overflow: visible; text-overflow: clip; white-space: normal; overflow-wrap: break-word; }
 .trainer-card:hover .trainer-card__name,
 .trainer-card:focus-visible .trainer-card__name { color: var(--primary); }
-.trainer-card__rating { grid-column: 2; grid-row: 1; justify-self: end; z-index: 1; display: inline-flex; align-items: center; gap: 4px; color: var(--dark); font-size: 13px; font-weight: var(--fw-title); white-space: nowrap; }
-.trainer-card__rating svg { width: 13px; height: 13px; fill: #ffb400; stroke: none; }
-.trainer-card__rating span { color: var(--muted); font-weight: var(--fw-ui); }
-.trainer-card__rating--empty { color: var(--muted); }
-.trainer-card__rating--empty svg { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); }
 .trainer-card__sport { margin: 0; color: var(--muted); font-size: var(--fs-caption); line-height: 1.35; font-weight: var(--fw-body); }
 .trainer-card__footer { display: flex; align-items: center; justify-content: flex-start; gap: 8px; margin-top: 2px; padding-top: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
-.trainer-card__rank { margin-left: auto; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; line-height: 1.3; }
 .trainer-card__location { display: inline-flex; align-items: center; gap: 5px; min-width: 0; max-width: 100%; color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); }
 .trainer-card__location svg { flex: 0 0 auto; width: 13px; height: 13px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .trainer-card__location span { overflow: visible; text-overflow: clip; white-space: normal; overflow-wrap: break-word; }

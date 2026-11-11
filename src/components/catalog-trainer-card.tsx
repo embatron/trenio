@@ -7,7 +7,6 @@ import { CardDirectLink } from "@/components/messages/card-direct-link";
 import { ShareProfileButton } from "@/components/share-profile";
 import { PhotoImage } from "@/components/photo-image";
 import { TrainerName } from "@/components/trainer-name";
-import { TrainerRating } from "@/components/trainer-rating";
 import { trainerSportCityLocation } from "@/lib/catalog/catalog-sports";
 import { noteTrainerCardImpression } from "@/lib/catalog/trainer-impression-client";
 import { NEGOTIABLE_PRICE_LABEL, statedTrainerPrice } from "@/lib/catalog/trainer-price";
@@ -30,7 +29,7 @@ export type CatalogTrainerCardData = {
   desc: string;
   rating: string;
   reviews: number;
-  /** Catalog points from 0 to 100. Shown when the list is ordered by that score. */
+  /** Catalog points from 0 to 100. Used for order. Not shown on the card. */
   catalogScore?: number;
   city: string;
   citySlug?: string;
@@ -97,7 +96,6 @@ export function CatalogTrainerCard({
           <h3 className="trainer-card__name">
             <TrainerName firstName={trainer.firstName} lastName={trainer.lastName} />
           </h3>
-          <TrainerRating rating={trainer.rating} reviews={trainer.reviews} />
         </div>
         <p className="trainer-card__sport">
           <TrainerSportTags sports={trainer.sports} tags={trainer.tags} />
@@ -118,11 +116,6 @@ export function CatalogTrainerCard({
             </svg>
             <span>{trainer.city}</span>
           </span>
-          {typeof trainer.catalogScore === "number" ? (
-            <span className="trainer-card__rank" aria-label={`Рейтинг в каталоге ${trainer.catalogScore} из 100`}>
-              рейтинг {trainer.catalogScore}
-            </span>
-          ) : null}
         </div>
       </div>
     </article>
