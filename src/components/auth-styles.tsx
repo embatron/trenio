@@ -100,11 +100,6 @@ const AUTH_CSS = `
 .auth-google.is-disabled { opacity: 0.55; }
 .auth-field__error { margin: 0; color: var(--primary); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
 .auth-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
-.auth-trainer-door {
-  display: grid; place-items: center; width: 100%; margin: 0 0 22px;
-  min-height: 50px; text-decoration: none;
-}
-.auth-trainer-door:focus-visible { outline: 2px solid var(--primary-dark); outline-offset: 3px; }
 
 .auth-card--expired { text-align: center; padding: clamp(32px, 6vw, 48px) clamp(22px, 5vw, 40px) clamp(28px, 5vw, 36px); }
 .auth-expired__mark {

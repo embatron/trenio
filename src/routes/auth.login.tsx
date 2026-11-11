@@ -130,9 +130,6 @@ function LoginPage() {
       <SiteHeader />
       <main className="auth-main">
         <div className="auth-card">
-          <Link to="/join/trainer" className="auth-submit auth-trainer-door">
-            Я — тренер
-          </Link>
           <div className="auth-card__head">
             <h1 className="auth-title">Войти на сайт</h1>
           </div>
