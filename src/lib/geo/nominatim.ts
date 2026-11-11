@@ -85,6 +85,9 @@ export type NominatimSearchOptions = {
   countrycodes?: string | null;
   limit?: number;
   belarusOnly?: boolean;
+  /** Structured search. House number first, then the street. Do not combine with a free-text query. */
+  street?: string | null;
+  city?: string | null;
 };
 
 /** Low-level search. Network and HTTP failures resolve to `unavailable` and do not throw. */
@@ -100,7 +103,14 @@ export async function searchNominatim(query: string, options: NominatimSearchOpt
   url.searchParams.set("accept-language", "ru");
   url.searchParams.set("limit", String(limit));
   if (countrycodes) url.searchParams.set("countrycodes", countrycodes);
-  url.searchParams.set("q", sanitized);
+  const street = options.street?.trim() ?? "";
+  if (street) {
+    url.searchParams.set("street", street);
+    const city = options.city?.trim() ?? "";
+    if (city) url.searchParams.set("city", city);
+  } else {
+    url.searchParams.set("q", sanitized);
+  }
 
   await pace();
   const controller = new AbortController();

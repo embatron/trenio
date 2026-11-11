@@ -5,6 +5,7 @@ import { CityEntityInput } from "@/components/city-entity-input";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { suggestAddress } from "@/lib/geo/functions";
+import { addressQueryReady } from "@/lib/geo/normalize";
 import {
   BELARUS_COUNTRY,
   EMPTY_TRAINER_PLACE,
@@ -60,22 +61,27 @@ function PlaceInput({
   const text = draft ?? place.address;
   const query = text.trim().replace(/\s+/g, " ");
   const lookupQuery = suggestQuery(query, city);
-  const showMenu = open && query.length >= 3;
+  const showMenu = open && addressQueryReady(lookupQuery);
 
   useEffect(() => {
     if (!showMenu) return;
     let cancelled = false;
     let gaveUp = false;
+    let retryTimer = 0;
+    let tries = 0;
     const fail = window.setTimeout(() => {
       if (cancelled) return;
       gaveUp = true;
+      window.clearTimeout(retryTimer);
       setLoading(false);
       setSuggestions([]);
       setOpen(false);
       setMapError(MAP_TEMPORARILY_UNAVAILABLE);
     }, MAP_WAIT_MS);
-    const timer = window.setTimeout(() => {
-      if (cancelled) return;
+    const run = () => {
+      if (cancelled || gaveUp) return;
+      tries += 1;
+      let scheduled = false;
       setLoading(true);
       void suggestRef
         .current({ data: { query: lookupQuery } })
@@ -95,21 +101,28 @@ function PlaceInput({
         })
         .catch((error: unknown) => {
           if (cancelled || gaveUp) return;
-          window.clearTimeout(fail);
           const message = authErrorMessage(error);
-          if (message.startsWith("Слишком много")) return;
+          if (message.startsWith("Слишком много") && tries < 4) {
+            scheduled = true;
+            retryTimer = window.setTimeout(run, 1200);
+            return;
+          }
+          window.clearTimeout(fail);
           setSuggestions([]);
           setOpen(false);
           setMapError(MAP_TEMPORARILY_UNAVAILABLE);
         })
         .finally(() => {
-          if (!cancelled && !gaveUp) setLoading(false);
+          if (cancelled || gaveUp || scheduled) return;
+          setLoading(false);
         });
-    }, SUGGEST_WAIT_MS);
+    };
+    const timer = window.setTimeout(run, SUGGEST_WAIT_MS);
     return () => {
       cancelled = true;
       window.clearTimeout(timer);
       window.clearTimeout(fail);
+      window.clearTimeout(retryTimer);
     };
   }, [lookupQuery, showMenu]);
 

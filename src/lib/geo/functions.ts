@@ -11,6 +11,7 @@ import { AuthError } from "@/lib/auth/errors";
 import { editorHtml } from "@/lib/catalog/review-html";
 import { writeLog } from "@/lib/log/logger";
 import { cityCatalogByName } from "@/lib/catalog/city-pages";
+import { addressQueryReady } from "@/lib/geo/normalize";
 import { mirrorTrainingPlace, resolveTrainingPlaces, suggestCachedOrRemote } from "@/lib/geo/resolve";
 import {
   MAP_TEMPORARILY_UNAVAILABLE,
@@ -44,6 +45,7 @@ export const suggestAddress = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
   .validator(suggestAddressSchema)
   .handler(async ({ data, context }): Promise<{ suggestions: AddressSuggestion[]; unavailable: boolean }> => {
+    if (!addressQueryReady(data.query)) return { suggestions: [], unavailable: false };
     const limit = await consumeRateLimit(
       `geo:suggest:${context.user.id}`,
       RATE_LIMITS.geocodeUser.windowMs,

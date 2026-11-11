@@ -2,7 +2,7 @@ import { AuthError } from "@/lib/auth/errors";
 import { logCaught, writeLog } from "@/lib/log/logger";
 import { readGeocodeCache, writeGeocodeCache, type CachedGeocode } from "@/lib/geo/cache";
 import { probeAddressCountry, searchNominatim, type GeocodeHit } from "@/lib/geo/nominatim";
-import { addressHitScore, addressLookupQueries, expandStreetQuery, normalizeQuery, sanitizeQuery } from "@/lib/geo/normalize";
+import { addressHitScore, addressQueryReady, addressSearches, normalizeQuery, sanitizeQuery, type AddressSearch } from "@/lib/geo/normalize";
 import {
   FOREIGN_ADDRESS_MESSAGE,
   MAP_TEMPORARILY_UNAVAILABLE,
@@ -53,58 +53,84 @@ async function writeCache(queryNorm: string, hit: GeocodeHit | null, countryCode
   }
 }
 
-function rankedHit(query: string, hits: GeocodeHit[]): GeocodeHit | null {
-  const ranked = hits
+function planKey(plan: AddressSearch): string | null {
+  const raw = plan.street ? `street ${plan.street} ${plan.city ?? ""}` : plan.q;
+  return normalizeQuery(raw);
+}
+
+function rankedHits(plan: AddressSearch, hits: GeocodeHit[]): GeocodeHit[] {
+  return hits
     .filter((hit) => hit.countryCode === "by")
-    .map((hit) => ({ hit, score: addressHitScore(query, hit) }))
+    .map((hit) => ({ hit, score: addressHitScore(plan.q, hit, plan) }))
     .filter((row) => row.score > 0)
-    .sort((a, b) => b.score - a.score);
-  return ranked[0]?.hit ?? null;
+    .sort((a, b) => b.score - a.score)
+    .map((row) => row.hit);
 }
 
 /**
- * Try the shortened street, then a spelling variant.
+ * Try the canonical street, then a spelling or word-order variant.
  * A cached miss on one variant does not hide a later variant.
  * A hit that does not share the street or the place name is not accepted.
+ * `remoteBudget` caps Nominatim calls. Suggestions use two, a save uses four.
  */
-async function lookup(query: string, bypassCache: boolean): Promise<
-  | { kind: "ok"; hit: GeocodeHit }
+async function lookup(
+  query: string,
+  cityHint: string,
+  bypassCache: boolean,
+  remoteBudget: number,
+  probeForeign: boolean,
+): Promise<
+  | { kind: "ok"; hit: GeocodeHit; hits: GeocodeHit[] }
   | { kind: "not_found" }
   | { kind: "foreign" }
   | { kind: "unavailable" }
 > {
-  const variants = addressLookupQueries(query);
-  if (!variants.length) return { kind: "not_found" };
-  const keys = variants.map((variant) => normalizeQuery(variant));
+  const plans = addressSearches(query, cityHint).slice(0, 4);
+  if (!plans.length) return { kind: "not_found" };
+  const keys = plans.map(planKey);
   if (!keys.some(Boolean)) return { kind: "not_found" };
 
   if (!bypassCache) {
     let everyVariantCached = true;
     for (const [index, key] of keys.entries()) {
-      if (!key) continue;
+      if (!key) {
+        everyVariantCached = false;
+        continue;
+      }
       const cached = await readCache(key);
       if (cached === "miss") {
         everyVariantCached = false;
         continue;
       }
       if (cached.foreign) return { kind: "foreign" };
-      if (cached.hit && addressHitScore(variants[index] || query, cached.hit) > 0) {
-        return { kind: "ok", hit: cached.hit };
+      const plan = plans[index];
+      if (cached.hit && plan && addressHitScore(plan.q, cached.hit, plan) > 0) {
+        return { kind: "ok", hit: cached.hit, hits: [cached.hit] };
       }
     }
     if (everyVariantCached) return { kind: "not_found" };
   }
 
-  for (const [index, variant] of variants.entries()) {
+  let remoteCalls = 0;
+  for (const [index, plan] of plans.entries()) {
     const key = keys[index];
     if (!key) continue;
     if (!bypassCache) {
       const cached = await readCache(key);
       if (cached !== "miss") continue;
     }
-    const remote = await searchNominatim(variant, { limit: 5, countrycodes: "by", belarusOnly: true });
+    if (remoteCalls >= remoteBudget) break;
+    remoteCalls += 1;
+    const remote = await searchNominatim(plan.q, {
+      limit: 5,
+      countrycodes: "by",
+      belarusOnly: true,
+      street: plan.street,
+      city: plan.city,
+    });
     if (remote.kind === "unavailable") return remote;
-    const hit = remote.kind === "ok" ? rankedHit(variant, remote.hits) : null;
+    const hits = remote.kind === "ok" ? rankedHits(plan, remote.hits) : [];
+    const hit = hits[0] ?? null;
     if (!hit) {
       await writeCache(key, null);
       continue;
@@ -112,12 +138,15 @@ async function lookup(query: string, bypassCache: boolean): Promise<
     await writeCache(key, hit);
     const original = normalizeQuery(query);
     if (original && original !== key) await writeCache(original, hit);
-    const displayNorm = normalizeQuery(hit.displayName);
-    if (displayNorm && displayNorm !== key) await writeCache(displayNorm, hit);
-    return { kind: "ok", hit };
+    for (const item of hits) {
+      const displayNorm = normalizeQuery(item.displayName);
+      if (displayNorm && displayNorm !== key) await writeCache(displayNorm, item);
+    }
+    return { kind: "ok", hit, hits };
   }
 
-  const probe = await probeAddressCountry(variants[0]);
+  if (remoteCalls === 0 || !probeForeign) return { kind: "not_found" };
+  const probe = await probeAddressCountry(plans[0]?.q ?? query);
   if (probe === "foreign") {
     for (const key of keys) {
       if (key) await writeCache(key, null, "other");
@@ -176,7 +205,7 @@ export async function resolveProfileAddress(
     }
   }
 
-  const result = await lookup(address, force);
+  const result = await lookup(address, "", force, 4, true);
   if (result.kind === "ok") {
     return {
       address,
@@ -221,29 +250,13 @@ export async function suggestCachedOrRemote(
   query: string,
   allowRemote: () => boolean,
 ): Promise<SuggestLookup> {
-  const expanded = addressLookupQueries(query)[0] ?? expandStreetQuery(query);
-  const norm = normalizeQuery(expanded);
-  if (!norm) return { kind: "ok", hits: [] };
-  const cached = await readCache(norm);
-  if (cached !== "miss") {
-    if (cached.foreign || !cached.hit) return { kind: "ok", hits: [] };
-    return { kind: "ok", hits: [cached.hit] };
-  }
-  if (!allowRemote()) return { kind: "limited" };
-
-  const remote = await searchNominatim(expanded, { limit: 5, countrycodes: "by", belarusOnly: true });
-  if (remote.kind === "unavailable") return { kind: "unavailable" };
-  if (remote.kind !== "ok") return { kind: "ok", hits: [] };
-  await writeCache(norm, remote.hits[0] ?? null);
-  for (const hit of remote.hits) {
-    const displayNorm = normalizeQuery(hit.displayName);
-    if (displayNorm) await writeCache(displayNorm, hit);
-  }
-  return { kind: "ok", hits: remote.hits.filter((hit) => hit.countryCode === "by").slice(0, 5) };
-}
-
-function placeQuery(place: { city: string; district: string; address: string }) {
-  return [place.address, place.district, place.city, "Беларусь"].map((part) => part.trim()).filter(Boolean).join(", ");
+  if (!addressQueryReady(query)) return { kind: "ok", hits: [] };
+  const remote = allowRemote();
+  const result = await lookup(query, "", false, remote ? 2 : 0, false);
+  if (result.kind === "unavailable") return { kind: "unavailable" };
+  if (result.kind === "ok") return { kind: "ok", hits: result.hits.slice(0, 5) };
+  if (!remote) return { kind: "limited" };
+  return { kind: "ok", hits: [] };
 }
 
 function samePlaceText(a: TrainerPlace, b: { city: string; district: string; address: string }) {
@@ -280,7 +293,7 @@ export async function resolveTrainingPlaces(
       resolved.push(current);
       continue;
     }
-    const query = placeQuery(row);
+    const query = [row.address, row.city].map((part) => part.trim()).filter(Boolean).join(", ");
     const norm = normalizeQuery(query);
     if (!force && norm && row.lat != null && row.lng != null) {
       const cached = await readCache(norm);
@@ -301,7 +314,7 @@ export async function resolveTrainingPlaces(
         continue;
       }
     }
-    const result = await lookup(query, force);
+    const result = await lookup(row.address, row.city, force, 4, true);
     if (result.kind === "foreign") throw new AuthError(FOREIGN_ADDRESS_MESSAGE, "VALIDATION");
     if (result.kind === "ok") {
       resolved.push(fromHit(row, result.hit));
