@@ -325,12 +325,15 @@ const CSS = `
 .profile-actions { position: absolute; top: 0; right: 0; z-index: 3; display: flex; flex-direction: column; gap: 0; opacity: 0.85; transition: opacity 0.18s ease; }
 .photo-slider:hover .profile-actions,
 .photo-slider:focus-within .profile-actions { opacity: 1; }
-.photo-slider__nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.82); color: rgba(17, 24, 39, 0.78); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.06); z-index: 2; transition: color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease; }
-.photo-slider__nav:hover, .photo-slider__nav:focus-visible { background: rgba(255,255,255,0.94); color: var(--dark); box-shadow: 0 8px 22px rgba(var(--primary-rgb), 0.16); }
-.photo-slider__nav--prev { left: 10px; }
-/* Four 44px actions plus gaps end at 210px. Keep the next arrow's center below that column. */
-.photo-slider__nav--next { right: 10px; top: max(50%, 240px); }
-.photo-slider__nav svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.photo-slider__nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: transparent; box-shadow: none; color: rgba(17, 24, 39, 0.78); cursor: pointer; display: grid; place-items: center; z-index: 2; }
+.photo-slider__nav:hover, .photo-slider__nav:focus-visible { color: var(--dark); }
+.photo-slider__nav--prev { left: 0; }
+.photo-slider__nav--next { right: 0; top: max(50%, 198px); }
+.photo-slider__nav svg { width: 31px; height: 31px; padding: 8px; box-sizing: border-box; border-radius: 50%; background: rgba(255,255,255,0.82); box-shadow: 0 4px 12px rgba(var(--dark-rgb), 0.08); stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; transition: background 0.18s ease, box-shadow 0.18s ease; }
+.photo-slider__nav:hover svg, .photo-slider__nav:focus-visible svg { background: rgba(255,255,255,0.96); box-shadow: 0 6px 16px rgba(var(--primary-rgb), 0.16); }
+@media (max-width: 767px) and (min-width: 360px) {
+  .photo-slider__nav svg { width: 28px; height: 28px; padding: 7px; }
+}
 .photo-thumbs { display: flex; gap: 8px; margin: 0; padding: 10px 12px 12px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; background: var(--white); list-style: none; }
 .photo-thumbs::-webkit-scrollbar { display: none; }
 .photo-thumbs button { width: 64px; height: 80px; flex: 0 0 auto; padding: 0; border: 2px solid transparent; border-radius: 10px; overflow: hidden; background: var(--neutral-bg); cursor: pointer; }
