@@ -33,6 +33,21 @@ export default defineConfig({
       external: ["ip-location-api", "sharp", "tinify", "pdfjs-dist", "@napi-rs/canvas"],
     },
     plugins: [serveUploadFiles()],
+    // The client dependency scan follows server imports. Bundling the native
+    // canvas addon fails the whole pre-bundle, and then every browser module
+    // waits forever. These packages stay external, same as the SSR build.
+    optimizeDeps: {
+      exclude: [
+        "@napi-rs/canvas",
+        "sharp",
+        "postgres",
+        "drizzle-orm",
+        "ip-location-api",
+        "tinify",
+        "web-push",
+        "pdfjs-dist",
+      ],
+    },
     server: {
       // Apache listens on 80 and 8080. This dev server stays on 8081, and
       // trenio.local.conf proxies the public name, including the HMR socket.
