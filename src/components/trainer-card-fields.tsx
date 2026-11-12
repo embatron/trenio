@@ -11,6 +11,7 @@ import { TrainerMediaField } from "@/components/trainer-media-field";
 import { MAX_TRAINER_PHOTOS } from "@/lib/admin/trainers";
 import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { ContactStatusMark } from "@/components/trainer-contact-status";
 import { BY_PHONE_COUNTRY_PREFIX, constrainBelarusPhoneInput } from "@/lib/auth/phone";
 import type { TrainerPlace } from "@/lib/geo/schemas";
 import {
@@ -180,19 +181,9 @@ function EmailField({
     <div>
       <label>
         <span className="cabinet-form__label-row">
-          <span>
-            Почта
-            {email && verified && !editing ? (
-              <>
-                {" "}
-                · <em className="cabinet-form__verified">подтверждена</em>
-              </>
-            ) : email && !editing ? (
-              " · не подтверждена"
-            ) : (
-              ""
-            )}
-          </span>
+          <span>Почта</span>
+          <span className="cabinet-form__label-end">
+            <ContactStatusMark added={Boolean(email)} verified={email ? verified : null} gender="f" />
           {email && !editing ? (
             <button type="button" className="cabinet-edit" onClick={() => setEditing(true)}>
               Редактировать
@@ -212,6 +203,7 @@ function EmailField({
               Отмена
             </button>
           ) : null}
+          </span>
         </span>
         <ContactControl locked={Boolean(email) && !editing}>
           <MailMark />
@@ -233,7 +225,7 @@ function EmailField({
       {editing ? (
         <div className="cabinet-form__actions">
           <button
-            className="cabinet-form__ghost"
+            className="cabinet-form__cta"
             type="button"
             disabled={pending}
             onClick={() => {
@@ -270,7 +262,7 @@ function EmailField({
           />
           <div className="cabinet-form__actions">
             <button
-              className="cabinet-form__ghost"
+              className="cabinet-form__cta"
               type="button"
               disabled={pending}
               onClick={() => {
@@ -341,19 +333,13 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
     <div>
       <label>
         <span className="cabinet-form__label-row">
-          <span>
-            Телефон
-            {phone.value && verified ? (
-              <>
-                {" "}
-                · <em className="cabinet-form__verified">подтверждён</em>
-              </>
-            ) : phone.value && !editing ? (
-              " · не подтверждён"
-            ) : (
-              ""
-            )}
-          </span>
+          <span>Телефон</span>
+          <span className="cabinet-form__label-end">
+            <ContactStatusMark
+              added={Boolean(phone.value)}
+              verified={phone.value ? phone.verified : null}
+              gender="m"
+            />
           {phone.value && !editing ? (
             <button
               type="button"
@@ -379,6 +365,7 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
               Отмена
             </button>
           ) : null}
+          </span>
         </span>
         <ContactControl locked={!editing}>
           <PhoneMark />
@@ -405,7 +392,7 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
       {editing ? (
         <div className="cabinet-form__actions">
           <button
-            className="cabinet-form__ghost"
+            className="cabinet-form__cta"
             type="button"
             disabled={pending}
             onClick={() => {
@@ -427,7 +414,7 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
       ) : null}
       {editing && codeDialog.issued && codeDialog.phase === "closed" ? (
         <div className="cabinet-form__actions">
-          <button className="cabinet-form__ghost" type="button" onClick={codeDialog.reopen}>Ввести код</button>
+          <button className="cabinet-form__cta" type="button" onClick={codeDialog.reopen}>Ввести код</button>
         </div>
       ) : null}
       <PhoneCodeDialogs
@@ -570,6 +557,7 @@ export function TrainerCardFields({
         <label>
           <span>Заголовок</span>
           <input
+            required={self || undefined}
             value={values.headline}
             maxLength={200}
             placeholder="Фитнес-тренер"
@@ -621,7 +609,9 @@ export function TrainerCardFields({
             : "Расскажите подробно, как и где проходят тренировки и чем они отличаются: место и формат."}
         </p>
         <div>
-          <span className="cabinet-media__label">{self ? "Мои виды спорта" : "Виды спорта"}</span>
+          <span className={self ? "cabinet-media__label is-required" : "cabinet-media__label"}>
+            {self ? "Мои виды спорта" : "Виды спорта"}
+          </span>
           <SportEntityInput
             value={values.sportSlugs}
             onChange={(sportSlugs) => patch({ sportSlugs })}
@@ -702,6 +692,7 @@ export function TrainerCardFields({
         <TrainerPlacesField
           city={values.city}
           places={values.places}
+          cityRequired={self}
           onChange={(next) => patch(next)}
         />
         {afterAddress}
@@ -712,7 +703,16 @@ export function TrainerCardFields({
       <ProfileSection id="trainer-contacts" title="Контакты" plain={mode === "contacts"}>
         <PhoneField phone={phone} self={self} />
         <label>
-          <span>Instagram</span>
+          <span className="cabinet-form__label-row">
+            <span>Instagram</span>
+            {self ? (
+              <ContactStatusMark
+                added={Boolean(values.instagram.trim())}
+                verified={values.instagram.trim() ? true : null}
+                gender="m"
+              />
+            ) : null}
+          </span>
           <ContactControl locked={self}>
             <InstagramIcon />
             <input
@@ -730,13 +730,14 @@ export function TrainerCardFields({
           ) : null}
         </label>
         <label>
-          <span>
-            Telegram
-            {self && values.telegram && telegramVerified ? (
-              <>
-                {" "}
-                · <em className="cabinet-form__verified">подтверждён</em>
-              </>
+          <span className="cabinet-form__label-row">
+            <span>Telegram</span>
+            {self ? (
+              <ContactStatusMark
+                added={Boolean(values.telegram.trim())}
+                verified={values.telegram.trim() ? telegramVerified : null}
+                gender="m"
+              />
             ) : null}
           </span>
           <ContactControl>

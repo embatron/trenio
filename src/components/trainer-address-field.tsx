@@ -343,10 +343,12 @@ function addressHasText(place: TrainerPlace) {
 export function TrainerPlacesField({
   city,
   places,
+  cityRequired = false,
   onChange,
 }: {
   city: string;
   places: TrainerPlace[];
+  cityRequired?: boolean;
   onChange: (next: { city?: string; places?: TrainerPlace[] }) => void;
 }) {
   const rows = places.length > 0 ? places : [EMPTY_TRAINER_PLACE];
@@ -408,7 +410,7 @@ export function TrainerPlacesField({
       </label>
       <label>
         <span>Город</span>
-        <CityEntityInput value={city} onChange={changeCity} />
+        <CityEntityInput value={city} onChange={changeCity} required={cityRequired} />
       </label>
       {rows.map((place, index) => {
         const removable = rows.length > 1 || addressHasText(place);

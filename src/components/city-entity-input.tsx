@@ -6,9 +6,11 @@ import { filterBelarusCities } from "@/lib/catalog/city-taxonomy";
 export function CityEntityInput({
   value,
   onChange,
+  required = false,
 }: {
   value: string;
   onChange: (city: string) => void;
+  required?: boolean;
 }) {
   const [query, setQuery] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
@@ -42,6 +44,7 @@ export function CityEntityInput({
         aria-expanded={open}
         aria-controls={listId}
         aria-label="Город"
+        required={required || undefined}
         placeholder="Найти город"
         onFocus={() => setOpen(true)}
         onChange={(event) => {

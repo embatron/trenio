@@ -299,9 +299,18 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
     if (!reviewPlainText(bio)) {
       throw new AuthError("Напишите, как вас представить.", "VALIDATION");
     }
+    if (!data.headline.trim()) {
+      throw new AuthError("Укажите заголовок.", "VALIDATION");
+    }
     const sports = trainerSportsFromSlugs(data.sportSlugs).sports;
+    if (sports.length < 1) {
+      throw new AuthError("Выберите хотя бы один вид спорта.", "VALIDATION");
+    }
     if (sports.length > MAX_TRAINER_SPORTS) {
       throw new AuthError("Можно выбрать не больше четырёх видов спорта.", "VALIDATION");
+    }
+    if (!data.city.trim()) {
+      throw new AuthError("Выберите город.", "VALIDATION");
     }
     const city = await assertBelarusCity(data.city);
     const phone = formatBelarusPhone(account?.phone || existing?.phone || "");

@@ -62,6 +62,26 @@ function Mark({ tone, children }: { tone: "on" | "wait" | "off" | "added"; child
   return <span className={`cabinet-mark cabinet-mark--${tone}`}>{children}</span>;
 }
 
+export function ContactStatusMark({
+  added,
+  verified,
+  gender,
+}: {
+  added: boolean;
+  verified: boolean | null;
+  gender: "m" | "f";
+}) {
+  const missingLabel = gender === "f"
+    ? "Не добавлена (не видно пользователям)"
+    : "Не добавлен (не видно пользователям)";
+  const verifiedLabel = gender === "f" ? "Подтверждена" : "Подтверждён";
+  const waitingLabel = gender === "f" ? "Не подтверждена" : "Не подтверждён";
+  if (verified === true) return <VerifiedMark label={verifiedLabel} />;
+  if (verified === false) return <Mark tone="wait">{waitingLabel}</Mark>;
+  if (!added) return <Mark tone="off">{missingLabel}</Mark>;
+  return <Mark tone="added">{gender === "f" ? "Добавлена" : "Добавлен"}</Mark>;
+}
+
 function CodeConfirm({
   request,
   confirm,
@@ -93,7 +113,7 @@ function CodeConfirm({
       ) : null}
       <div className="cabinet-contact__actions">
         <button
-          className="cabinet-form__ghost"
+          className="cabinet-form__cta"
           type="button"
           disabled={pending}
           onClick={() => {
@@ -169,7 +189,7 @@ function TelegramConfirm({ intent }: { intent: "add" | "confirm" }) {
           {step.fields}
           <div className="cabinet-contact__actions">
             <button
-              className="cabinet-form__ghost"
+              className="cabinet-form__cta"
               type="button"
               disabled={pending}
               onClick={() => {
@@ -207,7 +227,7 @@ function TelegramConfirm({ intent }: { intent: "add" | "confirm" }) {
         </>
       ) : (
         <div className="cabinet-contact__actions">
-          <button className="cabinet-form__ghost" type="button" onClick={() => setOpen(true)}>{label}</button>
+          <button className="cabinet-form__cta" type="button" onClick={() => setOpen(true)}>{label}</button>
         </div>
       )}
       {status ? <p className="cabinet-note" role="status">{status}</p> : null}
@@ -228,7 +248,7 @@ function TelegramPhoneButton() {
     <>
       {step.fields}
       <button
-        className="cabinet-form__ghost"
+        className="cabinet-form__cta"
         type="button"
         disabled={pending}
         onClick={() => {
@@ -280,11 +300,6 @@ function Row({
   confirm?: ReactNode;
   editor?: ReactNode;
 }) {
-  const missingLabel = gender === "f"
-    ? "Не добавлена (не видно пользователям)"
-    : "Не добавлен (не видно пользователям)";
-  const verifiedLabel = gender === "f" ? "Подтверждена" : "Подтверждён";
-  const waitingLabel = gender === "f" ? "Не подтверждена" : "Не подтверждён";
   return (
     <div className="cabinet-contact">
       <span className="cabinet-contact__icon" aria-hidden="true">{icon}</span>
@@ -293,10 +308,7 @@ function Row({
         {added ? <span className="cabinet-contact__value">{value}</span> : null}
       </span>
       <span className="cabinet-contact__marks">
-        {verified === true ? <VerifiedMark label={verifiedLabel} /> : null}
-        {verified === false ? <Mark tone="wait">{waitingLabel}</Mark> : null}
-        {verified === null && !added ? <Mark tone="off">{missingLabel}</Mark> : null}
-        {verified === null && added ? <Mark tone="added">{gender === "f" ? "Добавлена" : "Добавлен"}</Mark> : null}
+        <ContactStatusMark added={added} verified={verified} gender={gender} />
       </span>
       {(!added && editor) || (verified === false && confirm) ? (
         <div className="cabinet-contact__panel">
@@ -336,7 +348,7 @@ function PhoneSmsActions({
   const actions = (
     <div className="cabinet-contact__actions">
       <button
-        className="cabinet-form__ghost"
+        className="cabinet-form__cta"
         type="button"
         disabled={pending}
         onClick={() => {
@@ -353,7 +365,7 @@ function PhoneSmsActions({
         {requestLabel}
       </button>
       {codeDialog.issued && codeDialog.phase === "closed" ? (
-        <button className="cabinet-form__ghost" type="button" onClick={codeDialog.reopen}>Ввести код</button>
+        <button className="cabinet-form__cta" type="button" onClick={codeDialog.reopen}>Ввести код</button>
       ) : null}
       <TelegramPhoneButton />
     </div>
@@ -453,7 +465,7 @@ function EmailEditor({
       ) : null}
       <div className="cabinet-contact__actions">
         <button
-          className="cabinet-form__ghost"
+          className="cabinet-form__cta"
           type="button"
           disabled={pending}
           onClick={() => {

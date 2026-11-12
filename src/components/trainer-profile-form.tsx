@@ -39,11 +39,12 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
       emailVerified: profile.emailVerified,
       instagram: profile.instagram,
       telegram: profile.telegram,
+      telegramVerified: profile.telegramVerified,
       slug: profile.slug,
       photos: profile.photos,
       certificates: profile.certificates,
     }));
-  }, [profile.phone, profile.phoneVerified, profile.email, profile.emailVerified, profile.instagram, profile.telegram, profile.slug, profile.photos, profile.certificates]);
+  }, [profile.phone, profile.phoneVerified, profile.email, profile.emailVerified, profile.instagram, profile.telegram, profile.telegramVerified, profile.slug, profile.photos, profile.certificates]);
   const [bioInvalid, setBioInvalid] = useState(false);
   const [popup, setPopup] = useState<{ title: string; message: string } | null>(null);
   const media = form.slug
@@ -86,6 +87,18 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
         className="cabinet-form"
         onSubmit={(event) => {
           event.preventDefault();
+          if (!form.headline.trim()) {
+            setPopup({ title: "Не получилось", message: "Укажите заголовок." });
+            return;
+          }
+          if (form.sportSlugs.length < 1) {
+            setPopup({ title: "Не получилось", message: "Выберите хотя бы один вид спорта." });
+            return;
+          }
+          if (!form.city.trim()) {
+            setPopup({ title: "Не получилось", message: "Выберите город." });
+            return;
+          }
           if (!reviewPlainText(form.bio)) {
             setBioInvalid(true);
             setPopup({ title: "Не получилось", message: "Напишите, как вас представить." });
@@ -114,6 +127,7 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
           priceLabel="Сколько у меня стоит разовое занятие (персональная тренировка), BYN?"
           values={form}
           bioInvalid={bioInvalid}
+          telegramVerified={form.telegramVerified}
           onChange={(values: TrainerCardValues) => {
             if (reviewPlainText(values.bio)) setBioInvalid(false);
             setForm((current) => ({ ...current, ...values }));
