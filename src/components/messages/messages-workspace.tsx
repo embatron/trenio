@@ -475,10 +475,13 @@ export const DIRECT_CSS = `
 .cabinet-card > .direct { border: 0; border-radius: 0; background: transparent; }
 .direct-list, .direct-thread { min-width: 0; min-height: 0; }
 .direct-list { display: flex; flex-direction: column; border-bottom: 1px solid var(--line); }
-.direct-list h2 { margin: 0; padding: 14px 16px 8px; font-size: 16px; color: var(--dark); }
-.direct-search { display: grid; gap: 4px; margin: 0 12px 8px; }
+.direct-search { position: relative; display: block; margin: 12px 12px 8px; }
 .direct-search__label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-.direct-search input { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 12px; padding: 0 12px; background: var(--white); color: var(--dark); font: inherit; font-size: 16px; }
+.direct-search__icon { position: absolute; left: 12px; top: 0; bottom: 0; display: grid; place-items: center; color: var(--muted); pointer-events: none; }
+.direct-search__icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.direct-search input { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 12px; padding: 0 12px 0 38px; background: var(--white); color: var(--dark); font: inherit; font-size: 16px; }
+.direct-search input::-webkit-search-decoration,
+.direct-search input::-webkit-search-results-decoration { display: none; }
 .direct-banner { display: flex; align-items: center; gap: 8px; margin: 0 12px 8px; min-height: 44px; padding: 6px 8px 6px 12px; border-radius: 12px; background: var(--light-bg); color: var(--dark); font-size: 13px; }
 .direct-banner span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .direct-banner button { flex: 0 0 44px; width: 44px; height: 44px; border: 0; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; }

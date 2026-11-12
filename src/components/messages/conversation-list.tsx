@@ -63,10 +63,15 @@ export function ConversationList({
   const searching = query.trim().length >= 2;
   return (
     <div className="direct-list">
-      <h2>Сообщения</h2>
       {onQuery ? (
         <label className="direct-search">
           <span className="direct-search__label">Поиск</span>
+          <span className="direct-search__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="6.5" />
+              <path d="M16 16l4 4" />
+            </svg>
+          </span>
           <input
             type="search"
             value={query}
