@@ -1,4 +1,4 @@
-import { Link, useNavigate, useRouteContext, useRouterState } from "@tanstack/react-router";
+import { Link, useRouteContext, useRouterState } from "@tanstack/react-router";
 import { Fragment, useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
@@ -228,7 +228,6 @@ export function CabinetShell({
   children: ReactNode;
 }) {
   const { user } = useRouteContext({ from: "__root__" });
-  const navigate = useNavigate();
   const name = joinTrainerName(firstName, lastName) || "Без имени";
   const publicSlug = profileSlug?.trim() || "";
   const identity = <TrainerName firstName={firstName} lastName={lastName} empty="Без имени" />;
@@ -236,7 +235,6 @@ export function CabinetShell({
   const navEl = useRef<HTMLElement>(null);
   const sideRef = useRef<HTMLElement>(null);
   const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const personalCabinet = pathname.startsWith("/me") || pathname.startsWith("/account");
   useEffect(() => {
     const header = document.getElementById("site-header");
     const side = sideRef.current;
@@ -263,11 +261,15 @@ export function CabinetShell({
   const pageHere = currentCabinetPage(pathname, items.flatMap((item) => item.pages ?? []));
   const pageSig = items.map((item) => item.pages?.map((page) => `${page.id}:${page.badge ?? ""}`).join(",") ?? "").join("|");
   const [currentSection, setCurrentSection] = useState<string | null>(null);
+  const [sectionsOpen, setSectionsOpen] = useState(false);
   const spyPause = useRef(0);
   const syncSection = useRef<() => void>(() => {});
   useEffect(() => {
     navRef.current?.querySelector(".is-active")?.scrollIntoView({ inline: "nearest", block: "nearest" });
   }, [active]);
+  useEffect(() => {
+    setSectionsOpen(false);
+  }, [pathname]);
   useEffect(() => {
     const ids = sectionKey ? sectionKey.split("|") : [];
     if (!ids.length) {
@@ -332,17 +334,19 @@ export function CabinetShell({
       mark.style.height = `${link.offsetHeight}px`;
       mark.style.transform = `translate(${link.offsetLeft}px, ${link.offsetTop}px)`;
     }
-  }, [currentSection, sectionKey, pathname, pageSig]);
+  }, [currentSection, sectionKey, pathname, pageSig, sectionsOpen]);
   function moveToSection(id: string) {
+    navEl.current?.classList.remove("is-open");
+    setSectionsOpen(false);
     const target = document.getElementById(id);
     if (!target) return;
     setCurrentSection(id);
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const narrow = window.matchMedia("(max-width: 960px)").matches;
+    const stackedSticky = window.matchMedia("(max-width: 960px) and (min-width: 768px)").matches;
     const header = document.getElementById("site-header");
     const destination = () => {
       const headerH = header ? Math.ceil(header.getBoundingClientRect().height) : 96;
-      const sideH = narrow && sideRef.current ? Math.ceil(sideRef.current.getBoundingClientRect().height) : 0;
+      const sideH = stackedSticky && sideRef.current ? Math.ceil(sideRef.current.getBoundingClientRect().height) : 0;
       return Math.max(0, window.scrollY + target.getBoundingClientRect().top - headerH - sideH - 16);
     };
     let top = destination();
@@ -376,12 +380,18 @@ export function CabinetShell({
     window.addEventListener("scroll", onScroll, { passive: true });
   }
 
+  const currentItem = items.find((item) => item.id === active);
+  const sectionHere = currentItem?.sections?.find((section) => section.id === currentSection);
+  const toggleLabel = sectionHere?.label ?? pageHere?.label ?? currentItem?.label ?? "Разделы";
+  const toggleBadge = pageHere?.badge ?? currentItem?.badge;
+  const toggleBadgeId = pageHere?.id ?? currentItem?.id ?? "";
+
   return (
     <>
       <SiteHeader />
       <main>
         <div className="layout-with-sidebar">
-          <aside className={personalCabinet ? "cabinet-side cabinet-side--personal" : "cabinet-side"} ref={sideRef}>
+          <aside className="cabinet-side" ref={sideRef}>
             <div className="cabinet-title">
               <h1>{title}</h1>
               {lede ? <p>{lede}</p> : null}
@@ -408,60 +418,34 @@ export function CabinetShell({
             </div>
             <nav
               ref={navEl}
-              className="cabinet-nav"
+              className={sectionsOpen ? "cabinet-nav is-open" : "cabinet-nav"}
               aria-label="Разделы кабинета"
               style={sectionKey ? { ["--nav-sub-row" as string]: String(items.findIndex((item) => item.id === active) + 2) } : undefined}
             >
-              <div className="cabinet-nav__pick">
-                <select
-                  aria-label="Раздел кабинета"
-                  value={pageHere ? `page:${pageHere.id}` : active}
-                  onChange={(event) => {
-                    const value = event.target.value;
-                    if (value.startsWith("page:")) {
-                      const page = items.flatMap((entry) => entry.pages ?? []).find((entry) => entry.id === value.slice(5));
-                      if (page) void navigate({ to: page.to });
-                      return;
-                    }
-                    const item = items.find((entry) => entry.id === value);
-                    if (!item) return;
-                    if (item.to === "/trainer-admin") {
-                      void navigate({ to: "/trainer-admin", search: item.search ?? {} });
-                      return;
-                    }
-                    if (item.to) {
-                      void navigate({ to: item.to });
-                      return;
-                    }
-                    if (item.id !== active) onSelect?.(item.id);
-                  }}
-                >
-                  {items.map((item) => {
-                    const label = typeof item.badge === "number" ? `${item.label} (${item.badge > 99 ? "99+" : item.badge})` : item.label;
-                    return (
-                      <Fragment key={item.id}>
-                        <option value={item.id}>{label}</option>
-                        {item.id === active ? item.pages?.map((page) => (
-                          <option key={page.id} value={`page:${page.id}`}>
-                            {typeof page.badge === "number" ? `— ${page.label} (${page.badge > 99 ? "99+" : page.badge})` : `— ${page.label}`}
-                          </option>
-                        )) : null}
-                      </Fragment>
-                    );
-                  })}
-                </select>
-                {sectionKey ? (
-                  <select
-                    aria-label="Раздел страницы"
-                    value={currentSection ?? ""}
-                    onChange={(event) => moveToSection(event.target.value)}
-                  >
-                    {items.find((item) => item.id === active)?.sections?.map((section) => (
-                      <option key={section.id} value={section.id}>{section.label}</option>
-                    ))}
-                  </select>
-                ) : null}
-              </div>
+              <button
+                type="button"
+                className="cabinet-nav__toggle"
+                aria-expanded={sectionsOpen}
+                aria-controls="cabinet-sections"
+                onClick={() => setSectionsOpen((value) => !value)}
+              >
+                <span className="cabinet-nav__toggle-main">
+                  {currentItem ? <CabinetMark icon={currentItem.icon} /> : null}
+                  <span className="cabinet-nav__label">{toggleLabel}</span>
+                  {typeof toggleBadge === "number" ? (
+                    <span className={navBadgeClass(toggleBadgeId, toggleBadge)}>{toggleBadge > 99 ? "99+" : toggleBadge}</span>
+                  ) : null}
+                </span>
+                <svg className="cabinet-nav__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6" /></svg>
+              </button>
+              <div
+                className="cabinet-nav__body"
+                id="cabinet-sections"
+                onClick={(event) => {
+                  const node = event.target;
+                  if (node instanceof Element && node.closest("a, button")) setSectionsOpen(false);
+                }}
+              >
               <div className="cabinet-nav__items" ref={navRef}>
                 {items.map((item) => {
                   const className = item.id === active ? "is-active" : undefined;
@@ -554,6 +538,7 @@ export function CabinetShell({
                   ))}
                 </div>
               ) : null}
+              </div>
             </nav>
             <button type="button" className="cabinet-logout" onClick={onLogout} disabled={logoutPending}>
               {logoutPending ? "Выход…" : "Выйти"}
@@ -600,18 +585,21 @@ a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
 .cabinet-id span { color: var(--muted); font-size: 13px; }
 .cabinet-id span.cabinet-id__open { color: var(--dark); font-size: 0; }
 .cabinet-nav { display: flex; flex-direction: column; gap: 4px; }
-.cabinet-nav__pick { display: none; }
+.cabinet-nav__body { min-width: 0; }
+.cabinet-nav__toggle-main { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 1 auto; }
+.cabinet-nav__chevron { margin-left: 8px; transform: rotate(90deg); transition: transform 0.2s ease; }
+.cabinet-nav.is-open .cabinet-nav__chevron { transform: rotate(-90deg); }
+.cabinet-nav .cabinet-nav__toggle { display: none; width: 100%; justify-content: space-between; border: 1px solid var(--line); background: var(--white); }
+.cabinet-nav .cabinet-nav__toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .cabinet-nav__items { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .cabinet-nav__sub { position: relative; display: grid; gap: 2px; margin: 0 0 4px 18px; padding-left: 10px; border-left: 2px solid rgba(var(--primary-rgb), 0.35); }
 .cabinet-nav__mark { position: absolute; left: 0; top: 0; border-radius: var(--radius-control); background: rgba(var(--primary-rgb), 0.1); pointer-events: none; z-index: 0; transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), width 0.42s cubic-bezier(0.22, 1, 0.36, 1), height 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
 @media (prefers-reduced-motion: reduce) {
-  .cabinet-nav__mark { transition: none; }
+  .cabinet-nav__mark, .cabinet-nav__chevron { transition: none; }
 }
-@media (min-width: 961px) {
-  .cabinet-nav:has(> .cabinet-nav__sub) { display: grid; }
-  .cabinet-nav:has(> .cabinet-nav__sub) .cabinet-nav__items { display: contents; }
-  .cabinet-nav > .cabinet-nav__sub { grid-row: var(--nav-sub-row); margin-left: 18px; }
-}
+.cabinet-nav__body:has(> .cabinet-nav__sub) { display: grid; }
+.cabinet-nav__body:has(> .cabinet-nav__sub) .cabinet-nav__items { display: contents; }
+.cabinet-nav__body > .cabinet-nav__sub { grid-row: var(--nav-sub-row); margin-left: 18px; }
 .cabinet-nav__sub a { position: relative; z-index: 1; color: var(--muted); font-size: 14px; font-weight: var(--fw-ui); transition: color 0.28s ease; }
 .cabinet-nav__sub a.is-current { background: transparent; color: var(--primary); }
 .cabinet-nav button, .cabinet-nav a, .cabinet-logout {
@@ -1163,13 +1151,12 @@ a.cabinet-icon-btn { text-decoration: none; }
   .layout-with-sidebar:has(> .cabinet-side) { display: flex; flex-direction: column; align-items: stretch; }
   .cabinet-side { width: 100%; }
   .cabinet-section, #trainer-page-status, #trainer-contact-block { scroll-margin-top: calc(var(--cabinet-sticky-top, 96px) + var(--cabinet-side-h, 0px) + 16px); }
-  .cabinet-nav__items, .cabinet-nav__sub { display: none; }
-  .cabinet-nav__pick { display: grid; gap: 8px; }
-  .cabinet-nav__pick select {
-    width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--line);
-    border-radius: var(--radius-control); background: var(--white); color: var(--text);
-    font: inherit; font-size: 16px;
-  }
+  .cabinet-nav .cabinet-nav__toggle { display: flex; font-size: 16px; }
+  .cabinet-nav__toggle .cabinet-nav__label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cabinet-nav__body,
+  .cabinet-nav__body:has(> .cabinet-nav__sub) { display: none; }
+  .cabinet-nav.is-open .cabinet-nav__body { display: block; }
+  .cabinet-nav.is-open .cabinet-nav__body:has(> .cabinet-nav__sub) { display: grid; }
   .cabinet-logout { display: none; }
 }
 .site-text { display: grid; gap: 8px; min-width: 0; }
@@ -1183,16 +1170,16 @@ a.cabinet-icon-btn { text-decoration: none; }
 .site-parts { display: grid; gap: 4px; padding-left: 1.2em; }
 @media (max-width: 767px) {
   .cabinet-form input, .cabinet-form textarea, .cabinet-form select, .entity-input input { font-size: 16px; }
-  .cabinet-side--personal {
+  .cabinet-side {
     position: static;
     top: auto;
     z-index: auto;
     max-height: none;
     overflow: visible;
   }
-  .layout-with-sidebar:has(> .cabinet-side--personal) .cabinet-section,
-  .layout-with-sidebar:has(> .cabinet-side--personal) #trainer-page-status,
-  .layout-with-sidebar:has(> .cabinet-side--personal) #trainer-contact-block {
+  .layout-with-sidebar:has(> .cabinet-side) .cabinet-section,
+  .layout-with-sidebar:has(> .cabinet-side) #trainer-page-status,
+  .layout-with-sidebar:has(> .cabinet-side) #trainer-contact-block {
     scroll-margin-top: calc(var(--cabinet-sticky-top, 96px) + 16px);
   }
 }

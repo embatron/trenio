@@ -475,6 +475,7 @@ body.is-search-docked .site-header__search {
   .mega-cat { min-height: 44px; padding: 0 8px; }
   .mega-cat__icon, .mega-cat__icon img { width: 56px; height: 56px; }
   .mega-cats.is-open .mega-sheet { padding-bottom: 18px; }
+  .site-header__nav .account-menu { display: none; }
   .account-face { max-width: 44px; padding-right: 0; }
   .account-face__nick { display: none; }
   .mega-account, .mega-cities { display: block; }
