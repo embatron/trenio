@@ -136,17 +136,19 @@ body.is-search-docked .site-header__search {
 }
 .icon-btn:hover, .icon-btn[aria-current="page"] { background: transparent; color: var(--primary); transform: none; }
 .icon-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
-.favorite-count { position: relative; width: 44px; height: 44px; }
+.favorite-count {
+  display: inline-grid; grid-template-columns: 20px max-content; align-items: center; justify-content: center;
+  column-gap: 2px; width: 44px; height: 44px;
+}
+.count-glyph { display: contents; }
 .favorite-count__n {
-  position: absolute; top: 9px; right: 10px; min-width: 0; height: auto; padding: 0;
-  border-radius: 0; background: transparent; color: var(--muted);
-  font-size: 11px; font-weight: 500; line-height: 1; text-align: right;
+  color: var(--muted); font-size: 11px; font-weight: 500; line-height: 1;
   font-variant-numeric: tabular-nums; pointer-events: none;
 }
 .message-count.has-items .favorite-count__n {
-  top: 4px; right: 2px; min-width: 16px; height: 16px; padding: 0 4px;
-  border-radius: 999px; background: var(--primary); color: #fff;
-  font-size: 10px; font-weight: var(--fw-title); line-height: 16px; text-align: center;
+  min-width: 14px; height: 14px; padding: 0 3px; border-radius: 999px;
+  background: var(--primary); color: #fff; font-size: 9px; font-weight: var(--fw-title);
+  line-height: 14px; text-align: center;
 }
 .message-count.has-items { color: var(--primary); }
 .account-face {
@@ -1204,13 +1206,14 @@ function MessageCount() {
   const className = `icon-btn favorite-count message-count${shown > 0 ? " has-items" : ""}`;
   const icon = <svg viewBox="0 0 24 24" aria-hidden="true"><path d={MESSAGE_ENVELOPE} /></svg>;
   const count = <span className="favorite-count__n">{shown > 99 ? "99+" : shown}</span>;
+  const mark = <span className="count-glyph">{icon}{count}</span>;
   if (staff) {
-    return <Link to="/admin/messages" className={className} aria-label={label} title="Сообщения">{icon}{count}</Link>;
+    return <Link to="/admin/messages" className={className} aria-label={label} title="Сообщения">{mark}</Link>;
   }
   if (trainer) {
-    return <Link to="/me/messages" className={className} aria-label={label} title="Сообщения">{icon}{count}</Link>;
+    return <Link to="/me/messages" className={className} aria-label={label} title="Сообщения">{mark}</Link>;
   }
-  return <Link to="/account/messages" className={className} aria-label={label} title="Сообщения">{icon}{count}</Link>;
+  return <Link to="/account/messages" className={className} aria-label={label} title="Сообщения">{mark}</Link>;
 }
 
 function FavoriteCount() {
@@ -1230,10 +1233,12 @@ function FavoriteCount() {
         aria-label={label}
         title="Избранное"
       >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" />
-        </svg>
-        {ready ? <span className="favorite-count__n">{count}</span> : null}
+        <span className="count-glyph">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" />
+          </svg>
+          {ready ? <span className="favorite-count__n">{count}</span> : null}
+        </span>
       </Link>
     );
   }
@@ -1244,10 +1249,12 @@ function FavoriteCount() {
       aria-label={label}
       title="Избранное"
     >
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" />
-      </svg>
-      {ready ? <span className="favorite-count__n">{count}</span> : null}
+      <span className="count-glyph">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" />
+        </svg>
+        {ready ? <span className="favorite-count__n">{count}</span> : null}
+      </span>
     </Link>
   );
 }
