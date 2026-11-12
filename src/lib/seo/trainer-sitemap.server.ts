@@ -78,6 +78,7 @@ export async function listPublishedTrainerSitemapEntries(): Promise<SitemapTrain
         address: trainerProfiles.address,
         trainingPlaces: trainerProfiles.trainingPlaces,
         sports: trainerProfiles.sports,
+        headline: trainerProfiles.headline,
       })
       .from(trainerProfiles)
       .where(eq(trainerProfiles.status, "published"));
@@ -96,7 +97,7 @@ export async function listPublishedTrainerSitemapEntries(): Promise<SitemapTrain
       const phrase = trainerDocumentPhrase(trainerSportDatives(sports), {
         slug: cityCatalogSlug(label) || row.citySlug || "",
         label,
-      }, name, trainerIntroPhrase(trainerSportRoles(sports)));
+      }, name, row.headline.trim() || trainerIntroPhrase(trainerSportRoles(sports)));
       const image = cardFace(row.avatarPath, row.photos)
         ? publicAssetUrl(trainerShareImagePath(row.slug, row.updatedAt.toISOString()))
         : null;

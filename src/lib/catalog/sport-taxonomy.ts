@@ -26,6 +26,12 @@ export type SportTaxonomyChild = {
   titleGenitive?: string;
   /** Genitive that follows «тренер» directly: «тренер тренажёрного зала». */
   titleBare?: string;
+  /** Profession in the profile line. The default is «Тренер». */
+  titleRole?: string;
+  /** Profile line when the words are not «{роль} по {вид}»: «фитнес-тренер». */
+  titleLine?: string;
+  /** Words after the profession, without «по». The catalog phrase stays on `titleGenitive`. */
+  titleRest?: string;
   description?: string;
   aliases?: string[];
 };
@@ -34,6 +40,10 @@ export type TopLevelSportCategory = {
   slug: string;
   label: string;
   titleGenitive: string;
+  /** Profile line for the whole section, such as «фитнес-тренер». */
+  titleLine?: string;
+  /** Profession in the profile line. The default is «Тренер». */
+  titleRole?: string;
   iconKey: SportIconKey;
   description: string;
   /** Search phrases for this page. Not separate URLs. */
@@ -98,6 +108,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     slug: "fitnes",
     label: "Фитнес",
     titleGenitive: "фитнесу",
+    titleLine: "фитнес-тренер",
     iconKey: "gymFitness",
     description: "Тренажёрный зал, ОФП, кроссфит, джампинг, TRX, тяжёлая атлетика, пауэрлифтинг, силовой тренинг, бодибилдинг, коррекция фигуры и питание.",
     aliases: ["фитнес", "fitness", "персональный тренер", "кардио", "тренировки 50+"],
@@ -111,6 +122,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         label: "Тренажёрный зал",
         titleGenitive: "тренажёрному залу",
         titleBare: "тренажёрного зала",
+        titleRole: "Инструктор",
         aliases: ["тренажерный зал", "тренажёрный зал", "тренажерка", "спортзал", "gym"],
       },
       {
@@ -132,18 +144,21 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         slug: "krossfit",
         label: "Кроссфит",
         titleGenitive: "кроссфиту",
+        titleLine: "кроссфит-тренер",
         aliases: ["crossfit", "функциональные тренировки", "функциональный тренинг"],
       },
       {
         slug: "dzhamping",
         label: "Джампинг",
         titleGenitive: "джампингу",
+        titleRole: "Инструктор",
         aliases: ["jumping"],
       },
       {
         slug: "trx",
         label: "TRX",
         titleGenitive: "TRX",
+        titleLine: "инструктор TRX",
         aliases: ["подвесные петли"],
       },
       {
@@ -230,7 +245,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         titleGenitive: "плаванию",
         aliases: ["обучение плаванию", "научиться плавать", "спортивное плавание", "плавание для детей", "swimming"],
       },
-      { slug: "akvaaerobika", label: "Аквааэробика", titleGenitive: "аквааэробике", aliases: ["аквафитнес"] },
+      { slug: "akvaaerobika", label: "Аквааэробика", titleGenitive: "аквааэробике", titleRole: "Инструктор", aliases: ["аквафитнес"] },
       { slug: "pryzhki", label: "Прыжки в воду", titleGenitive: "прыжкам в воду" },
       {
         slug: "sinhronnoe",
@@ -447,6 +462,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         slug: "aerobika",
         label: "Спортивная аэробика",
         titleGenitive: "спортивной аэробике",
+        titleRole: "Инструктор",
       },
     ],
   }),
@@ -462,12 +478,13 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     image: "/images/categories/yoga-pilates-i-rastyazhka-card.webp",
     featuredImage: "/images/ideogram/yoga2.png",
     children: [
-      { slug: "yoga", label: "Йога", titleGenitive: "йоге", aliases: ["хатха", "виньяса", "йога для начинающих"] },
-      { slug: "pilates", label: "Пилатес", titleGenitive: "пилатесу", aliases: ["Pilates"] },
+      { slug: "yoga", label: "Йога", titleGenitive: "йоге", titleRole: "Инструктор", aliases: ["хатха", "виньяса", "йога для начинающих"] },
+      { slug: "pilates", label: "Пилатес", titleGenitive: "пилатесу", titleRole: "Инструктор", aliases: ["Pilates"] },
       {
         slug: "stretching",
         label: "Растяжка",
         titleGenitive: "растяжке",
+        titleRole: "Инструктор",
         aliases: ["стретчинг", "stretching", "здоровая спина", "МФР", "миофасциальный релиз", "суставная гимнастика"],
       },
     ],
@@ -544,6 +561,8 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         slug: "lfk",
         label: "ЛФК",
         titleGenitive: "лечебной физической культуре",
+        titleRole: "Инструктор",
+        titleRest: "ЛФК",
         aliases: ["лечебная физкультура", "кинезитерапия", "адаптивная физкультура"],
       },
       {
@@ -556,6 +575,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         slug: "massazh",
         label: "Массаж",
         titleGenitive: "массажу",
+        titleLine: "массажист",
         aliases: ["спортивный массаж", "расслабляющий массаж", "классический массаж"],
       },
       {
@@ -568,6 +588,8 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         slug: "ofk",
         label: "ОФК",
         titleGenitive: "оздоровительной физической культуре",
+        titleRole: "Инструктор",
+        titleRest: "ОФК",
         aliases: ["оздоровительная физическая культура", "оздоровительная физкультура"],
       },
     ],
@@ -764,16 +786,29 @@ export function sportDative(sport: { slug: string; label: string }): string {
 export type TrainerSportRole = {
   text: string;
   po: boolean;
+  /** Empty when `text` is already the whole line, such as «фитнес-тренер». */
+  lead: string;
 };
 
-/** Words after «Тренер». A bare genitive drops «по»: «тренажёрного зала». */
+function sameSportLabel(sport: { label: string }, label: string | undefined) {
+  return Boolean(label) && sport.label.trim() === label;
+}
+
+/** Words of one sport in the profile line. */
 export function trainerSportRoles(sports: Array<{ slug: string; label: string }>): TrainerSportRole[] {
   return sports.slice(0, MAX_TRAINER_SPORTS).map((sport) => {
-    const bare = getSportTaxonomyChild(sport.slug)?.titleBare?.trim();
-    if (bare && sport.label.trim() === getSportTaxonomyChild(sport.slug)?.label) {
-      return { text: bare, po: false };
-    }
-    return { text: sportDative(sport), po: true };
+    const child = getSportTaxonomyChild(sport.slug);
+    const section = getTopLevelSportCategory(sport.slug);
+    const onChild = sameSportLabel(sport, child?.label);
+    const onSection = sameSportLabel(sport, section?.label) && child?.label !== section?.label;
+    const line = (onChild ? child?.titleLine : onSection ? section?.titleLine : "")?.trim() ?? "";
+    if (line) return { text: line, po: false, lead: "" };
+    const lead = ((onChild ? child?.titleRole : onSection ? section?.titleRole : "") || "Тренер").trim();
+    const rest = (onChild ? child?.titleRest : "")?.trim() ?? "";
+    if (rest) return { text: rest, po: false, lead };
+    const bare = (onChild ? child?.titleBare : "")?.trim() ?? "";
+    if (bare) return { text: bare, po: false, lead };
+    return { text: sportDative(sport), po: true, lead };
   });
 }
 
@@ -787,13 +822,44 @@ function joinRu(items: string[]): string {
   return `${items.slice(0, -1).join(", ")} и ${items[items.length - 1]}`;
 }
 
-/** «Тренер по боксу и фитнесу» or «Тренер тренажёрного зала». */
+function capRu(value: string) {
+  const chars = [...value];
+  if (chars.length === 0) return value;
+  chars[0] = chars[0].toLocaleUpperCase("ru");
+  return chars.join("");
+}
+
+function roleGroups(roles: TrainerSportRole[]) {
+  const groups: TrainerSportRole[][] = [];
+  for (const role of roles) {
+    const last = groups[groups.length - 1];
+    if (last && role.lead && last[0]?.lead === role.lead) last.push(role);
+    else groups.push([role]);
+  }
+  return groups;
+}
+
+function groupPhrase(group: TrainerSportRole[], first: boolean, commasOnly: boolean) {
+  const join = commasOnly ? (items: string[]) => items.join(", ") : joinRu;
+  const lead = group[0]?.lead ?? "";
+  if (!lead) {
+    const text = group[0]?.text ?? "";
+    return first ? capRu(text) : text;
+  }
+  const name = first ? capRu(lead) : lead.toLocaleLowerCase("ru");
+  const parts = group.map((role) => (role.po ? `по ${role.text}` : role.text));
+  if (group.every((role) => role.po)) return `${name} по ${join(group.map((role) => role.text))}`;
+  if (group.every((role) => !role.po)) return `${name} ${join(group.map((role) => role.text))}`;
+  return `${name} ${join(parts)}`;
+}
+
+/** «Тренер по боксу», «Фитнес-тренер», or «Инструктор тренажёрного зала». */
 export function trainerIntroPhrase(roles: TrainerSportRole[]): string {
   const list = roles.filter((role) => role.text.trim()).slice(0, MAX_TRAINER_SPORTS);
   if (list.length === 0) return "Тренер";
-  if (list.every((role) => role.po)) return `Тренер по ${joinRu(list.map((role) => role.text))}`;
-  if (list.every((role) => !role.po)) return `Тренер ${joinRu(list.map((role) => role.text))}`;
-  return `Тренер ${joinRu(list.map((role) => (role.po ? `по ${role.text}` : role.text)))}`;
+  const groups = roleGroups(list);
+  if (groups.length === 1) return groupPhrase(groups[0] ?? [], true, false);
+  return joinRu(groups.map((group, index) => groupPhrase(group, index === 0, true)));
 }
 
 /** The profile line: one sport, «а и б», or «а, б и в». */

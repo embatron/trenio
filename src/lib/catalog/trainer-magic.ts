@@ -99,6 +99,7 @@ function profileToPublished(row: TrainerProfile): PublishedTrainer {
     sports: sports.length ? sports : primary.slug ? [primary] : [],
     primarySport: primary,
     bio: row.bio,
+    headline: row.headline,
     audiences: effectiveAudiences(row.audiences),
     formats: row.formats,
     phone: row.phone,

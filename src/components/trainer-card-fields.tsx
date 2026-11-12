@@ -567,6 +567,15 @@ export function TrainerCardFields({
             </label>
           </div>
         )}
+        <label>
+          <span>Заголовок</span>
+          <input
+            value={values.headline}
+            maxLength={200}
+            placeholder="Фитнес-тренер"
+            onChange={(event) => patch({ headline: event.target.value })}
+          />
+        </label>
         {self ? (
           <div>
             <span className="cabinet-media__label">Как меня представить</span>
@@ -578,22 +587,11 @@ export function TrainerCardFields({
             />
           </div>
         ) : (
-          <>
-            <label>
-              <span>Заголовок</span>
-              <input
-                value={values.headline}
-                maxLength={200}
-                placeholder="Тренер по боксу"
-                onChange={(event) => patch({ headline: event.target.value })}
-              />
-            </label>
-            <ReviewEditor
-              value={values.bio}
-              onChange={(bio) => patch({ bio })}
-              placeholder="Коротко о себе"
-            />
-          </>
+          <ReviewEditor
+            value={values.bio}
+            onChange={(bio) => patch({ bio })}
+            placeholder="Коротко о себе"
+          />
         )}
       </ProfileSection>
       <ProfileSection id="trainer-docs" title="Документы (диплом, курсы и пр.)">

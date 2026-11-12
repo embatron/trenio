@@ -25,7 +25,7 @@ export type TrainerSeoSource = {
   updatedAt?: string;
   /** Public catalog page. A draft, a preview, and a staff look stay out of the index and emit no graph. */
   index?: boolean;
-  /** Full role line when a sport drops «по», such as «Тренер тренажёрного зала». */
+  /** Stored profile line, such as «Фитнес-тренер» or «Инструктор тренажёрного зала». */
   intro?: string;
 };
 

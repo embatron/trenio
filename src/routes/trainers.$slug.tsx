@@ -64,7 +64,8 @@ type Trainer = {
   sports: string[];
   sportLabel: string;
   sportDatives: string[];
-  sportRoles: Array<{ text: string; po: boolean }>;
+  sportRoles: Array<{ text: string; po: boolean; lead: string }>;
+  headline: string;
   primarySport: { slug: string; parentSlug: string; label: string };
   sportRefs: Array<{ slug: string; parentSlug: string; label: string }>;
   city: { slug: string; label: string };
@@ -148,6 +149,7 @@ function toTrainer(
     sportLabel: sportLine(trainer),
     sportDatives: trainerSportDatives(trainer.sports),
     sportRoles: trainerSportRoles(trainer.sports),
+    headline: (trainer.headline ?? "").trim() || trainerIntroPhrase(trainerSportRoles(trainer.sports)),
     primarySport: trainer.primarySport,
     sportRefs: trainer.sports,
     city: trainer.city,
@@ -261,7 +263,7 @@ export const Route = createFileRoute("/trainers/$slug")({
       name: t.name,
       sports: t.sports,
       sportDatives: t.sportDatives,
-      intro: trainerIntroPhrase(t.sportRoles),
+      intro: t.headline,
       primarySport: t.primarySport,
       city: t.city,
       about: [t.about[0] ?? "", t.sessions],
@@ -1082,21 +1084,9 @@ function TrainerPage() {
             ) : null}
             <header className="profile-intro">
               <div className="profile-identity">
-                {t.sportRoles.length > 0 ? (
+                {t.headline && t.headline !== "Тренер" ? (
                   <p className="profile-identity__sport">
-                    Тренер{" "}
-                    {t.sportRoles.every((role) => role.po) ? "по " : null}
-                    {t.sportRoles.map((role, index) => {
-                      const sep = index === 0 ? "" : index === t.sportRoles.length - 1 ? " и " : ", ";
-                      const sharedPo = t.sportRoles.every((item) => item.po);
-                      return (
-                        <span key={`${role.text}-${index}`}>
-                          {sep}
-                          {!sharedPo && role.po ? "по " : ""}
-                          <span className="profile-identity__sport-name">{role.text}</span>
-                        </span>
-                      );
-                    })}
+                    <span className="profile-identity__sport-name">{t.headline}</span>
                   </p>
                 ) : null}
                 <div className="profile-identity__title">

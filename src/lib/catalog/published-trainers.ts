@@ -28,6 +28,8 @@ export type PublishedTrainer = {
   sports: PublishedSport[];
   primarySport: PublishedSport;
   bio: string;
+  /** Line above the name. Empty until the sport formula or a person fills it. */
+  headline?: string;
   audiences: TrainerAudience[];
   formats: TrainerFormat[];
   phone: string;

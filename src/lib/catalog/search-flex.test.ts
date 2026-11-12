@@ -165,18 +165,56 @@ test("a section can be stored, and the gym phrase drops по", () => {
   );
   assert.equal(
     trainerIntroPhrase(trainerSportRoles([{ slug: "fitnes", label: "Фитнес" }])),
-    "Тренер по фитнесу",
+    "Фитнес-тренер",
   );
   assert.equal(
     trainerIntroPhrase(trainerSportRoles([{ slug: "trenazherka", label: "Тренажёрный зал" }])),
-    "Тренер тренажёрного зала",
+    "Инструктор тренажёрного зала",
+  );
+  assert.equal(
+    trainerIntroPhrase(trainerSportRoles([{ slug: "krossfit", label: "Кроссфит" }])),
+    "Кроссфит-тренер",
+  );
+  assert.equal(
+    trainerIntroPhrase(trainerSportRoles([
+      { slug: "yoga", label: "Йога" },
+      { slug: "pilates", label: "Пилатес" },
+    ])),
+    "Инструктор по йоге и пилатесу",
+  );
+  assert.equal(
+    trainerIntroPhrase(trainerSportRoles([
+      { slug: "ofk", label: "ОФК" },
+      { slug: "lfk", label: "ЛФК" },
+    ])),
+    "Инструктор ОФК и ЛФК",
+  );
+  assert.equal(
+    trainerIntroPhrase(trainerSportRoles([{ slug: "massazh", label: "Массаж" }])),
+    "Массажист",
+  );
+  assert.equal(
+    trainerIntroPhrase(trainerSportRoles([
+      { slug: "beg", label: "Бег" },
+      { slug: "ofp", label: "ОФП" },
+    ])),
+    "Тренер по бегу и общефизической подготовке",
   );
   assert.equal(
     trainerIntroPhrase(trainerSportRoles([
       { slug: "trenazherka", label: "Тренажёрный зал" },
       { slug: "nutriciolog", label: "Питание" },
     ])),
-    "Тренер тренажёрного зала и по питанию",
+    "Инструктор тренажёрного зала и тренер по питанию",
+  );
+  assert.equal(
+    trainerIntroPhrase(trainerSportRoles([
+      { slug: "bodibilding", label: "Бодибилдинг" },
+      { slug: "silovoj-trening", label: "Силовой тренинг" },
+      { slug: "ofp", label: "ОФП" },
+      { slug: "fitnes", label: "Фитнес" },
+    ])),
+    "Тренер по бодибилдингу, силовому тренингу, общефизической подготовке и фитнес-тренер",
   );
   assert.deepEqual(trainerSportCityLocation("minsk", { slug: "fitnes", parentSlug: "fitnes" }), {
     to: "/city/$slug/$sport",

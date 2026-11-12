@@ -11,7 +11,7 @@ import { coverPosition } from "../../../../src/lib/images/variants.ts";
 import { formatBelarusPhone } from "../../../../src/lib/auth/phone.ts";
 import { inferTrainerGender } from "../../../../src/lib/catalog/trainer-gender.ts";
 import { foldYo, prepareSportText, sportAliasRegex } from "../../../../src/lib/catalog/sport-alias.ts";
-import { TOP_LEVEL_SPORT_CATEGORIES } from "../../../../src/lib/catalog/sport-taxonomy.ts";
+import { TOP_LEVEL_SPORT_CATEGORIES, trainerIntroPhrase, trainerSportRoles } from "../../../../src/lib/catalog/sport-taxonomy.ts";
 import { trainerPersonKey } from "../../../../src/lib/catalog/trainer-slugs.ts";
 import { AuthError } from "../../../../src/lib/auth/errors.ts";
 import { isSpecificAddress } from "../../../../src/lib/geo/schemas.ts";
@@ -1133,6 +1133,13 @@ async function saveOne(rawPath: string, settlements: string[]) {
     pins.length === 0 ? "pinnedPosts" : "",
   ].filter(Boolean);
 
+  const storedSports = [primary, ...sports.filter((sport) => sport.slug !== primary?.slug)]
+    .filter((sport): sport is SportHit => Boolean(sport))
+    .slice(0, 4);
+  const headline = storedSports.length
+    ? trainerIntroPhrase(trainerSportRoles(storedSports.map((sport) => ({ slug: sport.slug, label: sport.label }))))
+    : "";
+
   const draft = {
     source: "instagram",
     sourceUrl: `https://www.instagram.com/${handle}/`,
@@ -1146,7 +1153,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
     fullName,
     gender,
     nameQuotes,
-    headline: primary ? `Тренер по ${primary.titleGenitive}` : "",
+    headline: headline === "Тренер" ? "" : headline,
     sourceBio: storedSourceBio,
     sourceAbout: aboutFrames.map(stripPhones),
     sourceThreads: storedThreads,
@@ -1159,7 +1166,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
       caption: cleanLine(post.caption || ""),
       imageText: (post.imageText || []).map(cleanLine).filter(Boolean),
     })),
-    sports: [primary, ...sports.filter((sport) => sport.slug !== primary?.slug)].filter((sport): sport is SportHit => Boolean(sport)).slice(0, 4).map((sport) => ({
+    sports: storedSports.map((sport) => ({
       slug: sport.slug,
       parentSlug: sport.parentSlug,
       label: sport.label,

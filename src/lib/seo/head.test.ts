@@ -12,7 +12,9 @@ import {
   getSportTaxonomyChildInCategory,
   getTopLevelSportCategory,
   trainerByPhrase,
+  trainerIntroPhrase,
   trainerSportDatives,
+  trainerSportRoles,
 } from "@/lib/catalog/sport-taxonomy";
 import { catalogPageHead, categoryRouteHead, cityCatalogDescription } from "@/lib/seo/catalog";
 import { seoHead } from "@/lib/seo/head";
@@ -185,11 +187,19 @@ test("a trainer title lists every sport and the city", () => {
     "Тренер по боксу Артём Романович в Минске",
   );
   assert.equal(
-    trainerDocumentPhrase(trainerSportDatives([
-      { slug: "ofk", label: "ОФК" },
-      { slug: "lfk", label: "ЛФК" },
-    ]), { slug: "gomel", label: "Гомель" }),
-    "Тренер по оздоровительной физической культуре и лечебной физической культуре в Гомеле",
+    trainerDocumentPhrase(
+      trainerSportDatives([
+        { slug: "ofk", label: "ОФК" },
+        { slug: "lfk", label: "ЛФК" },
+      ]),
+      { slug: "gomel", label: "Гомель" },
+      "",
+      trainerIntroPhrase(trainerSportRoles([
+        { slug: "ofk", label: "ОФК" },
+        { slug: "lfk", label: "ЛФК" },
+      ])),
+    ),
+    "Инструктор ОФК и ЛФК в Гомеле",
   );
   assert.equal(trainerByPhrase(["боксу"]), "Тренер по боксу");
   assert.equal(
