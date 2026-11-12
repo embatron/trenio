@@ -416,6 +416,16 @@ html.is-staff-layout {
 .trainer-card__head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
 .trainer-name { display: flex; flex-direction: column; align-items: flex-start; gap: 0; min-width: 0; max-width: 100%; }
 .trainer-name__line { display: block; min-width: 0; max-width: 100%; overflow: visible; text-overflow: clip; white-space: normal; overflow-wrap: anywhere; }
+.trainer-name__text { min-width: 0; overflow-wrap: anywhere; }
+.trainer-presence {
+  display: inline-block; vertical-align: middle; margin-left: 6px;
+  position: relative; z-index: 2;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--muted);
+}
+a.trainer-presence { text-decoration: none; }
+.trainer-presence--online { background: #1f9d55; }
+.trainer-presence--away { background: #e3941a; }
 .trainer-card__name { grid-column: 1 / -1; grid-row: 1; margin: 0; min-width: 0; font-size: 13px; line-height: 1.2; letter-spacing: 0; font-weight: var(--fw-title); color: var(--dark); transition: color 0.16s ease; }
 @media (min-width: 768px) {
   .trainer-card__name { font-size: 14px; }

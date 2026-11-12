@@ -41,6 +41,7 @@ import { ReviewEditor } from "@/components/review-editor";
 import { ReviewExcerpt, ReviewHtml } from "@/components/review-html";
 import { compactReviewHtml, reviewPlainText } from "@/lib/catalog/review-html";
 import { CatalogTrainerCard, TrainerSportLink, type CatalogTrainerCardData } from "@/components/catalog-trainer-card";
+import { TrainerPresenceMark } from "@/components/trainer-presence";
 import { TrainerName } from "@/components/trainer-name";
 import { TrainerDocuments } from "@/components/trainer-documents";
 import type { TrainerDocument } from "@/lib/catalog/certificate-preview";
@@ -1091,7 +1092,11 @@ function TrainerPage() {
                 ) : null}
                 <div className="profile-identity__title">
                   <h1 className="profile-identity__name">
-                    <TrainerName firstName={t.firstName} lastName={t.lastName} />
+                    <TrainerName
+                      firstName={t.firstName}
+                      lastName={t.lastName}
+                      afterName={<TrainerPresenceMark slug={t.slug} />}
+                    />
                   </h1>
                 </div>
                 <div className="profile-identity__meta">
