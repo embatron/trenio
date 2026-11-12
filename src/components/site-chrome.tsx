@@ -138,13 +138,13 @@ body.is-search-docked .site-header__search {
 .icon-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .favorite-count { position: relative; width: 44px; height: 44px; }
 .favorite-count__n {
-  position: absolute; top: 2px; right: 0; min-width: 16px; height: 16px; padding: 0 4px;
+  position: absolute; top: 2px; right: 8px; min-width: 16px; height: 16px; padding: 0 4px;
   border-radius: 999px; background: transparent; color: var(--muted);
   font-size: 10px; font-weight: var(--fw-title); line-height: 16px; text-align: center;
 }
 .favorite-count:not(.message-count) .favorite-count__n {
-  top: 7px; right: 9px; min-width: 0; height: auto; padding: 0; border-radius: 0;
-  background: transparent; color: var(--muted); line-height: 1;
+  top: 8px; right: 14px; min-width: 0; height: auto; padding: 0; border-radius: 0;
+  background: transparent; color: var(--muted); font-size: 11px; font-weight: 500; line-height: 1;
 }
 .message-count.has-items .favorite-count__n { background: var(--primary); color: #fff; }
 .message-count.has-items { color: var(--primary); }
