@@ -135,6 +135,64 @@ export function forgetPresence(userId: string, socket: object, now = Date.now())
   void persist(userId, row, now, true);
 }
 
+export type PresenceSample = {
+  userId: string;
+  lastSeenAt: number | null;
+  visible: boolean;
+};
+
+/** Memory wins. Only a visible tab from the last minute counts as online. */
+export function onlineUserIds(input: {
+  now: number;
+  memory: readonly PresenceSample[];
+  stored: readonly PresenceSample[];
+}): string[] {
+  const state = new Map<string, Presence>();
+  for (const row of input.memory) {
+    state.set(row.userId, presenceState({ now: input.now, lastSeenAt: row.lastSeenAt, visible: row.visible }));
+  }
+  for (const row of input.stored) {
+    if (state.has(row.userId)) continue;
+    state.set(row.userId, presenceState({ now: input.now, lastSeenAt: row.lastSeenAt, visible: row.visible }));
+  }
+  return [...state].filter(([, value]) => value === "online").map(([id]) => id);
+}
+
+function presenceVisible(value: boolean | string) {
+  return value === true || value === "t" || value === "true";
+}
+
+/** Accounts with a visible tab in the last minute. An away tab is not included. */
+export async function listOnlineUserIds(now = Date.now()): Promise<string[]> {
+  const memory: PresenceSample[] = [];
+  for (const [userId, row] of store().memory) {
+    memory.push({ userId, lastSeenAt: row.lastSeenAt, visible: row.visible });
+  }
+  const stored: PresenceSample[] = [];
+  try {
+    await ensureTable();
+    if (!store().tableFailed) {
+      const cutoff = new Date(now - PRESENCE_ONLINE_MS).toISOString();
+      const rows = await getDb().execute<{ userId: string; lastSeenAt: Date | string; visible: boolean | string }>(sql`
+        SELECT user_id AS "userId", last_seen_at AS "lastSeenAt", visible
+        FROM user_presence
+        WHERE last_seen_at >= ${cutoff}::timestamptz
+      `);
+      for (const row of rows) {
+        const at = new Date(row.lastSeenAt).getTime();
+        stored.push({
+          userId: row.userId,
+          lastSeenAt: Number.isNaN(at) ? null : at,
+          visible: presenceVisible(row.visible),
+        });
+      }
+    }
+  } catch (error) {
+    logCaught("message", "message.presence", error);
+  }
+  return onlineUserIds({ now, memory, stored });
+}
+
 export function presenceFromMemory(userId: string, now = Date.now()): Presence | null {
   const row = store().memory.get(userId);
   if (!row) return null;

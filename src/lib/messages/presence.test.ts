@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { letterWaitMs, PRESENCE_AWAY_MS, PRESENCE_ONLINE_MS, presenceState } from "@/lib/messages/presence";
+import { letterWaitMs, onlineUserIds, PRESENCE_AWAY_MS, PRESENCE_ONLINE_MS, presenceState } from "@/lib/messages/presence";
 
 const now = 1_700_000_000_000;
 
@@ -20,6 +20,22 @@ test("no report, or a report older than ten minutes, is offline", () => {
   assert.equal(presenceState({ now, lastSeenAt: null, visible: false }), "offline");
   assert.equal(presenceState({ now, lastSeenAt: now - PRESENCE_AWAY_MS - 1, visible: true }), "offline");
   assert.equal(presenceState({ now, lastSeenAt: now - PRESENCE_AWAY_MS - 1, visible: false }), "offline");
+});
+
+test("online ids keep a visible tab and let memory win over a stored row", () => {
+  const ids = onlineUserIds({
+    now,
+    memory: [
+      { userId: "live", lastSeenAt: now - 5_000, visible: true },
+      { userId: "hid", lastSeenAt: now - 5_000, visible: false },
+    ],
+    stored: [
+      { userId: "hid", lastSeenAt: now - 1_000, visible: true },
+      { userId: "saved", lastSeenAt: now - 20_000, visible: true },
+      { userId: "stale", lastSeenAt: now - PRESENCE_ONLINE_MS - 1, visible: true },
+    ],
+  });
+  assert.deepEqual(ids, ["live", "saved"]);
 });
 
 test("a letter waits unless the person is offline", () => {

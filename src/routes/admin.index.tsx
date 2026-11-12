@@ -110,6 +110,13 @@ function AdminOverviewPage() {
 
   return (
     <>
+      <section className="cabinet-card">
+        <h2>Сейчас на сайте</h2>
+        <div className="cabinet-stats cabinet-online">
+          <OnlineGroup people={data.online.trainers} one="тренер онлайн" few="тренера онлайн" many="тренеров онлайн" />
+          <OnlineGroup people={data.online.users} one="пользователь онлайн" few="пользователя онлайн" many="пользователей онлайн" />
+        </div>
+      </section>
       <div className="cabinet-stats">
         <div className="cabinet-stat">
           <StatMark>
@@ -206,6 +213,45 @@ function CountFigure({
       <strong>{value}</strong>
       <span>{label}</span>
       <span className={`cabinet-stat__delta ${delta.className}`}>{delta.text}</span>
+    </div>
+  );
+}
+
+function OnlineGroup({
+  people,
+  one,
+  few,
+  many,
+}: {
+  people: Array<{ id: string; name: string; kind: "public" | "trainer" | "account"; slug: string }>;
+  one: string;
+  few: string;
+  many: string;
+}) {
+  return (
+    <div className="cabinet-stat">
+      <strong>{people.length}</strong>
+      <span>{pluralRu(people.length, one, few, many)}</span>
+      {people.length ? (
+        <ul className="cabinet-stat__leaders">
+          {people.map((person) => (
+            <li key={person.id}>
+              {person.kind === "public" ? (
+                <a className="cabinet-stat__who" href={`/trainers/${person.slug}`} target="_blank" rel="noopener noreferrer">
+                  {person.name}
+                  <OpenMark />
+                </a>
+              ) : person.kind === "trainer" ? (
+                <Link to="/admin/trainers/$slug" params={{ slug: person.slug }} className="cabinet-stat__who">{person.name}</Link>
+              ) : (
+                <Link to="/admin/accounts/$id" params={{ id: person.id }} className="cabinet-stat__who">{person.name}</Link>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <span className="cabinet-stat__note">Сейчас никого</span>
+      )}
     </div>
   );
 }
