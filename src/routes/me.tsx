@@ -23,10 +23,10 @@ const ME_PAGE_SECTIONS = [
   ...TRAINER_PROFILE_SECTIONS,
 ];
 
-const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: MeSectionPath; sections?: typeof ME_PAGE_SECTIONS }> = [
+const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: MeSectionPath; sections?: typeof ME_PAGE_SECTIONS; sectionsMobile?: boolean }> = [
   { id: "overview", label: "Общая панель", icon: "overview", to: "/me" },
   { id: "stats", label: "Моя статистика", icon: "stats", to: "/me/stats" },
-  { id: "profile", label: "Моя страница", icon: "trainers", to: "/me/profile", sections: ME_PAGE_SECTIONS },
+  { id: "profile", label: "Моя страница", icon: "edit", to: "/me/profile", sections: ME_PAGE_SECTIONS, sectionsMobile: false },
   { id: "messages", label: "Мои сообщения", icon: "messages", to: "/me/messages" },
   { id: "reviews", label: "Мои отзывы", icon: "reviews", to: "/me/reviews" },
   { id: "likes", label: "Мои лайкосы", icon: "likes", to: "/me/likes" },

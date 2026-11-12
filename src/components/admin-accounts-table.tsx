@@ -1,6 +1,7 @@
 import { Link, useRouteContext } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 
+import { CabinetFilterBar } from "@/components/cabinet";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { TrainerName } from "@/components/trainer-name";
 import { UserAvatar } from "@/components/user-avatar";
@@ -84,7 +85,7 @@ export function AdminAccountsTable({ accounts }: { accounts: AdminAccount[] }) {
         Аккаунты с подтверждённой почтой, телефоном или Telegram. Карточки тренеров без аккаунта смотрите в разделе{" "}
         <Link to="/admin/trainers">Тренеры</Link>.
       </p>
-      <div className="cabinet-filters">
+      <CabinetFilterBar active={[query.trim(), role, status].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}>
         <label className="cabinet-filters__search">
           <span>Поиск</span>
           <input
@@ -122,7 +123,7 @@ export function AdminAccountsTable({ accounts }: { accounts: AdminAccount[] }) {
             <option value="name">По имени</option>
           </select>
         </label>
-      </div>
+      </CabinetFilterBar>
       {accounts.length === 0 ? (
         <p className="cabinet-empty">Подтверждённых аккаунтов пока нет.</p>
       ) : visible.length === 0 ? (

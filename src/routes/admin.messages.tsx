@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 
+import { CabinetFilterBar } from "@/components/cabinet";
 import { ConversationList } from "@/components/messages/conversation-list";
 import { ConversationThread, type ThreadMessage } from "@/components/messages/conversation-thread";
 import { useNoteMessagesRead, useRefreshMessages } from "@/components/messages/messages-live";
@@ -416,7 +417,7 @@ function ReportQueue({
 
   return (
     <>
-      <div className="cabinet-filters">
+      <CabinetFilterBar active={status ? 1 : 0}>
         <label>
           <span>Статус</span>
           <select value={status} onChange={(event) => setStatus(event.target.value as "" | ReportRow["status"])}>
@@ -426,7 +427,7 @@ function ReportQueue({
             <option value="dismissed">Отклонённые</option>
           </select>
         </label>
-      </div>
+      </CabinetFilterBar>
       {actionError ? <p className="cabinet-empty">{actionError}</p> : null}
       {visible.length === 0 ? <p className="cabinet-empty">Нет жалоб с таким фильтром.</p> : (
         <>

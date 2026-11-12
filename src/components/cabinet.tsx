@@ -4,38 +4,13 @@ import { createPortal } from "react-dom";
 
 import { CredentialsRequiredDialog } from "@/components/auth/credentials-required-dialog";
 import { DoorPasswordDialog } from "@/components/auth/door-password-dialog";
+import { CabinetMark, type CabinetIcon } from "@/components/cabinet-mark";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { TrainerName } from "@/components/trainer-name";
 import { UserAvatar } from "@/components/user-avatar";
-import { MESSAGE_ENVELOPE } from "@/components/messages/direct-mark";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
 
-const ICONS = {
-  overview: "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z",
-  stats: "M4 19V5M4 19h16M8 15l3.5-4 3 2.5L19 8",
-  trainers: "M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0",
-  reviews: "M5 6h14v9H8l-3 3V6z",
-  accounts: "M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01",
-  profile: "M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0",
-  favorites: "M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z",
-  likes: "M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z",
-  bookings: "M7 3v3M17 3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z",
-  finance: "M4 5h16v14H4zM4 9h16M8 13h5",
-  messages: MESSAGE_ENVELOPE,
-  contacts: "M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM9 8h6M9 12h6M9 16h4",
-  site: "M6 3h8l5 5v13H6zM14 3v5h5M8 13h8M8 17h5",
-} as const;
-
-export type CabinetIcon = keyof typeof ICONS;
-
-/** The same line mark used by cabinet sidebars and cabinet content. */
-export function CabinetMark({ icon, className }: { icon: CabinetIcon; className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
-      <path d={ICONS[icon]} />
-    </svg>
-  );
-}
+export { CabinetMark, type CabinetIcon };
 
 export const REVIEW_STATUS_LABEL = {
   pending: "На модерации",
@@ -186,11 +161,33 @@ export type CabinetNavItem = {
   to?: AccountSectionPath | AdminSectionPath | TrainerSectionPath | MeSectionPath;
   search?: { tab: "overview" | "settings" | "card" | "reviews" };
   sections?: readonly CabinetSectionLink[];
+  /** In-page sections stay in the wide menu and stay off the phone menu. */
+  sectionsMobile?: boolean;
   pages?: readonly CabinetNavPage[];
 };
 
 export function CabinetStyles() {
   return <style dangerouslySetInnerHTML={{ __html: CABINET_CSS }} />;
+}
+
+/** Admin table filters start closed, the same way the map and a category do. */
+export function CabinetFilterBar({ children, active = 0 }: { children: ReactNode; active?: number }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="cabinet-filter-bar">
+      <button
+        type="button"
+        className={open ? "is-open" : undefined}
+        aria-expanded={open}
+        onClick={() => setOpen((value) => !value)}
+      >
+        Фильтры
+        {active > 0 ? <span className="cabinet-filter-bar__count">{active}</span> : null}
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+      </button>
+      {open ? <div className="cabinet-filters">{children}</div> : null}
+    </div>
+  );
 }
 
 /** Unread messages use the brand color. Other cabinet counts stay muted. */
@@ -381,8 +378,7 @@ export function CabinetShell({
   }
 
   const currentItem = items.find((item) => item.id === active);
-  const sectionHere = currentItem?.sections?.find((section) => section.id === currentSection);
-  const toggleLabel = sectionHere?.label ?? pageHere?.label ?? currentItem?.label ?? "Разделы";
+  const toggleLabel = pageHere?.label ?? currentItem?.label ?? "Разделы";
   const toggleBadge = pageHere?.badge ?? currentItem?.badge;
   const toggleBadgeId = pageHere?.id ?? currentItem?.id ?? "";
 
@@ -397,7 +393,7 @@ export function CabinetShell({
               {lede ? <p>{lede}</p> : null}
             </div>
             <div className="cabinet-id">
-              <UserAvatar name={name} src={avatarUrl} size={44} />
+              <UserAvatar name={name} src={avatarUrl} size={36} />
               <div>
                 {publicSlug ? (
                   <a className="cabinet-id__line" href={`/trainers/${publicSlug}`} target="_blank" rel="noopener noreferrer" title="Открыть публичный профиль">
@@ -518,7 +514,7 @@ export function CabinetShell({
                 })}
               </div>
               {sectionKey ? (
-                <div className="cabinet-nav__sub" aria-label="Разделы профиля">
+                <div className={items.find((item) => item.id === active)?.sectionsMobile === false ? "cabinet-nav__sub cabinet-nav__sub--sections" : "cabinet-nav__sub"} aria-label="Разделы профиля">
                   <span className="cabinet-nav__mark" aria-hidden="true" />
                   {items.find((item) => item.id === active)?.sections?.map((section) => (
                     <a
@@ -557,7 +553,7 @@ export function CabinetShell({
 
 const CABINET_CSS = `
 .cabinet-title { display: grid; gap: 4px; }
-.cabinet-title h1 { margin: 0; font-size: 18px; letter-spacing: var(--tracking-heading); font-weight: var(--fw-heading); color: color-mix(in srgb, var(--dark) 35%, var(--muted)); line-height: 1.25; }
+.cabinet-title h1 { margin: 0; font-size: 16px; letter-spacing: var(--tracking-heading); font-weight: var(--fw-heading); color: color-mix(in srgb, var(--dark) 35%, var(--muted)); line-height: 1.25; }
 .cabinet-title p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.35; }
 .cabinet-side {
   display: grid; gap: 14px; align-content: start; align-self: start;
@@ -565,14 +561,14 @@ const CABINET_CSS = `
   max-height: calc(100dvh - var(--cabinet-sticky-top, 96px) - 16px); overflow: auto;
   padding: 16px; border: 1px solid var(--line); border-radius: var(--card-radius); background: var(--white);
 }
-.cabinet-id { display: flex; align-items: center; gap: 12px; }
+.cabinet-id { display: flex; align-items: center; gap: 10px; }
 .cabinet-id > div { display: grid; gap: 2px; min-width: 0; }
-.cabinet-id__mark { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgba(var(--primary-rgb), 0.12); color: var(--primary); font-weight: var(--fw-title); object-fit: cover; }
+.cabinet-id__mark { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: rgba(var(--primary-rgb), 0.12); color: var(--primary); font-weight: var(--fw-title); object-fit: cover; }
 .cabinet-id__line { display: flex; align-items: center; gap: 0; min-width: 0; color: inherit; text-decoration: none; }
 a.cabinet-id__line:hover strong,
 a.cabinet-id__line:hover .cabinet-id__open { color: var(--primary); }
 a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
-.cabinet-id strong { display: block; min-width: 0; color: var(--dark); font-size: 16px; font-weight: var(--fw-title); line-height: 1.2; }
+.cabinet-id strong { display: block; min-width: 0; color: var(--dark); font-size: 14px; font-weight: var(--fw-title); line-height: 1.2; }
 .cabinet-id > div > span { margin: 0; line-height: 1.3; }
 .cabinet-id__open { position: relative; width: 28px; height: 28px; flex: 0 0 28px; margin-left: 2px; display: grid; place-items: center; border-radius: 50%; color: var(--dark); text-decoration: none; }
 .cabinet-id__open::after { content: ""; position: absolute; inset: -8px; }
@@ -592,14 +588,14 @@ a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
 .cabinet-nav .cabinet-nav__toggle { display: none; width: 100%; justify-content: space-between; border: 1px solid var(--line); background: var(--white); }
 .cabinet-nav .cabinet-nav__toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .cabinet-nav__items { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.cabinet-nav__sub { position: relative; display: grid; gap: 2px; margin: 0 0 4px 18px; padding-left: 10px; border-left: 2px solid rgba(var(--primary-rgb), 0.35); }
+.cabinet-nav__sub { position: relative; display: grid; gap: 2px; margin: 0 0 4px 12px; padding-left: 8px; border-left: 2px solid rgba(var(--primary-rgb), 0.35); }
 .cabinet-nav__mark { position: absolute; left: 0; top: 0; border-radius: var(--radius-control); background: rgba(var(--primary-rgb), 0.1); pointer-events: none; z-index: 0; transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), width 0.42s cubic-bezier(0.22, 1, 0.36, 1), height 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
 @media (prefers-reduced-motion: reduce) {
   .cabinet-nav__mark, .cabinet-nav__chevron { transition: none; }
 }
 .cabinet-nav__body:has(> .cabinet-nav__sub) { display: grid; }
 .cabinet-nav__body:has(> .cabinet-nav__sub) .cabinet-nav__items { display: contents; }
-.cabinet-nav__body > .cabinet-nav__sub { grid-row: var(--nav-sub-row); margin-left: 18px; }
+.cabinet-nav__body > .cabinet-nav__sub { grid-row: var(--nav-sub-row); margin-left: 12px; }
 .cabinet-nav__sub a { position: relative; z-index: 1; color: var(--muted); font-size: 14px; font-weight: var(--fw-ui); transition: color 0.28s ease; }
 .cabinet-nav__sub a.is-current { background: transparent; color: var(--primary); }
 .cabinet-nav button, .cabinet-nav a, .cabinet-logout {
@@ -613,7 +609,7 @@ a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
 .cabinet-nav__badge.is-hot { color: var(--primary); }
 .cabinet-nav button.is-active, .cabinet-nav a.is-active { background: rgba(var(--primary-rgb), 0.1); color: var(--primary-dark); }
 .cabinet-nav button:hover, .cabinet-nav a:hover, .cabinet-logout:hover { background: rgba(var(--dark-rgb), 0.04); }
-.cabinet-nav__sub a { color: var(--muted); font-weight: var(--fw-ui); }
+.cabinet-nav__sub a { padding: 0 8px; color: var(--muted); font-weight: var(--fw-ui); }
 .cabinet-nav__sub a.is-current { background: transparent; color: var(--primary); }
 .cabinet-logout { color: var(--muted); justify-content: center; }
 .cabinet-main { display: grid; gap: 16px; min-width: 0; overflow-x: clip; }
@@ -626,6 +622,7 @@ a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
   .profile-card-enter { animation: none; }
 }
 .cabinet-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--layout-gap); }
+.cabinet-card > .cabinet-online { padding: 16px 18px; }
 .cabinet-stat, .cabinet-card { border: 1px solid var(--line); border-radius: var(--card-radius); background: var(--white); }
 .cabinet-stat { position: relative; padding: 16px 18px; }
 a.cabinet-stat { display: block; color: inherit; text-decoration: none; }
@@ -677,13 +674,15 @@ a.cabinet-stat:hover { border-color: var(--primary); }
 .cabinet-contact__phone { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .cabinet-contact__phone > input { flex: 1 1 auto; width: auto; min-width: 0; height: 44px; min-height: 44px; }
 .cabinet-contact__phone .cabinet-contact__actions { flex: 0 0 auto; flex-wrap: nowrap; align-items: center; }
-.cabinet-contact__phone .cabinet-form__ghost { height: 44px; min-height: 44px; white-space: nowrap; }
+.cabinet-contact__phone .cabinet-form__ghost,
+.cabinet-contact__phone .cabinet-form__cta { height: 44px; min-height: 44px; white-space: nowrap; }
 .cabinet-contact__field { display: grid; gap: 6px; min-width: 0; }
 .cabinet-contact__field span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
 .cabinet-contact__panel input, .cabinet-contact__field input { width: 100%; min-width: 0; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); color: var(--dark); font: inherit; font-size: 16px; }
 .cabinet-contact__panel .cabinet-contact__phone > input { width: auto; flex: 1 1 auto; height: 44px; }
 .cabinet-contact__actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.cabinet-contact .cabinet-form__ghost { min-height: 44px; }
+.cabinet-contact .cabinet-form__ghost,
+.cabinet-contact .cabinet-form__cta { min-height: 44px; }
 .cabinet-mark { display: inline-grid; place-items: center; height: 28px; padding: 0 12px; border-radius: 999px; border: 1px solid transparent; font-size: 12px; font-weight: var(--fw-title); line-height: 1; white-space: nowrap; }
 .cabinet-mark--sign { width: 28px; padding: 0; border-radius: 50%; }
 .cabinet-mark--sign svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
@@ -841,12 +840,25 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-table--trainers .cabinet-social__link { width: 44px; height: 44px; display: grid; place-items: center; color: inherit; }
 .cabinet-table--trainers .cabinet-social__link svg { width: 22px; height: 22px; overflow: visible; }
 .cabinet-table--trainers .cabinet-social__link--line svg { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.cabinet-filter-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+.cabinet-filter-bar > button { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-size: 14px; font-weight: var(--fw-ui); cursor: pointer; }
+.cabinet-filter-bar > button:hover, .cabinet-filter-bar > button.is-open { border-color: var(--primary); color: var(--primary); }
+.cabinet-filter-bar > button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; transition: transform 0.16s ease; }
+.cabinet-filter-bar > button.is-open svg { transform: rotate(180deg); }
+.cabinet-filter-bar__count { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--primary); color: #fff; font-size: 12px; font-weight: var(--fw-title); line-height: 22px; text-align: center; }
 .cabinet-filters { display: flex; flex-wrap: wrap; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+.cabinet-filter-bar .cabinet-filters { flex: 1 1 100%; padding: 4px 0 0; border-bottom: 0; }
 .cabinet-filters label { display: grid; gap: 6px; flex: 1 1 180px; min-width: min(100%, 180px); }
 .cabinet-filters label span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
 .cabinet-filters label.cabinet-filters__search { flex: 1 1 100%; }
 .cabinet-filters select, .cabinet-filters input { width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--text); font: inherit; font-size: 15px; }
 .cabinet-filters p { flex: 1 1 100%; }
+@media (max-width: 767px) {
+  .cabinet-filters select, .cabinet-filters input { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cabinet-filter-bar > button svg { transition: none; }
+}
 .cabinet-person { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .cabinet-person img, .cabinet-person__mark { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex: 0 0 auto; }
 .cabinet-person__mark { display: grid; place-items: center; background: rgba(var(--primary-rgb), 0.12); color: var(--primary); font-weight: var(--fw-title); }
@@ -952,6 +964,8 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-form label { display: grid; gap: 6px; }
 .cabinet-form label span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
 .cabinet-form__label-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.cabinet-form__label-end { display: flex; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; margin-left: auto; }
+.cabinet-form__label-row .cabinet-mark--off { height: auto; min-height: 28px; max-width: 11rem; padding: 6px 10px; white-space: normal; text-align: right; line-height: 1.25; }
 .cabinet-edit { min-height: 44px; padding: 0; border: 0; background: none; color: var(--primary); font: inherit; font-size: 13px; font-weight: var(--fw-title); cursor: pointer; }
 .cabinet-avatar { position: relative; display: flex; align-items: center; gap: 14px; }
 .cabinet-avatar__photo, .cabinet-avatar__mark { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; background: rgba(var(--primary-rgb), 0.12); color: var(--primary); display: grid; place-items: center; font-weight: var(--fw-title); font-size: 24px; }
@@ -968,6 +982,8 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-session__face { color: var(--dark); font-weight: var(--fw-title); }
 .cabinet-form__ghost, label.cabinet-form__ghost { position: relative; display: inline-flex; align-items: center; justify-content: center; width: fit-content; min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-size: 15px; font-weight: var(--fw-title); cursor: pointer; text-decoration: none; }
 .cabinet-form__ghost:disabled { opacity: 0.6; cursor: default; }
+.cabinet-form__cta { display: inline-flex; align-items: center; justify-content: center; width: fit-content; min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-size: 15px; font-weight: var(--fw-title); cursor: pointer; }
+.cabinet-form__cta:disabled { opacity: 0.6; cursor: default; }
 .cabinet-form input, .cabinet-form textarea, .cabinet-form select { width: 100%; min-height: 44px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--text); font: inherit; font-size: 15px; }
 .cabinet-disclose { width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent; color: var(--text); cursor: pointer; display: grid; place-items: center; }
 .cabinet-disclose svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
@@ -1157,7 +1173,7 @@ a.cabinet-icon-btn { text-decoration: none; }
   .cabinet-nav__body:has(> .cabinet-nav__sub) { display: none; }
   .cabinet-nav.is-open .cabinet-nav__body { display: block; }
   .cabinet-nav.is-open .cabinet-nav__body:has(> .cabinet-nav__sub) { display: grid; }
-  .cabinet-logout { display: none; }
+  .cabinet-nav__sub--sections { display: none; }
 }
 .site-text { display: grid; gap: 8px; min-width: 0; }
 .site-text > p, .site-tokens p, .site-parts { margin: 6px 0 0; max-width: 62ch; color: var(--muted); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
@@ -1177,6 +1193,7 @@ a.cabinet-icon-btn { text-decoration: none; }
     max-height: none;
     overflow: visible;
   }
+  .cabinet-logout { display: none; }
   .layout-with-sidebar:has(> .cabinet-side) .cabinet-section,
   .layout-with-sidebar:has(> .cabinet-side) #trainer-page-status,
   .layout-with-sidebar:has(> .cabinet-side) #trainer-contact-block {
@@ -1303,6 +1320,14 @@ a.cabinet-icon-btn { text-decoration: none; }
 @media (max-width: 640px) {
   .cabinet-stats { grid-template-columns: 1fr; }
   .cabinet-contact { grid-template-columns: 28px minmax(0, 1fr) auto; }
+  .cabinet-contact__phone { flex-direction: column; align-items: stretch; }
+  .cabinet-contact__phone > input { width: 100%; flex: 1 1 auto; }
+  .cabinet-contact__phone .cabinet-contact__actions { flex: 1 1 auto; flex-wrap: wrap; width: 100%; }
+  .cabinet-contact__actions { flex-direction: column; align-items: stretch; }
+  .cabinet-contact__phone .cabinet-form__ghost,
+  .cabinet-contact__phone .cabinet-form__cta,
+  .cabinet-contact__actions .cabinet-form__cta,
+  #trainer-contacts .cabinet-form__actions .cabinet-form__cta { width: 100%; white-space: normal; }
   .cabinet-row { align-items: flex-start; flex-direction: column; }
   .cabinet-status-stack { align-items: center; align-self: flex-start; }
   .cabinet-form__row { grid-template-columns: 1fr; }

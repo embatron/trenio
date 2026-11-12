@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 
-import { CabinetModal, REVIEW_STATUS_LABEL, ReviewStatus } from "@/components/cabinet";
+import { CabinetFilterBar, CabinetModal, REVIEW_STATUS_LABEL, ReviewStatus } from "@/components/cabinet";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { ReviewHtml } from "@/components/review-html";
 import { UserAvatar } from "@/components/user-avatar";
@@ -119,7 +119,7 @@ function AdminReviewsPage() {
       <h2>Модерация отзывов</h2>
       {reviews.length === 0 ? <p className="cabinet-empty">Отзывов пока нет.</p> : (
         <>
-          <div className="cabinet-filters">
+          <CabinetFilterBar active={[status, category, sport].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}>
             <label>
               <span>Статус</span>
               <select value={status} onChange={(event) => setStatus(event.target.value as "" | ReviewStatusValue)}>
@@ -163,7 +163,7 @@ function AdminReviewsPage() {
                 <option value="rating-asc">Сначала низкая оценка</option>
               </select>
             </label>
-          </div>
+          </CabinetFilterBar>
           {visible.length === 0 ? <p className="cabinet-empty">Нет отзывов с таким фильтром.</p> : (
         <>
         <div className="cabinet-table-wrap">

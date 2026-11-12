@@ -16,6 +16,7 @@ import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { pluralRu } from "@/lib/ru-plural";
 import { BELARUS_OBLAST_CENTERS } from "@/lib/catalog/city-taxonomy";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
+import { CabinetMark, type CabinetIcon } from "@/components/cabinet-mark";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { InstagramIcon, TelegramIcon, ThreadsIcon } from "@/components/brand-icons";
 import { MESSAGE_ENVELOPE } from "@/components/messages/direct-mark";
@@ -141,8 +142,12 @@ body.is-search-docked .site-header__search {
   border-radius: 999px; background: transparent; color: var(--muted);
   font-size: 10px; font-weight: var(--fw-title); line-height: 16px; text-align: center;
 }
-.favorite-count.has-items .favorite-count__n { background: var(--primary); color: #fff; }
-.favorite-count.has-items { color: var(--primary); }
+.favorite-count:not(.message-count) .favorite-count__n {
+  top: 7px; right: 9px; min-width: 0; height: auto; padding: 0; border-radius: 0;
+  background: transparent; color: var(--muted); line-height: 1;
+}
+.message-count.has-items .favorite-count__n { background: var(--primary); color: #fff; }
+.message-count.has-items { color: var(--primary); }
 .account-face {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   min-width: 44px; min-height: 44px; max-width: 210px;
@@ -177,13 +182,15 @@ body.is-search-docked .site-header__search {
 .account-menu__logout { color: var(--muted); }
 .account-menu__logout:hover { color: var(--primary-dark); }
 .account-menu__logout:disabled { cursor: default; opacity: 0.7; }
-.burger-btn { width: 44px; padding: 0; min-width: 0; }
+.burger-btn { position: relative; width: 44px; padding: 0; min-width: 0; }
 .burger-btn__bars { display: inline-flex; flex-direction: column; gap: 5px; }
 .burger-btn__bars span { width: 20px; height: 2px; background: currentColor; border-radius: 2px; transition: transform 0.2s ease, opacity 0.2s ease; }
 .burger-btn[aria-expanded="true"] .burger-btn__bars span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .burger-btn[aria-expanded="true"] .burger-btn__bars span:nth-child(2) { opacity: 0; }
 .burger-btn[aria-expanded="true"] .burger-btn__bars span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 .burger-btn__label { display: none; }
+.notice-mark { flex: 0 0 auto; color: var(--primary); font-size: 10px; font-weight: var(--fw-heading); line-height: 1; }
+.burger-btn .notice-mark { position: absolute; top: 4px; right: 4px; font-size: 11px; pointer-events: none; }
 
 
 .mega-overlay {
@@ -475,9 +482,8 @@ body.is-search-docked .site-header__search {
   .mega-cat { min-height: 44px; padding: 0 8px; }
   .mega-cat__icon, .mega-cat__icon img { width: 56px; height: 56px; }
   .mega-cats.is-open .mega-sheet { padding-bottom: 18px; }
-  .site-header__nav .account-menu { display: none; }
   .account-face { max-width: 44px; padding-right: 0; }
-  .account-face__nick { display: none; }
+  .account-face__nick, .account-face .notice-mark { display: none; }
   .mega-account, .mega-cities { display: block; }
   .mega-col--cities { display: none; }
   .mega-account, .mega-cities {
@@ -523,7 +529,7 @@ body.is-search-docked .site-header__search {
   .mega-account__list { display: none; margin-top: 4px; }
   .mega-account.is-open .mega-account__list { display: grid; }
   .mega-account__list .account-menu__item { white-space: normal; }
-  .mega-account__list .account-menu__item > span:first-child { min-width: 0; }
+  .mega-account__list .account-menu__label { min-width: 0; }
 }
 @media (max-width: 560px) {
   .mega-cats.is-open .mega-cats__row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -550,6 +556,7 @@ body.is-search-docked .site-header__search {
 @media (max-width: 480px) {
   .site-header__nav,
   body.is-search-docked .site-header__nav { gap: 0; }
+  .account-face .user-avatar { width: 20px !important; height: 20px !important; }
 }
 @media (max-width: 359px) {
   .logo__img, .site-header .logo__img { height: 15px; }
@@ -589,65 +596,50 @@ type AdminMenuTo =
 type MeMenuTo = "/me" | "/me/stats" | "/me/messages" | "/me/reviews" | "/me/likes" | "/me/favorites" | "/me/profile" | "/me/settings";
 
 type HeaderMenuItem =
-  | { id: string; label: string; kind: "account"; to: AccountMenuTo }
-  | { id: string; label: string; kind: "admin"; to: AdminMenuTo }
-  | { id: string; label: string; kind: "me"; to: MeMenuTo };
+  | { id: string; label: string; icon: CabinetIcon; kind: "account"; to: AccountMenuTo }
+  | { id: string; label: string; icon: CabinetIcon; kind: "admin"; to: AdminMenuTo }
+  | { id: string; label: string; icon: CabinetIcon; kind: "me"; to: MeMenuTo };
 
 const ACCOUNT_MENU: HeaderMenuItem[] = [
-  { id: "profile", label: "Профиль", kind: "account", to: "/account" },
-  { id: "messages", label: "Мои сообщения", kind: "account", to: "/account/messages" },
-  { id: "reviews", label: "Мои отзывы", kind: "account", to: "/account/reviews" },
-  { id: "bookings", label: "Мои записи", kind: "account", to: "/account/bookings" },
-  { id: "favorites", label: "Избранное", kind: "account", to: "/account/favorites" },
-  { id: "settings", label: "Настройки", kind: "account", to: "/account/settings" },
+  { id: "profile", label: "Профиль", icon: "overview", kind: "account", to: "/account" },
+  { id: "messages", label: "Мои сообщения", icon: "messages", kind: "account", to: "/account/messages" },
+  { id: "reviews", label: "Мои отзывы", icon: "reviews", kind: "account", to: "/account/reviews" },
+  { id: "bookings", label: "Мои записи", icon: "bookings", kind: "account", to: "/account/bookings" },
+  { id: "favorites", label: "Избранное", icon: "favorites", kind: "account", to: "/account/favorites" },
+  { id: "settings", label: "Настройки", icon: "profile", kind: "account", to: "/account/settings" },
 ];
 
 const TRAINER_MENU: HeaderMenuItem[] = [
-  { id: "overview", label: "Общая панель", kind: "me", to: "/me" },
-  { id: "stats", label: "Моя статистика", kind: "me", to: "/me/stats" },
-  { id: "profile", label: "Моя страница", kind: "me", to: "/me/profile" },
-  { id: "messages", label: "Мои сообщения", kind: "me", to: "/me/messages" },
-  { id: "reviews", label: "Мои отзывы", kind: "me", to: "/me/reviews" },
-  { id: "likes", label: "Мои лайкосы", kind: "me", to: "/me/likes" },
-  { id: "favorites", label: "Избранное", kind: "me", to: "/me/favorites" },
-  { id: "settings", label: "Настройки", kind: "me", to: "/me/settings" },
-];
-
-const ADMIN_FACE_MENU: HeaderMenuItem[] = [
-  { id: "overview", label: "Обзор", kind: "admin", to: "/admin" },
-  { id: "trainers", label: "Тренеры", kind: "admin", to: "/admin/trainers" },
-  { id: "messages", label: "Сообщения", kind: "admin", to: "/admin/messages" },
-  { id: "accounts", label: "Аккаунты", kind: "admin", to: "/admin/accounts" },
-  { id: "finance", label: "Бухгалтерия", kind: "admin", to: "/admin/finance" },
-  { id: "settings", label: "Настройки", kind: "admin", to: "/admin/settings" },
+  { id: "overview", label: "Общая панель", icon: "overview", kind: "me", to: "/me" },
+  { id: "stats", label: "Моя статистика", icon: "stats", kind: "me", to: "/me/stats" },
+  { id: "profile", label: "Моя страница", icon: "trainers", kind: "me", to: "/me/profile" },
+  { id: "messages", label: "Мои сообщения", icon: "messages", kind: "me", to: "/me/messages" },
+  { id: "reviews", label: "Мои отзывы", icon: "reviews", kind: "me", to: "/me/reviews" },
+  { id: "likes", label: "Мои лайкосы", icon: "likes", kind: "me", to: "/me/likes" },
+  { id: "favorites", label: "Избранное", icon: "favorites", kind: "me", to: "/me/favorites" },
+  { id: "settings", label: "Настройки", icon: "profile", kind: "me", to: "/me/settings" },
 ];
 
 const ADMIN_MENU: HeaderMenuItem[] = [
-  { id: "overview", label: "Обзор", kind: "admin", to: "/admin" },
-  { id: "trainers", label: "Тренеры", kind: "admin", to: "/admin/trainers" },
-  { id: "all", label: "Весь список", kind: "admin", to: "/admin/trainers" },
-  { id: "drafts", label: "Драфты", kind: "admin", to: "/admin/trainers/drafts" },
-  { id: "active", label: "Активные", kind: "admin", to: "/admin/trainers/active" },
-  { id: "unclear", label: "Непонятные", kind: "admin", to: "/admin/trainers/unclear" },
-  { id: "welcomes", label: "Заявки", kind: "admin", to: "/admin/welcomes" },
-  { id: "reviews", label: "Отзывы", kind: "admin", to: "/admin/reviews" },
-  { id: "messages", label: "Сообщения", kind: "admin", to: "/admin/messages" },
-  { id: "accounts", label: "Аккаунты", kind: "admin", to: "/admin/accounts" },
-  { id: "finance", label: "Бухгалтерия", kind: "admin", to: "/admin/finance" },
-  { id: "settings", label: "Настройки", kind: "admin", to: "/admin/settings" },
-  { id: "site", label: "Сайт", kind: "admin", to: "/admin/site" },
+  { id: "overview", label: "Обзор", icon: "overview", kind: "admin", to: "/admin" },
+  { id: "trainers", label: "Тренеры", icon: "trainers", kind: "admin", to: "/admin/trainers" },
+  { id: "all", label: "Весь список", icon: "trainers", kind: "admin", to: "/admin/trainers" },
+  { id: "drafts", label: "Драфты", icon: "trainers", kind: "admin", to: "/admin/trainers/drafts" },
+  { id: "active", label: "Активные", icon: "trainers", kind: "admin", to: "/admin/trainers/active" },
+  { id: "unclear", label: "Непонятные", icon: "trainers", kind: "admin", to: "/admin/trainers/unclear" },
+  { id: "welcomes", label: "Заявки", icon: "contacts", kind: "admin", to: "/admin/welcomes" },
+  { id: "reviews", label: "Отзывы", icon: "reviews", kind: "admin", to: "/admin/reviews" },
+  { id: "messages", label: "Сообщения", icon: "messages", kind: "admin", to: "/admin/messages" },
+  { id: "accounts", label: "Аккаунты", icon: "accounts", kind: "admin", to: "/admin/accounts" },
+  { id: "finance", label: "Бухгалтерия", icon: "finance", kind: "admin", to: "/admin/finance" },
+  { id: "settings", label: "Настройки", icon: "profile", kind: "admin", to: "/admin/settings" },
+  { id: "site", label: "Сайт", icon: "site", kind: "admin", to: "/admin/site" },
 ];
 
 function headerMenuFor(roles: UserRole[], ownedSlugs: string[]): HeaderMenuItem[] {
   if (isStaff(roles)) return ADMIN_MENU;
   if (hasAnyRole(roles, ["trainer", "club"])) return trainerMenu(ownedSlugs);
   return ACCOUNT_MENU;
-}
-
-/** The user-icon menu stays on the cabinet's first level. Subpages stay in the cabinet. */
-function faceMenuFor(roles: UserRole[], ownedSlugs: string[]): HeaderMenuItem[] {
-  if (isStaff(roles)) return ADMIN_FACE_MENU;
-  return headerMenuFor(roles, ownedSlugs);
 }
 
 function trainerMenu(ownedSlugs: string[]) {
@@ -679,7 +671,7 @@ function menuCounts(
 function HeaderMenuLink({ item, count, onNavigate }: { item: HeaderMenuItem; count?: number; onNavigate: () => void }) {
   const props = { className: "account-menu__item", onClick: onNavigate };
   const hot = item.id === "messages";
-  const body = <><span>{item.label}</span><MenuCount count={count} hot={hot} /></>;
+  const body = <><CabinetMark icon={item.icon} /><span className="account-menu__label">{item.label}</span><MenuCount count={count} hot={hot} /></>;
   if (item.kind === "me") {
     return <Link to={item.to} activeOptions={item.to === "/me" ? { exact: true } : undefined} {...props}>{body}</Link>;
   }
@@ -800,47 +792,23 @@ function useCabinetMenuCounts() {
   };
 }
 
+function personalNotice(roles: readonly UserRole[] | undefined, total: number) {
+  return Boolean(roles && total > 0 && !isStaff(roles));
+}
+
+function NoticeMark({ labelled = false }: { labelled?: boolean }) {
+  return (
+    <span className="notice-mark" aria-hidden={labelled ? undefined : true} aria-label={labelled ? "Есть оповещения" : undefined}>
+      !
+    </span>
+  );
+}
+
 function AccountButton() {
   const { user } = useRouteContext({ from: "__root__" });
-  const staffCounts = useStaffMenuCounts(Boolean(user && isStaff(user.roles)));
-  const [open, setOpen] = useState(false);
-  const [pending, setPending] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-  const closeTimer = useRef(0);
-  const pointerType = useRef("mouse");
-  const holdClosed = useRef(false);
-  const logout = useAuthServerFn(logoutFn);
   const loginSearch = useBrowseLoginSearch();
   const messaging = useMessaging();
-  const cabinetCounts = useCabinetMenuCounts();
-  const trainerCounts = useTrainerMenuCounts(Boolean(user && hasAnyRole(user.roles, ["trainer", "club"])), open);
-  const accountCounts = useAccountMenuCounts(Boolean(user && !isStaff(user.roles) && !hasAnyRole(user.roles, ["trainer", "club"])), open);
-  const { keys, ready } = useFavorites();
   const face = useLiveAvatar(user?.id, user?.avatarPath);
-
-  useEffect(() => () => window.clearTimeout(closeTimer.current), []);
-
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      holdClosed.current = true;
-      setOpen(false);
-      rootRef.current?.querySelector("a")?.focus();
-      window.setTimeout(() => {
-        holdClosed.current = false;
-      }, 0);
-    };
-    const onPointer = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
-    };
-    document.addEventListener("keydown", onKey);
-    document.addEventListener("pointerdown", onPointer);
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.removeEventListener("pointerdown", onPointer);
-    };
-  }, [open]);
 
   if (!user) {
     return (
@@ -851,94 +819,19 @@ function AccountButton() {
   }
 
   const name = [user.firstName, user.lastName].filter(Boolean).join(" ");
-  const items = faceMenuFor(user.roles, messaging.ownedSlugs);
-  const counts = menuCounts(
-    user.roles,
-    messaging.own,
-    messaging.inbox,
-    ready ? keys.length : undefined,
-    cabinetCounts.staff ?? staffCounts,
-    cabinetCounts.trainer ?? trainerCounts,
-    cabinetCounts.account ?? accountCounts,
-  );
-  const show = () => {
-    if (holdClosed.current) return;
-    window.clearTimeout(closeTimer.current);
-    setOpen(true);
-  };
-  const hideSoon = () => {
-    window.clearTimeout(closeTimer.current);
-    closeTimer.current = window.setTimeout(() => setOpen(false), 140);
-  };
-
+  const cabinet = getCabinetPath(user.roles);
   return (
-    <div
-      className={`account-menu${open ? " is-open" : ""}`}
-      ref={rootRef}
-      onPointerEnter={(event) => {
-        if (event.pointerType === "mouse") show();
-      }}
-      onPointerLeave={(event) => {
-        if (event.pointerType !== "mouse") return;
-        const active = document.activeElement;
-        if (active && rootRef.current?.contains(active)) return;
-        hideSoon();
-      }}
-      onFocus={() => {
-        if (window.matchMedia("(hover: hover)").matches) show();
-      }}
-      onBlur={(event) => {
-        if (!window.matchMedia("(hover: hover)").matches) return;
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) hideSoon();
-      }}
+    <Link
+      to={cabinet}
+      activeOptions={{ exact: true }}
+      className="account-face"
+      aria-label={name ? `${name}, кабинет` : "Кабинет"}
+      title={user.nick || name || "Кабинет"}
     >
-      <Link
-        to={getCabinetPath(user.roles)}
-        activeOptions={{ exact: true }}
-        className="account-face"
-        aria-label={user.nick ? `${name}, ${user.nick}, вы вошли` : `${name}, вы вошли`}
-        aria-haspopup="true"
-        aria-expanded={open}
-        aria-controls="account-menu"
-        title={user.nick || name}
-        onPointerDown={(event) => {
-          if (pointerType.current === "touch" && event.pointerType === "mouse") return;
-          pointerType.current = event.pointerType;
-        }}
-        onClick={(event) => {
-          const narrow = window.matchMedia("(max-width: 767px)").matches;
-          const touch = pointerType.current !== "mouse" || window.matchMedia("(hover: none)").matches;
-          if (!narrow && !touch) return;
-          event.preventDefault();
-          setOpen((value) => !value);
-        }}
-      >
-        <UserAvatar name={name} src={face} size={32} />
-        {user.nick ? <span className="account-face__nick">{user.nick}</span> : null}
-      </Link>
-      <nav className="account-menu__panel" id="account-menu" aria-label="Кабинет">
-        <div className="account-menu__card">
-          {items.map((item) => <HeaderMenuLink key={item.id} item={item} count={counts[item.id]} onNavigate={() => setOpen(false)} />)}
-          <div className="account-menu__rule" />
-          <button
-            type="button"
-            className="account-menu__item account-menu__logout"
-            disabled={pending}
-            onClick={() => {
-              setPending(true);
-              void logout()
-                .then(() => {
-                  window.location.href = "/";
-                })
-                .finally(() => setPending(false));
-            }}
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M14 6l-6 6 6 6"/><path d="M8 12h7"/></svg>
-            {pending ? "Выход…" : "Выйти"}
-          </button>
-        </div>
-      </nav>
-    </div>
+      <UserAvatar name={name} src={face} size={28} />
+      {user.nick ? <span className="account-face__nick">{user.nick}</span> : null}
+      {personalNotice(user.roles, messaging.total) ? <NoticeMark labelled /> : null}
+    </Link>
   );
 }
 
@@ -1081,6 +974,7 @@ function MegaAccount({ menuOpen, onClose }: { menuOpen: boolean; onClose: () => 
           <span className="mega-account__who">
             <UserAvatar name={name} src={face} size={32} />
             <span className="mega-account__nick">{label}</span>
+            {personalNotice(user.roles, messaging.total) ? <NoticeMark labelled /> : null}
           </span>
           <svg className="mega-account__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6" /></svg>
         </button>
@@ -1203,13 +1097,13 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             <ul>
               <li><Link className="mega-link mega-link--text" to="/" onClick={onClose}>Найти тренера</Link></li>
               <li><Link className="mega-link mega-link--text" to="/map" search={{ sports: undefined, city: undefined }} onClick={onClose}>На карте</Link></li>
-              {user ? (
+              {user && getCabinetPath(user.roles) !== "/me" ? (
                 <li>
                   <Link className="mega-link mega-link--text" to={getCabinetPath(user.roles)} onClick={onClose}>
                     <TrainerName firstName={user.firstName} lastName={user.lastName} empty="Кабинет" />
                   </Link>
                 </li>
-              ) : (
+              ) : user ? null : (
                 <>
                   <li><Link className="mega-link mega-link--text" to="/auth/signup" search={loginSearch} onClick={onClose}>Создать аккаунт</Link></li>
                   <li><Link className="mega-link mega-link--text" to="/auth/login" search={loginSearch} onClick={onClose}>Войти</Link></li>
@@ -1331,7 +1225,7 @@ function FavoriteCount() {
     return (
       <Link
         to="/me/favorites"
-        className={`icon-btn favorite-count${ready && count > 0 ? " has-items" : ""}`}
+        className="icon-btn favorite-count"
         aria-label={label}
         title="Избранное"
       >
@@ -1345,7 +1239,7 @@ function FavoriteCount() {
   return (
     <Link
       to="/account/favorites"
-      className={`icon-btn favorite-count${ready && count > 0 ? " has-items" : ""}`}
+      className="icon-btn favorite-count"
       aria-label={label}
       title="Избранное"
     >
@@ -1358,6 +1252,9 @@ function FavoriteCount() {
 }
 
 export function SiteHeader({ middleSlot }: { middleSlot?: ReactNode }) {
+  const { user } = useRouteContext({ from: "__root__" });
+  const messaging = useMessaging();
+  const noticed = personalNotice(user?.roles, messaging.total);
   const [menuOpen, setMenuOpen] = useState(false);
   const close = () => setMenuOpen(false);
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -1421,10 +1318,11 @@ export function SiteHeader({ middleSlot }: { middleSlot?: ReactNode }) {
               className="icon-btn burger-btn"
               aria-expanded={menuOpen}
               aria-haspopup="dialog"
-              aria-label="Открыть меню"
+              aria-label={noticed ? "Открыть меню, есть оповещения" : "Открыть меню"}
               onClick={() => setMenuOpen((v) => !v)}
             >
               <span className="burger-btn__bars" aria-hidden="true"><span/><span/><span/></span>
+              {noticed ? <NoticeMark /> : null}
             </button>
 
           </nav>

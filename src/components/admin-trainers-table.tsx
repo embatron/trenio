@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 
 import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
+import { CabinetFilterBar } from "@/components/cabinet";
 import { STAR_PATH } from "@/components/review-stars";
 import { UserAvatar } from "@/components/user-avatar";
 import { TrainerName } from "@/components/trainer-name";
@@ -518,7 +519,9 @@ export function AdminTrainersTable({
           </button>
         </div>
       ) : null}
-      <div className="cabinet-filters">
+      <CabinetFilterBar
+        active={[query.trim(), category, sport, city, format, audience, message, link, visit].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}
+      >
         <label className="cabinet-filters__search">
           <span>Поиск</span>
           <input
@@ -623,7 +626,7 @@ export function AdminTrainersTable({
             ))}
           </select>
         </label>
-      </div>
+      </CabinetFilterBar>
       {visible.length === 0 ? <p className="cabinet-empty">Нет тренеров с таким фильтром.</p> : (
         <>
         <div className="cabinet-table-wrap">
