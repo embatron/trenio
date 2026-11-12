@@ -14,7 +14,7 @@ const STATEMENTS = [
     byte_size integer NOT NULL,
     ext text NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
-    CONSTRAINT message_attachments_size CHECK (byte_size BETWEEN 1 AND 2097152),
+    CONSTRAINT message_attachments_size CHECK (byte_size BETWEEN 1 AND 5242880),
     CONSTRAINT message_attachments_name_len CHECK (char_length(original_name) BETWEEN 1 AND 180)
   )`,
   "CREATE INDEX IF NOT EXISTS message_attachments_message_idx ON message_attachments (message_id)",
@@ -123,6 +123,18 @@ const STATEMENTS = [
      visible boolean NOT NULL DEFAULT false
    )`,
   "COMMENT ON TABLE user_presence IS 'Last open-page signal. Green is a visible tab, orange is hidden or seen within 10 minutes, gray is offline.'",
+  "ALTER TABLE message_attachments DROP CONSTRAINT IF EXISTS message_attachments_size",
+  "ALTER TABLE message_attachments ADD CONSTRAINT message_attachments_size CHECK (byte_size BETWEEN 1 AND 5242880)",
+  `CREATE TABLE IF NOT EXISTS message_notices (
+     conversation_id uuid NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+     recipient_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     channel text NOT NULL,
+     message_id bigint NOT NULL,
+     due_at timestamptz NOT NULL,
+     PRIMARY KEY (conversation_id, recipient_id, channel),
+     CONSTRAINT message_notices_channel CHECK (channel IN ('push', 'letter'))
+   )`,
+  "COMMENT ON TABLE message_notices IS 'A message letter or browser notice waiting to be sent. The row outlives a process restart.'",
 ];
 
 async function main() {

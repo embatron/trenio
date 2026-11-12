@@ -1,11 +1,11 @@
-import { and, eq, gt, inArray, isNull } from "drizzle-orm";
+import { and, eq, gt, inArray, isNull, lte, sql } from "drizzle-orm";
 
 import { getDb } from "@/db";
-import { conversationReads, conversations, messages, trainerProfiles, userRoles, users } from "@/db/schema";
+import { conversationReads, conversations, messageNotices, messages, trainerProfiles, userRoles, users } from "@/db/schema";
 import { isPendingSignupEmail } from "@/lib/auth/pending-email";
 import { storedGivenName } from "@/lib/auth/login-name";
 import { reviewPlainText } from "@/lib/catalog/review-html";
-import { writeLog } from "@/lib/log/logger";
+import { logCaught, writeLog } from "@/lib/log/logger";
 import { renderLetter } from "@/lib/mail/letter";
 import { canReceiveMailbox, messageTelegramNoticeAllowed, telegramThreadButton } from "@/lib/mail/notice-rules";
 import { letterWaitMs, presenceFor } from "@/lib/messages/presence";
@@ -47,14 +47,20 @@ export async function deliverMessageNotice(input: {
       ),
     )
     .limit(1);
-  if (newer) return;
+  if (newer) {
+    await dropNotice(input);
+    return;
+  }
 
   const [read] = await db
     .select({ lastReadAt: conversationReads.lastReadAt, lastReadMessageId: conversationReads.lastReadMessageId })
     .from(conversationReads)
     .where(and(eq(conversationReads.conversationId, input.conversationId), eq(conversationReads.userId, input.recipientId)))
     .limit(1);
-  if (read && read.lastReadMessageId >= input.messageId) return;
+  if (read && read.lastReadMessageId >= input.messageId) {
+    await dropNotice(input);
+    return;
+  }
 
   const here = (await presenceFor([input.recipientId])).get(input.recipientId) ?? "offline";
   const wait = letterWaitMs(here);
@@ -71,10 +77,12 @@ export async function deliverMessageNotice(input: {
         target: input.conversationId,
       });
     }
+    if (!(await rememberNotice(input, wait))) return;
     arm(key, wait, () => deliverMessageNotice(input), input.conversationId);
     return;
   }
   letterHeld.delete(`${input.conversationId}:${input.recipientId}:letter`);
+  if ((await claimNotice(input)) === "skip") return;
 
   const [row] = await db
     .select({
@@ -97,7 +105,10 @@ export async function deliverMessageNotice(input: {
     .leftJoin(trainerProfiles, eq(trainerProfiles.id, conversations.trainerProfileId))
     .where(eq(conversations.id, input.conversationId))
     .limit(1);
-  if (!row) return;
+  if (!row) {
+    await dropNotice(input);
+    return;
+  }
 
   const roles = await db
     .select({ role: userRoles.role })
@@ -120,7 +131,10 @@ export async function deliverMessageNotice(input: {
     .from(messages)
     .where(eq(messages.id, input.messageId))
     .limit(1);
-  if (!posted) return;
+  if (!posted) {
+    await dropNotice(input);
+    return;
+  }
   const [sender] = await db
     .select({ firstName: users.firstName, lastName: users.lastName, email: users.email, avatarPath: users.avatarPath })
     .from(users)
@@ -151,6 +165,7 @@ export async function deliverMessageNotice(input: {
         target: input.conversationId,
       });
     }
+    await dropNotice(input);
     return;
   }
 
@@ -201,6 +216,7 @@ export async function deliverMessageNotice(input: {
     telegramUserId: row.telegramUserId,
     botSeenAt: row.telegramBotSeenAt,
   })) {
+    await dropNotice(input);
     return;
   }
   const token = process.env.TELEGRAM_LOGIN_BOT_TOKEN?.trim();
@@ -210,6 +226,7 @@ export async function deliverMessageNotice(input: {
     if (process.env.AUTH_DEV_LOG_EMAILS === "true" || process.env.NODE_ENV !== "production") {
       console.info(`[telegram] chat=${row.telegramUserId}\n${text}\n${url}`);
     }
+    await dropNotice(input);
     return;
   }
   try {
@@ -245,6 +262,7 @@ export async function deliverMessageNotice(input: {
       error,
     });
   }
+  await dropNotice(input);
 }
 
 /** Mail every active admin and superadmin. The comment is the reporter's note, not the chat. */
@@ -301,6 +319,173 @@ export async function notifyStaffAboutReport(input: {
   });
 }
 
+type NoticeInput = {
+  conversationId: string;
+  messageId: number;
+  recipientId: string;
+  channel: "push" | "letter";
+};
+
+let noticeTable: Promise<void> | null = null;
+let noticeTableFailed = false;
+
+function ensureNoticeTable() {
+  if (noticeTableFailed) return Promise.resolve();
+  if (!noticeTable) {
+    noticeTable = getDb()
+      .execute(sql`
+        CREATE TABLE IF NOT EXISTS message_notices (
+          conversation_id uuid NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+          recipient_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          channel text NOT NULL,
+          message_id bigint NOT NULL,
+          due_at timestamptz NOT NULL,
+          PRIMARY KEY (conversation_id, recipient_id, channel),
+          CONSTRAINT message_notices_channel CHECK (channel IN ('push', 'letter'))
+        )
+      `)
+      .then(() => undefined)
+      .catch((error: unknown) => {
+        noticeTable = null;
+        noticeTableFailed = true;
+        logCaught("message", "message.notify", error);
+      });
+  }
+  return noticeTable;
+}
+
+async function rememberNotice(input: NoticeInput, delayMs: number): Promise<boolean> {
+  try {
+    await ensureNoticeTable();
+    if (noticeTableFailed) return true;
+    const dueAt = new Date(Date.now() + delayMs);
+    await getDb()
+      .insert(messageNotices)
+      .values({
+        conversationId: input.conversationId,
+        recipientId: input.recipientId,
+        channel: input.channel,
+        messageId: input.messageId,
+        dueAt,
+      })
+      .onConflictDoUpdate({
+        target: [messageNotices.conversationId, messageNotices.recipientId, messageNotices.channel],
+        set: { messageId: input.messageId, dueAt },
+      });
+    return true;
+  } catch (error) {
+    if (noticeGone(error)) return false;
+    logCaught("message", "message.notify", error, { target: input.conversationId });
+    return true;
+  }
+}
+
+function noticeGone(error: unknown) {
+  const cause = (error as { cause?: { code?: string } } | null)?.cause;
+  return cause?.code === "23503";
+}
+
+async function dropNotice(input: NoticeInput) {
+  try {
+    await ensureNoticeTable();
+    if (noticeTableFailed) return;
+    await getDb()
+      .delete(messageNotices)
+      .where(
+        and(
+          eq(messageNotices.conversationId, input.conversationId),
+          eq(messageNotices.recipientId, input.recipientId),
+          eq(messageNotices.channel, input.channel),
+          eq(messageNotices.messageId, input.messageId),
+        ),
+      );
+  } catch (error) {
+    if (noticeGone(error)) return;
+    logCaught("message", "message.notify", error, { target: input.conversationId });
+  }
+}
+
+/** One worker claims the row. A newer message keeps its own row. */
+async function claimNotice(input: NoticeInput): Promise<"send" | "skip"> {
+  try {
+    await ensureNoticeTable();
+    if (noticeTableFailed) return "send";
+    const claimed = await getDb()
+      .update(messageNotices)
+      .set({ dueAt: new Date(Date.now() + 2 * 60_000) })
+      .where(
+        and(
+          eq(messageNotices.conversationId, input.conversationId),
+          eq(messageNotices.recipientId, input.recipientId),
+          eq(messageNotices.channel, input.channel),
+          eq(messageNotices.messageId, input.messageId),
+          lte(messageNotices.dueAt, new Date()),
+        ),
+      )
+      .returning({ messageId: messageNotices.messageId });
+    if (claimed.length > 0) return "send";
+    const [existing] = await getDb()
+      .select({ messageId: messageNotices.messageId })
+      .from(messageNotices)
+      .where(
+        and(
+          eq(messageNotices.conversationId, input.conversationId),
+          eq(messageNotices.recipientId, input.recipientId),
+          eq(messageNotices.channel, input.channel),
+        ),
+      )
+      .limit(1);
+    return existing ? "skip" : "send";
+  } catch (error) {
+    if (noticeGone(error)) return "skip";
+    logCaught("message", "message.notify", error, { target: input.conversationId });
+    return "send";
+  }
+}
+
+const NOTICE_SWEEP = Symbol.for("trenio.message.noticeSweep");
+
+export function startNoticeSweeper() {
+  if (process.env.NODE_TEST_CONTEXT) return;
+  const host = globalThis as typeof globalThis & { [NOTICE_SWEEP]?: boolean };
+  if (host[NOTICE_SWEEP]) return;
+  host[NOTICE_SWEEP] = true;
+  const run = () => {
+    void sweepNotices();
+  };
+  const timer = setInterval(run, 15_000);
+  timer.unref?.();
+  run();
+}
+
+async function sweepNotices() {
+  try {
+    await ensureNoticeTable();
+    if (noticeTableFailed) return;
+    const due = await getDb()
+      .select({
+        conversationId: messageNotices.conversationId,
+        recipientId: messageNotices.recipientId,
+        channel: messageNotices.channel,
+        messageId: messageNotices.messageId,
+      })
+      .from(messageNotices)
+      .where(lte(messageNotices.dueAt, new Date()))
+      .limit(20);
+    for (const row of due) {
+      if (row.channel !== "push" && row.channel !== "letter") continue;
+      await deliverMessageNotice({
+        conversationId: row.conversationId,
+        recipientId: row.recipientId,
+        channel: row.channel,
+        messageId: row.messageId,
+      });
+    }
+  } catch (error) {
+    logCaught("message", "message.notify", error);
+  }
+}
+
 function arm(
   key: string,
   delay: number,
@@ -333,7 +518,10 @@ export function scheduleMessageNotification(input: {
   messageId: number;
   recipientId: string;
 }) {
+  startNoticeSweeper();
   const base = `${input.conversationId}:${input.recipientId}`;
   arm(base + ":push", PUSH_DEBOUNCE_MS, () => deliverMessageNotice({ ...input, channel: "push" }), input.conversationId);
   arm(base + ":letter", LETTER_DEBOUNCE_MS, () => deliverMessageNotice({ ...input, channel: "letter" }), input.conversationId);
+  void rememberNotice({ ...input, channel: "push" }, PUSH_DEBOUNCE_MS);
+  void rememberNotice({ ...input, channel: "letter" }, LETTER_DEBOUNCE_MS);
 }

@@ -25,7 +25,7 @@ Passwords, session tokens, reset links, OTP and email codes, `initData`, cookies
 
 ## Levels and noise
 
-`LOG_LEVEL` defaults to `info`. Debug is dropped. Polls (`message.list`, `message.thread`, `message.read`, `message.unread`) log failures only. A client may report only `warn` and `error`, at most 20 events per 5 minutes per `X-Real-IP`.
+`LOG_LEVEL` defaults to `info`. Debug is dropped. Polls (`message.list`, `message.thread`, `message.read`, `message.unread`) log failures only. A staff open of the full inbox (`message.staff.list`) and a staff open of a thread they are not in (`message.staff.read`) are the exception: one info row per actor and thread, at most every 30 minutes, with no message body and no search text. A client may report only `warn` and `error`, at most 20 events per 5 minutes per `X-Real-IP`.
 
 ## Retention
 

@@ -4,6 +4,7 @@ import { getRequest } from "@tanstack/react-start/server";
 
 import { ensureAuthSchema } from "@/auth/auth-schema";
 import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
+import { startNoticeSweeper } from "@/lib/messages/notify";
 import { ensurePushSchema } from "@/lib/messages/push-schema";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
@@ -67,6 +68,7 @@ export default {
         outcome: "success",
         message: "Процесс сервера принимает запросы.",
       });
+      startNoticeSweeper();
     }
     try {
       await ensureAuthSchema();

@@ -109,7 +109,7 @@ export const messageAttachments = pgTable(
   (table) => [
     index("message_attachments_message_idx").on(table.messageId),
     index("message_attachments_client_idx").on(table.conversationId, table.clientId),
-    check("message_attachments_size", sql`${table.byteSize} between 1 and 2097152`),
+    check("message_attachments_size", sql`${table.byteSize} between 1 and 5242880`),
     check("message_attachments_name_len", sql`char_length(${table.originalName}) between 1 and 180`),
   ],
 );
@@ -171,6 +171,26 @@ export const blockedPairs = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [primaryKey({ columns: [table.userId, table.trainerProfileId] })],
+);
+
+/** A letter or browser notice that still has to go out. The row survives a process restart. */
+export const messageNotices = pgTable(
+  "message_notices",
+  {
+    conversationId: uuid("conversation_id")
+      .notNull()
+      .references(() => conversations.id, { onDelete: "cascade" }),
+    recipientId: uuid("recipient_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    channel: text("channel").notNull(),
+    messageId: bigint("message_id", { mode: "number" }).notNull(),
+    dueAt: timestamp("due_at", { withTimezone: true }).notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.conversationId, table.recipientId, table.channel] }),
+    check("message_notices_channel", sql`${table.channel} in ('push', 'letter')`),
+  ],
 );
 
 export type Conversation = typeof conversations.$inferSelect;

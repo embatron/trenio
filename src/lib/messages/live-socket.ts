@@ -1,10 +1,12 @@
 import type { Hooks } from "crossws";
 
 import { getSessionUserFromToken } from "@/auth/service";
+import { appOrigin } from "@/lib/app-origin";
 import type { UserRole } from "@/lib/auth/types";
 import { attachLiveSocket, publishTyping } from "@/lib/messages/live-hub";
 import { forgetPresence, recordPresence } from "@/lib/messages/presence";
 import { liveParticipants } from "@/lib/messages/service";
+import { socketOriginAllowed } from "@/lib/messages/socket-origin";
 
 const SESSION_COOKIE = "trenio_session";
 
@@ -35,8 +37,27 @@ function frameText(message: { text?: () => string }) {
   return text.length > 240 ? "" : text;
 }
 
+function socketHosts(): string[] {
+  const hosts = new Set<string>(["trenio.by", "www.trenio.by", "trenio.local"]);
+  try {
+    hosts.add(new URL(appOrigin()).host);
+  } catch {
+    /* APP_URL is not a URL. The named hosts above still apply. */
+  }
+  if (process.env.NODE_ENV !== "production") {
+    hosts.add("127.0.0.1:8081");
+    hosts.add("localhost:8081");
+    hosts.add("127.0.0.1");
+    hosts.add("localhost");
+  }
+  return [...hosts];
+}
+
 export const messageLiveHooks: Partial<Hooks> = {
   async upgrade(request) {
+    if (!socketOriginAllowed(request.headers.get("origin"), socketHosts())) {
+      throw new Response(null, { status: 401 });
+    }
     const user = await getSessionUserFromToken(sessionToken(request));
     if (!user) throw new Response(null, { status: 401 });
     return { context: { userId: user.id, roles: user.roles } satisfies LiveContext };

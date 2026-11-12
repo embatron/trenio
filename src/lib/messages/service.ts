@@ -29,7 +29,7 @@ import {
   sniffAttachment,
 } from "@/lib/messages/attachments";
 import { imageDecodes, removeMessageFile, writeMessageFile, writeMessagePreview } from "@/lib/messages/attachment-store";
-import { logCaught } from "@/lib/log/logger";
+import { logCaught, writeLog } from "@/lib/log/logger";
 import { notifyStaffAboutReport, scheduleMessageNotification } from "@/lib/messages/notify";
 import { publishThread } from "@/lib/messages/live-hub";
 import { presenceFor } from "@/lib/messages/presence";
@@ -1159,6 +1159,35 @@ async function conversationIdsByPerson(
   }).map((row) => row.id);
 }
 
+const STAFF_AUDIT = Symbol.for("trenio.message.staffAudit");
+const STAFF_AUDIT_GAP_MS = 30 * 60_000;
+
+function noteStaffAudit(
+  actor: MessageActor,
+  action: "message.staff.list" | "message.staff.read",
+  target: string | null,
+  message: string,
+  context?: Record<string, unknown>,
+) {
+  if (!isStaff(actor.roles)) return;
+  const host = globalThis as typeof globalThis & { [STAFF_AUDIT]?: Map<string, number> };
+  if (!host[STAFF_AUDIT]) host[STAFF_AUDIT] = new Map();
+  const key = `${action}:${actor.id}:${target ?? ""}`;
+  const now = Date.now();
+  if (now - (host[STAFF_AUDIT].get(key) ?? 0) < STAFF_AUDIT_GAP_MS) return;
+  host[STAFF_AUDIT].set(key, now);
+  void writeLog({
+    level: "info",
+    domain: "message",
+    action,
+    outcome: "success",
+    message,
+    target,
+    actorUserId: actor.id,
+    context,
+  });
+}
+
 export async function listConversations(
   actor: MessageActor,
   input: { view: "own" | "inbox" | "staff"; cursor?: ConversationCursor; query?: string },
@@ -1168,6 +1197,16 @@ export async function listConversations(
   }
   if (input.view === "inbox" && !actor.roles.some((role) => role === "trainer" || role === "club" || role === "admin" || role === "superadmin")) {
     throw new AuthError("Нет доступа к перепискам профиля.", "FORBIDDEN");
+  }
+  if (input.view === "staff") {
+    const chars = input.query?.trim().length ?? 0;
+    noteStaffAudit(
+      actor,
+      "message.staff.list",
+      null,
+      "Сотрудник открыл список переписок.",
+      chars >= 2 ? { searchChars: chars } : undefined,
+    );
   }
   const filters = [];
   const viewFilter = conversationViewFilter(actor, input.view);
@@ -1383,6 +1422,9 @@ export async function listMessages(
   input: { conversationId: string; cursor?: MessageCursor },
 ): Promise<ThreadResult> {
   const loaded = await requireConversation(actor, input.conversationId, "read");
+  if (!isParticipant(actor.id, loaded.access)) {
+    noteStaffAudit(actor, "message.staff.read", input.conversationId, "Сотрудник открыл чужую переписку.");
+  }
   const filters = [eq(messages.conversationId, input.conversationId)];
   const clearedAt = viewerDeletedAt(actor.id, loaded.conversation, loaded.profile.ownerUserId);
   if (clearedAt) filters.push(sql`${messages.createdAt} > ${clearedAt.toISOString()}::timestamptz`);
