@@ -3,6 +3,7 @@ import type { Hooks } from "crossws";
 import { getSessionUserFromToken } from "@/auth/service";
 import type { UserRole } from "@/lib/auth/types";
 import { attachLiveSocket, publishTyping } from "@/lib/messages/live-hub";
+import { forgetPresence, recordPresence } from "@/lib/messages/presence";
 import { liveParticipants } from "@/lib/messages/service";
 
 const SESSION_COOKIE = "trenio_session";
@@ -47,13 +48,18 @@ export const messageLiveHooks: Partial<Hooks> = {
       roles: context.roles,
       send: (payload) => peer.send(payload),
     });
+    recordPresence(context.userId, peer, false);
   },
   async message(peer, message) {
     const context = peer.context as LiveContext;
-    let body: { type?: unknown; conversationId?: unknown; on?: unknown };
+    let body: { type?: unknown; conversationId?: unknown; on?: unknown; visible?: unknown };
     try {
       body = JSON.parse(frameText(message)) as typeof body;
     } catch {
+      return;
+    }
+    if (body.type === "presence") {
+      recordPresence(context.userId, peer, body.visible === true);
       return;
     }
     if (body.type !== "typing" || typeof body.conversationId !== "string") return;
@@ -63,6 +69,8 @@ export const messageLiveHooks: Partial<Hooks> = {
     publishTyping(body.conversationId, ids, context.userId, body.on === true);
   },
   close(peer) {
-    (peer.context as LiveContext).detach?.();
+    const context = peer.context as LiveContext;
+    forgetPresence(context.userId, peer);
+    context.detach?.();
   },
 };

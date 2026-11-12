@@ -192,6 +192,11 @@ export function MessagesLive({
       if (!socket || socket.readyState !== WebSocket.OPEN) return;
       socket.send(JSON.stringify({ type: "typing", conversationId, on }));
     });
+    const sendPresence = () => {
+      const socket = socketRef.current;
+      if (!socket || socket.readyState !== WebSocket.OPEN) return;
+      socket.send(JSON.stringify({ type: "presence", visible: document.visibilityState === "visible" }));
+    };
     const connect = () => {
       if (stop) return;
       const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
@@ -201,6 +206,7 @@ export function MessagesLive({
         retry = 0;
         window.clearInterval(fallback);
         fallback = 0;
+        sendPresence();
         refreshOpen();
       };
       socket.onmessage = (event) => {
@@ -221,15 +227,18 @@ export function MessagesLive({
       };
     };
     const onVisible = () => {
+      sendPresence();
       if (document.visibilityState === "visible") refreshOpen();
     };
     document.addEventListener("visibilitychange", onVisible);
+    const presenceTimer = window.setInterval(sendPresence, 20_000);
     connect();
     return () => {
       stop = true;
       unbind();
       window.clearTimeout(retryTimer);
       window.clearInterval(fallback);
+      window.clearInterval(presenceTimer);
       document.removeEventListener("visibilitychange", onVisible);
       socketRef.current?.close();
       socketRef.current = null;

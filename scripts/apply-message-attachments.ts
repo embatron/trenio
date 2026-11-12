@@ -117,6 +117,12 @@ const STATEMENTS = [
   "ALTER TABLE conversations ADD COLUMN IF NOT EXISTS peer_revived_at timestamptz",
   "COMMENT ON COLUMN conversations.user_revived_at IS 'Клиент снова открыл диалог после удаления у себя. Старые сообщения скрыты.'",
   "COMMENT ON COLUMN conversations.peer_revived_at IS 'Владелец профиля или админ портала снова открыл диалог после удаления у себя.'",
+  `CREATE TABLE IF NOT EXISTS user_presence (
+     user_id uuid PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+     last_seen_at timestamptz NOT NULL,
+     visible boolean NOT NULL DEFAULT false
+   )`,
+  "COMMENT ON TABLE user_presence IS 'Last open-page signal. Green is a visible tab, orange is hidden or seen within 10 minutes, gray is offline.'",
 ];
 
 async function main() {

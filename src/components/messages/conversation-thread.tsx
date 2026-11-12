@@ -3,6 +3,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "re
 
 import { MessageBubble } from "@/components/messages/message-bubble";
 import { MessageComposer, type ComposerFile } from "@/components/messages/message-composer";
+import { PresenceDot } from "@/components/messages/presence-dot";
 import { TrainerName } from "@/components/trainer-name";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { UserAvatar } from "@/components/user-avatar";
@@ -219,7 +220,7 @@ export function ConversationThread({
     }
 
     const boundary = released.current ? followedId.current : readAtOpen.current;
-    const anchorId = firstUnreadMessageId(rows, boundary, current.canReport);
+    const anchorId = firstUnreadMessageId(rows, boundary, current.canMarkRead);
     const anchor = anchorId == null ? null : el.querySelector(`[data-message-id="${anchorId}"]`);
     const anchorTop = anchor instanceof HTMLElement
       ? anchor.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop
@@ -402,11 +403,15 @@ export function ConversationThread({
             ) : null}
             <div className="direct-thread__identity">
               {profileHref ? (
-                <a className="direct-person__face" href={profileHref} target="_blank" rel="noopener noreferrer" aria-label={thread.counterpart.name}>
+                <a className="direct-person__face presence-face" href={profileHref} target="_blank" rel="noopener noreferrer" aria-label={thread.counterpart.name}>
                   <UserAvatar name={thread.counterpart.name} src={thread.counterpart.avatarPath || null} size={44} />
+                  <PresenceDot presence={thread.counterpart.presence ?? "offline"} />
                 </a>
               ) : (
-                <UserAvatar name={thread.counterpart.name} src={thread.counterpart.avatarPath || null} size={44} />
+                <span className="presence-face">
+                  <UserAvatar name={thread.counterpart.name} src={thread.counterpart.avatarPath || null} size={44} />
+                  <PresenceDot presence={thread.counterpart.presence ?? "offline"} />
+                </span>
               )}
               <div className="direct-thread__who">
                 {profileHref ? (

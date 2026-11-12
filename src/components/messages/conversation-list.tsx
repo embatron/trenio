@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
+import { PresenceDot } from "@/components/messages/presence-dot";
 import { UnreadBadge } from "@/components/messages/unread-badge";
 import { TrainerName } from "@/components/trainer-name";
 import { UserAvatar } from "@/components/user-avatar";
@@ -89,7 +90,10 @@ export function ConversationList({
             const className = item.id === activeId ? "is-active" : undefined;
             const body = (
               <>
-                <UserAvatar name={item.counterpart.name} src={item.counterpart.avatarPath || null} size={44} />
+                <span className="presence-face">
+                  <UserAvatar name={item.counterpart.name} src={item.counterpart.avatarPath || null} size={44} />
+                  <PresenceDot presence={item.counterpart.presence ?? "offline"} />
+                </span>
                 <span className="direct-list__text">
                   <strong>
                     <TrainerName firstName={item.counterpart.firstName} lastName={item.counterpart.lastName} empty={item.counterpart.name} />

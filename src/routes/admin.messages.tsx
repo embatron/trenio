@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { ConversationList } from "@/components/messages/conversation-list";
 import { ConversationThread, type ThreadMessage } from "@/components/messages/conversation-thread";
+import { useNoteMessagesRead, useRefreshMessages } from "@/components/messages/messages-live";
 import type { ComposerFile } from "@/components/messages/message-composer";
 import { DIRECT_CSS } from "@/components/messages/messages-workspace";
 import { TablePager, useTablePage } from "@/components/table-pager";
@@ -108,6 +109,9 @@ function StaffThreads() {
   const sendFn = useServerFn(sendMessageFn);
   const editFn = useServerFn(editMessageFn);
   const uploadFn = useServerFn(uploadMessageFileFn);
+  const queryClient = useQueryClient();
+  const noteRead = useNoteMessagesRead();
+  const refreshMessages = useRefreshMessages();
   const markFn = useServerFn(markConversationReadFn);
   const blockFn = useServerFn(blockPairFn);
   const deleteFn = useServerFn(deleteConversationFn);
@@ -177,27 +181,70 @@ function StaffThreads() {
   }, [conversation]);
   useEffect(() => {
     if (quiet || mobile || openId || opening || trainer || conversation || list.isPending || !latestId) return;
+    if (window.matchMedia("(max-width: 767px)").matches) return;
     setOpenId(latestId);
   }, [quiet, mobile, openId, opening, trainer, conversation, list.isPending, latestId]);
-  const canMark = Boolean(thread.data?.canReport);
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      void list.refetch();
+    }, 30_000);
+    return () => window.clearInterval(timer);
+  }, [list]);
+  const canMark = Boolean(thread.data?.canMarkRead);
   const canMarkRef = useRef(canMark);
   canMarkRef.current = canMark;
   const markedUpTo = useRef(0);
   const markedFor = useRef("");
+  const notedUnread = useRef<{ id: string; left: number } | null>(null);
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
+  const messagesRef = useRef<ThreadMessage[]>([]);
+  const paintUnread = (id: string, unread: number) => {
+    queryClient.setQueriesData<{ items: ConversationListItem[] }>({ queryKey: ["conversations", "staff"] }, (current) => {
+      if (!current?.items) return current;
+      return {
+        ...current,
+        items: current.items.map((item) => item.id === id ? { ...item, unread } : item),
+      };
+    });
+    setExtra((current) => current.map((item) => item.id === id ? { ...item, unread } : item));
+  };
   const markSeen = (messageId: number) => {
     if (!openId || !canMarkRef.current || messageId <= 0) return;
     if (markedFor.current !== openId) {
       markedFor.current = openId;
       markedUpTo.current = 0;
+      notedUnread.current = null;
+    }
+    const left = messagesRef.current.filter((message) => !message.mine && message.id > messageId).length;
+    if (!notedUnread.current) {
+      const before = itemsRef.current.find((item) => item.id === openId)?.unread ?? left;
+      notedUnread.current = { id: openId, left: before };
+    }
+    const drop = notedUnread.current.left - left;
+    if (drop > 0) {
+      notedUnread.current.left = left;
+      noteRead(thread.data?.counterpart.kind === "trainer" ? "own" : "inbox", drop);
+      paintUnread(openId, left);
     }
     if (messageId <= markedUpTo.current) return;
     markedUpTo.current = messageId;
-    void markFn({ data: { conversationId: openId, lastMessageId: messageId } }).catch(() => {
-      if (markedUpTo.current === messageId) markedUpTo.current = 0;
-    });
+    void markFn({ data: { conversationId: openId, lastMessageId: messageId } })
+      .then(() => {
+        refreshMessages();
+        void queryClient.invalidateQueries({ queryKey: ["conversations", "staff"] });
+      })
+      .catch(() => {
+        if (markedUpTo.current === messageId) markedUpTo.current = 0;
+        notedUnread.current = null;
+        refreshMessages();
+        void queryClient.invalidateQueries({ queryKey: ["conversations", "staff"] });
+      });
   };
   const next = cursor === undefined ? list.data?.nextCursor ?? null : cursor;
   const messages: ThreadMessage[] = (thread.data?.messages ?? []).slice().reverse();
+  messagesRef.current = messages;
   const openIndex = openId ? items.findIndex((item) => item.id === openId) : -1;
 
   async function send(body: string, files: ComposerFile[] = [], replyToId?: number) {
@@ -215,6 +262,13 @@ function StaffThreads() {
         attachmentIds.push(saved.id);
       }
       await sendFn({ data: { conversationId: openId, body, clientId, attachmentIds, replyToId } });
+      const before = itemsRef.current.find((item) => item.id === openId)?.unread ?? 0;
+      if (before > 0) {
+        noteRead(thread.data?.counterpart.kind === "trainer" ? "own" : "inbox", before);
+        notedUnread.current = { id: openId, left: 0 };
+        paintUnread(openId, 0);
+      }
+      refreshMessages();
       await thread.refetch();
       await list.refetch();
     } catch (err) {

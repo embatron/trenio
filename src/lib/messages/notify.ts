@@ -8,15 +8,16 @@ import { reviewPlainText } from "@/lib/catalog/review-html";
 import { writeLog } from "@/lib/log/logger";
 import { renderLetter } from "@/lib/mail/letter";
 import { canReceiveMailbox, messageTelegramNoticeAllowed, telegramThreadButton } from "@/lib/mail/notice-rules";
+import { letterWaitMs, presenceFor } from "@/lib/messages/presence";
 import { sendMessagePushes } from "@/lib/messages/push";
 import { recipientAllowsMail } from "@/lib/mail/preferences";
 import { mailAppUrl, sendMail } from "@/lib/mail/send.server";
 
 const LETTER_DEBOUNCE_MS = 2 * 60_000;
 const PUSH_DEBOUNCE_MS = 15_000;
-const ONLINE_MS = 30_000;
 
 const timers = new Map<string, ReturnType<typeof setTimeout>>();
+const letterHeld = new Set<string>();
 
 function personName(firstName: string | null | undefined, lastName: string | null | undefined, email?: string | null) {
   const given = storedGivenName(firstName, email);
@@ -28,7 +29,7 @@ function trainerName(fullName: string | null, firstName: string | null, lastName
   return (fullName ?? "").trim() || combined || "Тренер";
 }
 
-async function deliver(input: {
+export async function deliverMessageNotice(input: {
   conversationId: string;
   messageId: number;
   recipientId: string;
@@ -53,13 +54,27 @@ async function deliver(input: {
     .from(conversationReads)
     .where(and(eq(conversationReads.conversationId, input.conversationId), eq(conversationReads.userId, input.recipientId)))
     .limit(1);
-  if (
-    read &&
-    Date.now() - read.lastReadAt.getTime() < ONLINE_MS &&
-    read.lastReadMessageId >= input.messageId
-  ) {
+  if (read && read.lastReadMessageId >= input.messageId) return;
+
+  const here = (await presenceFor([input.recipientId])).get(input.recipientId) ?? "offline";
+  const wait = letterWaitMs(here);
+  if (wait != null) {
+    const key = `${input.conversationId}:${input.recipientId}:${input.channel}`;
+    if (input.channel === "letter" && !letterHeld.has(key)) {
+      letterHeld.add(key);
+      void writeLog({
+        level: "info",
+        domain: "email",
+        action: "email.notice",
+        outcome: "skipped",
+        message: "Письмо о сообщении ждёт, пока человек не выйдет из сети.",
+        target: input.conversationId,
+      });
+    }
+    arm(key, wait, () => deliverMessageNotice(input), input.conversationId);
     return;
   }
+  letterHeld.delete(`${input.conversationId}:${input.recipientId}:letter`);
 
   const [row] = await db
     .select({
@@ -319,6 +334,6 @@ export function scheduleMessageNotification(input: {
   recipientId: string;
 }) {
   const base = `${input.conversationId}:${input.recipientId}`;
-  arm(base + ":push", PUSH_DEBOUNCE_MS, () => deliver({ ...input, channel: "push" }), input.conversationId);
-  arm(base + ":letter", LETTER_DEBOUNCE_MS, () => deliver({ ...input, channel: "letter" }), input.conversationId);
+  arm(base + ":push", PUSH_DEBOUNCE_MS, () => deliverMessageNotice({ ...input, channel: "push" }), input.conversationId);
+  arm(base + ":letter", LETTER_DEBOUNCE_MS, () => deliverMessageNotice({ ...input, channel: "letter" }), input.conversationId);
 }

@@ -149,7 +149,14 @@ export function MessagesWorkspace({
       if (conversationId) void threadQuery.refetch();
     };
     document.addEventListener("visibilitychange", onVisible);
-    return () => document.removeEventListener("visibilitychange", onVisible);
+    const presenceTimer = window.setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      void listQuery.refetch();
+    }, 30_000);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisible);
+      window.clearInterval(presenceTimer);
+    };
   }, [conversationId, listQuery, threadQuery]);
 
   const scanned = useRef(messaging.total);
@@ -160,9 +167,7 @@ export function MessagesWorkspace({
     if (conversationId) void threadQuery.refetch();
   }, [messaging.total, conversationId, listQuery, threadQuery]);
 
-  const shouldMark = Boolean(
-    threadQuery.data && (threadQuery.data.canWrite || threadQuery.data.canReport),
-  );
+  const shouldMark = Boolean(threadQuery.data?.canMarkRead);
   const shouldMarkRef = useRef(shouldMark);
   shouldMarkRef.current = shouldMark;
   const markedUpTo = useRef(0);
@@ -488,6 +493,10 @@ export const DIRECT_CSS = `
 .direct-bubble__edit:hover { opacity: 1; color: var(--primary); }
 .direct-log [data-message-id] { scroll-margin-top: 12px; }
 .direct-list ul { list-style: none; margin: 0; padding: 0; overflow: auto; }
+.presence-face { position: relative; display: flex; flex: 0 0 auto; }
+.presence { position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px; border: 2px solid var(--white); border-radius: 50%; background: var(--muted); }
+.presence--online { background: #1f9d55; }
+.presence--away { background: #e3941a; }
 .direct-list a, .direct-list button.direct-list__row { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 64px; padding: 8px 12px; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; text-decoration: none; cursor: pointer; transition: background-color 0.15s ease; }
 .direct-list a:hover, .direct-list button.direct-list__row:hover { background: rgba(var(--dark-rgb), 0.04); }
 .direct-list a:hover .trainer-name__line, .direct-list button.direct-list__row:hover .trainer-name__line { color: var(--primary); }

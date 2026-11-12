@@ -32,6 +32,8 @@ import { imageDecodes, removeMessageFile, writeMessageFile, writeMessagePreview 
 import { logCaught } from "@/lib/log/logger";
 import { notifyStaffAboutReport, scheduleMessageNotification } from "@/lib/messages/notify";
 import { publishThread } from "@/lib/messages/live-hub";
+import { presenceFor } from "@/lib/messages/presence";
+import type { Presence } from "@/lib/messages/schemas";
 import { messageEditable, messagePersonMatches, messageSearchPattern, pickPairThread, preferClickedProfile } from "@/lib/messages/pair";
 
 const hostUsers = alias(users, "conversation_hosts");
@@ -148,6 +150,7 @@ export function getCounterparty(input: {
   trainerAvatarPath: string;
   trainerSlug: string;
   trainerHref: string | null;
+  presence?: Presence;
 }): CounterpartDto {
   if (input.viewerId === input.conversationUserId) {
     return {
@@ -158,6 +161,7 @@ export function getCounterparty(input: {
       slug: input.trainerSlug || null,
       href: input.trainerHref,
       kind: "trainer",
+      presence: input.presence ?? "offline",
     };
   }
   return {
@@ -168,7 +172,13 @@ export function getCounterparty(input: {
     slug: null,
     href: input.userHref,
     kind: "user",
+    presence: input.presence ?? "offline",
   };
+}
+
+function counterpartUserId(viewerId: string, row: { userId: string; ownerUserId: string | null; hostUserId: string | null }) {
+  if (viewerId === row.userId) return row.ownerUserId ?? row.hostUserId ?? "";
+  return row.userId;
 }
 
 type OwnedFace = { avatarPath: string; href: string | null };
@@ -1288,6 +1298,8 @@ export async function listConversations(
     for (const row of unreadRows) unread.set(row.conversationId, asNumber(row.count));
   }
 
+  const states = await presenceFor(page.map((row) => counterpartUserId(actor.id, row)));
+
   let total: number | undefined;
   if (input.view === "staff") {
     const [counted] = await getDb().select({ n: sql<number>`count(*)::int` }).from(conversations);
@@ -1315,6 +1327,7 @@ export async function listConversations(
       trainerAvatarPath: trainer.avatarPath,
       trainerSlug: trainer.slug,
       trainerHref,
+      presence: states.get(counterpartUserId(actor.id, row)) ?? "offline",
     });
     const involved = row.userId === actor.id || row.ownerUserId === actor.id || row.hostUserId === actor.id;
     return {
@@ -1413,11 +1426,15 @@ export async function listMessages(
   const oldest = page[page.length - 1];
   const messageIds = page.map((row) => asNumber(row.id));
   const replyIds = page.flatMap((row) => row.replyToId == null ? [] : [asNumber(row.replyToId)]);
-  const [readUpTo, viewerReadMessageId, files, quotes] = await Promise.all([
+  const otherId = actor.id === loaded.conversation.userId
+    ? loaded.profile.ownerUserId ?? loaded.conversation.hostUserId
+    : loaded.conversation.userId;
+  const [readUpTo, viewerReadMessageId, files, quotes, states] = await Promise.all([
     counterpartReadUpTo(actor, loaded.conversation, loaded.profile.ownerUserId),
     viewerReadUpTo(actor.id, loaded.conversation.id),
     attachmentDtos(messageIds),
     quotesById(replyIds),
+    presenceFor(otherId ? [otherId] : []),
   ]);
   return {
     conversationId: loaded.conversation.id,
@@ -1439,6 +1456,7 @@ export async function listMessages(
       trainerAvatarPath: loaded.profile.avatarPath,
       trainerSlug: loaded.profile.slug,
       trainerHref,
+      presence: otherId ? states.get(otherId) ?? "offline" : "offline",
     }),
     canWrite,
     blocked: loaded.access.blocked,
@@ -1447,6 +1465,7 @@ export async function listMessages(
     canBlock: Boolean(loaded.conversation.trainerProfileId) && allows(actor, loaded.access, "block"),
     canHide: false,
     canReport: isParticipant(actor.id, loaded.access) && !isPortalAdminThread(loaded.conversation),
+    canMarkRead: isParticipant(actor.id, loaded.access),
     canDelete: isParticipant(actor.id, loaded.access) && !isPortalAdminThread(loaded.conversation),
     deletedByCounterpart: await keptHistoryBeforeClear(actor.id, loaded.conversation, loaded.profile.ownerUserId),
     listed: await conversationListedFor(actor.id, loaded.conversation.id),

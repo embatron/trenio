@@ -221,12 +221,15 @@ test("a portal welcome cannot be reported, blocked, or deleted", async () => {
     const trainerView = await listMessages(trainer, { conversationId: conversation.id });
     const staffView = await listMessages(staff, { conversationId: conversation.id });
     assert.equal(hostView.canReport, false);
+    assert.equal(hostView.canMarkRead, true);
     assert.equal(hostView.canBlock, false);
     assert.equal(hostView.canDelete, false);
     assert.equal(trainerView.canReport, false);
+    assert.equal(trainerView.canMarkRead, true);
     assert.equal(trainerView.canBlock, false);
     assert.equal(trainerView.canDelete, false);
     assert.equal(staffView.canReport, false);
+    assert.equal(staffView.canMarkRead, false);
     assert.equal(staffView.canBlock, false);
     assert.equal(staffView.canDelete, false);
 

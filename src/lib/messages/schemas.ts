@@ -119,6 +119,9 @@ export const listReportsSchema = z.object({
 export type ConversationCursor = z.infer<typeof conversationCursorSchema>;
 export type MessageCursor = z.infer<typeof messageCursorSchema>;
 
+/** Green: on the site. Orange: hidden or seen within ten minutes. Gray: offline. */
+export type Presence = "online" | "away" | "offline";
+
 export type CounterpartDto = {
   name: string;
   firstName: string;
@@ -128,6 +131,7 @@ export type CounterpartDto = {
   /** Published card. Empty when this person has no public page. */
   href: string | null;
   kind: "user" | "trainer";
+  presence: Presence;
 };
 
 export type ConversationListItem = {
@@ -200,6 +204,8 @@ export type ThreadResult = {
   canBlock: boolean;
   canHide: boolean;
   canReport: boolean;
+  /** This account is in the thread, so opening it may move their read cursor. A staff reader does not. */
+  canMarkRead: boolean;
   /** A participant may clear the thread for themselves. The other side keeps it. */
   canDelete: boolean;
   /** The other participant cleared their copy, and this side still has a message from before that. */
