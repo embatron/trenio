@@ -21,6 +21,28 @@ export function firstUnreadMessageId(
  * Pin the log to the bottom when the unread tail fits.
  * A taller tail keeps the top of that message on screen, 8px below the pane edge.
  */
+/** A few pixels of rounding so the last line counts once it clears the pane edge. */
+export const READ_EDGE_SLACK = 8;
+
+/**
+ * The read cutoff is the bottom edge of the visible log.
+ * A message counts once its own bottom has crossed that edge.
+ * The same measurement is the phone sheet, the tablet pane, and the wide pane.
+ */
+export function seenMessageId(
+  rows: Array<{ id: number; bottom: number }>,
+  paneBottom: number,
+  slack = READ_EDGE_SLACK,
+): number | null {
+  const edge = paneBottom + slack;
+  let seen: number | null = null;
+  for (const row of rows) {
+    if (row.id <= 0 || row.bottom > edge) continue;
+    if (seen == null || row.id > seen) seen = row.id;
+  }
+  return seen;
+}
+
 export function messageScrollTop(input: {
   anchorTop: number | null;
   scrollHeight: number;

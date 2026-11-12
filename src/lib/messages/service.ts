@@ -997,6 +997,8 @@ export async function sendMessage(
     return { row: created, duplicate: false };
   });
 
+  await advanceReadCursor(actor.id, conversationId, asNumber(saved.row.id));
+
   if (!saved.duplicate) {
     const recipientId = actor.id === loaded.conversation.userId ? loaded.profile.ownerUserId : loaded.conversation.userId;
     if (recipientId && recipientId !== actor.id) {
@@ -1468,6 +1470,25 @@ export async function listMessages(
   };
 }
 
+/** A reply covers every earlier message. The cursor never moves backward. */
+async function advanceReadCursor(userId: string, conversationId: string, messageId: number) {
+  await getDb()
+    .insert(conversationReads)
+    .values({
+      conversationId,
+      userId,
+      lastReadMessageId: messageId,
+      lastReadAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: [conversationReads.conversationId, conversationReads.userId],
+      set: {
+        lastReadMessageId: sql`GREATEST(${conversationReads.lastReadMessageId}, ${messageId})`,
+        lastReadAt: new Date(),
+      },
+    });
+}
+
 export async function markConversationRead(actor: MessageActor, input: { conversationId: string; lastMessageId: number }) {
   const loaded = await loadConversation(input.conversationId);
   if (!loaded || !isParticipant(actor.id, loaded.access)) {
@@ -1479,21 +1500,7 @@ export async function markConversationRead(actor: MessageActor, input: { convers
     .where(and(eq(messages.id, input.lastMessageId), eq(messages.conversationId, input.conversationId)))
     .limit(1);
   if (!message) throw new AuthError("Сообщение не найдено.", "VALIDATION");
-  await getDb()
-    .insert(conversationReads)
-    .values({
-      conversationId: input.conversationId,
-      userId: actor.id,
-      lastReadMessageId: input.lastMessageId,
-      lastReadAt: new Date(),
-    })
-    .onConflictDoUpdate({
-      target: [conversationReads.conversationId, conversationReads.userId],
-      set: {
-        lastReadMessageId: sql`GREATEST(${conversationReads.lastReadMessageId}, ${input.lastMessageId})`,
-        lastReadAt: new Date(),
-      },
-    });
+  await advanceReadCursor(actor.id, input.conversationId, input.lastMessageId);
   if (actor.id === loaded.conversation.userId && loaded.conversation.userHiddenAt) {
     await getDb().update(conversations).set({ userHiddenAt: null }).where(eq(conversations.id, input.conversationId));
   }

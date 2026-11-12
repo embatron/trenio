@@ -1,12 +1,12 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useRouter, useRouterState } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 
 import { CabinetNotice } from "@/components/cabinet";
 import { ConversationList } from "@/components/messages/conversation-list";
-import { useMessaging } from "@/components/messages/messages-live";
+import { useMessaging, useNoteMessagesRead, useRefreshMessages } from "@/components/messages/messages-live";
 import { ConversationThread, type ThreadMessage } from "@/components/messages/conversation-thread";
 import type { ComposerFile } from "@/components/messages/message-composer";
 import { authErrorMessage } from "@/lib/auth/errors";
@@ -27,6 +27,30 @@ import { DAILY_TRAINER_LIMIT_MESSAGE, type ConversationCursor, type Conversation
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const quietLists = new Set<string>();
+
+const PHONE_SHEET = "(max-width: 767px)";
+
+/**
+ * The phone back button follows browser history. A dialog opened from a profile,
+ * a notification, or a fresh tab has no list entry under it, so back leaves the
+ * messages page. Put the dialog list behind the current entry without a render:
+ * the history patch notifies the router, so this uses the original methods.
+ */
+function placeDialogListBehind(listPath: string) {
+  const threadHref = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (window.location.pathname === listPath || !threadHref.startsWith(`${listPath}/`)) return;
+  const state = window.history.state;
+  if (!state || typeof state !== "object" || state.messagesListBehind) return;
+  const index = typeof state.__TSR_index === "number" ? state.__TSR_index : 0;
+  const listKey = `dialogs-${state.key ?? index}`;
+  History.prototype.replaceState.call(window.history, {
+    ...state,
+    __TSR_index: index - 1,
+    key: listKey,
+    __TSR_key: listKey,
+  }, "", listPath);
+  History.prototype.pushState.call(window.history, { ...state, messagesListBehind: true }, "", threadHref);
+}
 
 function mergeById<T extends { id: string | number }>(first: T[], extra: T[]) {
   const seen = new Set(first.map((item) => item.id));
@@ -64,6 +88,8 @@ export function MessagesWorkspace({
     },
   });
   const messaging = useMessaging();
+  const noteRead = useNoteMessagesRead();
+  const refreshMessages = useRefreshMessages();
   const queryClient = useQueryClient();
   const listFn = useServerFn(listConversationsFn);
   const messagesFn = useServerFn(listMessagesFn);
@@ -134,20 +160,55 @@ export function MessagesWorkspace({
     if (conversationId) void threadQuery.refetch();
   }, [messaging.total, conversationId, listQuery, threadQuery]);
 
-  const newestId = threadQuery.data?.messages[0]?.id ?? 0;
   const shouldMark = Boolean(
-    threadQuery.data && (threadQuery.data.canWrite || threadQuery.data.canReport || threadQuery.data.canClose),
+    threadQuery.data && (threadQuery.data.canWrite || threadQuery.data.canReport),
   );
-  const markedKey = useRef("");
-  useEffect(() => {
-    if (!conversationId || !newestId || !shouldMark) return;
-    const key = `${conversationId}:${newestId}`;
-    if (markedKey.current === key) return;
-    markedKey.current = key;
-    void markFn({ data: { conversationId, lastMessageId: newestId } })
-      .then(() => router.invalidate())
-      .catch(() => undefined);
-  }, [conversationId, newestId, shouldMark, markFn, router]);
+  const shouldMarkRef = useRef(shouldMark);
+  shouldMarkRef.current = shouldMark;
+  const markedUpTo = useRef(0);
+  const markedFor = useRef("");
+  const notedUnread = useRef<{ id: string; left: number } | null>(null);
+  const itemsRef = useRef<ConversationListItem[]>([]);
+  const chronologicalRef = useRef<ThreadMessage[]>([]);
+  const markSeen = (messageId: number) => {
+    if (!conversationId || !shouldMarkRef.current || messageId <= 0) return;
+    if (markedFor.current !== conversationId) {
+      markedFor.current = conversationId;
+      markedUpTo.current = 0;
+      notedUnread.current = null;
+    }
+    const left = chronologicalRef.current.filter((message) => !message.mine && message.id > messageId).length;
+    if (!notedUnread.current) {
+      const before = itemsRef.current.find((item) => item.id === conversationId)?.unread ?? left;
+      notedUnread.current = { id: conversationId, left: before };
+    }
+    const drop = notedUnread.current.left - left;
+    if (drop > 0) {
+      notedUnread.current.left = left;
+      noteRead(view === "own" ? "own" : "inbox", drop);
+      queryClient.setQueriesData<{ items: ConversationListItem[] }>({ queryKey: ["conversations", view] }, (current) => {
+        if (!current?.items) return current;
+        return {
+          ...current,
+          items: current.items.map((item) => item.id === conversationId ? { ...item, unread: left } : item),
+        };
+      });
+      setExtraItems((current) => current.map((item) => item.id === conversationId ? { ...item, unread: left } : item));
+    }
+    if (messageId <= markedUpTo.current) return;
+    markedUpTo.current = messageId;
+    void markFn({ data: { conversationId, lastMessageId: messageId } })
+      .then(() => {
+        refreshMessages();
+        void queryClient.invalidateQueries({ queryKey: ["conversations", view] });
+      })
+      .catch(() => {
+        if (markedUpTo.current === messageId) markedUpTo.current = 0;
+        notedUnread.current = null;
+        void router.invalidate();
+        void queryClient.invalidateQueries({ queryKey: ["conversations", view] });
+      });
+  };
 
   const items = useMemo(
     () => mergeById(listQuery.data?.items ?? [], extraItems),
@@ -179,6 +240,8 @@ export function MessagesWorkspace({
     seen.add(key);
     return true;
   });
+  itemsRef.current = items;
+  chronologicalRef.current = messages;
   const nextMessageCursor = messageCursor === undefined ? threadQuery.data?.nextCursor ?? null : messageCursor;
 
   async function send(body: string, files: ComposerFile[] = [], clientId?: string, replyToId?: number) {
@@ -215,6 +278,20 @@ export function MessagesWorkspace({
         attachmentIds.push(saved.id);
       }
       await sendFn({ data: { conversationId, body, clientId: id, attachmentIds, replyToId } });
+      const before = itemsRef.current.find((item) => item.id === conversationId)?.unread ?? 0;
+      if (before > 0) {
+        noteRead(view === "own" ? "own" : "inbox", before);
+        notedUnread.current = { id: conversationId, left: 0 };
+        queryClient.setQueriesData<{ items: ConversationListItem[] }>({ queryKey: ["conversations", view] }, (current) => {
+          if (!current?.items) return current;
+          return {
+            ...current,
+            items: current.items.map((item) => item.id === conversationId ? { ...item, unread: 0 } : item),
+          };
+        });
+        setExtraItems((current) => current.map((item) => item.id === conversationId ? { ...item, unread: 0 } : item));
+      }
+      refreshMessages();
       await threadQuery.refetch();
       setPending((current) => current.filter((item) => item.clientId !== id));
       await listQuery.refetch();
@@ -257,11 +334,21 @@ export function MessagesWorkspace({
   }, [limitMessage]);
   const threadPath = view === "own" ? "/account/messages/$conversationId" : "/me/messages/$conversationId";
   const listPath = view === "own" ? "/account/messages" : "/me/messages";
+  const openedFromList = useRef(false);
+  useLayoutEffect(() => {
+    const phone = window.matchMedia(PHONE_SHEET).matches;
+    if (!conversationId) {
+      if (phone) openedFromList.current = true;
+      return;
+    }
+    if (!phone || openedFromList.current || window.history.state?.messagesListBehind) return;
+    placeDialogListBehind(listPath);
+  }, [conversationId, listPath]);
   useEffect(() => {
     const thread = threadQuery.data;
     if (!conversationId || !thread || thread.conversationId !== conversationId || thread.listed) return;
     quietLists.add(view);
-    void navigate({ to: listPath });
+    void navigate({ to: listPath, replace: true });
   }, [conversationId, threadQuery.data, view, navigate, listPath]);
   const openAt = (id: string) => {
     void navigate({ to: threadPath, params: { conversationId: id }, search: {} });
@@ -347,19 +434,23 @@ export function MessagesWorkspace({
               quietLists.add(view);
               await listQuery.refetch();
               void router.invalidate();
-              await navigate({ to: listPath });
+              await navigate({ to: listPath, replace: true });
             })
             .catch((error) => setActionError(authErrorMessage(error)))
             .finally(() => setBusy(false));
         }}
         busy={busy}
-        onBack={mobile ? () => void navigate({ to: listPath }) : undefined}
+        onBack={mobile ? () => {
+          if (router.history.length > 1) router.history.back();
+          else void navigate({ to: listPath, replace: true });
+        } : undefined}
         onDismiss={() => {
           quietLists.add(view);
-          void navigate({ to: listPath });
+          void navigate({ to: listPath, replace: true });
         }}
         onPrevious={previousId ? () => openAt(previousId) : undefined}
         onNext={nextId ? () => openAt(nextId) : undefined}
+        onSeen={markSeen}
       />
       {limitOpen && limitMessage ? (
         <CabinetNotice
@@ -485,7 +576,8 @@ export const DIRECT_CSS = `
 .direct-bubble .review-html ol { list-style: decimal; }
 .direct-bubble .review-html li + li { margin-top: 0.25em; }
 .direct-bubble__meta { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 2px; }
-.direct-bubble__meta time, .direct-bubble__meta .direct-bubble__state { margin: 0; font-size: 11px; opacity: 0.85; }
+.direct-bubble__meta time, .direct-bubble__meta .direct-bubble__state { margin: 0; font-size: 12px; opacity: 0.85; }
+.direct-bubble__state.is-read { color: var(--dark); font-weight: 600; opacity: 1; }
 .direct-bubble.is-deleted { opacity: 0.7; font-style: italic; }
 .direct-bubble__retry { min-height: 44px; border: 0; background: transparent; color: var(--muted); padding: 0 4px; }
 .direct-thread__actions button.direct-icon { width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
@@ -536,7 +628,9 @@ export const DIRECT_CSS = `
 .direct-field s { text-decoration: line-through; }
 .direct-field code, .direct-field pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.92em; }
 .direct-emoji__panel { position: absolute; left: 0; right: 0; bottom: calc(100% + 8px); z-index: 40; width: auto; max-width: 360px; margin-left: auto; }
-.direct.is-mobile.is-thread .direct-emoji__panel { left: var(--layout-gutter); right: var(--layout-gutter); max-width: none; margin-left: 0; }
+@media (max-width: 767px) {
+  .direct.is-thread .direct-emoji__panel { left: var(--layout-gutter); right: var(--layout-gutter); max-width: none; margin-left: 0; }
+}
 .direct-draft { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 8px 12px 0; }
 .direct-draft li { display: flex; align-items: center; gap: 8px; max-width: 100%; min-height: 44px; padding: 4px 8px 4px 4px; border: 1px solid var(--line); border-radius: 12px; background: var(--light-bg); }
 .direct-draft li.is-image { position: relative; width: 96px; height: 96px; padding: 0; overflow: hidden; }
@@ -579,36 +673,43 @@ export const DIRECT_CSS = `
   .direct:not(.is-mobile).is-open .direct-list { border-right: 1px solid var(--line); }
   .direct:not(.is-mobile):not(.is-open) .direct-thread { display: none; }
 }
-.direct.is-mobile { display: flex; flex-direction: column; min-height: 60vh; }
-.direct.is-mobile:not(.is-thread) .direct-thread { display: none; }
-.direct.is-mobile:not(.is-thread) .direct-list { flex: 1; min-height: 50vh; border-bottom: 0; }
-.direct.is-mobile.is-thread { position: fixed; z-index: 280; left: 0; right: 0; top: var(--direct-top, var(--header-clearance)); bottom: var(--keyboard-inset, 0px); display: flex; min-height: 0; border: 0; border-radius: 0; background: var(--white); padding-bottom: var(--keyboard-pad, env(safe-area-inset-bottom)); transition: bottom 0.2s ease, padding-bottom 0.2s ease; animation: direct-sheet 0.32s cubic-bezier(0.22, 0.8, 0.28, 1); }
-.direct.is-mobile.is-thread .direct-list { display: none; }
-.direct.is-mobile.is-thread .direct-thread { flex: 1; min-height: 0; height: 100%; }
-.direct.is-mobile.is-thread .direct-thread__head { flex-wrap: nowrap; align-items: center; padding-inline: var(--layout-gutter); }
-.direct.is-mobile.is-thread .direct-thread__who { overflow: hidden; }
-.direct.is-mobile.is-thread .direct-thread__who > * { min-width: 0; max-width: 100%; }
-.direct.is-mobile.is-thread .direct-thread__who a.cabinet-id__line { display: flex; min-width: 0; max-width: 100%; }
-.direct.is-mobile.is-thread .direct-thread__who a.cabinet-id__line > strong { flex: 1 1 auto; width: auto; min-width: 0; overflow: visible; white-space: normal; overflow-wrap: anywhere; }
-.direct.is-mobile.is-thread .direct-thread__who > strong { display: block; min-width: 0; max-width: 100%; overflow: visible; white-space: normal; overflow-wrap: anywhere; }
-.direct.is-mobile.is-thread .direct-thread__who .trainer-name { width: 100%; min-width: 0; max-width: 100%; overflow: visible; }
-.direct.is-mobile.is-thread .direct-thread__who .trainer-name__line { min-width: 0; overflow: visible; text-overflow: clip; white-space: normal; }
-.direct.is-mobile.is-thread .direct-thread__who a.direct-thread__trainer { min-width: 0; max-width: 100%; }
-.direct.is-mobile.is-thread .direct-thread__who a.direct-thread__trainer > strong { display: block; min-width: 0; overflow: visible; white-space: normal; overflow-wrap: anywhere; }
-.direct.is-mobile.is-thread .direct-composer,
-.direct.is-mobile.is-thread .direct-log { background: var(--white); }
 @media (max-width: 767px) {
+  .direct { display: flex; flex-direction: column; min-height: 60vh; }
+  .direct:not(.is-thread) .direct-thread { display: none; }
+  .direct:not(.is-thread) .direct-list { flex: 1; min-height: 50vh; border-bottom: 0; }
+  .direct.is-thread {
+    position: fixed; z-index: 280; left: 0; right: 0; top: var(--direct-top, var(--header-clearance)); bottom: var(--keyboard-inset, 0px);
+    display: flex; min-height: 0; border: 0; border-radius: 0; background: var(--white);
+    padding-bottom: var(--keyboard-pad, env(safe-area-inset-bottom));
+    transition: bottom 0.2s ease, padding-bottom 0.2s ease;
+    animation: direct-sheet 0.28s cubic-bezier(0.22, 0.8, 0.28, 1);
+  }
+  .direct.is-thread .direct-list { display: none; }
+  .direct.is-thread .direct-thread { flex: 1; min-height: 0; height: 100%; }
+  .direct.is-thread .direct-thread__pane { animation: none; }
+  .direct.is-thread .direct-thread__head { flex-wrap: nowrap; align-items: center; padding-inline: var(--layout-gutter); }
+  .direct.is-thread .direct-thread__who { overflow: hidden; }
+  .direct.is-thread .direct-thread__who > * { min-width: 0; max-width: 100%; }
+  .direct.is-thread .direct-thread__who a.cabinet-id__line { display: flex; min-width: 0; max-width: 100%; }
+  .direct.is-thread .direct-thread__who a.cabinet-id__line > strong { flex: 1 1 auto; width: auto; min-width: 0; overflow: visible; white-space: normal; overflow-wrap: anywhere; }
+  .direct.is-thread .direct-thread__who > strong { display: block; min-width: 0; max-width: 100%; overflow: visible; white-space: normal; overflow-wrap: anywhere; }
+  .direct.is-thread .direct-thread__who .trainer-name { width: 100%; min-width: 0; max-width: 100%; overflow: visible; }
+  .direct.is-thread .direct-thread__who .trainer-name__line { min-width: 0; overflow: visible; text-overflow: clip; white-space: normal; }
+  .direct.is-thread .direct-thread__who a.direct-thread__trainer { min-width: 0; max-width: 100%; }
+  .direct.is-thread .direct-thread__who a.direct-thread__trainer > strong { display: block; min-width: 0; overflow: visible; white-space: normal; overflow-wrap: anywhere; }
+  .direct.is-thread .direct-thread__actions { flex: 0 0 auto; margin-left: 0; flex-wrap: nowrap; }
+  .direct.is-thread .direct-composer,
+  .direct.is-thread .direct-log { background: var(--white); }
+  .direct.is-thread .direct-log,
+  .direct.is-thread .direct-composer,
+  .direct.is-thread .direct-draft,
+  .direct.is-thread .direct-composer__hint { padding-inline: var(--layout-gutter); }
   .direct-switch { display: none; }
+  body:has(.direct.is-thread) { overflow: hidden; }
 }
-.direct.is-mobile.is-thread .direct-thread__actions { flex: 0 0 auto; margin-left: 0; flex-wrap: nowrap; }
-.direct.is-mobile.is-thread .direct-log,
-.direct.is-mobile.is-thread .direct-composer,
-.direct.is-mobile.is-thread .direct-draft,
-.direct.is-mobile.is-thread .direct-composer__hint { padding-inline: var(--layout-gutter); }
 @media (min-width: 768px) {
   .direct-field, .direct-field__placeholder { font-size: 14px; }
 }
-body:has(.direct.is-mobile.is-thread) { overflow: hidden; }
 @keyframes direct-switch { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes direct-sheet { from { transform: translateX(100%); } to { transform: none; } }
 @media (max-width: 480px) {
@@ -616,6 +717,6 @@ body:has(.direct.is-mobile.is-thread) { overflow: hidden; }
   .direct-back__label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .direct-thread__pane, .direct.is-mobile.is-thread { animation: none; transition: none; }
+  .direct-thread__pane, .direct.is-thread { animation: none; transition: none; }
 }
 `;

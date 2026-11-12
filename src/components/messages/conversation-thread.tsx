@@ -10,7 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { reviewTextLength } from "@/lib/catalog/review-html";
 import { notifyTyping, remoteTyping, subscribeTyping } from "@/lib/messages/live-client";
 import { REPORT_COMMENT_MAX_LENGTH, REPORT_REASONS, messagePreview, type MessageDto, type ThreadResult } from "@/lib/messages/schemas";
-import { firstUnreadMessageId, messageScrollTop } from "@/lib/messages/thread-scroll";
+import { firstUnreadMessageId, messageScrollTop, seenMessageId } from "@/lib/messages/thread-scroll";
 
 function dayKey(iso: string) {
   const date = new Date(iso);
@@ -79,6 +79,7 @@ export function ConversationThread({
   onDismiss,
   onPrevious,
   onNext,
+  onSeen,
 }: {
   view: "own" | "inbox";
   thread: ThreadResult | null;
@@ -100,6 +101,8 @@ export function ConversationThread({
   onDismiss?: () => void;
   onPrevious?: () => void;
   onNext?: () => void;
+  /** Latest message whose bottom has entered the visible log. */
+  onSeen?: (messageId: number) => void;
 }) {
   const mobile = useIsMobile();
   const threadRoot = useRef<HTMLDivElement>(null);
@@ -129,6 +132,22 @@ export function ConversationThread({
   const commentOver = commentLength > REPORT_COMMENT_MAX_LENGTH;
   const [reporting, setReporting] = useState(false);
   const scroller = useRef<HTMLDivElement>(null);
+  const onSeenRef = useRef(onSeen);
+  onSeenRef.current = onSeen;
+  const reportSeen = () => {
+    const el = scroller.current;
+    const report = onSeenRef.current;
+    if (!el || !report || el.clientHeight < 1) return;
+    const edge = el.getBoundingClientRect().bottom;
+    const rows = [...el.querySelectorAll("[data-message-id]")].flatMap((node) => {
+      if (!(node instanceof HTMLElement)) return [];
+      const id = Number(node.dataset.messageId);
+      if (!Number.isFinite(id)) return [];
+      return [{ id, bottom: node.getBoundingClientRect().bottom }];
+    });
+    const seen = seenMessageId(rows, edge);
+    if (seen != null) report(seen);
+  };
   const stick = useRef(true);
   const released = useRef(false);
   const placedFor = useRef<string | null>(null);
@@ -148,7 +167,6 @@ export function ConversationThread({
   const messageCount = messages.length;
 
   useLayoutEffect(() => {
-    if (!mobile) return;
     const header = document.querySelector(".site-header");
     if (!(header instanceof HTMLElement)) return;
     const apply = () => {
@@ -161,7 +179,7 @@ export function ConversationThread({
       observer.disconnect();
       document.documentElement.style.removeProperty("--direct-top");
     };
-  }, [mobile]);
+  }, []);
 
   useLayoutEffect(() => {
     const el = scroller.current;
@@ -191,10 +209,12 @@ export function ConversationThread({
       if (Math.abs(el.scrollTop - top) > 1) el.scrollTop = top;
       stick.current = true;
       followedId.current = lastId ?? null;
+      reportSeen();
       return;
     }
     if (released.current && !stick.current) {
       followedId.current = lastId ?? null;
+      reportSeen();
       return;
     }
 
@@ -213,7 +233,19 @@ export function ConversationThread({
     stick.current = place.stick;
     placedFor.current = current.conversationId;
     followedId.current = lastId ?? null;
+    reportSeen();
   }, [conversationId, messageCount, lastId, lastClient, lastMine, scrollEpoch]);
+
+  useEffect(() => {
+    const root = threadRoot.current?.closest(".direct");
+    if (!(root instanceof HTMLElement)) return;
+    const done = (event: AnimationEvent) => {
+      if (event.target !== root) return;
+      reportSeen();
+    };
+    root.addEventListener("animationend", done);
+    return () => root.removeEventListener("animationend", done);
+  }, [conversationId]);
 
   useEffect(() => {
     const el = scroller.current;
@@ -223,10 +255,16 @@ export function ConversationThread({
       if (!stick.current) return;
       const top = Math.max(0, el.scrollHeight - el.clientHeight);
       if (Math.abs(el.scrollTop - top) > 1) el.scrollTop = top;
+      reportSeen();
     };
     const observer = new ResizeObserver(pin);
     observer.observe(thread);
-    return () => observer.disconnect();
+    const box = new ResizeObserver(() => reportSeen());
+    box.observe(el);
+    return () => {
+      observer.disconnect();
+      box.disconnect();
+    };
   }, [conversationId]);
 
   useEffect(() => {
@@ -583,6 +621,7 @@ export function ConversationThread({
               const el = event.currentTarget;
               released.current = true;
               stick.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+              reportSeen();
             }}
           >
             {hasEarlier ? (

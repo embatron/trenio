@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useRouteContext } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 import { isAuthorizationRequired } from "@/lib/auth/errors";
@@ -15,9 +15,21 @@ import { MESSAGE_SOCKET_FALLBACK_MS } from "@/lib/messages/polling";
 import { EMPTY_MESSAGING, type MessageNotice, type MessagingSummary } from "@/lib/messages/schemas";
 
 const MessagesLiveContext = createContext<MessagingSummary>(EMPTY_MESSAGING);
+const MessagesReadContext = createContext<(bucket: "own" | "inbox", drop: number) => void>(() => {});
+const MessagesRefreshContext = createContext<() => void>(() => {});
 
 export function useMessaging() {
   return useContext(MessagesLiveContext);
+}
+
+/** Drop the header and menu count as soon as this screen has seen those messages. */
+export function useNoteMessagesRead() {
+  return useContext(MessagesReadContext);
+}
+
+/** Read the counters again after a reply or a read cursor move. */
+export function useRefreshMessages() {
+  return useContext(MessagesRefreshContext);
 }
 
 function openIncoming(
@@ -89,6 +101,15 @@ export function MessagesLive({
   const router = useRouter();
   const { user } = useRouteContext({ from: "__root__" });
   const [summary, setSummary] = useState(initial);
+  const noteRead = useCallback((bucket: "own" | "inbox", drop: number) => {
+    if (drop <= 0) return;
+    setSummary((current) => ({
+      ...current,
+      total: Math.max(0, current.total - drop),
+      own: bucket === "own" ? Math.max(0, current.own - drop) : current.own,
+      inbox: bucket === "inbox" ? Math.max(0, current.inbox - drop) : current.inbox,
+    }));
+  }, []);
   const unread = useServerFn(unreadCountFn);
   const unreadRef = useRef(unread);
   unreadRef.current = unread;
@@ -103,6 +124,10 @@ export function MessagesLive({
   const seenRef = useRef<number | null>(null);
   const seenUserRef = useRef<string | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
+  const refreshRef = useRef<() => void>(() => {});
+  const refreshMessages = useCallback(() => {
+    refreshRef.current();
+  }, []);
 
   useEffect(() => {
     setSummary(userId ? initial : EMPTY_MESSAGING);
@@ -153,6 +178,9 @@ export function MessagesLive({
           redirectToLogin();
         }
       }
+    };
+    refreshRef.current = () => {
+      void refresh();
     };
     const refreshOpen = () => {
       void refresh();
@@ -208,5 +236,11 @@ export function MessagesLive({
     };
   }, [userId]);
 
-  return <MessagesLiveContext.Provider value={summary}>{children}</MessagesLiveContext.Provider>;
+  return (
+    <MessagesRefreshContext.Provider value={refreshMessages}>
+      <MessagesReadContext.Provider value={noteRead}>
+        <MessagesLiveContext.Provider value={summary}>{children}</MessagesLiveContext.Provider>
+      </MessagesReadContext.Provider>
+    </MessagesRefreshContext.Provider>
+  );
 }

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { firstUnreadMessageId, messageScrollTop } from "@/lib/messages/thread-scroll";
+import { firstUnreadMessageId, messageScrollTop, seenMessageId } from "@/lib/messages/thread-scroll";
 
 const thread = [
   { id: 1, mine: false },
@@ -42,6 +42,25 @@ test("a short unread tail stays pinned to the bottom", () => {
   const place = messageScrollTop({ anchorTop: 1800, scrollHeight: 2100, clientHeight: 500 });
   assert.equal(place.top, 1600);
   assert.equal(place.stick, true);
+});
+
+test("a message is read only after its bottom crosses the pane edge", () => {
+  const rows = [
+    { id: 1, bottom: 200 },
+    { id: 2, bottom: 480 },
+    { id: 3, bottom: 900 },
+  ];
+  assert.equal(seenMessageId(rows, 500), 2);
+  assert.equal(seenMessageId(rows, 891), 2);
+  assert.equal(seenMessageId(rows, 892), 3);
+});
+
+test("a message scrolled above the pane stays read", () => {
+  assert.equal(seenMessageId([{ id: 4, bottom: -40 }, { id: 5, bottom: 700 }], 400), 4);
+});
+
+test("a pending row does not move the read cutoff", () => {
+  assert.equal(seenMessageId([{ id: -1, bottom: 100 }, { id: 0, bottom: 100 }], 400), null);
 });
 
 test("no unread anchor pins to the bottom", () => {

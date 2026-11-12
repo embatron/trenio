@@ -183,7 +183,7 @@ export function MessageBubble({
           ) : null}
           <time dateTime={message.createdAt}>{timeLabel(message.createdAt)}</time>
           {message.editedAt ? <span className="direct-bubble__state">изменено</span> : null}
-          {receipt ? <span className="direct-bubble__state">{receipt}</span> : null}
+          {receipt ? <span className={`direct-bubble__state${receipt === "Прочитано" ? " is-read" : ""}`}>{receipt}</span> : null}
         </div>
         {failed ? (
           <button type="button" className="direct-bubble__retry" onClick={() => onRetry?.(message)}>

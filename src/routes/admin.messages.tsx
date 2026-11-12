@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 
@@ -179,11 +179,23 @@ function StaffThreads() {
     if (quiet || mobile || openId || opening || trainer || conversation || list.isPending || !latestId) return;
     setOpenId(latestId);
   }, [quiet, mobile, openId, opening, trainer, conversation, list.isPending, latestId]);
-  const newestId = thread.data?.messages[0]?.id ?? 0;
-  useEffect(() => {
-    if (!openId || !newestId || !thread.data?.canReport) return;
-    void markFn({ data: { conversationId: openId, lastMessageId: newestId } }).catch(() => undefined);
-  }, [openId, newestId, thread.data?.canReport, markFn]);
+  const canMark = Boolean(thread.data?.canReport);
+  const canMarkRef = useRef(canMark);
+  canMarkRef.current = canMark;
+  const markedUpTo = useRef(0);
+  const markedFor = useRef("");
+  const markSeen = (messageId: number) => {
+    if (!openId || !canMarkRef.current || messageId <= 0) return;
+    if (markedFor.current !== openId) {
+      markedFor.current = openId;
+      markedUpTo.current = 0;
+    }
+    if (messageId <= markedUpTo.current) return;
+    markedUpTo.current = messageId;
+    void markFn({ data: { conversationId: openId, lastMessageId: messageId } }).catch(() => {
+      if (markedUpTo.current === messageId) markedUpTo.current = 0;
+    });
+  };
   const next = cursor === undefined ? list.data?.nextCursor ?? null : cursor;
   const messages: ThreadMessage[] = (thread.data?.messages ?? []).slice().reverse();
   const openIndex = openId ? items.findIndex((item) => item.id === openId) : -1;
@@ -291,6 +303,7 @@ function StaffThreads() {
         }}
         onPrevious={openIndex > 0 ? () => setOpenId(items[openIndex - 1]?.id ?? null) : undefined}
         onNext={openIndex >= 0 && openIndex < items.length - 1 ? () => setOpenId(items[openIndex + 1]?.id ?? null) : undefined}
+        onSeen={markSeen}
       />
     </div>
   );

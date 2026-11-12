@@ -8,6 +8,8 @@ import { ensureConversationFn } from "@/lib/messages/functions";
 /**
  * `?trainer=` means that card's dialog. Hold the list's "open the first row"
  * until the server has returned that session and the URL shows its id.
+ * On a phone the dialog is pushed, so the system back button returns to this
+ * list instead of the page that opened it. A wide screen still replaces.
  */
 export function useOpenTrainerThread(
   trainer: string | undefined,
@@ -35,11 +37,12 @@ export function useOpenTrainerThread(
       .then((result) => {
         if (slugRef.current !== trainer) return;
         targetRef.current = result.conversationId;
+        const phone = window.matchMedia("(max-width: 767px)").matches;
         void navigate({
           to,
           params: { conversationId: result.conversationId },
           search: {},
-          replace: true,
+          replace: !phone,
         });
       })
       .catch((err) => {
