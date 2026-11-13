@@ -5,6 +5,7 @@ import { AuthStyles } from "@/components/auth-styles";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { beginTotpFn, confirmLoginTotpFn, confirmTotpFn, logoutFn, pendingTotpFn } from "@/lib/auth/functions";
+import { logoutWithShell } from "@/lib/native/shell";
 import { getPostLoginPath } from "@/lib/auth/roles";
 import { STAFF_TOTP_REQUIRED } from "@/lib/auth/staff-totp";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
@@ -128,7 +129,7 @@ function TotpPage() {
               type="button"
               className="auth-resend"
               onClick={() => {
-                void logout().then(() => {
+                void logoutWithShell(() => logout()).then(() => {
                   window.location.assign("/");
                 });
               }}

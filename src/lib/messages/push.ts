@@ -5,6 +5,7 @@ import { getDb } from "@/db";
 import { pushSubscriptions } from "@/db/schema";
 import { writeLog } from "@/lib/log/logger";
 import { ensurePushSchema } from "@/lib/messages/push-schema";
+import { sendApnsPushes } from "@/lib/mobile/apns";
 import { SITE_EMAIL } from "@/lib/seo/site";
 
 export type MessagePush = {
@@ -37,8 +38,17 @@ export async function sendMessagePushes(userId: string, payload: MessagePush): P
       message: "Уведомление не отправлено: нет ключей VAPID.",
       target: payload.tag,
     });
-    return;
+  } else {
+    await deliverVapid(userId, payload, keys);
   }
+  await sendApnsPushes(userId, payload);
+}
+
+async function deliverVapid(
+  userId: string,
+  payload: MessagePush,
+  keys: { publicKey: string; privateKey: string },
+): Promise<void> {
   await ensurePushSchema();
   const rows = await getDb()
     .select({

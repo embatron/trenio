@@ -89,6 +89,17 @@ export function decideYandexLink(input: {
   return decideMailboxLink({ ...input, currentSub: input.yandexSub });
 }
 
+/** Apple is the same proof, on `apple_sub`. A private-relay mailbox counts as verified. */
+export function decideAppleLink(input: {
+  exists: boolean;
+  blocked: boolean;
+  emailVerified: boolean;
+  appleSub: string | null;
+  incomingSub: string;
+}): GoogleLinkChoice {
+  return decideMailboxLink({ ...input, currentSub: input.appleSub });
+}
+
 export function accountGatePath(user: {
   needsCredentials: boolean;
   needsDoorPassword: boolean;

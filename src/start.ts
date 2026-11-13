@@ -3,6 +3,13 @@ import { createStart, createMiddleware } from "@tanstack/react-start";
 import { renderErrorPage } from "./lib/error-page";
 import { logCaught, wasLogged } from "./lib/log/logger";
 import { handleTelegramMenuWebhook, telegramWebhookPath } from "./lib/telegram/webhook.server";
+import { handleMobileApi } from "./lib/mobile/http";
+
+const mobileApiMiddleware = createMiddleware().server(async ({ request, next }) => {
+  const handled = await handleMobileApi(request);
+  if (handled) return handled;
+  return next();
+});
 
 const telegramMenuMiddleware = createMiddleware().server(async ({ request, next }) => {
   const { pathname } = new URL(request.url);
@@ -36,5 +43,5 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
 });
 
 export const startInstance = createStart(() => ({
-  requestMiddleware: [telegramMenuMiddleware, errorMiddleware],
+  requestMiddleware: [mobileApiMiddleware, telegramMenuMiddleware, errorMiddleware],
 }));

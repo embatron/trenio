@@ -138,7 +138,7 @@ function toSessionUser(user: User, roles: UserRole[]): SessionUser {
     pushMessages: user.pushMessages,
     telegramLinked: user.telegramUserId != null,
     telegramUsername: user.telegramUsername,
-    needsPassword: user.needsPassword && !user.googleSub && !user.yandexSub,
+    needsPassword: user.needsPassword && !user.googleSub && !user.yandexSub && !user.appleSub,
     hasPassword: user.passwordSetAt != null,
     phoneVerified: user.phoneVerifiedAt != null,
     totpEnabled: user.totpEnabledAt != null,

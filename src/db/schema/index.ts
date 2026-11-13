@@ -11,6 +11,7 @@ export * from "./user-favorites";
 export * from "./account-likes";
 export * from "./messages";
 export * from "./push-subscriptions";
+export * from "./user-devices";
 export * from "./trainer-welcomes";
 export * from "./geo-cache";
 export * from "./app-logs";

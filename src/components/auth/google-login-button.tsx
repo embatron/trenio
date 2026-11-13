@@ -1,4 +1,5 @@
 import { GoogleIcon } from "@/components/brand-icons";
+import { openProviderInShell } from "@/lib/native/shell";
 
 /** Starts the Google redirect. The same address signs in or creates the account. */
 export function GoogleLoginButton({
@@ -35,7 +36,7 @@ export function GoogleLoginButton({
     );
   }
   return (
-    <a className="auth-google" href={`/auth/google${next}`}>
+    <a className="auth-google" href={`/auth/google${next}`} onClick={(event) => openProviderInShell(event, `/auth/google${next}`)}>
       {label}
     </a>
   );

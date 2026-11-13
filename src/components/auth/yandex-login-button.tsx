@@ -1,4 +1,5 @@
 import { YandexIcon } from "@/components/brand-icons";
+import { openProviderInShell } from "@/lib/native/shell";
 
 /** Starts the Yandex redirect. The same address signs in or creates the account. */
 export function YandexLoginButton({
@@ -35,7 +36,7 @@ export function YandexLoginButton({
     );
   }
   return (
-    <a className="auth-google" href={`/auth/yandex${next}`}>
+    <a className="auth-google" href={`/auth/yandex${next}`} onClick={(event) => openProviderInShell(event, `/auth/yandex${next}`)}>
       {label}
     </a>
   );

@@ -33,6 +33,18 @@ export function YandexIcon() {
   );
 }
 
+/** Apple mark for Sign in with Apple. The website shows it only inside the iOS shell. */
+export function AppleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width={18} height={18} aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M16.4 12.6c0-2.2 1.8-3.3 1.9-3.4-1-1.5-2.6-1.7-3.2-1.7-1.4-.1-2.6.8-3.3.8s-1.7-.8-2.9-.8c-1.5 0-2.8.9-3.6 2.2-1.5 2.7-.4 6.6 1.1 8.8.7 1.1 1.6 2.3 2.7 2.2 1.1 0 1.5-.7 2.8-.7s1.7.7 2.9.7 1.9-1.1 2.6-2.2c.8-1.2 1.2-2.3 1.2-2.4-.1 0-2.2-.9-2.2-3.5zM14.7 6.4c.6-.7 1-1.7.9-2.7-1 .1-2.1.6-2.7 1.4-.6.7-1.1 1.7-.9 2.6 1 .1 2.1-.5 2.7-1.3z"
+      />
+    </svg>
+  );
+}
+
 /** Official Threads mark. The color follows the surface so it stays visible on the dark footer. */
 export function ThreadsIcon() {
   return (

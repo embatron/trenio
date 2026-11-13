@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
+import { AppleLoginButton } from "@/components/auth/apple-login-button";
 import { PhoneOtpFields, clientValidatePhone, useCountdown } from "@/components/auth/phone-otp-fields";
 import { YandexLoginButton } from "@/components/auth/yandex-login-button";
 import { authErrorMessage } from "@/lib/auth/errors";
@@ -153,6 +154,7 @@ export function TrainerDoorMail({
           <>
             <div className="door-google">
               <GoogleLoginButton returnPath="/me" door />
+              <AppleLoginButton returnPath="/me" />
               <YandexLoginButton returnPath="/me" door />
               <button type="button" className="auth-google" onClick={() => setPhoneOpen(true)}>
                 <svg viewBox="0 0 24 24" width={18} height={18} aria-hidden="true">

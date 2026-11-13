@@ -28,12 +28,12 @@ export default defineConfig({
       publicDir: "dist/client",
     },
     externals: {
-      external: ["pdfjs-dist", "@napi-rs/canvas"],
+      external: ["pdfjs-dist", "@napi-rs/canvas", "apn"],
     },
   } as Exclude<LovableViteTanstackOptions["nitro"], boolean | undefined>,
   vite: {
     ssr: {
-      external: ["ip-location-api", "sharp", "tinify", "pdfjs-dist", "@napi-rs/canvas"],
+      external: ["ip-location-api", "sharp", "tinify", "pdfjs-dist", "@napi-rs/canvas", "apn"],
     },
     plugins: [serveUploadFiles(), messageLiveDev()],
     // The client dependency scan follows server imports. Bundling the native
@@ -49,6 +49,8 @@ export default defineConfig({
         "tinify",
         "web-push",
         "pdfjs-dist",
+        "apn",
+        "jose",
       ],
     },
     server: {

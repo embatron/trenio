@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 
 import { AuthStyles } from "@/components/auth-styles";
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
+import { AppleLoginButton } from "@/components/auth/apple-login-button";
 import { YandexLoginButton } from "@/components/auth/yandex-login-button";
 import { honeypotFromForm, HoneypotField } from "@/components/auth/honeypot-field";
 import { PasswordStrength } from "@/components/auth/password-strength";
@@ -163,6 +164,13 @@ function SignupPage() {
               browse={browse === "1"}
               disabled={!accepted}
               onBlocked={() => setError("Примите политику конфиденциальности.")}
+            />
+            <AppleLoginButton
+              returnPath={returnPath}
+              browse={browse === "1"}
+              disabled={!accepted}
+              onBlocked={() => setError("Примите политику конфиденциальности.")}
+              onError={setError}
             />
             <YandexLoginButton
               returnPath={returnPath}

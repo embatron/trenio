@@ -1,4 +1,20 @@
-/* Message pushes only. Pages stay on the network so a deploy is not cached as the app. */
+/* Message pushes only. A failed navigation can show offline.html. Pages are not cached. */
+const OFFLINE_CACHE = "trenio-offline-v1";
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(caches.open(OFFLINE_CACHE).then((cache) => cache.add("/offline.html")).catch(() => undefined));
+});
+
+self.addEventListener("fetch", (event) => {
+  const request = event.request;
+  if (request.method !== "GET" || request.mode !== "navigate") return;
+  event.respondWith(fetch(request).catch(async () => {
+    const cached = await caches.match("/offline.html");
+    if (cached) return cached;
+    return new Response("Нет сети", { status: 503, headers: { "content-type": "text/plain; charset=utf-8" } });
+  }));
+});
+
 self.addEventListener("push", (event) => {
   const fallback = {
     title: "Trenio",

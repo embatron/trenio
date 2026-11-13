@@ -9,6 +9,7 @@ import {
   useCountdown,
 } from "@/components/auth/phone-otp-fields";
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
+import { AppleLoginButton } from "@/components/auth/apple-login-button";
 import { YandexLoginButton } from "@/components/auth/yandex-login-button";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
@@ -160,6 +161,7 @@ function LoginPage() {
 
           <div className="auth-google-slot">
             <GoogleLoginButton returnPath={returnPath} browse={browse === "1"} />
+            <AppleLoginButton returnPath={returnPath} browse={browse === "1"} onError={setError} />
             <YandexLoginButton returnPath={returnPath} browse={browse === "1"} />
             <div className="auth-or" aria-hidden="true">или</div>
           </div>

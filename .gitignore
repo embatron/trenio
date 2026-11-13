@@ -58,3 +58,17 @@ public/trainers/admin/
 
 # Export archives
 *.zip
+
+# Local architecture brief. Not for the repo.
+docs/ARCHITECTURE.local.md
+
+# Mobile signing material. Never commit.
+*.p8
+*.keystore
+mobile/android/signing.properties
+mobile/android/local.properties
+mobile/android/.gradle/
+mobile/android/build/
+mobile/android/app/build/
+mobile/ios/App/Pods/
+mobile/ios/DerivedData/

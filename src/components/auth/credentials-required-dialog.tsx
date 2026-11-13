@@ -13,6 +13,7 @@ import {
 } from "@/lib/auth/functions";
 import { validatePasswordStrength } from "@/lib/auth/password-policy";
 import { AuthAlert, useAuthSubmit, useAuthServerFn } from "@/lib/auth/use-auth-form";
+import { logoutWithShell } from "@/lib/native/shell";
 
 export function CredentialsRequiredDialog() {
   const router = useRouter();
@@ -218,7 +219,7 @@ export function CredentialsRequiredDialog() {
           type="button"
           className="auth-submit"
           onClick={() => {
-            void logout().then(() => {
+            void logoutWithShell(() => logout()).then(() => {
               window.location.assign("/");
             });
           }}

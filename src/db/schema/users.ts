@@ -70,6 +70,10 @@ export const users = pgTable(
     googleSub: varchar("google_sub", { length: 255 }),
     /** Stable Yandex ID. Set when the person signs in with Yandex. */
     yandexSub: varchar("yandex_sub", { length: 255 }),
+    /** Stable Sign in with Apple subject. Set when the person signs in with Apple. */
+    appleSub: varchar("apple_sub", { length: 255 }),
+    /** Mailbox Apple sent with the first authorization, including a private relay. */
+    appleEmail: varchar("apple_email", { length: 320 }),
     /** AES-GCM blob. Empty until a staff account starts enrollment. */
     totpSecret: text("totp_secret"),
     totpEnabledAt: timestamp("totp_enabled_at", { withTimezone: true }),
@@ -94,6 +98,7 @@ export const users = pgTable(
     uniqueIndex("users_telegram_user_id_unique").on(table.telegramUserId),
     uniqueIndex("users_google_sub_unique").on(table.googleSub),
     uniqueIndex("users_yandex_sub_unique").on(table.yandexSub),
+    uniqueIndex("users_apple_sub_unique").on(table.appleSub),
     index("users_status_idx").on(table.status),
     index("users_deleted_at_idx").on(table.deletedAt),
   ],
