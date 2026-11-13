@@ -193,5 +193,20 @@ export const messageNotices = pgTable(
   ],
 );
 
+/** One thumb from one account on one message. The sender does not mark their own text. */
+export const messageReactions = pgTable(
+  "message_reactions",
+  {
+    messageId: bigint("message_id", { mode: "number" })
+      .notNull()
+      .references(() => messages.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.messageId, table.userId] })],
+);
+
 export type Conversation = typeof conversations.$inferSelect;
 export type Message = typeof messages.$inferSelect;

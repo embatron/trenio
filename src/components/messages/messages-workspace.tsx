@@ -18,17 +18,17 @@ import {
   listConversationsFn,
   listMessagesFn,
   markConversationReadFn,
+  reactMessageFn,
   reportMessageFn,
   sendMessageFn,
   uploadMessageFileFn,
 } from "@/lib/messages/functions";
 import { newMessageClientId } from "@/lib/messages/attachments";
+import { backShouldOpenDialogList, isMessageThreadPath, messageListPath, PHONE_SHEET } from "@/lib/messages/phone-history";
 import { DAILY_TRAINER_LIMIT_MESSAGE, type ConversationCursor, type ConversationListItem, type MessageCursor, type MessageDto } from "@/lib/messages/schemas";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const quietLists = new Set<string>();
-
-const PHONE_SHEET = "(max-width: 767px)";
 
 /**
  * The phone back button follows browser history. A dialog opened from a profile,
@@ -101,6 +101,7 @@ export function MessagesWorkspace({
   const deleteFn = useServerFn(deleteConversationFn);
   const unblockFn = useServerFn(unblockPairFn);
   const reportFn = useServerFn(reportMessageFn);
+  const likeFn = useServerFn(reactMessageFn);
   const [extraItems, setExtraItems] = useState<ConversationListItem[]>([]);
   const [listCursor, setListCursor] = useState<ConversationCursor | null | undefined>(undefined);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -113,6 +114,8 @@ export function MessagesWorkspace({
   const [busy, setBusy] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
+  const [likeOverride, setLikeOverride] = useState<Map<number, boolean>>(new Map());
+  const likeLock = useRef(new Set<number>());
 
   useEffect(() => {
     const timer = window.setTimeout(() => setSearch(searchInput.trim()), 300);
@@ -140,6 +143,7 @@ export function MessagesWorkspace({
     setMessageCursor(undefined);
     setPending([]);
     setActionError(null);
+    setLikeOverride(new Map());
   }, [conversationId]);
 
   useEffect(() => {
@@ -247,6 +251,30 @@ export function MessagesWorkspace({
   });
   itemsRef.current = items;
   chronologicalRef.current = messages;
+  const shownMessages = likeOverride.size === 0
+    ? messages
+    : messages.map((message) => likeOverride.has(message.id) ? { ...message, liked: likeOverride.get(message.id)! } : message);
+  async function like(messageId: number) {
+    if (likeLock.current.has(messageId)) return;
+    const current = shownMessages.find((message) => message.id === messageId);
+    const next = !(current?.liked ?? false);
+    likeLock.current.add(messageId);
+    setLikeOverride((map) => new Map(map).set(messageId, next));
+    try {
+      const result = await likeFn({ data: { messageId } });
+      setLikeOverride((map) => new Map(map).set(messageId, result.liked));
+      await threadQuery.refetch();
+    } catch (error) {
+      setLikeOverride((map) => {
+        const copy = new Map(map);
+        copy.delete(messageId);
+        return copy;
+      });
+      setActionError(authErrorMessage(error));
+    } finally {
+      likeLock.current.delete(messageId);
+    }
+  }
   const nextMessageCursor = messageCursor === undefined ? threadQuery.data?.nextCursor ?? null : messageCursor;
 
   async function send(body: string, files: ComposerFile[] = [], clientId?: string, replyToId?: number) {
@@ -263,6 +291,7 @@ export function MessagesWorkspace({
       mine: true,
       side: threadQuery.data?.counterpart.kind === "user" ? "trainer" : "user",
       receipt: null,
+      liked: false,
       editedAt: null,
       canEdit: false,
       replyTo: replyToId ? { id: replyToId, preview: "Цитата" } : null,
@@ -340,6 +369,30 @@ export function MessagesWorkspace({
   const threadPath = view === "own" ? "/account/messages/$conversationId" : "/me/messages/$conversationId";
   const listPath = view === "own" ? "/account/messages" : "/me/messages";
   const openedFromList = useRef(false);
+  const threadPathRef = useRef<string | null>(null);
+  useLayoutEffect(() => {
+    threadPathRef.current = window.matchMedia(PHONE_SHEET).matches && conversationId
+      ? window.location.pathname
+      : null;
+  }, [conversationId]);
+  useEffect(() => {
+    const onPop = () => {
+      const from = threadPathRef.current;
+      const to = window.location.pathname;
+      if (!from || !backShouldOpenDialogList(from, to)) return;
+      const list = messageListPath(from);
+      if (!list) return;
+      threadPathRef.current = null;
+      window.setTimeout(() => {
+        const path = window.location.pathname;
+        if (messageListPath(path) === list && !isMessageThreadPath(path)) return;
+        if (list === "/account/messages") void navigate({ to: "/account/messages", search: {} });
+        else void navigate({ to: "/me/messages", search: {} });
+      }, 0);
+    };
+    window.addEventListener("popstate", onPop, true);
+    return () => window.removeEventListener("popstate", onPop, true);
+  }, [navigate]);
   useLayoutEffect(() => {
     const phone = window.matchMedia(PHONE_SHEET).matches;
     if (!conversationId) {
@@ -392,7 +445,8 @@ export function MessagesWorkspace({
       <ConversationThread
         view={view}
         thread={threadQuery.data ?? null}
-        messages={messages}
+        messages={shownMessages}
+        onLike={(messageId) => void like(messageId)}
         loading={Boolean(conversationId) && threadQuery.isPending}
         error={conversationId ? threadError : shown(openError)}
         hasEarlier={Boolean(nextMessageCursor)}
@@ -447,7 +501,8 @@ export function MessagesWorkspace({
         busy={busy}
         onBack={mobile ? () => {
           if (router.history.length > 1) router.history.back();
-          else void navigate({ to: listPath, replace: true });
+          else if (listPath === "/account/messages") void navigate({ to: "/account/messages", search: {}, replace: true });
+          else void navigate({ to: "/me/messages", search: {}, replace: true });
         } : undefined}
         onDismiss={() => {
           quietLists.add(view);
@@ -494,6 +549,17 @@ export const DIRECT_CSS = `
 .direct-bubble__edit::before { content: ""; position: absolute; inset: -11px; }
 .direct-bubble__edit svg { width: 16px; height: 16px; display: block; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .direct-bubble__edit:hover { opacity: 1; color: var(--primary); }
+.direct-bubble__like {
+  position: relative; flex: 0 0 auto; width: 22px; height: 22px; margin-left: 2px; padding: 0; border: 0;
+  background: transparent; color: var(--muted); display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; opacity: 0.72; transition: color 0.18s ease, opacity 0.18s ease, transform 0.18s ease;
+}
+.direct-bubble__like::before { content: ""; position: absolute; inset: -11px; }
+.direct-bubble__like svg { width: 16px; height: 16px; display: block; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.direct-bubble__like:hover, .direct-bubble__like:focus-visible, .direct-bubble__like.is-on { opacity: 1; color: var(--primary); }
+.direct-bubble__like.is-on { animation: direct-like 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
+.is-arriving { animation: direct-arrive 0.32s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.direct-thread__typing, .direct-banner, .direct-menu__list, .direct-day, .direct-cleared { animation: direct-fade 0.22s ease both; }
 .direct-log [data-message-id] { scroll-margin-top: 12px; }
 .direct-list ul { list-style: none; margin: 0; padding: 0; overflow: auto; }
 .presence-face { position: relative; display: flex; flex: 0 0 auto; }
@@ -655,8 +721,8 @@ export const DIRECT_CSS = `
 .direct-preview { display: block; width: 72px; height: 72px; padding: 0; border: 0; border-radius: 10px; overflow: hidden; background: rgba(20, 16, 16, 0.06); cursor: pointer; }
 .direct-preview img { display: block; width: 100%; height: 100%; max-width: none; max-height: none; object-fit: cover; border-radius: 0; }
 .direct-file { min-height: 44px; display: inline-flex; align-items: center; color: inherit; overflow-wrap: anywhere; }
-.direct-lightbox { position: fixed; inset: 0; z-index: 400; display: flex; align-items: center; justify-content: center; padding: max(68px, calc(env(safe-area-inset-top) + 56px)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); background: rgba(20, 16, 16, 0.88); }
-.direct-lightbox__bar { position: absolute; top: max(12px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right)); display: flex; align-items: center; gap: 8px; }
+.direct-lightbox { position: fixed; inset: 0; z-index: 500; display: flex; align-items: center; justify-content: center; padding: max(72px, calc(env(safe-area-inset-top) + 60px)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); background: rgba(20, 16, 16, 0.92); }
+.direct-lightbox__bar { position: absolute; z-index: 1; top: max(8px, env(safe-area-inset-top)); right: max(8px, env(safe-area-inset-right)); display: flex; align-items: center; gap: 8px; }
 .direct-lightbox__bar button, .direct-lightbox__close { width: 44px; height: 44px; min-width: 44px; padding: 0; border: 0; border-radius: 999px; background: var(--white); color: var(--dark); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
 .direct-lightbox__bar svg { width: 20px; height: 20px; display: block; }
 .direct-lightbox img { display: block; max-width: min(92vw, 960px); max-height: calc(100dvh - 140px); object-fit: contain; transition: transform 0.2s ease; }
@@ -724,11 +790,14 @@ export const DIRECT_CSS = `
 }
 @keyframes direct-switch { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes direct-sheet { from { transform: translateX(100%); } to { transform: none; } }
+@keyframes direct-arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes direct-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes direct-like { from { transform: scale(0.86); } to { transform: none; } }
 @media (max-width: 480px) {
   .direct-back { width: 44px; padding: 0; justify-content: center; }
   .direct-back__label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .direct-thread__pane, .direct.is-thread { animation: none; transition: none; }
+  .direct-thread__pane, .direct.is-thread, .is-arriving, .direct-thread__typing, .direct-banner, .direct-menu__list, .direct-day, .direct-cleared, .direct-bubble__like { animation: none; transition: none; }
 }
 `;

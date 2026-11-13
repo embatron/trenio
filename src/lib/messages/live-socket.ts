@@ -6,6 +6,7 @@ import type { UserRole } from "@/lib/auth/types";
 import { attachLiveSocket, publishTyping } from "@/lib/messages/live-hub";
 import { forgetPresence, recordPresence } from "@/lib/messages/presence";
 import { liveParticipants } from "@/lib/messages/service";
+import { requestCookie } from "@/lib/http/request-cookie";
 import { socketOriginAllowed } from "@/lib/messages/socket-origin";
 
 const SESSION_COOKIE = "trenio_session";
@@ -17,18 +18,7 @@ type LiveContext = {
 };
 
 function sessionToken(request: Request) {
-  const header = request.headers.get("cookie");
-  if (!header) return null;
-  for (const part of header.split(";")) {
-    const [name, ...rest] = part.trim().split("=");
-    if (name !== SESSION_COOKIE) continue;
-    try {
-      return decodeURIComponent(rest.join("="));
-    } catch {
-      return rest.join("=");
-    }
-  }
-  return null;
+  return requestCookie(request.headers.get("cookie"), SESSION_COOKIE);
 }
 
 function frameText(message: { text?: () => string }) {

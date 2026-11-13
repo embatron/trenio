@@ -1,4 +1,4 @@
-import { sanitizeReviewHtml } from "@/lib/catalog/review-html";
+import { collapseMessageHtml } from "@/lib/messages/breaks";
 
 type Kind = "bold" | "italic" | "underline" | "strike" | "code" | "pre" | "spoiler";
 
@@ -152,5 +152,5 @@ function markupFragments(html: string) {
 /** Markers in a plain field or in editor HTML, then the same allow-list as the bubble. */
 export function messageMarkup(value: string) {
   const marked = /[<>]/.test(value) ? markupFragments(value) : renderMessageMarkers(value);
-  return sanitizeReviewHtml(marked);
+  return collapseMessageHtml(marked);
 }

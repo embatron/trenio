@@ -26,9 +26,11 @@ import {
   listMessagesFn,
   listReportsFn,
   markConversationReadFn,
+  reactMessageFn,
   sendMessageFn,
   uploadMessageFileFn,
 } from "@/lib/messages/functions";
+import { PHONE_SHEET } from "@/lib/messages/phone-history";
 import type { ConversationCursor, ConversationListItem, ReportRow } from "@/lib/messages/schemas";
 
 const STATUS_LABEL = {
@@ -118,6 +120,27 @@ function StaffThreads() {
   const deleteFn = useServerFn(deleteConversationFn);
   const unblockFn = useServerFn(unblockPairFn);
   const [openId, setOpenId] = useState<string | null>(conversation || null);
+  const likeFn = useServerFn(reactMessageFn);
+  const [likeOverride, setLikeOverride] = useState<Map<number, boolean>>(new Map());
+  const likeLock = useRef(new Set<number>());
+  useEffect(() => {
+    setLikeOverride(new Map());
+  }, [openId]);
+  useEffect(() => {
+    if (!window.matchMedia(PHONE_SHEET).matches || !openId) return;
+    if (window.history.state?.adminDialog !== openId) {
+      const prior = window.history.state;
+      const index = typeof prior?.__TSR_index === "number" ? prior.__TSR_index : 0;
+      History.prototype.pushState.call(window.history, {
+        ...(prior && typeof prior === "object" ? prior : {}),
+        __TSR_index: index + 1,
+        adminDialog: openId,
+      }, "", window.location.href);
+    }
+    const onPop = () => setOpenId(null);
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [openId]);
   const [opening, setOpening] = useState(Boolean(trainer));
   const [quiet, setQuiet] = useState(false);
   const [extra, setExtra] = useState<ConversationListItem[]>([]);
@@ -244,7 +267,9 @@ function StaffThreads() {
       });
   };
   const next = cursor === undefined ? list.data?.nextCursor ?? null : cursor;
-  const messages: ThreadMessage[] = (thread.data?.messages ?? []).slice().reverse();
+  const messages: ThreadMessage[] = (thread.data?.messages ?? []).slice().reverse().map((message) => (
+    likeOverride.has(message.id) ? { ...message, liked: likeOverride.get(message.id)! } : message
+  ));
   messagesRef.current = messages;
   const openIndex = openId ? items.findIndex((item) => item.id === openId) : -1;
 
@@ -351,7 +376,34 @@ function StaffThreads() {
           void act(() => deleteFn({ data: { conversationId: id } }), "Диалог удалён").then(() => setOpenId(null));
         }}
         busy={busy}
-        onBack={() => setOpenId(null)}
+        onBack={() => {
+          if (window.history.state?.adminDialog) {
+            window.history.back();
+            return;
+          }
+          setOpenId(null);
+        }}
+        onLike={(messageId) => {
+          if (likeLock.current.has(messageId)) return;
+          const current = messages.find((message) => message.id === messageId);
+          const next = !(current?.liked ?? false);
+          likeLock.current.add(messageId);
+          setLikeOverride((map) => new Map(map).set(messageId, next));
+          void likeFn({ data: { messageId } })
+            .then((result) => {
+              setLikeOverride((map) => new Map(map).set(messageId, result.liked));
+              return thread.refetch();
+            })
+            .catch((err) => {
+              setLikeOverride((map) => {
+                const copy = new Map(map);
+                copy.delete(messageId);
+                return copy;
+              });
+              setError(authErrorMessage(err));
+            })
+            .finally(() => likeLock.current.delete(messageId));
+        }}
         onDismiss={() => {
           setQuiet(true);
           setOpenId(null);

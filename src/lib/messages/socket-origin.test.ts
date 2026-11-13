@@ -13,4 +13,5 @@ test("the live socket accepts this site and refuses another page", () => {
   assert.equal(socketOriginAllowed("https://trenio.by.evil.example", hosts), false);
   assert.equal(socketOriginAllowed(null, hosts), false);
   assert.equal(socketOriginAllowed("not a url", hosts), false);
+  assert.equal(socketOriginAllowed("capacitor://localhost", hosts), false);
 });

@@ -70,6 +70,7 @@ export function ConversationThread({
   onEarlier,
   onSend,
   onEdit,
+  onLike,
   onRetry,
   onReport,
   onBlock,
@@ -92,6 +93,7 @@ export function ConversationThread({
   onEarlier: () => void;
   onSend: (body: string, files: ComposerFile[], replyToId?: number) => Promise<void>;
   onEdit: (messageId: number, body: string) => Promise<void>;
+  onLike?: (messageId: number) => void;
   onRetry: (message: ThreadMessage) => void;
   onReport: (reason: (typeof REPORT_REASONS)[number]["id"], comment: string) => Promise<void>;
   onBlock: () => void;
@@ -115,6 +117,9 @@ export function ConversationThread({
     if (!liveConversationId) return;
     return () => notifyTyping(liveConversationId, false);
   }, [liveConversationId]);
+  const knownFor = useRef("");
+  const seenKeys = useRef(new Set<string>());
+  const freshKeys = useRef(new Set<string>());
   const [reply, setReply] = useState<{ id: number; preview: string } | null>(null);
   const [editing, setEditing] = useState<{ id: number; body: string } | null>(null);
   useEffect(() => {
@@ -639,13 +644,25 @@ export function ConversationThread({
               const previous = messages[index - 1];
               const split = !previous || dayKey(previous.createdAt) !== dayKey(message.createdAt);
               const quoted = messages.some((item) => item.replyTo?.id === message.id);
+              const key = message.clientId || String(message.id);
+              if (knownFor.current !== (thread?.conversationId ?? "")) {
+                knownFor.current = thread?.conversationId ?? "";
+                seenKeys.current = new Set(messages.map((item) => item.clientId || String(item.id)));
+                freshKeys.current = new Set();
+              }
+              if (!seenKeys.current.has(key)) {
+                seenKeys.current.add(key);
+                freshKeys.current.add(key);
+              }
+              const canLike = Boolean(onLike) && thread?.canMarkRead && !message.mine && !message.deleted && !message.status && message.id > 0;
               return (
-                <div key={message.clientId || message.id} data-message-id={message.id}>
+                <div key={key} className={freshKeys.current.has(key) ? "is-arriving" : undefined} data-message-id={message.id}>
                   {split ? <p className="direct-day">{dayLabel(message.createdAt)}</p> : null}
                   <MessageBubble
                     message={message}
                     quoted={quoted}
                     onRetry={onRetry}
+                    onLike={canLike ? () => onLike?.(message.id) : undefined}
                     onQuote={thread?.canWrite && !message.deleted && !message.status ? () => {
                       setEditing(null);
                       setReply({ id: message.id, preview: messagePreview(message.body) || "Вложение" });

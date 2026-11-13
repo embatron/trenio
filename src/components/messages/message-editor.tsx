@@ -1,5 +1,14 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 
+import { reviewTextLength } from "@/lib/catalog/review-html";
+import {
+  MESSAGE_BREAK_CAP,
+  MESSAGE_BREAK_RUN,
+  clipPlainMessage,
+  collapsePlainBreaks,
+  messageBreaksNeedTighten,
+  plainToEditorHtml,
+} from "@/lib/messages/breaks";
 import { markerEndingAt, renderMessageMarkers } from "@/lib/messages/markup";
 
 const EmojiPanel = lazy(() => import("@/components/messages/emoji-panel"));
@@ -62,6 +71,39 @@ function applyClosedMarker(root: HTMLElement) {
   selection.addRange(range);
 }
 
+function placeCaretAtEnd(field: HTMLElement) {
+  const selection = window.getSelection();
+  const range = document.createRange();
+  range.selectNodeContents(field);
+  range.collapse(false);
+  selection?.removeAllRanges();
+  selection?.addRange(range);
+}
+
+function breaksBeforeCaret(field: HTMLElement) {
+  const selection = window.getSelection();
+  if (!selection?.isCollapsed || selection.rangeCount === 0) return 0;
+  const node = selection.anchorNode;
+  if (!node || !field.contains(node)) return 0;
+  let current: Node | null = node;
+  let offset = selection.anchorOffset;
+  let count = 0;
+  if (current instanceof Text) {
+    const before = current.data.slice(0, offset).replace(/\u200b/g, "");
+    if (before.length > 0) return (before.match(/\n+$/)?.[0].length ?? 0);
+    current = current.previousSibling;
+  } else if (current instanceof HTMLElement) {
+    current = current.childNodes[offset - 1] ?? null;
+  }
+  while (current) {
+    if (current instanceof HTMLBRElement) count += 1;
+    else if (current instanceof Text && current.data.replace(/\u200b|\n/g, "") === "") count += (current.data.match(/\n/g) ?? []).length;
+    else break;
+    current = current.previousSibling;
+  }
+  return count;
+}
+
 function insertText(field: HTMLElement, text: string) {
   field.focus();
   const selection = window.getSelection();
@@ -85,18 +127,21 @@ function insertText(field: HTMLElement, text: string) {
 
 export function MessageEditor({
   value,
+  maxLength,
   onChange,
   disabled,
   onSubmit,
   onAttach,
 }: {
   value: string;
+  maxLength: number;
   onChange: (html: string) => void;
   disabled: boolean;
   onSubmit: (html: string) => void;
   onAttach: (files: File[]) => void;
 }) {
   const field = useRef<HTMLDivElement>(null);
+  const keyedEnter = useRef(0);
   const [emoji, setEmoji] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -132,8 +177,47 @@ export function MessageEditor({
   function publish() {
     const el = field.current;
     if (!el) return;
+    const brs = el.querySelectorAll("br").length;
+    if (brs > MESSAGE_BREAK_CAP || messageBreaksNeedTighten(el.innerHTML)) {
+      el.innerHTML = plainToEditorHtml(clipPlainMessage(el.innerText, maxLength));
+      placeCaretAtEnd(el);
+    }
     applyClosedMarker(el);
     onChange(el.innerHTML);
+  }
+
+  function insertBreak() {
+    const el = field.current;
+    if (!el || disabled) return;
+    const breaks = (el.innerText.match(/\n/g) ?? []).length;
+    if (breaks >= MESSAGE_BREAK_CAP || breaksBeforeCaret(el) >= MESSAGE_BREAK_RUN) return;
+    if (reviewTextLength(el.innerHTML) >= maxLength) return;
+    el.focus();
+    const selection = window.getSelection();
+    const range = document.createRange();
+    if (selection && selection.rangeCount > 0 && el.contains(selection.anchorNode)) {
+      const current = selection.getRangeAt(0);
+      current.deleteContents();
+      range.setStart(current.startContainer, current.startOffset);
+    } else {
+      range.selectNodeContents(el);
+      range.collapse(false);
+    }
+    const br = document.createElement("br");
+    range.insertNode(br);
+    range.setStartAfter(br);
+    range.collapse(true);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    el.dispatchEvent(new InputEvent("input", { bubbles: true }));
+  }
+
+  function sendFromField() {
+    const el = field.current;
+    if (!el || disabled) return;
+    applyClosedMarker(el);
+    onChange(el.innerHTML);
+    onSubmit(el.innerHTML);
   }
 
   return (
@@ -160,18 +244,41 @@ export function MessageEditor({
           if (text == null) return;
           event.preventDefault();
           const el = field.current;
-          if (el) insertText(el, text);
+          if (!el || !text) return;
+          const room = Math.max(0, maxLength - reviewTextLength(el.innerHTML));
+          insertText(el, clipPlainMessage(collapsePlainBreaks(text), room));
+        }}
+        onBeforeInput={(event) => {
+          const type = event.nativeEvent.inputType;
+          if ((type === "insertParagraph" || type === "insertLineBreak") && performance.now() - keyedEnter.current < 50) {
+            event.preventDefault();
+            return;
+          }
+          if (type === "insertParagraph") {
+            event.preventDefault();
+            if (!event.nativeEvent.isComposing) sendFromField();
+            return;
+          }
+          if (type === "insertLineBreak") {
+            event.preventDefault();
+            insertBreak();
+            return;
+          }
+          if (!type.startsWith("insert") || type === "insertCompositionText") return;
+          const el = field.current;
+          if (el && reviewTextLength(el.innerHTML) >= maxLength) event.preventDefault();
         }}
         onKeyDown={(event) => {
-          if (event.key !== "Enter" || event.repeat || event.shiftKey || event.altKey) return;
-          if (!event.ctrlKey && !event.metaKey) return;
-          if (event.nativeEvent.isComposing) return;
+          if (event.key !== "Enter" || event.nativeEvent.isComposing) return;
+          keyedEnter.current = performance.now();
+          if (event.shiftKey || event.altKey) {
+            event.preventDefault();
+            insertBreak();
+            return;
+          }
           event.preventDefault();
-          const el = field.current;
-          if (!el) return;
-          applyClosedMarker(el);
-          onChange(el.innerHTML);
-          onSubmit(el.innerHTML);
+          if (event.repeat) return;
+          sendFromField();
         }}
       />
       <button

@@ -8,6 +8,7 @@ import {
   conversationReads,
   conversations,
   messageAttachments,
+  messageReactions,
   messageReports,
   messages,
   trainerProfiles,
@@ -16,7 +17,8 @@ import {
 } from "@/db/schema";
 import { AuthError, isAuthError } from "@/lib/auth/errors";
 import { storedGivenName } from "@/lib/auth/login-name";
-import { reviewPlainText, reviewTextLength, sanitizeReviewHtml } from "@/lib/catalog/review-html";
+import { reviewPlainText, reviewTextLength } from "@/lib/catalog/review-html";
+import { collapseMessageHtml } from "@/lib/messages/breaks";
 import { isGodUser } from "@/lib/auth/god";
 import { isStaff } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
@@ -750,7 +752,7 @@ async function toMessageDto(row: {
   editedAt?: Date | string | null;
   deletedAt: Date | string | null;
   replyToId?: number | string | null;
-}, actor: MessageActor, conversationUserId: string, staffSeesBody: boolean, readUpTo: number | null, files: MessageAttachmentDto[] = [], quote?: MessageQuoteDto | null): Promise<MessageDto> {
+}, actor: MessageActor, conversationUserId: string, staffSeesBody: boolean, readUpTo: number | null, files: MessageAttachmentDto[] = [], quote?: MessageQuoteDto | null, liked = false): Promise<MessageDto> {
   const deleted = row.deletedAt != null;
   const id = asNumber(row.id);
   const mine = row.senderId === actor.id;
@@ -769,8 +771,20 @@ async function toMessageDto(row: {
     mine,
     side: row.senderId === conversationUserId ? "user" : "trainer",
     receipt: !mine || deleted ? null : readUpTo != null && id <= readUpTo ? "read" : "delivered",
+    liked: deleted ? false : liked,
     attachments: deleted && !staffSeesBody ? [] : files,
   };
+}
+
+async function reactionMarks(ids: number[], actorId: string) {
+  const marks = new Set<number>();
+  if (ids.length === 0) return marks;
+  const rows = await getDb()
+    .select({ messageId: messageReactions.messageId })
+    .from(messageReactions)
+    .where(and(inArray(messageReactions.messageId, ids), eq(messageReactions.userId, actorId)));
+  for (const row of rows) marks.add(asNumber(row.messageId));
+  return marks;
 }
 
 async function viewerReadUpTo(actorId: string, conversationId: string) {
@@ -905,7 +919,7 @@ export async function sendMessage(
   }
   const loaded = await requireConversation(actor, conversationId, "write");
   const attachmentIds = input.attachmentIds ?? [];
-  const html = sanitizeReviewHtml(input.body);
+  const html = collapseMessageHtml(input.body);
   const plain = reviewPlainText(html);
   const stored = plain ? html : "";
   if (!plain && attachmentIds.length === 0) throw new AuthError("Введите сообщение.", "VALIDATION");
@@ -1048,7 +1062,7 @@ export async function editMessage(actor: MessageActor, input: { messageId: numbe
     throw new AuthError("Сообщение можно изменить в течение 15 минут.", "VALIDATION");
   }
   const loaded = await requireConversation(actor, row.conversationId, "write");
-  const html = sanitizeReviewHtml(input.body);
+  const html = collapseMessageHtml(input.body);
   const plain = reviewPlainText(html);
   if (!plain) throw new AuthError("Введите сообщение.", "VALIDATION");
   if (html.length > MESSAGE_HTML_MAX_LENGTH) throw new AuthError("Сообщение слишком длинное.", "VALIDATION");
@@ -1097,6 +1111,31 @@ export async function editMessage(actor: MessageActor, input: { messageId: numbe
       quoted ? { id: quoted.id, preview: quotePreview(quoted.body, quoted.deletedAt != null) } : null,
     ),
   };
+}
+
+/** Thumb from the other participant. A second call removes it. */
+export async function toggleMessageLike(actor: MessageActor, messageId: number) {
+  const minute = await consumeRateLimit(`msg:like:${actor.id}`, 60_000, 60);
+  if (!minute.ok) throw new AuthError(`Слишком много отметок. Подождите ${minute.retryAfterSec} с.`, "RATE_LIMITED");
+  const [row] = await getDb().select().from(messages).where(eq(messages.id, messageId)).limit(1);
+  if (!row || row.deletedAt) throw new AuthError("Сообщение не найдено.", "VALIDATION");
+  if (row.senderId === actor.id) throw new AuthError("Своё сообщение отметить нельзя.", "VALIDATION");
+  const loaded = await requireConversation(actor, row.conversationId, "read");
+  if (!isParticipant(actor.id, loaded.access)) throw new AuthError("Нет доступа к этой переписке.", "FORBIDDEN");
+  const [existing] = await getDb()
+    .select({ messageId: messageReactions.messageId })
+    .from(messageReactions)
+    .where(and(eq(messageReactions.messageId, messageId), eq(messageReactions.userId, actor.id)))
+    .limit(1);
+  if (existing) {
+    await getDb()
+      .delete(messageReactions)
+      .where(and(eq(messageReactions.messageId, messageId), eq(messageReactions.userId, actor.id)));
+  } else {
+    await getDb().insert(messageReactions).values({ messageId, userId: actor.id }).onConflictDoNothing();
+  }
+  notifyThread(loaded);
+  return { conversationId: row.conversationId, liked: !existing };
 }
 
 function lastMessageReceipt(
@@ -1471,12 +1510,13 @@ export async function listMessages(
   const otherId = actor.id === loaded.conversation.userId
     ? loaded.profile.ownerUserId ?? loaded.conversation.hostUserId
     : loaded.conversation.userId;
-  const [readUpTo, viewerReadMessageId, files, quotes, states] = await Promise.all([
+  const [readUpTo, viewerReadMessageId, files, quotes, states, likedIds] = await Promise.all([
     counterpartReadUpTo(actor, loaded.conversation, loaded.profile.ownerUserId),
     viewerReadUpTo(actor.id, loaded.conversation.id),
     attachmentDtos(messageIds),
     quotesById(replyIds),
     presenceFor(otherId ? [otherId] : []),
+    reactionMarks(messageIds, actor.id),
   ]);
   return {
     conversationId: loaded.conversation.id,
@@ -1523,6 +1563,7 @@ export async function listMessages(
         readUpTo,
         files.get(asNumber(row.id)) ?? [],
         quoted ? { id: quoted.id, preview: quotePreview(quoted.body, quoted.deletedAt != null) } : null,
+        likedIds.has(asNumber(row.id)),
       );
     })),
     nextCursor: hasMore && oldest

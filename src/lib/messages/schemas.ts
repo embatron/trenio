@@ -87,6 +87,10 @@ export const editMessageSchema = z.object({
   body: z.string().trim().min(1, "Введите сообщение.").max(MESSAGE_HTML_MAX_LENGTH, "Сообщение слишком длинное."),
 });
 
+export const reactMessageSchema = z.object({
+  messageId: z.number().int().positive(),
+});
+
 export const markConversationReadSchema = z.object({
   conversationId: z.string().uuid(),
   lastMessageId: z.number().int().positive(),
@@ -185,6 +189,8 @@ export type MessageDto = {
   side: "user" | "trainer";
   /** Set on the sender's own messages. Null for everyone else's. */
   receipt: "delivered" | "read" | null;
+  /** This account marked the message with a thumb. */
+  liked: boolean;
   attachments: MessageAttachmentDto[];
 };
 

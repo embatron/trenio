@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { ReviewHtml } from "@/components/review-html";
 import type { MessageDto } from "@/lib/messages/schemas";
@@ -25,6 +26,10 @@ export function ReplyIcon() {
 }
 
 const EDIT_ICON = "M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z";
+const THUMB_PATHS = [
+  "M7 10v12",
+  "M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z",
+];
 
 function LineIcon({ paths }: { paths: string[] }) {
   return (
@@ -46,14 +51,19 @@ function ImageLightbox({
   const [turn, setTurn] = useState(0);
   const sideways = turn % 180 !== 0;
   useEffect(() => {
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener("keydown", onKey);
+    };
   }, [onClose]);
 
-  return (
+  return createPortal(
     <div className="direct-lightbox" role="dialog" aria-modal="true" aria-label={zoom.name} onClick={onClose}>
       <div className="direct-lightbox__bar" onClick={(event) => event.stopPropagation()}>
         <button type="button" onClick={() => setTurn((value) => (value + 270) % 360)} aria-label="Повернуть влево">
@@ -73,7 +83,8 @@ function ImageLightbox({
         style={{ transform: `rotate(${turn}deg)` }}
         onClick={(event) => event.stopPropagation()}
       />
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -83,6 +94,7 @@ export function MessageBubble({
   onRetry,
   onQuote,
   onEdit,
+  onLike,
   onFocusQuote,
   quoted,
 }: {
@@ -95,6 +107,7 @@ export function MessageBubble({
   onRetry?: (message: MessageDto) => void;
   onQuote?: () => void;
   onEdit?: () => void;
+  onLike?: () => void;
   onFocusQuote?: (id: number) => void;
   /** This message is quoted by another one in the thread. */
   quoted?: boolean;
@@ -184,6 +197,19 @@ export function MessageBubble({
           <time dateTime={message.createdAt}>{timeLabel(message.createdAt)}</time>
           {message.editedAt ? <span className="direct-bubble__state">изменено</span> : null}
           {receipt ? <span className={`direct-bubble__state${receipt === "Прочитано" ? " is-read" : ""}`}>{receipt}</span> : null}
+          {onLike ? (
+            <button
+              type="button"
+              className={`direct-bubble__like${message.liked ? " is-on" : ""}`}
+              aria-pressed={message.liked}
+              aria-label={message.liked ? "Убрать отметку" : "Отметить"}
+              onClick={onLike}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                {THUMB_PATHS.map((d) => <path key={d} d={d} style={LINE_ICON} />)}
+              </svg>
+            </button>
+          ) : null}
         </div>
         {failed ? (
           <button type="button" className="direct-bubble__retry" onClick={() => onRetry?.(message)}>

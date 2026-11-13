@@ -11,6 +11,7 @@ import {
   conversationIdSchema,
   dismissReportSchema,
   editMessageSchema,
+  reactMessageSchema,
   EMPTY_MESSAGING,
   ensureConversationSchema,
   listConversationsSchema,
@@ -39,6 +40,7 @@ import {
   reopenConversation,
   reportMessage,
   sendMessage,
+  toggleMessageLike,
   unreadSummary,
   uploadMessageFile,
 } from "@/lib/messages/service";
@@ -151,6 +153,22 @@ export const editMessageFn = createServerFn({ method: "POST" })
       rethrowMessage(error, "message.edit", context.user.id, String(data.messageId), {
         chars: data.body.length,
       });
+    }
+  });
+
+export const reactMessageFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(reactMessageSchema)
+  .handler(async ({ data, context }) => {
+    try {
+      const result = await toggleMessageLike(context.user, data.messageId);
+      logMessage("message.react", context.user.id, result.liked ? "Сообщение отмечено." : "Отметка снята.", result.conversationId, {
+        messageId: data.messageId,
+        liked: result.liked,
+      });
+      return { liked: result.liked };
+    } catch (error) {
+      rethrowMessage(error, "message.react", context.user.id, String(data.messageId));
     }
   });
 

@@ -6,6 +6,7 @@ import { MessageEditor } from "@/components/messages/message-editor";
 import { clientAttachmentIssue, composerBody, newMessageClientId } from "@/lib/messages/attachments";
 import { messageMarkup } from "@/lib/messages/markup";
 import { reviewPlainText, reviewTextLength } from "@/lib/catalog/review-html";
+import { prepareShellCamera } from "@/lib/native/shell";
 
 export type ComposerFile = {
   id: string;
@@ -48,6 +49,7 @@ export function MessageComposer({
   const [files, setFiles] = useState<ComposerFile[]>([]);
   const [fileError, setFileError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const sending = useRef(false);
   const input = useRef<HTMLInputElement>(null);
   const filesRef = useRef(files);
   filesRef.current = files;
@@ -91,8 +93,9 @@ export function MessageComposer({
     const raw = composerBody(liveHtml, html);
     const body = messageMarkup(raw);
     const plain = reviewPlainText(body);
-    if ((!plain && files.length === 0) || disabled || busy || over) return;
+    if ((!plain && files.length === 0) || disabled || busy || sending.current || over) return;
     const sentFiles = files;
+    sending.current = true;
     setHtml("");
     setFiles([]);
     onActivity?.(false);
@@ -106,6 +109,7 @@ export function MessageComposer({
       setFiles(sentFiles);
       throw error;
     } finally {
+      sending.current = false;
       setBusy(false);
     }
   }
@@ -154,7 +158,9 @@ export function MessageComposer({
           className="direct-composer__attach"
           aria-label="Прикрепить файл"
           disabled={disabled || busy || editing}
-          onClick={() => input.current?.click()}
+          onClick={() => {
+            void prepareShellCamera().finally(() => input.current?.click());
+          }}
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M15.5 7.2v8.1a3.5 3.5 0 0 1-7 0V6.4a2.3 2.3 0 0 1 4.6 0v8.2a1.1 1.1 0 0 1-2.2 0V7.4" />
@@ -174,6 +180,7 @@ export function MessageComposer({
         <div className="direct-composer__pill">
           <MessageEditor
             value={html}
+            maxLength={max}
             onChange={(value) => {
               setHtml(value);
               onActivity?.(reviewPlainText(value).trim().length > 0);

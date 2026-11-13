@@ -135,6 +135,13 @@ const STATEMENTS = [
      CONSTRAINT message_notices_channel CHECK (channel IN ('push', 'letter'))
    )`,
   "COMMENT ON TABLE message_notices IS 'A message letter or browser notice waiting to be sent. The row outlives a process restart.'",
+  `CREATE TABLE IF NOT EXISTS message_reactions (
+     message_id bigint NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
+     user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     created_at timestamptz NOT NULL DEFAULT now(),
+     PRIMARY KEY (message_id, user_id)
+   )`,
+  "COMMENT ON TABLE message_reactions IS 'One thumb from one account on one message. The sender does not mark their own text.'",
 ];
 
 async function main() {

@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 
 import { authErrorMessage } from "@/lib/auth/errors";
 import { ensureConversationFn } from "@/lib/messages/functions";
+import { markTrainerDialogOpened, PHONE_SHEET, trainerDialogAlreadyOpened } from "@/lib/messages/phone-history";
 
 /**
  * `?trainer=` means that card's dialog. Hold the list's "open the first row"
@@ -28,6 +29,17 @@ export function useOpenTrainerThread(
       setHold(false);
       return;
     }
+    const phone = window.matchMedia(PHONE_SHEET).matches;
+    if (phone && trainerDialogAlreadyOpened(window.history.state, trainer)) {
+      slugRef.current = trainer;
+      setHold(false);
+      void navigate({
+        to: to === "/account/messages/$conversationId" ? "/account/messages" : "/me/messages",
+        search: {},
+        replace: true,
+      });
+      return;
+    }
     if (slugRef.current === trainer) return;
     slugRef.current = trainer;
     targetRef.current = null;
@@ -37,7 +49,11 @@ export function useOpenTrainerThread(
       .then((result) => {
         if (slugRef.current !== trainer) return;
         targetRef.current = result.conversationId;
-        const phone = window.matchMedia("(max-width: 767px)").matches;
+        const phone = window.matchMedia(PHONE_SHEET).matches;
+        if (phone) {
+          const marked = markTrainerDialogOpened(window.history.state, trainer);
+          if (marked) History.prototype.replaceState.call(window.history, marked, "");
+        }
         void navigate({
           to,
           params: { conversationId: result.conversationId },

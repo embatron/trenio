@@ -53,7 +53,7 @@ export function newMessageClientId() {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
-/** The visible editor wins when it already has text. React state can lag behind Ctrl+Enter or ⌘+Enter. */
+/** The visible editor wins when it already has text. React state can lag behind Enter. */
 export function composerBody(liveHtml: string | undefined, stateHtml: string) {
   if (liveHtml != null && reviewPlainText(liveHtml).length > 0) return liveHtml;
   return stateHtml;
