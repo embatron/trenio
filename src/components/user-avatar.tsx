@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 
 import { PhotoImage } from "@/components/photo-image";
 
-/** Circle logo. Shown when a portrait is missing or will not load. */
-export const DEFAULT_AVATAR_SRC = "/favicon.svg";
+/** Approved square mark. Shown when a portrait is missing or will not load. */
+export const DEFAULT_AVATAR_SRC = "/brand/trenio-avatar-square.svg";
 
 export function UserAvatar({
   name,
