@@ -533,6 +533,15 @@ export function TrainerCardFields({
         {nickFirst ? null : nickBlock}
         {self ? null : (
           <>
+            <label>
+              <span>Заголовок страницы</span>
+              <input
+                value={values.headline}
+                maxLength={200}
+                placeholder="Фитнес-тренер"
+                onChange={(event) => patch({ headline: event.target.value })}
+              />
+            </label>
             <div className="cabinet-form__row">
               <label>
                 <span>Имя</span>
@@ -554,15 +563,6 @@ export function TrainerCardFields({
                 />
               </label>
             </div>
-            <label>
-              <span>Заголовок</span>
-              <input
-                value={values.headline}
-                maxLength={200}
-                placeholder="Фитнес-тренер"
-                onChange={(event) => patch({ headline: event.target.value })}
-              />
-            </label>
           </>
         )}
         {self ? (

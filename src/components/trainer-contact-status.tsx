@@ -522,7 +522,7 @@ export function TrainerIdentityFields({ profile }: { profile: OwnTrainerProfile 
           return;
         }
         if (!nextHeadline) {
-          setStatus("Укажите заголовок.");
+          setStatus("Укажите заголовок страницы.");
           return;
         }
         setPending(true);
@@ -537,6 +537,17 @@ export function TrainerIdentityFields({ profile }: { profile: OwnTrainerProfile 
           .finally(() => setPending(false));
       }}
     >
+      <label>
+        <span>Заголовок страницы</span>
+        <input
+          name="headline"
+          required
+          value={headline}
+          maxLength={200}
+          placeholder="Фитнес-тренер"
+          onChange={(event) => setHeadline(event.target.value)}
+        />
+      </label>
       <div className="cabinet-form__row">
         <label>
           <span>Имя</span>
@@ -558,17 +569,6 @@ export function TrainerIdentityFields({ profile }: { profile: OwnTrainerProfile 
           />
         </label>
       </div>
-      <label>
-        <span>Заголовок</span>
-        <input
-          name="headline"
-          required
-          value={headline}
-          maxLength={200}
-          placeholder="Фитнес-тренер"
-          onChange={(event) => setHeadline(event.target.value)}
-        />
-      </label>
       <button className="cabinet-form__submit" type="submit" disabled={pending}>
         {pending ? "Сохранение…" : "Сохранить"}
       </button>
