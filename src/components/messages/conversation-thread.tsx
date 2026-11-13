@@ -358,9 +358,10 @@ export function ConversationThread({
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") setMoreOpen(false);
     };
-    document.addEventListener("pointerdown", onPointer);
+    const timer = window.setTimeout(() => document.addEventListener("pointerdown", onPointer), 0);
     document.addEventListener("keydown", onKey);
     return () => {
+      window.clearTimeout(timer);
       document.removeEventListener("pointerdown", onPointer);
       document.removeEventListener("keydown", onKey);
     };

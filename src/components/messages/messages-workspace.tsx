@@ -661,7 +661,7 @@ export const DIRECT_CSS = `
 .direct-thread__actions button.direct-icon { width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
 .direct-thread__actions button.direct-icon svg { width: 20px; height: 20px; display: block; }
 .direct-thread__actions button.direct-icon:hover { color: var(--dark); background: rgba(var(--dark-rgb), 0.05); }
-.direct-menu { position: relative; }
+.direct-menu { position: relative; flex: 0 0 auto; }
 .direct-thread__actions .direct-menu__btn {
   width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 999px;
   background: transparent; color: var(--muted); font-weight: 400; line-height: 1;
@@ -765,7 +765,11 @@ export const DIRECT_CSS = `
   .direct.is-thread .direct-list { display: none; }
   .direct.is-thread .direct-thread { flex: 1; min-height: 0; height: 100%; }
   .direct.is-thread .direct-thread__pane { animation: none; }
-  .direct.is-thread .direct-thread__head { flex-wrap: nowrap; align-items: center; padding-inline: var(--layout-gutter); }
+  .direct.is-thread { overflow: visible; }
+  .direct.is-thread .direct-thread__head { position: relative; z-index: 8; flex-wrap: nowrap; align-items: center; padding-inline: var(--layout-gutter); }
+  .direct.is-thread .direct-thread__actions .direct-menu__btn {
+    border: 1px solid var(--line); background: var(--white); color: var(--dark);
+  }
   .direct.is-thread .direct-thread__who { overflow: hidden; }
   .direct.is-thread .direct-thread__who > * { min-width: 0; max-width: 100%; }
   .direct.is-thread .direct-thread__who a.cabinet-id__line { display: flex; min-width: 0; max-width: 100%; }
