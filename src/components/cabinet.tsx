@@ -564,13 +564,13 @@ a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
 .cabinet-nav .cabinet-nav__toggle { display: none; width: 100%; justify-content: space-between; border: 1px solid var(--line); background: var(--white); }
 .cabinet-nav .cabinet-nav__toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .cabinet-nav__items { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.cabinet-nav__sub { display: grid; gap: 2px; margin: 0 0 4px 12px; }
+.cabinet-nav__sub { display: grid; gap: 2px; margin: 10px 0 4px 22px; }
 @media (prefers-reduced-motion: reduce) {
   .cabinet-nav__chevron { transition: none; }
 }
 .cabinet-nav__body:has(> .cabinet-nav__sub) { display: grid; }
 .cabinet-nav__body:has(> .cabinet-nav__sub) .cabinet-nav__items { display: contents; }
-.cabinet-nav__body > .cabinet-nav__sub { grid-row: var(--nav-sub-row); margin-left: 12px; }
+.cabinet-nav__body > .cabinet-nav__sub { grid-row: var(--nav-sub-row); margin-left: 22px; }
 .cabinet-nav__sub a { color: var(--muted); font-size: 14px; font-weight: var(--fw-ui); transition: color 0.28s ease, background 0.28s ease; }
 .cabinet-nav button, .cabinet-nav a, .cabinet-logout {
   min-height: 44px; border: 0; border-radius: var(--radius-control); background: transparent;
