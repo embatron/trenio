@@ -14,6 +14,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as OpenRouteImport } from './routes/open'
 import { Route as OfferRouteImport } from './routes/offer'
 import { Route as MeRouteImport } from './routes/me'
 import { Route as MapRouteImport } from './routes/map'
@@ -128,6 +129,11 @@ const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OpenRoute = OpenRouteImport.update({
+  id: '/open',
+  path: '/open',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OfferRoute = OfferRouteImport.update({
@@ -601,6 +607,7 @@ export interface FileRoutesByFullPath {
   '/map': typeof MapRoute
   '/me': typeof MeRouteWithChildren
   '/offer': typeof OfferRoute
+  '/open': typeof OpenRoute
   '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/search': typeof SearchRoute
@@ -695,6 +702,7 @@ export interface FileRoutesByTo {
   '/mail': typeof MailRoute
   '/map': typeof MapRoute
   '/offer': typeof OfferRoute
+  '/open': typeof OpenRoute
   '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/search': typeof SearchRoute
@@ -788,6 +796,7 @@ export interface FileRoutesById {
   '/map': typeof MapRoute
   '/me': typeof MeRouteWithChildren
   '/offer': typeof OfferRoute
+  '/open': typeof OpenRoute
   '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/search': typeof SearchRoute
@@ -887,6 +896,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/me'
     | '/offer'
+    | '/open'
     | '/privacy'
     | '/robots.txt'
     | '/search'
@@ -981,6 +991,7 @@ export interface FileRouteTypes {
     | '/mail'
     | '/map'
     | '/offer'
+    | '/open'
     | '/privacy'
     | '/robots.txt'
     | '/search'
@@ -1073,6 +1084,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/me'
     | '/offer'
+    | '/open'
     | '/privacy'
     | '/robots.txt'
     | '/search'
@@ -1171,6 +1183,7 @@ export interface RootRouteChildren {
   MapRoute: typeof MapRoute
   MeRoute: typeof MeRouteWithChildren
   OfferRoute: typeof OfferRoute
+  OpenRoute: typeof OpenRoute
   PrivacyRoute: typeof PrivacyRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SearchRoute: typeof SearchRoute
@@ -1247,6 +1260,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/open': {
+      id: '/open'
+      path: '/open'
+      fullPath: '/open'
+      preLoaderRoute: typeof OpenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/offer': {
@@ -2117,6 +2137,7 @@ const rootRouteChildren: RootRouteChildren = {
   MapRoute: MapRoute,
   MeRoute: MeRouteWithChildren,
   OfferRoute: OfferRoute,
+  OpenRoute: OpenRoute,
   PrivacyRoute: PrivacyRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SearchRoute: SearchRoute,

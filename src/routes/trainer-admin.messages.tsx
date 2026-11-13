@@ -5,6 +5,7 @@ import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
 import { MessagesWorkspace } from "@/components/messages/messages-workspace";
 import { logoutFn } from "@/lib/auth/functions";
+import { logoutWithShell } from "@/lib/native/shell";
 import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { hasAnyRole, ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
@@ -60,7 +61,7 @@ function TrainerMessagesPage() {
         logoutPending={pending}
         onLogout={() => {
           setPending(true);
-          void logout().then(() => {
+          void logoutWithShell(() => logout()).then(() => {
             window.location.href = "/";
           }).finally(() => setPending(false));
         }}

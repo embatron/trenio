@@ -13,6 +13,8 @@
 | `auth.telegram` / `auth.telegram.webapp` | Telegram login |
 | `auth.login.google` / `auth.signup.google` | Google sign-in. The code, token, and client secret are not stored |
 | `auth.login.yandex` / `auth.signup.yandex` | Yandex sign-in. The code, token, client secret, and portrait bytes are not stored |
+| `auth.login.apple` | Sign in with Apple. The identity token and authorization code are not stored |
+| `auth.device` | APNs token register and unregister. The token itself is not stored in the journal |
 | `auth.telegram.link` / `auth.telegram.unlink` | Bind or unbind Telegram on the signed-in account. No initData and no widget payload |
 | `auth.signup` / `auth.logout` | Email registration and logout |
 | `auth.signup.sms` | Phone registration: SMS request and confirm |

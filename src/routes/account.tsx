@@ -6,6 +6,7 @@ import { useCabinetLive } from "@/components/cabinet-live";
 import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
 import { logoutFn } from "@/lib/auth/functions";
+import { logoutWithShell } from "@/lib/native/shell";
 import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { deniedCabinetTarget, ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
@@ -78,7 +79,7 @@ function AccountLayout() {
       logoutPending={pending}
       onLogout={() => {
         setPending(true);
-        void logout()
+        void logoutWithShell(() => logout())
           .then(() => {
             window.location.href = "/";
           })

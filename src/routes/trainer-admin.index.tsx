@@ -9,6 +9,7 @@ import { TRAINER_PROFILE_SECTIONS } from "@/components/trainer-card-fields";
 import { TrainerProfileForm } from "@/components/trainer-profile-form";
 import { TrainerReviewsPanel } from "@/components/trainer-reviews-panel";
 import { logoutFn } from "@/lib/auth/functions";
+import { logoutWithShell } from "@/lib/native/shell";
 import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { displayAccountLogin } from "@/lib/auth/login-name";
 import { hasAnyRole, ROLE_LABELS } from "@/lib/auth/roles";
@@ -99,7 +100,7 @@ function TrainerCabinetPage() {
       logoutPending={pending}
       onLogout={() => {
         setPending(true);
-        void logout()
+        void logoutWithShell(() => logout())
           .then(() => {
             window.location.href = "/";
           })
