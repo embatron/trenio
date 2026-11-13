@@ -985,7 +985,7 @@ function Index() {
           <section className="content-section" aria-labelledby="stats-heading">
             <div className="section-head section-head--stacked">
               <h2 className="section-title section-title--logo" id="stats-heading">
-                <img className="section-title__logo" src="/logo.webp" width={503} height={128} alt="trenio" />
+                <img className="section-title__logo" src="/brand/trenio-by-light.svg" width={594} height={139} alt="trenio" />
                 <span>в цифрах</span>
               </h2>
             </div>

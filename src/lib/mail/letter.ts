@@ -104,7 +104,7 @@ export function renderLetter(letter: Letter) {
   const html = `<!DOCTYPE html><html lang="ru"><body style="margin:0;padding:26px;background:#f9fafb;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
 <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="width:100%;max-width:560px;background:#ffffff;border-radius:22px;padding:31px;">
-<tr><td style="background:#ffffff;"><a href="${escapeHtml(home)}" style="text-decoration:none;"><img src="${escapeHtml(logo)}" width="157" height="40" alt="trenio.by" style="display:block;width:157px;height:40px;border:0;background:#ffffff;"></a></td></tr>
+<tr><td style="background:#ffffff;"><a href="${escapeHtml(home)}" style="text-decoration:none;"><img src="${escapeHtml(logo)}" width="172" height="40" alt="trenio.by" style="display:block;width:172px;height:40px;border:0;background:#ffffff;"></a></td></tr>
 <tr><td style="padding-top:20px;font:700 22px Arial,sans-serif;color:#111827;">${escapeHtml(letter.title)}</td></tr>
 <tr><td style="padding-top:13px;">${lead}${person}${quote}${codeBlock}${bodyLines}${action}${note}</td></tr>
 <tr><td style="padding-top:20px;font:13px Arial,sans-serif;color:#6b7280;">trenio.by · ${escapeHtml(SITE_EMAIL)}</td></tr>
