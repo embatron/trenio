@@ -51,4 +51,5 @@ test("a liker is named without the mailbox", () => {
     accountLikePersonName("+37529.....51", "", "pending.11111111-1111-4111-8111-111111111111@users.trenio.invalid"),
     "+37529.....51",
   );
+  assert.equal(accountLikePersonName("Анна", "Ковалёва", "anna@example.com", "deleted"), "Удалённый");
 });

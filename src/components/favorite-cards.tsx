@@ -159,7 +159,7 @@ export function FavoriteCards({
       <article className="cabinet-card">
         <h2>Избранное</h2>
         <p className="cabinet-empty">
-          Нажмите сердечко на карточке тренера, и он останется здесь.{" "}
+          Нажмите закладку на карточке тренера, и он останется здесь.{" "}
           <Link className="cabinet-inline-link" to="/">Смотреть тренеров</Link>
         </p>
       </article>

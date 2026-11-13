@@ -7,6 +7,7 @@ import { useMessaging } from "@/components/messages/messages-live";
 import { getAdminShellFn } from "@/lib/admin/shell";
 import { useCabinetLive } from "@/components/cabinet-live";
 import { logoutFn } from "@/lib/auth/functions";
+import { logoutWithShell } from "@/lib/native/shell";
 import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { getCabinetPath, hasAnyRole, isStaff } from "@/lib/auth/roles";
 import { getAccountMenuCountsFn } from "@/lib/cabinet";
@@ -17,13 +18,13 @@ import { pluralRu } from "@/lib/ru-plural";
 import { BELARUS_OBLAST_CENTERS } from "@/lib/catalog/city-taxonomy";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { CabinetMark, type CabinetIcon } from "@/components/cabinet-mark";
+import { FavoriteMark } from "@/components/favorite-mark";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { InstagramIcon, TelegramIcon, ThreadsIcon } from "@/components/brand-icons";
 import { MESSAGE_ENVELOPE } from "@/components/messages/direct-mark";
 import { InstallBanner } from "@/components/install-banner";
 import { MessagePush } from "@/components/message-push";
 import { UserAvatar } from "@/components/user-avatar";
-import { TrainerName } from "@/components/trainer-name";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 import { getTrainerMenuCountsFn } from "@/lib/catalog/trainer-views";
 import { TRAINER_INVITE_LINE } from "@/lib/catalog/trainer-welcome";
@@ -44,9 +45,8 @@ const CHROME_CSS = `
 }
 body.is-search-docked .site-header,
 .site-header.is-scrolled {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%);
-  box-shadow: 0 1px 0 rgba(var(--dark-rgb), 0.06), 0 10px 36px rgba(var(--dark-rgb), 0.05);
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(var(--dark-rgb), 0.06);
   border-bottom-color: rgba(var(--primary-rgb), 0.12);
 }
 .site-header.is-menu-open,
@@ -286,7 +286,6 @@ body.is-search-docked .site-header__search {
   text-transform: none; color: var(--muted);
 }
 .mega-col ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 2px; }
-.mega-link .trainer-name { flex-direction: row; align-items: baseline; flex-wrap: wrap; gap: 0.35em; }
 .mega-link {
   display: flex; align-items: center; gap: 8px;
   min-height: 44px; margin: 0 -12px; padding: 8px 12px;
@@ -990,7 +989,7 @@ function MegaAccount({ menuOpen, onClose }: { menuOpen: boolean; onClose: () => 
             disabled={pending}
             onClick={() => {
               setPending(true);
-              void logout()
+              void logoutWithShell(() => logout())
                 .then(() => {
                   window.location.href = "/";
                 })
@@ -1100,13 +1099,7 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             <ul>
               <li><Link className="mega-link mega-link--text" to="/" onClick={onClose}>Найти тренера</Link></li>
               <li><Link className="mega-link mega-link--text" to="/map" search={{ sports: undefined, city: undefined }} onClick={onClose}>На карте</Link></li>
-              {user && getCabinetPath(user.roles) !== "/me" ? (
-                <li>
-                  <Link className="mega-link mega-link--text" to={getCabinetPath(user.roles)} onClick={onClose}>
-                    <TrainerName firstName={user.firstName} lastName={user.lastName} empty="Кабинет" />
-                  </Link>
-                </li>
-              ) : user ? null : (
+              {user ? null : (
                 <>
                   <li><Link className="mega-link mega-link--text" to="/auth/signup" search={loginSearch} onClick={onClose}>Создать аккаунт</Link></li>
                   <li><Link className="mega-link mega-link--text" to="/auth/login" search={loginSearch} onClick={onClose}>Войти</Link></li>
@@ -1234,9 +1227,7 @@ function FavoriteCount() {
         title="Избранное"
       >
         <span className="count-glyph">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" />
-          </svg>
+          <FavoriteMark />
           {ready ? <span className="favorite-count__n">{count}</span> : null}
         </span>
       </Link>
@@ -1250,9 +1241,7 @@ function FavoriteCount() {
       title="Избранное"
     >
       <span className="count-glyph">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 20.5l-1.1-1C6.5 15.2 4 12.8 4 9.5 4 7 5.8 5 8.2 5c1.4 0 2.7.7 3.8 1.8C13.1 5.7 14.4 5 15.8 5 18.2 5 20 7 20 9.5c0 3.3-2.5 5.7-6.9 10l-1.1 1z" />
-        </svg>
+        <FavoriteMark />
         {ready ? <span className="favorite-count__n">{count}</span> : null}
       </span>
     </Link>
@@ -1281,7 +1270,7 @@ export function SiteHeader({ middleSlot }: { middleSlot?: ReactNode }) {
         const top = sentinel.getBoundingClientRect().top;
         docked = docked ? top < 128 : top < 72;
       } else {
-        docked = docked ? y > 8 : y > 48;
+        docked = false;
       }
       el.classList.toggle("is-scrolled", y > 8);
       document.body.classList.toggle("is-search-docked", docked);

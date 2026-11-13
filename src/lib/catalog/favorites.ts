@@ -90,7 +90,7 @@ export type FavoriteTrainerFace = {
   price: number | null;
 };
 
-/** Published cards other people can keep. The static seed list is empty, so the heart reads the database. */
+/** Published cards other people can keep. The static seed list is empty, so the bookmark reads the database. */
 export const favoriteTrainerFacesFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
   .validator(z.object({ slugs: z.array(z.string().trim().regex(/^[a-z0-9._-]{1,80}$/)).max(200) }))

@@ -17,7 +17,12 @@ export const getRouter = () => {
 
   const router = createRouter({
     routeTree,
-    context: { queryClient, user: null as PublicUser | null, messaging: EMPTY_MESSAGING },
+    context: {
+      queryClient,
+      user: null as PublicUser | null,
+      messaging: EMPTY_MESSAGING,
+      likeCounts: {} as Record<string, number>,
+    },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
   });

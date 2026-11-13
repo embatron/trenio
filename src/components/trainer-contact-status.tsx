@@ -16,6 +16,7 @@ import {
   confirmTrainerTelegramWebAppFn,
   requestAccountPhoneCodeFn,
   requestTrainerContactEmailCodeFn,
+  updateProfileFn,
 } from "@/lib/auth/functions";
 import type { TelegramWidgetUser } from "@/lib/auth/telegram-widget";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
@@ -492,6 +493,70 @@ function EmailEditor({
   );
 }
 
+function NameFields({ firstName, lastName }: { firstName: string; lastName: string }) {
+  const router = useRouter();
+  const updateProfile = useAuthServerFn(updateProfileFn);
+  const [given, setGiven] = useState(firstName);
+  const [family, setFamily] = useState(lastName);
+  const [pending, setPending] = useState(false);
+  const [status, setStatus] = useState("");
+
+  useEffect(() => {
+    setGiven(firstName);
+    setFamily(lastName);
+  }, [firstName, lastName]);
+
+  return (
+    <form
+      className="cabinet-form"
+      onSubmit={(event) => {
+        event.preventDefault();
+        const nextFirst = given.trim();
+        const nextLast = family.trim();
+        if (!nextFirst) {
+          setStatus("Укажите имя.");
+          return;
+        }
+        setPending(true);
+        setStatus("");
+        void updateProfile({ data: { firstName: nextFirst, lastName: nextLast } })
+          .then(async () => {
+            setStatus("Имя сохранено.");
+            await router.invalidate();
+          })
+          .catch((error) => setStatus(authErrorMessage(error) || "Не удалось сохранить имя."))
+          .finally(() => setPending(false));
+      }}
+    >
+      <div className="cabinet-form__row">
+        <label>
+          <span>Имя</span>
+          <input
+            required
+            value={given}
+            maxLength={100}
+            autoComplete="given-name"
+            onChange={(event) => setGiven(event.target.value)}
+          />
+        </label>
+        <label>
+          <span>Фамилия, необязательно</span>
+          <input
+            value={family}
+            maxLength={100}
+            autoComplete="family-name"
+            onChange={(event) => setFamily(event.target.value)}
+          />
+        </label>
+      </div>
+      <button className="cabinet-form__submit" type="submit" disabled={pending}>
+        {pending ? "Сохранение…" : "Сохранить"}
+      </button>
+      {status ? <p className="cabinet-note" role="status">{status}</p> : null}
+    </form>
+  );
+}
+
 export function TrainerContactStatus({ profile }: { profile: OwnTrainerProfile }) {
   const requestPhone = useAuthServerFn(requestAccountPhoneCodeFn);
   const requestEmail = useAuthServerFn(requestTrainerContactEmailCodeFn);
@@ -504,6 +569,7 @@ export function TrainerContactStatus({ profile }: { profile: OwnTrainerProfile }
 
   return (
     <div className="cabinet-contacts">
+      <NameFields firstName={profile.firstName} lastName={profile.lastName} />
       {step.fields}
       <Row
         icon={<LineIcon path={PHONE_PATH} />}

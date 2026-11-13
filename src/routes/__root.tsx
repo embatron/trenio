@@ -7,7 +7,7 @@ import {
   Scripts,
   useRouter,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useState, type ReactNode } from "react";
 
 import { GA_MEASUREMENT_ID, YM_COUNTER_ID, googleAnalyticsSnippet, yandexMetrikaSnippet } from "@/lib/seo/analytics";
 import { SITE_NAME, siteTitle } from "@/lib/seo/site";
@@ -15,11 +15,16 @@ import appCss from "../styles.css?url";
 import type { PublicUser } from "@/lib/auth/schemas";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { installClientLogReporter, reportClientEvent } from "@/lib/log/client-reporter";
+import { NativeAppChrome } from "@/components/mobile/mobile-tab-bar";
+import { bootNativeShell } from "@/lib/native/shell";
+import { shellClassName } from "@/lib/mobile/detect";
+import { currentShellKind, rememberAndroidShell } from "@/lib/mobile/shell-runtime";
 import { CatalogMiss } from "@/components/catalog-miss";
 import { TelegramAppChrome } from "@/components/telegram-tab-bar";
 import { AccountLikesProvider } from "@/components/account-likes-store";
 import { FavoritesProvider } from "@/components/favorites-store";
 import { canPlaceAccountLike } from "@/lib/catalog/account-like-rules";
+import { listPublicLikeCountsFn } from "@/lib/catalog/account-likes";
 import { CabinetLive } from "@/components/cabinet-live";
 import { MessagesLive } from "@/components/messages/messages-live";
 import { CopyLinkToast } from "@/components/share-profile";
@@ -116,21 +121,25 @@ export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
   user: PublicUser | null;
   messaging: MessagingSummary;
+  likeCounts: Record<string, number>;
 }>()({
   beforeLoad: async ({ location }) => {
-    const user = await getSessionFn();
-    if (!user) return { user, messaging: EMPTY_MESSAGING };
+    const [user, likeCounts] = await Promise.all([
+      getSessionFn(),
+      listPublicLikeCountsFn().then((result) => result.counts).catch(() => ({})),
+    ]);
+    if (!user) return { user, messaging: EMPTY_MESSAGING, likeCounts };
     const gate = accountGatePath(user);
     if (gate && !gateAllowsPath(location.pathname, gate)) {
       throw redirect({ to: gate });
     }
-    if (gate) return { user, messaging: EMPTY_MESSAGING };
+    if (gate) return { user, messaging: EMPTY_MESSAGING, likeCounts };
     try {
       const messaging = await unreadCountFn({ data: {} });
-      return { user, messaging };
+      return { user, messaging, likeCounts };
     } catch {
       // unreadCountFn already writes the failure. The root route stays in the client graph.
-      return { user, messaging: EMPTY_MESSAGING };
+      return { user, messaging: EMPTY_MESSAGING, likeCounts };
     }
   },
   head: () => ({
@@ -168,8 +177,13 @@ export const Route = createRootRouteWithContext<{
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const [kind, setKind] = useState(() => currentShellKind());
+  useLayoutEffect(() => {
+    rememberAndroidShell();
+    setKind(currentShellKind());
+  }, []);
   return (
-    <html lang="ru">
+    <html lang="ru" className={shellClassName(kind) || undefined}>
       <head>
         <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} />
         <script dangerouslySetInnerHTML={{ __html: googleAnalyticsSnippet() }} />
@@ -194,20 +208,28 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function RootComponent() {
-  const { queryClient, user, messaging } = Route.useRouteContext();
+  const { queryClient, user, messaging, likeCounts } = Route.useRouteContext();
   useEffect(() => {
     installClientLogReporter();
   }, []);
+  useEffect(() => {
+    void bootNativeShell(user?.id ?? null);
+  }, [user?.id]);
 
   return (
     <QueryClientProvider client={queryClient}>
       <FavoritesProvider userId={user?.id ?? null}>
-        <AccountLikesProvider userId={user?.id ?? null} enabled={Boolean(user && canPlaceAccountLike(user.roles))}>
+        <AccountLikesProvider
+          userId={user?.id ?? null}
+          enabled={Boolean(user && canPlaceAccountLike(user.roles))}
+          counts={likeCounts}
+        >
           <MessagesLive userId={user?.id ?? null} initial={messaging}>
             <CabinetLive userId={user?.id ?? null}>
               {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
               <Outlet />
               <TelegramAppChrome />
+              <NativeAppChrome />
               <Toaster />
               <CopyLinkToast />
             </CabinetLive>

@@ -7,6 +7,7 @@ import { useFavorites } from "@/components/favorites-store";
 import { useMessaging } from "@/components/messages/messages-live";
 import { TRAINER_PROFILE_SECTIONS } from "@/components/trainer-card-fields";
 import { logoutFn } from "@/lib/auth/functions";
+import { logoutWithShell } from "@/lib/native/shell";
 import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { deniedCabinetTarget, hasAnyRole, ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
@@ -20,7 +21,7 @@ import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 const ME_PAGE_SECTIONS = [
   { id: "trainer-page-status", label: "Статус" },
   { id: "trainer-contact-block", label: "Контакты" },
-  ...TRAINER_PROFILE_SECTIONS,
+  ...TRAINER_PROFILE_SECTIONS.filter((section) => section.id !== "trainer-contacts"),
 ];
 
 const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: MeSectionPath; sections?: typeof ME_PAGE_SECTIONS; sectionsMobile?: boolean }> = [
@@ -100,7 +101,7 @@ function MeLayout() {
       logoutPending={pending}
       onLogout={() => {
         setPending(true);
-        void logout()
+        void logoutWithShell(() => logout())
           .then(() => {
             window.location.href = "/";
           })

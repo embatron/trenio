@@ -1,4 +1,4 @@
-import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, count, desc, eq, inArray, isNull, ne, or, sql } from "drizzle-orm";
 
 import { accountLikes, trainerProfiles, userRoles, users } from "@/db/schema";
 import { accountLikePersonName } from "@/lib/catalog/account-like-rules";
@@ -57,19 +57,54 @@ export async function loadAccountLikeMarks(userId: string): Promise<AccountLikeM
     .select({ profileId: accountLikes.profileId, slug: trainerProfiles.slug })
     .from(accountLikes)
     .innerJoin(trainerProfiles, eq(trainerProfiles.id, accountLikes.profileId))
-    .where(and(eq(accountLikes.actorUserId, userId), eq(trainerProfiles.status, "published")));
+    .where(and(
+      eq(accountLikes.actorUserId, userId),
+      eq(trainerProfiles.status, "published"),
+      or(isNull(trainerProfiles.ownerUserId), ne(trainerProfiles.ownerUserId, userId)),
+    ));
   if (mine.length === 0) return [];
   const totals = await db
     .select({ profileId: accountLikes.profileId, total: count() })
     .from(accountLikes)
-    .where(inArray(accountLikes.profileId, mine.map((row) => row.profileId)))
+    .innerJoin(trainerProfiles, eq(trainerProfiles.id, accountLikes.profileId))
+    .where(and(
+      inArray(accountLikes.profileId, mine.map((row) => row.profileId)),
+      or(isNull(trainerProfiles.ownerUserId), ne(accountLikes.actorUserId, trainerProfiles.ownerUserId)),
+    ))
     .groupBy(accountLikes.profileId);
   const byProfile = new Map(totals.map((row) => [row.profileId, Number(row.total)]));
-  return mine.flatMap((row) => {
-    const total = byProfile.get(row.profileId);
-    if (total == null) return [];
-    return [{ slug: row.slug, count: total }];
-  });
+  return mine.map((row) => ({ slug: row.slug, count: byProfile.get(row.profileId) ?? 0 }));
+}
+
+/** Likes other people placed. The owner's own row does not count. */
+export async function visibleLikeCount(profileId: string, ownerUserId: string | null): Promise<number> {
+  const db = await database();
+  const where = ownerUserId
+    ? and(eq(accountLikes.profileId, profileId), ne(accountLikes.actorUserId, ownerUserId))
+    : eq(accountLikes.profileId, profileId);
+  const [row] = await db.select({ total: count() }).from(accountLikes).where(where);
+  return Number(row?.total ?? 0);
+}
+
+/** Public totals for published cards. Missing table returns an empty map. */
+export async function loadPublicLikeCounts(): Promise<Record<string, number>> {
+  if (!(await ensureAccountLikesTable())) return {};
+  const db = await database();
+  const rows = await db
+    .select({ slug: trainerProfiles.slug, total: count() })
+    .from(accountLikes)
+    .innerJoin(trainerProfiles, eq(trainerProfiles.id, accountLikes.profileId))
+    .where(and(
+      eq(trainerProfiles.status, "published"),
+      or(isNull(trainerProfiles.ownerUserId), ne(accountLikes.actorUserId, trainerProfiles.ownerUserId)),
+    ))
+    .groupBy(trainerProfiles.slug);
+  const counts: Record<string, number> = {};
+  for (const row of rows) {
+    const total = Number(row.total);
+    if (total > 0) counts[row.slug] = total;
+  }
+  return counts;
 }
 
 function cardName(firstName: string, lastName: string, fullName: string): string {
@@ -92,13 +127,14 @@ export async function loadAccountLikeHistory(
       firstName: users.firstName,
       lastName: users.lastName,
       email: users.email,
+      status: users.status,
       avatar: users.avatarPath,
     })
     .from(accountLikes)
     .innerJoin(trainerProfiles, eq(trainerProfiles.id, accountLikes.profileId))
     .innerJoin(users, eq(users.id, accountLikes.actorUserId))
     .innerJoin(userRoles, and(eq(userRoles.userId, users.id), eq(userRoles.role, "user")))
-    .where(eq(trainerProfiles.ownerUserId, userId))
+    .where(and(eq(trainerProfiles.ownerUserId, userId), ne(accountLikes.actorUserId, userId)))
     .orderBy(desc(accountLikes.createdAt))
     .limit(HISTORY_LIMIT);
   const actorIds = [...new Set(receivedRows.map((row) => row.actorId))];
@@ -115,10 +151,10 @@ export async function loadAccountLikeHistory(
   }
   const received = receivedRows.map((row) => ({
     id: row.id,
-    name: accountLikePersonName(row.firstName, row.lastName, row.email),
-    avatar: row.avatar,
+    name: accountLikePersonName(row.firstName, row.lastName, row.email, row.status),
+    avatar: row.status === "deleted" ? "" : row.avatar,
     at: row.at.toISOString(),
-    slug: slugByOwner.get(row.actorId) ?? null,
+    slug: row.status === "deleted" ? null : (slugByOwner.get(row.actorId) ?? null),
   }));
 
   const givenRows = await db
@@ -134,7 +170,11 @@ export async function loadAccountLikeHistory(
     })
     .from(accountLikes)
     .innerJoin(trainerProfiles, eq(trainerProfiles.id, accountLikes.profileId))
-    .where(and(eq(accountLikes.actorUserId, userId), eq(trainerProfiles.status, "published")))
+    .where(and(
+      eq(accountLikes.actorUserId, userId),
+      eq(trainerProfiles.status, "published"),
+      or(isNull(trainerProfiles.ownerUserId), ne(trainerProfiles.ownerUserId, userId)),
+    ))
     .orderBy(desc(accountLikes.createdAt))
     .limit(HISTORY_LIMIT);
   const given = givenRows.map((row) => ({

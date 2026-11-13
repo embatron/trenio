@@ -479,7 +479,7 @@ export function TrainerCardFields({
     onChange({ ...values, ...partial });
   }
   const showProfile = mode !== "contacts";
-  const showContacts = mode !== "profile";
+  const showContacts = mode !== "profile" && !self;
   const nickBlock = nick ? (
     <div>
       <label>

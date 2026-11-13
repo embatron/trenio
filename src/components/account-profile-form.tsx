@@ -90,11 +90,14 @@ export function AccountProfileForm({
   phone,
   phoneVerified,
   profilePhoto = null,
+  contactsHere = true,
 }: {
   user: PublicUser;
   phone: string | null;
   phoneVerified: boolean;
   profilePhoto?: string | null;
+  /** Trainer and club edit the name and contacts on «Моя страница». */
+  contactsHere?: boolean;
 }) {
   const router = useRouter();
   const updateProfile = useAuthServerFn(updateProfileFn);
@@ -182,6 +185,7 @@ export function AccountProfileForm({
         className="cabinet-form"
         onSubmit={(event) => {
           event.preventDefault();
+          if (!contactsHere) return;
           const nextFirst = firstName.trim();
           const nextLast = lastName.trim();
           if (!nextFirst || (!surnameOptional && !nextLast)) {
@@ -257,6 +261,8 @@ export function AccountProfileForm({
             }}
           />
         ) : null}
+        {contactsHere ? (
+        <>
         <div className="cabinet-form__row">
           <label>
             <span>Имя</span>
@@ -510,6 +516,8 @@ export function AccountProfileForm({
             </div>
           </label>
         ) : null}
+        </>
+        ) : null}
         <label>
           <span>Роль</span>
           <input value={role} readOnly />
@@ -518,9 +526,11 @@ export function AccountProfileForm({
           <span>Статус аккаунта</span>
           <input value={ACCOUNT_STATUS[user.status] ?? user.status} readOnly />
         </label>
+        {contactsHere ? (
         <button className="cabinet-form__submit" type="submit" disabled={pending}>
           {pending ? "Сохранение…" : "Сохранить"}
         </button>
+        ) : null}
         {canBecomeTrainer ? (
           <p className="cabinet-note">
             <Link to="/join/trainer" className="cabinet-text-link">Стать тренером</Link>

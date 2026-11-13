@@ -8,7 +8,7 @@ export const Route = createFileRoute("/me/settings")({
   head: () => ({
     meta: [
       { title: "Настройки · Я ищу тренера на trenio.by" },
-      { name: "description", content: "Имя аккаунта. Фамилия необязательна." },
+      { name: "description", content: "Пароль, письма и уведомления." },
       { name: "robots", content: "noindex,follow" },
     ],
   }),
@@ -29,6 +29,7 @@ function MeSettingsPage() {
         phone={cabinet.phone}
         phoneVerified={cabinet.phoneVerified}
         profilePhoto={face}
+        contactsHere={false}
       />
     </article>
   );

@@ -18,7 +18,13 @@ export function accountLikeLabel(count: number): string {
 }
 
 /** The person who liked, without the mailbox. A phone mask and a typed name stay. */
-export function accountLikePersonName(firstName: string, lastName: string | null | undefined, email: string): string {
+export function accountLikePersonName(
+  firstName: string,
+  lastName: string | null | undefined,
+  email: string,
+  status?: string | null,
+): string {
+  if (status === "deleted") return "Удалённый";
   const given = storedGivenName(firstName, email);
   const family = (lastName ?? "").trim();
   if (!family || family === given) return given;

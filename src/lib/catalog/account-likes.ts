@@ -1,4 +1,4 @@
-import { and, count, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
@@ -9,6 +9,8 @@ import {
   ensureAccountLikesTable,
   loadAccountLikeHistory,
   loadAccountLikeMarks,
+  loadPublicLikeCounts,
+  visibleLikeCount,
   type AccountLikeHistoryItem,
   type AccountLikeMark,
 } from "@/lib/catalog/account-like-load.server";
@@ -38,6 +40,16 @@ export const listOwnAccountLikesFn = createServerFn({ method: "GET" })
     }
   });
 
+export const listPublicLikeCountsFn = createServerFn({ method: "GET" })
+  .handler(async (): Promise<{ counts: Record<string, number> }> => {
+    try {
+      return { counts: await loadPublicLikeCounts() };
+    } catch (error) {
+      logCaught("catalog", "catalog.like", error, { target: "counts" });
+      return { counts: {} };
+    }
+  });
+
 export const listAccountLikesFn = createServerFn({ method: "GET" })
   .middleware([requireAuthMiddleware])
   .handler(async ({ context }): Promise<{ marks: AccountLikeMark[] }> => {
@@ -53,7 +65,7 @@ export const listAccountLikesFn = createServerFn({ method: "GET" })
 export const toggleAccountLikeFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
   .validator(slugSchema)
-  .handler(async ({ data, context }): Promise<{ liked: boolean; count: number | null }> => {
+  .handler(async ({ data, context }): Promise<{ liked: boolean; count: number }> => {
     if (!canPlaceAccountLike(context.user.roles)) {
       void writeLog({
         level: "warn",
@@ -84,6 +96,19 @@ export const toggleAccountLikeFn = createServerFn({ method: "POST" })
 
       const where = and(eq(accountLikes.actorUserId, context.user.id), eq(accountLikes.profileId, card.id));
       const [existing] = await db.select({ id: accountLikes.id }).from(accountLikes).where(where).limit(1);
+      if (!existing && card.ownerUserId === context.user.id) {
+        void writeLog({
+          level: "warn",
+          domain: "catalog",
+          action: "catalog.like",
+          outcome: "denied",
+          message: "Нельзя поставить лайкос своей странице.",
+          actorUserId: context.user.id,
+          subject: context.user.email,
+          target: data.slug,
+        });
+        throw new AuthError("Нельзя поставить лайкос своей странице.", "FORBIDDEN");
+      }
       if (existing) {
         await db.delete(accountLikes).where(eq(accountLikes.id, existing.id));
       } else {
@@ -93,11 +118,7 @@ export const toggleAccountLikeFn = createServerFn({ method: "POST" })
         }).onConflictDoNothing();
       }
       const liked = !existing;
-      let total: number | null = null;
-      if (liked) {
-        const [row] = await db.select({ total: count() }).from(accountLikes).where(eq(accountLikes.profileId, card.id));
-        total = Number(row?.total ?? 0);
-      }
+      const total = await visibleLikeCount(card.id, card.ownerUserId);
 
       void writeLog({
         level: "info",

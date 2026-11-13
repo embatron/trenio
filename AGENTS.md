@@ -63,6 +63,7 @@
 | `.cursor/skills/trenio-diagnosis/` | Diagnose a failure from `app_logs`. Command: `/diagnosis` |
 | `.cursor/skills/trenio-tests/` | Unit tests plus Playwright, then recommendations. Command: `/tests` |
 | `.cursor/skills/trenio-seo/` | Public-page SEO for Belarus: titles, canonical, robots, sitemap, schema.org. Subagent: `seo` |
+| `.cursor/skills/trenio-ship/` | Commit feature work and refresh `docs/ARCHITECTURE.local.md`. `deploy` also updates the live site. Command: `/ship` |
 
 ## Hooks
 

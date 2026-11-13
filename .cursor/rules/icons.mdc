@@ -21,6 +21,7 @@ Reuse the existing path. Do not draw a second pin, heart, chevron, or star.
 
 - Place: `M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z` plus a circle at `12,9` r `2.4`.
 - Direction: `M14 6l-6 6 6 6` and `M10 6l6 6-6 6`.
+- Favorite: `M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z` (`FAVORITE_BOOKMARK`).
 
 ## Allowed fills
 
@@ -29,10 +30,10 @@ Reuse the existing path. Do not draw a second pin, heart, chevron, or star.
 
 ## Like, favorite, share
 
-These three stay strokes everywhere, including the pressed state. The active mark is `color: var(--primary)`. It does not fill the shape. The heart, the thumb, and the share nodes use one view box and `--icon-stroke`. Every photo action stack — catalog cards and the public portrait — rests at 85% opacity. Hover or focus on that card restores full strength, and hover on one mark still lifts its circle and stroke. A like this account placed stays `var(--primary)`, including while the pointer is on it. The public portrait uses the same disc, hit area, and gap as a catalog card.
+These three stay strokes everywhere, including the pressed state. The active mark is `color: var(--primary)`. It does not fill the shape. The bookmark, the thumb, and the share nodes use one view box and `--icon-stroke`. Every photo action stack — catalog cards and the public portrait — rests at 85% opacity. Hover or focus on that card restores full strength, and hover on one mark still lifts its circle and stroke. A like this account placed stays `var(--primary)`, including while the pointer is on it. The public portrait uses the same disc, hit area, and gap as a catalog card. The like count is a digit on that thumb for everyone, including a guest. The owner of the card does not place a like on it.
 
 ```css
-/* wrong: a saved heart turns solid */
+/* wrong: a saved bookmark turns solid */
 .profile-save svg { fill: currentColor; }
 
 /* right: the same stroke, the brand color marks it */
@@ -42,7 +43,7 @@ These three stay strokes everywhere, including the pressed state. The active mar
 
 ## Direct messages
 
-The write mark is one outline plane (`DirectMark`). On a contact row it sits in a coral rounded square the same size as the Instagram mark. Hover moves that square 2px up and right. The inbox mark stays an envelope (`MESSAGE_ENVELOPE`) with rounded corners and a curved flap. On a catalog card the same outline plane sits after the heart, in the white disc with the other photo actions.
+The write mark is one outline plane (`DirectMark`). On a contact row it sits in a coral rounded square the same size as the Instagram mark. Hover moves that square 2px up and right. The inbox mark stays an envelope (`MESSAGE_ENVELOPE`) with rounded corners and a curved flap. On a catalog card the same outline plane sits after the bookmark, in the white disc with the other photo actions.
 
 ## Do not
 

@@ -14,7 +14,9 @@ import {
   emailVerificationTokens,
   messages,
   passwordResetTokens,
+  pushSubscriptions,
   sessions,
+  userDevices,
   trainerProfiles,
   trainerReviews,
   trainerWelcomes,
@@ -189,6 +191,13 @@ export async function deleteOwnAccount(
       .where(eq(users.id, user.id));
   });
 
+  const conversationIds = await dropPersonalRecords(user.id, profiles.map((profile) => profile.id), profiles.map((profile) => profile.slug));
+  try {
+    await Promise.all(conversationIds.map((id) => removeConversationFiles(id)));
+  } catch (error) {
+    logCaught("account", "account.delete", error, { actorUserId: user.id, target: profiles[0]?.slug ?? null, subject: user.email });
+  }
+
   await writeLog({
     level: "info",
     domain: "account",
@@ -207,6 +216,49 @@ export async function deleteOwnAccount(
     phoneVerifiedAt: user.phoneVerifiedAt,
     actorUserId: user.id,
   });
+}
+
+/** Bookmarks, favorites, threads, and push go away. Likes stay on the account. */
+async function dropPersonalRecords(userId: string, profileIds: string[], slugs: string[]): Promise<string[]> {
+  const db = getDb();
+  const threadRows = await db
+    .select({ id: conversations.id })
+    .from(conversations)
+    .where(
+      profileIds.length
+        ? or(
+            eq(conversations.userId, userId),
+            eq(conversations.hostUserId, userId),
+            inArray(conversations.trainerProfileId, profileIds),
+          )
+        : or(eq(conversations.userId, userId), eq(conversations.hostUserId, userId)),
+    );
+  const sentRows = await db
+    .select({ id: messages.conversationId })
+    .from(messages)
+    .where(eq(messages.senderId, userId));
+  const conversationIds = [...new Set([...threadRows.map((row) => row.id), ...sentRows.map((row) => row.id)])];
+
+  await db.transaction(async (tx) => {
+    if (slugs.length) {
+      await tx.delete(userFavorites).where(
+        or(eq(userFavorites.userId, userId), and(eq(userFavorites.targetType, "trainer"), inArray(userFavorites.targetSlug, slugs))),
+      );
+    } else {
+      await tx.delete(userFavorites).where(eq(userFavorites.userId, userId));
+    }
+    if (conversationIds.length) await tx.delete(conversations).where(inArray(conversations.id, conversationIds));
+    if (profileIds.length) {
+      await tx.delete(blockedPairs).where(
+        or(eq(blockedPairs.userId, userId), inArray(blockedPairs.trainerProfileId, profileIds)),
+      );
+    } else {
+      await tx.delete(blockedPairs).where(eq(blockedPairs.userId, userId));
+    }
+    await tx.delete(pushSubscriptions).where(eq(pushSubscriptions.userId, userId));
+    await tx.delete(userDevices).where(eq(userDevices.userId, userId));
+  });
+  return conversationIds;
 }
 
 async function purgeAccountRecord(user: User): Promise<void> {
@@ -317,6 +369,8 @@ async function purgeAccountRecord(user: User): Promise<void> {
     } else {
       await tx.delete(blockedPairs).where(eq(blockedPairs.userId, user.id));
     }
+    await tx.delete(pushSubscriptions).where(eq(pushSubscriptions.userId, user.id));
+    await tx.delete(userDevices).where(eq(userDevices.userId, user.id));
     await tx.delete(sessions).where(eq(sessions.userId, user.id));
     await tx.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, user.id));
     await tx.delete(emailVerificationTokens).where(eq(emailVerificationTokens.userId, user.id));

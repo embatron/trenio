@@ -346,12 +346,7 @@ export function CabinetShell({
       const sideH = stackedSticky && sideRef.current ? Math.ceil(sideRef.current.getBoundingClientRect().height) : 0;
       return Math.max(0, window.scrollY + target.getBoundingClientRect().top - headerH - sideH - 16);
     };
-    let top = destination();
-    if (header && top > 8) {
-      header.classList.add("is-scrolled");
-      if (!document.getElementById("search-dock-sentinel")) document.body.classList.add("is-search-docked");
-      top = destination();
-    }
+    const top = destination();
     const token = ++spyPause.current;
     const release = () => {
       window.setTimeout(() => {
@@ -656,6 +651,7 @@ a.cabinet-stat:hover { border-color: var(--primary); }
 .cabinet-stat--brand .cabinet-stat__delta.is-down,
 .cabinet-stat--brand .cabinet-stat__delta.is-flat { color: rgba(255, 255, 255, 0.88); }
 .cabinet-contacts { display: grid; }
+.cabinet-contacts > .cabinet-form { border-bottom: 1px solid var(--line); }
 .cabinet-contact { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; grid-template-areas: "icon body marks" "panel panel panel"; column-gap: 12px; row-gap: 8px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--line); }
 .cabinet-contact:last-child { border-bottom: 0; }
 .cabinet-contact__icon { grid-area: icon; display: grid; place-items: center; width: 28px; height: 28px; color: var(--dark); }

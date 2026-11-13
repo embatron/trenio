@@ -29,26 +29,48 @@ type Gate = {
   login: boolean;
 };
 
+function LikeFace({ count }: { count: number }) {
+  return (
+    <>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        {THUMB_PATHS.map((path) => (
+          <path key={path} d={path} />
+        ))}
+      </svg>
+      {count > 0 ? <span className="account-like__tip" aria-hidden="true">{count}</span> : null}
+    </>
+  );
+}
+
 export function AccountLikeButton({ slug, className }: { slug: string; className: string }) {
-  const { user } = useRouteContext({ from: "__root__" });
-  const { marks, toggle } = useAccountLikes();
+  const { user, messaging } = useRouteContext({ from: "__root__" });
+  const { marks, counts, toggle } = useAccountLikes();
   const href = useRouterState({ select: (state) => state.location.href });
   const mark = marks.find((item) => item.slug === slug);
+  const count = counts[slug] ?? mark?.count ?? 0;
   const [optimistic, setOptimistic] = useState<boolean | null>(null);
   const liked = optimistic ?? (Boolean(user) && Boolean(mark));
   const [gate, setGate] = useState<Gate | null>(null);
   const pending = useRef(false);
   const allowed = Boolean(user && canPlaceAccountLike(user.roles));
+  const own = messaging.ownedSlugs.includes(slug);
   const redirect = href.startsWith("/") ? href.split("#")[0].slice(0, 200) : "/";
+  const total = count > 0 ? accountLikeLabel(count) : "";
   const label = !user
-    ? "Войдите, чтобы поставить лайкос"
+    ? total ? `Войдите, чтобы поставить лайкос, ${total}` : "Войдите, чтобы поставить лайкос"
     : !allowed
-      ? "Лайкос доступен пользователям и тренерам"
+      ? total ? `Лайкос доступен пользователям и тренерам, ${total}` : "Лайкос доступен пользователям и тренерам"
       : liked
-        ? mark && mark.count >= 0
-          ? `Убрать лайкос, ${accountLikeLabel(mark.count)}`
-          : "Убрать лайкос"
-        : "Лайкос";
+        ? total ? `Убрать лайкос, ${total}` : "Убрать лайкос"
+        : total ? `Лайкос, ${total}` : "Лайкос";
+
+  if (own) {
+    return (
+      <span className={`${className} is-own`} aria-label={total || "Лайкосы"}>
+        <LikeFace count={count} />
+      </span>
+    );
+  }
 
   return (
     <>
@@ -89,14 +111,7 @@ export function AccountLikeButton({ slug, className }: { slug: string; className
             });
         }}
       >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          {THUMB_PATHS.map((path) => (
-            <path key={path} d={path} />
-          ))}
-        </svg>
-        {liked && mark ? (
-          <span className="account-like__tip" aria-hidden="true">{mark.count}</span>
-        ) : null}
+        <LikeFace count={count} />
       </button>
       {gate ? <LikeGate gate={gate} redirect={redirect} onClose={() => setGate(null)} /> : null}
     </>
