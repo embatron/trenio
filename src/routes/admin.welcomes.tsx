@@ -7,6 +7,7 @@ import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import {
   getAdminWelcomesFn,
   setAdminWelcomeStatusFn,
+  welcomeIsOpen,
   type AdminWelcome,
 } from "@/lib/admin/welcomes";
 
@@ -154,10 +155,21 @@ function IconButton({
   );
 }
 
+function welcomeIsQueued(row: AdminWelcome) {
+  return welcomeIsOpen({
+    staffStatus: row.staffStatus,
+    trainerStatus: row.trainer?.status ?? null,
+  });
+}
+
 function AdminWelcomesPage() {
   const rows = Route.useLoaderData();
   const router = useRouter();
-  const pager = useTablePage(rows);
+  const [tab, setTab] = useState<"open" | "done">("open");
+  const openRows = rows.filter(welcomeIsQueued);
+  const doneRows = rows.filter((row) => !welcomeIsQueued(row));
+  const visible = tab === "open" ? openRows : doneRows;
+  const pager = useTablePage(visible, tab);
   const setStatus = useAuthServerFn(setAdminWelcomeStatusFn);
   const [busyId, setBusyId] = useState<string | null>(null);
 
@@ -175,6 +187,20 @@ function AdminWelcomesPage() {
         <p className="cabinet-empty">Заявок пока нет.</p>
       ) : (
         <>
+          <div className="cabinet-tabs" role="tablist" aria-label="Заявки">
+            <button type="button" role="tab" aria-selected={tab === "open"} onClick={() => setTab("open")}>
+              {`Новые и черновики (${openRows.length})`}
+            </button>
+            <button type="button" role="tab" aria-selected={tab === "done"} onClick={() => setTab("done")}>
+              {`Опубликованные и обработанные (${doneRows.length})`}
+            </button>
+          </div>
+          {visible.length === 0 ? (
+            <p className="cabinet-empty">
+              {tab === "open" ? "Новых заявок нет." : "Обработанных заявок нет."}
+            </p>
+          ) : (
+          <>
           <div className="cabinet-table-wrap">
             <table className="cabinet-table welcome-table">
               <thead>
@@ -243,6 +269,8 @@ function AdminWelcomesPage() {
             to={pager.to}
             onPage={pager.setPage}
           />
+          </>
+          )}
         </>
       )}
       <style
