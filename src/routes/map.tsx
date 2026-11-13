@@ -23,6 +23,7 @@ import { TRAINER_FORMAT_OPTIONS } from "@/lib/catalog/published-trainers";
 import { listMapAreaFn, type MapAreaFeature, type MapTrainer } from "@/lib/catalog/map-trainers";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 import { resolveVisitorPointFn, type VisitorPoint } from "@/lib/catalog/visitor-place";
+import { shellCoordinates } from "@/lib/native/shell";
 import { reportClientEvent } from "@/lib/log/client-reporter";
 import { pluralRu } from "@/lib/ru-plural";
 
@@ -483,29 +484,43 @@ export function CatalogMapScreen({
         route: window.location.pathname,
       });
     };
-    if (!navigator.geolocation) {
-      note("Браузер не сообщает местоположение.");
-      return;
-    }
+    const apply = (lat: number, lng: number) => {
+      if (!inBelarus(lat, lng)) {
+        setUserPoint(null);
+        note("Точка вне Беларуси.");
+        return;
+      }
+      setUserPoint({ lat, lng });
+    };
     setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
+    void shellCoordinates().then((shell) => {
+      if (shell === "denied") {
         setLocating(false);
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        if (!inBelarus(lat, lng)) {
-          setUserPoint(null);
-          note("Точка вне Беларуси.");
-          return;
-        }
-        setUserPoint({ lat, lng });
-      },
-      (error) => {
+        note("Браузер не разрешил местоположение.");
+        return;
+      }
+      if (shell !== "skip") {
         setLocating(false);
-        note(error.code === 1 ? "Браузер не разрешил местоположение." : "Браузер не передал координаты.");
-      },
-      { enableHighAccuracy: false, timeout: 8000, maximumAge: 60_000 },
-    );
+        apply(shell.lat, shell.lng);
+        return;
+      }
+      if (!navigator.geolocation) {
+        setLocating(false);
+        note("Браузер не сообщает местоположение.");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocating(false);
+          apply(position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+          setLocating(false);
+          note(error.code === 1 ? "Браузер не разрешил местоположение." : "Браузер не передал координаты.");
+        },
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 60_000 },
+      );
+    });
   };
 
   const headerSport = selectedSports.length === 1
