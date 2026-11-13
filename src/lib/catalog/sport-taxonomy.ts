@@ -491,7 +491,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         slug: "tajczi-cigun",
         label: "Тайцзи-цигун",
         titleGenitive: "тайцзи и цигун",
-        aliases: ["тайцзицюань", "тайцзи", "цигун", "тай-чи", "тайчи", "taichi", "qigong", "ци-гун"],
+        aliases: ["тайцзицюань", "тайчи", "тайцзи", "цигун", "тай-чи", "taichi", "qigong", "ци-гун"],
       },
     ],
   }),
