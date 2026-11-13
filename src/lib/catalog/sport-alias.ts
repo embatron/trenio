@@ -22,7 +22,8 @@ function wordPattern(word: string): string {
   if (/[аеёиоуыэюя]$/u.test(lower) && [...lower].length >= 4) {
     return `(?:${lower}|${lower.slice(0, -1)}(?:${ENDING}))`;
   }
-  return `(?:${lower}(?:${ENDING})?)`;
+  // «футбол» also appears as «футбольный».
+  return `(?:${lower}(?:${ENDING})?|${lower}ьн(?:${ENDING})?)`;
 }
 
 /** A catalog alias, including an inflected form. «йоге» matches «йога». «бокс» does not match inside «кикбоксинг». */

@@ -12,6 +12,7 @@ test("sport alias matches an inflected form and not a longer sport", () => {
   assert.equal(sportAliasRegex("настольный теннис").test("настольному теннису"), true);
   assert.equal(sportAliasRegex("фигурное катание").test("фигурному катанию"), true);
   assert.equal(sportAliasRegex("бокс").test("кикбоксинг"), false);
+  assert.equal(sportAliasRegex("футбол").test("футбольный тренер"), true);
   assert.equal(sportAliasRegex("бокс").test("бокс"), true);
 });
 
