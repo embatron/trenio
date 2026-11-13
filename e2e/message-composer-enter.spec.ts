@@ -78,6 +78,9 @@ test("Enter sends, Shift+Enter breaks, and a million breaks stay small", async (
     await page.getByRole("link", { name: /Сообщения/ }).click();
     await page.locator(`.direct-list a[href*="${conversation.id}"]`).click();
     await page.locator(".direct-log").waitFor();
+    await expect(page.locator(".site-footer")).toBeHidden();
+    const sheet = await page.locator(".direct.is-thread").evaluate((node) => getComputedStyle(node).transform);
+    expect(sheet === "none" || sheet === "matrix(1, 0, 0, 1, 0, 0)").toBe(true);
     const field = page.getByRole("textbox", { name: "Написать сообщение" });
     const bubbles = page.locator(".direct-bubble");
     await expect(bubbles).toHaveCount(1);
@@ -93,7 +96,10 @@ test("Enter sends, Shift+Enter breaks, and a million breaks stay small", async (
     expect(draftBreaks).toBeLessThanOrEqual(2);
 
     await field.press("Enter");
-    await expect(page.locator(".direct-bubble").filter({ hasText: "Привет" })).toBeVisible();
+    const sent = page.locator(".direct-bubble").filter({ hasText: "Привет" });
+    await expect(sent).toBeVisible();
+    await expect(sent.getByText("Доставлено")).toBeVisible();
+    await expect(field).toBeFocused();
     await expect(bubbles).toHaveCount(2);
     const sentBreaks = await page.locator(".direct-bubble").filter({ hasText: "Привет" }).evaluate((node) => node.querySelectorAll("br").length);
     expect(sentBreaks).toBeLessThanOrEqual(2);

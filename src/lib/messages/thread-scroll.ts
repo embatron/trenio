@@ -43,6 +43,17 @@ export function seenMessageId(
   return seen;
 }
 
+/** Keep the same line on screen when older messages are added above it. */
+export function prependedScrollTop(input: {
+  scrollTop: number;
+  previousHeight: number;
+  nextHeight: number;
+}): number {
+  const delta = input.nextHeight - input.previousHeight;
+  if (delta <= 0) return input.scrollTop;
+  return input.scrollTop + delta;
+}
+
 export function messageScrollTop(input: {
   anchorTop: number | null;
   scrollHeight: number;

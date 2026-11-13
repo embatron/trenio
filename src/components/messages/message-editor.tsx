@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, memo, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { reviewTextLength } from "@/lib/catalog/review-html";
 import {
@@ -9,6 +9,12 @@ import {
   messageBreaksNeedTighten,
   plainToEditorHtml,
 } from "@/lib/messages/breaks";
+import {
+  clipboardFiles,
+  clipboardSuggestsImage,
+  fileFromDataUrl,
+  filesFromHtmlImages,
+} from "@/lib/messages/clipboard-images";
 import { markerEndingAt, renderMessageMarkers } from "@/lib/messages/markup";
 
 const EmojiPanel = lazy(() => import("@/components/messages/emoji-panel"));
@@ -22,19 +28,6 @@ const TAG: Record<string, string> = {
   pre: "pre",
   spoiler: "span",
 };
-
-function filesFromClipboard(data: DataTransfer | null) {
-  if (!data) return [];
-  const listed = [...data.files];
-  if (listed.length > 0) return listed;
-  const files: File[] = [];
-  for (const item of data.items) {
-    if (item.kind !== "file") continue;
-    const file = item.getAsFile();
-    if (file) files.push(file);
-  }
-  return files;
-}
 
 function applyClosedMarker(root: HTMLElement) {
   const selection = window.getSelection();
@@ -125,7 +118,7 @@ function insertText(field: HTMLElement, text: string) {
   field.dispatchEvent(new InputEvent("input", { bubbles: true }));
 }
 
-export function MessageEditor({
+export const MessageEditor = memo(function MessageEditor({
   value,
   maxLength,
   onChange,
@@ -142,6 +135,9 @@ export function MessageEditor({
 }) {
   const field = useRef<HTMLDivElement>(null);
   const keyedEnter = useRef(0);
+  const stick = useRef(false);
+  const written = useRef<string | null>(null);
+  const tookPaste = useRef(0);
   const [emoji, setEmoji] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -150,11 +146,38 @@ export function MessageEditor({
   const placeholder = disabled ? "Сообщения закрыты" : "Написать сообщение";
   const empty = value.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").trim().length === 0;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = field.current;
-    if (!el || el.innerHTML === value) return;
-    el.innerHTML = value;
-  }, [value]);
+    if (!el || disabled) return;
+    const focused = document.activeElement === el;
+    if (el.innerHTML !== value) {
+      const draft = el.innerText.replace(/\u200b/g, "").trim();
+      const typingAhead = focused && value === "" && written.current === "" && draft.length > 0;
+      if (!typingAhead) {
+        el.innerHTML = value;
+        written.current = value;
+        if (stick.current || focused) {
+          el.focus();
+          placeCaretAtEnd(el);
+        }
+      }
+    } else {
+      written.current = value;
+    }
+    if (!stick.current) return;
+    if (document.activeElement !== el) el.focus();
+    if (!el.contains(window.getSelection()?.anchorNode ?? null)) placeCaretAtEnd(el);
+  });
+
+  useEffect(() => {
+    function onPointer(event: PointerEvent) {
+      const target = event.target;
+      if (target instanceof Node && field.current?.contains(target)) return;
+      stick.current = false;
+    }
+    document.addEventListener("pointerdown", onPointer, true);
+    return () => document.removeEventListener("pointerdown", onPointer, true);
+  }, []);
 
   useEffect(() => {
     if (!emoji) return;
@@ -173,6 +196,39 @@ export function MessageEditor({
       document.removeEventListener("keydown", onKey);
     };
   }, [emoji]);
+
+  function giveFiles(files: File[]) {
+    if (files.length === 0) return;
+    if (performance.now() - tookPaste.current < 300) return;
+    tookPaste.current = performance.now();
+    attachRef.current(files);
+    field.current?.focus();
+  }
+
+  async function liftInsertedImages(el: HTMLElement) {
+    const images = [...el.querySelectorAll("img")];
+    if (images.length === 0) return;
+    const srcs = images.map((img) => img.getAttribute("src") ?? "");
+    for (const img of images) img.remove();
+    if (performance.now() - tookPaste.current < 500) return;
+    const files: File[] = [];
+    for (const src of srcs) {
+      if (src.startsWith("data:image/")) {
+        const file = fileFromDataUrl(src);
+        if (file) files.push(file);
+        continue;
+      }
+      if (!src.startsWith("blob:")) continue;
+      try {
+        const blob = await (await fetch(src)).blob();
+        if (!blob.type.startsWith("image/") || blob.size <= 0) continue;
+        files.push(new File([blob], "screenshot.png", { type: blob.type || "image/png" }));
+      } catch {
+        // The browser kept a picture we cannot read back.
+      }
+    }
+    giveFiles(files);
+  }
 
   function publish() {
     const el = field.current;
@@ -216,6 +272,7 @@ export function MessageEditor({
     const el = field.current;
     if (!el || disabled) return;
     applyClosedMarker(el);
+    stick.current = true;
     onChange(el.innerHTML);
     onSubmit(el.innerHTML);
   }
@@ -232,15 +289,52 @@ export function MessageEditor({
         aria-multiline="true"
         aria-disabled={disabled}
         aria-label={placeholder}
-        onInput={() => publish()}
-        onPaste={(event) => {
-          const files = filesFromClipboard(event.clipboardData);
-          if (files.length > 0) {
-            event.preventDefault();
-            attachRef.current(files);
+        onInput={() => {
+          const el = field.current;
+          if (!el || !el.querySelector("img")) {
+            publish();
             return;
           }
-          const text = event.clipboardData?.getData("text/plain");
+          void liftInsertedImages(el).finally(() => publish());
+        }}
+        onBlur={() => {
+          setTimeout(() => {
+            if (document.activeElement !== field.current) stick.current = false;
+          }, 0);
+        }}
+        onPaste={(event) => {
+          const data = event.clipboardData;
+          const files = clipboardFiles(data);
+          if (files.length > 0) {
+            event.preventDefault();
+            giveFiles(files);
+            return;
+          }
+          const htmlFiles = filesFromHtmlImages(data?.getData("text/html") ?? "");
+          if (htmlFiles.length > 0) {
+            event.preventDefault();
+            giveFiles(htmlFiles);
+            return;
+          }
+          const types = [...(data?.types ?? [])];
+          if (clipboardSuggestsImage(types)) {
+            if (window.isSecureContext && navigator.clipboard?.read) {
+              event.preventDefault();
+              void navigator.clipboard.read().then(async (items) => {
+                const images: File[] = [];
+                for (const item of items) {
+                  const type = item.types.find((entry) => entry.startsWith("image/"));
+                  if (!type) continue;
+                  const blob = await item.getType(type);
+                  if (blob.size <= 0) continue;
+                  images.push(new File([blob], "screenshot.png", { type: blob.type || type }));
+                }
+                giveFiles(images);
+              }).catch(() => undefined);
+            }
+            return;
+          }
+          const text = data?.getData("text/plain");
           if (text == null) return;
           event.preventDefault();
           const el = field.current;
@@ -310,4 +404,4 @@ export function MessageEditor({
     ) : null}
     </>
   );
-}
+}, (prev, next) => prev.value === next.value && prev.disabled === next.disabled && prev.maxLength === next.maxLength);

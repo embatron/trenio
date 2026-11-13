@@ -4,6 +4,7 @@ import { DirectMark } from "@/components/messages/direct-mark";
 import { ReplyIcon } from "@/components/messages/message-bubble";
 import { MessageEditor } from "@/components/messages/message-editor";
 import { clientAttachmentIssue, composerBody, newMessageClientId } from "@/lib/messages/attachments";
+import { preparePastedFile } from "@/lib/messages/clipboard-images";
 import { messageMarkup } from "@/lib/messages/markup";
 import { reviewPlainText, reviewTextLength } from "@/lib/catalog/review-html";
 import { prepareShellCamera } from "@/lib/native/shell";
@@ -15,12 +16,6 @@ export type ComposerFile = {
   kind: "image" | "file";
   url: string;
 };
-
-function namedFile(file: File) {
-  if (file.name.trim()) return file;
-  const ext = file.type === "image/jpeg" ? "jpg" : file.type === "image/webp" ? "webp" : file.type === "image/gif" ? "gif" : "png";
-  return new File([file], `screenshot.${ext}`, { type: file.type || "image/png" });
-}
 
 export function MessageComposer({
   limit,
@@ -53,6 +48,7 @@ export function MessageComposer({
   const input = useRef<HTMLInputElement>(null);
   const filesRef = useRef(files);
   filesRef.current = files;
+  const pendingAdds = useRef(Promise.resolve());
   const max = limit > 0 ? limit : 4000;
   const length = reviewTextLength(html);
   const over = length > max;
@@ -63,21 +59,24 @@ export function MessageComposer({
   }, []);
 
   function addFiles(list: File[]) {
-    const next = [...files];
-    let error: string | null = null;
-    for (const raw of list) {
-      const file = namedFile(raw);
-      const issue = clientAttachmentIssue(file, next.length);
-      if (issue) {
-        error = issue;
-        if (issue.startsWith("Можно прикрепить не больше")) break;
-        continue;
+    pendingAdds.current = pendingAdds.current.then(async () => {
+      const next = [...filesRef.current];
+      let error: string | null = null;
+      for (const raw of list) {
+        const file = await preparePastedFile(raw);
+        const issue = clientAttachmentIssue(file, next.length);
+        if (issue) {
+          error = issue;
+          if (issue.startsWith("Можно прикрепить не больше")) break;
+          continue;
+        }
+        const kind = file.type.startsWith("image/") || /\.(png|jpe?g|webp|gif)$/i.test(file.name) ? "image" : "file";
+        next.push({ id: newMessageClientId(), file, name: file.name, kind, url: URL.createObjectURL(file) });
       }
-      const kind = file.type.startsWith("image/") || /\.(png|jpe?g|webp|gif)$/i.test(file.name) ? "image" : "file";
-      next.push({ id: newMessageClientId(), file, name: file.name, kind, url: URL.createObjectURL(file) });
-    }
-    setFiles(next);
-    setFileError(error);
+      filesRef.current = next;
+      setFiles(next);
+      setFileError(error);
+    }).catch(() => undefined);
   }
 
   function removeFile(id: string) {
@@ -105,8 +104,8 @@ export function MessageComposer({
       await onSend(plain ? body : "", sentFiles);
       for (const item of sentFiles) URL.revokeObjectURL(item.url);
     } catch (error) {
-      setHtml(body);
-      setFiles(sentFiles);
+      setHtml((current) => (reviewPlainText(current).length > 0 ? current : body));
+      setFiles((current) => (current.length > 0 ? current : sentFiles));
       throw error;
     } finally {
       sending.current = false;
@@ -185,7 +184,7 @@ export function MessageComposer({
               setHtml(value);
               onActivity?.(reviewPlainText(value).trim().length > 0);
             }}
-            disabled={disabled || busy}
+            disabled={disabled}
             onSubmit={(live) => void submit(live)}
             onAttach={addFiles}
           />

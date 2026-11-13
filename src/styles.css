@@ -393,6 +393,28 @@ html.is-staff-layout {
   line-height: 1; letter-spacing: 0; white-space: nowrap;
   box-shadow: 0 1px 3px rgba(var(--dark-rgb), 0.16);
 }
+.trenio-toast { font-family: inherit; }
+.trenio-toast__card {
+  background: var(--white) !important;
+  color: var(--dark) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: var(--card-radius) !important;
+  box-shadow: 0 12px 32px rgba(var(--dark-rgb), 0.12) !important;
+  font-family: inherit;
+}
+.trenio-toast__title { color: var(--dark); font-weight: var(--fw-title); font-size: 15px; }
+.trenio-toast__text { color: var(--muted); font-size: 14px; font-weight: var(--fw-body); }
+.trenio-toast__action {
+  background: var(--primary) !important;
+  color: #fff !important;
+  border-radius: 999px !important;
+  min-height: 44px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: var(--fw-ui);
+}
+.trenio-toast__cancel { color: var(--muted); font: inherit; }
 .copy-toast {
   position: fixed; left: 50%; bottom: max(20px, env(safe-area-inset-bottom)); z-index: 400;
   margin: 0; padding: 12px 18px; border-radius: 999px; background: #00c853; color: #063318;

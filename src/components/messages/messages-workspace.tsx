@@ -677,6 +677,7 @@ export const DIRECT_CSS = `
 .direct-thread__actions .direct-menu__list button {
   width: 100%; min-height: 44px; padding: 0 12px; border: 0; border-radius: 8px;
   background: transparent; color: var(--dark); font-size: 14px; font-weight: 400; justify-content: flex-start;
+  transition: background-color 0.16s ease, color 0.16s ease;
 }
 .direct-thread__actions .direct-menu__list button:hover { background: rgba(var(--primary-rgb), 0.08); color: var(--primary); }
 .direct-cleared { margin: 8px 16px 12px; text-align: center; color: var(--muted); font-size: 13px; line-height: 1.4; }
@@ -760,11 +761,16 @@ export const DIRECT_CSS = `
     display: flex; min-height: 0; border: 0; border-radius: 0; background: var(--white);
     padding-bottom: var(--keyboard-pad, env(safe-area-inset-bottom));
     transition: bottom 0.2s ease, padding-bottom 0.2s ease;
-    animation: direct-sheet 0.28s cubic-bezier(0.22, 0.8, 0.28, 1);
   }
+  body:has(.direct.is-thread)::before {
+    content: "";
+    position: fixed; z-index: 270; left: 0; right: 0; top: var(--direct-top, var(--header-clearance)); bottom: 0;
+    background: var(--white); pointer-events: none;
+  }
+  body:has(.direct.is-thread) .site-footer { visibility: hidden; }
   .direct.is-thread .direct-list { display: none; }
-  .direct.is-thread .direct-thread { flex: 1; min-height: 0; height: 100%; }
-  .direct.is-thread .direct-thread__pane { animation: none; }
+  .direct.is-thread .direct-thread { flex: 1; min-height: 0; height: 100%; animation: direct-fade 0.2s ease; }
+  .direct.is-thread .direct-thread__pane { animation: direct-fade 0.2s ease; }
   .direct.is-thread { overflow: visible; }
   .direct.is-thread .direct-thread__head { position: relative; z-index: 8; flex-wrap: nowrap; align-items: center; padding-inline: var(--layout-gutter); }
   .direct.is-thread .direct-thread__actions .direct-menu__btn {
@@ -793,7 +799,6 @@ export const DIRECT_CSS = `
   .direct-field, .direct-field__placeholder { font-size: 14px; }
 }
 @keyframes direct-switch { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-@keyframes direct-sheet { from { transform: translateX(100%); } to { transform: none; } }
 @keyframes direct-arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes direct-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes direct-like { from { transform: scale(0.86); } to { transform: none; } }
@@ -802,6 +807,6 @@ export const DIRECT_CSS = `
   .direct-back__label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .direct-thread__pane, .direct.is-thread, .is-arriving, .direct-thread__typing, .direct-banner, .direct-menu__list, .direct-day, .direct-cleared, .direct-bubble__like { animation: none; transition: none; }
+  .direct-thread__pane, .direct.is-thread, .direct.is-thread .direct-thread, .is-arriving, .direct-thread__typing, .direct-banner, .direct-menu__list, .direct-day, .direct-cleared, .direct-bubble__like { animation: none; transition: none; }
 }
 `;

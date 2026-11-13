@@ -11,7 +11,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { reviewTextLength } from "@/lib/catalog/review-html";
 import { notifyTyping, remoteTyping, subscribeTyping } from "@/lib/messages/live-client";
 import { REPORT_COMMENT_MAX_LENGTH, REPORT_REASONS, messagePreview, type MessageDto, type ThreadResult } from "@/lib/messages/schemas";
-import { firstUnreadMessageId, messageScrollTop, seenMessageId } from "@/lib/messages/thread-scroll";
+import { firstUnreadMessageId, messageScrollTop, prependedScrollTop, seenMessageId } from "@/lib/messages/thread-scroll";
 
 function dayKey(iso: string) {
   const date = new Date(iso);
@@ -120,6 +120,8 @@ export function ConversationThread({
   const knownFor = useRef("");
   const seenKeys = useRef(new Set<string>());
   const freshKeys = useRef(new Set<string>());
+  const openedMax = useRef(0);
+  const logBox = useRef({ height: 0, firstId: null as number | null, conversationId: "" });
   const [reply, setReply] = useState<{ id: number; preview: string } | null>(null);
   const [editing, setEditing] = useState<{ id: number; body: string } | null>(null);
   useEffect(() => {
@@ -207,6 +209,29 @@ export function ConversationThread({
     }
     heightTries.current = 0;
 
+    const firstId = rows[0]?.id ?? null;
+    const box = logBox.current;
+    const remember = () => {
+      box.conversationId = current.conversationId;
+      box.height = el.scrollHeight;
+      box.firstId = firstId;
+    };
+    const prepended = box.conversationId === current.conversationId
+      && box.firstId != null
+      && firstId !== box.firstId
+      && (lastId ?? null) === followedId.current
+      && released.current
+      && !stick.current;
+    if (prepended) {
+      el.scrollTop = prependedScrollTop({
+        scrollTop: el.scrollTop,
+        previousHeight: box.height,
+        nextHeight: el.scrollHeight,
+      });
+      remember();
+      return;
+    }
+
     const alreadyPlaced = placedFor.current === current.conversationId;
     const ownSend = alreadyPlaced && lastMine && followedId.current !== (lastId ?? null);
     if (ownSend) {
@@ -216,11 +241,13 @@ export function ConversationThread({
       stick.current = true;
       followedId.current = lastId ?? null;
       reportSeen();
+      remember();
       return;
     }
     if (released.current && !stick.current) {
       followedId.current = lastId ?? null;
       reportSeen();
+      remember();
       return;
     }
 
@@ -240,6 +267,7 @@ export function ConversationThread({
     placedFor.current = current.conversationId;
     followedId.current = lastId ?? null;
     reportSeen();
+    remember();
   }, [conversationId, messageCount, lastId, lastClient, lastMine, scrollEpoch]);
 
   useEffect(() => {
@@ -650,10 +678,11 @@ export function ConversationThread({
                 knownFor.current = thread?.conversationId ?? "";
                 seenKeys.current = new Set(messages.map((item) => item.clientId || String(item.id)));
                 freshKeys.current = new Set();
+                openedMax.current = messages.reduce((max, item) => Math.max(max, item.id), 0);
               }
               if (!seenKeys.current.has(key)) {
                 seenKeys.current.add(key);
-                freshKeys.current.add(key);
+                if (message.status === "sending" || message.id > openedMax.current) freshKeys.current.add(key);
               }
               const canLike = Boolean(onLike) && thread?.canMarkRead && !message.mine && !message.deleted && !message.status && message.id > 0;
               return (
