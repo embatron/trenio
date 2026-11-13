@@ -364,6 +364,8 @@ html.is-staff-layout {
 .trainer-card__save.is-saved,
 .trainer-card__save.is-saved:hover,
 .trainer-card__save.is-saved:focus-visible { color: var(--primary); }
+.trainer-card__like.is-liked svg path:first-of-type { opacity: 0; }
+.trainer-card__like.is-liked svg path:last-of-type { fill: currentColor; stroke: none; }
 .trainer-card__like svg,
 .trainer-card__save svg,
 .trainer-card__write svg,
