@@ -98,6 +98,9 @@ test("sport field fixes layout, alias, and a jammed pair without grabbing a neig
   assert.equal(catalogSportByName("ььф")?.label, "MMA");
   assert.equal(catalogSportByName("crossfit")?.label, "Кроссфит");
   assert.equal(catalogSportByName("йога")?.level, 2);
+  assert.equal(catalogSportByName("тайцзи")?.slug, "tajczi-cigun");
+  assert.equal(catalogSportByName("цигун")?.label, "Тайцзи-цигун");
+  assert.equal(catalogSportByName("Тайцзи-цигун")?.parentSlug, "yoga");
   assert.equal(catalogSportByName("бо"), null);
   assert.equal(filterSportSuggestions("qjuf")[0], "Йога");
   assert.equal(filterSportSuggestions("йоаг")[0], "Йога");

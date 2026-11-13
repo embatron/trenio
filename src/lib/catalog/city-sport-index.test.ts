@@ -83,6 +83,7 @@ test("an unknown category slug is not a public document", () => {
   assert.deepEqual(categoryChildRoute("yoga", "yoga"), { kind: "render" });
 
   const paths = listCatalogSitemapPaths();
+  assert.equal(paths.includes("/categories/yoga/tajczi-cigun"), true);
   assert.equal(paths.includes("/categories/velnes"), false);
   assert.equal(paths.includes("/categories/velnes/meditaciya"), false);
   assert.equal(paths.includes("/categories/zzzz-not-real"), false);
