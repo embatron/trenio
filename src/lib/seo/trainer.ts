@@ -115,11 +115,12 @@ export function trainerSeoHead(trainer: TrainerSeoSource) {
       : "";
   const rating = Number(trainer.rating.value);
   const cityPage = cityCatalogBySlug(trainer.city.slug);
+  const cityCrumb = trainer.city.label.trim() || `Тренеры в ${place}`;
   const crumbs = [
     { name: "Главная", path: "/" },
     ...(cityPage
-      ? [{ name: `Тренеры в ${place}`, path: `/city/${trainer.city.slug}` }]
-      : [{ name: `Тренеры в ${place}`, path }]),
+      ? [{ name: cityCrumb, path: `/city/${trainer.city.slug}` }]
+      : [{ name: cityCrumb, path }]),
     { name: trainer.primarySport.label, path: sportPath(trainer.primarySport) },
     { name: trainer.name, path },
   ];

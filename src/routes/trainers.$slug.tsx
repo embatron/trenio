@@ -992,9 +992,9 @@ function TrainerPage() {
             <li><Link to="/">Главная</Link></li>
             <li>
               {cityCatalogBySlug(t.city.slug) ? (
-                <Link to="/city/$slug" params={{ slug: t.city.slug }} search={{ sports: undefined }}>Тренеры в {cityIn(t.city.slug, t.city.label)}</Link>
+                <Link to="/city/$slug" params={{ slug: t.city.slug }} search={{ sports: undefined }}>{t.city.label.trim() || `Тренеры в ${cityIn(t.city.slug, t.city.label)}`}</Link>
               ) : (
-                <span>Тренеры в {cityIn(t.city.slug, t.city.label)}</span>
+                <span>{t.city.label.trim() || `Тренеры в ${cityIn(t.city.slug, t.city.label)}`}</span>
               )}
             </li>
             <li>

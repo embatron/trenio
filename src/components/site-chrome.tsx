@@ -449,6 +449,7 @@ body.is-search-docked .site-header__search {
   body.is-search-docked .site-header__inner {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
+    padding-block: 16px;
   }
   .site-header__nav,
   body.is-search-docked .site-header__nav {
