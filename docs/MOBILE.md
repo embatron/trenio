@@ -273,7 +273,7 @@ Android, FCM и короткий токен — 400. Без сессии — 401
 
 `CapacitorHttp` не включался. Для `server.url` на своём домене cookie первого лица. Если на телефоне сессия пропадёт после выгрузки, сначала проверяются app-bound domains, а не прокси всех `fetch`.
 
-Иконки 1024 и splash 2732 скриптом `npm run mobile:assets` не генерировались: нет исходников `assets/icon.png` и `assets/splash.png`. В проекте остаются значки, которые положил Capacitor.
+Иконка iOS — квадрат 1024: обычный коралловый, тёмный и тонированный. Заставка 2732 — тот же знак по центру поля `#fff5f5`. `npm run mobile:assets` их не собирает.
 
 Клиент слушает `appUrlOpen` (`@capacitor/app`) в `bootNativeShell`. Адрес проходит через `shellAppLink`: только `https`, только `trenio.by` или `www.trenio.by`, дальше тот же разбор, что у `/open`. Чужой адрес страницу не уводит. `SceneDelegate` уже отдаёт ссылку в `SceneDelegateProxy`, так что Capacitor этот listener получает.
 
@@ -291,7 +291,7 @@ Android, FCM и короткий токен — 400. Без сессии — 401
 | `app/src/main/java/by/trenio/app/` | `Application`, `LauncherActivity`, `DelegationService` |
 | `app/src/main/res/` | Adaptive icon, splash и значок уведомления по плотностям |
 | `gradlew` | Wrapper Gradle 8.11.1 |
-| `store_icon.png` | 512×512 для карточки Play, сгенерирован из иконки сайта |
+| `store_icon.png` | 512×512 для карточки Play, тот же квадратный знак |
 
 Разрешения: `INTERNET` и `POST_NOTIFICATIONS`. Второе нужно делегированию уведомлений Chrome, не FCM.
 
@@ -486,7 +486,7 @@ Android: после JDK 17 и Android SDK `npm run mobile:android` собира�
 - файлов `.p8` и keystore;
 - отпечатка Play в `assetlinks.json` и team id в association на боевом сервере;
 - сборки, которую можно поставить на телефон: нет Xcode.app, нет JDK и нет Android SDK;
-- исходников `assets/icon.png` (1024) и `assets/splash.png` (2732) для `npm run mobile:assets`. В iOS-проекте остаются значки Capacitor. Android-иконки сгенерированы из `https://trenio.by/icons/icon-512.png`;
+- исходников `assets/icon.png` и `assets/splash.png` для `npm run mobile:assets`. Знак уже лежит в каталогах iOS и Android: квадрат 1024, тёмный и тонированный варианты, слои adaptive icon и `store_icon.png`;
 - закрытого теста Play на 14 дней и 12 человек;
 - проверки на живом iPhone: пуш, Apple, Universal Links, камера, cookie после выгрузки;
 - записи Apple-аккаунта в базу внутри автотеста;
