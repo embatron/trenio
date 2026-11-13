@@ -33,6 +33,7 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
   useEffect(() => {
     setForm((current) => ({
       ...current,
+      headline: profile.headline,
       phone: profile.phone,
       phoneVerified: profile.phoneVerified,
       email: profile.email,
@@ -44,7 +45,7 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
       photos: profile.photos,
       certificates: profile.certificates,
     }));
-  }, [profile.phone, profile.phoneVerified, profile.email, profile.emailVerified, profile.instagram, profile.telegram, profile.telegramVerified, profile.slug, profile.photos, profile.certificates]);
+  }, [profile.headline, profile.phone, profile.phoneVerified, profile.email, profile.emailVerified, profile.instagram, profile.telegram, profile.telegramVerified, profile.slug, profile.photos, profile.certificates]);
   const [bioInvalid, setBioInvalid] = useState(false);
   const [popup, setPopup] = useState<{ title: string; message: string } | null>(null);
   const media = form.slug
@@ -107,7 +108,8 @@ export function TrainerProfileForm({ profile }: { profile: OwnTrainerProfile }) 
           setBioInvalid(false);
           setPending(true);
           const { avatarPath: _avatarPath, slug: _slug, certificates: _certificates, photos: _photos, phoneVerified: _phoneVerified, emailVerified: _emailVerified, telegramVerified: _telegramVerified, phone: _phone, offerAccepted: _offerAccepted, privacyAccepted: _privacyAccepted, firstName: _firstName, lastName: _lastName, pageStatus: _pageStatus, ...fields } = form;
-          void save({ data: { ...fields, status: profile.status } })
+          const liveHeadline = document.querySelector<HTMLInputElement>('#trainer-name input[name="headline"]')?.value;
+          void save({ data: { ...fields, headline: liveHeadline ?? fields.headline, status: profile.status } })
             .then(async (result) => {
               const payload = result as { message: string };
               setPopup({ title: "Готово", message: payload.message });

@@ -130,6 +130,67 @@ export const setOwnTrainerPageStatusFn = createServerFn({ method: "POST" })
     return { ok: true as const, status: data.status };
   });
 
+export const saveOwnTrainerHeadlineFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(z.object({ headline: z.string().trim().max(200) }))
+  .handler(async ({ data, context }) => {
+    assertTrainer(context.user.roles);
+    const headline = data.headline.trim();
+    const [row] = await getDb()
+      .select({ id: trainerProfiles.id, slug: trainerProfiles.slug })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.ownerUserId, context.user.id))
+      .limit(1);
+    if (!row) throw new AuthError("Карточка ещё не создана.", "VALIDATION");
+    if (!headline) {
+      const error = new AuthError("Укажите заголовок.", "VALIDATION");
+      void writeLog({
+        level: "warn",
+        domain: "form",
+        action: "form.trainer_headline",
+        outcome: "denied",
+        message: error.message,
+        actorUserId: context.user.id,
+        subject: context.user.email,
+        target: row.slug,
+        error,
+      });
+      throw error;
+    }
+    try {
+      await getDb().update(trainerProfiles).set({
+        headline,
+        updatedAt: new Date(),
+      }).where(eq(trainerProfiles.id, row.id));
+      void writeLog({
+        level: "info",
+        domain: "form",
+        action: "form.trainer_headline",
+        outcome: "success",
+        message: "Заголовок карточки сохранён.",
+        actorUserId: context.user.id,
+        subject: context.user.email,
+        target: row.slug,
+      });
+      return { ok: true as const };
+    } catch (error) {
+      void writeLog({
+        level: "error",
+        domain: "form",
+        action: "form.trainer_headline",
+        outcome: "failure",
+        message: "Заголовок карточки не сохранился.",
+        actorUserId: context.user.id,
+        subject: context.user.email,
+        target: row.slug,
+        error,
+      });
+      const failure = new AuthError("Не удалось сохранить заголовок.", "VALIDATION");
+      markLogged(failure);
+      throw failure;
+    }
+  });
+
 /** Draft has no trainer-facing box. The first save can publish it. */
 export function ownFacingStatus(status: string | null | undefined): OwnProfileStatus {
   if (status === "hidden" || status === "archived" || status === "published") return status;

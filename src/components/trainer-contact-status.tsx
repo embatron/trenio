@@ -20,7 +20,7 @@ import {
 } from "@/lib/auth/functions";
 import type { TelegramWidgetUser } from "@/lib/auth/telegram-widget";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
-import type { OwnTrainerProfile } from "@/lib/catalog/trainer-own";
+import { saveOwnTrainerHeadlineFn, type OwnTrainerProfile } from "@/lib/catalog/trainer-own";
 import { getTelegramWebAppInitData, requestTelegramContact } from "@/lib/telegram-webapp";
 
 const PHONE_PATH = "M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.5 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.5c.9.2 1.8.4 2.7.5A2 2 0 0 1 22 16.9z";
@@ -493,18 +493,21 @@ function EmailEditor({
   );
 }
 
-function NameFields({ firstName, lastName }: { firstName: string; lastName: string }) {
+export function TrainerIdentityFields({ profile }: { profile: OwnTrainerProfile }) {
   const router = useRouter();
   const updateProfile = useAuthServerFn(updateProfileFn);
-  const [given, setGiven] = useState(firstName);
-  const [family, setFamily] = useState(lastName);
+  const saveHeadline = useAuthServerFn(saveOwnTrainerHeadlineFn);
+  const [given, setGiven] = useState(profile.firstName);
+  const [family, setFamily] = useState(profile.lastName);
+  const [headline, setHeadline] = useState(profile.headline);
   const [pending, setPending] = useState(false);
   const [status, setStatus] = useState("");
 
   useEffect(() => {
-    setGiven(firstName);
-    setFamily(lastName);
-  }, [firstName, lastName]);
+    setGiven(profile.firstName);
+    setFamily(profile.lastName);
+    setHeadline(profile.headline);
+  }, [profile.firstName, profile.lastName, profile.headline]);
 
   return (
     <form
@@ -513,18 +516,24 @@ function NameFields({ firstName, lastName }: { firstName: string; lastName: stri
         event.preventDefault();
         const nextFirst = given.trim();
         const nextLast = family.trim();
+        const nextHeadline = headline.trim();
         if (!nextFirst) {
           setStatus("Укажите имя.");
+          return;
+        }
+        if (!nextHeadline) {
+          setStatus("Укажите заголовок.");
           return;
         }
         setPending(true);
         setStatus("");
         void updateProfile({ data: { firstName: nextFirst, lastName: nextLast } })
+          .then(() => saveHeadline({ data: { headline: nextHeadline } }))
           .then(async () => {
-            setStatus("Имя сохранено.");
+            setStatus("Сохранено.");
             await router.invalidate();
           })
-          .catch((error) => setStatus(authErrorMessage(error) || "Не удалось сохранить имя."))
+          .catch((error) => setStatus(authErrorMessage(error) || "Не удалось сохранить."))
           .finally(() => setPending(false));
       }}
     >
@@ -549,6 +558,17 @@ function NameFields({ firstName, lastName }: { firstName: string; lastName: stri
           />
         </label>
       </div>
+      <label>
+        <span>Заголовок</span>
+        <input
+          name="headline"
+          required
+          value={headline}
+          maxLength={200}
+          placeholder="Фитнес-тренер"
+          onChange={(event) => setHeadline(event.target.value)}
+        />
+      </label>
       <button className="cabinet-form__submit" type="submit" disabled={pending}>
         {pending ? "Сохранение…" : "Сохранить"}
       </button>
@@ -569,7 +589,6 @@ export function TrainerContactStatus({ profile }: { profile: OwnTrainerProfile }
 
   return (
     <div className="cabinet-contacts">
-      <NameFields firstName={profile.firstName} lastName={profile.lastName} />
       {step.fields}
       <Row
         icon={<LineIcon path={PHONE_PATH} />}

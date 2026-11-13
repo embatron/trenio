@@ -19,6 +19,7 @@ import { getOwnTrainerViewStatsFn } from "@/lib/catalog/trainer-views";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
 const ME_PAGE_SECTIONS = [
+  { id: "trainer-name", label: "Имя и заголовок" },
   { id: "trainer-page-status", label: "Статус" },
   { id: "trainer-contact-block", label: "Контакты" },
   ...TRAINER_PROFILE_SECTIONS.filter((section) => section.id !== "trainer-contacts"),

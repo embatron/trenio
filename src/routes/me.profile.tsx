@@ -3,7 +3,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 
 import { CabinetModal } from "@/components/cabinet";
 import { PageStatusCard } from "@/components/trainer-cabinet-pulse";
-import { TrainerContactStatus } from "@/components/trainer-contact-status";
+import { TrainerContactStatus, TrainerIdentityFields } from "@/components/trainer-contact-status";
 import { TrainerProfileForm } from "@/components/trainer-profile-form";
 
 const meRoute = getRouteApi("/me");
@@ -77,9 +77,13 @@ function MeProfilePage() {
 
   return (
     <>
+      <article className="cabinet-card" id="trainer-name">
+        <h2>Имя и заголовок</h2>
+        <TrainerIdentityFields profile={trainer} />
+      </article>
       <PageStatusCard status={trainer.pageStatus} />
       <article className="cabinet-card" id="trainer-contact-block">
-        <h2>Что уже есть</h2>
+        <h2>Контакты</h2>
         <TrainerContactStatus profile={trainer} />
       </article>
       <article

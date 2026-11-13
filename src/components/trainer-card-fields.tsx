@@ -532,38 +532,39 @@ export function TrainerCardFields({
         {leading}
         {nickFirst ? null : nickBlock}
         {self ? null : (
-          <div className="cabinet-form__row">
+          <>
+            <div className="cabinet-form__row">
+              <label>
+                <span>Имя</span>
+                <input
+                  required
+                  value={values.firstName}
+                  maxLength={100}
+                  autoComplete="given-name"
+                  onChange={(event) => patch({ firstName: event.target.value })}
+                />
+              </label>
+              <label>
+                <span>Фамилия, необязательно</span>
+                <input
+                  value={values.lastName}
+                  maxLength={100}
+                  autoComplete="family-name"
+                  onChange={(event) => patch({ lastName: event.target.value })}
+                />
+              </label>
+            </div>
             <label>
-              <span>Имя</span>
+              <span>Заголовок</span>
               <input
-                required
-                value={values.firstName}
-                maxLength={100}
-                autoComplete="given-name"
-                onChange={(event) => patch({ firstName: event.target.value })}
+                value={values.headline}
+                maxLength={200}
+                placeholder="Фитнес-тренер"
+                onChange={(event) => patch({ headline: event.target.value })}
               />
             </label>
-            <label>
-              <span>Фамилия, необязательно</span>
-              <input
-                value={values.lastName}
-                maxLength={100}
-                autoComplete="family-name"
-                onChange={(event) => patch({ lastName: event.target.value })}
-              />
-            </label>
-          </div>
+          </>
         )}
-        <label>
-          <span>Заголовок</span>
-          <input
-            required={self || undefined}
-            value={values.headline}
-            maxLength={200}
-            placeholder="Фитнес-тренер"
-            onChange={(event) => patch({ headline: event.target.value })}
-          />
-        </label>
         {self ? (
           <div>
             <span className="cabinet-media__label">Как меня представить</span>
