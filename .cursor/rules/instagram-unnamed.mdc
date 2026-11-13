@@ -1,0 +1,21 @@
+---
+description: An Instagram import with no given name stores the handle as the name
+alwaysApply: true
+---
+
+# Unnamed Instagram trainer
+
+When the profile, a pinned caption, Threads, and the operator note give no given name, the given name is the Instagram handle. The surname stays empty. Do not leave `firstName` empty. Do not invent a Cyrillic name from the handle.
+
+«Без имени» means the operator has no name. It is not the given name and not the surname.
+
+`save-draft.ts` writes the handle into `firstName` when both name fields are empty and the note does not name a person. The live import rejects a draft with an empty given name, so this is what lets that card onto the server. The row stays a draft.
+
+```ts
+// wrong: the page has no name, so the field stays empty
+firstName: "";
+
+// right: the account is the name
+firstName: "potapooff20";
+lastName: "";
+```

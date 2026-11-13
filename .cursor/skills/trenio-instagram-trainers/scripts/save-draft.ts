@@ -211,11 +211,12 @@ function noteNamePairs(note: string, settlements: string[]): Array<{ first: stri
   const cities = new Set(settlements.map((name) => name.toLowerCase()));
   const pairs: Array<{ first: string; last: string }> = [];
   const noteForNames = note.replace(/(?<![\p{L}])Это\s+(?=[\p{Lu}])/gu, "");
-  for (const match of noteForNames.matchAll(/(?<![\p{L}])([\p{Lu}][\p{Ll}]{1,})\s+([\p{Lu}][\p{Ll}]{1,})(?![\p{L}])/gu)) {
+  const personName = "[\\p{Lu}][\\p{Ll}]{1,}(?:-[\\p{Lu}][\\p{Ll}]{1,})?";
+  for (const match of noteForNames.matchAll(new RegExp(`(?<![\\p{L}])(${personName})\\s+(${personName})(?![\\p{L}])`, "gu"))) {
     const first = match[1] || "";
     const last = match[2] || "";
     if (!first || !last || ROLE_WORDS.test(first) || ROLE_WORDS.test(last)) continue;
-    if (!/^[\p{Script=Cyrillic}]+$/u.test(first) || !/^[\p{Script=Cyrillic}]+$/u.test(last)) continue;
+    if (!/^[\p{Script=Cyrillic}]+(?:-[\p{Script=Cyrillic}]+)?$/u.test(first) || !/^[\p{Script=Cyrillic}]+(?:-[\p{Script=Cyrillic}]+)?$/u.test(last)) continue;
     const sportWord = (word: string) => catalogPhrases().some((phrase) => phrase.label.toLowerCase() === word.toLowerCase() || phrase.alias.toLowerCase() === word.toLowerCase());
     if (sportWord(first) || sportWord(last)) continue;
     if (cities.has(first.toLowerCase()) || cities.has(last.toLowerCase())) continue;
@@ -733,15 +734,13 @@ async function saveOne(rawPath: string, settlements: string[]) {
   for (const post of threadPosts) assertStillPhotos(rawPath, post, true);
   const photoSources = [...pins, ...extras, ...threadPosts];
 
-  const firstName = cleanLine(resolved.firstName || "");
+  let firstName = cleanLine(resolved.firstName || "");
   const lastName = cleanLine(resolved.lastName || "");
   const nameQuotes = (resolved.nameQuotes || []).map(cleanLine).filter(Boolean);
   for (const quote of nameQuotes) {
     if (!includesNorm(corpus, quote)) fail(rawPath, `Name quote is not in the profile, Threads, or the operator note: ${quote}`);
   }
   const quoted = nameQuotes.join("\n");
-  if (firstName && !hasWord(quoted, firstName)) fail(rawPath, `firstName "${firstName}" is not in nameQuotes.`);
-  if (lastName && !hasWord(quoted, lastName)) fail(rawPath, `lastName "${lastName}" is not in nameQuotes.`);
   const notedPairs = noteNamePairs(note, settlements);
   const notedPair = notedPairs.length === 1 ? notedPairs[0] : null;
   const notedFirst = labeledName(note, "имя").concat(labeledName(note, "зовут"));
@@ -764,6 +763,11 @@ async function saveOne(rawPath: string, settlements: string[]) {
       fail(rawPath, `Given name next to ${lastName} is ${beside[0]}. Do not leave it empty and do not substitute another name.`);
     }
   }
+  if (!firstName && !lastName && !notedPair && notedFirst.length === 0 && notedLast.length === 0) {
+    firstName = handle;
+  }
+  if (firstName && firstName !== handle && !hasWord(quoted, firstName)) fail(rawPath, `firstName "${firstName}" is not in nameQuotes.`);
+  if (lastName && !hasWord(quoted, lastName)) fail(rawPath, `lastName "${lastName}" is not in nameQuotes.`);
 
   if (resolved.bio != null || resolved.about != null) {
     fail(rawPath, "resolved.bio and resolved.about are no longer inputs. Set sourceBio, presentation, and training.");

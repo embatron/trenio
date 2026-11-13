@@ -2,12 +2,12 @@
 
 Drafts are unpublished `TrainerProfile` imports (`status: draft`, `createdSource: import`). They do not go into `src/routes/trainers.$slug.tsx`.
 
-The name and the description are decided in sequential thinking, then checked by `scripts/save-draft.ts`. The script does not invent a given name from the header layout or the handle.
+The name and the description are decided in sequential thinking, then checked by `scripts/save-draft.ts`. The script does not invent a Cyrillic given name from the header layout. When no given name is written anywhere, it stores the Instagram handle as `firstName`.
 
 | Draft field | Filled from | Leave empty when |
 | --- | --- | --- |
 | `slug` | The Instagram handle, lowercase, including dots and underscores. It is the account id, the nick, and `/trainers/{slug}`. It is unique across drafts and profiles. The same handle updates the same card. Another profile with that nick is rejected. The same given name and surname on a different handle is the same person: the save is rejected and the existing slug is reported. A given name without a surname does not match other cards. The nick is not edited in the product; support changes it | The handle is empty |
-| `firstName`, `lastName` | A verbatim quote in the profile, a pinned caption, Threads, or the operator note. One name in the note replaces a different name on the page | No name is written, or two given names conflict and the note does not pick one |
+| `firstName`, `lastName` | A verbatim quote in the profile, a pinned caption, Threads, or the operator note. One name in the note replaces a different name on the page. When none of those write a given name, `firstName` is the Instagram handle and `lastName` stays empty | Two given names conflict and the note does not pick one |
 | `gender` | `male` or `female`, set by `save-draft.ts` from the given name. A name ending in а, я, or Latin a is female, except a short list of male names such as Никита and Илья. A name ending in a consonant is male. `тренерка`, `инструкторка`, or `спортсменка` in the source forces female. Staff see «женский» or «мужской» on the trainer card. The public page and the trainer profile do not show the field. The claim greeting uses it only to choose «был» or «была» | The given name is missing or ambiguous (Саша, Женя) |
 | `sourceBio` | Verbatim profile biography. Staff see it as «Текст из источника». A phone in it is removed | The profile has no biography |
 | `sourceAbout` | Verbatim frames of the highlight titled «Обо мне», «О себе», «About», or «About me» | No such highlight |
@@ -34,7 +34,7 @@ The name and the description are decided in sequential thinking, then checked by
 
 `firstName` and `lastName` stay separate in the draft, the database, and the cabinet form. `fullName` is only those two joined. Public cards, the profile title, similar trainers, and the admin table show the given name on one line and the surname on the next.
 
-The given name is whatever the profile, a pinned caption, Threads, or the operator note actually writes. A header that shows only a surname is not a reason to leave `firstName` empty when a pin, Threads, or the note writes the given name beside that surname. When the note states one given name, that name is saved even if the page shows a different one. A handle is the file id, not a name. Role words (`тренер`, `coach`, `trainer`, `training`) are not given names.
+The given name is whatever the profile, a pinned caption, Threads, or the operator note actually writes. A header that shows only a surname is not a reason to leave `firstName` empty when a pin, Threads, or the note writes the given name beside that surname. When the note states one given name, that name is saved even if the page shows a different one. When none of those sources write a given name, `firstName` is the handle itself (`potapooff20`) and `lastName` stays empty. «Без имени» is not a name. Role words (`тренер`, `coach`, `trainer`, `training`) are not given names.
 
 ## Description
 
