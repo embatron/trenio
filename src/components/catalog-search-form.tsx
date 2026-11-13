@@ -84,13 +84,13 @@ const FORM_CSS = `
   .catalog-search.search-block--hero .search-submit { grid-column: 2; grid-row: 1 / span 2; }
 }
 @media (max-width: 767px) {
-  .catalog-search .search-intent { gap: 6px 12px; margin-bottom: 12px; font-size: 13px; }
+  .catalog-search .search-intent { gap: 4px 10px; margin-bottom: 10px; font-size: 13px; }
   .catalog-search .intent-group { gap: 4px; }
   .catalog-search .audience-tab, .catalog-search .format-tab {
-    min-height: 44px;
-    padding: 6px 10px;
+    min-height: 32px;
+    padding: 2px 10px;
     font-size: 13px;
-    line-height: 1.25;
+    line-height: 1.15;
   }
 }
 @media (max-width: 620px) {

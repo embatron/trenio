@@ -588,9 +588,9 @@ body:has(.trenio-root) { background: var(--white); }
   .search-block--header, .search-block--header .search-shell { width: 100%; }
 }
 @media (max-width: 767px) {
-  .search-intent { gap: 6px 12px; font-size: 13px; }
+  .search-intent { gap: 4px 10px; font-size: 13px; }
   .intent-group { gap: 4px; }
-  .audience-tab, .format-tab { min-height: 44px; padding: 6px 10px; font-size: 13px; line-height: 1.25; }
+  .audience-tab, .format-tab { min-height: 32px; padding: 2px 10px; font-size: 13px; line-height: 1.15; }
   .audience-tab.is-active { box-shadow: none; }
 }
 @media (max-width: 767px) {
