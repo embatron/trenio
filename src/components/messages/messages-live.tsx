@@ -9,7 +9,9 @@ import { hasAnyRole } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
 import { redirectToLogin } from "@/lib/auth/return-path";
 import { unreadCountFn } from "@/lib/messages/functions";
-import { bindTypingSender, noteCabinet, noteRemoteTyping } from "@/lib/messages/live-client";
+import { bindTypingSender, noteCabinet, noteReaction, noteRemoteTyping } from "@/lib/messages/live-client";
+import { patchMessageReaction } from "@/lib/messages/like-flash";
+import type { MessageDto } from "@/lib/messages/schemas";
 import { nextMessageAnnounce } from "@/lib/messages/notice";
 import { MESSAGE_SOCKET_FALLBACK_MS } from "@/lib/messages/polling";
 import { EMPTY_MESSAGING, type MessageNotice, type MessagingSummary } from "@/lib/messages/schemas";
@@ -64,8 +66,13 @@ function announceIncoming(
   });
 }
 
-function applyFrame(queryClient: ReturnType<typeof useQueryClient>, raw: string, refresh: () => void) {
-  let frame: { type?: string; conversationId?: string; on?: boolean };
+function applyFrame(
+  queryClient: ReturnType<typeof useQueryClient>,
+  raw: string,
+  refresh: () => void,
+  userId: string,
+) {
+  let frame: { type?: string; conversationId?: string; on?: boolean; messageId?: number; actorId?: string };
   try {
     frame = JSON.parse(raw) as typeof frame;
   } catch {
@@ -77,6 +84,28 @@ function applyFrame(queryClient: ReturnType<typeof useQueryClient>, raw: string,
   }
   if (frame.type === "typing" && frame.conversationId) {
     noteRemoteTyping(frame.conversationId, frame.on === true);
+    return;
+  }
+  if (
+    frame.type === "reaction"
+    && frame.conversationId
+    && typeof frame.messageId === "number"
+    && typeof frame.actorId === "string"
+    && typeof frame.on === "boolean"
+  ) {
+    const note = {
+      conversationId: frame.conversationId,
+      messageId: frame.messageId,
+      actorId: frame.actorId,
+      on: frame.on,
+    };
+    noteReaction(note);
+    queryClient.setQueriesData<{ messages: MessageDto[] }>(
+      { queryKey: ["messages", frame.conversationId] },
+      (current) => current?.messages
+        ? { ...current, messages: patchMessageReaction(current.messages, userId, note) }
+        : current,
+    );
     return;
   }
   if (frame.type === "thread" && frame.conversationId) {
@@ -210,7 +239,7 @@ export function MessagesLive({
         refreshOpen();
       };
       socket.onmessage = (event) => {
-        if (typeof event.data === "string") applyFrame(queryRef.current, event.data, () => void refresh());
+        if (typeof event.data === "string") applyFrame(queryRef.current, event.data, () => void refresh(), userId);
       };
       socket.onclose = () => {
         if (socketRef.current === socket) socketRef.current = null;

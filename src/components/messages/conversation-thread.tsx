@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 import { MessageBubble } from "@/components/messages/message-bubble";
@@ -9,7 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { UserAvatar } from "@/components/user-avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { reviewTextLength } from "@/lib/catalog/review-html";
-import { notifyTyping, remoteTyping, subscribeTyping } from "@/lib/messages/live-client";
+import { freshReactionIds, patchMessageReaction, reactionSnapshot } from "@/lib/messages/like-flash";
+import { notifyTyping, remoteTyping, subscribeReaction, subscribeTyping } from "@/lib/messages/live-client";
 import { REPORT_COMMENT_MAX_LENGTH, REPORT_REASONS, messagePreview, type MessageDto, type ThreadResult } from "@/lib/messages/schemas";
 import { firstUnreadMessageId, messageScrollTop, prependedScrollTop, seenMessageId } from "@/lib/messages/thread-scroll";
 
@@ -107,6 +108,8 @@ export function ConversationThread({
   /** Latest message whose bottom has entered the visible log. */
   onSeen?: (messageId: number) => void;
 }) {
+  const { user } = useRouteContext({ from: "__root__" });
+  const viewerId = user?.id ?? "";
   const mobile = useIsMobile();
   const threadRoot = useRef<HTMLDivElement>(null);
   const [, setTypingTick] = useState(0);
@@ -122,6 +125,44 @@ export function ConversationThread({
   const freshKeys = useRef(new Set<string>());
   const openedMax = useRef(0);
   const logBox = useRef({ height: 0, firstId: null as number | null, conversationId: "" });
+  const [reactionNotes, setReactionNotes] = useState<{ messageId: number; actorId: string; on: boolean }[]>([]);
+  useEffect(() => {
+    setReactionNotes([]);
+  }, [liveConversationId]);
+  useEffect(() => {
+    if (!liveConversationId) return;
+    return subscribeReaction((frame) => {
+      if (frame.conversationId !== liveConversationId) return;
+      setReactionNotes((current) => {
+        const rest = current.filter((item) => item.messageId !== frame.messageId);
+        return [...rest, frame];
+      });
+    });
+  }, [liveConversationId]);
+  const shownMessages = reactionNotes.reduce(
+    (list, note) => patchMessageReaction(list, viewerId, note),
+    messages,
+  );
+  const reactionKey = shownMessages.map((message) => `${message.id}:${message.liked ? 1 : 0}:${message.peerLiked ? 1 : 0}`).join(",");
+  const shownRef = useRef(shownMessages);
+  shownRef.current = shownMessages;
+  const seenReactions = useRef<Map<number, boolean> | null>(null);
+  const seenReactionFor = useRef("");
+  const [likeFlash, setLikeFlash] = useState<ReadonlySet<number>>(new Set());
+  useLayoutEffect(() => {
+    const list = shownRef.current;
+    if (seenReactionFor.current !== (liveConversationId ?? "")) {
+      seenReactionFor.current = liveConversationId ?? "";
+      seenReactions.current = null;
+      setLikeFlash(new Set());
+    }
+    const born = freshReactionIds(seenReactions.current, list);
+    seenReactions.current = reactionSnapshot(list);
+    if (born.length === 0) return;
+    setLikeFlash(new Set(born));
+    const timer = window.setTimeout(() => setLikeFlash(new Set()), 560);
+    return () => window.clearTimeout(timer);
+  }, [reactionKey, liveConversationId]);
   const [reply, setReply] = useState<{ id: number; preview: string } | null>(null);
   const [editing, setEditing] = useState<{ id: number; body: string } | null>(null);
   useEffect(() => {
@@ -668,17 +709,17 @@ export function ConversationThread({
                 {loadingEarlier ? "Загрузка…" : "Более ранние сообщения"}
               </button>
             ) : null}
-            {messages.length === 0 && !thread.deletedByCounterpart ? <p className="direct-empty">Напишите первое сообщение</p> : null}
-            {messages.map((message, index) => {
-              const previous = messages[index - 1];
+            {shownMessages.length === 0 && !thread.deletedByCounterpart ? <p className="direct-empty">Напишите первое сообщение</p> : null}
+            {shownMessages.map((message, index) => {
+              const previous = shownMessages[index - 1];
               const split = !previous || dayKey(previous.createdAt) !== dayKey(message.createdAt);
-              const quoted = messages.some((item) => item.replyTo?.id === message.id);
+              const quoted = shownMessages.some((item) => item.replyTo?.id === message.id);
               const key = message.clientId || String(message.id);
               if (knownFor.current !== (thread?.conversationId ?? "")) {
                 knownFor.current = thread?.conversationId ?? "";
-                seenKeys.current = new Set(messages.map((item) => item.clientId || String(item.id)));
+                seenKeys.current = new Set(shownMessages.map((item) => item.clientId || String(item.id)));
                 freshKeys.current = new Set();
-                openedMax.current = messages.reduce((max, item) => Math.max(max, item.id), 0);
+                openedMax.current = shownMessages.reduce((max, item) => Math.max(max, item.id), 0);
               }
               if (!seenKeys.current.has(key)) {
                 seenKeys.current.add(key);
@@ -693,6 +734,7 @@ export function ConversationThread({
                     quoted={quoted}
                     onRetry={onRetry}
                     onLike={canLike ? () => onLike?.(message.id) : undefined}
+                    likeFlash={likeFlash.has(message.id)}
                     onQuote={thread?.canWrite && !message.deleted && !message.status ? () => {
                       setEditing(null);
                       setReply({ id: message.id, preview: messagePreview(message.body) || "Вложение" });

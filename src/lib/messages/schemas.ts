@@ -191,6 +191,8 @@ export type MessageDto = {
   receipt: "delivered" | "read" | null;
   /** This account marked the message with a thumb. */
   liked: boolean;
+  /** The other person marked this message. The author sees it and cannot press it. */
+  peerLiked: boolean;
   attachments: MessageAttachmentDto[];
 };
 

@@ -31,6 +31,18 @@ const THUMB_PATHS = [
   "M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z",
 ];
 
+function ThumbMark({ on }: { on: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d={THUMB_PATHS[0]} style={on ? { ...LINE_ICON, opacity: 0 } : LINE_ICON} />
+      <path
+        d={THUMB_PATHS[1]}
+        style={on ? { fill: "currentColor", stroke: "none" } : LINE_ICON}
+      />
+    </svg>
+  );
+}
+
 function LineIcon({ paths }: { paths: string[] }) {
   return (
     <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
@@ -97,6 +109,7 @@ export function MessageBubble({
   onLike,
   onFocusQuote,
   quoted,
+  likeFlash = false,
 }: {
   message: MessageDto & {
     status?: "sending" | "failed";
@@ -111,6 +124,8 @@ export function MessageBubble({
   onFocusQuote?: (id: number) => void;
   /** This message is quoted by another one in the thread. */
   quoted?: boolean;
+  /** The mark just turned on. One quiet blink, then the class goes away. */
+  likeFlash?: boolean;
 }) {
   const [zoom, setZoom] = useState<{ src: string; name: string } | null>(null);
   const mine = message.mine;
@@ -200,15 +215,17 @@ export function MessageBubble({
           {onLike ? (
             <button
               type="button"
-              className={`direct-bubble__like${message.liked ? " is-on" : ""}`}
+              className={`direct-bubble__like${message.liked ? " is-on" : ""}${message.liked && likeFlash ? " is-pop" : ""}`}
               aria-pressed={message.liked}
               aria-label={message.liked ? "Убрать отметку" : "Отметить"}
               onClick={onLike}
             >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                {THUMB_PATHS.map((d) => <path key={d} d={d} style={LINE_ICON} />)}
-              </svg>
+              <ThumbMark on={message.liked} />
             </button>
+          ) : message.peerLiked ? (
+            <span className={`direct-bubble__like is-on is-seen${likeFlash ? " is-pop" : ""}`} aria-label="Отмечено">
+              <ThumbMark on />
+            </span>
           ) : null}
         </div>
         {failed ? (

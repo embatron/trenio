@@ -36,6 +36,21 @@ function safeSend(socket: LiveSocket, payload: string) {
   }
 }
 
+/** The thumb changed. Both participants and a staff reader apply it. No message text. */
+export function publishReaction(
+  conversationId: string,
+  participantIds: readonly string[],
+  messageId: number,
+  actorId: string,
+  on: boolean,
+) {
+  const payload = JSON.stringify({ type: "reaction", conversationId, messageId, actorId, on });
+  for (const socket of hub().sockets) {
+    if (!shouldReceiveThread(socket.userId, isStaff(socket.roles), participantIds)) continue;
+    safeSend(socket, payload);
+  }
+}
+
 /** Tell open pages that a thread changed. Participants also refresh the unread total. */
 export function publishThread(conversationId: string, participantIds: readonly string[]) {
   const thread = JSON.stringify({ type: "thread", conversationId });

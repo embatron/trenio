@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, isNull, or, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, ne, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
 import { consumeRateLimit } from "@/auth/rate-limit";
@@ -33,7 +33,7 @@ import {
 import { imageDecodes, removeMessageFile, writeMessageFile, writeMessagePreview } from "@/lib/messages/attachment-store";
 import { logCaught, writeLog } from "@/lib/log/logger";
 import { notifyStaffAboutReport, scheduleMessageNotification } from "@/lib/messages/notify";
-import { publishThread } from "@/lib/messages/live-hub";
+import { publishReaction, publishThread } from "@/lib/messages/live-hub";
 import { presenceFor } from "@/lib/messages/presence";
 import type { Presence } from "@/lib/messages/schemas";
 import { messageEditable, messagePersonMatches, messageSearchPattern, pickPairThread, preferClickedProfile } from "@/lib/messages/pair";
@@ -516,6 +516,19 @@ function notifyThread(loaded: { conversation: { id: string; userId: string }; pr
   }
 }
 
+function notifyReaction(
+  loaded: { conversation: { id: string; userId: string }; profile: { ownerUserId: string | null } },
+  messageId: number,
+  actorId: string,
+  on: boolean,
+) {
+  try {
+    publishReaction(loaded.conversation.id, partyIds(loaded), messageId, actorId, on);
+  } catch (error) {
+    logCaught("message", "message.live", error, { target: loaded.conversation.id });
+  }
+}
+
 /** Participant ids when this account is one of the two people. Staff who only read get nothing. */
 export async function liveParticipants(conversationId: string, actorId: string) {
   const loaded = await loadConversation(conversationId);
@@ -752,7 +765,7 @@ async function toMessageDto(row: {
   editedAt?: Date | string | null;
   deletedAt: Date | string | null;
   replyToId?: number | string | null;
-}, actor: MessageActor, conversationUserId: string, staffSeesBody: boolean, readUpTo: number | null, files: MessageAttachmentDto[] = [], quote?: MessageQuoteDto | null, liked = false): Promise<MessageDto> {
+}, actor: MessageActor, conversationUserId: string, staffSeesBody: boolean, readUpTo: number | null, files: MessageAttachmentDto[] = [], quote?: MessageQuoteDto | null, liked = false, peerLiked = false): Promise<MessageDto> {
   const deleted = row.deletedAt != null;
   const id = asNumber(row.id);
   const mine = row.senderId === actor.id;
@@ -772,6 +785,7 @@ async function toMessageDto(row: {
     side: row.senderId === conversationUserId ? "user" : "trainer",
     receipt: !mine || deleted ? null : readUpTo != null && id <= readUpTo ? "read" : "delivered",
     liked: deleted ? false : liked,
+    peerLiked: deleted ? false : peerLiked,
     attachments: deleted && !staffSeesBody ? [] : files,
   };
 }
@@ -783,6 +797,17 @@ async function reactionMarks(ids: number[], actorId: string) {
     .select({ messageId: messageReactions.messageId })
     .from(messageReactions)
     .where(and(inArray(messageReactions.messageId, ids), eq(messageReactions.userId, actorId)));
+  for (const row of rows) marks.add(asNumber(row.messageId));
+  return marks;
+}
+
+async function peerReactionMarks(ids: number[], actorId: string) {
+  const marks = new Set<number>();
+  if (ids.length === 0) return marks;
+  const rows = await getDb()
+    .select({ messageId: messageReactions.messageId })
+    .from(messageReactions)
+    .where(and(inArray(messageReactions.messageId, ids), ne(messageReactions.userId, actorId)));
   for (const row of rows) marks.add(asNumber(row.messageId));
   return marks;
 }
@@ -1134,7 +1159,7 @@ export async function toggleMessageLike(actor: MessageActor, messageId: number) 
   } else {
     await getDb().insert(messageReactions).values({ messageId, userId: actor.id }).onConflictDoNothing();
   }
-  notifyThread(loaded);
+  notifyReaction(loaded, messageId, actor.id, !existing);
   return { conversationId: row.conversationId, liked: !existing };
 }
 
@@ -1510,13 +1535,14 @@ export async function listMessages(
   const otherId = actor.id === loaded.conversation.userId
     ? loaded.profile.ownerUserId ?? loaded.conversation.hostUserId
     : loaded.conversation.userId;
-  const [readUpTo, viewerReadMessageId, files, quotes, states, likedIds] = await Promise.all([
+  const [readUpTo, viewerReadMessageId, files, quotes, states, likedIds, peerLikedIds] = await Promise.all([
     counterpartReadUpTo(actor, loaded.conversation, loaded.profile.ownerUserId),
     viewerReadUpTo(actor.id, loaded.conversation.id),
     attachmentDtos(messageIds),
     quotesById(replyIds),
     presenceFor(otherId ? [otherId] : []),
     reactionMarks(messageIds, actor.id),
+    peerReactionMarks(messageIds, actor.id),
   ]);
   return {
     conversationId: loaded.conversation.id,
@@ -1564,6 +1590,7 @@ export async function listMessages(
         files.get(asNumber(row.id)) ?? [],
         quoted ? { id: quoted.id, preview: quotePreview(quoted.body, quoted.deletedAt != null) } : null,
         likedIds.has(asNumber(row.id)),
+        peerLikedIds.has(asNumber(row.id)),
       );
     })),
     nextCursor: hasMore && oldest

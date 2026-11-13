@@ -292,6 +292,7 @@ export function MessagesWorkspace({
       side: threadQuery.data?.counterpart.kind === "user" ? "trainer" : "user",
       receipt: null,
       liked: false,
+      peerLiked: false,
       editedAt: null,
       canEdit: false,
       replyTo: replyToId ? { id: replyToId, preview: "Цитата" } : null,
@@ -552,12 +553,16 @@ export const DIRECT_CSS = `
 .direct-bubble__like {
   position: relative; flex: 0 0 auto; width: 22px; height: 22px; margin-left: 2px; padding: 0; border: 0;
   background: transparent; color: var(--muted); display: inline-flex; align-items: center; justify-content: center;
-  cursor: pointer; opacity: 0.72; transition: color 0.18s ease, opacity 0.18s ease, transform 0.18s ease;
+  cursor: pointer; opacity: 0.72; transition: color 0.16s ease, opacity 0.16s ease, transform 0.16s ease;
 }
 .direct-bubble__like::before { content: ""; position: absolute; inset: -11px; }
-.direct-bubble__like svg { width: 16px; height: 16px; display: block; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
-.direct-bubble__like:hover, .direct-bubble__like:focus-visible, .direct-bubble__like.is-on { opacity: 1; color: var(--primary); }
-.direct-bubble__like.is-on { animation: direct-like 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
+.direct-bubble__like svg { width: 16px; height: 16px; display: block; }
+.direct-bubble__like:hover, .direct-bubble__like:focus-visible { opacity: 1; color: var(--primary); }
+.direct-bubble__like:active { transform: scale(0.92); }
+.direct-bubble__like.is-on { opacity: 1; color: var(--primary); }
+.direct-bubble__like.is-seen { cursor: default; }
+.direct-bubble__like.is-seen::before { display: none; }
+.direct-bubble__like.is-pop { animation: direct-like 0.5s ease; }
 .is-arriving { animation: direct-arrive 0.32s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .direct-thread__typing, .direct-banner, .direct-menu__list, .direct-day, .direct-cleared { animation: direct-fade 0.22s ease both; }
 .direct-log [data-message-id] { scroll-margin-top: 12px; }
@@ -801,7 +806,12 @@ export const DIRECT_CSS = `
 @keyframes direct-switch { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes direct-arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes direct-fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes direct-like { from { transform: scale(0.86); } to { transform: none; } }
+@keyframes direct-like {
+  0%, 100% { opacity: 1; }
+  30% { opacity: 0.4; }
+  58% { opacity: 1; }
+  78% { opacity: 0.62; }
+}
 @media (max-width: 480px) {
   .direct-back { width: 44px; padding: 0; justify-content: center; }
   .direct-back__label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }

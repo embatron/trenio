@@ -3,7 +3,7 @@ import { mock, test } from "node:test";
 
 import { CABINET_HINT_MS } from "@/lib/cabinet/live";
 import { shouldReceiveThread, shouldReceiveTyping } from "@/lib/messages/live";
-import { attachLiveSocket, publishCabinet, publishThread, publishTyping } from "@/lib/messages/live-hub";
+import { attachLiveSocket, publishCabinet, publishReaction, publishThread, publishTyping } from "@/lib/messages/live-hub";
 
 test("a thread update reaches both people and a staff reader", () => {
   const party = ["client", "trainer"];
@@ -29,6 +29,7 @@ test("the hub keeps the message text off the socket", () => {
   ];
   publishTyping("conv", ["client", "trainer"], "client", true);
   publishThread("conv", ["client", "trainer"]);
+  publishReaction("conv", ["client", "trainer"], 42, "client", true);
   for (const stop of detach) stop();
   assert.deepEqual(sent.client.filter((payload) => payload.includes("typing")), []);
   assert.equal(sent.trainer.filter((payload) => payload.includes("typing")).length, 1);
@@ -37,6 +38,11 @@ test("the hub keeps the message text off the socket", () => {
   assert.equal(sent.admin.filter((payload) => payload.includes('"unread"')).length, 0);
   assert.equal(sent.client.filter((payload) => payload.includes('"unread"')).length, 1);
   assert.equal(sent.trainer.filter((payload) => payload.includes('"unread"')).length, 1);
+  const reaction = sent.trainer.find((payload) => payload.includes('"reaction"'));
+  assert.equal(reaction, JSON.stringify({ type: "reaction", conversationId: "conv", messageId: 42, actorId: "client", on: true }));
+  assert.equal(sent.client.filter((payload) => payload.includes('"reaction"')).length, 1);
+  assert.equal(sent.admin.filter((payload) => payload.includes('"reaction"')).length, 1);
+  assert.equal(reaction?.includes("body"), false);
 });
 
 test("a cabinet hint collapses a burst into one frame", () => {

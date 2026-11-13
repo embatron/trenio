@@ -30,7 +30,7 @@ Reuse the existing path. Do not draw a second pin, heart, chevron, or star.
 
 ## Like, favorite, share
 
-These three stay strokes everywhere, including the pressed state. The active mark is `color: var(--primary)`. It does not fill the shape. The bookmark, the thumb, and the share nodes use one view box and `--icon-stroke`. Every photo action stack — catalog cards and the public portrait — rests at 85% opacity. Hover or focus on that card restores full strength, and hover on one mark still lifts its circle and stroke. A like this account placed stays `var(--primary)`, including while the pointer is on it. The public portrait uses the same disc, hit area, and gap as a catalog card. The like count is a digit on that thumb for everyone, including a guest. The owner of the card does not place a like on it.
+These three stay strokes everywhere, including the pressed state. The active mark is `color: var(--primary)`. It does not fill the shape. The dialog thumb is the exception: idle stays a stroke, and `.direct-bubble__like.is-on` fills that thumb with `currentColor`. The bookmark, the thumb, and the share nodes use one view box and `--icon-stroke`. Every photo action stack — catalog cards and the public portrait — rests at 85% opacity. Hover or focus on that card restores full strength, and hover on one mark still lifts its circle and stroke. A like this account placed stays `var(--primary)`, including while the pointer is on it. The public portrait uses the same disc, hit area, and gap as a catalog card. The like count is a digit on that thumb for everyone, including a guest. The owner of the card does not place a like on it.
 
 ```css
 /* wrong: a saved bookmark turns solid */

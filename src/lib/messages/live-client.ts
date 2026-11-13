@@ -57,6 +57,26 @@ export function noteCabinet() {
   for (const listener of cabinetListeners) listener();
 }
 
+export type ReactionFrame = {
+  conversationId: string;
+  messageId: number;
+  actorId: string;
+  on: boolean;
+};
+
+const reactionListeners = new Set<(frame: ReactionFrame) => void>();
+
+export function subscribeReaction(listener: (frame: ReactionFrame) => void) {
+  reactionListeners.add(listener);
+  return () => {
+    reactionListeners.delete(listener);
+  };
+}
+
+export function noteReaction(frame: ReactionFrame) {
+  for (const listener of reactionListeners) listener(frame);
+}
+
 /** Tell the other person this field is being typed. Repeats of «on» wait two seconds. */
 export function notifyTyping(conversationId: string, on: boolean) {
   const now = Date.now();
