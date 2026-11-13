@@ -83,7 +83,6 @@ function TrainerAccountPage() {
           .join-account .join-names { grid-template-columns: 1fr 1fr; }
         }
         @media (max-width: 767px) {
-          .join-account__crumbs { font-size: 12px; gap: 6px; }
           .join-account .entity-input input,
           .join-account .review-editor .rsw-ce { font-size: 16px; }
         }

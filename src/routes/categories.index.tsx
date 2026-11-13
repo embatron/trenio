@@ -18,7 +18,6 @@ const CSS = `
 .categories-hero__crumbs {
   font-size: 13px;
   color: var(--muted);
-  font-weight: var(--fw-title);
   margin-bottom: 14px;
   display: flex;
   align-items: center;
@@ -136,7 +135,7 @@ function CategoriesIndexPage() {
         <section className="categories-hero">
           <nav className="categories-hero__crumbs" aria-label="Хлебные крошки">
             <Link to="/">Главная</Link>
-            <span>/</span>
+            <span aria-hidden="true">/</span>
             <span className="is-current" aria-current="page">{CATEGORIES_CRUMB}</span>
           </nav>
           <h1>{CATEGORIES_CRUMB}</h1>

@@ -595,7 +595,7 @@ const PAGE_CSS = `
 .cat-hero .layout-container:has(.cat-hero__photo) { grid-template-columns: minmax(0, 1fr) 256px; }
 .cat-hero__copy { display: grid; gap: calc(var(--layout-gap) * 0.8); min-width: 0; }
 .cat-hero__head { display: grid; gap: 8px; }
-.cat-hero__crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; font-size: 13px; line-height: 1.3; font-weight: var(--fw-title); color: var(--muted); }
+.cat-hero__crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; font-size: 13px; line-height: 1.3; color: var(--muted); }
 .cat-hero__crumbs a { color: var(--muted); text-decoration: none; }
 .cat-hero__crumbs a:hover { color: var(--primary); }
 .cat-hero__photo { width: 100%; aspect-ratio: 1; object-fit: contain; border-radius: var(--card-radius); display: block; }

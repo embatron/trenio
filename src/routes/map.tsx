@@ -878,7 +878,7 @@ const PAGE_CSS = `
 .map-page { background: var(--white); overflow-anchor: none; }
 .map-hero { padding-top: 12px; }
 .map-hero .layout-container { display: grid; gap: 8px; }
-.map-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; font-size: 13px; line-height: 1.3; font-weight: var(--fw-title); color: var(--muted); }
+.map-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; font-size: 13px; line-height: 1.3; color: var(--muted); }
 .map-crumbs a { color: var(--muted); text-decoration: none; }
 .map-crumbs a:hover { color: var(--primary); }
 .map-hero h1 { margin: 0; font-size: var(--fs-page); line-height: 1.15; letter-spacing: var(--tracking-heading); font-weight: var(--fw-heading); color: var(--dark); }

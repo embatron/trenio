@@ -148,10 +148,9 @@ const CSS = `
     radial-gradient(circle at 100% 0%, rgba(var(--primary-rgb), 0.16), transparent 36%),
     linear-gradient(180deg, #fff 0%, var(--light-bg) 100%);
 }
-.about-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 22px; font-size: 14px; font-weight: var(--fw-title); }
+.about-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 22px; font-size: 14px; }
 .about-crumbs a { color: var(--muted); text-decoration: none; }
 .about-crumbs a:hover { color: var(--primary); }
-.about-crumbs span[aria-hidden] { color: var(--line); }
 .about-hero h1 { margin: 0 0 12px; font-size: var(--fs-display); letter-spacing: -0.04em; color: var(--dark); }
 .about-lead { margin: 0; max-width: 36rem; font-size: 18px; line-height: 1.5; }
 .about-chapter { padding-block: clamp(28px, 5vw, 64px); }

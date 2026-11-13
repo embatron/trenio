@@ -33,7 +33,7 @@ const DIRECTIONS = ["Все направления", "Бокс", "Единобо
 const CSS = `
 .clubs-page { min-height: 100vh; background: var(--bg); }
 .clubs-hero { padding: var(--layout-section-y) var(--layout-gutter) 36px; max-width: var(--layout-max); margin: 0 auto; }
-.clubs-hero__crumbs { font-size: 13px; color: var(--muted); font-weight: var(--fw-title); margin-bottom: 14px; }
+.clubs-hero__crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 14px; }
 .clubs-hero__crumbs a { color: var(--muted); text-decoration: none; }
 .clubs-hero__crumbs a:hover { color: var(--primary); }
 .clubs-hero h1 { margin: 0 0 14px; font-size: var(--fs-page); line-height: 1.15; letter-spacing: var(--tracking-heading); font-weight: var(--fw-heading); color: var(--dark); max-width: 880px; }
@@ -119,7 +119,9 @@ function ClubsListPage() {
 
       <section className="clubs-hero">
         <div className="clubs-hero__crumbs">
-          <Link to="/">Главная</Link> · <span className="is-current" aria-current="page">{CLUBS_CRUMB}</span>
+          <Link to="/">Главная</Link>
+          <span aria-hidden="true">/</span>
+          <span className="is-current" aria-current="page">{CLUBS_CRUMB}</span>
         </div>
         <h1>Спортивные клубы и залы Беларуси</h1>
         <p>Клубы, студии и залы. Адреса и направления появятся в карточке, когда она будет опубликована.</p>

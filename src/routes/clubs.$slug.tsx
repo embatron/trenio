@@ -69,10 +69,10 @@ const CSS = `
 
 .page-shell { max-width: var(--layout-max); margin: 0 auto; padding: var(--layout-section-y) var(--layout-gutter) clamp(40px, 6vw, 72px); }
 
-.breadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 24px; padding: 0; list-style: none; font-size: 13px; font-weight: var(--fw-title); color: var(--muted); }
+.breadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 24px; padding: 0; list-style: none; font-size: 13px; color: var(--muted); }
 .breadcrumbs a { color: var(--muted); text-decoration: none; }
 .breadcrumbs a:hover { color: var(--primary-dark); }
-.breadcrumbs li + li::before { content: "›"; margin-right: 8px; color: var(--line); }
+.breadcrumbs li + li::before { content: "/"; margin-right: 8px; color: var(--muted); }
 
 .club-hero { margin-bottom: 28px; }
 .club-gallery { position: relative; }

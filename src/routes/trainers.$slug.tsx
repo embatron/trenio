@@ -297,10 +297,10 @@ const CSS = `
 .trainer-page { background: var(--light-bg); --aside-w: minmax(360px, 38%); }
 .trainer-page__inner { padding-block: var(--layout-section-y) clamp(40px, 6vw, 72px); }
 
-.breadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 24px; padding: 0; list-style: none; font-size: 13px; font-weight: var(--fw-title); color: var(--muted); }
+.breadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 24px; padding: 0; list-style: none; font-size: 13px; color: var(--muted); }
 .breadcrumbs a { color: var(--muted); text-decoration: none; }
 .breadcrumbs a:hover { color: var(--primary-dark); }
-.breadcrumbs li + li::before { content: "›"; margin-right: 8px; color: var(--line); }
+.breadcrumbs li + li::before { content: "/"; margin-right: 8px; color: var(--muted); }
 .profile-access { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 16px; padding: 12px 14px; border: 1px solid rgba(var(--primary-rgb), 0.22); border-radius: 12px; background: rgba(var(--primary-rgb), 0.08); color: var(--dark); font-size: 14px; line-height: 1.45; }
 .profile-access__icon { width: 20px; height: 20px; flex: 0 0 20px; margin-top: 0; color: var(--primary); }
 .profile-access__icon svg { display: block; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }

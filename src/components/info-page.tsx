@@ -53,10 +53,9 @@ export function InfoPage({
 const INFO_CSS = `
 .info-page { min-height: 100vh; display: flex; flex-direction: column; background: var(--white); color: var(--text); }
 .info-main { flex: 1; padding-block: var(--layout-section-y) clamp(40px, 6vw, 72px); }
-.info-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 28px; font-size: 14px; font-weight: var(--fw-title); }
+.info-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 28px; font-size: 14px; }
 .info-crumbs a { color: var(--muted); text-decoration: none; }
 .info-crumbs a:hover { color: var(--primary); }
-.info-crumbs span[aria-hidden] { color: var(--line); }
 .info-header { margin-bottom: 32px; }
 .info-header h1 { margin: 0 0 12px; letter-spacing: -0.04em; color: var(--dark); }
 .info-updated { margin: 0 0 14px; color: var(--muted); font-size: 14px; font-weight: var(--fw-title); }

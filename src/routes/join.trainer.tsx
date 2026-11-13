@@ -38,7 +38,6 @@ const CSS = `
 .welcome-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 28px; color: var(--muted); font-size: 14px; }
 .welcome-crumbs a { color: var(--muted); text-decoration: none; }
 .welcome-crumbs a:hover { color: var(--primary); }
-.welcome-crumbs span[aria-hidden] { color: var(--line); }
 .welcome-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.92fr) minmax(320px, 1.08fr);
