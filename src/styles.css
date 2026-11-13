@@ -582,6 +582,15 @@ html.is-staff-layout {
     gap: 6px;
   }
   ol.breadcrumbs li + li::before { margin-right: 6px; }
+  /* The city phrase and the name wrap on a trainer page. Keep the trail, just quieter. */
+  .trainer-page ol.breadcrumbs {
+    font-size: 11px;
+    font-weight: var(--fw-body);
+    line-height: 1.25;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+  .trainer-page ol.breadcrumbs li + li::before { margin-right: 4px; }
 }
 form :is(label, .auth-field):has(:is(input, textarea, select):required) > .auth-field__label:not(:has(a)) { justify-content: flex-start; }
 form :is(label, .auth-field):has(:is(input, textarea, select):required) > .auth-field__label:not(:has(a))::after,
