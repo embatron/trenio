@@ -1,5 +1,5 @@
 import { Link, useRouteContext, useRouterState } from "@tanstack/react-router";
-import { Fragment, useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { Fragment, useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 import { CredentialsRequiredDialog } from "@/components/auth/credentials-required-dialog";
@@ -315,23 +315,6 @@ export function CabinetShell({
       if (frame) window.cancelAnimationFrame(frame);
     };
   }, [sectionKey]);
-  useLayoutEffect(() => {
-    const root = navEl.current;
-    if (!root) return;
-    for (const sub of root.querySelectorAll<HTMLElement>(".cabinet-nav__sub")) {
-      const mark = sub.querySelector<HTMLElement>(".cabinet-nav__mark");
-      const link = sub.querySelector<HTMLElement>(".is-current");
-      if (!mark) continue;
-      if (!link) {
-        mark.style.width = "0px";
-        mark.style.height = "0px";
-        continue;
-      }
-      mark.style.width = `${link.offsetWidth}px`;
-      mark.style.height = `${link.offsetHeight}px`;
-      mark.style.transform = `translate(${link.offsetLeft}px, ${link.offsetTop}px)`;
-    }
-  }, [currentSection, sectionKey, pathname, pageSig, sectionsOpen]);
   function moveToSection(id: string) {
     navEl.current?.classList.remove("is-open");
     setSectionsOpen(false);
@@ -448,7 +431,6 @@ export function CabinetShell({
                   ) : null;
                   const pages = item.id === active && item.pages?.length ? (
                     <div className="cabinet-nav__sub" aria-label={item.label}>
-                      <span className="cabinet-nav__mark" aria-hidden="true" />
                       {item.pages.map((page) => {
                         const here = page.id === pageHere?.id;
                         return (
@@ -510,7 +492,6 @@ export function CabinetShell({
               </div>
               {sectionKey ? (
                 <div className={items.find((item) => item.id === active)?.sectionsMobile === false ? "cabinet-nav__sub cabinet-nav__sub--sections" : "cabinet-nav__sub"} aria-label="Разделы профиля">
-                  <span className="cabinet-nav__mark" aria-hidden="true" />
                   {items.find((item) => item.id === active)?.sections?.map((section) => (
                     <a
                       key={section.id}
@@ -583,16 +564,14 @@ a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
 .cabinet-nav .cabinet-nav__toggle { display: none; width: 100%; justify-content: space-between; border: 1px solid var(--line); background: var(--white); }
 .cabinet-nav .cabinet-nav__toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .cabinet-nav__items { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.cabinet-nav__sub { position: relative; display: grid; gap: 2px; margin: 0 0 4px 12px; padding-left: 8px; border-left: 2px solid rgba(var(--primary-rgb), 0.35); }
-.cabinet-nav__mark { position: absolute; left: 0; top: 0; border-radius: var(--radius-control); background: rgba(var(--primary-rgb), 0.1); pointer-events: none; z-index: 0; transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), width 0.42s cubic-bezier(0.22, 1, 0.36, 1), height 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
+.cabinet-nav__sub { display: grid; gap: 2px; margin: 0 0 4px 12px; }
 @media (prefers-reduced-motion: reduce) {
-  .cabinet-nav__mark, .cabinet-nav__chevron { transition: none; }
+  .cabinet-nav__chevron { transition: none; }
 }
 .cabinet-nav__body:has(> .cabinet-nav__sub) { display: grid; }
 .cabinet-nav__body:has(> .cabinet-nav__sub) .cabinet-nav__items { display: contents; }
 .cabinet-nav__body > .cabinet-nav__sub { grid-row: var(--nav-sub-row); margin-left: 12px; }
-.cabinet-nav__sub a { position: relative; z-index: 1; color: var(--muted); font-size: 14px; font-weight: var(--fw-ui); transition: color 0.28s ease; }
-.cabinet-nav__sub a.is-current { background: transparent; color: var(--primary); }
+.cabinet-nav__sub a { color: var(--muted); font-size: 14px; font-weight: var(--fw-ui); transition: color 0.28s ease, background 0.28s ease; }
 .cabinet-nav button, .cabinet-nav a, .cabinet-logout {
   min-height: 44px; border: 0; border-radius: var(--radius-control); background: transparent;
   display: flex; align-items: center; gap: 10px; padding: 0 12px; color: var(--text);
@@ -605,10 +584,10 @@ a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
 .cabinet-nav button.is-active, .cabinet-nav a.is-active { background: rgba(var(--primary-rgb), 0.1); color: var(--primary-dark); }
 .cabinet-nav button:hover, .cabinet-nav a:hover, .cabinet-logout:hover { background: rgba(var(--dark-rgb), 0.04); }
 .cabinet-nav__sub a {
-  justify-self: start; width: auto; max-width: 100%; min-height: 32px; padding: 0 10px;
+  width: 100%; min-height: 32px; padding: 0 10px;
   color: var(--muted); font-size: 13px; font-weight: var(--fw-ui); line-height: 1.2;
 }
-.cabinet-nav__sub a.is-current { background: transparent; color: var(--primary); }
+.cabinet-nav__sub a.is-current { background: rgba(var(--primary-rgb), 0.1); color: var(--primary-dark); }
 .cabinet-logout { color: var(--muted); justify-content: center; }
 .cabinet-main { display: grid; gap: 16px; min-width: 0; overflow-x: clip; }
 @keyframes profile-card-in {
