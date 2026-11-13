@@ -550,6 +550,7 @@ npm run format
 | `.cursor/rules/logging.mdc` | Журналы `app_logs` и `trainer_journal` без срока хранения (`alwaysApply`) |
 | `.cursor/skills/`           | Workflows: feature dev, PWA audit, mobile audit, docs sync, импорт тренеров из Instagram, журнал, диагностика, тесты, SEO |
 | `.cursor/skills/trenio-logging/` | Запись в `app_logs` и проверка `npm run logs:check` |
+| `.cursor/skills/trenio-sequential-thinking/` | Цепочка sequential-thinking перед большим многошаговым действием, разбором и диагностикой |
 | `.cursor/skills/trenio-diagnosis/` | Разбор сбоя по строкам журнала. Команда `/diagnosis` |
 | `.cursor/skills/trenio-tests/` | Unit и Playwright, затем рекомендации. Команда `/tests` |
 | `.cursor/skills/trenio-seo/` | Заголовки, canonical, robots, sitemap и schema.org для страниц Беларуси. Субагент `seo` |

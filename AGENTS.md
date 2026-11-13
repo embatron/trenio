@@ -60,6 +60,7 @@
 | `.cursor/skills/trenio-sync-trainers/` | Copy trainer cards, catalog status, and message marks between the laptop and the live site, and copy every trainer application from the live site onto the laptop. The local `test-trener` card stays on the laptop. Command: `/sync-trainers` |
 | `.cursor/skills/trenio-messages/` | Direct messages: who can write, composer, receipts, polling. Rule: `.cursor/rules/messages.mdc` |
 | `.cursor/skills/trenio-logging/` | Operational journal in `app_logs` and `trainer_journal`. Rows are kept. Command: `/logging`. Rule: `.cursor/rules/logging.mdc` |
+| `.cursor/skills/trenio-sequential-thinking/` | Ordered pass on the sequential-thinking MCP before a large multi-step action, an analysis, or a diagnosis |
 | `.cursor/skills/trenio-diagnosis/` | Diagnose a failure from `app_logs`. Command: `/diagnosis` |
 | `.cursor/skills/trenio-tests/` | Unit tests plus Playwright, then recommendations. Command: `/tests` |
 | `.cursor/skills/trenio-seo/` | Public-page SEO for Belarus: titles, canonical, robots, sitemap, schema.org. Subagent: `seo` |

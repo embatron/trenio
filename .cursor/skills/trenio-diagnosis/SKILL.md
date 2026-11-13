@@ -8,7 +8,7 @@ description: >-
 
 # Diagnosis
 
-Read `.cursor/skills/trenio-logging/SKILL.md` and [reference.md](../trenio-logging/reference.md) first. The journal is the source. Do not guess a stack that is not in the row.
+Read `.cursor/skills/trenio-sequential-thinking/SKILL.md` and finish that chain before naming a cause. Then read `.cursor/skills/trenio-logging/SKILL.md` and [reference.md](../trenio-logging/reference.md). The journal is the source. Do not guess a stack that is not in the row.
 
 ## Steps
 
