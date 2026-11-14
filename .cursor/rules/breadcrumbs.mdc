@@ -16,7 +16,8 @@ The last crumb is the current page. It uses the brand color. Earlier crumbs stay
 - `is-current` without `aria-current="page"` is not a breadcrumb. The claim-link state uses that class for a different color.
 - Every trail uses body weight (`--fw-body`). Do not set title weight on a crumb.
 - Below 768px every trail is the same: 12px, line-height 1.3, and a 6px gap. That size lives once in `src/styles.css`. Do not repeat it in a route, and do not give one page a smaller trail. Desktop stays at the route size, 13px or 14px.
-- On a trainer page the city crumb is the city name (`Минск`), and the `BreadcrumbList` name is that same word. The city page title stays `Тренеры в Минске`.
+- On a trainer page the city crumb is the city name (`Гродно`), and the `BreadcrumbList` name is that same word. The city page title stays `Тренеры в Гродно`.
+- On a trainer page the sport crumb opens that sport in the same city (`/city/grodno/dzyudo`). It does not open the national category, and it does not follow the visitor IP or the Minsk default. The `BreadcrumbList` item uses that same path. A city outside the catalog still falls back to `/categories/...`.
 
 ## Example
 

@@ -1,3 +1,4 @@
+import { trainerSportCityPath } from "@/lib/catalog/catalog-sports";
 import { cityCatalogBySlug } from "@/lib/catalog/city-pages";
 import { trainerByPhrase } from "@/lib/catalog/sport-taxonomy";
 import { seoHead } from "@/lib/seo/head";
@@ -79,10 +80,8 @@ function trainerMetaDescription(phrase: string, detail: string) {
   return `${lead} ${cut}…`;
 }
 
-function sportPath(sport: TrainerSeoSource["primarySport"]) {
-  if (!sport.slug) return "/categories";
-  if (sport.parentSlug === sport.slug) return `/categories/${sport.slug}`;
-  return `/categories/${sport.parentSlug}/${sport.slug}`;
+function sportPath(citySlug: string, sport: TrainerSeoSource["primarySport"]) {
+  return trainerSportCityPath(citySlug, sport);
 }
 
 function sameAs(trainer: TrainerSeoSource) {
@@ -121,7 +120,7 @@ export function trainerSeoHead(trainer: TrainerSeoSource) {
     ...(cityPage
       ? [{ name: cityCrumb, path: `/city/${trainer.city.slug}` }]
       : [{ name: cityCrumb, path }]),
-    { name: trainer.primarySport.label, path: sportPath(trainer.primarySport) },
+    { name: trainer.primarySport.label, path: sportPath(trainer.city.slug, trainer.primarySport) },
     { name: trainer.name, path },
   ];
   const locations = trainer.places

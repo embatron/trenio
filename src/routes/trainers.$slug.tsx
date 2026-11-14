@@ -379,6 +379,8 @@ const CSS = `
 .review-reply__open { align-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--primary-dark); font: inherit; font-size: 14px; font-weight: var(--fw-title); cursor: pointer; }
 .profile-identity__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
 .profile-location { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 14px; font-weight: var(--fw-title); }
+.profile-location a { color: inherit; text-decoration: none; }
+.profile-location a:hover { text-decoration: underline; }
 .profile-location svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .profile-rating { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; font-size: 15px; font-weight: var(--fw-title); color: var(--dark); }
 .profile-rating__stars { position: relative; display: inline-flex; }
@@ -998,11 +1000,7 @@ function TrainerPage() {
               )}
             </li>
             <li>
-              {crumbSport.parentSlug === crumbSport.slug ? (
-                <Link to="/categories/$slug" params={{ slug: crumbSport.slug }}>{crumbSport.label}</Link>
-              ) : (
-                <Link to="/categories/$parentSlug/$childSlug" params={{ parentSlug: crumbSport.parentSlug, childSlug: crumbSport.slug }}>{crumbSport.label}</Link>
-              )}
+              <TrainerSportLink citySlug={t.city.slug} sport={crumbSport} />
             </li>
             <li className="is-current" aria-current="page">{t.name}</li>
           </ol>
@@ -1097,7 +1095,9 @@ function TrainerPage() {
                 <div className="profile-identity__meta">
                   <span className="profile-location">
                     <svg viewBox="0 0 24 24"><path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.4" /></svg>
-                    {t.city.label}
+                    {cityCatalogBySlug(t.city.slug) ? (
+                      <Link to="/map" search={{ city: t.city.slug }}>{t.city.label}</Link>
+                    ) : t.city.label}
                   </span>
                   {hasRating ? <div className="profile-rating" aria-label={`Рейтинг ${t.rating.value} из 5, ${t.rating.reviewCount} ${pluralRu(t.rating.reviewCount, "отзыв", "отзыва", "отзывов")}`}>
                     <Stars rating={parseFloat(t.rating.value)} />

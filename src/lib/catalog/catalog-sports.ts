@@ -310,6 +310,19 @@ export function catalogSportForStored(sport: { slug: string; parentSlug: string 
   return catalogSportById(`${sport.parentSlug}/${sport.slug}`) ?? catalogSportById(sport.slug);
 }
 
+/** City and sport path for a trainer crumb or tag. Without a catalog city, the sport page alone. */
+export function trainerSportCityPath(citySlug: string, sport: { slug: string; parentSlug: string }): string {
+  const catalog = catalogSportForStored(sport);
+  if (!catalog) {
+    if (!sport.slug) return "/categories";
+    if (!sport.parentSlug || sport.parentSlug === sport.slug) return `/categories/${sport.slug}`;
+    return `/categories/${sport.parentSlug}/${sport.slug}`;
+  }
+  if (citySlug && cityCatalogBySlug(citySlug)) return catalogSportPath(citySlug, catalog);
+  if (catalog.id.includes("/")) return `/categories/${catalog.parentSlug}/${catalog.slug}`;
+  return `/categories/${catalog.slug}`;
+}
+
 /** City and sport page for a tag on a trainer card. Without a catalog city, the sport page alone. */
 export function trainerSportCityLocation(citySlug: string, sport: { slug: string; parentSlug: string }) {
   const catalog = catalogSportForStored(sport);

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { listCatalogSports, catalogPagePhrase, catalogSportByName, catalogSportPhrase, filterCatalogSports, filterTrainerSports, trainerSportCityLocation, trainerSportMenu } from "./catalog-sports";
+import { listCatalogSports, catalogPagePhrase, catalogSportByName, catalogSportPhrase, filterCatalogSports, filterTrainerSports, trainerSportCityLocation, trainerSportCityPath, trainerSportMenu } from "./catalog-sports";
 import { trainerIntroPhrase, trainerSportRoles, trainerSportsFromSlugs } from "./sport-taxonomy";
 import { BELARUS_CITIES, BELARUS_QUICK_CITIES, filterBelarusCities, resolveBelarusCity } from "./city-taxonomy";
 import { editDistance, foldSearchText, keyboardToLatin, keyboardToRussian } from "./query-flex";
@@ -235,6 +235,14 @@ test("a section can be stored, and the gym phrase drops по", () => {
     to: "/categories/$slug",
     params: { slug: "fitnes" },
   });
+  assert.deepEqual(trainerSportCityLocation("grodno", { slug: "dzyudo", parentSlug: "edinoborstva" }), {
+    to: "/city/$slug/$sport",
+    params: { slug: "grodno", sport: "dzyudo" },
+  });
+  assert.equal(
+    trainerSportCityPath("grodno", { slug: "dzyudo", parentSlug: "edinoborstva" }),
+    "/city/grodno/dzyudo",
+  );
 });
 
 test("anti-patterns: noise, neighbours, and shared words do not pick a wrong name", () => {

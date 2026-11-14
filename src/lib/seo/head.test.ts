@@ -382,6 +382,16 @@ test("each indexable page kind emits its schema types", () => {
   assert.equal(profile?.primaryImageOfPage?.url, profile?.mainEntity?.image?.url);
   assert.equal(profile?.primaryImageOfPage?.width, 1200);
   assert.equal(profile?.primaryImageOfPage?.height, 630);
+  const crumbs = trainer.scripts
+    ?.map((script) => JSON.parse(script.children) as {
+      "@type"?: string;
+      itemListElement?: Array<{ name?: string; item?: string }>;
+    })
+    .find((node) => node["@type"] === "BreadcrumbList");
+  assert.equal(
+    crumbs?.itemListElement?.find((item) => item.name === "Кикбоксинг")?.item,
+    "https://trenio.by/city/minsk/kikboksing",
+  );
   const datedImage = trainer.meta.find((item) => "property" in item && item.property === "og:image");
   assert.equal(
     datedImage && "content" in datedImage ? datedImage.content : "",
