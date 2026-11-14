@@ -222,6 +222,7 @@ export function CatalogMapScreen({
   const sentinelRef = useRef<HTMLDivElement>(null);
   const seenPeopleRef = useRef(new Set<string>());
   const queryRef = useRef<Parameters<typeof listMapAreaFn>[0]["data"] | null>(null);
+  const metaKeyRef = useRef("");
   const generationRef = useRef(0);
   const nextCursorRef = useRef<number | null>(null);
   const looseScrollRef = useRef(false);
@@ -390,6 +391,7 @@ export function CatalogMapScreen({
     looseScrollRef.current = false;
     loadingRef.current = true;
     setLoading(true);
+    const wantMeta = metaKeyRef.current !== filterKey;
     const payload = {
       south: frame.south,
       west: frame.west,
@@ -405,6 +407,7 @@ export function CatalogMapScreen({
       priceMax: price ? priceMax : null,
       cursor: 0,
       includeFeatures: true,
+      meta: wantMeta,
     };
     const timer = window.setTimeout(() => {
       void listMapAreaFn({ data: payload })
@@ -414,25 +417,25 @@ export function CatalogMapScreen({
           setFeatures(area.features);
           setRows(area.trainers);
           setTotal(area.total);
-          setMatched(area.matched);
           setNextCursor(area.nextCursor);
           setUnlocated(area.unlocated);
           setUnlocatedTotal(area.unlocatedTotal);
           setUnlocatedNext(area.unlocatedNextCursor);
-          setPriceSpan((current) => (
-            current.min === area.priceMin && current.max === area.priceMax
-              ? current
-              : { min: area.priceMin, max: area.priceMax }
-          ));
+          if (wantMeta) {
+            metaKeyRef.current = filterKey;
+            setMatched(area.matched);
+            setPriceSpan((current) => (
+              current.min === area.priceMin && current.max === area.priceMax
+                ? current
+                : { min: area.priceMin, max: area.priceMax }
+            ));
+          }
           setLoadError(false);
           setAreaReady(true);
         })
         .catch(() => {
           if (generationRef.current !== generation) return;
           setLoadError(true);
-          setUnlocated([]);
-          setUnlocatedTotal(0);
-          setUnlocatedNext(null);
           setAreaReady(true);
         })
         .finally(() => {
@@ -896,6 +899,9 @@ export function CatalogMapScreen({
                 />
               </div>
               <div className="map-stage__list">
+                {loadError && areaReady && (rows.length > 0 || unlocatedTotal > 0) ? (
+                  <p className="map-loading">Не удалось обновить кадр. Показан предыдущий.</p>
+                ) : null}
                 <div className="map-count">
                   {areaReady ? (
                     <>

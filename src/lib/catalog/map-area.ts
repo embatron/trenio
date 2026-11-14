@@ -6,7 +6,7 @@ import type { MapAreaInput } from "@/lib/catalog/map-area-input";
 import { trainerProfiles, trainerReviews } from "@/db/schema";
 import type { TrainerAudience, TrainerFormat } from "@/lib/catalog/published-trainers";
 import { trainerNameParts } from "@/lib/catalog/trainer-name";
-import { mapConsideredCity } from "@/lib/catalog/map-city";
+import { mapFrameCities } from "@/lib/catalog/map-city";
 import { isSpecificAddress, placesFromProfile, SPECIFIC_ADDRESS_SQL } from "@/lib/geo/schemas";
 import { MAP_CLUSTER_CAP, MAP_PAGE_SIZE, MAP_PIN_CAP, MAP_TOOLTIP_CAP, mapClusterStep } from "@/lib/catalog/map-limits";
 
@@ -118,6 +118,30 @@ function foldCity(value: string) {
 function num(value: unknown) {
   const parsed = typeof value === "number" ? value : typeof value === "string" ? Number(value) : Number.NaN;
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function jsonList(value: unknown): string[] {
+  let parsed = value;
+  if (typeof value === "string") {
+    try {
+      parsed = JSON.parse(value) as unknown;
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(parsed)) return [];
+  return parsed.flatMap((item) => (typeof item === "string" && item.trim() ? [item.trim()] : []));
+}
+
+function slugList(value: unknown): string[] {
+  if (Array.isArray(value)) return jsonList(value);
+  if (typeof value !== "string" || value.length < 2 || !value.startsWith("{")) return [];
+  const body = value.slice(1, -1);
+  if (!body) return [];
+  return body.split(",").flatMap((item) => {
+    const slug = item.trim().replace(/^"|"$/g, "");
+    return slug ? [slug] : [];
+  });
 }
 
 function asRows(result: unknown): Record<string, unknown>[] {
@@ -258,9 +282,9 @@ function placesSql(filters: AreaFilters, bounds: AreaBounds | null, applyPrice: 
   `;
 }
 
-function withoutSpecificAddress(city: string): SQL {
+function withoutSpecificAddress(cities: string[]): SQL {
   return sql`
-    lower(replace(btrim(tp.city), 'ё', 'е')) = ${foldCity(city)}
+    lower(replace(btrim(tp.city), 'ё', 'е')) IN (${inList(cities.map((city) => foldCity(city)))})
     AND NOT EXISTS (
       SELECT 1
       FROM jsonb_array_elements(
@@ -459,7 +483,7 @@ function pinKey(lat: number, lng: number) {
 
 async function pinFeatures(filters: AreaFilters, bounds: AreaBounds): Promise<MapAreaFeature[]> {
   const groups = await queryRows(sql`
-    WITH places AS (${placesSql(filters, bounds, true)})
+    WITH places AS MATERIALIZED (${placesSql(filters, bounds, true)})
     SELECT
       round(lat::numeric, 5) AS lat_key,
       round(lng::numeric, 5) AS lng_key,
@@ -467,38 +491,18 @@ async function pinFeatures(filters: AreaFilters, bounds: AreaBounds): Promise<Ma
       min(lng) AS lng,
       min(city) AS city,
       min(address) AS address,
-      count(DISTINCT slug)::int AS count
+      count(DISTINCT slug)::int AS count,
+      (array_agg(DISTINCT slug ORDER BY slug))[1:${SLUG_CAP}] AS slugs
     FROM places
     GROUP BY 1, 2
     ORDER BY count DESC
     LIMIT ${MAP_PIN_CAP}
   `);
-  const samples = await queryRows(sql`
-    WITH places AS (${placesSql(filters, bounds, true)})
-    SELECT lat_key, lng_key, slug
-    FROM (
-      SELECT
-        round(lat::numeric, 5) AS lat_key,
-        round(lng::numeric, 5) AS lng_key,
-        slug,
-        row_number() OVER (
-          PARTITION BY round(lat::numeric, 5), round(lng::numeric, 5)
-          ORDER BY slug
-        ) AS n
-      FROM places
-    ) ranked
-    WHERE n <= ${SLUG_CAP}
-  `);
   const slugsByKey = new Map<string, string[]>();
-  for (const row of samples) {
+  for (const row of groups) {
     const lat = Number(Number(row.lat_key).toFixed(5));
     const lng = Number(Number(row.lng_key).toFixed(5));
-    const key = pinKey(lat, lng);
-    const slug = typeof row.slug === "string" ? row.slug : "";
-    if (!slug) continue;
-    const list = slugsByKey.get(key) ?? [];
-    list.push(slug);
-    slugsByKey.set(key, list);
+    slugsByKey.set(pinKey(lat, lng), slugList(row.slugs).slice(0, SLUG_CAP));
   }
   const sampleSlugs = [...new Set([...slugsByKey.values()].flatMap((list) => list.slice(0, MAP_TOOLTIP_CAP)))];
   const loaded = await loadTrainers(sampleSlugs, bounds, filters.city);
@@ -528,60 +532,120 @@ async function pinFeatures(filters: AreaFilters, bounds: AreaBounds): Promise<Ma
 }
 
 async function clusterFeatures(filters: AreaFilters, bounds: AreaBounds, zoom: number): Promise<MapAreaFeature[]> {
-  let rows: Record<string, unknown>[] = [];
-  let step = mapClusterStep(zoom, 0);
-  for (let attempt = 0; attempt < 6; attempt += 1) {
-    step = mapClusterStep(zoom, attempt);
-    rows = await queryRows(sql`
-      WITH places AS (${placesSql(filters, bounds, true)})
-      SELECT
-        round((lat / ${step})::numeric) AS gy,
-        round((lng / ${step})::numeric) AS gx,
-        avg(lat) AS lat,
-        avg(lng) AS lng,
-        count(DISTINCT slug)::int AS count
-      FROM places
-      GROUP BY 1, 2
-      ORDER BY count DESC
-      LIMIT ${MAP_CLUSTER_CAP + 1}
-    `);
-    if (rows.length <= MAP_CLUSTER_CAP) break;
+  const steps = Array.from({ length: 6 }, (_, attempt) => mapClusterStep(zoom, attempt));
+  const branches = steps.map((step, attempt) => sql`
+    SELECT
+      ${attempt}::int AS attempt,
+      round((lat / ${step})::numeric) AS gy,
+      round((lng / ${step})::numeric) AS gx,
+      avg(lat) AS lat,
+      avg(lng) AS lng,
+      count(DISTINCT slug)::int AS count
+    FROM places
+    GROUP BY 2, 3
+  `);
+  const rows = await queryRows(sql`
+    WITH places AS MATERIALIZED (${placesSql(filters, bounds, true)})
+    ${sql.join(branches, sql` UNION ALL `)}
+  `);
+  let chosen = steps.length - 1;
+  for (let attempt = 0; attempt < steps.length; attempt += 1) {
+    const size = rows.reduce((count, row) => count + (num(row.attempt) === attempt ? 1 : 0), 0);
+    if (size <= MAP_CLUSTER_CAP) {
+      chosen = attempt;
+      break;
+    }
   }
-  return rows.slice(0, MAP_CLUSTER_CAP).flatMap((row) => {
-    const lat = num(row.lat);
-    const lng = num(row.lng);
-    const gx = num(row.gx);
-    const gy = num(row.gy);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return [];
-    return [{
-      kind: "cluster" as const,
-      key: `c:${gy}:${gx}:${step.toFixed(5)}`,
-      lat,
-      lng,
-      count: num(row.count),
-    }];
-  });
+  const step = steps[chosen];
+  return rows
+    .filter((row) => num(row.attempt) === chosen)
+    .sort((a, b) => num(b.count) - num(a.count))
+    .slice(0, MAP_CLUSTER_CAP)
+    .flatMap((row) => {
+      const lat = num(row.lat);
+      const lng = num(row.lng);
+      const gx = num(row.gx);
+      const gy = num(row.gy);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return [];
+      return [{
+        kind: "cluster" as const,
+        key: `c:${gy}:${gx}:${step.toFixed(5)}`,
+        lat,
+        lng,
+        count: num(row.count),
+      }];
+    });
 }
 
-async function unlocatedPage(filters: AreaFilters, city: string | null, cursor: number) {
-  if (!city) return { city: null, total: 0, trainers: [] as MapTrainer[], next: null as number | null };
-  const where = sql`${profileWhere(filters, true)} AND ${withoutSpecificAddress(city)}`;
-  const [countRows, pageRows] = await Promise.all([
-    queryRows(sql`SELECT count(*)::int AS total FROM trainer_profiles tp WHERE ${where}`),
-    queryRows(sql`
-      SELECT tp.slug
-      FROM trainer_profiles tp
-      WHERE ${where}
-      ORDER BY tp.last_name, tp.first_name, tp.slug
-      LIMIT ${MAP_PAGE_SIZE} OFFSET ${cursor}
-    `),
-  ]);
-  const total = num(countRows[0]?.total);
+async function citiesInFrame(filters: AreaFilters, bounds: AreaBounds): Promise<string[]> {
+  if (filters.city.trim()) return mapFrameCities(filters.city, bounds);
+  const rows = await queryRows(sql`
+    WITH places AS (${placesSql(filters, bounds, true)})
+    SELECT btrim(tp.city) AS city
+    FROM places
+    JOIN trainer_profiles tp ON tp.slug = places.slug
+    GROUP BY 1
+  `);
+  const pins = rows.flatMap((row) => (typeof row.city === "string" ? [row.city] : []));
+  return mapFrameCities("", bounds, pins);
+}
+
+async function frameSnapshot(filters: AreaFilters, bounds: AreaBounds, cursor: number) {
+  const clat = (bounds.south + bounds.north) / 2;
+  const clng = bounds.world || bounds.wraps ? 0 : (bounds.west + bounds.east) / 2;
+  const rows = await queryRows(sql`
+    WITH places AS MATERIALIZED (${placesSql(filters, bounds, true)})
+    SELECT
+      (SELECT count(*)::int FROM places) AS places,
+      (SELECT count(DISTINCT slug)::int FROM places) AS trainers,
+      (SELECT count(DISTINCT (round(lat::numeric, 5)::text || ',' || round(lng::numeric, 5)::text))::int FROM places) AS points,
+      (
+        SELECT coalesce(json_agg(city), '[]'::json)
+        FROM (
+          SELECT btrim(tp.city) AS city
+          FROM places
+          JOIN trainer_profiles tp ON tp.slug = places.slug
+          GROUP BY 1
+        ) cities
+      ) AS cities,
+      (
+        SELECT coalesce(json_agg(page.slug ORDER BY page.dist, page.slug), '[]'::json)
+        FROM (
+          SELECT slug,
+            min(((lat - ${clat}) * (lat - ${clat})) + ((lng - ${clng}) * (lng - ${clng}))) AS dist
+          FROM places
+          GROUP BY slug
+          ORDER BY dist, slug
+          LIMIT ${MAP_PAGE_SIZE} OFFSET ${cursor}
+        ) page
+      ) AS page
+  `);
+  const row = rows[0] ?? {};
+  return {
+    places: num(row.places),
+    trainers: num(row.trainers),
+    points: num(row.points),
+    cities: jsonList(row.cities),
+    slugs: jsonList(row.page),
+  };
+}
+
+async function unlocatedPage(filters: AreaFilters, cities: string[], cursor: number) {
+  if (cities.length === 0) return { city: null, total: 0, trainers: [] as MapTrainer[], next: null as number | null };
+  const where = sql`${profileWhere(filters, true)} AND ${withoutSpecificAddress(cities)}`;
+  const pageRows = await queryRows(sql`
+    SELECT tp.slug, count(*) OVER ()::int AS total
+    FROM trainer_profiles tp
+    WHERE ${where}
+    ORDER BY tp.last_name, tp.first_name, tp.slug
+    LIMIT ${MAP_PAGE_SIZE} OFFSET ${cursor}
+  `);
+  const total = pageRows.length > 0 ? num(pageRows[0]?.total) : 0;
   const slugs = pageRows.flatMap((row) => (typeof row.slug === "string" ? [row.slug] : []));
   return {
-    city,
+    city: cities[0] ?? null,
     total,
-    trainers: await loadTrainers(slugs, null, city),
+    trainers: await loadTrainers(slugs, null, cities[0] ?? ""),
     next: cursor + slugs.length < total ? cursor + MAP_PAGE_SIZE : null,
   };
 }
@@ -598,9 +662,9 @@ export async function loadMapArea(input: MapAreaInput): Promise<MapArea> {
     priceMax: input.priceMax ?? null,
   };
   const cursor = input.cursor ?? 0;
-  const considered = mapConsideredCity(filters.city, bounds);
   if (input.list === "unlocated") {
-    const page = await unlocatedPage(filters, considered, cursor);
+    const cities = await citiesInFrame(filters, bounds);
+    const page = await unlocatedPage(filters, cities, cursor);
     return {
       total: 0,
       addressCount: 0,
@@ -617,67 +681,47 @@ export async function loadMapArea(input: MapAreaInput): Promise<MapArea> {
     };
   }
   const includeFeatures = input.includeFeatures !== false && cursor === 0;
+  const meta = input.meta !== false && cursor === 0;
   const spanFilters: AreaFilters = { ...filters, audience: null, formats: [], minExperience: null, priceMin: null, priceMax: null };
-  const [spanRows, countRows] = await Promise.all([
-    cursor === 0
+  const [shot, spanRows, matchedRows] = await Promise.all([
+    frameSnapshot(filters, bounds, cursor),
+    meta
       ? queryRows(sql`
-        WITH places AS (${placesSql(spanFilters, null, false)})
+        WITH places AS MATERIALIZED (${placesSql(spanFilters, null, false)})
         SELECT
-          count(DISTINCT slug)::int AS matched,
           coalesce(min(price_from), 0)::int AS price_min,
           coalesce(max(price_from), 0)::int AS price_max
         FROM places
       `)
       : Promise.resolve([]),
-    queryRows(sql`
-      WITH places AS (${placesSql(filters, bounds, true)})
-      SELECT
-        count(*)::int AS places,
-        count(DISTINCT slug)::int AS trainers,
-        count(DISTINCT (round(lat::numeric, 5)::text || ',' || round(lng::numeric, 5)::text))::int AS points
-      FROM places
-    `),
+    meta
+      ? queryRows(sql`
+        WITH places AS MATERIALIZED (${placesSql(filters, null, true)})
+        SELECT count(DISTINCT slug)::int AS matched
+        FROM places
+      `)
+      : Promise.resolve([]),
   ]);
-  const matchedRows = cursor === 0
-    ? await queryRows(sql`
-      WITH places AS (${placesSql(filters, null, true)})
-      SELECT count(DISTINCT slug)::int AS matched
-      FROM places
-    `)
-    : [];
-  const total = num(countRows[0]?.trainers);
-  const addressCount = num(countRows[0]?.places);
-  const points = num(countRows[0]?.points);
-  const clat = (bounds.south + bounds.north) / 2;
-  const clng = bounds.world || bounds.wraps ? 0 : (bounds.west + bounds.east) / 2;
-  const pageRows = await queryRows(sql`
-    WITH places AS (${placesSql(filters, bounds, true)})
-    SELECT slug
-    FROM (
-      SELECT slug,
-        min(((lat - ${clat}) * (lat - ${clat})) + ((lng - ${clng}) * (lng - ${clng}))) AS dist
-      FROM places
-      GROUP BY slug
-    ) ranked
-    ORDER BY dist, slug
-    LIMIT ${MAP_PAGE_SIZE} OFFSET ${cursor}
-  `);
-  const pageSlugs = pageRows.flatMap((row) => (typeof row.slug === "string" ? [row.slug] : []));
-  const trainers = await loadTrainers(pageSlugs, bounds, filters.city);
-  const loose = cursor === 0 ? await unlocatedPage(filters, considered, 0) : null;
-  let features: MapAreaFeature[] = [];
-  if (includeFeatures) {
-    features = points > MAP_PIN_CAP
-      ? await clusterFeatures(filters, bounds, input.zoom)
-      : await pinFeatures(filters, bounds);
-  }
-  const priceMin = num(spanRows[0]?.price_min);
-  const rawMax = num(spanRows[0]?.price_max);
+  const total = shot.trainers;
+  const addressCount = shot.places;
+  const points = shot.points;
+  const cities = mapFrameCities(filters.city, bounds, filters.city.trim() ? [] : shot.cities);
+  const [trainers, loose, features] = await Promise.all([
+    loadTrainers(shot.slugs, bounds, filters.city),
+    cursor === 0 ? unlocatedPage(filters, cities, 0) : Promise.resolve(null),
+    includeFeatures
+      ? points > MAP_PIN_CAP
+        ? clusterFeatures(filters, bounds, input.zoom)
+        : pinFeatures(filters, bounds)
+      : Promise.resolve([] as MapAreaFeature[]),
+  ]);
+  const priceMin = meta ? num(spanRows[0]?.price_min) : 0;
+  const rawMax = meta ? num(spanRows[0]?.price_max) : 0;
   return {
     total,
     addressCount,
-    matched: cursor === 0 ? num(matchedRows[0]?.matched) : total,
-    nextCursor: cursor + pageSlugs.length < total ? cursor + MAP_PAGE_SIZE : null,
+    matched: meta ? num(matchedRows[0]?.matched) : total,
+    nextCursor: cursor + shot.slugs.length < total ? cursor + MAP_PAGE_SIZE : null,
     trainers,
     features,
     priceMin,

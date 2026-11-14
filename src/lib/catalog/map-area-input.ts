@@ -15,6 +15,8 @@ export const areaSchema = z.object({
   priceMax: z.number().finite().min(0).max(1_000_000).nullable().optional(),
   cursor: z.number().int().min(0).max(100_000).optional(),
   includeFeatures: z.boolean().optional(),
+  /** Price range and the catalog-wide count. A pan sends false and keeps the values already shown. */
+  meta: z.boolean().optional(),
   list: z.enum(["frame", "unlocated"]).optional(),
 });
 

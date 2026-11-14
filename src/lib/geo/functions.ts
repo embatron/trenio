@@ -9,7 +9,7 @@ import { trainerProfiles } from "@/db/schema";
 import { assertStaff } from "@/lib/admin/access";
 import { AuthError } from "@/lib/auth/errors";
 import { editorHtml } from "@/lib/catalog/review-html";
-import { writeLog } from "@/lib/log/logger";
+import { logCaught, writeLog } from "@/lib/log/logger";
 import { addressQueryReady } from "@/lib/geo/normalize";
 import { mirrorTrainingPlace, resolveTrainingPlaces, suggestCachedOrRemote } from "@/lib/geo/resolve";
 import {
@@ -68,6 +68,7 @@ export const suggestAddress = createServerFn({ method: "POST" })
 export const getTrainerAddressFn = createServerFn({ method: "GET" })
   .validator(z.object({ slug: z.string().trim().min(1).max(30) }))
   .handler(async ({ data }): Promise<{ places: Array<{ city: string; district: string; address: string; lat: number | null; lng: number | null }>; about: string }> => {
+    try {
     const [row] = await getDb()
       .select({
         city: trainerProfiles.city,
@@ -102,6 +103,10 @@ export const getTrainerAddressFn = createServerFn({ method: "GET" })
       };
     }).filter((place) => placeLine(place));
     return { places, about: editorHtml(row?.about ?? []) };
+    } catch (error) {
+      logCaught("geo", "geo.address", error, { target: data.slug });
+      throw error;
+    }
   });
 
 export const adminGeocodeTrainer = createServerFn({ method: "POST" })
