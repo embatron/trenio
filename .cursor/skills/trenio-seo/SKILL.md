@@ -69,4 +69,4 @@ These are the live gaps. Repeat one only when the task touches it.
 - Search cabinets and the two counters are in [cabinets.md](cabinets.md). Do not add a second GA tag, a second Metrika counter, Tag Manager, a Yandex Business card, or a site move. Do not commit verification tokens.
 - `PUBLISHED_TRAINERS` stays empty until a real profile is published.
 - `/search` is disallowed and `noindex`. The `SearchAction` still points at `?sport=`. Do not open `/search` to crawlers to chase a sitelinks box.
-- The SSR crash page in `src/lib/error-page.ts` is English. It is `noindex`. Translating it is a product-language fix, not a ranking project.
+- The SSR crash page in `src/lib/error-page.ts` is the Russian maintenance screen, the same document as `public/maintenance.html`. It is `noindex`. Do not add links or a second public URL for it.

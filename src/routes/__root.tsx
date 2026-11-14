@@ -5,7 +5,6 @@ import {
   HeadContent,
   redirect,
   Scripts,
-  useRouter,
 } from "@tanstack/react-router";
 import { useEffect, useLayoutEffect, useState, type ReactNode } from "react";
 
@@ -25,6 +24,7 @@ import { AccountLikesProvider } from "@/components/account-likes-store";
 import { FavoritesProvider } from "@/components/favorites-store";
 import { canPlaceAccountLike } from "@/lib/catalog/account-like-rules";
 import { listPublicLikeCountsFn } from "@/lib/catalog/account-likes";
+import { listFavoritesFn } from "@/lib/catalog/favorites";
 import { CabinetLive } from "@/components/cabinet-live";
 import { MessagesLive } from "@/components/messages/messages-live";
 import { CopyLinkToast } from "@/components/share-profile";
@@ -61,11 +61,12 @@ function AuthorizationRedirect() {
   return null;
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
-  if (isAuthorizationRequired(error)) return <AuthorizationRedirect />;
-  console.error(error);
-  const router = useRouter();
+function ErrorComponent({ error }: { error: Error; reset: () => void }) {
+  const auth = isAuthorizationRequired(error);
+  const forbidden = httpStatus(error) === 403;
   useEffect(() => {
+    if (auth || forbidden) return;
+    console.error(error);
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
     reportClientEvent({
       domain: "client",
@@ -74,9 +75,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
       message: error.message.slice(0, 500) || "route error",
       route: window.location.pathname,
     });
-  }, [error]);
+    const timer = window.setTimeout(() => window.location.reload(), 8000);
+    return () => window.clearTimeout(timer);
+  }, [auth, error, forbidden]);
 
-  if (httpStatus(error) === 403) {
+  if (auth) return <AuthorizationRedirect />;
+  if (forbidden) {
     return (
       <CatalogMiss
         code="403"
@@ -87,60 +91,74 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <button
-            onClick={() => {
-              router.invalidate();
-              reset();
-            }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Try again
-          </button>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            Go home
-          </a>
-        </div>
-      </div>
-    </div>
+    <main className="maintain-screen">
+      <style>{MAINTAIN_CSS}</style>
+      <p className="maintain-screen__kicker">Обновление</p>
+      <h1>Сайт на минуту закрыт</h1>
+      <p className="maintain-screen__lead">Обновляем trenio.by. Подождите немного: страница откроется сама.</p>
+    </main>
   );
 }
+
+const MAINTAIN_CSS = `
+.maintain-screen {
+  position: fixed; inset: 0; z-index: 80; box-sizing: border-box;
+  width: 100%; height: 100%; min-height: 100dvh;
+  display: grid; place-items: center; align-content: center; justify-items: center;
+  margin: 0; text-align: center; color: #fff;
+  padding:
+    max(28px, env(safe-area-inset-top))
+    max(20px, env(safe-area-inset-right))
+    max(28px, env(safe-area-inset-bottom))
+    max(20px, env(safe-area-inset-left));
+  background:
+    radial-gradient(circle at calc(100% - 12px) 22px, #ffd166 0 36px, transparent 38px),
+    linear-gradient(145deg, #ff6a4a 0%, #f04b50 46%, #9b1d3a 100%);
+}
+.maintain-screen::before {
+  content: ""; position: fixed; inset: auto -8% -30% 40%; height: 70%;
+  border: 18px solid rgba(255, 255, 255, 0.16); border-radius: 50%; pointer-events: none;
+}
+.maintain-screen__kicker {
+  position: relative; display: inline-block; margin: 0 0 16px; padding: 6px 12px;
+  border-radius: 999px; background: rgba(255, 255, 255, 0.16); color: #fff;
+  font-size: 13px; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.maintain-screen h1 {
+  position: relative; margin: 0 auto 12px; max-width: 12ch; color: #fff;
+  font-size: clamp(32px, 4.4vw, 48px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05;
+}
+.maintain-screen__lead {
+  position: relative; margin: 0 auto; max-width: 36ch; color: rgba(255, 255, 255, 0.9); font-size: 16px; line-height: 1.5;
+}
+@media (max-width: 720px) {
+  .maintain-screen::before { inset: auto -46% -48% 18%; height: 70%; border-width: 14px; }
+}
+`;
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
   user: PublicUser | null;
   messaging: MessagingSummary;
   likeCounts: Record<string, number>;
+  /** `null` means the list was not loaded with the page, so the client fetches it. */
+  favoriteKeys: string[] | null;
 }>()({
   beforeLoad: async ({ location }) => {
     const [user, likeCounts] = await Promise.all([
       getSessionFn(),
       listPublicLikeCountsFn().then((result) => result.counts).catch(() => ({})),
     ]);
-    if (!user) return { user, messaging: EMPTY_MESSAGING, likeCounts };
+    if (!user) return { user, messaging: EMPTY_MESSAGING, likeCounts, favoriteKeys: null };
     const gate = accountGatePath(user);
     if (gate && !gateAllowsPath(location.pathname, gate)) {
       throw redirect({ to: gate });
     }
-    if (gate) return { user, messaging: EMPTY_MESSAGING, likeCounts };
-    try {
-      const messaging = await unreadCountFn({ data: {} });
-      return { user, messaging, likeCounts };
-    } catch {
-      // unreadCountFn already writes the failure. The root route stays in the client graph.
-      return { user, messaging: EMPTY_MESSAGING, likeCounts };
-    }
+    const [messaging, favoriteKeys] = await Promise.all([
+      unreadCountFn({ data: {} }).catch(() => EMPTY_MESSAGING),
+      listFavoritesFn().then((result) => result.keys).catch(() => null),
+    ]);
+    return { user, messaging, likeCounts, favoriteKeys };
   },
   head: () => ({
     meta: [
@@ -208,7 +226,7 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function RootComponent() {
-  const { queryClient, user, messaging, likeCounts } = Route.useRouteContext();
+  const { queryClient, user, messaging, likeCounts, favoriteKeys } = Route.useRouteContext();
   useEffect(() => {
     installClientLogReporter();
   }, []);
@@ -218,7 +236,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <FavoritesProvider userId={user?.id ?? null}>
+      <FavoritesProvider userId={user?.id ?? null} initialKeys={favoriteKeys}>
         <AccountLikesProvider
           userId={user?.id ?? null}
           enabled={Boolean(user && canPlaceAccountLike(user.roles))}

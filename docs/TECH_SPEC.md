@@ -334,6 +334,7 @@ IP берётся из `CF-Connecting-IP` или `X-Real-IP`. Если в зап
 | `public/icons/icon-192.png`, `icon-512.png` | Те же круглые PWA-иконки на весь квадрат |
 | `public/manifest.webmanifest`             | Имя, `theme_color`, `display: standalone`, иконки 192/512                                      |
 | `public/offline.html`                     | Страница без сети. Её показывает `sw.js`, если навигация не дошла до сервера                  |
+| `public/maintenance.html`                 | Полноэкранная страница обновления без ссылок. Край отдаёт её, когда процесс не отвечает. Тот же экран показывает сбой сборки страницы |
 | `public/images/categories/*-card.webp`    | Карточки «Категории спорта» на главной (~720×480 WebP)                                        |
 | `public/images/categories/*.webp`         | Featured image родительских категорий на `/categories/$slug` (~960×640 WebP)                    |
 | `public/images/popular/*.webp`            | Legacy thumbnails (заменены на `categories/`; можно удалить после проверки)                   |
