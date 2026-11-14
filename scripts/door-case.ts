@@ -43,7 +43,7 @@ async function seed() {
     profileId: profile.id,
     email,
     tokenHash: hashToken(`${profile.id}:${token}`),
-    expiresAt: new Date(Date.now() + 60 * 60_000),
+    expiresAt: new Date(Date.now() + 24 * 60 * 60_000),
   });
   emit({ code, token, email });
 }

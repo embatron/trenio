@@ -48,7 +48,10 @@ import { logCaught, maskPhone, writeLog } from "@/lib/log/logger";
 
 const PREVIEW_COOKIE = "trenio_trainer_preview";
 const EDIT_COOKIE = "trenio_trainer_edit";
+/** Preview and edit cookies on the short link. Not the letter button. */
 const LINK_MAX_AGE = 60 * 30;
+/** The mailbox button in «Ваш профиль». A newer letter retires the previous one. */
+const DOOR_MAIL_HOURS = 24;
 
 function requestOrigin() {
   const fallback = appOrigin();
@@ -654,7 +657,7 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
       profileId: row.id,
       email,
       tokenHash: hashToken(`${row.id}:${linkToken}`),
-      expiresAt: addMinutes(now, 60),
+      expiresAt: addMinutes(now, DOOR_MAIL_HOURS * 60),
     }).returning({ id: authDoorClaims.id });
     if (!created) {
       if (retiredIds.length > 0) {
@@ -673,7 +676,7 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
           avatarUrl: row.avatarPath,
           caption: "Ваш профиль",
         },
-        lines: ["Ссылка действует один час и сразу открывает вашу страницу."],
+        lines: ["Ссылка действует 24 часа и сразу открывает вашу страницу."],
         action: { href: link, label: "Открыть профиль" },
         note: "Если вы не запрашивали это письмо, просто удалите его.",
       });
@@ -691,6 +694,18 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
       logCaught("email", "email.send", error, { subject: email, target: row.slug });
       throw new AuthError("Письмо не отправилось. Попробуйте ещё раз.", "VALIDATION");
     }
+    if (retiredIds.length > 0) {
+      void writeLog({
+        level: "info",
+        domain: "email",
+        action: "email.send",
+        outcome: "success",
+        message: "Новое письмо погасило предыдущую ссылку на профиль.",
+        subject: email,
+        target: row.slug,
+        context: { retired: retiredIds.length },
+      });
+    }
     void writeLog({
       level: "info",
       domain: "email",
@@ -699,6 +714,7 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
       message: "Ссылка на профиль отправлена на почту.",
       subject: email,
       target: row.slug,
+      context: { hours: DOOR_MAIL_HOURS },
     });
     return { ok: true as const, message: "Ссылка уже отправлена.", email };
   });
@@ -860,9 +876,44 @@ export const confirmDoorEmailFn = createServerFn({ method: "POST" })
     throw new AuthError("Ссылка недействительна или устарела.", "INVALID_TOKEN");
   });
 
+type DoorMailFault = "missing" | "used" | "expired" | "owned" | "closed";
+
+function noteDoorMailFault(reason: DoorMailFault, slug: string | null, subject: string | null) {
+  const message = {
+    missing: "Ссылка из письма не найдена.",
+    used: "Ссылка из письма уже использована.",
+    expired: "Ссылка из письма просрочена.",
+    owned: "Ссылка из письма не открыла профиль: карточка уже привязана.",
+    closed: "Ссылка из письма не открыла профиль: аккаунт закрыт.",
+  }[reason];
+  void writeLog({
+    level: "warn",
+    domain: "account",
+    action: "account.claim",
+    outcome: "denied",
+    message,
+    subject,
+    target: slug,
+    context: { reason },
+  });
+}
+
+const doorMailSchema = z.object({
+  code: z.string().trim().min(1).max(80),
+  token: z.string().trim().min(1).max(500),
+});
+
 async function freshDoorClaim(code: string, token: string) {
-  const row = await doorByCode(code);
-  if (!row) return null;
+  const parsed = doorCodeSchema.safeParse(code);
+  if (!parsed.success) {
+    noteDoorMailFault("missing", null, null);
+    return null;
+  }
+  const row = await doorByCode(parsed.data);
+  if (!row) {
+    noteDoorMailFault("missing", null, null);
+    return null;
+  }
   const now = new Date();
   const [claim] = await getDb()
     .select()
@@ -871,40 +922,70 @@ async function freshDoorClaim(code: string, token: string) {
       and(
         eq(authDoorClaims.profileId, row.id),
         eq(authDoorClaims.tokenHash, hashToken(`${row.id}:${token}`)),
-        isNull(authDoorClaims.usedAt),
-        gt(authDoorClaims.expiresAt, now),
       ),
     )
     .limit(1);
-  if (!claim) return null;
+  if (!claim) {
+    noteDoorMailFault("missing", row.slug, null);
+    return null;
+  }
+  if (claim.usedAt) {
+    noteDoorMailFault("used", row.slug, claim.email);
+    return null;
+  }
+  if (claim.expiresAt.getTime() <= now.getTime()) {
+    noteDoorMailFault("expired", row.slug, claim.email);
+    return null;
+  }
+  if (row.ownerUserId) {
+    noteDoorMailFault("owned", row.slug, claim.email);
+    return null;
+  }
   return { row, claim };
 }
 
 export const peekTrainerMailFn = createServerFn({ method: "GET" })
-  .validator(z.object({ code: doorCodeSchema, token: z.string().trim().min(20).max(200) }))
+  .validator(doorMailSchema)
   .handler(async ({ data }) => {
     const found = await freshDoorClaim(data.code, data.token);
-    return found ? { ok: true as const } : null;
+    if (!found) return null;
+    void writeLog({
+      level: "info",
+      domain: "account",
+      action: "account.claim",
+      outcome: "success",
+      message: "Ссылка из письма ещё действует.",
+      subject: found.claim.email,
+      target: found.row.slug,
+    });
+    return { ok: true as const };
   });
 
 export const openTrainerMailFn = createServerFn({ method: "POST" })
-  .validator(z.object({ code: doorCodeSchema, token: z.string().trim().min(20).max(200) }))
+  .validator(doorMailSchema)
   .handler(async ({ data }) => {
     const found = await freshDoorClaim(data.code, data.token);
     if (!found) throw new AuthError("Ссылка уже не действует.", "INVALID_TOKEN");
     const { row, claim } = found;
-    if (row.ownerUserId) throw new AuthError("Ссылка уже не действует.", "VALIDATION");
+    if (row.ownerUserId) {
+      noteDoorMailFault("owned", row.slug, claim.email);
+      throw new AuthError("Ссылка уже не действует.", "VALIDATION");
+    }
     const now = new Date();
     const [spent] = await getDb()
       .update(authDoorClaims)
       .set({ usedAt: now })
       .where(and(eq(authDoorClaims.id, claim.id), isNull(authDoorClaims.usedAt)))
       .returning({ id: authDoorClaims.id });
-    if (!spent) throw new AuthError("Ссылка уже не действует.", "INVALID_TOKEN");
+    if (!spent) {
+      noteDoorMailFault("used", row.slug, claim.email);
+      throw new AuthError("Ссылка уже не действует.", "INVALID_TOKEN");
+    }
 
     const email = claim.email;
     let user = await findUserByEmail(email);
     if (user && (user.status === "deleted" || user.status === "suspended")) {
+      noteDoorMailFault("closed", row.slug, email);
       throw new AuthError("Ссылка уже не действует.", "VALIDATION");
     }
     if (!user) {

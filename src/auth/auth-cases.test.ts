@@ -920,7 +920,7 @@ describe("auth cases", { concurrency: false }, () => {
     createdProfiles.push(profile.id);
     const { authDoorClaims } = await import("@/db/schema");
     const raw = `door-token-${stamp}-abcdefghij`;
-    const expiresAt = new Date(Date.now() + 60 * 60_000);
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60_000);
     await db.insert(authDoorClaims).values({
       profileId: profile.id,
       email: email("door"),
@@ -933,8 +933,8 @@ describe("auth cases", { concurrency: false }, () => {
       .where(eq(authDoorClaims.profileId, profile.id))
       .limit(1);
     assert.equal(stored?.usedAt, null);
-    assert.ok(stored && stored.expiresAt.getTime() - Date.now() < 61 * 60_000);
-    assert.ok(stored && stored.expiresAt.getTime() - Date.now() > 50 * 60_000);
+    assert.ok(stored && stored.expiresAt.getTime() - Date.now() < 24 * 60 * 60_000 + 60_000);
+    assert.ok(stored && stored.expiresAt.getTime() - Date.now() > 23 * 60 * 60_000);
     assert.equal(stored?.tokenHash, hashToken(`${profile.id}:${raw}`));
     const source = await import("node:fs/promises").then((fs) =>
       fs.readFile(new URL("../lib/catalog/trainer-magic.ts", import.meta.url), "utf8"),
@@ -943,6 +943,8 @@ describe("auth cases", { concurrency: false }, () => {
       source.indexOf("export const confirmDoorEmailFn"),
       source.indexOf("async function freshDoorClaim"),
     );
+    assert.match(source, /const DOOR_MAIL_HOURS = 24/);
+    assert.match(source, /Ссылка действует 24 часа и сразу открывает вашу страницу/);
     assert.match(handler, /INVALID_TOKEN/);
     assert.equal(handler.includes("hashToken"), false);
   });

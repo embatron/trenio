@@ -19,6 +19,7 @@ Import, a server copy, the short-link visit, and the password step do not publis
 
 - Save and sync an imported profile as `draft`.
 - Publish the draft when the confirmation letter is opened, Google or Yandex binds the card, or the SMS code on the short link is accepted.
+- Keep the mailbox letter alive for 24 hours. A newer letter retires the previous unused one. A dead open is a warn row on `account.claim` (`missing`, `used`, `expired`, `owned`, or `closed`) and stores no link.
 - Leave the account window on the short link until the card has an owner.
 - Let the trainer set the page to hidden in the cabinet.
 
