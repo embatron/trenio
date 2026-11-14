@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 
 import { CatalogEmpty } from "@/components/catalog-empty";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
@@ -224,6 +224,7 @@ export function CatalogMapScreen({
   const queryRef = useRef<Parameters<typeof listMapAreaFn>[0]["data"] | null>(null);
   const generationRef = useRef(0);
   const nextCursorRef = useRef<number | null>(null);
+  const looseScrollRef = useRef(false);
   const unlocatedNextRef = useRef<number | null>(null);
   const loadingRef = useRef(false);
   const loadingMoreRef = useRef(false);
@@ -386,6 +387,7 @@ export function CatalogMapScreen({
     if (!frame) return;
     const generation = generationRef.current + 1;
     generationRef.current = generation;
+    looseScrollRef.current = false;
     loadingRef.current = true;
     setLoading(true);
     const payload = {
@@ -485,6 +487,60 @@ export function CatalogMapScreen({
     observer.observe(node);
     return () => observer.disconnect();
   }, [areaReady, rows.length, nextCursor, unlocated.length, unlocatedNext]);
+
+  useEffect(() => {
+    if (!looseScrollRef.current || nextCursor != null || unlocatedTotal === 0) return;
+    const target = document.getElementById("map-unlocated");
+    if (!target) return;
+    looseScrollRef.current = false;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+    target.scrollIntoView({ behavior: motion, block: "start" });
+  }, [nextCursor, unlocatedTotal, unlocated.length]);
+
+  const scrollToUnlocated = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+    if (nextCursorRef.current == null) {
+      document.getElementById("map-unlocated")?.scrollIntoView({ behavior: motion, block: "start" });
+      return;
+    }
+    const payload = queryRef.current;
+    if (!payload) return;
+    looseScrollRef.current = true;
+    const generation = generationRef.current;
+    const pull = async () => {
+      let cursor = nextCursorRef.current;
+      while (cursor != null && looseScrollRef.current && generationRef.current === generation) {
+        while ((loadingRef.current || loadingMoreRef.current) && generationRef.current === generation) {
+          await new Promise((resolve) => window.setTimeout(resolve, 40));
+        }
+        if (!looseScrollRef.current || generationRef.current !== generation) return;
+        cursor = nextCursorRef.current;
+        if (cursor == null) return;
+        loadingMoreRef.current = true;
+        setLoadingMore(true);
+        try {
+          const area = await listMapAreaFn({ data: { ...payload, cursor, includeFeatures: false, list: "frame" } });
+          if (generationRef.current !== generation) return;
+          setRows((current) => {
+            const seen = new Set(current.map((trainer) => trainer.slug));
+            return [...current, ...area.trainers.filter((trainer) => !seen.has(trainer.slug))];
+          });
+          nextCursorRef.current = area.nextCursor;
+          setNextCursor(area.nextCursor);
+          cursor = area.nextCursor;
+        } catch {
+          if (generationRef.current === generation) setLoadError(true);
+          looseScrollRef.current = false;
+          return;
+        } finally {
+          loadingMoreRef.current = false;
+          setLoadingMore(false);
+        }
+      }
+    };
+    void pull();
+  };
 
   const highlightKeys = useMemo(() => {
     if (!cardSlug) return [];
@@ -840,13 +896,21 @@ export function CatalogMapScreen({
                 />
               </div>
               <div className="map-stage__list">
-                {!areaReady || total > 0 || unlocatedTotal === 0 ? (
-                  <div className="map-count">
-                    {areaReady ? (
-                      <>Найдено <b>{total}</b> {pluralRu(total, "тренер", "тренера", "тренеров")}</>
-                    ) : mode === "search" ? "Ищем тренеров" : "Загружаем тренеров в этом кадре"}
-                  </div>
-                ) : null}
+                <div className="map-count">
+                  {areaReady ? (
+                    <>
+                      Найдено <b>{total + unlocatedTotal}</b> {pluralRu(total + unlocatedTotal, "тренер", "тренера", "тренеров")}
+                      {unlocatedTotal > 0 ? (
+                        <>
+                          {" "}
+                          <a href="#map-unlocated" className="map-count__loose" onClick={scrollToUnlocated}>
+                            ({unlocatedTotal} без точного адреса)
+                          </a>
+                        </>
+                      ) : null}
+                    </>
+                  ) : mode === "search" ? "Ищем тренеров" : "Загружаем тренеров в этом кадре"}
+                </div>
                 {!areaReady ? (
                   <div className="map-people" aria-hidden="true">
                     {Array.from({ length: 6 }, (_, index) => <div key={index} className="map-skeleton" />)}
@@ -888,7 +952,7 @@ export function CatalogMapScreen({
                     ) : null}
                     {nextCursor == null && unlocatedTotal > 0 ? (
                       <>
-                        <h2 className="map-unlocated">
+                        <h2 id="map-unlocated" className="map-unlocated">
                           У <b>{unlocatedTotal}</b> {pluralRu(unlocatedTotal, "адреса", "адресов", "адресов")} не указан точный адрес
                         </h2>
                         <MapPeopleWindow count={unlocated.length} pending={loadingMore}>
@@ -998,7 +1062,9 @@ const PAGE_CSS = `
 .map-stage__map, .map-stage__list { min-width: 0; }
 .map-count { margin: 0 0 12px; font-size: 15px; color: var(--muted); font-weight: var(--fw-ui); }
 .map-count b { color: var(--dark); font-weight: var(--fw-title); }
-.map-unlocated { margin: 22px 0 12px; font-size: 15px; line-height: 1.35; letter-spacing: 0; color: var(--muted); font-weight: var(--fw-ui); }
+.map-count__loose { color: inherit; font-weight: var(--fw-body); text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.map-count__loose:hover { color: var(--primary); }
+.map-unlocated { margin: 22px 0 12px; font-size: 15px; line-height: 1.35; letter-spacing: 0; color: var(--muted); font-weight: var(--fw-ui); scroll-margin-top: calc(var(--header-clearance) + 12px); }
 .map-unlocated b { color: var(--dark); font-weight: var(--fw-title); }
 .map-people { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--layout-gap); }
 .map-people-frame { position: relative; }
