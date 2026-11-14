@@ -6,7 +6,7 @@ import type { MapAreaInput } from "@/lib/catalog/map-area-input";
 import { trainerProfiles, trainerReviews } from "@/db/schema";
 import type { TrainerAudience, TrainerFormat } from "@/lib/catalog/published-trainers";
 import { trainerNameParts } from "@/lib/catalog/trainer-name";
-import { cityCatalogByName, listCityCatalogPages } from "@/lib/catalog/city-pages";
+import { mapConsideredCity } from "@/lib/catalog/map-city";
 import { isSpecificAddress, placesFromProfile, SPECIFIC_ADDRESS_SQL } from "@/lib/geo/schemas";
 import { MAP_CLUSTER_CAP, MAP_PAGE_SIZE, MAP_PIN_CAP, MAP_TOOLTIP_CAP, mapClusterStep } from "@/lib/catalog/map-limits";
 
@@ -78,6 +78,10 @@ export type MapArea = {
   features: MapAreaFeature[];
   priceMin: number;
   priceMax: number;
+  unlocatedCity: string | null;
+  unlocatedTotal: number;
+  unlocated: MapTrainer[];
+  unlocatedNextCursor: number | null;
 };
 
 type AreaFilters = {
@@ -197,25 +201,10 @@ function boundsWhere(bounds: AreaBounds | null): SQL {
   return sql`${lat} AND ${lng}`;
 }
 
-function cityCenterValues(): SQL {
-  const rows = listCityCatalogPages().map((city) => sql`(${foldCity(city.name)}, ${city.lat}::double precision, ${city.lng}::double precision)`);
-  return sql.join(rows, sql`, `);
-}
-
 function placesSql(filters: AreaFilters, bounds: AreaBounds | null, applyPrice: boolean): SQL {
   const city = foldCity(filters.city);
   const citySql = city
     ? sql`lower(replace(city, 'ё', 'е')) = ${city}`
-    : sql`true`;
-  const profileCitySql = city
-    ? sql`lower(replace(btrim(tp.city), 'ё', 'е')) = ${city}`
-    : sql`true`;
-  const centerBounds = bounds
-    ? bounds.world
-      ? sql`centers.lat BETWEEN ${bounds.south} AND ${bounds.north}`
-      : bounds.wraps
-        ? sql`centers.lat BETWEEN ${bounds.south} AND ${bounds.north} AND (centers.lng >= ${bounds.west} OR centers.lng <= ${bounds.east})`
-        : sql`centers.lat BETWEEN ${bounds.south} AND ${bounds.north} AND centers.lng BETWEEN ${bounds.west} AND ${bounds.east}`
     : sql`true`;
   return sql`
     WITH mapped AS (
@@ -266,29 +255,20 @@ function placesSql(filters: AreaFilters, bounds: AreaBounds | null, applyPrice: 
       AND ${boundsWhere(bounds)}
     )
     SELECT slug, price_from, lat, lng, city, address FROM mapped
-    UNION ALL
-    SELECT
-      tp.slug,
-      coalesce(tp.price_from, 0)::int AS price_from,
-      centers.lat,
-      centers.lng,
-      btrim(tp.city) AS city,
-      '' AS address
-    FROM trainer_profiles tp
-    JOIN (VALUES ${cityCenterValues()}) AS centers(name, lat, lng)
-      ON lower(replace(btrim(tp.city), 'ё', 'е')) = centers.name
-    WHERE ${profileWhere(filters, applyPrice)}
-      AND tp.slug NOT IN (SELECT slug FROM mapped)
-      AND NOT EXISTS (
-        SELECT 1
-        FROM jsonb_array_elements(
-          CASE WHEN jsonb_typeof(tp.training_places) = 'array' THEN tp.training_places ELSE '[]'::jsonb END
-        ) AS place
-        WHERE coalesce(place->>'address', '') ~* ${SPECIFIC_ADDRESS_SQL}
-      )
-      AND coalesce(tp.address, '') !~* ${SPECIFIC_ADDRESS_SQL}
-      AND ${profileCitySql}
-      AND ${centerBounds}
+  `;
+}
+
+function withoutSpecificAddress(city: string): SQL {
+  return sql`
+    lower(replace(btrim(tp.city), 'ё', 'е')) = ${foldCity(city)}
+    AND NOT EXISTS (
+      SELECT 1
+      FROM jsonb_array_elements(
+        CASE WHEN jsonb_typeof(tp.training_places) = 'array' THEN tp.training_places ELSE '[]'::jsonb END
+      ) AS place
+      WHERE coalesce(place->>'address', '') ~* ${SPECIFIC_ADDRESS_SQL}
+    )
+    AND coalesce(tp.address, '') !~* ${SPECIFIC_ADDRESS_SQL}
   `;
 }
 
@@ -340,7 +320,7 @@ function toMapTrainer(row: {
   addressLat: number | null;
   addressLng: number | null;
   geocodeStatus: string | null;
-}): MapTrainer | null {
+}, places?: MapTrainerPlace[]): MapTrainer | null {
   const stored = placesFromProfile(row);
   const specific = stored.flatMap((place) => {
     if (!isSpecificAddress(place.address)) return [];
@@ -348,16 +328,8 @@ function toMapTrainer(row: {
     if (!Number.isFinite(place.lat) || !Number.isFinite(place.lng)) return [];
     return [{ city: place.city, address: place.address, lat: place.lat, lng: place.lng }];
   });
-  const hasSpecific = specific.length > 0
-    || stored.some((place) => isSpecificAddress(place.address))
-    || isSpecificAddress(row.address ?? "");
-  const center = cityCatalogByName(row.city);
-  const places = specific.length > 0
-    ? specific
-    : !hasSpecific && center
-      ? [{ city: row.city.trim(), address: "", lat: center.lat, lng: center.lng }]
-      : [];
-  if (places.length === 0) return null;
+  const located = places ?? specific;
+  if (places === undefined && located.length === 0) return null;
   const sports = (row.sports ?? []).flatMap((sport) => {
     const slug = sport?.slug?.trim() ?? "";
     if (!slug) return [];
@@ -384,7 +356,7 @@ function toMapTrainer(row: {
     tags: sports.map((sport) => sport.label),
     rating: "0",
     reviews: 0,
-    places,
+    places: located,
   };
 }
 
@@ -395,7 +367,7 @@ function inFrame(lat: number, lng: number, bounds: AreaBounds) {
   return lng >= bounds.west && lng <= bounds.east;
 }
 
-async function loadTrainers(slugs: string[], bounds: AreaBounds, cityName: string) {
+async function loadTrainers(slugs: string[], bounds: AreaBounds | null, cityName: string) {
   if (slugs.length === 0) return [];
   const db = getDb();
   const rows = await db
@@ -423,6 +395,11 @@ async function loadTrainers(slugs: string[], bounds: AreaBounds, cityName: strin
   const city = foldCity(cityName);
   const bySlug = new Map<string, MapTrainer>();
   for (const row of rows) {
+    if (!bounds) {
+      const trainer = toMapTrainer(row, []);
+      if (trainer) bySlug.set(trainer.slug, trainer);
+      continue;
+    }
     const trainer = toMapTrainer(row);
     if (!trainer) continue;
     const places = trainer.places.filter((place) => {
@@ -586,6 +563,29 @@ async function clusterFeatures(filters: AreaFilters, bounds: AreaBounds, zoom: n
   });
 }
 
+async function unlocatedPage(filters: AreaFilters, city: string | null, cursor: number) {
+  if (!city) return { city: null, total: 0, trainers: [] as MapTrainer[], next: null as number | null };
+  const where = sql`${profileWhere(filters, true)} AND ${withoutSpecificAddress(city)}`;
+  const [countRows, pageRows] = await Promise.all([
+    queryRows(sql`SELECT count(*)::int AS total FROM trainer_profiles tp WHERE ${where}`),
+    queryRows(sql`
+      SELECT tp.slug
+      FROM trainer_profiles tp
+      WHERE ${where}
+      ORDER BY tp.last_name, tp.first_name, tp.slug
+      LIMIT ${MAP_PAGE_SIZE} OFFSET ${cursor}
+    `),
+  ]);
+  const total = num(countRows[0]?.total);
+  const slugs = pageRows.flatMap((row) => (typeof row.slug === "string" ? [row.slug] : []));
+  return {
+    city,
+    total,
+    trainers: await loadTrainers(slugs, null, city),
+    next: cursor + slugs.length < total ? cursor + MAP_PAGE_SIZE : null,
+  };
+}
+
 export async function loadMapArea(input: MapAreaInput): Promise<MapArea> {
   const bounds = normalizeBounds(input.south, input.west, input.north, input.east);
   const filters: AreaFilters = {
@@ -598,6 +598,24 @@ export async function loadMapArea(input: MapAreaInput): Promise<MapArea> {
     priceMax: input.priceMax ?? null,
   };
   const cursor = input.cursor ?? 0;
+  const considered = mapConsideredCity(filters.city, bounds);
+  if (input.list === "unlocated") {
+    const page = await unlocatedPage(filters, considered, cursor);
+    return {
+      total: 0,
+      addressCount: 0,
+      matched: 0,
+      nextCursor: null,
+      trainers: [],
+      features: [],
+      priceMin: 0,
+      priceMax: 1,
+      unlocatedCity: page.city,
+      unlocatedTotal: page.total,
+      unlocated: page.trainers,
+      unlocatedNextCursor: page.next,
+    };
+  }
   const includeFeatures = input.includeFeatures !== false && cursor === 0;
   const spanFilters: AreaFilters = { ...filters, audience: null, formats: [], minExperience: null, priceMin: null, priceMax: null };
   const [spanRows, countRows] = await Promise.all([
@@ -646,6 +664,7 @@ export async function loadMapArea(input: MapAreaInput): Promise<MapArea> {
   `);
   const pageSlugs = pageRows.flatMap((row) => (typeof row.slug === "string" ? [row.slug] : []));
   const trainers = await loadTrainers(pageSlugs, bounds, filters.city);
+  const loose = cursor === 0 ? await unlocatedPage(filters, considered, 0) : null;
   let features: MapAreaFeature[] = [];
   if (includeFeatures) {
     features = points > MAP_PIN_CAP
@@ -663,5 +682,9 @@ export async function loadMapArea(input: MapAreaInput): Promise<MapArea> {
     features,
     priceMin,
     priceMax: rawMax > priceMin ? rawMax : priceMin + 1,
+    unlocatedCity: loose?.city ?? null,
+    unlocatedTotal: loose?.total ?? 0,
+    unlocated: loose?.trainers ?? [],
+    unlocatedNextCursor: loose?.next ?? null,
   };
 }

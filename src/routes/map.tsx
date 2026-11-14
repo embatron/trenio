@@ -202,6 +202,9 @@ export function CatalogMapScreen({
   const [total, setTotal] = useState(0);
   const [matched, setMatched] = useState<number | null>(null);
   const [nextCursor, setNextCursor] = useState<number | null>(null);
+  const [unlocated, setUnlocated] = useState<MapTrainer[]>([]);
+  const [unlocatedTotal, setUnlocatedTotal] = useState(0);
+  const [unlocatedNext, setUnlocatedNext] = useState<number | null>(null);
   const [areaReady, setAreaReady] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -221,9 +224,11 @@ export function CatalogMapScreen({
   const queryRef = useRef<Parameters<typeof listMapAreaFn>[0]["data"] | null>(null);
   const generationRef = useRef(0);
   const nextCursorRef = useRef<number | null>(null);
+  const unlocatedNextRef = useRef<number | null>(null);
   const loadingRef = useRef(false);
   const loadingMoreRef = useRef(false);
   nextCursorRef.current = nextCursor;
+  unlocatedNextRef.current = unlocatedNext;
   loadingRef.current = loading;
 
   const onFrame = (next: CatalogMapBounds) => {
@@ -409,6 +414,9 @@ export function CatalogMapScreen({
           setTotal(area.total);
           setMatched(area.matched);
           setNextCursor(area.nextCursor);
+          setUnlocated(area.unlocated);
+          setUnlocatedTotal(area.unlocatedTotal);
+          setUnlocatedNext(area.unlocatedNextCursor);
           setPriceSpan((current) => (
             current.min === area.priceMin && current.max === area.priceMax
               ? current
@@ -420,6 +428,9 @@ export function CatalogMapScreen({
         .catch(() => {
           if (generationRef.current !== generation) return;
           setLoadError(true);
+          setUnlocated([]);
+          setUnlocatedTotal(0);
+          setUnlocatedNext(null);
           setAreaReady(true);
         })
         .finally(() => {
@@ -437,15 +448,26 @@ export function CatalogMapScreen({
     if (!node) return;
     const observer = new IntersectionObserver((entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
-      const cursor = nextCursorRef.current;
       const payload = queryRef.current;
-      if (cursor == null || !payload || loadingRef.current || loadingMoreRef.current) return;
+      const frameCursor = nextCursorRef.current;
+      const looseCursor = unlocatedNextRef.current;
+      const list = frameCursor != null ? "frame" as const : looseCursor != null ? "unlocated" as const : null;
+      const cursor = list === "frame" ? frameCursor : looseCursor;
+      if (list == null || cursor == null || !payload || loadingRef.current || loadingMoreRef.current) return;
       const generation = generationRef.current;
       loadingMoreRef.current = true;
       setLoadingMore(true);
-      void listMapAreaFn({ data: { ...payload, cursor, includeFeatures: false } })
+      void listMapAreaFn({ data: { ...payload, cursor, includeFeatures: false, list } })
         .then((area) => {
           if (generationRef.current !== generation) return;
+          if (list === "unlocated") {
+            setUnlocated((current) => {
+              const seen = new Set(current.map((trainer) => trainer.slug));
+              return [...current, ...area.unlocated.filter((trainer) => !seen.has(trainer.slug))];
+            });
+            setUnlocatedNext(area.unlocatedNextCursor);
+            return;
+          }
           setRows((current) => {
             const seen = new Set(current.map((trainer) => trainer.slug));
             return [...current, ...area.trainers.filter((trainer) => !seen.has(trainer.slug))];
@@ -462,7 +484,7 @@ export function CatalogMapScreen({
     }, { rootMargin: "280px" });
     observer.observe(node);
     return () => observer.disconnect();
-  }, [areaReady, rows.length, nextCursor]);
+  }, [areaReady, rows.length, nextCursor, unlocated.length, unlocatedNext]);
 
   const highlightKeys = useMemo(() => {
     if (!cardSlug) return [];
@@ -808,7 +830,7 @@ export function CatalogMapScreen({
                   locating={locating}
                   onLocate={locate}
                   onBounds={onFrame}
-                  showEmpty={areaReady && !loading && features.length === 0}
+                  showEmpty={areaReady && !loading && features.length === 0 && unlocatedTotal === 0}
                   loading={loading && features.length > 0}
                   empty={(
                     <div>
@@ -818,16 +840,18 @@ export function CatalogMapScreen({
                 />
               </div>
               <div className="map-stage__list">
-                <div className="map-count">
-                  {areaReady ? (
-                    <>Найдено <b>{total}</b> {pluralRu(total, "тренер", "тренера", "тренеров")}</>
-                  ) : mode === "search" ? "Ищем тренеров" : "Загружаем тренеров в этом кадре"}
-                </div>
+                {!areaReady || total > 0 || unlocatedTotal === 0 ? (
+                  <div className="map-count">
+                    {areaReady ? (
+                      <>Найдено <b>{total}</b> {pluralRu(total, "тренер", "тренера", "тренеров")}</>
+                    ) : mode === "search" ? "Ищем тренеров" : "Загружаем тренеров в этом кадре"}
+                  </div>
+                ) : null}
                 {!areaReady ? (
                   <div className="map-people" aria-hidden="true">
                     {Array.from({ length: 6 }, (_, index) => <div key={index} className="map-skeleton" />)}
                   </div>
-                ) : rows.length === 0 ? (
+                ) : rows.length === 0 && unlocatedTotal === 0 ? (
                   loadError ? (
                     <div className="cat-empty">
                       <h3>Не удалось загрузить тренеров</h3>
@@ -838,29 +862,60 @@ export function CatalogMapScreen({
                   )
                 ) : (
                   <>
-                    <MapPeopleWindow count={rows.length} pending={loading}>
-                      {(start, end) => rows.slice(start, end).map((trainer, offset) => {
-                        const index = start + offset;
-                        const settled = seenPeopleRef.current.has(trainer.slug);
-                        if (!settled) seenPeopleRef.current.add(trainer.slug);
-                        const fromSport = selectedSports.length === 1 && selectedSports[0].level === 2
-                          ? selectedSports[0].slug
-                          : undefined;
-                        return (
-                          <MapListedCard
-                            key={trainer.slug}
-                            trainer={trainer}
-                            marked={pinSlugs.includes(trainer.slug)}
-                            settled={settled}
-                            delay={`${Math.min(index, 11) * 40}ms`}
-                            city={cardCity(trainer)}
-                            onHover={setCardSlug}
-                            fromSport={fromSport}
-                          />
-                        );
-                      })}
-                    </MapPeopleWindow>
-                    {nextCursor != null ? <div ref={sentinelRef} className="map-sentinel" /> : null}
+                    {rows.length > 0 ? (
+                      <MapPeopleWindow count={rows.length} pending={loading}>
+                        {(start, end) => rows.slice(start, end).map((trainer, offset) => {
+                          const index = start + offset;
+                          const settled = seenPeopleRef.current.has(trainer.slug);
+                          if (!settled) seenPeopleRef.current.add(trainer.slug);
+                          const fromSport = selectedSports.length === 1 && selectedSports[0].level === 2
+                            ? selectedSports[0].slug
+                            : undefined;
+                          return (
+                            <MapListedCard
+                              key={trainer.slug}
+                              trainer={trainer}
+                              marked={pinSlugs.includes(trainer.slug)}
+                              settled={settled}
+                              delay={`${Math.min(index, 11) * 40}ms`}
+                              city={cardCity(trainer)}
+                              onHover={setCardSlug}
+                              fromSport={fromSport}
+                            />
+                          );
+                        })}
+                      </MapPeopleWindow>
+                    ) : null}
+                    {nextCursor == null && unlocatedTotal > 0 ? (
+                      <>
+                        <h2 className="map-unlocated">
+                          У <b>{unlocatedTotal}</b> {pluralRu(unlocatedTotal, "адреса", "адресов", "адресов")} не указан точный адрес
+                        </h2>
+                        <MapPeopleWindow count={unlocated.length} pending={loadingMore}>
+                          {(start, end) => unlocated.slice(start, end).map((trainer, offset) => {
+                            const index = start + offset;
+                            const settled = seenPeopleRef.current.has(trainer.slug);
+                            if (!settled) seenPeopleRef.current.add(trainer.slug);
+                            const fromSport = selectedSports.length === 1 && selectedSports[0].level === 2
+                              ? selectedSports[0].slug
+                              : undefined;
+                            return (
+                              <MapListedCard
+                                key={trainer.slug}
+                                trainer={trainer}
+                                marked={false}
+                                settled={settled}
+                                delay={`${Math.min(index, 11) * 40}ms`}
+                                city={cardCity(trainer)}
+                                onHover={setCardSlug}
+                                fromSport={fromSport}
+                              />
+                            );
+                          })}
+                        </MapPeopleWindow>
+                      </>
+                    ) : null}
+                    {nextCursor != null || unlocatedNext != null ? <div ref={sentinelRef} className="map-sentinel" /> : null}
                     {loadingMore ? <p className="map-loading">Подгружаем ещё</p> : null}
                   </>
                 )}
@@ -943,6 +998,8 @@ const PAGE_CSS = `
 .map-stage__map, .map-stage__list { min-width: 0; }
 .map-count { margin: 0 0 12px; font-size: 15px; color: var(--muted); font-weight: var(--fw-ui); }
 .map-count b { color: var(--dark); font-weight: var(--fw-title); }
+.map-unlocated { margin: 22px 0 12px; font-size: 15px; line-height: 1.35; letter-spacing: 0; color: var(--muted); font-weight: var(--fw-ui); }
+.map-unlocated b { color: var(--dark); font-weight: var(--fw-title); }
 .map-people { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--layout-gap); }
 .map-people-frame { position: relative; }
 .map-people-frame > .map-people { position: absolute; top: 0; left: 0; right: 0; }

@@ -15,6 +15,7 @@ export const areaSchema = z.object({
   priceMax: z.number().finite().min(0).max(1_000_000).nullable().optional(),
   cursor: z.number().int().min(0).max(100_000).optional(),
   includeFeatures: z.boolean().optional(),
+  list: z.enum(["frame", "unlocated"]).optional(),
 });
 
 export type MapAreaInput = z.infer<typeof areaSchema>;

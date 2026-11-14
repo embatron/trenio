@@ -10,7 +10,6 @@ import { assertStaff } from "@/lib/admin/access";
 import { AuthError } from "@/lib/auth/errors";
 import { editorHtml } from "@/lib/catalog/review-html";
 import { writeLog } from "@/lib/log/logger";
-import { cityCatalogByName } from "@/lib/catalog/city-pages";
 import { addressQueryReady } from "@/lib/geo/normalize";
 import { mirrorTrainingPlace, resolveTrainingPlaces, suggestCachedOrRemote } from "@/lib/geo/resolve";
 import {
@@ -22,20 +21,6 @@ import {
   type AddressSuggestion,
   type TrainerPlace,
 } from "@/lib/geo/schemas";
-
-function cityCenterPlace(city: string): TrainerPlace[] {
-  const name = city.trim();
-  if (!name) return [];
-  const center = cityCatalogByName(name);
-  return [{
-    city: name,
-    district: "",
-    address: "",
-    lat: center?.lat ?? null,
-    lng: center?.lng ?? null,
-    geocodeStatus: center ? "ok" : null,
-  }];
-}
 
 function toSuggestions(hits: AddressSuggestion[]): AddressSuggestion[] {
   return hits.filter((hit) => hit.displayName && hit.lat != null && hit.lng != null).slice(0, 5);
@@ -98,9 +83,14 @@ export const getTrainerAddressFn = createServerFn({ method: "GET" })
       .limit(1);
     const stored = placesFromProfile(row ?? {});
     const specific = stored.filter((place) => isSpecificAddress(place.address));
+    const cityName = (row?.city ?? "").trim();
     const shown = specific.length > 0
       ? specific
-      : cityCenterPlace((row?.city ?? "").trim() || stored.find((place) => place.city.trim())?.city || "");
+      : stored.length > 0
+        ? stored
+        : cityName
+          ? [{ city: cityName, district: "", address: "", lat: null, lng: null, geocodeStatus: null }]
+          : [];
     const places = shown.map((place) => {
       const mapped = place.geocodeStatus === "ok" && place.lat != null && place.lng != null;
       return {
