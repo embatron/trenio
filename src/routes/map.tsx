@@ -902,10 +902,11 @@ export function CatalogMapScreen({
                       Найдено <b>{total + unlocatedTotal}</b> {pluralRu(total + unlocatedTotal, "тренер", "тренера", "тренеров")}
                       {unlocatedTotal > 0 ? (
                         <>
-                          {" "}
+                          {" ("}
                           <a href="#map-unlocated" className="map-count__loose" onClick={scrollToUnlocated}>
-                            ({unlocatedTotal} без точного адреса)
+                            {unlocatedTotal} без точного адреса
                           </a>
+                          {")"}
                         </>
                       ) : null}
                     </>
