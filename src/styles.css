@@ -370,7 +370,7 @@ html.is-staff-layout {
 .trainer-card__save svg,
 .trainer-card__write svg,
 .trainer-card__share svg {
-  width: 30px; height: 30px; padding: 9px; box-sizing: border-box; border-radius: 50%;
+  width: 31px; height: 31px; padding: 9px; box-sizing: border-box; border-radius: 50%;
   background: rgba(255, 255, 255, 0.82); box-shadow: 0 4px 12px rgba(var(--dark-rgb), 0.08);
   stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round;
   transition: background 0.18s ease, box-shadow 0.18s ease;
@@ -437,7 +437,7 @@ html.is-staff-layout {
     100% { opacity: 0; transform: translate(-50%, 0); }
   }
 }
-.trainer-card__body { display: flex; flex-direction: column; gap: 8px; padding: 15px 16px 17px; }
+.trainer-card__body { display: flex; flex-direction: column; gap: 8px; padding: 16px 16px 18px; }
 .trainer-card__head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
 .trainer-name { display: flex; flex-direction: column; align-items: flex-start; gap: 0; min-width: 0; max-width: 100%; }
 .trainer-name__line { display: block; min-width: 0; max-width: 100%; overflow: visible; text-overflow: clip; white-space: normal; overflow-wrap: anywhere; }
@@ -456,7 +456,39 @@ html.is-staff-layout {
 .trainer-card__rating--empty { color: var(--muted); }
 .trainer-card__rating--empty svg { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); }
 .trainer-card__sport { margin: 0; color: var(--muted); font-size: var(--fs-caption); line-height: 1.35; font-weight: var(--fw-body); }
-.trainer-card__footer { display: flex; align-items: center; justify-content: flex-start; gap: 8px; margin-top: 2px; padding-top: 11px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.trainer-card__footer { display: flex; align-items: center; justify-content: flex-start; gap: 8px; margin-top: 2px; padding-top: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+/* Catalog lists only. The public trainer page keeps the sizes above. */
+.trainer-grid .trainer-card__like svg,
+.trainer-grid .trainer-card__save svg,
+.trainer-grid .trainer-card__write svg,
+.trainer-grid .trainer-card__share svg,
+.cat-grid .trainer-card__like svg,
+.cat-grid .trainer-card__save svg,
+.cat-grid .trainer-card__write svg,
+.cat-grid .trainer-card__share svg,
+.favorites-grid .trainer-card__like svg,
+.favorites-grid .trainer-card__save svg,
+.favorites-grid .trainer-card__write svg,
+.favorites-grid .trainer-card__share svg,
+.sr-grid .trainer-card__like svg,
+.sr-grid .trainer-card__save svg,
+.sr-grid .trainer-card__write svg,
+.sr-grid .trainer-card__share svg {
+  width: 30px;
+  height: 30px;
+}
+.trainer-grid .trainer-card__body,
+.cat-grid .trainer-card__body,
+.favorites-grid .trainer-card__body,
+.sr-grid .trainer-card__body {
+  padding: 15px 16px 17px;
+}
+.trainer-grid .trainer-card__footer,
+.cat-grid .trainer-card__footer,
+.favorites-grid .trainer-card__footer,
+.sr-grid .trainer-card__footer {
+  padding-top: 11px;
+}
 .trainer-card__location { display: inline-flex; align-items: center; gap: 5px; min-width: 0; max-width: 100%; color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); }
 .trainer-card__location svg { flex: 0 0 auto; width: 13px; height: 13px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .trainer-card__location span { overflow: visible; text-overflow: clip; white-space: normal; overflow-wrap: break-word; }
@@ -661,7 +693,11 @@ input.is-locked {
   .sr-grid .trainer-card__like svg,
   .sr-grid .trainer-card__save svg,
   .sr-grid .trainer-card__write svg,
-  .sr-grid .trainer-card__share svg,
+  .sr-grid .trainer-card__share svg {
+    width: 27px;
+    height: 27px;
+    padding: 8px;
+  }
   .similar-trainers .trainer-card__like svg,
   .similar-trainers .trainer-card__save svg,
   .similar-trainers .trainer-card__write svg,
@@ -670,8 +706,8 @@ input.is-locked {
   .profile-actions .trainer-card__save svg,
   .profile-actions .trainer-card__write svg,
   .profile-actions .trainer-card__share svg {
-    width: 27px;
-    height: 27px;
+    width: 28px;
+    height: 28px;
     padding: 8px;
   }
 }
