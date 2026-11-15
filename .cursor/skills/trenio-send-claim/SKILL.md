@@ -41,6 +41,8 @@ IG_ACCOUNT=trenioby ./node_modules/.bin/tsx --env-file=.env scripts/outreach-tra
 ```
 
 `{hello}` becomes «Ирина, добрый день!» for the given name Ирина, or «Добрый день!» when the given name is empty. `{doorUrl}` is the short link read from that draft after the live site has answered. Do not reuse a link from an earlier message. If the command prints `published`, `sent`, `not-draft`, `missing`, or `link`, do not type anything.
+- Keep the letter's line breaks. The template is paragraphs separated by a blank line, and the short link is alone on the line after «опубликуйте в кабинете:». Instagram drops those breaks when the whole letter is inserted at once (`insertText` of the full string, `execCommand('insertText')`, or one paste). The paragraphs then run together, spaces disappear, and the short link sticks to the previous word. Do not send that.
+- Type one line at a time. Split the letter on `\n`. For a line that has text, insert only that line. Then press Shift+Enter, including after a blank line, and skip Shift+Enter after the last line. Enter without Shift sends the message. Before Send, read the composer. It must equal the letter: the same lines, a blank line between paragraphs, the spaces inside each sentence, and the short link alone on its line. If a break is missing or the link is glued to the colon, clear the composer and type it again. Do not click Send until that check passes.
 - Send only from `https://www.instagram.com/{handle}/` while that row is still an unmarked draft.
 - Send only into an empty thread. If this same letter is already there, mark it sent and do not type again. If any other message is already in the thread, skip it and say so.
 - Click Follow or «Подписаться» only when Instagram will not open the composer until this account follows. That is a missing Message button, or a dialog that asks for a follow before the message can be sent. Click it once, wait until Message or «Написать» appears, then send. If Message is already on the profile, do not follow. If the button still does not appear, skip the profile. Do not click Like or Comment.
@@ -63,6 +65,7 @@ IG_ACCOUNT=trenioby ./node_modules/.bin/tsx --env-file=.env scripts/outreach-tra
 - Leave «Ссылка» empty. This letter contains the short link, so `mark {handle} claim` sets it together with «Сообщение».
 - Message a published, hidden, or archived card, or a draft that already has a message mark.
 - Type a short link that `text` did not just print for this handle.
+- Insert the whole letter in one step. A single `insertText`, `execCommand('insertText')`, or paste drops the line breaks. The short link must stay on its own line.
 - Follow a profile that already shows Message.
 
 ## Report

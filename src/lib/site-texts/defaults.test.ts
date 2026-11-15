@@ -76,7 +76,7 @@ test("the application letter substitutes the given name and that trainer's short
   const text = renderClaimInstagramMessage("Ирина", "https://trenio.by/hi/k4n8pq2w");
   assert.match(text, /^Ирина, добрый день!/);
   assert.match(text, /Мы увидели вашу заявку на https:\/\/trenio\.by и уже подготовили страницу\./);
-  assert.match(text, /опубликуйте в кабинете:\nhttps:\/\/trenio\.by\/hi\/k4n8pq2w/);
+  assert.match(text, /добрый день!\n\nМы увидели вашу заявку на https:\/\/trenio\.by и уже подготовили страницу\.\n\nОткройте её, посмотрите, всё ли на месте, и опубликуйте в кабинете:\nhttps:\/\/trenio\.by\/hi\/k4n8pq2w\n\nПосле публикации/);
   assert.match(text, /править текст, фото и остальные сведения/);
   assert.equal(text.includes("{hello}"), false);
   assert.equal(text.includes("{doorUrl}"), false);

@@ -22,7 +22,7 @@ The rest of this message is the scope. Do not message every unmarked draft when 
 1. Read the skill and the arguments above.
 2. Open `https://www.instagram.com/accounts/edit/` in the import Chrome window. Continue only when the account is `trenioby`. On a login wall, sign in once from `LOGIN.md` and check again. Do not print the password. If the account is anyone else, stop.
 3. List the scope with `IG_ACCOUNT=trenioby` and `scripts/outreach-trainers.ts list`.
-4. For each handle, run `scripts/outreach-trainers.ts text {handle}`. Send that text only when it is the letter. `published`, `sent`, `not-draft`, `missing`, and `link` mean do not type. The short link in the letter is the one stored on that draft.
+4. For each handle, run `scripts/outreach-trainers.ts text {handle}`. Send that text only when it is the letter. `published`, `sent`, `not-draft`, `missing`, and `link` mean do not type. The short link in the letter is the one stored on that draft. Type it one line at a time with Shift+Enter between lines, including the blank lines. The short link stays alone on the line after «опубликуйте в кабинете:». Do not insert the whole letter at once: Instagram then drops the breaks, the spaces collapse, and the link sticks to the previous word. Read the composer before Send. If it is not the same lines as the letter, clear it and type again. Do not send the collapsed line.
 5. Send only when the open profile is that handle, the row is still an unmarked draft, and the thread is empty. If this letter is already in the thread, mark it and do not type again. If Instagram will not accept the message until this account follows, click Follow once and then send. Do not follow when Message is already there.
 6. Run `scripts/outreach-trainers.ts mark {handle} claim` after a send or a confirmed existing letter. That sets «Сообщение» and «Ссылка».
 7. After the batch, run `scripts/sync-remote.ts marks`.
@@ -33,7 +33,7 @@ The rest of this message is the scope. Do not message every unmarked draft when 
 
 - The batch started only after the browser showed the account `trenioby`.
 - A published trainer and a trainer who already received a message were skipped.
-- Each letter uses that trainer's given name and the short link just read from that draft. No sport or other profile fact was added.
+- Each letter uses that trainer's given name and the short link just read from that draft. The short link is on its own line, with a blank line between paragraphs. No sport or other profile fact was added.
 - Follow was clicked only when Instagram required it before the message could be sent.
 - Each handled draft has the message mark and the link mark on the laptop and on the live site, or a stated reason it was skipped.
 - The profile stays a draft.
