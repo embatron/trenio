@@ -562,7 +562,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Реабилитация",
     titleGenitive: "реабилитации и восстановлению",
     iconKey: "rehab",
-    description: "ЛФК, массаж, осанка и восстановление после травмы.",
+    description: "ЛФК, массаж, осанка, восстановление после травмы и после родов.",
     aliases: ["реабилитация", "восстановление", "лечебная физкультура"],
     count: "",
     bg: "linear-gradient(135deg, #ebfff4 0%, #a5efc2 100%)",
@@ -582,6 +582,12 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         label: "После травмы",
         titleGenitive: "восстановлению после травмы",
         aliases: ["восстановление после травмы", "реабилитация после травмы"],
+      },
+      {
+        slug: "posle-rodov",
+        label: "После родов",
+        titleGenitive: "восстановлению после родов",
+        aliases: ["после родов", "восстановление после родов", "реабилитация после родов", "послеродовое восстановление"],
       },
       {
         slug: "massazh",
