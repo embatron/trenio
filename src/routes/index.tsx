@@ -3,6 +3,10 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { CatalogSearchForm } from "@/components/catalog-search-form";
 import { SportIcon } from "@/components/sport-icon";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
+import { cityCatalogByName } from "@/lib/catalog/city-pages";
+import { catalogFilterCities } from "@/lib/catalog/search-city";
+import { resolveVisitorPlaceFn } from "@/lib/catalog/visitor-place";
+import { cityIn } from "@/lib/seo/text";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
 import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
 import { compareByPopularity, popularityChecklist, popularityScore, ratingFor } from "@/lib/catalog/trainer-popularity";
@@ -328,13 +332,14 @@ function PopularSlider() {
 export const Route = createFileRoute("/")({
   head: () => homePageHead(HOME_FAQ),
   loader: async () => {
-    const [ratings, prices, stats, trainers] = await Promise.all([
+    const [ratings, prices, stats, trainers, place] = await Promise.all([
       listTrainerRatingSummariesFn(),
       listTrainerPricesFn(),
       getHomeStatsFn(),
       listCatalogTrainersFn(),
+      resolveVisitorPlaceFn(),
     ]);
-    return { ratings, prices, stats, trainers };
+    return { ratings, prices, stats, trainers, place };
   },
   component: Index,
 });
@@ -780,10 +785,15 @@ function HomeStatsBand({ stats }: { stats: HomeStats }) {
 }
 
 function Index() {
-  const { ratings, prices, stats, trainers: published } = Route.useLoaderData();
+  const { ratings, prices, stats, trainers: published, place } = Route.useLoaderData();
+  const homeCityName = catalogFilterCities(place)[0] ?? "Минск";
+  const homeCity = cityCatalogByName(homeCityName);
+  const homeFold = homeCityName.trim().toLowerCase().replaceAll("ё", "е");
+  const homeWhere = homeCity?.locative ?? cityIn(homeCity?.slug ?? "", homeCityName);
   const trainers = published.filter((trainer) => {
     const label = trainer.city.label.trim().toLowerCase().replaceAll("ё", "е");
-    return trainer.city.slug === "minsk" || label === "минск";
+    if (homeCity && trainer.city.slug === homeCity.slug) return true;
+    return label === homeFold;
   }).map((trainer) => {
     const rating = ratingFor(trainer.slug, ratings);
     const fill = popularityChecklist({
@@ -883,15 +893,17 @@ function Index() {
           <section className="content-section" aria-labelledby="trainers-heading">
             <div className="section-head">
               <h2 className="section-title" id="trainers-heading">
-                Тренеры в Минске
+                {`Тренеры в ${homeWhere}`}
               </h2>
-              <Link className="section-link" to="/city/$slug" params={{ slug: "minsk" }}>
-                Смотреть всех
-              </Link>
+              {homeCity ? (
+                <Link className="section-link" to="/city/$slug" params={{ slug: homeCity.slug }}>
+                  Смотреть всех
+                </Link>
+              ) : null}
             </div>
 
             {trainers.length === 0 ? (
-              <CatalogEmpty title="Тренеров в Минске пока нет" />
+              <CatalogEmpty title={`Тренеров в ${homeWhere} пока нет`} />
             ) : (
               <div className="trainer-grid trainer-grid--home">
                 {trainers.map((t) => (

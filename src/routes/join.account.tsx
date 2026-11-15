@@ -9,6 +9,7 @@ import { CityEntityInput } from "@/components/city-entity-input";
 import { ReviewEditor } from "@/components/review-editor";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { SportEntityInput } from "@/components/sport-entity-input";
+import { MAX_TRAINER_SPORTS } from "@/lib/catalog/sport-taxonomy";
 import { AuthAlert, useAuthServerFn, useAuthSubmit } from "@/lib/auth/use-auth-form";
 import { hasAnyRole, isStaff } from "@/lib/auth/roles";
 import { isStandInAccountName } from "@/lib/auth/phone-label";
@@ -350,7 +351,7 @@ const emptyBasics: Basics = { bio: "", sportSlugs: [], city: "", formats: [], au
 function validateBasics(values: Basics): string | null {
   if (!reviewPlainText(values.bio)) return "Напишите, как вас представить.";
   if (values.sportSlugs.length < 1) return "Выберите хотя бы один вид спорта.";
-  if (values.sportSlugs.length > 4) return "Можно выбрать не больше четырёх видов спорта.";
+  if (values.sportSlugs.length > MAX_TRAINER_SPORTS) return "Можно выбрать не больше пяти видов спорта.";
   if (!values.city.trim()) return "Выберите город из списка населённых пунктов Беларуси.";
   if (values.formats.length < 1) return "Выберите формат тренировок.";
   if (values.audiences.length < 1) return "Выберите, с кем вы работаете.";
@@ -384,7 +385,7 @@ function BasicsFields({
       <div>
         <span className="cabinet-media__label is-required">Мои виды спорта</span>
         <SportEntityInput value={values.sportSlugs} onChange={(sportSlugs) => onChange({ ...values, sportSlugs })} />
-        <p className="cabinet-note">Не больше четырёх видов. Фитнес и другие разделы открывают виды внутри: в карточку попадает вид, не раздел.</p>
+        <p className="cabinet-note">Не больше пяти видов. Раздел, например фитнес, можно назначить целиком или выбрать вид внутри него.</p>
       </div>
       <div>
         <span className="cabinet-media__label is-required">Формат моих тренировок</span>

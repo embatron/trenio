@@ -560,7 +560,7 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
     const published = getPublishedTrainer(data.slug);
     const picked = trainerSportsFromSlugs(data.sportSlugs);
     if (picked.slugs.length > MAX_TRAINER_SPORTS) {
-      throw new AuthError("Можно выбрать не больше четырёх видов спорта.", "VALIDATION");
+      throw new AuthError("Можно выбрать не больше пяти видов спорта.", "VALIDATION");
     }
     if (picked.sports.length !== picked.slugs.length) {
       throw new AuthError("Выберите вид спорта из списка категорий.", "VALIDATION");

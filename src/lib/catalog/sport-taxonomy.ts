@@ -774,7 +774,7 @@ export function listSecondLevelSports() {
 }
 
 /** A trainer card lists at most four sports. A whole section counts as one. */
-export const MAX_TRAINER_SPORTS = 4;
+export const MAX_TRAINER_SPORTS = 5;
 
 /** A published section whose slug is not already a sport, such as «fitnes» or «edinoborstva». */
 export function trainerSectionBySlug(slug: string) {

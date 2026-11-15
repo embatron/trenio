@@ -195,40 +195,42 @@ function placeFromCity(city: string): CatalogPlace {
   return { cities: [city], query: "", source: "detected", lookupOnClient: false };
 }
 
+/** A city the person picked stays. A detected city is looked up again on the next visit. */
+function chosenPlace(saved: VisitorPlace | null): CatalogPlace | null {
+  if (saved?.dismissed) return { cities: [], query: "", source: "none", lookupOnClient: false };
+  if (saved?.origin === "chosen" && (saved.cities.length > 0 || saved.query)) {
+    return { cities: saved.cities, query: saved.query, source: "saved", lookupOnClient: false };
+  }
+  return null;
+}
+
+function detectedFallback(saved: VisitorPlace | null, lookupOnClient: boolean): CatalogPlace {
+  if (saved && (saved.cities.length > 0 || saved.query)) {
+    return { cities: saved.cities, query: saved.query, source: "detected", lookupOnClient };
+  }
+  return { cities: [], query: "", source: "none", lookupOnClient };
+}
+
 export async function resolveVisitorPlace(): Promise<CatalogPlace> {
   const saved = parseVisitorPlace(getCookie(VISITOR_PLACE_COOKIE));
-  if (saved?.dismissed) return { cities: [], query: "", source: "none", lookupOnClient: false };
-  if (saved && (saved.cities.length > 0 || saved.query)) {
-    return {
-      cities: saved.cities,
-      query: saved.query,
-      source: saved.origin === "detected" ? "detected" : "saved",
-      lookupOnClient: false,
-    };
-  }
+  const chosen = chosenPlace(saved);
+  if (chosen) return chosen;
 
   const ip = clientPublicIp();
-  if (!ip) return { cities: [], query: "", source: "none", lookupOnClient: true };
+  if (!ip) return detectedFallback(saved, true);
   const city = await detectBelarusCity(ip);
-  if (!city) return { cities: [], query: "", source: "none", lookupOnClient: false };
+  if (!city) return detectedFallback(saved, false);
   return placeFromCity(city);
 }
 
 export async function detectVisitorPlace(clientIp: string): Promise<CatalogPlace> {
   const saved = parseVisitorPlace(getCookie(VISITOR_PLACE_COOKIE));
-  if (saved?.dismissed) return { cities: [], query: "", source: "none", lookupOnClient: false };
-  if (saved && (saved.cities.length > 0 || saved.query)) {
-    return {
-      cities: saved.cities,
-      query: saved.query,
-      source: saved.origin === "detected" ? "detected" : "saved",
-      lookupOnClient: false,
-    };
-  }
+  const chosen = chosenPlace(saved);
+  if (chosen) return chosen;
 
   const ip = clientPublicIp() ?? clientIp;
   const city = await detectBelarusCity(ip);
-  if (!city) return { cities: [], query: "", source: "none", lookupOnClient: false };
+  if (!city) return detectedFallback(saved, false);
   return placeFromCity(city);
 }
 

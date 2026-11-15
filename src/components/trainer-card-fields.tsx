@@ -618,7 +618,7 @@ export function TrainerCardFields({
             onChange={(sportSlugs) => patch({ sportSlugs })}
           />
         </div>
-        <p className="cabinet-note">Не больше четырёх. Раздел, например фитнес, можно назначить целиком или выбрать вид внутри него.</p>
+        <p className="cabinet-note">Не больше пяти. Раздел, например фитнес, можно назначить целиком или выбрать вид внутри него.</p>
         <label>
           <span>{self ? "Мой тренерский стаж, лет" : "Общий тренерский стаж, лет"}</span>
           <input

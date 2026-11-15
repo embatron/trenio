@@ -63,9 +63,12 @@ body.is-search-docked .site-header.is-menu-open {
   display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 28px;
 }
 .site-header__search {
-  min-width: 0; max-width: none; max-height: none; overflow: hidden; opacity: 0; visibility: hidden; pointer-events: none;
+  min-width: 0; max-width: none; max-height: none; overflow: visible; opacity: 1; visibility: visible; pointer-events: auto;
   display: flex; align-items: center; justify-content: flex-start;
   transition: opacity 0.2s ease;
+}
+body:has(#search-dock-sentinel):not(.is-search-docked) .site-header__search {
+  overflow: hidden; opacity: 0; visibility: hidden; pointer-events: none;
 }
 body.is-search-docked .site-header__search {
   max-width: none; max-height: none; opacity: 1; visibility: visible; overflow: visible; pointer-events: auto;
@@ -403,6 +406,25 @@ body.is-search-docked .site-header__search {
 @media (max-width: 1000px) {
   .search-block--header { width: min(100%, 700px); }
 }
+@media (max-width: 999px) {
+  .site-header__inner {
+    grid-template-columns: auto minmax(0, 1fr);
+    row-gap: 8px;
+  }
+  .site-header__nav {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+  .site-header__search {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+  }
+  .search-block--header,
+  .search-block--header .search-shell { width: 100%; }
+  body:has(#search-dock-sentinel):not(.is-search-docked) .site-header__search { display: none; }
+}
 @media (min-width: 768px) and (max-width: 999px) {
   body.is-search-docked .site-header__inner {
     grid-template-columns: auto minmax(0, 1fr);
@@ -458,7 +480,12 @@ body.is-search-docked .site-header__search {
     justify-self: end;
   }
   .site-header__search,
-  body.is-search-docked .site-header__search { display: none; }
+  body.is-search-docked .site-header__search {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+  }
+  body:has(#search-dock-sentinel):not(.is-search-docked) .site-header__search { display: none; }
   .mega-sports__toggle {
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     width: 100%; min-height: 44px; margin: 0; padding: 0 4px;

@@ -54,7 +54,8 @@ export function SportEntityInput({
     if (known.includes(slug) || known.length >= max) return;
     onChange([...known, slug]);
     setQuery("");
-    setOpen(true);
+    setOpenedSection(null);
+    setOpen(false);
   }
 
   function remove(slug: string) {
@@ -67,9 +68,12 @@ export function SportEntityInput({
     setOpen(true);
   }
 
-  /** A whole section is stored on the first click. The menu opens after that click, so it cannot close itself. */
+  /** A whole section is stored on the first click, and the menu closes with that choice. */
   function chooseSection(slug: string) {
-    if (trainerSectionBySlug(slug)) add(slug);
+    if (trainerSectionBySlug(slug)) {
+      add(slug);
+      return;
+    }
     openSection(slug);
   }
 
@@ -88,7 +92,7 @@ export function SportEntityInput({
         aria-controls={listId}
         aria-autocomplete="list"
         aria-label="Виды спорта"
-        placeholder={known.length >= max ? "Уже четыре" : selected.length === 0 ? "Найти раздел или вид" : ""}
+        placeholder={known.length >= max ? "Уже пять" : selected.length === 0 ? "Найти раздел или вид" : ""}
         disabled={known.length >= max}
         onFocus={() => setOpen(true)}
         onChange={(event) => {

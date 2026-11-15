@@ -368,7 +368,7 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       throw new AuthError("Выберите хотя бы один вид спорта.", "VALIDATION");
     }
     if (sports.length > MAX_TRAINER_SPORTS) {
-      throw new AuthError("Можно выбрать не больше четырёх видов спорта.", "VALIDATION");
+      throw new AuthError("Можно выбрать не больше пяти видов спорта.", "VALIDATION");
     }
     if (!data.city.trim()) {
       throw new AuthError("Выберите город.", "VALIDATION");

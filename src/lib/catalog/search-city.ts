@@ -15,6 +15,20 @@ export function catalogFilterCities(place: { cities: string[]; query: string }):
   return [DEFAULT_SEARCH_CITY];
 }
 
+/** The visitor city leads the quick row. The rest keep the usual order, without a duplicate. */
+export function leadCityNames(selected: readonly string[], hints: readonly string[], limit = 5): string[] {
+  const seen = new Set<string>();
+  const names: string[] = [];
+  for (const name of [...selected, ...hints]) {
+    const city = name.trim();
+    if (!city || seen.has(city)) continue;
+    seen.add(city);
+    names.push(city);
+    if (names.length >= limit) break;
+  }
+  return names;
+}
+
 function cityFromPlace(place: VisitorPlace | null): string | null {
   if (!place || place.dismissed) return null;
   const city = place.cities[0]?.trim() || place.query.trim();
@@ -38,8 +52,11 @@ export function resolveSearchCity(): Promise<string> {
   if (typeof window === "undefined") return Promise.resolve(DEFAULT_SEARCH_CITY);
   if (!pendingCity) {
     pendingCity = (async () => {
-      const saved = cityFromPlace(readVisitorPlaceCookie());
-      if (saved) return saved;
+      const remembered = readVisitorPlaceCookie();
+      if (remembered && !remembered.dismissed && remembered.origin === "chosen") {
+        const chosen = cityFromPlace(remembered);
+        if (chosen) return chosen;
+      }
       try {
         const place = await resolveVisitorPlaceFn();
         const known = place.cities[0]?.trim() || place.query.trim();

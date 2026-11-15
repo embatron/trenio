@@ -45,7 +45,7 @@ import {
   type CatalogPlace,
   type VisitorPlace,
 } from "@/lib/catalog/visitor-place";
-import { catalogFilterCities, resolveSearchCity, readVisitorPlaceCookie } from "@/lib/catalog/search-city";
+import { catalogFilterCities, leadCityNames, resolveSearchCity, readVisitorPlaceCookie } from "@/lib/catalog/search-city";
 import {
   clearCatalogFilters,
   emptyCatalogFilters,
@@ -618,8 +618,8 @@ const PAGE_CSS = `
 .cat-child-nav__tile {
   min-width: 0;
   width: auto;
-  min-height: 44px;
-  padding: 6px 12px;
+  min-height: 32px;
+  padding: 3px 12px;
   border-radius: 999px;
   background: var(--white);
   border: 1.5px solid var(--line);
@@ -832,7 +832,9 @@ a.cat-pill { text-decoration: none; }
   .cat-cta { grid-template-columns: 1fr; padding: var(--layout-block-gap) var(--layout-gap); }
 }
 @media (max-width: 767px) {
-  .cat-child-nav__tile, .cat-pill { min-height: 44px; padding: 6px 10px; font-size: 13px; line-height: 1.25; }
+  .cat-child-nav__inner { gap: 6px; }
+  .cat-child-nav__tile { min-height: 32px; padding: 3px 10px; font-size: 13px; line-height: 1.2; }
+  .cat-pill { min-height: 44px; padding: 6px 10px; font-size: 13px; line-height: 1.25; }
 }
 @media (max-width: 640px) {
   .cat-hero .layout-container:has(.cat-hero__photo) { grid-template-columns: 1fr; }
@@ -1067,11 +1069,10 @@ export function CategoryCatalogPage({
     return list;
   }, [allTrainers, selectedCities, cityQuery, audience, formats, priceMin, priceMax, minExperience, sort, selectedSports, sportQuery]);
 
-  const cityPills = useMemo(() => {
-    const hints = listCityCatalogPages().slice(0, 5).map((city) => city.name);
-    const known = new Set(hints);
-    return [...selectedCities.filter((city) => !known.has(city)), ...hints];
-  }, [selectedCities]);
+  const cityPills = useMemo(
+    () => leadCityNames(selectedCities, listCityCatalogPages().slice(0, 5).map((city) => city.name)),
+    [selectedCities],
+  );
   const sportPills = useMemo(() => {
     const hints = localSports.length > 0 ? localSports : filterCatalogSports("", 5);
     const known = new Set(hints.map((sport) => sport.id));

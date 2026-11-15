@@ -496,7 +496,7 @@ async function saveFromCookie(data: z.infer<typeof cardSchema>, publish: boolean
   }
   const picked = trainerSportsFromSlugs(data.sportSlugs);
   if (picked.sports.length > MAX_TRAINER_SPORTS) {
-    throw new AuthError("Можно выбрать не больше четырёх видов спорта.", "VALIDATION");
+    throw new AuthError("Можно выбрать не больше пяти видов спорта.", "VALIDATION");
   }
   const city = await assertBelarusCity(data.city);
   const places = await resolveTrainingPlaces(data.places, placesFromProfile(row));

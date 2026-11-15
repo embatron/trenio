@@ -22,7 +22,7 @@ import { MAP_CRUMB, MAP_DESCRIPTION, mapPageHead } from "@/lib/seo/pages";
 import { TRAINER_FORMAT_OPTIONS } from "@/lib/catalog/published-trainers";
 import { listMapAreaFn, type MapAreaFeature, type MapTrainer } from "@/lib/catalog/map-trainers";
 import { listPublishedSportCategories } from "@/lib/catalog/sport-taxonomy";
-import { resolveVisitorPointFn, type VisitorPoint } from "@/lib/catalog/visitor-place";
+import { resolveVisitorPlaceFn, resolveVisitorPointFn, type VisitorPoint } from "@/lib/catalog/visitor-place";
 import { shellCoordinates } from "@/lib/native/shell";
 import { reportClientEvent } from "@/lib/log/client-reporter";
 import { pluralRu } from "@/lib/ru-plural";
@@ -90,7 +90,10 @@ export const Route = createFileRoute("/map")({
     const city = cityCatalogBySlug(match.search.city ?? "");
     return mapPageHead(sports.length > 0 || Boolean(city));
   },
-  loader: async () => ({ point: await resolveVisitorPointFn() }),
+  loader: async () => {
+    const [point, place] = await Promise.all([resolveVisitorPointFn(), resolveVisitorPlaceFn()]);
+    return { point, place };
+  },
   component: MapRoute,
 });
 
@@ -151,9 +154,10 @@ function pinKeyFor(lat: number, lng: number) {
 }
 
 function MapRoute() {
-  const { point } = Route.useLoaderData();
+  const { point, place } = Route.useLoaderData();
   const { sports, city } = Route.useSearch();
-  return <CatalogMapScreen mode="map" sportsQuery={sports} citySlug={city} visitor={point} />;
+  const detected = city ? undefined : cityCatalogByName(place.cities[0]?.trim() ?? "")?.slug;
+  return <CatalogMapScreen mode="map" sportsQuery={sports} citySlug={city || detected} visitor={point} />;
 }
 
 export function CatalogMapScreen({
