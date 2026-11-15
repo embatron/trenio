@@ -117,15 +117,24 @@ function AccountCell({ trainer }: { trainer: AdminTrainer }) {
   return confirmedAccountValue(trainer.account) || "не подтверждён";
 }
 
-function categoryLabels(slugs: string[]) {
-  const labels: string[] = [];
+/** Category filter value for a card with no section in the taxonomy. */
+const UNSET_CATEGORY = "__unset";
+
+function categoryParents(slugs: string[]) {
+  const parents: string[] = [];
   for (const slug of slugs) {
     const parent = getSportTaxonomyChild(slug)?.parentSlug
       ?? (trainerSectionBySlug(slug) ? slug : "");
-    const label = parent ? getTopLevelSportCategory(parent)?.label : "";
-    if (label && !labels.includes(label)) labels.push(label);
+    if (parent && !parents.includes(parent)) parents.push(parent);
   }
-  return labels.join(", ");
+  return parents;
+}
+
+function categoryLabels(slugs: string[]) {
+  return categoryParents(slugs)
+    .map((parent) => getTopLevelSportCategory(parent)?.label ?? "")
+    .filter(Boolean)
+    .join(", ");
 }
 
 function audienceLabels(audiences: TrainerAudience[]) {
@@ -459,8 +468,10 @@ export function AdminTrainersTable({
   const visibleBuckets = useMemo(() => {
     const tokens = query.trim().toLocaleLowerCase("ru").replaceAll("ё", "е").split(/\s+/).filter(Boolean);
     const rows = listed.filter((trainer) => {
-      const parents = trainer.sportSlugs.map((slug) => getSportTaxonomyChild(slug)?.parentSlug ?? (getTopLevelSportCategory(slug) ? slug : undefined));
-      if (category && !parents.includes(category)) return false;
+      const parents = categoryParents(trainer.sportSlugs);
+      if (category === UNSET_CATEGORY) {
+        if (parents.length > 0) return false;
+      } else if (category && !parents.includes(category)) return false;
       if (sport && !trainer.sportSlugs.includes(sport)) return false;
       if (city && trainer.city !== city) return false;
       if (format && !trainer.formats.includes(format)) return false;
@@ -543,6 +554,7 @@ export function AdminTrainersTable({
             }}
           >
             <option value="">Все категории</option>
+            <option value={UNSET_CATEGORY}>Не указан</option>
             {listPublishedSportCategories().map((item) => (
               <option key={item.slug} value={item.slug}>{item.label}</option>
             ))}
