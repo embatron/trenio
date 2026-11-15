@@ -67,6 +67,12 @@ export function SportEntityInput({
     setOpen(true);
   }
 
+  /** A whole section is stored on the first click. The menu opens after that click, so it cannot close itself. */
+  function chooseSection(slug: string) {
+    if (trainerSectionBySlug(slug)) add(slug);
+    openSection(slug);
+  }
+
   return (
     <div className="entity-input" ref={boxRef}>
       {selected.map((sport) => (
@@ -125,10 +131,7 @@ export function SportEntityInput({
               <button
                 type="button"
                 role="option"
-                onPointerDown={(event) => {
-                  event.preventDefault();
-                  add(menu.section!.slug);
-                }}
+                onPointerDown={(event) => event.preventDefault()}
                 onClick={() => add(menu.section!.slug)}
               >
                 {menu.section.label}
@@ -141,11 +144,8 @@ export function SportEntityInput({
               <button
                 type="button"
                 role="option"
-                onPointerDown={(event) => {
-                  event.preventDefault();
-                  openSection(section.slug);
-                }}
-                onClick={() => openSection(section.slug)}
+                onPointerDown={(event) => event.preventDefault()}
+                onClick={() => chooseSection(section.slug)}
               >
                 {section.label}
                 <span>раздел, {section.count} {pluralRu(section.count, "вид", "вида", "видов")}</span>
@@ -157,10 +157,7 @@ export function SportEntityInput({
               <button
                 type="button"
                 role="option"
-                onPointerDown={(event) => {
-                  event.preventDefault();
-                  add(sport.slug);
-                }}
+                onPointerDown={(event) => event.preventDefault()}
                 onClick={() => add(sport.slug)}
               >
                 {sport.label}

@@ -17,7 +17,7 @@ import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { formatBelarusPhone } from "@/lib/auth/phone";
 import { BELARUS_CITIES } from "@/lib/catalog/city-taxonomy";
 import { TRAINER_AUDIENCE_OPTIONS, TRAINER_FORMAT_OPTIONS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
-import { getSportTaxonomyChild, getTopLevelSportCategory, listPublishedSportCategories, listSecondLevelSports } from "@/lib/catalog/sport-taxonomy";
+import { getSportTaxonomyChild, getTopLevelSportCategory, listPublishedSportCategories, listSecondLevelSports, trainerSectionBySlug } from "@/lib/catalog/sport-taxonomy";
 import { placeLine } from "@/lib/geo/schemas";
 import { outreachHello, outreachWithSiteLink } from "@/lib/site-texts/defaults";
 
@@ -120,7 +120,8 @@ function AccountCell({ trainer }: { trainer: AdminTrainer }) {
 function categoryLabels(slugs: string[]) {
   const labels: string[] = [];
   for (const slug of slugs) {
-    const parent = getSportTaxonomyChild(slug)?.parentSlug;
+    const parent = getSportTaxonomyChild(slug)?.parentSlug
+      ?? (trainerSectionBySlug(slug) ? slug : "");
     const label = parent ? getTopLevelSportCategory(parent)?.label : "";
     if (label && !labels.includes(label)) labels.push(label);
   }

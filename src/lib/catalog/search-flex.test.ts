@@ -156,6 +156,9 @@ test("a section can be stored, and the gym phrase drops по", () => {
   assert.equal(catalogSportByName("тренажерка")?.slug, "trenazherka");
   assert.equal(catalogSportByName("спортзал")?.slug, "trenazherka");
   assert.equal(trainerSportsFromSlugs(["fitnes"]).sports[0]?.label, "Фитнес");
+  assert.equal(catalogSportByName("пилон")?.slug, "pole-dance");
+  assert.equal(catalogSportByName("пол-дэнс")?.slug, "pole-dance");
+  assert.equal(trainerSportsFromSlugs(["pole-dance"]).sports[0]?.parentSlug, "tancy");
   assert.equal(trainerSportsFromSlugs(["edinoborstva"]).sports[0]?.label, "Единоборства");
   assert.equal(trainerSportsFromSlugs(["yoga"]).sports[0]?.label, "Йога");
   const gym = catalogSportByName("тренажерка");
