@@ -24,7 +24,7 @@ Price, "индивидуально", "для начинающих", and "с ну
 
 ## Where the demand sits
 
-Minsk is the commercial center. Then the oblast centers: Gomel, Brest, Grodno, Vitebsk, Mogilev. Then the rest of the twenty catalog cities. Internal links from a sport page should prefer that order, which `CITY_PAGES` already has. A town outside the twenty stays a profile field.
+Minsk is the commercial center. Then the oblast centers: Gomel, Brest, Grodno, Vitebsk, Mogilev. Then the rest of the forty catalog cities. Internal links from a sport page should prefer that order, which `CITY_PAGES` already has. A town outside the forty stays a profile field.
 
 Sports that carry the non-brand demand, in the order worth watching in Search Console:
 

@@ -1,6 +1,6 @@
 import { cityCatalogBySlug } from "@/lib/catalog/city-pages";
 
-/** Locative after «в»: «Минске», or «городе Слуцк» when the city has no catalog page. */
+/** Locative after «в»: «Минске», or «городе Щучин» when the city has no catalog page. */
 export function cityIn(slug: string, label: string) {
   return cityCatalogBySlug(slug)?.locative ?? `городе ${label}`;
 }

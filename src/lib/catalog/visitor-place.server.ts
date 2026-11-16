@@ -57,7 +57,8 @@ const CITY_ALIASES: Record<string, string> = {
   slonim: "Слоним",
   kobrin: "Кобрин",
   volkovysk: "Волковыск",
-  smorgon: "Сморгонь",
+  smorgon: "Смаргонь",
+  сморгонь: "Смаргонь",
 };
 
 type GeoModule = {

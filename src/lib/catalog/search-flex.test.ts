@@ -262,6 +262,10 @@ test("anti-patterns: noise, neighbours, and shared words do not pick a wrong nam
   assert.equal(resolveBelarusCity("г. минск"), "Минск");
   assert.equal(resolveBelarusCity("в г. минске"), "Минск");
   assert.equal(resolveBelarusCity("в гомеле"), "Гомель");
+  assert.equal(resolveBelarusCity("в Горках"), "Горки");
+  assert.equal(filterBelarusCities("Горках")[0], "Горки");
+  assert.equal(resolveBelarusCity("в Марьиной Горке"), "Марьина Горка");
+  assert.equal(resolveBelarusCity("в Сморгони"), "Смаргонь");
   assert.equal(resolveBelarusCity("го"), null);
   assert.equal(resolveBelarusCity("minsk"), null);
   assert.equal(catalogSportByName("минск"), null);

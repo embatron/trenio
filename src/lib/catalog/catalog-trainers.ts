@@ -4,7 +4,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getDb } from "@/db";
 import { trainerProfiles, users } from "@/db/schema";
 import { formatBelarusPhone } from "@/lib/auth/phone";
-import { cityCatalogSlug } from "@/lib/catalog/city-pages";
+import { cityCatalogByName, cityCatalogBySlug } from "@/lib/catalog/city-pages";
 import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import { effectiveAudiences, type PublishedTrainer } from "@/lib/catalog/published-trainers";
@@ -99,7 +99,7 @@ export function catalogTrainerFromSources(
     firstName: row.firstName,
     lastName: row.lastName,
     photo: (row.photos?.[0] || row.avatarPath || "").split("?")[0],
-    city: { slug: row.citySlug || cityCatalogSlug(label) || "", label },
+    city: { slug: cityCatalogBySlug(row.citySlug)?.slug || cityCatalogByName(label)?.slug || row.citySlug || "", label },
     sports: sports.length ? sports : primarySport.slug ? [primarySport] : [],
     primarySport,
     bio: row.bio,

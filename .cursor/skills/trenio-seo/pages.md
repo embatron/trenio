@@ -13,7 +13,7 @@ JSON-LD for each row comes from the helper in [markup.md](markup.md). A `noindex
 | City | `/city/{city}` | yes | `Найти тренера в {locative} \| Я ищу тренера на trenio.by` |
 | City + sport | `/city/{city}/{sport}` | yes, when a published trainer matches that city and sport. Otherwise `noindex` and out of the sitemap. The page stays open | `Найти тренера по {dative} в {locative} \| Я ищу тренера на trenio.by` |
 | Nested sport | `/city/minsk/yoga/yoga` | same rule as city + sport | same, when the sport slug equals its parent |
-| Trainer | `/trainers/{slug}` | yes | `Тренер по {все виды в дательном, через «и»} {имя фамилия} в {предложный город} \| Я ищу тренера на trenio.by`. Example: `Тренер по боксу Артём Романович в Минске \| Я ищу тренера на trenio.by`. ОФП, ЛФК and ОФК expand. A town outside the twenty uses `в городе {name}`. The H1 stays the person's name. |
+| Trainer | `/trainers/{slug}` | yes | `Тренер по {все виды в дательном, через «и»} {имя фамилия} в {предложный город} \| Я ищу тренера на trenio.by`. Example: `Тренер по боксу Артём Романович в Минске \| Я ищу тренера на trenio.by`. ОФП, ЛФК and ОФК expand. A town outside the forty uses `в городе {name}`. The H1 stays the person's name. |
 | Map | `/map` | yes | `Тренеры на карте Беларуси \| Я ищу тренера на trenio.by` |
 | Map with query | `/map?sports=` or `?city=` | no | canonical stays `/map` |
 | Join | `/join/trainer` | yes | `Стать тренером — бесплатная карточка \| Я ищу тренера на trenio.by`. H1 stays `Привет!` |
@@ -30,7 +30,7 @@ JSON-LD for each row comes from the helper in [markup.md](markup.md). A `noindex
 | Claim | `/trainers/claim/{token}` | no | — |
 | 403, 404, SSR crash | those responses | no | — |
 
-Twenty cities have pages: Minsk, Gomel, Grodno, Vitebsk, Mogilev, Brest, then Bobruisk through Zhodino. The list is `CITY_PAGES` in `src/lib/catalog/city-pages.ts`. A smaller town does not get a URL. On a trainer profile the locative falls back to `городе {name}`.
+Forty cities have pages: Minsk, Gomel, Grodno, Vitebsk, Mogilev, Brest, then Bobruisk through Zhodino, then Svetlogorsk through Pruzhany. The list is `CITY_PAGES` in `src/lib/catalog/city-pages.ts`. A smaller town does not get a URL. On a trainer profile the locative falls back to `городе {name}`.
 
 H1 on a category or city page is the phrase without the brand: `Найти тренера по боксу в Бресте`. The dative comes from `titleGenitive`. `ОФП`, `ЛФК`, and `ОФК` expand only in that phrase. Crumbs, menus, and cards keep the short name.
 

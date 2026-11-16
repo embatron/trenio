@@ -55,6 +55,20 @@ test("a published catalog card keeps the sport and hides unverified contacts", (
   assert.equal(trainer.telegram, "");
 });
 
+test("a catalog city keeps its page slug when the stored slug is not that page", () => {
+  const trainer = catalogTrainerFromSources(
+    source({ city: "Марьина Горка", citySlug: "maryina" }),
+    {
+      email: "owner@example.com",
+      emailVerifiedAt: null,
+      phone: "",
+      phoneVerifiedAt: null,
+    },
+  );
+  assert.equal(trainer.city.slug, "marina-gorka");
+  assert.equal(trainer.city.label, "Марьина Горка");
+});
+
 test("verified phone, telegram, and login email stay on the catalog card", () => {
   const trainer = catalogTrainerFromSources(
     source({ telegramVerifiedAt: new Date("2026-11-03T00:00:00Z"), emailVerifiedAt: new Date("2026-11-03T00:00:00Z") }),

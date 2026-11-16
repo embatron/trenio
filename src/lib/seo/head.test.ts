@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 import { HOME_FAQ } from "@/lib/catalog/site-faq";
 import { catalogSportById } from "@/lib/catalog/catalog-sports";
-import { cityCatalogBySlug } from "@/lib/catalog/city-pages";
+import { cityCatalogBySlug, listCityCatalogPages } from "@/lib/catalog/city-pages";
 import {
   categorySearchDescription,
   getSportTaxonomyChildInCategory,
@@ -134,8 +134,13 @@ test("city and category snippets use the Belarus query, not an alias dump", () =
   const brest = cityCatalogBySlug("brest");
   const boxing = catalogSportById("boks");
   assert.ok(brest && boxing);
+  assert.equal(listCityCatalogPages().length, 40);
+  assert.equal(listCityCatalogPages()[20]?.slug, "svetlogorsk");
+  assert.equal(listCityCatalogPages()[39]?.slug, "pruzhany");
   assert.equal(cityIn("brest", "Брест"), "Бресте");
-  assert.equal(cityIn("slutsk", "Слуцк"), "городе Слуцк");
+  assert.equal(cityIn("slutsk", "Слуцк"), "Слуцке");
+  assert.equal(cityIn("marina-gorka", "Марьина Горка"), "Марьиной Горке");
+  assert.equal(cityIn("shchuchin", "Щучин"), "городе Щучин");
   const description = cityCatalogDescription(brest, boxing);
   assert.match(description, /Тренер по боксу в Бресте/);
   assert.equal(description.includes("любительский бокс, бокс"), false);
@@ -204,7 +209,11 @@ test("a trainer title lists every sport and the city", () => {
   assert.equal(trainerByPhrase(["боксу"]), "Тренер по боксу");
   assert.equal(
     trainerDocumentPhrase(["боксу"], { slug: "slutsk", label: "Слуцк" }),
-    "Тренер по боксу в городе Слуцк",
+    "Тренер по боксу в Слуцке",
+  );
+  assert.equal(
+    trainerDocumentPhrase(["боксу"], { slug: "shchuchin", label: "Щучин" }),
+    "Тренер по боксу в городе Щучин",
   );
 });
 
