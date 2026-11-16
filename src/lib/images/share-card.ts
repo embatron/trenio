@@ -31,6 +31,36 @@ export function isImageDerivative(urlPath: string) {
   return DERIVATIVE.test(relative);
 }
 
+function photoKey(urlPath: string) {
+  const relative = sharePhotoRelative(urlPath) ?? urlPath.split("?")[0]?.replace(/^\//, "") ?? "";
+  return relative.replace(DERIVATIVE, "");
+}
+
+/** Master first, then the stored derivative, for the current gallery lead. */
+export function leadFilePaths(urlPath: string) {
+  const relative = sharePhotoRelative(urlPath);
+  if (!relative) return [];
+  const master = relative.replace(DERIVATIVE, "");
+  return master === relative ? [`/${relative}`] : [`/${master}`, `/${relative}`];
+}
+
+/**
+ * The photo the page shows first. A later frame is used only when that file is missing.
+ * The master of that same photo wins over its derivative.
+ */
+export function leadSharePhoto(listed: readonly string[], measured: readonly FaceCandidate[]) {
+  const usable = measured.filter((item) => item.width > 0 && item.height > 0 && item.path.trim());
+  for (const item of listed) {
+    const key = photoKey(item);
+    if (!key) continue;
+    const same = usable.filter((file) => photoKey(file.path) === key);
+    const master = same.find((file) => !isImageDerivative(file.path));
+    if (master) return master;
+    if (same[0]) return same[0];
+  }
+  return null;
+}
+
 /** The face file wins when it is a portrait. A wide graphic loses to a later square frame. */
 export function pickFacePhoto(candidates: FaceCandidate[], slug: string) {
   const usable = candidates.filter((item) => item.width > 0 && item.height > 0 && item.path.trim());

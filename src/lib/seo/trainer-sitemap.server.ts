@@ -98,8 +98,9 @@ export async function listPublishedTrainerSitemapEntries(): Promise<SitemapTrain
         slug: cityCatalogSlug(label) || row.citySlug || "",
         label,
       }, name, row.headline.trim() || trainerIntroPhrase(trainerSportRoles(sports)));
-      const image = cardFace(row.avatarPath, row.photos)
-        ? publicAssetUrl(trainerShareImagePath(row.slug, row.updatedAt.toISOString()))
+      const face = cardFace(row.avatarPath, row.photos);
+      const image = face
+        ? publicAssetUrl(trainerShareImagePath(row.slug, row.updatedAt.toISOString(), face))
         : null;
       const lastmod = sitemapDay(row.updatedAt);
       entries.push({

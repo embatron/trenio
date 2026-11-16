@@ -245,7 +245,7 @@ test("a trainer document names the person, the sport, and the city", () => {
   const ogImage = head.meta.find((item) => "property" in item && item.property === "og:image");
   assert.equal(
     ogImage && "content" in ogImage ? ogImage.content : "",
-    "https://trenio.by/og/trainers/antipenko.training.jpg",
+    "https://trenio.by/og/trainers/antipenko.training.jpg?v=antipenko.training",
   );
   const width = head.meta.find((item) => "property" in item && item.property === "og:image:width");
   const height = head.meta.find((item) => "property" in item && item.property === "og:image:height");
@@ -376,7 +376,7 @@ test("each indexable page kind emits its schema types", () => {
   assert.equal(profile?.dateCreated, "2026-10-01T08:00:00.000Z");
   assert.equal(profile?.dateModified, "2026-11-04T12:00:00.000Z");
   assert.equal(profile?.mainEntity?.alternateName, "antipenko.training");
-  assert.equal(profile?.mainEntity?.image?.url, "https://trenio.by/og/trainers/antipenko.training.jpg?v=20261104T120000Z");
+  assert.equal(profile?.mainEntity?.image?.url, "https://trenio.by/og/trainers/antipenko.training.jpg?v=20261104T120000Z-antipenko.training");
   assert.equal(profile?.mainEntity?.image?.width, 1200);
   assert.equal(profile?.mainEntity?.image?.caption, "Тренер по кикбоксингу Владимир Антипенко в Минске");
   assert.equal(profile?.primaryImageOfPage?.url, profile?.mainEntity?.image?.url);
@@ -395,7 +395,25 @@ test("each indexable page kind emits its schema types", () => {
   const datedImage = trainer.meta.find((item) => "property" in item && item.property === "og:image");
   assert.equal(
     datedImage && "content" in datedImage ? datedImage.content : "",
-    "https://trenio.by/og/trainers/antipenko.training.jpg?v=20261104T120000Z",
+    "https://trenio.by/og/trainers/antipenko.training.jpg?v=20261104T120000Z-antipenko.training",
+  );
+  const nextPhoto = trainerSeoHead({
+    slug: "antipenko.training",
+    name: "Владимир Антипенко",
+    sports: ["Кикбоксинг"],
+    sportDatives: ["кикбоксингу"],
+    primarySport: { slug: "kikboksing", parentSlug: "edinoborstva", label: "Кикбоксинг" },
+    city: { slug: "minsk", label: "Минск" },
+    about: ["Зал в Минске."],
+    rating: { value: "4.8", reviewCount: 3 },
+    photo: "/trainers/admin/antipenko/1794229032063-5a5eb3-w960.jpg",
+    places: [],
+    priceLines: ["35 BYN"],
+    updatedAt: "2026-11-04T12:00:00.000Z",
+  });
+  assert.equal(
+    nextPhoto.meta.find((item) => "property" in item && item.property === "og:image" && "content" in item)?.content,
+    "https://trenio.by/og/trainers/antipenko.training.jpg?v=20261104T120000Z-1794229032063-5a5eb3",
   );
 
   const hidden = trainerSeoHead({

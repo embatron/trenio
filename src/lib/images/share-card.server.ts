@@ -13,7 +13,8 @@ import {
   isPublishedSportCategory,
 } from "@/lib/catalog/sport-taxonomy";
 import {
-  pickFacePhoto,
+  leadFilePaths,
+  leadSharePhoto,
   renderContainCard,
   renderShareCard,
   sharePhotoRelative,
@@ -40,7 +41,7 @@ async function measuredPhoto(urlPath: string): Promise<FaceCandidate | null> {
   return { path: urlPath, width: meta.width ?? 0, height: meta.height ?? 0 };
 }
 
-/** Every trainer page uses one face card. The file is chosen from that trainer's photos. */
+/** The messenger card uses the same lead photo the page shows, then the portrait. */
 export async function trainerShareJpeg(slug: string) {
   if (typeof slug !== "string" || !trainerSitemapPath(slug)) return null;
   try {
@@ -52,14 +53,17 @@ export async function trainerShareJpeg(slug: string) {
       .from(trainerProfiles)
       .where(eq(trainerProfiles.slug, slug))
       .limit(1);
-    const listed = [...(row?.photos ?? []), row?.avatarPath ?? ""]
-      .map((item) => item.trim())
-      .filter(Boolean);
-    const unique = [...new Set(listed)];
-    const measured = (await Promise.all(unique.map((item) => measuredPhoto(item)))).filter(
-      (item): item is FaceCandidate => Boolean(item),
-    );
-    const picked = pickFacePhoto(measured, slug);
+    const listed = [...new Set(
+      [...(row?.photos ?? []), row?.avatarPath ?? ""].map((item) => item.trim()).filter(Boolean),
+    )];
+    let picked: FaceCandidate | null = null;
+    for (const item of listed) {
+      const measured = (
+        await Promise.all(leadFilePaths(item).map((path) => measuredPhoto(path)))
+      ).filter((entry): entry is FaceCandidate => Boolean(entry));
+      picked = leadSharePhoto([item], measured);
+      if (picked) break;
+    }
     const file = picked ? photoFile(picked.path) : null;
     if (!file) return null;
     return await renderShareCard(await readFile(file));

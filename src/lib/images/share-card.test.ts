@@ -4,6 +4,8 @@ import test from "node:test";
 import sharp from "sharp";
 
 import {
+  leadFilePaths,
+  leadSharePhoto,
   pickFacePhoto,
   renderContainCard,
   renderShareCard,
@@ -21,6 +23,21 @@ test("the share path stays inside public trainer and avatar photos", () => {
   assert.equal(sharePhotoRelative("/trainers/../.env"), null);
   assert.equal(sharePhotoRelative("/og.png"), null);
   assert.equal(sharePhotoRelative("data/secret.jpg"), null);
+});
+
+test("the messenger card uses the current first photo, not a later scored frame", () => {
+  const current = { path: "/trainers/admin/andrey/1794229032063-5a5eb3.jpg", width: 900, height: 1200 };
+  const older = { path: "/trainers/instagram/andrey_pivovarov_1977.jpg", width: 1080, height: 1080 };
+  const wide = { path: "/trainers/instagram/andrey_pivovarov_1977-g2.jpg", width: 1600, height: 500 };
+  const derivative = { path: "/trainers/admin/andrey/1794229032063-5a5eb3-w960.jpg", width: 960, height: 1280 };
+  assert.deepEqual(leadFilePaths(derivative.path), [current.path, derivative.path]);
+  assert.equal(
+    leadSharePhoto([derivative.path, older.path, wide.path], [wide, older, derivative, current])?.path,
+    current.path,
+  );
+  assert.equal(leadSharePhoto([older.path], [wide, older])?.path, older.path);
+  assert.equal(leadSharePhoto(["/missing.jpg", older.path], [older])?.path, older.path);
+  assert.equal(leadSharePhoto([], []), null);
 });
 
 test("the face file wins a square tie, and a wide graphic loses to a portrait", () => {

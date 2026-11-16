@@ -56,11 +56,27 @@ function profileImage(photo: string) {
   return absoluteUrl(value);
 }
 
-/** Wide face card for messengers. The search title stays on the document. */
-export function trainerShareImagePath(slug: string, updatedAt?: string) {
+/** File stem of the lead photo, so a new main photo is a new snippet URL. */
+export function sharePhotoToken(photo?: string) {
+  return (
+    photo
+      ?.split("?")[0]
+      ?.split("/")
+      .pop()
+      ?.replace(/\.[a-z0-9]+$/i, "")
+      .replace(/-(?:s128|c320|c640|w960)$/i, "")
+      .replace(/[^a-z0-9._-]+/gi, "")
+      .slice(0, 40) ?? ""
+  );
+}
+
+/** Wide card for messengers. The query names the current lead photo. */
+export function trainerShareImagePath(slug: string, updatedAt?: string, photo?: string) {
   const stamp = isoStamp(updatedAt)?.replace(/[-:]/g, "").replace(/\.\d+/, "") ?? "";
+  const token = sharePhotoToken(photo);
+  const version = [stamp, token].filter(Boolean).join("-");
   const path = `/og/trainers/${slug}.jpg`;
-  return stamp ? `${path}?v=${stamp}` : path;
+  return version ? `${path}?v=${version}` : path;
 }
 
 /** The title phrase already names the person. Then as much of the biography as fits. */
@@ -104,7 +120,7 @@ export function trainerSeoHead(trainer: TrainerSeoSource) {
   const description = trainerMetaDescription(phrase, detail);
   const portrait = profileImage(trainer.photo);
   const image = portrait
-    ? profileImage(trainerShareImagePath(trainer.slug, trainer.updatedAt))
+    ? profileImage(trainerShareImagePath(trainer.slug, trainer.updatedAt, trainer.photo))
     : undefined;
   const createdAt = isoStamp(trainer.createdAt);
   const updatedAt = isoStamp(trainer.updatedAt);
