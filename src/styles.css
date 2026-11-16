@@ -711,7 +711,9 @@ input.is-locked {
     padding: 8px;
   }
 }
-/* Phone trainer cards use a 20px gap. The home tile shows 12 of the 16. */
+/* Phone trainer cards use a 20px gap. The home tile shows 12 of the 16.
+   On that tile the gap and the card padding are 92% of the phone values.
+   Below 400px the same tile is tighter, so a long given name sits beside the rating. */
 @media (max-width: 767px) {
   .trainer-grid,
   .cat-grid,
@@ -719,7 +721,27 @@ input.is-locked {
   .sr-grid {
     gap: 20px;
   }
+  .trainer-grid--home {
+    gap: calc(20px * 0.92);
+  }
+  .trainer-grid--home .trainer-card__body {
+    padding: calc(15px * 0.92) calc(16px * 0.92) calc(17px * 0.92);
+  }
+  .trainer-grid--home .trainer-card__footer {
+    padding-top: calc(11px * 0.92);
+  }
   .trainer-grid--home > :nth-child(n + 13) { display: none; }
+}
+@media (max-width: 400px) {
+  .trainer-grid--home {
+    gap: 14px;
+  }
+  .trainer-grid--home .trainer-card__body {
+    padding: 13px 8px 15px;
+  }
+  .trainer-grid--home .trainer-card__footer {
+    padding-top: 10px;
+  }
 }
 /* Trainer catalogs stay two-up on a phone. One column only on the narrowest screens. */
 @media (max-width: 359px) {
