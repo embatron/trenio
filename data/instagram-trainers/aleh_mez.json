@@ -1,0 +1,67 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/aleh_mez/",
+  "handle": "aleh_mez",
+  "slug": "aleh_mez",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Олег",
+  "lastName": "",
+  "fullName": "Олег",
+  "gender": "male",
+  "nameQuotes": [
+    "Олег, Брест"
+  ],
+  "headline": "",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Олег, Брест",
+  "threadsUrl": "",
+  "bio": "Я Олег. Мой город Брест.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Брест",
+  "address": "",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/aleh_mez.jpg",
+  "photos": [
+    "/trainers/instagram/aleh_mez.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/aleh_mez/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

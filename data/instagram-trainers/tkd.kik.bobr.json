@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/tkd.kik.bobr/",
+  "handle": "tkd.kik.bobr",
+  "slug": "tkd.kik.bobr",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ольга",
+  "lastName": "",
+  "fullName": "Ольга",
+  "gender": "female",
+  "nameQuotes": [
+    "Ольга"
+  ],
+  "headline": "Тренер по тхэквондо и кикбоксингу",
+  "sourceBio": "Ольга Михайловна",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Бобруйск. Ольга. ул. Сикорского, д. 11. Тхэквондо. Кикбоксинг.",
+  "threadsUrl": "",
+  "bio": "Я Ольга, тренер по тхэквондо и кикбоксингу. Город Бобруйск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "thekvondo",
+      "parentSlug": "edinoborstva",
+      "label": "Тхэквондо",
+      "evidence": "Тхэквондо"
+    },
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "thekvondo",
+    "parentSlug": "edinoborstva",
+    "label": "Тхэквондо"
+  },
+  "city": "Бобруйск",
+  "address": "улица Сикорского, 11",
+  "cityCandidates": [
+    "Бобруйск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/tkd.kik.bobr.jpg",
+  "photos": [
+    "/trainers/instagram/tkd.kik.bobr.jpg",
+    "/trainers/instagram/tkd.kik.bobr-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/tkd.kik.bobr/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

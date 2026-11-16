@@ -39,7 +39,7 @@ Every profile gets its own photo search and its own card text. Do not reuse a se
 - Ask the user for an Instagram password, or commit one. The import login is the gitignored `.cursor/skills/trenio-instagram-trainers/LOGIN.md`. Read it and sign in when the page is a login wall. Do not print the password.
 - Save an `s100`, `s150`, or `s206` thumbnail as a photo, or edit a thumbnail URL (delete `stp`, or replace `s150` with `s1080`).
 - Read Instagram from any browser profile except the import profile named below.
-- Invent a Cyrillic given name from the handle, from a previous trainer, or from an example in this skill. When no source writes a given name, the handle itself is `firstName`.
+- Invent a Cyrillic given name that the handle does not contain, or copy a name from a previous trainer or from an example in this skill. When the cells, the full name, and the description write no person, split the handle on `_`, `.`, and digits, drop a role token (`trener`, `trainer`, `coach`, `fit`, `fitness`, `gym`), and map a remaining name token to Russian (`yana` is Яна, `vasiliy` is Василий, `emelyanenko` is Емельяненко). That pair goes in the note. When the handle has no name token, `firstName` is the handle.
 - Save a second slug for a person who already has a card. The same given name and surname is that person. Update the existing slug.
 - Leave the given name empty when the profile, a pinned caption, Threads, or the operator note writes that name next to the surname.
 - Save when two different given names are written for the same surname and the operator note does not pick one.
@@ -266,6 +266,16 @@ The row stays `draft`. Do not set `published`. A guest does not see `/trainers/{
 
 One line per link: handle, full name, primary sport, practiced sports, city, the stored street or that the place did not resolve, phone, email, telegram, pinned count, whether pinned image text was read, face side in pixels, gallery count, certificate count, whether the training text was written, whether an operator note was applied, whether Threads was read, and fields still empty. Drafts stay unpublished. Say that the draft is in the local database and on the server. Call `browser_close` when the batch ends.
 
+## CSV list
+
+A path to `coaches_import.csv` is the source list. The project file is `data/instagram-trainers/coaches_import.csv`. The command `.cursor/commands/import-instagram-trainers.md` has the column map. One row is one trainer at one club. Group by the Instagram handle. One handle is one card.
+
+The cells already decide the name, the biography, the city, the street, the coached slugs, and the club. Do not open the profile, a pin, or a highlight to find those again. When the name cells, the full name, and the description are a role or empty, read the handle as in the command: a name token becomes the Russian given name or surname and is written into the note. A handle with no name token stays the given name. `followers` is ignored. `Сморгонь` is stored as `Смаргонь`. The note names one city. A fourth place and a second city are reported, not forced into the card.
+
+Skip a row with no `category_slugs`, and a row whose description is a shop, a bar, a delivery service, or a course brand. The same handle already on disk is an update.
+
+Instagram is opened for the face, the gallery stills, and a header phone, email, or Telegram that the description does not already show. The eleven thoughts read the CSV row. They do not send the agent back to the profile for a fact the row already has.
+
 ## Bulk
 
-`/import-instagram-trainers` uses this flow for every link. A rejected profile does not discard drafts already saved.
+`/import-instagram-trainers` uses this flow for every link. A CSV batch uses the CSV list above and this same save. A rejected profile does not discard drafts already saved.

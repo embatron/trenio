@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/anna.grachyova/",
+  "handle": "anna.grachyova",
+  "slug": "anna.grachyova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анна",
+  "lastName": "Грачева",
+  "fullName": "Анна Грачева",
+  "gender": "female",
+  "nameQuotes": [
+    "Анна Грачева"
+  ],
+  "headline": "Фитнес-тренер и тренер по питанию",
+  "sourceBio": "Анна Грачева ▪️ Со мной ты будешь красиво выглядеть в купальнике 💪🏻 ▪️ твой коуч по питанию 🍎 ▪️ Провожу индивидуальные | групповые занятия 🫶🏻",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Анна Грачева. ул. Белобородова, д. 1Д.",
+  "threadsUrl": "",
+  "bio": "Я Анна Грачева, персональный тренер и коуч по питанию. Город Витебск.",
+  "about": [
+    "Я провожу индивидуальные и групповые занятия."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Витебск",
+  "address": "улица Генерала Белобородова, 1Д",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/anna.grachyova.jpg",
+  "photos": [
+    "/trainers/instagram/anna.grachyova.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/anna.grachyova/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

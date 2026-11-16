@@ -1,0 +1,91 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/popelyukh.trainer/",
+  "handle": "popelyukh.trainer",
+  "slug": "popelyukh.trainer",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Сергей",
+  "lastName": "Попелюх",
+  "fullName": "Сергей Попелюх",
+  "gender": "male",
+  "nameQuotes": [
+    "Сергей",
+    "Попелюх"
+  ],
+  "headline": "Тренер по боксу, силовому тренингу и кроссфит-тренер",
+  "sourceBio": "Тренер по боксу 🥊 Мастер спорта Направления: Бокс, фитбокс, силовой тренинг, функциональный тренинг. Подробности в директ или 📱 246000",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Сергей Попелюх. Город Добруш. ул. Комарова, д. 5.",
+  "threadsUrl": "",
+  "bio": "Я Сергей Попелюх, тренер по боксу. Силовой тренинг и функциональный тренинг. Город Добруш.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    },
+    {
+      "slug": "silovoj-trening",
+      "parentSlug": "fitnes",
+      "label": "Силовой тренинг",
+      "evidence": "Силовой тренинг"
+    },
+    {
+      "slug": "krossfit",
+      "parentSlug": "fitnes",
+      "label": "Кроссфит",
+      "evidence": "функциональный тренинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Добруш",
+  "address": "улица Владимира Комарова, 5",
+  "cityCandidates": [
+    "Добруш"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/popelyukh.trainer.jpg",
+  "photos": [
+    "/trainers/instagram/popelyukh.trainer.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/popelyukh.trainer/",
+    "phone": "+375 29 323-14-30",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

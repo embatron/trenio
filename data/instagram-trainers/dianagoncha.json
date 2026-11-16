@@ -1,0 +1,86 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/dianagoncha/",
+  "handle": "dianagoncha",
+  "slug": "dianagoncha",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Диана",
+  "lastName": "Водоевич",
+  "fullName": "Диана Водоевич",
+  "gender": "female",
+  "nameQuotes": [
+    "Водоевич Диана"
+  ],
+  "headline": "Тренер по танцам и хореографии и фитнес-тренер",
+  "sourceBio": "Хореограф @lift.dance_space Фитнес инструктор групповых программ @eva__by",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Бобруйск. Диана Водоевич. ул. Чонгарская, д. 98.",
+  "threadsUrl": "",
+  "bio": "Я Водоевич Диана, хореограф. Dance. Фитнес. Город Бобруйск.",
+  "about": [
+    "Я фитнес инструктор групповых программ."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "dance"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Бобруйск",
+  "address": "Чонгарская улица, 98",
+  "cityCandidates": [
+    "Бобруйск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/dianagoncha.jpg",
+  "photos": [
+    "/trainers/instagram/dianagoncha.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/dianagoncha/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/trener_pilipchuk/",
+  "handle": "trener_pilipchuk",
+  "slug": "trener_pilipchuk",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Екатерина",
+  "lastName": "Пилипчук",
+  "fullName": "Екатерина Пилипчук",
+  "gender": "female",
+  "nameQuotes": [
+    "Пилипчук Екатерина"
+  ],
+  "headline": "Фитнес-тренер и инструктор по пилатесу",
+  "sourceBio": "Индивидуальные и групповые тренировки в зале. Тренировки PILATES",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Пилипчук Екатерина",
+  "threadsUrl": "",
+  "bio": "Я Екатерина Пилипчук, фитнес-тренер в Гродно. Тренировки PILATES.",
+  "about": [
+    "Индивидуальные и групповые тренировки в зале."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/trener_pilipchuk/reel/DfdKb4IomNI/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/trener_pilipchuk/p/DfdIeqUCLux/",
+      "caption": "BISONRACE 2026 Grodno team race. Вот мне 40 и я снова в игре. Кайфанула. Бежала в удовольствие. Сложилось все: команда, погода, препятствия. Вот такая вот вечеринка для тех кому За",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/trener_pilipchuk/p/DeXcXObCNad/",
+      "caption": "Трэйл БАБУЛІНЫ КАЗКІ 2026. считаю одним из самых душевных, веселых и интересных забегов. Бег по осеннему лесу с видом на карьер просто завораживает. Это очень красиво",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Pilates"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "beg",
+      "label": "Бег",
+      "quote": "Бег"
+    }
+  ],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/trener_pilipchuk.jpg",
+  "photos": [
+    "/trainers/instagram/trener_pilipchuk.jpg",
+    "/trainers/instagram/trener_pilipchuk-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 2,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 1
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/trener_pilipchuk/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

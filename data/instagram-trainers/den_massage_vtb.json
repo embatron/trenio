@@ -1,0 +1,88 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/den_massage_vtb/",
+  "handle": "den_massage_vtb",
+  "slug": "den_massage_vtb",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Денис",
+  "lastName": "Герасимов",
+  "fullName": "Денис Герасимов",
+  "gender": "male",
+  "nameQuotes": [
+    "Денис Герасимов"
+  ],
+  "headline": "Массажист, тренер по реабилитации и восстановлению и фитнес-тренер",
+  "sourceBio": "Инструктор физической реабилитации Массажист Отец 2 красоток Фитнес-тренер с в/о Учащийся мед. колледжа Выезд с кушеткой 🚗 Пиши в директ 👇 Проспект Генерала Людникова, 10, Vitebsk 210026 dikidi.net/1561586 and 4 more",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Денис Герасимов. пр-т Генерала Людникова, д. 10.",
+  "threadsUrl": "",
+  "bio": "Я Денис Герасимов. Массаж, реабилитация и фитнес. Город Витебск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "massazh",
+      "parentSlug": "reabilitaciya",
+      "label": "Массаж",
+      "evidence": "Массаж"
+    },
+    {
+      "slug": "reabilitaciya",
+      "parentSlug": "reabilitaciya",
+      "label": "Реабилитация",
+      "evidence": "Реабилитация"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "massazh",
+    "parentSlug": "reabilitaciya",
+    "label": "Массаж"
+  },
+  "city": "Витебск",
+  "address": "проспект Генерала Людникова, 10",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/den_massage_vtb.jpg",
+  "photos": [
+    "/trainers/instagram/den_massage_vtb.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/den_massage_vtb/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/iron_cat666/",
+  "handle": "iron_cat666",
+  "slug": "iron_cat666",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Екатерина",
+  "lastName": "Соколова",
+  "fullName": "Екатерина Соколова",
+  "gender": "female",
+  "nameQuotes": [
+    "Екатерина Соколова"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Fitness Trainer",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Лида. Екатерина Соколова. ул. Железнодорожная, д. 12.",
+  "threadsUrl": "",
+  "bio": "Я Екатерина Соколова, фитнес-тренер. Город Лида.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Лида",
+  "address": "Железнодорожная улица, 12",
+  "cityCandidates": [
+    "Лида"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/iron_cat666.jpg",
+  "photos": [
+    "/trainers/instagram/iron_cat666.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/iron_cat666/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

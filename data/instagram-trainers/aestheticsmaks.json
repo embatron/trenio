@@ -1,0 +1,92 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/aestheticsmaks/",
+  "handle": "aestheticsmaks",
+  "slug": "aestheticsmaks",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Максим",
+  "lastName": "Кубасов",
+  "fullName": "Максим Кубасов",
+  "gender": "male",
+  "nameQuotes": [
+    "Максим Кубасов"
+  ],
+  "headline": "Тренер по бодибилдингу",
+  "sourceBio": "Personal Coach Maksim Kubasov Natural / natty Coach Grodno",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Максим Кубасов",
+  "threadsUrl": "",
+  "bio": "Я Максим Кубасов, тренер в Гродно.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/aestheticsmaks/p/Dd0tX4kCG5M/",
+      "caption": "Делаю людей ещё краше: Набор мышечной массы. Похудение (жиросжигание). Создание рельефа (сушка). Развитие силы. Повышение выносливости. Улучшение (укрепление) здоровья",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/aestheticsmaks/p/Ddbp7roCOw3/",
+      "caption": "Делаю людей ещё краше: Набор мышечной массы. Похудение (жиросжигание). Создание рельефа (сушка). Развитие силы. Повышение выносливости. Улучшение (укрепление) здоровья",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/aestheticsmaks/p/DdURxuGiMo-/",
+      "caption": "",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "bodibilding",
+      "parentSlug": "fitnes",
+      "label": "Бодибилдинг",
+      "evidence": "сушка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bodibilding",
+    "parentSlug": "fitnes",
+    "label": "Бодибилдинг"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/aestheticsmaks.jpg",
+  "photos": [
+    "/trainers/instagram/aestheticsmaks.jpg",
+    "/trainers/instagram/aestheticsmaks-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/aestheticsmaks/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

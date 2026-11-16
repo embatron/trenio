@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vpank0v/",
+  "handle": "vpank0v",
+  "slug": "vpank0v",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Вадим",
+  "lastName": "Панков",
+  "fullName": "Вадим Панков",
+  "gender": "male",
+  "nameQuotes": [
+    "Вадим Панков"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "Педагог-психолог для людей с нестабильным уровнем агрессии, эмпатии, самоконтролем и девиантным поведением, а также СДВГ, ЛГБТ, ОКР, БДСМ,ПТСР, и т.д",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гомель. Вадим Панков. ул. Столярная, д. 2-3.",
+  "threadsUrl": "",
+  "bio": "Я Вадим Панков, тренер по боксу. Город Гомель.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Гомель",
+  "address": "Столярная улица, 2",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vpank0v.jpg",
+  "photos": [
+    "/trainers/instagram/vpank0v.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vpank0v/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

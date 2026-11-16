@@ -1,0 +1,67 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yana_volat/",
+  "handle": "yana_volat",
+  "slug": "yana_volat",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Яна",
+  "lastName": "",
+  "fullName": "Яна",
+  "gender": "female",
+  "nameQuotes": [
+    "ЯНА ВОЛАТ"
+  ],
+  "headline": "",
+  "sourceBio": "РАБОТАЮ В ВОЛАТ (ул. Тельмана 110, пр-т Советский 35) ✨ЗДЕСЬ О НИХ! ✨ДО/ПОСЛЕ✨😍 ИСТОРИИ ПОДОПЕЧНЫХ и их портфолио",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Барановичи. Яна. ул. Тельмана, д. 110 | пр-т Советский, д. 35.",
+  "threadsUrl": "",
+  "bio": "Я Яна Волат. Город Барановичи.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Барановичи",
+  "address": "улица Тельмана, 110 | пр-т Советский, д. 35",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yana_volat.jpg",
+  "photos": [
+    "/trainers/instagram/yana_volat.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yana_volat/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

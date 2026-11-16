@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/tatsiana_trener/",
+  "handle": "tatsiana_trener",
+  "slug": "tatsiana_trener",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Татьяна",
+  "lastName": "",
+  "fullName": "Татьяна",
+  "gender": "female",
+  "nameQuotes": [
+    "Татьяна"
+  ],
+  "headline": "Тренер по тренажёрному залу",
+  "sourceBio": "Тренирую онлайн и офлайн в тренажёрном зале Похудение, набор мышечной массы, сочные ягодицы Ведение онлайн (программы тренировок и питания)",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Татьяна",
+  "threadsUrl": "",
+  "bio": "Я Татьяна, тренер. Тренирую онлайн и офлайн в тренажёрном зале в Гродно. Веду программы тренировок и питания.",
+  "about": [
+    "Тренирую онлайн и офлайн в тренажёрном зале. Похудение, набор мышечной массы, сочные ягодицы."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/tatsiana_trener/reel/DQwBTwbiLJV/",
+      "caption": "",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/tatsiana_trener.jpg",
+  "photos": [
+    "/trainers/instagram/tatsiana_trener.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/tatsiana_trener/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

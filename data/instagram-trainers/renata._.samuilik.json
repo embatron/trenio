@@ -1,0 +1,92 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/renata._.samuilik/",
+  "handle": "renata._.samuilik",
+  "slug": "renata._.samuilik",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Рената",
+  "lastName": "Самуйлик",
+  "fullName": "Рената Самуйлик",
+  "gender": "female",
+  "nameQuotes": [
+    "Рената Самуйлик"
+  ],
+  "headline": "Тренер по гребле, фитнес-тренер и тренер по сапу",
+  "sourceBio": "Работаю в трёх направлениях 🦾 ~веду запись на персональные тренировки в Direct⤵️",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Мозырь. Рената Самуйлик. ул. Юрия Гагарина, д. 85Б.",
+  "threadsUrl": "",
+  "bio": "Я Рената Самуйлик. Гребля и фитнес. Город Мозырь.",
+  "about": [
+    "Я веду персональные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "greblya",
+      "parentSlug": "plavanie",
+      "label": "Гребля",
+      "evidence": "Гребля"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "sup",
+      "parentSlug": "plavanie",
+      "label": "Сап",
+      "evidence": "SUP"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "greblya",
+    "parentSlug": "plavanie",
+    "label": "Гребля"
+  },
+  "city": "Мозырь",
+  "address": "улица Юрия Гагарина",
+  "cityCandidates": [
+    "Мозырь"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/renata._.samuilik.jpg",
+  "photos": [
+    "/trainers/instagram/renata._.samuilik.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/renata._.samuilik/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

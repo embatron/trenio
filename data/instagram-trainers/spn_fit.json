@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/spn_fit/",
+  "handle": "spn_fit",
+  "slug": "spn_fit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Сергей",
+  "lastName": "",
+  "fullName": "Сергей",
+  "gender": "male",
+  "nameQuotes": [
+    "Сергей"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "▪️Сделаю тебя лучше в @mirfitnesaby ▪️Пишу программы тренировок ▪️Онлайн ведение из любой точки мира",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Жлобин. Сергей. 1-й микрорайон, д. 1А.",
+  "threadsUrl": "",
+  "bio": "Я Сергей, фитнес-тренер. Город Жлобин.",
+  "about": [
+    "Я пишу программы тренировок."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Жлобин",
+  "address": "1-й микрорайон, д. 1А",
+  "cityCandidates": [
+    "Жлобин"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/spn_fit.jpg",
+  "photos": [
+    "/trainers/instagram/spn_fit.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/spn_fit/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

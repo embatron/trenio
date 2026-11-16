@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yuliya_taichi_stomova/",
+  "handle": "yuliya_taichi_stomova",
+  "slug": "yuliya_taichi_stomova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлия",
+  "lastName": "Стомова",
+  "fullName": "Юлия Стомова",
+  "gender": "female",
+  "nameQuotes": [
+    "Юлия Стомова"
+  ],
+  "headline": "Тренер по тайцзи и цигун",
+  "sourceBio": "пробное занятие по запросу в директ",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Юлия Стомова",
+  "threadsUrl": "",
+  "bio": "Я Юлия Стомова, преподаю тайцзи и цигун в Минске.",
+  "about": [
+    "Пробное занятие по запросу."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/yuliya_taichi_stomova/p/DfocMXFttna/",
+      "caption": "Актуальное расписание групповых занятий. Вторник - цигун и основы тайцзи. Суббота - тайцзи формы и меч. Шорная, 20 - понедельник, пятница - веер. Онлайн группа. Цигун и основы тацзи. В любую группу можно подойти на пробное занятие.",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/yuliya_taichi_stomova/reel/DOa7xDmjY6W/",
+      "caption": "Цигун нужен для того, чтобы было чем делать. Тайцзи нужно для того, чтобы понимать, что ты делаешь. Тайцзицюань - это больше про проявление себя вовне.",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "tajczi-cigun",
+      "parentSlug": "yoga",
+      "label": "Тайцзи-цигун",
+      "evidence": "тайцзи и цигун"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tajczi-cigun",
+    "parentSlug": "yoga",
+    "label": "Тайцзи-цигун"
+  },
+  "city": "Минск",
+  "address": "Шорная улица, 20",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yuliya_taichi_stomova.jpg",
+  "photos": [
+    "/trainers/instagram/yuliya_taichi_stomova.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yuliya_taichi_stomova/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

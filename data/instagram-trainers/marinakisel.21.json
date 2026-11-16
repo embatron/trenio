@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/marinakisel.21/",
+  "handle": "marinakisel.21",
+  "slug": "marinakisel.21",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Марина",
+  "lastName": "Кисель",
+  "fullName": "Марина Кисель",
+  "gender": "female",
+  "nameQuotes": [
+    "Марина Кисель"
+  ],
+  "headline": "Тренер по питанию",
+  "sourceBio": "🥗 консультации по питанию 🏃‍♀️‍➡️ тренировки Солнечная, 82 (напротив храма Петра и Февронии) НП Herbalife Nutrition🌿",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Пинск. Марина Кисель. ул. Солнечная, д. 82.",
+  "threadsUrl": "",
+  "bio": "Я Марина Кисель. Консультации по питанию и тренировки. Город Пинск.",
+  "about": [
+    "Я веду эти тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "nutriciolog",
+    "parentSlug": "fitnes",
+    "label": "Питание"
+  },
+  "city": "Пинск",
+  "address": "Солнечная улица, 82",
+  "cityCandidates": [
+    "Пинск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/marinakisel.21.jpg",
+  "photos": [
+    "/trainers/instagram/marinakisel.21.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/marinakisel.21/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

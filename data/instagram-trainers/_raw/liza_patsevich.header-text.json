@@ -1,0 +1,114 @@
+{
+  url: 'https://www.instagram.com/liza_patsevich/',
+  title: 'Фитнес-тренер | Лиза | Гродно (@liza_patsevich) • Instagram photos and videos',
+  og: '1,083 Followers, 733 Following, 65 Posts - See Instagram photos and videos from Фитнес-тренер | Лиза | Гродно (@liza_patsevich)',
+  header: 'liza_patsevich\n' +
+    'Фитнес-тренер | Лиза | Гродно\n' +
+    '65 posts\n' +
+    '1,086 followers\n' +
+    '718 following\n' +
+    'Fitness Trainer\n' +
+    'Фитнес клуб @shark.fitness.club\n' +
+    'Тренер с проф.образованием\n' +
+    'Follow\n' +
+    'Message\n' +
+    'Тренирую\n' +
+    'Тренируюсь\n' +
+    'Обучение',
+  highlights: [
+    {
+      title: 'Тренирую',
+      href: 'https://www.instagram.com/stories/highlights/18021983273623106/'
+    },
+    {
+      title: 'Тренируюсь',
+      href: 'https://www.instagram.com/stories/highlights/17875398291399248/'
+    },
+    {
+      title: 'Обучение',
+      href: 'https://www.instagram.com/stories/highlights/17869511442537449/'
+    }
+  ],
+  posts: [
+    {
+      href: 'https://www.instagram.com/liza_patsevich/reel/DUNKBaHCPM7/',
+      pinned: true,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/liza_patsevich/reel/DbTeEO2R12Q/',
+      pinned: true,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/liza_patsevich/reel/DfoXR4BBP4g/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/liza_patsevich/reel/DfnMdlZRm2y/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/liza_patsevich/reel/DfkdI2tBSXU/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/liza_patsevich/reel/DetxMY-t_t3/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/liza_patsevich/reel/DemNIl4Nv4i/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/liza_patsevich/reel/Dd0gA1itHkx/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/liza_patsevich/reel/DdrmQfAxyg8/',
+      pinned: false,
+      kind: 'reel'
+    }
+  ],
+  pinned: [
+    {
+      href: 'https://www.instagram.com/liza_patsevich/reel/DUNKBaHCPM7/',
+      pinned: true,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/liza_patsevich/reel/DbTeEO2R12Q/',
+      pinned: true,
+      kind: 'reel'
+    }
+  ],
+  imgs: [
+    {
+      alt: "liza_patsevich's profile picture",
+      w: 930,
+      h: 930
+    },
+    {
+      alt: "liza_patsevich's highlight story picture",
+      w: 150,
+      h: 150
+    },
+    {
+      alt: "liza_patsevich's highlight story picture",
+      w: 150,
+      h: 150
+    },
+    {
+      alt: "liza_patsevich's highlight story picture",
+      w: 150,
+      h: 150
+    }
+  ],
+  clickedMore: false
+}

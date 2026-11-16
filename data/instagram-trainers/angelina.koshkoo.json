@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/angelina.koshkoo/",
+  "handle": "angelina.koshkoo",
+  "slug": "angelina.koshkoo",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ангелина",
+  "lastName": "Кошко",
+  "fullName": "Ангелина Кошко",
+  "gender": "female",
+  "nameQuotes": [
+    "Ангелина Кошко"
+  ],
+  "headline": "Тренер по силовому тренингу и high heels",
+  "sourceBio": "Подтянутое и сильное тело без фитнес-фанатизма Силовые и коррекционные тренировки Персонально • группы • онлайн Клуб «Сборка тела» ↓ t.me/+HDi8iacxWVNlOTc6",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Лида. Ангелина Кошко. пр-т Победы, д. 23.",
+  "threadsUrl": "",
+  "bio": "Я Ангелина Кошко. Силовые тренировки. Город Лида.",
+  "about": [
+    "Я веду силовые тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "silovoj-trening",
+      "parentSlug": "fitnes",
+      "label": "Силовой тренинг",
+      "evidence": "силовые"
+    },
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "High Heels"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "silovoj-trening",
+    "parentSlug": "fitnes",
+    "label": "Силовой тренинг"
+  },
+  "city": "Лида",
+  "address": "проспект Победы, 23",
+  "cityCandidates": [
+    "Лида"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/angelina.koshkoo.jpg",
+  "photos": [
+    "/trainers/instagram/angelina.koshkoo.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/angelina.koshkoo/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

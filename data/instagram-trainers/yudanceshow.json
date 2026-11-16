@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yudanceshow/",
+  "handle": "yudanceshow",
+  "slug": "yudanceshow",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлия",
+  "lastName": "Горошкова",
+  "fullName": "Юлия Горошкова",
+  "gender": "female",
+  "nameQuotes": [
+    "Юлия Горошкова"
+  ],
+  "headline": "Тренер по танцам и хореографии и инструктор по растяжке",
+  "sourceBio": "dancer, choreographer •основатель, преподаватель @place.mog •руководитель @dance.show_mogilev Сотрудничество, запись на занятия ⬇️ t.me/danceshow_mogilev",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв. Юлия Горошкова. ул. Комсомольская, д. 5.",
+  "threadsUrl": "",
+  "bio": "Я Юлия Горошкова. Танцы и растяжка. Город Могилёв.",
+  "about": [
+    "Я преподаю эти занятия."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "stretching"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Могилёв",
+  "address": "Комсомольская улица, 5",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yudanceshow.jpg",
+  "photos": [
+    "/trainers/instagram/yudanceshow.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yudanceshow/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/danceshow_mogilev",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

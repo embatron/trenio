@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vladimir__mir_/",
+  "handle": "vladimir__mir_",
+  "slug": "vladimir__mir_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Владимир",
+  "lastName": "Денисюк",
+  "fullName": "Владимир Денисюк",
+  "gender": "male",
+  "nameQuotes": [
+    "Владимир Денисюк"
+  ],
+  "headline": "Тренер по боксу и кикбоксингу",
+  "sourceBio": "-Тренер с образованием -Бокс 🥊 -Кикбоксинг 🥊 -Персональные и групповые тренировки -Со мной ты полюбишь спорт, это будет результативно и интересно 🔥",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кобрин Владимир Денисюк",
+  "threadsUrl": "",
+  "bio": "Я Владимир Денисюк, тренер. Город Кобрин. Веду бокс и кикбоксинг.",
+  "about": [
+    "Персональные и групповые тренировки. Со мной ты полюбишь спорт, это будет результативно и интересно."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    },
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Кобрин",
+  "address": "",
+  "cityCandidates": [
+    "Кобрин"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vladimir__mir_.jpg",
+  "photos": [
+    "/trainers/instagram/vladimir__mir_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vladimir__mir_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

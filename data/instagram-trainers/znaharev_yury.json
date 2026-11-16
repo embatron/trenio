@@ -1,0 +1,75 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/znaharev_yury/",
+  "handle": "znaharev_yury",
+  "slug": "znaharev_yury",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юра",
+  "lastName": "Знахарев",
+  "fullName": "Юра Знахарев",
+  "gender": "female",
+  "nameQuotes": [
+    "Юра Знахарев"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Fitness Trainer Тренер. Фитнес методолог Анатомия | Биомеханика | Периодизация Без мистики и волшебных таблеток Фанат научного метода 👇Телеграм канал t.me/ZnaharevZnaet/713",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Барановичи. Юра Знахарев. ул. Чурилина, д. 13.",
+  "threadsUrl": "",
+  "bio": "Я Юра Знахарев, фитнес-тренер. Город Барановичи.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Барановичи",
+  "address": "улица Чурилина, 13",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/znaharev_yury.jpg",
+  "photos": [
+    "/trainers/instagram/znaharev_yury.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/znaharev_yury/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/ZnaharevZnaet",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

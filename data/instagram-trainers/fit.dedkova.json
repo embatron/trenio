@@ -1,0 +1,100 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/fit.dedkova/",
+  "handle": "fit.dedkova",
+  "slug": "fit.dedkova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ольга",
+  "lastName": "Дедкова",
+  "fullName": "Ольга Дедкова",
+  "gender": "female",
+  "nameQuotes": [
+    "Ольга Дедкова"
+  ],
+  "headline": "Инструктор по йоге, пилатесу, растяжке и тренер по танцам и хореографии",
+  "sourceBio": "✨ 8 лет опыта | Групповые и индивидуальные тренировки Йога • Пилатес • Стретчинг • Табата • Тай-бо • Танцы Заряжаю энергией и легкостью",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Бобруйск. Ольга Дедкова. ул. Сикорского, д. 11.",
+  "threadsUrl": "",
+  "bio": "Я Ольга Дедкова, инструктор по йоге. Город Бобруйск. Веду групповые и индивидуальные тренировки: йога, пилатес, стретчинг и танцы.",
+  "about": [
+    "Я веду групповые и индивидуальные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "стретчинг"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Бобруйск",
+  "address": "улица Сикорского, 11",
+  "cityCandidates": [
+    "Бобруйск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/fit.dedkova.jpg",
+  "photos": [
+    "/trainers/instagram/fit.dedkova.jpg",
+    "/trainers/instagram/fit.dedkova-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/fit.dedkova/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/tatiana_daybova/",
+  "handle": "tatiana_daybova",
+  "slug": "tatiana_daybova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Татьяна",
+  "lastName": "Дайбова",
+  "fullName": "Татьяна Дайбова",
+  "gender": "female",
+  "nameQuotes": [
+    "Татьяна Дайбова"
+  ],
+  "headline": "Инструктор по пилатесу и фитнес-тренер",
+  "sourceBio": "Blogger Татьяна Дайбова Прошла путь от тренера в найме до владельца фитнес-студии 🪄6 лет назад создала @joy.fitness.krd",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. Татьяна Дайбова. ул. Рябиновая, д. 26.",
+  "threadsUrl": "",
+  "bio": "Я Татьяна Дайбова. Обучаю пилатесу. Город Брест.",
+  "about": [
+    "Я веду тренировки по пилатесу."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Брест",
+  "address": "Рябиновая улица, 26",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/tatiana_daybova.jpg",
+  "photos": [
+    "/trainers/instagram/tatiana_daybova.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/tatiana_daybova/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

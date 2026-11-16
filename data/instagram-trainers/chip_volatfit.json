@@ -1,0 +1,91 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/chip_volatfit/",
+  "handle": "chip_volatfit",
+  "slug": "chip_volatfit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "chip_volatfit",
+  "lastName": "",
+  "fullName": "chip_volatfit",
+  "gender": "male",
+  "nameQuotes": [],
+  "headline": "Фитнес-тренер и тренер по питанию, осанке",
+  "sourceBio": "Дипломированный специалист Программы тренировок / питания Работа с осанкой Онлайн ведение",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Барановичи. пр-т Советский, д. 35.",
+  "threadsUrl": "",
+  "bio": "Я персональный тренер. Программы тренировок и питания. Работа с осанкой. Город Барановичи.",
+  "about": [
+    "Я пишу программы тренировок."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Барановичи",
+  "address": "пр-т Советский, д. 35",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/chip_volatfit.jpg",
+  "photos": [
+    "/trainers/instagram/chip_volatfit.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/chip_volatfit/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

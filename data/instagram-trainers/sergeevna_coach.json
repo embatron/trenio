@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/sergeevna_coach/",
+  "handle": "sergeevna_coach",
+  "slug": "sergeevna_coach",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алина",
+  "lastName": "Ярошук",
+  "fullName": "Алина Ярошук",
+  "gender": "female",
+  "nameQuotes": [
+    "Алина Ярошук"
+  ],
+  "headline": "Тренер по художественной гимнастике",
+  "sourceBio": "— Тренер по художественной гимнастике — Мастер Спорта Республики Беларусь — Дипломированный специалист — Чемпионка Кубка РБ 📍Гродно",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Алина Ярошук. ул. Коммунальная, д. 13/1.",
+  "threadsUrl": "",
+  "bio": "Я Алина Ярошук, тренер по художественной гимнастике. Город Гродно.",
+  "about": [
+    "Я веду тренировки по художественной гимнастике."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "hudozhestvennaya",
+      "parentSlug": "gimnastika",
+      "label": "Художественная гимнастика",
+      "evidence": "Художественная гимнастика"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "hudozhestvennaya",
+    "parentSlug": "gimnastika",
+    "label": "Художественная гимнастика"
+  },
+  "city": "Гродно",
+  "address": "Коммунальная улица",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/sergeevna_coach.jpg",
+  "photos": [
+    "/trainers/instagram/sergeevna_coach.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/sergeevna_coach/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

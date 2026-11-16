@@ -1,0 +1,93 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/olegryshkevich/",
+  "handle": "olegryshkevich",
+  "slug": "olegryshkevich",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Олег",
+  "lastName": "Рышкевич",
+  "fullName": "Олег Рышкевич",
+  "gender": "male",
+  "nameQuotes": [
+    "Олег Рышкевич"
+  ],
+  "headline": "Тренер по бодибилдингу, инструктор тренажёрного зала и фитнес-тренер",
+  "sourceBio": "Мастер спорта по бодибилдингу РБ IFBB 🇧🇾 Персональный тренер ROYAL GYM.",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Олег Рышкевич. ул. Мостовая, д. 39.",
+  "threadsUrl": "",
+  "bio": "Я Олег Рышкевич, мастер спорта по бодибилдингу. Город Гродно.",
+  "about": [
+    "Я персональный тренер."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "bodibilding",
+      "parentSlug": "fitnes",
+      "label": "Бодибилдинг",
+      "evidence": "Бодибилдинг"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bodibilding",
+    "parentSlug": "fitnes",
+    "label": "Бодибилдинг"
+  },
+  "city": "Гродно",
+  "address": "Мостовая улица, 39",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/olegryshkevich.jpg",
+  "photos": [
+    "/trainers/instagram/olegryshkevich.jpg",
+    "/trainers/instagram/olegryshkevich-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/olegryshkevich/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

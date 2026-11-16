@@ -1,0 +1,137 @@
+{
+  title: '(2) Instagram',
+  og: '2,374 Followers, 594 Following, 465 Posts - See Instagram photos and videos from MARK SHOKA • ДЗЮДО • ТРЕНЕР • ГРОДНО (@_shoka_1)',
+  header: '_shoka_1\n' +
+    'MARK SHOKA • ДЗЮДО • ТРЕНЕР • ГРОДНО\n' +
+    '465 posts\n' +
+    '2,383 followers\n' +
+    '578 following\n' +
+    'Athlete\n' +
+    '• основатель @shark.fitness.club\n' +
+    '• тренер в @shark.judo.club\n' +
+    '• МС по дзюдо и самбо 🥋\n' +
+    '• победитель шоу Герои 🏆\n' +
+    '•... \n' +
+    'more\n' +
+    '_shoka_1\n' +
+    'Follow\n' +
+    'Message\n' +
+    'GYM 💪🏽\n' +
+    'me\n' +
+    '2026\n' +
+    'Герои\n' +
+    'JUDO\n' +
+    '2025\n' +
+    'Wedding\n' +
+    'TENNIS 🎾\n' +
+    'Zakopane 🇵🇱\n' +
+    '2024\n' +
+    '2023\n' +
+    '2022\n' +
+    '2020/21\n' +
+    '2018/19',
+  highlights: [
+    {
+      title: 'GYM 💪🏽',
+      href: 'https://www.instagram.com/stories/highlights/18144396475055001/'
+    },
+    {
+      title: 'me',
+      href: 'https://www.instagram.com/stories/highlights/17887237439342571/'
+    },
+    {
+      title: '2026',
+      href: 'https://www.instagram.com/stories/highlights/17961256248151141/'
+    },
+    {
+      title: 'Герои',
+      href: 'https://www.instagram.com/stories/highlights/17928312828152300/'
+    },
+    {
+      title: 'JUDO',
+      href: 'https://www.instagram.com/stories/highlights/17901446605112851/'
+    },
+    {
+      title: '2025',
+      href: 'https://www.instagram.com/stories/highlights/18058880891473927/'
+    },
+    {
+      title: 'Wedding',
+      href: 'https://www.instagram.com/stories/highlights/18106614190554248/'
+    },
+    {
+      title: 'TENNIS 🎾',
+      href: 'https://www.instagram.com/stories/highlights/18276375910229675/'
+    },
+    {
+      title: 'Zakopane 🇵🇱',
+      href: 'https://www.instagram.com/stories/highlights/17959276477062228/'
+    },
+    {
+      title: '2024',
+      href: 'https://www.instagram.com/stories/highlights/18024959861447979/'
+    },
+    {
+      title: '2023',
+      href: 'https://www.instagram.com/stories/highlights/18035036336630926/'
+    },
+    {
+      title: '2022',
+      href: 'https://www.instagram.com/stories/highlights/17844314217451303/'
+    },
+    {
+      title: '2020/21',
+      href: 'https://www.instagram.com/stories/highlights/17859585882389293/'
+    },
+    {
+      title: '2018/19',
+      href: 'https://www.instagram.com/stories/highlights/17842024347460480/'
+    }
+  ],
+  posts: [
+    {
+      href: 'https://www.instagram.com/_shoka_1/reel/Db1MWqsRp8q/',
+      pinned: true,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/_shoka_1/reel/Dfg4HDYxno_/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/_shoka_1/reel/DfZlQYCo2R9/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/_shoka_1/reel/DfXzVuZI5RD/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/_shoka_1/reel/DfS0p9hxpqu/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/_shoka_1/reel/DfFwP7xx7vm/',
+      pinned: false,
+      kind: 'reel'
+    }
+  ],
+  pinned: [
+    {
+      href: 'https://www.instagram.com/_shoka_1/reel/Db1MWqsRp8q/',
+      pinned: true,
+      kind: 'reel'
+    }
+  ],
+  imgs: [
+    {
+      w: 1080,
+      h: 1080
+    }
+  ],
+  clickedMore: true
+}

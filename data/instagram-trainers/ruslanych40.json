@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ruslanych40/",
+  "handle": "ruslanych40",
+  "slug": "ruslanych40",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Руслан",
+  "lastName": "Кравчук",
+  "fullName": "Руслан Кравчук",
+  "gender": "male",
+  "nameQuotes": [
+    "Руслан",
+    "Кравчук"
+  ],
+  "headline": "Тренер по пауэрлифтингу и общефизической подготовке",
+  "sourceBio": "Помогу достичь совершенства,а также в подготовке к соревнованиям Мастер спорта по пауэрлифтингу, тренер с многолетним опытом. Реабилитолог.",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Руслан Кравчук. Город Витебск. ул. Чапаева, д. 29.",
+  "threadsUrl": "",
+  "bio": "Я Руслан Кравчук, тренер по пауэрлифтингу. Город Витебск.",
+  "about": [
+    "Я веду эти тренировки и помогаю в подготовке к соревнованиям."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pauerlifting",
+      "parentSlug": "fitnes",
+      "label": "Пауэрлифтинг",
+      "evidence": "Пауэрлифтинг"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "подготовка к соревнованиям"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pauerlifting",
+    "parentSlug": "fitnes",
+    "label": "Пауэрлифтинг"
+  },
+  "city": "Витебск",
+  "address": "улица Чапаева, 29",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ruslanych40.jpg",
+  "photos": [
+    "/trainers/instagram/ruslanych40.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ruslanych40/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

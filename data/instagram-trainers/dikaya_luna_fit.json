@@ -1,0 +1,107 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/dikaya_luna_fit/",
+  "handle": "dikaya_luna_fit",
+  "slug": "dikaya_luna_fit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дарья",
+  "lastName": "Молчанова",
+  "fullName": "Дарья Молчанова",
+  "gender": "female",
+  "nameQuotes": [
+    "Дарья Молчанова, Минск"
+  ],
+  "headline": "Тренер по питанию, фитнес-тренер и тренер по осанке",
+  "sourceBio": "Даша 🌙Фитнес,вдохновленный женской силой и природой 🌰Стройное тело&красивая осанка 🤸‍♂️Функционал,женское здоровье,сила, работа с дыханием и болями",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Дарья Молчанова, Минск",
+  "threadsUrl": "",
+  "bio": "Я Дарья, тренер по фитнесу и питанию в Минске. Работаю с осанкой, силой, дыханием и болями.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/dikaya_luna_fit/reel/DNGKsSLi6CX/",
+      "caption": "🧘",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/dikaya_luna_fit/reel/DNz6hVmWB-O/",
+      "caption": "Это реальное расписание моей жизни )))",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/dikaya_luna_fit/reel/DAVHHWZN1yK/",
+      "caption": "Главное задача, с которой лучше справится зал- большое количество мышц))Остальные задачи можно решить в комнате 1*1 с телефоном и 2 гантельками🫰🏻 У меня скоро новая мини-группа стартует, присоединяйся😏",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "nutriciolog",
+    "parentSlug": "fitnes",
+    "label": "Питание"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/dikaya_luna_fit.jpg",
+  "photos": [
+    "/trainers/instagram/dikaya_luna_fit.jpg",
+    "/trainers/instagram/dikaya_luna_fit-g2.jpg",
+    "/trainers/instagram/dikaya_luna_fit-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/dikaya_luna_fit/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

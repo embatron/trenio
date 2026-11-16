@@ -1,0 +1,103 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/evgeniya_cigankova/",
+  "handle": "evgeniya_cigankova",
+  "slug": "evgeniya_cigankova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгения",
+  "lastName": "Цыганкова",
+  "fullName": "Евгения Цыганкова",
+  "gender": "female",
+  "nameQuotes": [
+    "Евгения Цыганкова"
+  ],
+  "headline": "Фитнес-тренер и инструктор по йоге, пилатесу, растяжке",
+  "sourceBio": "Health/beauty ◾Тренер по фитнесу ◾Хореограф ▪️Групповое и индивидуальное ведение ▪️Йога, пилатес, стретчинг, МФР, силовыекардио фитнес-программы @taficlub.vitebsk",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Евгения Цыганкова. ул. Белорусская, д. 6В.",
+  "threadsUrl": "",
+  "bio": "Я Евгения Цыганкова, тренер по фитнесу. Город Витебск. Веду групповые и индивидуальные занятия.",
+  "about": [
+    "Я веду групповые и индивидуальные занятия."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "здоровая спина"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Витебск",
+  "address": "Белорусская улица",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [
+    "Беларуская"
+  ],
+  "avatarPath": "/trainers/instagram/evgeniya_cigankova.jpg",
+  "photos": [
+    "/trainers/instagram/evgeniya_cigankova.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/evgeniya_cigankova/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

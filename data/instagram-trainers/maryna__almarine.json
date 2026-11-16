@@ -1,0 +1,101 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/maryna__almarine/",
+  "handle": "maryna__almarine",
+  "slug": "maryna__almarine",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Марина",
+  "lastName": "Юртова",
+  "fullName": "Марина Юртова",
+  "gender": "female",
+  "nameQuotes": [
+    "Юртова Марина"
+  ],
+  "headline": "Тренер по танцам и хореографии, фитнес-тренер и тренер по high heels",
+  "sourceBio": "Dance & Fitness Coach",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Юртова Марина",
+  "threadsUrl": "",
+  "bio": "Я Марина Юртова, преподаю танцы и фитнес.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/maryna__almarine/reel/C9vMp-UIQDZ/",
+      "caption": "Всё начинается с ВЕРЫ.",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/maryna__almarine/p/DDbq1caoibZ/",
+      "caption": "Choreography. highheels.",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/maryna__almarine/reel/DVi2HMtjcsh/",
+      "caption": "Dance master class in Thailand, Phuket",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "dance"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "High Heels"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/maryna__almarine.jpg",
+  "photos": [
+    "/trainers/instagram/maryna__almarine.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/maryna__almarine/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

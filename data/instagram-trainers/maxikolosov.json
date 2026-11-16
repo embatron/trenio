@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/maxikolosov/",
+  "handle": "maxikolosov",
+  "slug": "maxikolosov",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Макс",
+  "lastName": "Колосов",
+  "fullName": "Макс Колосов",
+  "gender": "male",
+  "nameQuotes": [
+    "Макс Колосов"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Преподаватель @fitness_pro_ru • групповик Говорю серьёзно о «несерьезной» профессии 👇🏼 Музыка и кейсы тренировок",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Лида. Макс Колосов. тренировки. ул. Победы, д. 30.",
+  "threadsUrl": "",
+  "bio": "Я Макс Колосов. Fitness и групповые тренировки. Город Лида.",
+  "about": [
+    "Я веду групповые тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Лида",
+  "address": "улица Победы, 30",
+  "cityCandidates": [
+    "Лида"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/maxikolosov.jpg",
+  "photos": [
+    "/trainers/instagram/maxikolosov.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/maxikolosov/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/maxwell_fitnessmusic",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

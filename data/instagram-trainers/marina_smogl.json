@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/marina_smogl/",
+  "handle": "marina_smogl",
+  "slug": "marina_smogl",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Марина",
+  "lastName": "",
+  "fullName": "Марина",
+  "gender": "female",
+  "nameQuotes": [
+    "Марина"
+  ],
+  "headline": "Тренер по танцам и хореографии",
+  "sourceBio": "Добро пожаловать в мой мир😁 @marina_lifedance Тренер в @fitness.leto по Exotic Pole Dance Пеку тортики🍰 Развиваюсь в инфографике @smoglmarina",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Бобруйск. Марина. ул. Чонгарская, д. 98.",
+  "threadsUrl": "",
+  "bio": "Я Марина, тренер. Танцы. Город Бобруйск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "dance"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Бобруйск",
+  "address": "Чонгарская улица, 98",
+  "cityCandidates": [
+    "Бобруйск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/marina_smogl.jpg",
+  "photos": [
+    "/trainers/instagram/marina_smogl.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/marina_smogl/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

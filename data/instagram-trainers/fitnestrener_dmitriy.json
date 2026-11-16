@@ -66,14 +66,15 @@
   "languages": [],
   "avatarPath": "/trainers/instagram/fitnestrener_dmitriy.jpg",
   "photos": [
-    "/trainers/instagram/fitnestrener_dmitriy.jpg"
+    "/trainers/instagram/fitnestrener_dmitriy-v2.jpg",
+    "/trainers/instagram/fitnestrener_dmitriy-g2.jpg"
   ],
   "certificates": [],
   "photoSearch": {
     "face": true,
     "pinned": 2,
     "candidates": 0,
-    "gallery": 0,
+    "gallery": 1,
     "certificates": 0,
     "skipped": 0
   },

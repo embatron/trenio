@@ -1,0 +1,89 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/miss_janem/",
+  "handle": "miss_janem",
+  "slug": "miss_janem",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгения",
+  "lastName": "Мисник",
+  "fullName": "Евгения Мисник",
+  "gender": "female",
+  "nameQuotes": [
+    "ЕВГЕНИЯ",
+    "МИСНИК"
+  ],
+  "headline": "Фитнес-тренер, инструктор по растяжке и массажист",
+  "sourceBio": "Руководитель студии фитнеса @jt_fit ◽️Тренер по естественному омоложению •МФР•Массаж•Самомассаж• Помогаю освоить техники дома",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Евгения Мисник. Город Могилёв. ул. Первомайская, д. 2.",
+  "threadsUrl": "",
+  "bio": "Я Евгения Мисник, тренер. Фитнес, МФР и массаж. Город Могилёв.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "МФР"
+    },
+    {
+      "slug": "massazh",
+      "parentSlug": "reabilitaciya",
+      "label": "Массаж",
+      "evidence": "Массаж"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Могилёв",
+  "address": "Первомайская улица, 2",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/miss_janem.jpg",
+  "photos": [
+    "/trainers/instagram/miss_janem.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/miss_janem/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/oleg4228/",
+  "handle": "oleg4228",
+  "slug": "oleg4228",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Олег",
+  "lastName": "Мацкевич",
+  "fullName": "Олег Мацкевич",
+  "gender": "male",
+  "nameQuotes": [
+    "олег мацкевич"
+  ],
+  "headline": "",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Барановичи. Олег Мацкевич. пр-т Советский, д. 35.",
+  "threadsUrl": "",
+  "bio": "Я Олег Мацкевич. Город Барановичи.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Барановичи",
+  "address": "пр-т Советский, д. 35",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/oleg4228.jpg",
+  "photos": [
+    "/trainers/instagram/oleg4228.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/oleg4228/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

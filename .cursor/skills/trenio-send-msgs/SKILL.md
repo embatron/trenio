@@ -12,7 +12,7 @@ description: >-
 
 The first message asks whether the trainer wants to join. It does not contain the short link. An admin copies that link afterwards from `/admin/trainers` and sends it by hand.
 
-The application letter, for a page that is already prepared, is `/send-claim`. Do not send that letter from this command.
+The application letter, for a page that is already prepared, is `/send-claim`. The combined letter, the project plus the page already assembled, is `/send-ready`. Do not send either letter from this command.
 
 ## Arguments
 

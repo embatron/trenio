@@ -1,0 +1,92 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/alesechk.a/",
+  "handle": "alesechk.a",
+  "slug": "alesechk.a",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алеся",
+  "lastName": "Боровая",
+  "fullName": "Алеся Боровая",
+  "gender": "female",
+  "nameQuotes": [
+    "АЛЕСЯ БОРОВАЯ | ФИТНЕС ТРЕНЕР | МИНСК",
+    "Зовут Алеся (через «А»), фамилия Боровая (нет, не Новая)"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Personal Coach Зовут Алеся (через «А»), фамилия Боровая (нет, не Новая) Онлайн/оффлайн ведение🤳 Помогу отрастить сочную попу🫦 t.me/+k4DW_ztoiuJlZTMy",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "фитнес тренер, Минск она по заявке. Телефон . Telegram @alesechk_a",
+  "threadsUrl": "",
+  "bio": "Я Алеся Боровая, фитнес-тренер в Минске. Веду онлайн и офлайн. Помогу отрастить сочную попу.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/alesechk.a/p/DatDXpojjHP/",
+      "caption": "стань тем, в кого бы ты влюбился.",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/alesechk.a/p/DL9_7dziMfy/",
+      "caption": "sportcar🏎️",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/alesechk.a/p/DVEWZsgjEWU/",
+      "caption": "Мышцы тоже могут быть про женственность 🫦✨ @kirill_vert 📸",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/alesechk.a.jpg",
+  "photos": [
+    "/trainers/instagram/alesechk.a.jpg",
+    "/trainers/instagram/alesechk.a-g2.jpg",
+    "/trainers/instagram/alesechk.a-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/alesechk.a/",
+    "phone": "+375 44 731-72-94",
+    "email": "",
+    "telegram": "https://t.me/alesechk_a",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email"
+  ]
+}

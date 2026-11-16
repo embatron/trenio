@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/balkamma209/",
+  "handle": "balkamma209",
+  "slug": "balkamma209",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юрий",
+  "lastName": "Балка",
+  "fullName": "Юрий Балка",
+  "gender": "male",
+  "nameQuotes": [
+    "Юрий Балка"
+  ],
+  "headline": "Тренер по MMA и грэпплингу",
+  "sourceBio": "10 лет смешанных единоборств 🥉призёр чемпионата мира по версии IMMAF 2018 🏆многократный чемпион Беларуси ММА, ГРЭППЛИНГ 🥊тренер @belaruskudoteam",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кобрин Юрий Балка",
+  "threadsUrl": "",
+  "bio": "Я Юрий Балка, тренер. Город Кобрин. Веду ММА и грэпплинг. Призёр чемпионата мира по версии IMMAF и многократный чемпион Беларуси.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "mma",
+      "parentSlug": "edinoborstva",
+      "label": "MMA",
+      "evidence": "мма"
+    },
+    {
+      "slug": "grepling",
+      "parentSlug": "edinoborstva",
+      "label": "Грэпплинг",
+      "evidence": "Грэпплинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "mma",
+    "parentSlug": "edinoborstva",
+    "label": "MMA"
+  },
+  "city": "Кобрин",
+  "address": "",
+  "cityCandidates": [
+    "Кобрин"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/balkamma209.jpg",
+  "photos": [
+    "/trainers/instagram/balkamma209.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/balkamma209/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

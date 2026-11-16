@@ -1,0 +1,88 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kseniya_zelinskaya_/",
+  "handle": "kseniya_zelinskaya_",
+  "slug": "kseniya_zelinskaya_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ксения",
+  "lastName": "Зелинская",
+  "fullName": "Ксения Зелинская",
+  "gender": "female",
+  "nameQuotes": [
+    "Ксения Зелинская"
+  ],
+  "headline": "Фитнес-тренер и инструктор тренажёрного зала",
+  "sourceBio": "Personal blog Помогаю прийти в форму без изнуряющих тренировок 💪🏋🏼‍♀️ Персональные и групповые тренировки в @agat_gym_vitebsk 💪",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Ксения Зелинская. ул. Ивановского, д. 5.",
+  "threadsUrl": "",
+  "bio": "Я Ксения Зелинская, фитнес-тренер. Город Витебск. Веду персональные и групповые тренировки.",
+  "about": [
+    "Я веду персональные и групповые тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Витебск",
+  "address": "улица Генерала Ивановского, 5",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kseniya_zelinskaya_.jpg",
+  "photos": [
+    "/trainers/instagram/kseniya_zelinskaya_.jpg",
+    "/trainers/instagram/kseniya_zelinskaya_-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kseniya_zelinskaya_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

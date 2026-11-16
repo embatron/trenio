@@ -1,0 +1,88 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/wika.yaroshevich/",
+  "handle": "wika.yaroshevich",
+  "slug": "wika.yaroshevich",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктория",
+  "lastName": "Ярошевич",
+  "fullName": "Виктория Ярошевич",
+  "gender": "female",
+  "nameQuotes": [
+    "Виктория Ярошевич"
+  ],
+  "headline": "Тренер по бегу, общефизической подготовке и массажист",
+  "sourceBio": "Виктория Ярошевич ТРЕНЕР ПО БЕГУ📍Гродно| Специалист по физ.подготовке ⚽️🏒🎾 ⠀ ⠀ ⠀ ⠀ ⠀тренер @blackberry_crew ⠀ ⠀ ⠀ ⠀Вице-чемпионка Мира IAAFWorldRelays",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Виктория Ярошевич. ул. Врублевского, д. 1а.",
+  "threadsUrl": "",
+  "bio": "Я Виктория Ярошевич. Бег, ОФП и массаж. Город Гродно.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "beg",
+      "parentSlug": "beg",
+      "label": "Бег",
+      "evidence": "Бег"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
+    },
+    {
+      "slug": "massazh",
+      "parentSlug": "reabilitaciya",
+      "label": "Массаж",
+      "evidence": "Массаж"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "beg",
+    "parentSlug": "beg",
+    "label": "Бег"
+  },
+  "city": "Гродно",
+  "address": "улица Врублевского, 1А",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/wika.yaroshevich.jpg",
+  "photos": [
+    "/trainers/instagram/wika.yaroshevich.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/wika.yaroshevich/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

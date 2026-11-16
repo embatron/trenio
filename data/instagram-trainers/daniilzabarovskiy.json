@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/daniilzabarovskiy/",
+  "handle": "daniilzabarovskiy",
+  "slug": "daniilzabarovskiy",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Даниил",
+  "lastName": "Забаровский",
+  "fullName": "Даниил Забаровский",
+  "gender": "male",
+  "nameQuotes": [
+    "Даниил Забаровский"
+  ],
+  "headline": "Тренер по бегу",
+  "sourceBio": "Тренер для жизни - не сцены 👇 Здоровое тело🤝 Красивая форма👀 Удовольствие от процесса🤩 Запись в direct✉️",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Даниил Забаровский. ул. Ивановского, д. 5. тренер по бегу.",
+  "threadsUrl": "",
+  "bio": "Я Даниил Забаровский, тренер по бегу. Город Витебск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "beg",
+      "parentSlug": "beg",
+      "label": "Бег",
+      "evidence": "Бег"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "beg",
+    "parentSlug": "beg",
+    "label": "Бег"
+  },
+  "city": "Витебск",
+  "address": "улица Генерала Ивановского, 5",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/daniilzabarovskiy.jpg",
+  "photos": [
+    "/trainers/instagram/daniilzabarovskiy.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/daniilzabarovskiy/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pantera_krisss/",
+  "handle": "pantera_krisss",
+  "slug": "pantera_krisss",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "pantera_krisss",
+  "lastName": "",
+  "fullName": "pantera_krisss",
+  "gender": "male",
+  "nameQuotes": [],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "♥️Инструктор по фитнесу 🏋🏻‍♀️🏃🏻‍♀️ ♥️👯‍♀️групповые тренировки💪🏻 ♥️Помогу похудеть, привести себя в форму жду в л/с🫂",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Мозырь. ул. Юрия Гагарина, д. 85Б.",
+  "threadsUrl": "",
+  "bio": "Я инструктор по фитнесу. Город Мозырь.",
+  "about": [
+    "Я веду групповые тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Мозырь",
+  "address": "улица Юрия Гагарина",
+  "cityCandidates": [
+    "Мозырь"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/pantera_krisss.jpg",
+  "photos": [
+    "/trainers/instagram/pantera_krisss.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pantera_krisss/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

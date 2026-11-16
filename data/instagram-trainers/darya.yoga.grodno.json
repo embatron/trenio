@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/darya.yoga.grodno/",
+  "handle": "darya.yoga.grodno",
+  "slug": "darya.yoga.grodno",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дарья",
+  "lastName": "",
+  "fullName": "Дарья",
+  "gender": "female",
+  "nameQuotes": [
+    "Дарья"
+  ],
+  "headline": "Инструктор по йоге",
+  "sourceBio": "Blogger Yoga teacher @sacrum.yoga Hedonism Aesthetic t.me/dariayogagrodno",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Дарья. пер. Поповича, д. 10.",
+  "threadsUrl": "",
+  "bio": "Я Дарья, преподаватель йоги. Город Гродно.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Гродно",
+  "address": "переулок Поповича, 10",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/darya.yoga.grodno.jpg",
+  "photos": [
+    "/trainers/instagram/darya.yoga.grodno.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/darya.yoga.grodno/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/dariayogagrodno",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

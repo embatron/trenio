@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/elenanov._.fit/",
+  "handle": "elenanov._.fit",
+  "slug": "elenanov._.fit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Елена",
+  "lastName": "Новицкая",
+  "fullName": "Елена Новицкая",
+  "gender": "female",
+  "nameQuotes": [
+    "Елена",
+    "Новицкая"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "🏋️‍♀️ Тренировки с заботой о суставах ⏳ Красивое тело через здоровье 🔋 Помогу прийти к активной жизни и балансу с удовольствием",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв Новицкая Елена",
+  "threadsUrl": "",
+  "bio": "Я Елена Новицкая, фитнес-тренер. Город Могилёв. Тренировки с заботой о суставах, красивое тело через здоровье. Помогу прийти к активной жизни и балансу с удовольствием.",
+  "about": [
+    "Тренировки с заботой о суставах."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/elenanov._.fit.jpg",
+  "photos": [
+    "/trainers/instagram/elenanov._.fit.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/elenanov._.fit/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

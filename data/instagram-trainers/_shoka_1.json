@@ -1,0 +1,91 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/_shoka_1/",
+  "handle": "_shoka_1",
+  "slug": "_shoka_1",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Марк",
+  "lastName": "Шока",
+  "fullName": "Марк Шока",
+  "gender": "male",
+  "nameQuotes": [
+    "Марк Шока"
+  ],
+  "headline": "Тренер по дзюдо",
+  "sourceBio": "МС по дзюдо и самбо победитель шоу Герои индивидуал. тренировки",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Марк Шока",
+  "threadsUrl": "",
+  "bio": "Я Марк Шока, тренер по дзюдо в Гродно. МС по дзюдо и самбо.",
+  "about": [
+    "Индивидуал. тренировки."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/_shoka_1/reel/Db1MWqsRp8q/",
+      "caption": "этот путь был тяжелый, но получилось красиво. спасибо каждому, кто был рядом и помогал в создании чего-то большего, чем просто зал. запись в группы с 10 августа",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "dzyudo",
+      "parentSlug": "edinoborstva",
+      "label": "Дзюдо",
+      "evidence": "Дзюдо"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "sambo",
+      "label": "Самбо",
+      "quote": "самбо"
+    }
+  ],
+  "primarySport": {
+    "slug": "dzyudo",
+    "parentSlug": "edinoborstva",
+    "label": "Дзюдо"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/_shoka_1.jpg",
+  "photos": [
+    "/trainers/instagram/_shoka_1.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/_shoka_1/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

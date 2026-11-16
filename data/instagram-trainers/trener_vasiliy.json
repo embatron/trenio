@@ -1,0 +1,100 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/trener_vasiliy/",
+  "handle": "trener_vasiliy",
+  "slug": "trener_vasiliy",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Василий",
+  "lastName": "",
+  "fullName": "Василий",
+  "gender": "male",
+  "nameQuotes": [
+    "Василий"
+  ],
+  "headline": "Инструктор тренажёрного зала, по пилатесу, тренер по скалолазанию и инструктор по растяжке",
+  "sourceBio": "💥Тренирую в @realfit_streletcz",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "trener_vasiliy Могилёв ПЕРСОНАЛЬНЫЙ ТРЕНЕР Тренирую в @realfit_streletcz Тренажёрный зал Пилатес Скалолазание Растяжка Йога ул. Каштановая, д. 4А Василий",
+  "threadsUrl": "",
+  "bio": "Я Василий, персональный тренер. Город Могилёв. Веду занятия в тренажёрном зале.",
+  "about": [
+    "Я веду персональные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "skalolazanie",
+      "parentSlug": "outdoor",
+      "label": "Скалолазание",
+      "evidence": "Скалолазание"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "Растяжка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Могилёв",
+  "address": "Каштановая улица, 4А",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/trener_vasiliy.jpg",
+  "photos": [
+    "/trainers/instagram/trener_vasiliy.jpg",
+    "/trainers/instagram/trener_vasiliy-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/trener_vasiliy/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

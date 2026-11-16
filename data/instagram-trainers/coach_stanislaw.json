@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/coach_stanislaw/",
+  "handle": "coach_stanislaw",
+  "slug": "coach_stanislaw",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Станислав",
+  "lastName": "",
+  "fullName": "Станислав",
+  "gender": "male",
+  "nameQuotes": [
+    "Станислав"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "Персональные и групповые тренировки по Боксу Для взрослых и детей",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв Станислав",
+  "threadsUrl": "",
+  "bio": "Я Станислав, тренер по боксу. Город Могилёв. Тренирую взрослых и детей.",
+  "about": [
+    "Провожу персональные и групповые тренировки по боксу."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/coach_stanislaw.jpg",
+  "photos": [
+    "/trainers/instagram/coach_stanislaw.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/coach_stanislaw/",
+    "phone": "+375 29 603-61-40",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

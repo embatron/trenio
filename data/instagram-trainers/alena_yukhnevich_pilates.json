@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/alena_yukhnevich_pilates/",
+  "handle": "alena_yukhnevich_pilates",
+  "slug": "alena_yukhnevich_pilates",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алена",
+  "lastName": "Юхневич",
+  "fullName": "Алена Юхневич",
+  "gender": "female",
+  "nameQuotes": [
+    "Алена Юхневич"
+  ],
+  "headline": "Инструктор по пилатесу и фитнес-тренер",
+  "sourceBio": "🟠Алена Юхневич 🔴Пилатес 🤸 🟡Йогалатес 🧘‍♀️ 🟣Помогаю убрать боли в спине, обрести гибкость и укрепить здоровье 💪 📍Запись в Direct 💌",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Алена Юхневич. пр-т Янки Купалы, д. 4.",
+  "threadsUrl": "",
+  "bio": "Я Алена Юхневич. Пилатес и фитнес. Город Гродно.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Гродно",
+  "address": "проспект Янки Купалы, 4",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/alena_yukhnevich_pilates.jpg",
+  "photos": [
+    "/trainers/instagram/alena_yukhnevich_pilates.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/alena_yukhnevich_pilates/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

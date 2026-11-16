@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vladislavayanchhuk/",
+  "handle": "vladislavayanchhuk",
+  "slug": "vladislavayanchhuk",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Владислава",
+  "lastName": "Янчук",
+  "fullName": "Владислава Янчук",
+  "gender": "female",
+  "nameQuotes": [
+    "Владислава Янчук"
+  ],
+  "headline": "Тренер по танцам и хореографии и high heels",
+  "sourceBio": "dancer/choreographer strip/high heels Преподаватель @zal.13.brest Запись на индивы в лс",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. Владислава Янчук. ул. Куйбышева, д. 13.",
+  "threadsUrl": "",
+  "bio": "Я Владислава Янчук. Танцы и high heels. Город Брест.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    },
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "High Heels"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Брест",
+  "address": "улица Куйбышева, 13",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vladislavayanchhuk.jpg",
+  "photos": [
+    "/trainers/instagram/vladislavayanchhuk.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vladislavayanchhuk/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

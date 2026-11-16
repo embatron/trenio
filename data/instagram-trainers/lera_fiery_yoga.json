@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/lera_fiery_yoga/",
+  "handle": "lera_fiery_yoga",
+  "slug": "lera_fiery_yoga",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Валерия",
+  "lastName": "",
+  "fullName": "Валерия",
+  "gender": "female",
+  "nameQuotes": [
+    "Валерия"
+  ],
+  "headline": "Инструктор по йоге",
+  "sourceBio": "Хатха-йога🧘🏼‍♀️ Йога со мной в @yoga_vitebsk и @auroomyoga.vtb Vitebsk,Belarus",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Валерия. ул. Чкалова, д. 42.",
+  "threadsUrl": "",
+  "bio": "Я Валерия. Хатха-йога для беременных. Город Витебск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "хатха"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Витебск",
+  "address": "улица Чкалова, 42",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/lera_fiery_yoga.jpg",
+  "photos": [
+    "/trainers/instagram/lera_fiery_yoga.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/lera_fiery_yoga/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

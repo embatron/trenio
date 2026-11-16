@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/natallia_zozh/",
+  "handle": "natallia_zozh",
+  "slug": "natallia_zozh",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Наталья",
+  "lastName": "Ковалевская",
+  "fullName": "Наталья Ковалевская",
+  "gender": "female",
+  "nameQuotes": [
+    "Наталья Ковалевская"
+  ],
+  "headline": "Фитнес-тренер и тренер по питанию",
+  "sourceBio": "🏋️‍Ваш гид в мире фитнеса от первого шага 🇧🇾 Аккредитация 👩‍🎓Физ.образование 🥦Нутрициолог 👩‍Мама*2 Тренирую в @grafit_orsha @adrenalin.orsha",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Орша. Наталья Ковалевская. ул. Ленина, д. 242.",
+  "threadsUrl": "",
+  "bio": "Я Наталья Ковалевская. Фитнес и нутрициолог. Город Орша.",
+  "about": [
+    "Я тренирую с первого шага."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "нутрициолог"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Орша",
+  "address": "улица Владимира Ленина",
+  "cityCandidates": [
+    "Орша"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/natallia_zozh.jpg",
+  "photos": [
+    "/trainers/instagram/natallia_zozh.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/natallia_zozh/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/lappofitness/",
+  "handle": "lappofitness",
+  "slug": "lappofitness",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Владимир",
+  "lastName": "Лаппо",
+  "fullName": "Владимир Лаппо",
+  "gender": "male",
+  "nameQuotes": [
+    "Владимир Лаппо"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Фитнес-тренер 💢Специалист АФК 💢20 лет стажа в профессии 💢Высшее физкультурное образование #vitebsk #lappofitness",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Владимир Лаппо. ул. Бровки, д. 22.",
+  "threadsUrl": "",
+  "bio": "Я Владимир Лаппо, фитнес-тренер. Город Витебск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Витебск",
+  "address": "улица Петруся Бровки, 22",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/lappofitness.jpg",
+  "photos": [
+    "/trainers/instagram/lappofitness.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/lappofitness/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

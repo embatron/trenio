@@ -1,0 +1,80 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ilona_zhilinskaya/",
+  "handle": "ilona_zhilinskaya",
+  "slug": "ilona_zhilinskaya",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Илона",
+  "lastName": "Жилинская",
+  "fullName": "Илона Жилинская",
+  "gender": "female",
+  "nameQuotes": [
+    "Илона Жилинская"
+  ],
+  "headline": "Тренер по питанию",
+  "sourceBio": "Personal Coach Работа со мной•Программы•Онлайн ведение в директ ПОДПИШИСЬ - после моих Рилс ты захочешь тренироваться 🤍💪🏼",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Илона Жилинская",
+  "threadsUrl": "",
+  "bio": "Я Илона Жилинская, тренер по питанию. Веду онлайн.",
+  "about": [
+    "Я составляю программы, и после них хочется тренироваться."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "nutriciolog",
+    "parentSlug": "fitnes",
+    "label": "Питание"
+  },
+  "city": "",
+  "address": "",
+  "cityCandidates": [
+    "Гродно",
+    "Октябрь"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ilona_zhilinskaya.jpg",
+  "photos": [
+    "/trainers/instagram/ilona_zhilinskaya.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ilona_zhilinskaya/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "city",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

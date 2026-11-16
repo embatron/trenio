@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/coach_yarkov/",
+  "handle": "coach_yarkov",
+  "slug": "coach_yarkov",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юрий",
+  "lastName": "Ярков",
+  "fullName": "Юрий Ярков",
+  "gender": "male",
+  "nameQuotes": [
+    "Ярков Юрий",
+    "Ярков Юрий Дмитриевич"
+  ],
+  "headline": "Тренер по футболу",
+  "sourceBio": "Более 7 лет тренирую детей в ФК «Славия-Мозырь» ⚽️ - имею тренерские лицензии UEFA D, C, B - набор малышей от 4 лет - индивидуальные тренировки",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Мозырь Ярков Юрий",
+  "threadsUrl": "",
+  "bio": "Я Юрий Дмитриевич Ярков, футбольный тренер. Город Мозырь. Более 7 лет тренирую детей в ФК «Славия-Мозырь».",
+  "about": [
+    "Более 7 лет тренирую детей в ФК «Славия-Мозырь». Набираю малышей от 4 лет и веду индивидуальные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "futbol",
+      "parentSlug": "komandnye",
+      "label": "Футбол",
+      "evidence": "Футбол"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "futbol",
+    "parentSlug": "komandnye",
+    "label": "Футбол"
+  },
+  "city": "Мозырь",
+  "address": "",
+  "cityCandidates": [
+    "Мозырь"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/coach_yarkov.jpg",
+  "photos": [
+    "/trainers/instagram/coach_yarkov.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/coach_yarkov/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vlad_merlyak/",
+  "handle": "vlad_merlyak",
+  "slug": "vlad_merlyak",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Влад",
+  "lastName": "Мерляк",
+  "fullName": "Влад Мерляк",
+  "gender": "male",
+  "nameQuotes": [
+    "Влад Мерляк"
+  ],
+  "headline": "Фитнес-тренер, инструктор тренажёрного зала и тренер по питанию",
+  "sourceBio": "💪🏻Основатель и тренер @athletic_gym_grodno 🏋️‍♂️Более 300 ДО/ПОСЛЕ 🥩Работаю с питанием 🏆Чемпион РБ по легкой атлетике,бодибилдингу и пауэрлифтингу",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Влад Мерляк. ш. Индурское, д. 9.",
+  "threadsUrl": "",
+  "bio": "Я Влад Мерляк, фитнес-тренер. Город Гродно.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "legkaya-atletika",
+      "label": "Лёгкая атлетика",
+      "quote": "легкой атлетике"
+    },
+    {
+      "slug": "bodibilding",
+      "label": "Бодибилдинг",
+      "quote": "бодибилдингу"
+    },
+    {
+      "slug": "pauerlifting",
+      "label": "Пауэрлифтинг",
+      "quote": "пауэрлифтингу"
+    }
+  ],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Гродно",
+  "address": "Индурское шоссе, 9",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vlad_merlyak.jpg",
+  "photos": [
+    "/trainers/instagram/vlad_merlyak.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vlad_merlyak/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

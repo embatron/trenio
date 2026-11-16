@@ -1,0 +1,68 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kms_dimantos/",
+  "handle": "kms_dimantos",
+  "slug": "kms_dimantos",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дима",
+  "lastName": "",
+  "fullName": "Дима",
+  "gender": "female",
+  "nameQuotes": [
+    "Дима"
+  ],
+  "headline": "",
+  "sourceBio": "• тренировки для жизни • знаю какое тело ты хочешь * атлетическая тгшка зож-культурной романтики t.me/teresh_live",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. Дима. ул. Советская, д. 12.",
+  "threadsUrl": "",
+  "bio": "Я Дима, инструктор натурального атлетизма. Тренировки для жизни. Город Брест.",
+  "about": [
+    "Я веду тренировки для жизни."
+  ],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Брест",
+  "address": "Советская улица, 12",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kms_dimantos.jpg",
+  "photos": [
+    "/trainers/instagram/kms_dimantos.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kms_dimantos/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/teresh_live",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

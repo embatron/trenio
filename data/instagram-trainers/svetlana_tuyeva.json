@@ -1,0 +1,124 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/svetlana_tuyeva/",
+  "handle": "svetlana_tuyeva",
+  "slug": "svetlana_tuyeva",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Светлана",
+  "lastName": "Туева",
+  "fullName": "Светлана Туева",
+  "gender": "female",
+  "nameQuotes": [
+    "Туева Светлана"
+  ],
+  "headline": "Тренер по растяжке",
+  "sourceBio": "Personal Coach -Инструктор с первым мед.обр. -Тренерский стаж 5 лет -Сделаю ваше женственное тело рельефным -Проф-но посажу на шпагат -Курс по АЭРО | скоро www.youtube.com/@Svetlana_Tuyeva",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Туева Светлана",
+  "threadsUrl": "",
+  "bio": "Я Светлана Туева, тренер по стретчингу, пилатесу и фитнесу в Гродно. Тренерский стаж 5 лет.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/svetlana_tuyeva/p/DfftYUTiBk9/",
+      "caption": "Давайте знакомиться? Спойлер: со мной делать первый шаг совсем не страшно #фитнес #grodno #sport #тренер #pilates",
+      "imageText": [
+        "Кто я",
+        "обо мне и моей яркой жизни"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/svetlana_tuyeva/reel/DJs_7qroMbV/",
+      "caption": "выходят 10-ти минутные тренировки под моим руководством #растяжка",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/svetlana_tuyeva/reel/DIvwfIwt6Z-/",
+      "caption": "Шпагат- один из способов ярко выделятся из толпы! #спорт #шпагат #красота #растяжка #тренировка #аэробалет #гродно #девушки #тренировки #бег",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "стретчинг"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "triatlon",
+      "label": "Триатлон",
+      "quote": "ТРИАТЛОН"
+    },
+    {
+      "slug": "beg",
+      "label": "Бег",
+      "quote": "бег"
+    }
+  ],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": 5,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/svetlana_tuyeva.jpg",
+  "photos": [
+    "/trainers/instagram/svetlana_tuyeva.jpg",
+    "/trainers/instagram/svetlana_tuyeva-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/svetlana_tuyeva/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://www.youtube.com/@Svetlana_Tuyeva"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

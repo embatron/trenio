@@ -2,7 +2,7 @@
 
 Drafts are unpublished `TrainerProfile` imports (`status: draft`, `createdSource: import`). They do not go into `src/routes/trainers.$slug.tsx`.
 
-The name and the description are decided in sequential thinking, then checked by `scripts/save-draft.ts`. The script does not invent a Cyrillic given name from the header layout. When no given name is written anywhere, it stores the Instagram handle as `firstName`.
+The name and the description are decided in sequential thinking, then checked by `scripts/save-draft.ts`. The script does not invent a Cyrillic given name from the header layout. When no given name is written anywhere, a name token in the handle is mapped to Russian and written into the note. A handle with no name token is stored as `firstName`.
 
 | Draft field | Filled from | Leave empty when |
 | --- | --- | --- |
@@ -34,7 +34,7 @@ The name and the description are decided in sequential thinking, then checked by
 
 `firstName` and `lastName` stay separate in the draft, the database, and the cabinet form. `fullName` is only those two joined. Public cards, the profile title, similar trainers, and the admin table show the given name on one line and the surname on the next.
 
-The given name is whatever the profile, a pinned caption, Threads, or the operator note actually writes. A header that shows only a surname is not a reason to leave `firstName` empty when a pin, Threads, or the note writes the given name beside that surname. When the note states one given name, that name is saved even if the page shows a different one. When none of those sources write a given name, `firstName` is the handle itself (`potapooff20`) and `lastName` stays empty. «Без имени» is not a name. Role words (`тренер`, `coach`, `trainer`, `training`) are not given names.
+The given name is whatever the profile, a pinned caption, Threads, or the operator note actually writes. A header that shows only a surname is not a reason to leave `firstName` empty when a pin, Threads, or the note writes the given name beside that surname. When the note states one given name, that name is saved even if the page shows a different one. When none of those sources write a person, split the handle on `_`, `.`, and digits, drop a role token (`trener`, `trainer`, `coach`, `fit`, `fitness`, `gym`), and map a remaining name token to Russian (`yana` is Яна, `vasiliy` is Василий). Write that name into the note. A token that is not a name stays out. When the handle has no name token, `firstName` is the handle itself (`potapooff20`) and `lastName` stays empty. «Без имени» is not a name. Role words (`тренер`, `coach`, `trainer`, `training`) are not given names.
 
 ## Description
 

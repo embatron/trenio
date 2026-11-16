@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/swim_mogilev/",
+  "handle": "swim_mogilev",
+  "slug": "swim_mogilev",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгений",
+  "lastName": "Янченко",
+  "fullName": "Евгений Янченко",
+  "gender": "male",
+  "nameQuotes": [
+    "Евгений",
+    "Янченко"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "Янчᴇнᴋᴏ Еʙᴦᴇний Анᴀᴛᴏᴧьᴇʙич ▫️ ▫️обучение детей в группе и индивидуально ▫️Н2О, Дом спорта 📨Запись через Директ",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв Янченко Евгений",
+  "threadsUrl": "",
+  "bio": "Я Евгений Янченко, тренер по плаванию. Город Могилёв. Обучаю детей в группе и индивидуально.",
+  "about": [
+    "Обучаю детей в группе и индивидуально."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "Плавание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Могилёв",
+  "address": "проспект Мира, 8",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/swim_mogilev.jpg",
+  "photos": [
+    "/trainers/instagram/swim_mogilev.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/swim_mogilev/",
+    "phone": "+375 33 626-66-56",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

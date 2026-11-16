@@ -1,0 +1,92 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kuchinskaia_fit/",
+  "handle": "kuchinskaia_fit",
+  "slug": "kuchinskaia_fit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "kuchinskaia_fit",
+  "lastName": "Кучинская",
+  "fullName": "kuchinskaia_fit Кучинская",
+  "gender": "female",
+  "nameQuotes": [
+    "Кучинская"
+  ],
+  "headline": "Инструктор тренажёрного зала, фитнес-тренер и тренер по питанию",
+  "sourceBio": "instructor💪🏻тренер💪🏻 Групповые и персональные тренировки👫gym and fitness Различные направления 🏋️ Работа = на результат👌 Питание🥦 Похудение 💯",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Поставь фамилию Кучинская. Это женщина. адрес ставь как проспект Машерова, 78",
+  "threadsUrl": "",
+  "bio": "Я инструктор и тренер. Веду групповые и персональные тренировки в спортзале и по фитнесу. Занимаюсь питанием и похудением.",
+  "about": [
+    "Я провожу групповые и персональные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Минск",
+  "address": "проспект Машерова, 78",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kuchinskaia_fit.jpg",
+  "photos": [
+    "/trainers/instagram/kuchinskaia_fit.jpg",
+    "/trainers/instagram/kuchinskaia_fit-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kuchinskaia_fit/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

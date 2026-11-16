@@ -15,7 +15,7 @@
 
 **Разделение:** TECH_SPEC — _как устроен код_; PRODUCT — _что видит пользователь_; ACCOUNT_MODEL — _сущности и onboarding_; MOBILE — _оболочки магазинов_.
 
-Cursor automation: `.cursor/rules/`, `.cursor/skills/`, субагент `seo`, slash-команды `/hooks`, `/logging`, `/diagnosis`, `/tests`, `/import-instagram-trainers`, `/sync-trainers`, `/send-claim` и `/ship` (см. TECH_SPEC §13). `/ship` коммитит готовые функции и правит локальную записку `docs/ARCHITECTURE.local.md`. Аргумент `deploy` дополнительно обновляет боевой сайт. Журнал действий — [TECH_SPEC §4.8](./TECH_SPEC.md#48-журнал-действий).
+Cursor automation: `.cursor/rules/`, `.cursor/skills/`, субагент `seo`, slash-команды `/hooks`, `/logging`, `/diagnosis`, `/tests`, `/import-instagram-trainers`, `/sync-trainers`, `/send-claim`, `/send-ready` и `/ship` (см. TECH_SPEC §13). `/ship` коммитит готовые функции и правит локальную записку `docs/ARCHITECTURE.local.md`. Аргумент `deploy` дополнительно обновляет боевой сайт. Журнал действий — [TECH_SPEC §4.8](./TECH_SPEC.md#48-журнал-действий).
 
 ## Стек и команды
 

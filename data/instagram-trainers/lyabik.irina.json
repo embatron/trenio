@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/lyabik.irina/",
+  "handle": "lyabik.irina",
+  "slug": "lyabik.irina",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ирина",
+  "lastName": "Лябик",
+  "fullName": "Ирина Лябик",
+  "gender": "female",
+  "nameQuotes": [
+    "Ирина",
+    "Лябик"
+  ],
+  "headline": "Массажист",
+  "sourceBio": "Медицинский работник и ваш массажист Профессиональный уход за телом нежно и эффективно. 📍ул. Первомайская 29 💌Для записи пишите в директ",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Ирина Лябик. Город Могилёв. ул. Первомайская 29.",
+  "threadsUrl": "",
+  "bio": "Я Ирина Лябик. Массаж и расслабление. Город Могилёв.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "massazh",
+      "parentSlug": "reabilitaciya",
+      "label": "Массаж",
+      "evidence": "Массаж"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "massazh",
+    "parentSlug": "reabilitaciya",
+    "label": "Массаж"
+  },
+  "city": "Могилёв",
+  "address": "Первомайская улица, 29",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/lyabik.irina.jpg",
+  "photos": [
+    "/trainers/instagram/lyabik.irina.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/lyabik.irina/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/_illinita_/",
+  "handle": "_illinita_",
+  "slug": "_illinita_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "_illinita_",
+  "lastName": "",
+  "fullName": "_illinita_",
+  "gender": "",
+  "nameQuotes": [],
+  "headline": "Тренер по танцам и хореографии",
+  "sourceBio": "мать ангелочка @zal.13.brest 🩷 психолог @ill.own🤝 танцы «с нуля» для девушек индивидуальные/сплит/4-5 человек ❌группы Расписание и стоимость в DM⤵️",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. ул. Куйбышева, д. 13.",
+  "threadsUrl": "",
+  "bio": "Танцы для девушек. Город Брест.",
+  "about": [
+    "Я веду индивидуальные занятия."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Брест",
+  "address": "улица Куйбышева, 13",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/_illinita_.jpg",
+  "photos": [
+    "/trainers/instagram/_illinita_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/_illinita_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "gender",
+    "pinnedPosts"
+  ]
+}

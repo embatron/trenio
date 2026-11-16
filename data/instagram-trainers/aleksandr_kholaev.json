@@ -1,0 +1,89 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/aleksandr_kholaev/",
+  "handle": "aleksandr_kholaev",
+  "slug": "aleksandr_kholaev",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александр",
+  "lastName": "Холаев",
+  "fullName": "Александр Холаев",
+  "gender": "male",
+  "nameQuotes": [
+    "Александр Холаев"
+  ],
+  "headline": "Тренер по боксу и фитнес-тренер",
+  "sourceBio": "Александр Холаев •Тренер высшей категории🥊 •Мастер спорта по боксу 2X bronze medalist of Europe🥉🥉 •мини-группы | индивидуальные | сплит-тренировки",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гомель. Александр Холаев. ул. Советская, д. 60.",
+  "threadsUrl": "",
+  "bio": "Я Александр Холаев. Бокс. Персональный тренер. Город Гомель.",
+  "about": [
+    "Я веду индивидуальные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Гомель",
+  "address": "Советская улица, 60",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/aleksandr_kholaev.jpg",
+  "photos": [
+    "/trainers/instagram/aleksandr_kholaev.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/aleksandr_kholaev/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

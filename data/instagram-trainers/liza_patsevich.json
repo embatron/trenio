@@ -1,0 +1,88 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/liza_patsevich/",
+  "handle": "liza_patsevich",
+  "slug": "liza_patsevich",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Елизаветта",
+  "lastName": "Пацевич",
+  "fullName": "Елизаветта Пацевич",
+  "gender": "female",
+  "nameQuotes": [
+    "Пацевич Елизаветта"
+  ],
+  "headline": "Тренер по фитнесу",
+  "sourceBio": "Фитнес клуб @shark.fitness.club Тренер с проф.образованием",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Пацевич Елизаветта",
+  "threadsUrl": "",
+  "bio": "Я Елизаветта Пацевич, фитнес-тренер в Гродно. Я тренер с проф.образованием.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/liza_patsevich/reel/DUNKBaHCPM7/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/liza_patsevich/reel/DbTeEO2R12Q/",
+      "caption": "❤️‍🩹",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/liza_patsevich.jpg",
+  "photos": [
+    "/trainers/instagram/liza_patsevich.jpg",
+    "/trainers/instagram/liza_patsevich-g2.jpg",
+    "/trainers/instagram/liza_patsevich-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/liza_patsevich/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

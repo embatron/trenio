@@ -1,0 +1,92 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/andreicyprusevich/",
+  "handle": "andreicyprusevich",
+  "slug": "andreicyprusevich",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Андрей",
+  "lastName": "Ципрусевич",
+  "fullName": "Андрей Ципрусевич",
+  "gender": "male",
+  "nameQuotes": [
+    "Андрей Ципрусевич"
+  ],
+  "headline": "Фитнес-тренер, инструктор тренажёрного зала и тренер по питанию",
+  "sourceBio": "Fitness Trainer 🚀ЗАПИСЬ НА НОЯБРЬ 🍰Худеем правильно и вкусно 🏋️‍♀️Тренировки для дома и зала — 10 КГ без запретов и срывов🤩",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Андрей Ципрусевич. ул. Мостовая, д. 39. Тренажёрный зал.",
+  "threadsUrl": "",
+  "bio": "Я Андрей Ципрусевич. Fitness Trainer. Город Гродно.",
+  "about": [
+    "Я веду тренировки для дома и зала."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Гродно",
+  "address": "Мостовая улица, 39",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/andreicyprusevich.jpg",
+  "photos": [
+    "/trainers/instagram/andreicyprusevich.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/andreicyprusevich/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

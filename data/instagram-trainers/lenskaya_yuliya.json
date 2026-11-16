@@ -1,0 +1,66 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/lenskaya_yuliya/",
+  "handle": "lenskaya_yuliya",
+  "slug": "lenskaya_yuliya",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлия",
+  "lastName": "Ленская",
+  "fullName": "Юлия Ленская",
+  "gender": "female",
+  "nameQuotes": [
+    "Ленская Юлия"
+  ],
+  "headline": "",
+  "sourceBio": "Тренер",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Полоцк. Юлия Ленская. пр-т Ф. Скорины, д. 2.",
+  "threadsUrl": "",
+  "bio": "Я Юлия Ленская. Город Полоцк.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Полоцк",
+  "address": "проспект Франциска Скорины, 2",
+  "cityCandidates": [
+    "Полоцк"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/lenskaya_yuliya.jpg",
+  "photos": [
+    "/trainers/instagram/lenskaya_yuliya.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/lenskaya_yuliya/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

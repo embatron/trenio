@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/katusha.sokolovskaya/",
+  "handle": "katusha.sokolovskaya",
+  "slug": "katusha.sokolovskaya",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Екатерина",
+  "lastName": "Соколовская",
+  "fullName": "Екатерина Соколовская",
+  "gender": "female",
+  "nameQuotes": [
+    "Соколовская Екатерина"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Тренер,который не запрещает,а ведёт к цели Никаких жёстких диет",
+  "sourceAbout": [
+    "Меня зовут Катя Чуть больше, чем через неделю мне будет 24 года…(06.03)",
+    "Я фитнес- тренер",
+    "21.07.2023 Мы стали родителями маленькой принцессы Есении",
+    "Сейчас я в декрете"
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Кобрин Соколовская Екатерина",
+  "threadsUrl": "",
+  "bio": "Я Екатерина Соколовская, фитнес-тренер. Город Кобрин. Сейчас я в декрете. Веду к цели, и никаких жёстких диет.",
+  "about": [
+    "Я фитнес-тренер. Не запрещаю, а веду к цели."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Кобрин",
+  "address": "",
+  "cityCandidates": [
+    "Кобрин"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/katusha.sokolovskaya.jpg",
+  "photos": [
+    "/trainers/instagram/katusha.sokolovskaya.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/katusha.sokolovskaya/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

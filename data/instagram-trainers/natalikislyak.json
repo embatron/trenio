@@ -1,0 +1,93 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/natalikislyak/",
+  "handle": "natalikislyak",
+  "slug": "natalikislyak",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Наталия",
+  "lastName": "",
+  "fullName": "Наталия",
+  "gender": "female",
+  "nameQuotes": [
+    "Наталия"
+  ],
+  "headline": "Фитнес-тренер, инструктор ЛФК и тренер по питанию",
+  "sourceBio": "ФИТНЕС ТРЕНЕР💪 Инструктор-методист ЛФК🤸‍♂️ Нутрициолог🥑 Барановичи",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Барановичи. Наталия. Персональный. пр-т Советский, д. 35.",
+  "threadsUrl": "",
+  "bio": "Я Наталия, фитнес-тренер. ЛФК и нутрициолог. Город Барановичи.",
+  "about": [
+    "Я персональный тренер."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "lfk",
+      "parentSlug": "reabilitaciya",
+      "label": "ЛФК",
+      "evidence": "ЛФК"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "нутрициолог"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Барановичи",
+  "address": "пр-т Советский, д. 35",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/natalikislyak.jpg",
+  "photos": [
+    "/trainers/instagram/natalikislyak.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/natalikislyak/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

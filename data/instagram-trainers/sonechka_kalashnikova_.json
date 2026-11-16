@@ -1,0 +1,86 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/sonechka_kalashnikova_/",
+  "handle": "sonechka_kalashnikova_",
+  "slug": "sonechka_kalashnikova_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Софья",
+  "lastName": "",
+  "fullName": "Софья",
+  "gender": "female",
+  "nameQuotes": [
+    "СОФЬЯ"
+  ],
+  "headline": "Фитнес-тренер и инструктор тренажёрного зала",
+  "sourceBio": "23 y.o. Гомель | Беларусь тренер в @vault_gym_gomel 📍 ЗАПИСЬ НА ПЕРСОНАЛЬНЫЕ ТРЕНИРОВКИ В DIRECT📩 t.me/Kalashnikovastt",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гомель. Софья. ул. Юбилейная, д. 50.",
+  "threadsUrl": "",
+  "bio": "Я Софья, персональный тренер в Vault Gym. Город Гомель.",
+  "about": [
+    "Я веду персональные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Гомель",
+  "address": "Юбилейная улица, 50",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/sonechka_kalashnikova_.jpg",
+  "photos": [
+    "/trainers/instagram/sonechka_kalashnikova_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/sonechka_kalashnikova_/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/Kalashnikovastt",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/boxerevgen/",
+  "handle": "boxerevgen",
+  "slug": "boxerevgen",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгений",
+  "lastName": "",
+  "fullName": "Евгений",
+  "gender": "male",
+  "nameQuotes": [
+    "Евгений"
+  ],
+  "headline": "Тренер по боксу и коррекции фигуры",
+  "sourceBio": "Индивидуальные и групповые тренировки",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Евгений",
+  "threadsUrl": "",
+  "bio": "Я Евгений, тренер по боксу в Гродно. Мастер спорта. Женский фитбокс.",
+  "about": [
+    "Индивидуальные и групповые тренировки."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/boxerevgen/reel/DB1GSOso-Sb/",
+      "caption": "Групповые тренировки. Мини групповые. Индивидуальные. Женский фит-бокс. детский бокс",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/boxerevgen/reel/Cv9rxWHopRz/",
+      "caption": "Индивидуальные и сплит тренировки по женскому фит-боксу на свежем воздухе. Основные направления: Похудение, коррекция фигуры, развитие атлетизма, вестибулярного аппарата, ловкости, гибкости, координации. В тренировке по фит-боксу задействованы все группы мышц.",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/boxerevgen/reel/C7M-vyuoLY1/",
+      "caption": "Групповые и индивидуальные занятия по боксу. ВСЕХ ЖДУ",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    },
+    {
+      "slug": "figura",
+      "parentSlug": "fitnes",
+      "label": "Коррекция фигуры",
+      "evidence": "Коррекция фигуры"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/boxerevgen.jpg",
+  "photos": [
+    "/trainers/instagram/boxerevgen.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/boxerevgen/",
+    "phone": "+375 33 662-90-43",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram"
+  ]
+}

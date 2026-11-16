@@ -1,0 +1,88 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ng_.16/",
+  "handle": "ng_.16",
+  "slug": "ng_.16",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Наташа",
+  "lastName": "",
+  "fullName": "Наташа",
+  "gender": "female",
+  "nameQuotes": [
+    "Наташа"
+  ],
+  "headline": "Инструктор по растяжке и фитнес-тренер",
+  "sourceBio": "Fitness Trainer Преподаю в @mira.centr.brest и @tantra__place -индивидуальные и групповые тренировки",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. Наташа. ул. Куйбышева д. 13.",
+  "threadsUrl": "",
+  "bio": "Я Наташа, инструктор по растяжке. Город Брест. Веду индивидуальные и групповые тренировки.",
+  "about": [
+    "Я веду индивидуальные и групповые тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "стретчинг"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Брест",
+  "address": "улица Куйбышева, 13",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ng_.16.jpg",
+  "photos": [
+    "/trainers/instagram/ng_.16.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ng_.16/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/top_fita/",
+  "handle": "top_fita",
+  "slug": "top_fita",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ольга",
+  "lastName": "Анцутко",
+  "fullName": "Ольга Анцутко",
+  "gender": "female",
+  "nameQuotes": [
+    "Ольга",
+    "Анцутко"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Sports & Fitness Instruction",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв Анцутко Ольга",
+  "threadsUrl": "",
+  "bio": "Я Ольга Анцутко, фитнес-тренер. Город Могилёв.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/top_fita.jpg",
+  "photos": [
+    "/trainers/instagram/top_fita.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/top_fita/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yandieva0707/",
+  "handle": "yandieva0707",
+  "slug": "yandieva0707",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Даша",
+  "lastName": "Яндиева",
+  "fullName": "Даша Яндиева",
+  "gender": "female",
+  "nameQuotes": [
+    "Даша Яндиева"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Снимаюсь для брендов, ugc Тренирую в @sporttimegrodno",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Даша Яндиева. ул. Волкова, д. 10.",
+  "threadsUrl": "",
+  "bio": "Я Даша Яндиева, фитнес-тренер. Город Гродно.",
+  "about": [
+    "Я тренирую в этом зале."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Гродно",
+  "address": "улица Волкова, 10",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yandieva0707.jpg",
+  "photos": [
+    "/trainers/instagram/yandieva0707.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yandieva0707/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

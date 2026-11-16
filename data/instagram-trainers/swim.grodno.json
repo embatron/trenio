@@ -1,0 +1,93 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/swim.grodno/",
+  "handle": "swim.grodno",
+  "slug": "swim.grodno",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Маргарита",
+  "lastName": "Рышкевич",
+  "fullName": "Маргарита Рышкевич",
+  "gender": "female",
+  "nameQuotes": [
+    "Рышкевич Маргарита"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "Профессиональный подход к плаванию",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Рышкевич Маргарита",
+  "threadsUrl": "",
+  "bio": "Я Маргарита Рышкевич, тренер по плаванию в Гродно.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/swim.grodno/p/DfPg-9XkQMH/",
+      "caption": "Брест плывет, время взрослых. спасибо за организацию и подарки",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/swim.grodno/reel/DfUUrsiRoNn/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/swim.grodno/reel/DfUUOVHxrsM/",
+      "caption": "Брест",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "Плавание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/swim.grodno.jpg",
+  "photos": [
+    "/trainers/instagram/swim.grodno.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/swim.grodno/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/swim_grodno",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email"
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/anastasia_p_gym_/",
+  "handle": "anastasia_p_gym_",
+  "slug": "anastasia_p_gym_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анастасия",
+  "lastName": "",
+  "fullName": "Анастасия",
+  "gender": "female",
+  "nameQuotes": [
+    "Анастасия"
+  ],
+  "headline": "Инструктор тренажёрного зала, тренер по питанию и фитнес-тренер",
+  "sourceBio": "Анастасия-научу быть в форме 365 дней в году снижение веса|набор мышечной массы консультации по питанию 🏋️тренирую в @mogilev_refresh @oxygen_fitness_",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв. Анастасия. пр-т Мира, д. 25Г.",
+  "threadsUrl": "",
+  "bio": "Я Анастасия, инструктор тренажёрного зала. Консультации по питанию. Город Могилёв.",
+  "about": [
+    "Я тренирую и консультирую по питанию."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Могилёв",
+  "address": "проспект Мира, 25Г",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/anastasia_p_gym_.jpg",
+  "photos": [
+    "/trainers/instagram/anastasia_p_gym_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/anastasia_p_gym_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

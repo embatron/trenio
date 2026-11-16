@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/shish_boxing/",
+  "handle": "shish_boxing",
+  "slug": "shish_boxing",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ярослав",
+  "lastName": "Шиш",
+  "fullName": "Ярослав Шиш",
+  "gender": "male",
+  "nameQuotes": [
+    "Ярослав Шиш"
+  ],
+  "headline": "Тренер по боксу и общефизической подготовке",
+  "sourceBio": "👨‍🦱Ярослав Шиш 📳 🏅Мастер спорта по боксу 🤼‍♀️Фитбокс (Женский бокс) 👶Детский бокс 🏋️‍♂️ОФП 🤸‍♀️Программы по снижению веса",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Жлобин. Ярослав Шиш. ул. Барташова, д. 1.",
+  "threadsUrl": "",
+  "bio": "Я Ярослав Шиш. Бокс, ОФП и детский бокс. Город Жлобин.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "boxing"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Жлобин",
+  "address": "улица Барташова, 1",
+  "cityCandidates": [
+    "Жлобин"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/shish_boxing.jpg",
+  "photos": [
+    "/trainers/instagram/shish_boxing.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/shish_boxing/",
+    "phone": "+375 44 541-31-04",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/_tatiana_dadelo_/",
+  "handle": "_tatiana_dadelo_",
+  "slug": "_tatiana_dadelo_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Татьяна",
+  "lastName": "",
+  "fullName": "Татьяна",
+  "gender": "female",
+  "nameQuotes": [
+    "ТАТЬЯНА"
+  ],
+  "headline": "",
+  "sourceBio": "Набираю силу и уверенность тем, кто хочет изменить тело Индивидуальный подход🤌🏻 Программы— только под ваши цели и уровень",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Полоцк. Татьяна. пр-т Ф. Скорины, д. 2.",
+  "threadsUrl": "",
+  "bio": "Я Татьяна. Город Полоцк.",
+  "about": [
+    "Я держу индивидуальный подход."
+  ],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [
+    {
+      "slug": "tancy",
+      "label": "Танцы",
+      "quote": "ТАНЦЫ"
+    }
+  ],
+  "primarySport": null,
+  "city": "Полоцк",
+  "address": "проспект Франциска Скорины, 2",
+  "cityCandidates": [
+    "Полоцк"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/_tatiana_dadelo_.jpg",
+  "photos": [
+    "/trainers/instagram/_tatiana_dadelo_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/_tatiana_dadelo_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

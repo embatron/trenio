@@ -5,38 +5,13 @@ import { ReviewStars } from "@/components/review-stars";
 import { TrainerContactIcons } from "@/components/messages/trainer-contact-icons";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { pluralRu } from "@/lib/ru-plural";
+import { localClubBySlug, type LocalClub } from "@/lib/catalog/local-clubs";
 import { clubBreadcrumbs, clubPageHead } from "@/lib/seo/pages";
 
-type Club = {
-  slug: string;
-  name: string;
-  logo: string;
-  city: { slug: string; label: string };
-  address: string;
-  hours: string;
-  phone: string;
-  telegram: string;
-  mapUrl: string;
-  rating: { value: string; ratingCount: number; reviewCount: number; fillPct: number };
-  badge: string;
-  stats: Array<{ label: string; accent?: boolean }>;
-  about: string[];
-  formats: Array<{ label: string; accent?: boolean }>;
-  amenities: string[];
-  note: string;
-  prices: {
-    single: Array<{ name: string; price: string }>;
-    packs: Array<{ name: string; price: string }>;
-  };
-  directions: Array<{ slug: string; label: string; meta: string }>;
-  trainers: Array<{ slug: string; name: string; sport: string; meta: string; price: string }>;
-  reviews: Array<{ author: string; date: string; rating: number; text: string }>;
-};
-
-const CLUBS: Record<string, Club> = {};
+type Club = LocalClub;
 
 function getClub(slug: string): Club | undefined {
-  return CLUBS[slug];
+  return localClubBySlug(slug);
 }
 
 export const Route = createFileRoute("/clubs/$slug")({
@@ -235,12 +210,14 @@ function ClubPage() {
   const [phoneVisible, setPhoneVisible] = useState(false);
   const [reviewsShown, setReviewsShown] = useState(5);
 
-  const photos = [
-    placeholder(`${c.name} — ринг`),
-    placeholder("Зал · мешки"),
-    placeholder("Групповая тренировка"),
-    placeholder("ОФП-зона"),
-  ];
+  const photos = c.photos.length > 0
+    ? c.photos
+    : [
+        placeholder(`${c.name} — ринг`),
+        placeholder("Зал · мешки"),
+        placeholder("Групповая тренировка"),
+        placeholder("ОФП-зона"),
+      ];
 
   useEffect(() => {
     document.body.classList.add("page-club");
@@ -407,7 +384,7 @@ function ClubPage() {
                       <p className="club-text">В {c.name} можно заниматься в группе, индивидуально или самостоятельно в зале.</p>
                       <div className="direction-grid">
                         {c.directions.map((d) => (
-                          <a key={d.slug} className="direction-card" href={`/trainers/${c.city.slug}/${d.slug}`}>
+                          <a key={d.slug} className="direction-card" href={d.href}>
                             <span className="direction-card__label">{d.label}</span>
                             <span className="direction-card__meta">{d.meta}</span>
                           </a>
@@ -421,10 +398,10 @@ function ClubPage() {
                       <h2 className="club-section__title">Тренеры клуба · {c.trainers.length}</h2>
                       <div className="club-trainer-grid">
                         {c.trainers.map((t) => (
-                          <article key={t.slug} className="club-trainer-card">
-                            <Link className="club-trainer-card__hit" to="/trainers/$slug" params={{ slug: t.slug }} aria-label={t.name} />
+                          <article key={t.slug || t.name} className="club-trainer-card">
+                            {t.slug ? <Link className="club-trainer-card__hit" to="/trainers/$slug" params={{ slug: t.slug }} aria-label={t.name} /> : null}
                             <div className="club-trainer-card__photo-wrap">
-                              <img className="club-trainer-card__photo" src={placeholder(t.name, 420, 315)} alt={t.name} loading="lazy" />
+                              <img className="club-trainer-card__photo" src={t.photo || placeholder(t.name, 420, 315)} alt={t.name} loading="lazy" />
                             </div>
                             <div className="club-trainer-card__body">
                               <h3 className="club-trainer-card__name">{t.name}</h3>
@@ -433,7 +410,7 @@ function ClubPage() {
                                 <span>{t.meta}</span>
                                 <span className="club-trainer-card__price">{t.price}</span>
                               </div>
-                              <TrainerContactIcons slug={t.slug} />
+                              {t.slug ? <TrainerContactIcons slug={t.slug} /> : null}
                             </div>
                           </article>
                         ))}

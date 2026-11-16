@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/liza_mardoyan/",
+  "handle": "liza_mardoyan",
+  "slug": "liza_mardoyan",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Лиза",
+  "lastName": "Мардоян",
+  "fullName": "Лиза Мардоян",
+  "gender": "female",
+  "nameQuotes": [
+    "Лиза Мардоян"
+  ],
+  "headline": "Фитнес-тренер и тренер по питанию",
+  "sourceBio": "тренирую с заботой о здоровье 🧘‍♀️избавлю от болей в спине 🔥баланс в питании без ограничений 👩‍🎓тренер с высшим профильным образованием vk.com/liza_dragyn",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Сморгонь. Лиза Мардоян. ул. Юбилейная, д. 31.",
+  "threadsUrl": "",
+  "bio": "Я Лиза Мардоян, фитнес-тренер. Баланс в питании. Город Сморгонь.",
+  "about": [
+    "Я тренирую с заботой о здоровье."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Сморгонь",
+  "address": "Юбилейная улица, 31",
+  "cityCandidates": [
+    "Сморгонь"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/liza_mardoyan.jpg",
+  "photos": [
+    "/trainers/instagram/liza_mardoyan.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/liza_mardoyan/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

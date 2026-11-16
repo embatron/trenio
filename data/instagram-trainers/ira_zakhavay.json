@@ -1,0 +1,93 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ira_zakhavay/",
+  "handle": "ira_zakhavay",
+  "slug": "ira_zakhavay",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ира",
+  "lastName": "",
+  "fullName": "Ира",
+  "gender": "female",
+  "nameQuotes": [
+    "Ира"
+  ],
+  "headline": "Фитнес-тренер, тренер по питанию и инструктор по растяжке",
+  "sourceBio": "🤍Помогаю полюбить спорт и заботу о себе 🏋🏼‍♀️Индивидуальные тренировки 🥦Онлайн-сопровождение по питанию 💌Запись в Директ",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Борисов. Ира. ул. Трусова, д. 32.",
+  "threadsUrl": "",
+  "bio": "Я фитнес-тренер. Сопровождение по питанию. Stretching. Город Борисов.",
+  "about": [
+    "Я веду индивидуальные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "stretching"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Борисов",
+  "address": "улица Трусова, 32",
+  "cityCandidates": [
+    "Борисов"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ira_zakhavay.jpg",
+  "photos": [
+    "/trainers/instagram/ira_zakhavay.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ira_zakhavay/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

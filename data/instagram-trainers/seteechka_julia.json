@@ -1,0 +1,115 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/seteechka_julia/",
+  "handle": "seteechka_julia",
+  "slug": "seteechka_julia",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлия",
+  "lastName": "Сетейко",
+  "fullName": "Юлия Сетейко",
+  "gender": "female",
+  "nameQuotes": [
+    "Сетейко Юлия"
+  ],
+  "headline": "Тренер по пилатесу",
+  "sourceBio": "Помогу исправить осанку и укрепить мышцы пилатес на реформерах",
+  "sourceAbout": [
+    "Я преподаватель в студии пилатес \"Момент\" в Гродно. Кроме того, я сертифицированный тренер тренажерного зала.",
+    "вкусные и полезные завтраки простые рецепты",
+    "Задавайте свои вопросы про уход, тренировки после беременности, пилатес и все интересующие вопросы"
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Сетейко Юлия",
+  "threadsUrl": "",
+  "bio": "Я Юлия Сетейко, тренер по пилатесу и фитнесу в Гродно. Преподаю пилатес в студии и работаю тренером тренажёрного зала. Помогу исправить осанку и укрепить мышцы. У меня диплом о профессиональной переподготовке.",
+  "about": [
+    "На реформерах я помогаю исправить осанку и укрепить мышцы. Это пилатес и тренировки после беременности."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/seteechka_julia/p/DQb8ecdjKk2/",
+      "caption": "Представляешь себе тот миг, когда твоя мечта наконец-то становится частью твоей реальности? С днем тренера, коллеги 🥳",
+      "imageText": [
+        "ДИПЛОМ О ПРОФЕССИОНАЛЬНОЙ ПЕРЕПОДГОТОВКЕ",
+        "СЕРТИФИКАТ"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/seteechka_julia/reel/DLcSzQ8oN3K/",
+      "caption": "Пилатес в Моменте Я прошла обучение по пилатесу 📚 и невероятно рада этому! В моменте я почувствовала, как ощущается каждая мышца, дыхание становится глубже и свободнее. Раньше я испытывала напряжение в шее и спине, а теперь всё расслаблено и гармонично, плечи расправились 🤍 Исчезло давление в пояснице, ушла эта вечная тяжесть гиперлордоза, наконец-то почувствовала правильную осанку и комфорт в теле. Я уверена, что могу делиться этими знаниями в студии @moment.pilates в Гродно. Помогать другим достигать здоровья и счастья. Жду тебя на наших занятиях! Вместе сделаем твоё тело сильным и красивым 💖 #пилатес #пилатесгродно #тренер #фитнес",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/seteechka_julia.jpg",
+  "photos": [
+    "/trainers/instagram/seteechka_julia.jpg",
+    "/trainers/instagram/seteechka_julia-g2.jpg",
+    "/trainers/instagram/seteechka_julia-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/seteechka_julia/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

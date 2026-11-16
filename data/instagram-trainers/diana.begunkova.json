@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/diana.begunkova/",
+  "handle": "diana.begunkova",
+  "slug": "diana.begunkova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Диана",
+  "lastName": "Бегункова",
+  "fullName": "Диана Бегункова",
+  "gender": "female",
+  "nameQuotes": [
+    "Диана Бегункова"
+  ],
+  "headline": "Инструктор по йоге",
+  "sourceBio": "Ретриты по всему миру @yoga__cult Ближайший ретрит 11-15 ноября | Яншо 🇨🇳 🔖все подробности — dm",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв. Диана Бегункова. ул. Комсомольская, д. 5.",
+  "threadsUrl": "",
+  "bio": "Я Диана Бегункова, йога-тренер. Город Могилёв.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Могилёв",
+  "address": "Комсомольская улица, 5",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/diana.begunkova.jpg",
+  "photos": [
+    "/trainers/instagram/diana.begunkova.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/diana.begunkova/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

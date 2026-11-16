@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/missis.leonovets/",
+  "handle": "missis.leonovets",
+  "slug": "missis.leonovets",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Наталья",
+  "lastName": "Терновая",
+  "fullName": "Наталья Терновая",
+  "gender": "female",
+  "nameQuotes": [
+    "Наталья Терновая"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "Swimming Instructor 28 y.o.♈🏊 Рабочий аккаунт @swim_kobrin Работаю в @akvaparkkobrin",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кобрин. Наталья Терновая. ул. Гастелло, д. 15.",
+  "threadsUrl": "",
+  "bio": "Я Наталья Терновая. Swimming. Город Кобрин.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "swimming"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Кобрин",
+  "address": "улица Гастелло, 15",
+  "cityCandidates": [
+    "Кобрин"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/missis.leonovets.jpg",
+  "photos": [
+    "/trainers/instagram/missis.leonovets.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/missis.leonovets/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/katysuvalova/",
+  "handle": "katysuvalova",
+  "slug": "katysuvalova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Екатерина",
+  "lastName": "Сувалова",
+  "fullName": "Екатерина Сувалова",
+  "gender": "female",
+  "nameQuotes": [
+    "Екатерина Сувалова"
+  ],
+  "headline": "Тренер по танцам и хореографии",
+  "sourceBio": "✨Hhoreographer STRIP PLASTIC/POLE ART - изящность в каждом движении ✨Научу управлять женской энергией ✨@el_gao_studio - место, для твоего вдохновения",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гомель. Екатерина Сувалова. ул. Красноармейская, д. 5а.",
+  "threadsUrl": "",
+  "bio": "Я Екатерина Сувалова. Танцы. Город Гомель.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Гомель",
+  "address": "Красноармейская улица, 5А",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/katysuvalova.jpg",
+  "photos": [
+    "/trainers/instagram/katysuvalova.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/katysuvalova/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

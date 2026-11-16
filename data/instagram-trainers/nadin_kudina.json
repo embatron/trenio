@@ -1,0 +1,86 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/nadin_kudina/",
+  "handle": "nadin_kudina",
+  "slug": "nadin_kudina",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Надин",
+  "lastName": "Кудина",
+  "fullName": "Надин Кудина",
+  "gender": "male",
+  "nameQuotes": [
+    "Надин Кудина"
+  ],
+  "headline": "Инструктор по йоге и тренер по питанию",
+  "sourceBio": "Подружу разум с телом, научу худеть без диет👌🏼 • основатель @yoga.soulstudio • составлю индивидуальный план тренировок и питания • рисую для души🎨",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Барановичи. Надин Кудина. ул. Тельмана, д. 110.",
+  "threadsUrl": "",
+  "bio": "Я Надин Кудина. Йога и план питания. Город Барановичи.",
+  "about": [
+    "Я составлю индивидуальный план тренировок."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Барановичи",
+  "address": "улица Тельмана, 110",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/nadin_kudina.jpg",
+  "photos": [
+    "/trainers/instagram/nadin_kudina.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/nadin_kudina/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

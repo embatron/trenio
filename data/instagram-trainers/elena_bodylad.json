@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/elena_bodylad/",
+  "handle": "elena_bodylad",
+  "slug": "elena_bodylad",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Елена",
+  "lastName": "",
+  "fullName": "Елена",
+  "gender": "female",
+  "nameQuotes": [
+    "Елена"
+  ],
+  "headline": "Фитнес-тренер и тренер по бодибилдингу",
+  "sourceBio": "Помогаю женщинам и девушкам вернуть форму без жестких диет!!!🍑 Онлайн-помощь с составлением плана тренировок. 🏋️ Набор массы без страха еды😉 👇 t.me/elena_fit_orsha",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Елена. Город Орша. ул. Молокова, д. 2.",
+  "threadsUrl": "",
+  "bio": "Я Елена, фитнес-тренер. Набор массы. Город Орша.",
+  "about": [
+    "Я составляю план тренировок."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "bodibilding",
+      "parentSlug": "fitnes",
+      "label": "Бодибилдинг",
+      "evidence": "набор массы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Орша",
+  "address": "улица Василия Молокова, 2",
+  "cityCandidates": [
+    "Орша"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/elena_bodylad.jpg",
+  "photos": [
+    "/trainers/instagram/elena_bodylad.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/elena_bodylad/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/elena_fit_orsha",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

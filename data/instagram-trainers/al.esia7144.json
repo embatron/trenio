@@ -1,0 +1,71 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/al.esia7144/",
+  "handle": "al.esia7144",
+  "slug": "al.esia7144",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алеся",
+  "lastName": "",
+  "fullName": "Алеся",
+  "gender": "female",
+  "nameQuotes": [
+    "Алеся"
+  ],
+  "headline": "",
+  "sourceBio": "В жизни нужно выиграть самую главную битву - битву с самим собой 🏆💪",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Алеся. ул. Воинов-интернационалистов, д. 1Д.",
+  "threadsUrl": "",
+  "bio": "Я Алеся, инструктор групповых направлений. Город Витебск.",
+  "about": [
+    "Я инструктор групповых направлений."
+  ],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Витебск",
+  "address": "улица Воинов-Интернационалистов, 1Д",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/al.esia7144.jpg",
+  "photos": [
+    "/trainers/instagram/al.esia7144.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/al.esia7144/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

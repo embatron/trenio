@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/viktoria.stretching/",
+  "handle": "viktoria.stretching",
+  "slug": "viktoria.stretching",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктория",
+  "lastName": "Алейникова",
+  "fullName": "Виктория Алейникова",
+  "gender": "female",
+  "nameQuotes": [
+    "Виктория Алейникова"
+  ],
+  "headline": "Тренер по осанке и инструктор по растяжке, пилатесу",
+  "sourceBio": "Коррекция осанки. Растяжка без боли 🔥 Стретчинг | Пилатес МФР | Калланетика Суставная гимнастика 💙 тренер @mindbody.by",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Виктория Алейникова. ул. Смоленская, д. 3а, корп. 1.",
+  "threadsUrl": "",
+  "bio": "Я Виктория Алейникова. Осанка, растяжка и пилатес. Город Витебск.",
+  "about": [
+    "Я веду эти тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "суставная гимнастика"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "osanka",
+    "parentSlug": "reabilitaciya",
+    "label": "Осанка"
+  },
+  "city": "Витебск",
+  "address": "Смоленская улица, 3А",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/viktoria.stretching.jpg",
+  "photos": [
+    "/trainers/instagram/viktoria.stretching.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/viktoria.stretching/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

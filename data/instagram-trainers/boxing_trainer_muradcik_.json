@@ -1,0 +1,92 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/boxing_trainer_muradcik_/",
+  "handle": "boxing_trainer_muradcik_",
+  "slug": "boxing_trainer_muradcik_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Мурадчик",
+  "lastName": "",
+  "fullName": "Мурадчик",
+  "gender": "male",
+  "nameQuotes": [
+    "Мурадчик"
+  ],
+  "headline": "Тренер по боксу, фитнес-тренер и тренер по питанию",
+  "sourceBio": "|🏆Чемпион Европы🥇Мастер Спорта🇦🇿 |Women’s Boxing👸🏼🥊 |Azerbaijan Scool👊🏻 |Расчёт КБЖУ + Программа Питания + Меню🥗 |Запись В Директ⬇️ t.me/Mariano_93",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гомель. Мурадчик. персональный. ул. Привокзальная, д. 4.",
+  "threadsUrl": "",
+  "bio": "Я Мурадчик. Бокс и программа питания. Город Гомель.",
+  "about": [
+    "Я веду персональный тренинг."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "boxing"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "программы питания"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Гомель",
+  "address": "Привокзальная улица, 4",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/boxing_trainer_muradcik_.jpg",
+  "photos": [
+    "/trainers/instagram/boxing_trainer_muradcik_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/boxing_trainer_muradcik_/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/Mariano_93",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

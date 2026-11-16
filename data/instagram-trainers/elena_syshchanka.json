@@ -1,0 +1,80 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/elena_syshchanka/",
+  "handle": "elena_syshchanka",
+  "slug": "elena_syshchanka",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Елена",
+  "lastName": "Сыщенко",
+  "fullName": "Елена Сыщенко",
+  "gender": "female",
+  "nameQuotes": [
+    "Елена Сыщенко"
+  ],
+  "headline": "Инструктор по йоге",
+  "sourceBio": "Тренер по йоге, работаю с детьми от 6 лет и взрослыми 📌Амбассадор компании FYSM 📌 офлайн Мозырь/ онлайн",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Мозырь Елена Сыщенко",
+  "threadsUrl": "",
+  "bio": "Я Елена Сыщенко, тренер по йоге. Город Мозырь. Работаю с детьми от 6 лет и со взрослыми.",
+  "about": [
+    "Работаю с детьми от 6 лет и со взрослыми. Офлайн занятия веду в городе Мозырь, и есть онлайн."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Мозырь",
+  "address": "",
+  "cityCandidates": [
+    "Мозырь"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "adult"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/elena_syshchanka.jpg",
+  "photos": [
+    "/trainers/instagram/elena_syshchanka.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/elena_syshchanka/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

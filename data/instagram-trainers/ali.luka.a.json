@@ -1,0 +1,103 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ali.luka.a/",
+  "handle": "ali.luka.a",
+  "slug": "ali.luka.a",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алина",
+  "lastName": "Лукомская",
+  "fullName": "Алина Лукомская",
+  "gender": "female",
+  "nameQuotes": [
+    "Алина Лукомская"
+  ],
+  "headline": "Инструктор тренажёрного зала, по пилатесу, тренер по скалолазанию и инструктор по растяжке",
+  "sourceBio": "Тренер,которому доверяют | Амбассадор женственности 📍Тренирую в @realfit_streletcz Создаю тело, в котором хочется жить, а не прятаться под одеждой",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Алина Лукомская Могилёв Тренер,которому доверяют Создаю тело, в котором хочется жить, а не прятаться под одеждой Тренирую в @realfit_streletcz ФИТНЕС ТРЕНЕР Тренажёрный зал Пилатес Скалолазание Растяжка Йога ул. Каштановая, д. 4А",
+  "threadsUrl": "",
+  "bio": "Я Алина Лукомская, фитнес-тренер в Могилёве. Веду тренажёрный зал. Создаю тело, в котором хочется жить, а не прятаться под одеждой.",
+  "about": [
+    "Я тренирую и создаю тело, в котором хочется жить."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "skalolazanie",
+      "parentSlug": "outdoor",
+      "label": "Скалолазание",
+      "evidence": "Скалолазание"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "Растяжка"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "nutriciolog",
+      "label": "Питание",
+      "quote": "Питание"
+    }
+  ],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Могилёв",
+  "address": "Каштановая улица, 4А",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ali.luka.a.jpg",
+  "photos": [
+    "/trainers/instagram/ali.luka.a.jpg",
+    "/trainers/instagram/ali.luka.a-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ali.luka.a/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

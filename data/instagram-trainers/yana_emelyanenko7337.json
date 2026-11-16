@@ -1,0 +1,97 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yana_emelyanenko7337/",
+  "handle": "yana_emelyanenko7337",
+  "slug": "yana_emelyanenko7337",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Яна",
+  "lastName": "Емельяненко",
+  "fullName": "Яна Емельяненко",
+  "gender": "female",
+  "nameQuotes": [
+    "Яна Емельяненко"
+  ],
+  "headline": "Тренер по питанию, инструктор тренажёрного зала и фитнес-тренер",
+  "sourceBio": "➡️Программы питания, тренировок Сделаем красивое тело вместе💪 Победитель Кубка РБ 🏆 Серебряный призёр чемпионата РБ🏅 Бронзовый призёр чемпионата РФ🏅",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "yana_emelyanenko7337 Гомель ФИТНЕС ТРЕНЕР Программы питания, тренировок Сделаем красивое тело вместе Тренажёрный зал Питание пр-т Ленина, д. 3 Яна Емельяненко",
+  "threadsUrl": "",
+  "bio": "Я Яна Емельяненко, фитнес-тренер. Город Гомель. Составляю программы питания и тренировок.",
+  "about": [
+    "Я составляю программы тренировок."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "программы питания"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "beg",
+      "label": "Бег",
+      "quote": "Бёрпи марафон"
+    }
+  ],
+  "primarySport": {
+    "slug": "nutriciolog",
+    "parentSlug": "fitnes",
+    "label": "Питание"
+  },
+  "city": "Гомель",
+  "address": "проспект Ленина, 3",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yana_emelyanenko7337.jpg",
+  "photos": [
+    "/trainers/instagram/yana_emelyanenko7337.jpg",
+    "/trainers/instagram/yana_emelyanenko7337-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yana_emelyanenko7337/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

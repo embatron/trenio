@@ -1,0 +1,125 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pashams_brest/",
+  "handle": "pashams_brest",
+  "slug": "pashams_brest",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Павел",
+  "lastName": "",
+  "fullName": "Павел",
+  "gender": "male",
+  "nameQuotes": [
+    "Павел"
+  ],
+  "headline": "Тренер по пауэрлифтингу",
+  "sourceBio": "Personal Coach 🏆 Чемпион РБ 🎓 Эксперт с 3 высшими образованиями Специализация: 👇 Похудение / Набор массы 👇 Укрепление спины и осанки 👇 Подготовка к соревнованиям",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Телефон: Telegram: @ChernovalovPavel",
+  "threadsUrl": "",
+  "bio": "Я персональный тренер и мастер спорта по пауэрлифтингу. Я чемпион РБ.",
+  "about": [
+    "Специализация — похудение и набор массы, укрепление спины и осанки, подготовка к соревнованиям."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/pashams_brest/p/DOGUzLcjeKn/",
+      "caption": "Пост,а-ля знакомство, для всех кто впервые посетил мою страничку. Меня зовут Павел, и уже 8 лет я помогаю людям становиться сильнее, здоровее и увереннее в себе. Мой путь в спорте начался 15 лет назад с пауэрлифтинга, где я: Мастер спорта по пауэрлифтингу Абсолютный чемпион Кубка Республики Беларусь Победитель чемпионатов области, города и республики Подготовил призеров национальных соревнований и универсиад Образование и тренерская аккредитация: Физмат + магистратура по экономике 4 года аспирантуры (диссертация о блокчейне в логистике!) Аккредитованный тренер (сертификат гос. образца) Сейчас получаю второе высшее по физвоспитанию (тренер по лёгкой атлетике) Спорт — это страсть: В 2021 году добавил тайский бокс — и снова в призах: Бронза чемпионата РБ по кикбоксингу Победы на городских и областных турнирах Главное — мои клиенты: За 8 лет работы я помог сотням людей: Сбросить вес или набрать мышечную массу Укрепить спину и исправить осанку Подготовиться к соревнованиям или просто чувствовать себя лучше Работаю только с научным подходом, но без занудства — чтобы тренировки приносили и результат, и удовольствие.",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/pashams_brest/reel/DFnZcOztXv4/",
+      "caption": "А у тебя есть план? План Бейна на спину: 1. Становая тяга 210 6х3 230х3 2. Тяга Хаммера верх 30кг 8х3 3. Тяга Т грифа 100кг 8х3 4. Тяга вертикального блока 84кг 8х3 5. Подьем штанги на бицепс 45 кг 8х3 6. Молотки с гантелями 22.5 кг 8х3 #Gym #gymmotivation #belarus #brest #тренировки",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/pashams_brest/reel/C4axy7gIxGU/",
+      "caption": "MADNESS",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "pauerlifting",
+      "parentSlug": "fitnes",
+      "label": "Пауэрлифтинг",
+      "evidence": "Пауэрлифтинг"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    },
+    {
+      "slug": "legkaya-atletika",
+      "parentSlug": "beg",
+      "label": "Лёгкая атлетика",
+      "evidence": "Лёгкая атлетика"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "tajskij-boks",
+      "label": "Тайский бокс",
+      "quote": "тайский бокс"
+    },
+    {
+      "slug": "kikboksing",
+      "label": "Кикбоксинг",
+      "quote": "кикбоксингу"
+    }
+  ],
+  "primarySport": {
+    "slug": "pauerlifting",
+    "parentSlug": "fitnes",
+    "label": "Пауэрлифтинг"
+  },
+  "city": "Брест",
+  "address": "ул. Орловская, 10",
+  "cityCandidates": [
+    "Беларусь",
+    "Победитель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/pashams_brest.jpg",
+  "photos": [
+    "/trainers/instagram/pashams_brest.jpg",
+    "/trainers/instagram/pashams_brest-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pashams_brest/",
+    "phone": "+375 29 223-87-93",
+    "email": "",
+    "telegram": "https://t.me/ChernovalovPavel",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "email"
+  ]
+}

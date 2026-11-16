@@ -1,0 +1,173 @@
+{
+  title: '(2) Instagram',
+  og: '2,009 Followers, 1,272 Following, 1,383 Posts - See Instagram photos and videos from ЛЕРА ТРЕНЕР ГРОДНО & ОНЛАЙН/ТАНЦЫ В ПРУЖИНЯЩИХ БОТИНКАХ (@lera_domoskanova)',
+  header: 'lera_domoskanova\n' +
+    'ЛЕРА ТРЕНЕР ГРОДНО & ОНЛАЙН/ТАНЦЫ В ПРУЖИНЯЩИХ БОТИНКАХ\n' +
+    '1,383 posts\n' +
+    '2,014 followers\n' +
+    '1,260 following\n' +
+    'Personal blog\n' +
+    'Нутрициолог помогу вернуть энергию & Стройность\n' +
+    'Обучаю основам ПП\n' +
+    'Танцевальные занятия в Гродно\n' +
+    'В Пружинящих ботинках -... \n' +
+    'more\n' +
+    "Эмиля Чечко 2, Grodno, Hrodzyenskaya Voblasts', Belarus 230023\n" +
+    't.me/LeraDomoskanova\n' +
+    'lera_domoskanova\n' +
+    'Follow\n' +
+    'Message\n' +
+    'ВИТАМИНЫ\n' +
+    'КЕЙСЫ\n' +
+    'СЛУШАЕМ\n' +
+    'КОНКУРС\n' +
+    'ФИТДЕНС\n' +
+    'ЮМОР\n' +
+    'ОТЗЫВЫ ❤️\n' +
+    'ПИТАНИЕ\n' +
+    'ОБО МНЕ\n' +
+    'ОБРАЗОВАНИЕ\n' +
+    'ЗАМЕНА ЗАПЧАСТЕЙ\n' +
+    'ДОЧЬ УЛЬЯНА\n' +
+    'ГРОДНО ❤️\n' +
+    'КРОССФИТ',
+  highlights: [
+    {
+      title: 'ВИТАМИНЫ',
+      href: 'https://www.instagram.com/stories/highlights/17847133401687330/'
+    },
+    {
+      title: 'КЕЙСЫ',
+      href: 'https://www.instagram.com/stories/highlights/2824800854572572/'
+    },
+    {
+      title: 'СЛУШАЕМ',
+      href: 'https://www.instagram.com/stories/highlights/17910401838569754/'
+    },
+    {
+      title: 'КОНКУРС',
+      href: 'https://www.instagram.com/stories/highlights/18201597886377438/'
+    },
+    {
+      title: 'ФИТДЕНС',
+      href: 'https://www.instagram.com/stories/highlights/17908294626515248/'
+    },
+    {
+      title: 'ЮМОР',
+      href: 'https://www.instagram.com/stories/highlights/18025756526716361/'
+    },
+    {
+      title: 'ОТЗЫВЫ ❤️',
+      href: 'https://www.instagram.com/stories/highlights/18134386711645385/'
+    },
+    {
+      title: 'ПИТАНИЕ',
+      href: 'https://www.instagram.com/stories/highlights/18099248027109165/'
+    },
+    {
+      title: 'ОБО МНЕ',
+      href: 'https://www.instagram.com/stories/highlights/18088876843991203/'
+    },
+    {
+      title: 'ОБРАЗОВАНИЕ',
+      href: 'https://www.instagram.com/stories/highlights/17867604315679749/'
+    },
+    {
+      title: 'ЗАМЕНА ЗАПЧАСТЕЙ',
+      href: 'https://www.instagram.com/stories/highlights/1400203851930494/'
+    },
+    {
+      title: 'ДОЧЬ УЛЬЯНА',
+      href: 'https://www.instagram.com/stories/highlights/1038279448818919/'
+    },
+    {
+      title: 'ГРОДНО ❤️',
+      href: 'https://www.instagram.com/stories/highlights/18093732878175195/'
+    },
+    {
+      title: 'КРОССФИТ',
+      href: 'https://www.instagram.com/stories/highlights/18417811801159096/'
+    }
+  ],
+  posts: [
+    {
+      href: 'https://www.instagram.com/lera_domoskanova/reel/Dfhi6imMQab/',
+      pinned: true,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/lera_domoskanova/p/DfDTKhdMR32/',
+      pinned: true,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/lera_domoskanova/p/DfDRxsgsmzm/',
+      pinned: true,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/lera_domoskanova/reel/Dfkrn4TMkzC/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/lera_domoskanova/reel/Dfj7qdqsEZR/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/lera_domoskanova/reel/Dfj3rz0sZbk/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/lera_domoskanova/reel/DfhsPndMRmp/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/lera_domoskanova/reel/Dfgz9X8M9_R/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/lera_domoskanova/reel/DffV3z0sVuT/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/lera_domoskanova/reel/DfeyZSwsVkZ/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/lera_domoskanova/reel/Dfc7LR7M6Eg/',
+      pinned: false,
+      kind: 'reel'
+    }
+  ],
+  pinned: [
+    {
+      href: 'https://www.instagram.com/lera_domoskanova/reel/Dfhi6imMQab/',
+      pinned: true,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/lera_domoskanova/p/DfDTKhdMR32/',
+      pinned: true,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/lera_domoskanova/p/DfDRxsgsmzm/',
+      pinned: true,
+      kind: 'photo'
+    }
+  ],
+  imgs: [
+    {
+      w: 1080,
+      h: 1080
+    }
+  ],
+  clickedMore: true
+}

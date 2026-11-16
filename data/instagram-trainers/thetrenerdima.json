@@ -1,0 +1,93 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/thetrenerdima/",
+  "handle": "thetrenerdima",
+  "slug": "thetrenerdima",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дмитрий",
+  "lastName": "",
+  "fullName": "Дмитрий",
+  "gender": "male",
+  "nameQuotes": [
+    "ДМИТРИЙ"
+  ],
+  "headline": "Тренер по коррекции фигуры, инструктор тренажёрного зала и фитнес-тренер",
+  "sourceBio": "🏅 индивидуальный подход 🏅 коррекция фигуры 🏅 набор веса 🏅 похудение taplink.cc/theskryps",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гомель. Дмитрий. пр-т Ленина, д. 3. ПлазаДжим.",
+  "threadsUrl": "",
+  "bio": "Я Дмитрий, персональный тренер. Город Гомель. Индивидуальный подход, коррекция фигуры, набор веса и похудение.",
+  "about": [
+    "Я работаю с индивидуальным подходом: коррекция фигуры, набор веса и похудение."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "figura",
+      "parentSlug": "fitnes",
+      "label": "Коррекция фигуры",
+      "evidence": "Коррекция фигуры"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "figura",
+    "parentSlug": "fitnes",
+    "label": "Коррекция фигуры"
+  },
+  "city": "Гомель",
+  "address": "проспект Ленина, 3",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/thetrenerdima.jpg",
+  "photos": [
+    "/trainers/instagram/thetrenerdima.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/thetrenerdima/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

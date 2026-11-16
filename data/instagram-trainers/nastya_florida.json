@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/nastya_florida/",
+  "handle": "nastya_florida",
+  "slug": "nastya_florida",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Настя",
+  "lastName": "Флорида",
+  "fullName": "Настя Флорида",
+  "gender": "female",
+  "nameQuotes": [
+    "Настя Флорида"
+  ],
+  "headline": "Тренер по танцам и хореографии",
+  "sourceBio": "International choreographer, judge Гений, не миллиардер, плейбой, филантроп 😂 Professional dancer Founder @noflex_dc",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Настя Флорида. ул. Горького, д. 72.",
+  "threadsUrl": "",
+  "bio": "Я Настя Флорида. Танцы. Город Гродно.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Гродно",
+  "address": "улица Максима Горького, 72",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/nastya_florida.jpg",
+  "photos": [
+    "/trainers/instagram/nastya_florida.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/nastya_florida/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ann_s_fit/",
+  "handle": "ann_s_fit",
+  "slug": "ann_s_fit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анна",
+  "lastName": "Стерлягова",
+  "fullName": "Анна Стерлягова",
+  "gender": "female",
+  "nameQuotes": [
+    "Анна Стерлягова"
+  ],
+  "headline": "Фитнес-тренер и тренер по реабилитации и восстановлению",
+  "sourceBio": "- Восстановление после родов и КС - Работа с болью в спине, коленях - Сколиозы Тренирую в @kompas_fit",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Анна Стерлягова",
+  "threadsUrl": "",
+  "bio": "Я Анна Стерлягова, фитнес-инструктор. Веду восстановление после родов и КС, работаю с болью в спине и коленях и со сколиозами.",
+  "about": [
+    "Тренирую восстановление после родов и КС. Работаю с болью в спине и коленях и со сколиозами."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "reabilitaciya",
+      "parentSlug": "reabilitaciya",
+      "label": "Реабилитация",
+      "evidence": "восстановление"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ann_s_fit.jpg",
+  "photos": [
+    "/trainers/instagram/ann_s_fit.jpg",
+    "/trainers/instagram/ann_s_fit-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ann_s_fit/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://sportpriority.by/r/KompasPinsk"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

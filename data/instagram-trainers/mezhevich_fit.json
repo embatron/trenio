@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/mezhevich_fit/",
+  "handle": "mezhevich_fit",
+  "slug": "mezhevich_fit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Кристина",
+  "lastName": "Межевич",
+  "fullName": "Кристина Межевич",
+  "gender": "female",
+  "nameQuotes": [
+    "Кристина",
+    "Межевич"
+  ],
+  "headline": "Фитнес-тренер и тренер по питанию",
+  "sourceBio": "Хочешь похудеть на - 10 кг online не приходя в зал🏋️? Пиши «фигура », проведу бесплатный разбор твоей ситуации в 💌 Запись на консультацию 👇 docs.google.com/forms/d/1chqorAsbgZEBdJD9pAkGW6f-3zR5E6G-JT1xofGeyLY/edit?usp=drivesdk and 1 more",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кристина Межевич. Город Орша. ул. Молокова, д. 2.",
+  "threadsUrl": "",
+  "bio": "Я Кристина Межевич, фитнес-тренер и нутрициолог. Город Орша.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "нутрициолог"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Орша",
+  "address": "улица Василия Молокова, 2",
+  "cityCandidates": [
+    "Орша"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/mezhevich_fit.jpg",
+  "photos": [
+    "/trainers/instagram/mezhevich_fit.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/mezhevich_fit/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

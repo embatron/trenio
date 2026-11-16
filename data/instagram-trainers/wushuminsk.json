@@ -1,0 +1,102 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/wushuminsk/",
+  "handle": "wushuminsk",
+  "slug": "wushuminsk",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алексей",
+  "lastName": "Федосеев",
+  "fullName": "Алексей Федосеев",
+  "gender": "male",
+  "nameQuotes": [
+    "Алексей Федосеев"
+  ],
+  "headline": "Тренер по ушу и самообороне",
+  "sourceBio": "Тренер Алексей Федосеев",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Алексей Федосеев. Здравствуйте. Ссылка на нашего супер тренера ( специалиста) Стаж работы более 20 лет. г. Могилев Высшее образование. Физиотерапевт, майор, международный инструктор ( Африка , Сирия) Самооборона для детей и взрослых. И дети с особенностями развития ( нейроборьба) У него очень сложные дети. Также кто буллингу подвергался. С родителями всегда на связи. Отчёты о тренировках.",
+  "threadsUrl": "",
+  "bio": "Я Алексей Федосеев, тренер по ушу и самообороне в Могилеве.",
+  "about": [
+    "Отчёты о тренировках."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/wushuminsk/reel/DfmoacJIYLl/",
+      "caption": "Пока нет детей в спорт зале. Тренировка ушу.",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/wushuminsk/reel/DfXJLczIAPK/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/wushuminsk/reel/DfCmMdjo4cU/",
+      "caption": "Кунг-фу шестом",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "ushu",
+      "parentSlug": "edinoborstva",
+      "label": "Ушу",
+      "evidence": "кунг-фу"
+    },
+    {
+      "slug": "samooborona",
+      "parentSlug": "edinoborstva",
+      "label": "Самооборона",
+      "evidence": "Самооборона"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "ushu",
+    "parentSlug": "edinoborstva",
+    "label": "Ушу"
+  },
+  "city": "Могилев",
+  "address": "",
+  "cityCandidates": [
+    "Могилев"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/wushuminsk.jpg",
+  "photos": [
+    "/trainers/instagram/wushuminsk.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/wushuminsk/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

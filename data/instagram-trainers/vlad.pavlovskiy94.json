@@ -1,0 +1,124 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vlad.pavlovskiy94/",
+  "handle": "vlad.pavlovskiy94",
+  "slug": "vlad.pavlovskiy94",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Воадислав",
+  "lastName": "Павловский",
+  "fullName": "Воадислав Павловский",
+  "gender": "male",
+  "nameQuotes": [
+    "Павловский Воадислав"
+  ],
+  "headline": "Тренер по конькам",
+  "sourceBio": "Индивидуальные и групповые тренировки-Лёд|Бросковый зал ⚡️Обучение катанию взрослых и детей с НУЛЯ",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Павловский Воадислав",
+  "threadsUrl": "",
+  "bio": "Я Воадислав Павловский, тренер по катанию на коньках и хоккею в Гродно.",
+  "about": [
+    "Веду индивидуальные и групповые тренировки на льду и в бросковом зале. Обучаю взрослых и детей катанию с нуля. Это хоккейные тренировки и ОФП."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/vlad.pavlovskiy94/p/DYwWw-ViivR/",
+      "caption": "🎣",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/vlad.pavlovskiy94/p/DSCsxzDigmT/",
+      "caption": "За подробной информации в Direct",
+      "imageText": [
+        "ПОДГОТОВКА ДЕТЕЙ К ХОККЕЙНОЙ ШКОЛЕ",
+        "НАБОР ГРУППЫ 2020-2022 ГОДА",
+        "+375(29)7818067",
+        "ДЕЛАЕМ ПЕРВЫЙ ШАГ ВМЕСТЕ"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/vlad.pavlovskiy94/p/DPTdSqwCgPQ/",
+      "caption": "Друзья, приглашаем всех на обучение катанию на коньках с нуля (взрослых и детей) и тренировки по хоккею на ледовом TRINITI. Запись по номеру +375 29 781 80 67 До встречи!",
+      "imageText": [
+        "ОБУЧЕНИЕ КАТАНИЮ НА КОНЬКАХ С НУЛЯ ДЛЯ ВЗРОСЛЫХ И ДЕТЕЙ",
+        "ХОККЕЙНЫЕ ТРЕНИРОВКИ",
+        "Групповые и индивидуальные тренировки",
+        "Обучение технике владения клюшкой (Бросковый Зал)",
+        "Развитие физических навыков и координации (ОФП)",
+        "ТРК TRINITI",
+        "+375 29 781 80 67"
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "konki",
+      "parentSlug": "zima",
+      "label": "Коньки",
+      "evidence": "Коньки"
+    },
+    {
+      "slug": "hokkej",
+      "parentSlug": "zima",
+      "label": "Хоккей",
+      "evidence": "Хоккей"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "konki",
+    "parentSlug": "zima",
+    "label": "Коньки"
+  },
+  "city": "Гродно",
+  "address": "проспект Янки Купалы, 87",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vlad.pavlovskiy94.jpg",
+  "photos": [
+    "/trainers/instagram/vlad.pavlovskiy94.jpg",
+    "/trainers/instagram/vlad.pavlovskiy94-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vlad.pavlovskiy94/",
+    "phone": "+375 29 781-80-67",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram"
+  ]
+}

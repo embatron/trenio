@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kseniiamakarova6252/",
+  "handle": "kseniiamakarova6252",
+  "slug": "kseniiamakarova6252",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ксения",
+  "lastName": "Макарова",
+  "fullName": "Ксения Макарова",
+  "gender": "female",
+  "nameQuotes": [
+    "Ксения Макарова"
+  ],
+  "headline": "Инструктор по йоге и тренер по медитации",
+  "sourceBio": "Сертифицированный преподаватель Хатха-йоги 🎓YTTC 400ч. 🌿Хатха-йога: сила, гибкость и осознанность. 👇 Запись на пробное занятие в директ📩",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Солигорск. Ксения Макарова. ул. Гуляева, д. 2.",
+  "threadsUrl": "",
+  "bio": "Я Ксения Макарова. Хатха-йога. Город Солигорск.",
+  "about": [
+    "Я веду пробное занятие."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "хатха"
+    },
+    {
+      "slug": "meditaciya",
+      "parentSlug": "velnes",
+      "label": "Медитация",
+      "evidence": "осознанность"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Солигорск",
+  "address": "улица Гуляева, 2",
+  "cityCandidates": [
+    "Солигорск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "",
+  "photos": [],
+  "certificates": [],
+  "photoSearch": {
+    "face": false,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kseniiamakarova6252/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "avatar",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

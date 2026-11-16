@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/viktoriayogi/",
+  "handle": "viktoriayogi",
+  "slug": "viktoriayogi",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктория",
+  "lastName": "",
+  "fullName": "Виктория",
+  "gender": "female",
+  "nameQuotes": [
+    "Виктория"
+  ],
+  "headline": "Инструктор по йоге",
+  "sourceBio": "Преподаю йогу",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Виктория. Город Гродно. пр-т Янки Купалы, д. 53.",
+  "threadsUrl": "",
+  "bio": "Я Виктория. Я преподаю йогу. Город Гродно.",
+  "about": [
+    "Я преподаю йогу и веду тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Гродно",
+  "address": "проспект Янки Купалы, 53",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/viktoriayogi.jpg",
+  "photos": [
+    "/trainers/instagram/viktoriayogi.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/viktoriayogi/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

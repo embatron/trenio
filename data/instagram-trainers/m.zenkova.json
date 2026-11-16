@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/m.zenkova/",
+  "handle": "m.zenkova",
+  "slug": "m.zenkova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Маргарита",
+  "lastName": "Зенкова",
+  "fullName": "Маргарита Зенкова",
+  "gender": "female",
+  "nameQuotes": [
+    "Маргарита Зенкова"
+  ],
+  "headline": "Инструктор по йоге и тренер по сапу",
+  "sourceBio": "Personal blog 12-27.03 едем в 🇮🇳 Живу в своем Мире и создаю новые✨ @mira.fit.brest @mira.centr.brest Делюсь тем что узнала о человеческой жизни Здесь тебя любят ❤️ t.me/lifeendmagic",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. Маргарита Зенкова. ул. Куйбышева д. 13. тренировки.",
+  "threadsUrl": "",
+  "bio": "Я Маргарита Зенкова, инструктор по йоге. Город Брест. Веду тренировки.",
+  "about": [
+    "Я веду тренировки по йоге."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    },
+    {
+      "slug": "sup",
+      "parentSlug": "plavanie",
+      "label": "Сап",
+      "evidence": "Сап"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Брест",
+  "address": "улица Куйбышева, 13",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/m.zenkova.jpg",
+  "photos": [
+    "/trainers/instagram/m.zenkova.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/m.zenkova/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/lifeendmagic",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

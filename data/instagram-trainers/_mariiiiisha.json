@@ -1,0 +1,71 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/_mariiiiisha/",
+  "handle": "_mariiiiisha",
+  "slug": "_mariiiiisha",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Марина",
+  "lastName": "Барановская",
+  "fullName": "Марина Барановская",
+  "gender": "female",
+  "nameQuotes": [
+    "Марина Барановская"
+  ],
+  "headline": "",
+  "sourceBio": "🩺 Медицинское образование 🧘 Индивидуальные | Групповые ✨ Тренировки с заботой о здоровье 🤍 Помогаю полюбить спорт 📍 SV-fit,Чапаева 18",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Марина Барановская. ул. Чапаева, д. 18.",
+  "threadsUrl": "",
+  "bio": "Я Марина Барановская. Индивидуальные и групповые тренировки. Город Витебск.",
+  "about": [
+    "Я провожу индивидуальные и групповые тренировки."
+  ],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Витебск",
+  "address": "улица Чапаева, 18",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/_mariiiiisha.jpg",
+  "photos": [
+    "/trainers/instagram/_mariiiiisha.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/_mariiiiisha/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

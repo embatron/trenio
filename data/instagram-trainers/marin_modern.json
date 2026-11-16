@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/marin_modern/",
+  "handle": "marin_modern",
+  "slug": "marin_modern",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Марина",
+  "lastName": "Гурецкая",
+  "fullName": "Марина Гурецкая",
+  "gender": "female",
+  "nameQuotes": [
+    "Марина",
+    "Гурецкая"
+  ],
+  "headline": "Инструктор по растяжке",
+  "sourceBio": "Гнёмся, но не ломаемся!😼",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Марина Гурецкая. Город Молодечно. ул. Волынца, д. 12Б.",
+  "threadsUrl": "",
+  "bio": "Я Марина Гурецкая. Стретчинг. Город Молодечно.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "стретчинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Молодечно",
+  "address": "улица Волынца, 12Б",
+  "cityCandidates": [
+    "Молодечно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/marin_modern.jpg",
+  "photos": [
+    "/trainers/instagram/marin_modern.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/marin_modern/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

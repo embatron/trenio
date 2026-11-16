@@ -1,0 +1,71 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vlad_coach_mozyr/",
+  "handle": "vlad_coach_mozyr",
+  "slug": "vlad_coach_mozyr",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Владислав",
+  "lastName": "",
+  "fullName": "Владислав",
+  "gender": "male",
+  "nameQuotes": [
+    "Владислав"
+  ],
+  "headline": "",
+  "sourceBio": "Индивидуальные тренировки в Мозыре Кандидат мастера спорта Высшее спортивное образование Квалифицированный тренер Стаж тренировок более 10 лет",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Мозырь Владислав",
+  "threadsUrl": "",
+  "bio": "Я Владислав, тренер. Город Мозырь. Провожу индивидуальные тренировки.",
+  "about": [
+    "Индивидуальные тренировки провожу в городе Мозырь."
+  ],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Мозырь",
+  "address": "",
+  "cityCandidates": [
+    "Мозырь"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vlad_coach_mozyr.jpg",
+  "photos": [
+    "/trainers/instagram/vlad_coach_mozyr.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vlad_coach_mozyr/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

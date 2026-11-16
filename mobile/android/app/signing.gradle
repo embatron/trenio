@@ -1,0 +1,21 @@
+// Upload key. This file is not a Bubblewrap template, so a later `bubblewrap update`
+// leaves it in place. The apply line at the bottom of app/build.gradle does not survive
+// that update and has to be put back.
+//
+// Google Play App Signing uses a different certificate. Its SHA-256 goes into
+// ANDROID_SHA256_FINGERPRINTS on the server. It is not stored here.
+
+def propsFile = rootProject.file("signing.properties")
+if (propsFile.exists()) {
+    def props = new Properties()
+    propsFile.withInputStream { props.load(it) }
+    android.signingConfigs {
+        release {
+            storeFile rootProject.file(props.getProperty("storeFile"))
+            storePassword props.getProperty("storePassword")
+            keyAlias props.getProperty("keyAlias")
+            keyPassword props.getProperty("keyPassword")
+        }
+    }
+    android.buildTypes.release.signingConfig android.signingConfigs.release
+}

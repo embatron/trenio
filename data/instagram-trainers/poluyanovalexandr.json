@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/poluyanovalexandr/",
+  "handle": "poluyanovalexandr",
+  "slug": "poluyanovalexandr",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Alexandr",
+  "lastName": "Poluyanov",
+  "fullName": "Alexandr Poluyanov",
+  "gender": "male",
+  "nameQuotes": [
+    "Poluyanov Alexandr"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "Мастер спорта по боксу. Персональный тренер по боксу и фитбоксу. Personal boxing coach&fitboxing",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Телефон: Telegram: @Poluyanov",
+  "threadsUrl": "",
+  "bio": "Я мастер спорта по боксу.",
+  "about": [
+    "Занятия я веду персонально, по боксу."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "boxing"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/poluyanovalexandr.jpg",
+  "photos": [
+    "/trainers/instagram/poluyanovalexandr.jpg",
+    "/trainers/instagram/poluyanovalexandr-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/poluyanovalexandr/",
+    "phone": "+375 44 758-53-59",
+    "email": "",
+    "telegram": "https://t.me/Poluyanov",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "pinnedPosts"
+  ]
+}

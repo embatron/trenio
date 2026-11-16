@@ -1,0 +1,98 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/thekaryna_/",
+  "handle": "thekaryna_",
+  "slug": "thekaryna_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Карина",
+  "lastName": "Щукина",
+  "fullName": "Карина Щукина",
+  "gender": "female",
+  "nameQuotes": [
+    "Карина Щукина"
+  ],
+  "headline": "Фитнес-тренер, тренер по питанию и инструктор тренажёрного зала",
+  "sourceBio": "💪Тренер | КМС по пауэрлифтингу РБ (IPF)🏆 🥗Нутрициолог | Индивидуальные программы |Онлайн-сопровождение📱 📍Тренирую в @garmoniya142",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Орша. Карина Щукина. ул. Ленина, д. 242.",
+  "threadsUrl": "",
+  "bio": "Я Карина Щукина, фитнес-тренер и нутрициолог. Город Орша.",
+  "about": [
+    "Я тренирую индивидуально."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "нутрициолог"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "pauerlifting",
+      "label": "Пауэрлифтинг",
+      "quote": "пауэрлифтингу"
+    }
+  ],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Орша",
+  "address": "улица Владимира Ленина",
+  "cityCandidates": [
+    "Орша"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/thekaryna_.jpg",
+  "photos": [
+    "/trainers/instagram/thekaryna_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/thekaryna_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

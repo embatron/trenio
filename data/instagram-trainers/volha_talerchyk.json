@@ -1,0 +1,106 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/volha_talerchyk/",
+  "handle": "volha_talerchyk",
+  "slug": "volha_talerchyk",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ольга",
+  "lastName": "",
+  "fullName": "Ольга",
+  "gender": "female",
+  "nameQuotes": [
+    "Ольга"
+  ],
+  "headline": "Тренер по пауэрлифтингу, инструктор тренажёрного зала, по пилатесу и тренер по скалолазанию",
+  "sourceBio": "Personal Coach 🏆Мастер спорта по становой тяге #WRPF 🏅КМС по пауэрлифтингу (троеборье) 📌Тренирую в СК Олимпиец, г.Могилёв 🎓Высшее медицинское 🎓Высшее физкультурное",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Ольга Могилёв Персональный тренер Мастер спорта по становой тяге КМС по пауэрлифтингу (троеборье) Тренирую в СК Олимпиец, г.Могилёв Высшее медицинское Высшее физкультурное Тренажёрный зал Пилатес Скалолазание Растяжка Йога Пауэрлифтинг ул. Каштановая, д. 4А",
+  "threadsUrl": "",
+  "bio": "Я Ольга, тренер по пауэрлифтингу в Могилёве. Мастер спорта по становой тяге, КМС по пауэрлифтингу.",
+  "about": [
+    "Я веду персональные тренировки в СК Олимпиец."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pauerlifting",
+      "parentSlug": "fitnes",
+      "label": "Пауэрлифтинг",
+      "evidence": "Пауэрлифтинг"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "skalolazanie",
+      "parentSlug": "outdoor",
+      "label": "Скалолазание",
+      "evidence": "Скалолазание"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "krossfit",
+      "label": "Кроссфит",
+      "quote": "Кроссфит-компл."
+    }
+  ],
+  "primarySport": {
+    "slug": "pauerlifting",
+    "parentSlug": "fitnes",
+    "label": "Пауэрлифтинг"
+  },
+  "city": "Могилёв",
+  "address": "Каштановая улица, 4А",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/volha_talerchyk.jpg",
+  "photos": [
+    "/trainers/instagram/volha_talerchyk.jpg",
+    "/trainers/instagram/volha_talerchyk-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/volha_talerchyk/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

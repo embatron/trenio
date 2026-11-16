@@ -1,0 +1,91 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pumpevgeniifilipchik103/",
+  "handle": "pumpevgeniifilipchik103",
+  "slug": "pumpevgeniifilipchik103",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгений",
+  "lastName": "",
+  "fullName": "Евгений",
+  "gender": "male",
+  "nameQuotes": [
+    "Евгений"
+  ],
+  "headline": "Тренер по реабилитации и восстановлению, инструктор ЛФК и тренер по питанию",
+  "sourceBio": "📎 Аккредитованный тренер с мед образованием 📎Реабилитация,лфк,тренировки 📎КМС по пауэрлифтигу 📎 Составление плана тренировок и питания",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Барановичи. Евгений. пр-т Советский, д. 35.",
+  "threadsUrl": "",
+  "bio": "Я Евгений. Реабилитация и план питания. Город Барановичи.",
+  "about": [
+    "Я составляю план тренировок."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "reabilitaciya",
+      "parentSlug": "reabilitaciya",
+      "label": "Реабилитация",
+      "evidence": "Реабилитация"
+    },
+    {
+      "slug": "lfk",
+      "parentSlug": "reabilitaciya",
+      "label": "ЛФК",
+      "evidence": "ЛФК"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "reabilitaciya",
+    "parentSlug": "reabilitaciya",
+    "label": "Реабилитация"
+  },
+  "city": "Барановичи",
+  "address": "пр-т Советский, д. 35",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/pumpevgeniifilipchik103.jpg",
+  "photos": [
+    "/trainers/instagram/pumpevgeniifilipchik103.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pumpevgeniifilipchik103/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

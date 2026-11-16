@@ -1,0 +1,89 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/meteluyshka/",
+  "handle": "meteluyshka",
+  "slug": "meteluyshka",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Настасья",
+  "lastName": "",
+  "fullName": "Настасья",
+  "gender": "female",
+  "nameQuotes": [
+    "Настасья"
+  ],
+  "headline": "Фитнес-тренер, инструктор по пилатесу и тренер по осанке",
+  "sourceBio": "Помогу на пути к здоровому и красивому телу Онлайн/офлайн Сертифицированный тренер PolestarPilates Тренирую @lifestyle.fg Обучаю @fitnessacademy.by",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Настасья. ул. Воинов-интернационалистов, д. 1Д.",
+  "threadsUrl": "",
+  "bio": "Я Настасья, фитнес-тренер. Пилатес. Осанка. Город Витебск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Витебск",
+  "address": "улица Воинов-Интернационалистов, 1Д",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/meteluyshka.jpg",
+  "photos": [
+    "/trainers/instagram/meteluyshka.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/meteluyshka/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

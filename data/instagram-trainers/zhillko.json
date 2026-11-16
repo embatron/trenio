@@ -1,0 +1,113 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/zhillko/",
+  "handle": "zhillko",
+  "slug": "zhillko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Вера",
+  "lastName": "Жилко",
+  "fullName": "Вера Жилко",
+  "gender": "female",
+  "nameQuotes": [
+    "Жилко Вера",
+    "Я Вера"
+  ],
+  "headline": "Тренер по тренажёрному залу",
+  "sourceBio": "Personal Coach Привет! Я Вера 🎀 Аккредитованный тренер с высшим образованием ◽️тренирую в @olympic_grodno ◽️онлайн ведение по питанию и тренировкам - пиши в ТГ📱",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Жилко Вера",
+  "threadsUrl": "",
+  "bio": "Я Вера Жилко, фитнес-тренер. Тренирую в тренажерном зале и веду онлайн по питанию и тренировкам.",
+  "about": [
+    "Я составляю тренировочную программу под результат. К каждому упражнению есть видео с техникой, я исправляю ошибки и помогаю с рабочими весами."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/zhillko/reel/DK-FsNLMkKU/",
+      "caption": "за подробностями в direct!",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/zhillko/reel/DJUJMtXsaN9/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/zhillko/p/DUMSU9ZjIgq/",
+      "caption": "ОНЛАЙН ВЕДЕНИЕ (тренажерный зал + питание) Что входит? • анкетирование • индивидуальный план по кбжу, под ваши цели • индивидуальный план тренировок, корректировка техники, корректировка плана по необходимости. • консультация по БАДам и спортивным добавкам • обратная связь 24/7, поддержка на протяжении всего пути • доступ к тгк, где собрано бесконечное множество информации, также предоставляются гайды, рецепты и многое другое. Пиши в direct *Также есть вариант онлайн ведения по ПИТАНИЮ без тренажерного зала.",
+      "imageText": [
+        "ONLINE ВЕДЕНИЕ",
+        "РАБОТА СО МНОЙ ЭТО. ГРАМОТНО СОСТАВЛЕННАЯ ТРЕНИРОВОЧНАЯ ПРОГРАММА, КОТОРАЯ БУДЕТ РАБОТАТЬ КОНКРЕТНО НА ТВОЙ РЕЗУЛЬТАТ. У ТЕБЯ БУДЕТ ЛИЧНАЯ ТАБЛИЧКА, ГДЕ ЛЕГКО И УДОБНО СМОЖЕШЬ ОТСЛЕЖИВАТЬ СВОЙ ПРОГРЕСС, А ТАКЖЕ К КАЖДОМУ УПРАЖНЕНИЮ ПРИЛАГАЕТСЯ ВИДЕО С ТЕХНИКОЙ. Я В СВОЮ ОЧЕРЕДЬ ПОМОГУ И ДОБЬЮСЬ ОТ ТЕБЯ ХОРОШЕЙ ТЕХНИКИ, ПОДСКАЖУ, ИСПРАВЛЮ ОШИБКИ, ПОМОГУ С РАБОЧИМИ ВЕСАМИ. Я НА СВЯЗИ 24/7"
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "",
+  "address": "",
+  "cityCandidates": [
+    "Гродно",
+    "Мысли",
+    "Прогресс"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/zhillko.jpg",
+  "photos": [
+    "/trainers/instagram/zhillko.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/zhillko/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/zhiillko",
+    "website": "https://youtube.com/@zhillko"
+  },
+  "missing": [
+    "city",
+    "price",
+    "phone",
+    "email"
+  ]
+}

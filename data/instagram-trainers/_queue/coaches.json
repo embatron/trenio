@@ -1,0 +1,6534 @@
+{
+  "queue": [
+    {
+      "handle": "volha_talerchyk",
+      "url": "https://www.instagram.com/volha_talerchyk/",
+      "first": "Ольга",
+      "last": "",
+      "nameNote": "",
+      "city": "Могилёв",
+      "places": [
+        "ул. Каштановая, д. 4А"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"RealFit7\" - Каштановая"
+      ],
+      "slugs": [
+        "trenazherka",
+        "pilates",
+        "skalolazanie",
+        "stretching",
+        "yoga",
+        "pauerlifting"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Пилатес",
+        "Скалолазание",
+        "Растяжка",
+        "Йога",
+        "Пауэрлифтинг"
+      ],
+      "description": "Персональный тренер\n🏆Мастер спорта по становой тяге #WRPF\n🏅КМС по пауэрлифтингу (троеборье)\n📌Тренирую в СК Олимпиец, г.Могилёв\n🎓Высшее...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "trener_vasiliy",
+      "url": "https://www.instagram.com/trener_vasiliy/",
+      "first": "Тренирую",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Могилёв",
+      "places": [
+        "ул. Каштановая, д. 4А"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"RealFit7\" - Каштановая"
+      ],
+      "slugs": [
+        "trenazherka",
+        "pilates",
+        "skalolazanie",
+        "stretching",
+        "yoga"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Пилатес",
+        "Скалолазание",
+        "Растяжка",
+        "Йога"
+      ],
+      "description": "💥Тренирую в @realfit_streletcz",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "ali.luka.a",
+      "url": "https://www.instagram.com/ali.luka.a/",
+      "first": "Здоровье",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Могилёв",
+      "places": [
+        "ул. Каштановая, д. 4А"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"RealFit7\" - Каштановая"
+      ],
+      "slugs": [
+        "trenazherka",
+        "pilates",
+        "skalolazanie",
+        "stretching",
+        "yoga"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Пилатес",
+        "Скалолазание",
+        "Растяжка",
+        "Йога"
+      ],
+      "description": "Здоровье/красота\nТренер,которому доверяют | Амбассадор женственности\n📍Тренирую в @realfit_streletcz\nСоздаю тело, в котором хочется...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "petukhova._anya",
+      "url": "https://www.instagram.com/petukhova._anya/",
+      "first": "Анна",
+      "last": "",
+      "nameNote": "",
+      "city": "Могилёв",
+      "places": [
+        "ул. Каштановая, д. 4А"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"RealFit7\" - Каштановая"
+      ],
+      "slugs": [
+        "trenazherka",
+        "pilates",
+        "skalolazanie",
+        "stretching",
+        "yoga"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Пилатес",
+        "Скалолазание",
+        "Растяжка",
+        "Йога"
+      ],
+      "description": "Технолог-преподаватель\nбренда iP и HS в РБ 🤍\nВыпускница Академии парикм\nискусства Санкт-Пeтербурга,\nМосковской школы...\nПер Мечникова, д 6, кабинет 5, Mahilyow, Belarus",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "victorzemliansky",
+      "url": "https://www.instagram.com/victorzemliansky/",
+      "first": "Виктор",
+      "last": "",
+      "nameNote": "",
+      "city": "Гомель",
+      "places": [
+        "пр-т Ленина, д. 3"
+      ],
+      "clubs": [
+        "Тренажерный зал \"ПлазаДжим\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "silovoj-trening"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Силовой тренинг"
+      ],
+      "description": "Персональный тренер\n🦾 Силовые тренировки\nТренирую в @plazagym_gomel",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "yana_emelyanenko7337",
+      "url": "https://www.instagram.com/yana_emelyanenko7337/",
+      "first": "Личный",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гомель",
+      "places": [
+        "пр-т Ленина, д. 3"
+      ],
+      "clubs": [
+        "Тренажерный зал \"ПлазаДжим\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "nutriciolog"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Питание"
+      ],
+      "description": "Личный блог\n➡️Программы питания, тренировок\nСделаем красивое тело вместе💪\nПобедитель Кубка РБ 🏆\nСеребряный призёр чемпионата РБ🏅\nБ...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "moskal_max",
+      "url": "https://www.instagram.com/moskal_max/",
+      "first": "Максим",
+      "last": "Москалев",
+      "nameNote": "",
+      "city": "Гомель",
+      "places": [
+        "пр-т Ленина, д. 3"
+      ],
+      "clubs": [
+        "Тренажерный зал \"ПлазаДжим\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "tajskij-boks",
+        "boks",
+        "nutriciolog"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Тайский бокс",
+        "Бокс",
+        "Питание"
+      ],
+      "description": "⚜️персональные тренировки ( тренажерный зал,🦾бокс 🥊, муай-тай🥊)\n⚜️разбор питания\n⚜️индивидуальный подход",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "thetrenerdima",
+      "url": "https://www.instagram.com/thetrenerdima/",
+      "first": "thetrenerdima",
+      "last": "",
+      "nameNote": "handle-as-name",
+      "city": "Гомель",
+      "places": [
+        "пр-т Ленина, д. 3"
+      ],
+      "clubs": [
+        "Тренажерный зал \"ПлазаДжим\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "figura"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Коррекция фигуры"
+      ],
+      "description": "🏅 индивидуальный подход\n🏅 коррекция фигуры\n🏅 набор веса\n🏅 похудение\ntaplink.cc/theskryps",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "maksim_semenchukov",
+      "url": "https://www.instagram.com/maksim_semenchukov/",
+      "first": "Максим",
+      "last": "",
+      "nameNote": "",
+      "city": "Гомель",
+      "places": [
+        "пр-т Ленина, д. 3"
+      ],
+      "clubs": [
+        "Тренажерный зал \"ПлазаДжим\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Стройное тело доступно каждому!\n- ПП-рецепты 🌮\n- Тренировки: дом / зал🏃\n- Упражнения на мобильность 🧘‍♂️",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "oksanaluzhkova",
+      "url": "https://www.instagram.com/oksanaluzhkova/",
+      "first": "Оксана",
+      "last": "",
+      "nameNote": "",
+      "city": "Гомель",
+      "places": [
+        "пр-т Ленина, д. 3"
+      ],
+      "clubs": [
+        "Тренажерный зал \"ПлазаДжим\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "✨семья\n🎬съемки\n🌪️вечный движ 😅\nПоказываю жизнь, как есть😉",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "olga.pool.bobr",
+      "url": "https://www.instagram.com/olga.pool.bobr/",
+      "first": "Обучение",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Бобруйск",
+      "places": [
+        "ул. Сикорского, д. 11"
+      ],
+      "clubs": [
+        "ФОК \"Техас\""
+      ],
+      "slugs": [
+        "akvaaerobika",
+        "ofp",
+        "trenazherka",
+        "plavanie"
+      ],
+      "labels": [
+        "Аквааэробика",
+        "ОФП",
+        "Тренажёрный зал",
+        "Плавание"
+      ],
+      "description": "Обучение плаванию детей и взрослых\nГрупповые и индивидуальные тренировки @basseyn_texas\nЗапись по номеру телефона:...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "irina7818",
+      "url": "https://www.instagram.com/irina7818/",
+      "first": "Научу",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Бобруйск",
+      "places": [
+        "ул. Сикорского, д. 11"
+      ],
+      "clubs": [
+        "ФОК \"Техас\""
+      ],
+      "slugs": [
+        "akvaaerobika",
+        "ofp",
+        "trenazherka",
+        "plavanie",
+        "bodibilding",
+        "nutriciolog"
+      ],
+      "labels": [
+        "Аквааэробика",
+        "ОФП",
+        "Тренажёрный зал",
+        "Плавание",
+        "Бодибилдинг",
+        "Питание"
+      ],
+      "description": "Научу любить себя, зал и железо🔗\nСопровождение по питанию🥗\nонлайн/оффлайн. КМС-Бодибилдинг. Фитнес бикини до160 Р...\ninstagram.com/fok.texas?igshid=MzRlODBiNWFlZA%3D%3D",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "tkd.kik.bobr",
+      "url": "https://www.instagram.com/tkd.kik.bobr/",
+      "first": "Ольга",
+      "last": "Михайловна",
+      "nameNote": "parsed",
+      "city": "Бобруйск",
+      "places": [
+        "ул. Сикорского, д. 11"
+      ],
+      "clubs": [
+        "ФОК \"Техас\""
+      ],
+      "slugs": [
+        "akvaaerobika",
+        "ofp",
+        "trenazherka",
+        "plavanie",
+        "kikboksing",
+        "boks"
+      ],
+      "labels": [
+        "Аквааэробика",
+        "ОФП",
+        "Тренажёрный зал",
+        "Плавание",
+        "Кикбоксинг",
+        "Бокс"
+      ],
+      "description": "Ольга Михайловна",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "fit.dedkova",
+      "url": "https://www.instagram.com/fit.dedkova/",
+      "first": "Ольга",
+      "last": "Дедкова",
+      "nameNote": "",
+      "city": "Бобруйск",
+      "places": [
+        "ул. Сикорского, д. 11"
+      ],
+      "clubs": [
+        "ФОК \"Техас\""
+      ],
+      "slugs": [
+        "akvaaerobika",
+        "ofp",
+        "trenazherka",
+        "plavanie",
+        "sovremennye",
+        "pilates",
+        "stretching",
+        "yoga"
+      ],
+      "labels": [
+        "Аквааэробика",
+        "ОФП",
+        "Тренажёрный зал",
+        "Плавание",
+        "Современные танцы",
+        "Пилатес",
+        "Растяжка",
+        "Йога"
+      ],
+      "description": "✨ 8 лет опыта | Групповые и индивидуальные тренировки\nЙога • Пилатес • Стретчинг • Табата • Тай-бо • Танцы\nЗаряжаю...\nwww.instagram.com/fok.texas?igsh=Z3A3amR3Z3B5cjB1 и ещё 1",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "ilyaterekhov96",
+      "url": "https://www.instagram.com/ilyaterekhov96/",
+      "first": "Илья",
+      "last": "Терехов",
+      "nameNote": "",
+      "city": "Бобруйск",
+      "places": [
+        "ул. Сикорского, д. 11",
+        "ул. Чонгарская, д. 98"
+      ],
+      "clubs": [
+        "ФОК \"Техас\"",
+        "Фитнес-клуб \"Eva.by\" - Чонгарская"
+      ],
+      "slugs": [
+        "akvaaerobika",
+        "ofp",
+        "trenazherka",
+        "plavanie",
+        "grepling",
+        "borba"
+      ],
+      "labels": [
+        "Аквааэробика",
+        "ОФП",
+        "Тренажёрный зал",
+        "Плавание",
+        "Грэпплинг",
+        "Борьба"
+      ],
+      "description": "🤼‍♂️ МС по борьбе\n🥋Чемпион РБ по грепплингу\n💪Фитнес•Борьба\n🫡8+ лет в тренерстве\n📩Персонально / онлайн 🌍\nt.me/Tereh96",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "minin_viachaslau",
+      "url": "https://www.instagram.com/minin_viachaslau/",
+      "first": "Вячеслав",
+      "last": "Минин",
+      "nameNote": "",
+      "city": "Бобруйск",
+      "places": [
+        "ул. Сикорского, д. 11"
+      ],
+      "clubs": [
+        "ФОК \"Техас\""
+      ],
+      "slugs": [
+        "akvaaerobika",
+        "ofp",
+        "trenazherka",
+        "plavanie",
+        "silovoj-trening",
+        "osanka"
+      ],
+      "labels": [
+        "Аквааэробика",
+        "ОФП",
+        "Тренажёрный зал",
+        "Плавание",
+        "Силовой тренинг",
+        "Осанка"
+      ],
+      "description": "Здоровье/красота\n👥Персональные тренировки\n🏋️‍♂️Силовой тренинг\n🏃 Функциональный тренинг, МФР\n👬Сплит тренировки ( занятия в парах)\n📌 ФОК ...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "tusya_na_bachata",
+      "url": "https://www.instagram.com/tusya_na_bachata/",
+      "first": "Наталья",
+      "last": "Шункевич",
+      "nameNote": "",
+      "city": "Бобруйск",
+      "places": [
+        "ул. Сикорского, д. 11",
+        "ул. Чонгарская, д. 98"
+      ],
+      "clubs": [
+        "ФОК \"Техас\"",
+        "Фитнес-клуб \"Eva.by\" - Чонгарская"
+      ],
+      "slugs": [
+        "akvaaerobika",
+        "ofp",
+        "trenazherka",
+        "plavanie"
+      ],
+      "labels": [
+        "Аквааэробика",
+        "ОФП",
+        "Тренажёрный зал",
+        "Плавание"
+      ],
+      "description": "Деятель искусств\nИнструктор программы БачатаДенсФит.\nОткрою дверь в мир бачаты.\nДокажу, что ты можешь больше, чем думаешь!!!\ntiktok.com/@tusya_na",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "eller.agency",
+      "url": "https://www.instagram.com/eller.agency/",
+      "first": "Рекламное",
+      "last": "",
+      "nameNote": "",
+      "city": "Бобруйск",
+      "places": [
+        "ул. Сикорского, д. 11"
+      ],
+      "clubs": [
+        "ФОК \"Техас\""
+      ],
+      "slugs": [
+        "akvaaerobika",
+        "ofp",
+        "trenazherka",
+        "plavanie"
+      ],
+      "labels": [
+        "Аквааэробика",
+        "ОФП",
+        "Тренажёрный зал",
+        "Плавание"
+      ],
+      "description": "Берём маркетинг под ключ\nСтратегия → продвижение → реализация\nSMM • Meta Ads • контент • аналитика\n↓ Обсудить задачу",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "ng_.16",
+      "url": "https://www.instagram.com/ng_.16/",
+      "first": "Наташа",
+      "last": "",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Куйбышева д. 13 (2-ой этаж)"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Мира. Больше, чем фитнес\" - Куйбышева"
+      ],
+      "slugs": [
+        "stretching",
+        "pilates"
+      ],
+      "labels": [
+        "Растяжка",
+        "Пилатес"
+      ],
+      "description": "Тренер по фитнесу\nПреподаю в @mira.centr.brest и @tantra__place\n-индивидуальные и групповые тренировки",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "vika.lav.psy",
+      "url": "https://www.instagram.com/vika.lav.psy/",
+      "first": "Психолог",
+      "last": "",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Куйбышева д. 13 (2-ой этаж)",
+        "ул. Московская, д. 329 (цокольный этаж)"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Мира. Больше, чем фитнес\" - Куйбышева",
+        "Студия фитнеса \"Мира. Больше, чем фитнес\" - Московская"
+      ],
+      "slugs": [
+        "stretching",
+        "pilates",
+        "osanka",
+        "ofp",
+        "aerobika",
+        "yoga"
+      ],
+      "labels": [
+        "Растяжка",
+        "Пилатес",
+        "Осанка",
+        "ОФП",
+        "Спортивная аэробика",
+        "Йога"
+      ],
+      "description": "Виктория\nОнлайн консультации\n---\nВеду занятия в @mira.fit.brest\nvikalavpsy.taplink.ws и ещё 1",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "m.zenkova",
+      "url": "https://www.instagram.com/m.zenkova/",
+      "first": "Маргарита",
+      "last": "",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Куйбышева д. 13 (2-ой этаж)",
+        "ул. Московская, д. 329 (цокольный этаж)"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Мира. Больше, чем фитнес\" - Куйбышева",
+        "Студия фитнеса \"Мира. Больше, чем фитнес\" - Московская"
+      ],
+      "slugs": [
+        "stretching",
+        "pilates",
+        "yoga",
+        "ofp",
+        "aerobika"
+      ],
+      "labels": [
+        "Растяжка",
+        "Пилатес",
+        "Йога",
+        "ОФП",
+        "Спортивная аэробика"
+      ],
+      "description": "Личный блог\n12-27.03 едем в 🇮🇳\nЖиву в своем Мире и создаю новые✨\n@mira.fit.brest @mira.centr.brest\nДелюсь тем что узнала о...\nt.me/lifeendmagic",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "dariakozlova._",
+      "url": "https://www.instagram.com/dariakozlova._/",
+      "first": "Дарья",
+      "last": "",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Куйбышева д. 13 (2-ой этаж)"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Мира. Больше, чем фитнес\" - Куйбышева"
+      ],
+      "slugs": [
+        "stretching",
+        "pilates"
+      ],
+      "labels": [
+        "Растяжка",
+        "Пилатес"
+      ],
+      "description": "Личный блог",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "biodanzabelarus",
+      "url": "https://www.instagram.com/biodanzabelarus/",
+      "first": "Светлана",
+      "last": "Котовская",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Куйбышева д. 13 (2-ой этаж)"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Мира. Больше, чем фитнес\" - Куйбышева"
+      ],
+      "slugs": [
+        "stretching",
+        "pilates",
+        "sovremennye"
+      ],
+      "labels": [
+        "Растяжка",
+        "Пилатес",
+        "Современные танцы"
+      ],
+      "description": "Сообщество\nБиоданза- танцевально- двигательная практика\nЕженедельная группа в Бресте\nКлассы и семинары\nЗапись: +375297944867...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "mira.fit.brest",
+      "url": "https://www.instagram.com/mira.fit.brest/",
+      "first": "Аэростретчинг",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Брест",
+      "places": [
+        "ул. Куйбышева д. 13 (2-ой этаж)"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Мира. Больше, чем фитнес\" - Куйбышева"
+      ],
+      "slugs": [
+        "stretching",
+        "pilates",
+        "yoga"
+      ],
+      "labels": [
+        "Растяжка",
+        "Пилатес",
+        "Йога"
+      ],
+      "description": "📍Твоя студия на ВОСТОКЕ города\nМира- больше, чем фитнес ❤️\n✨Лечим спину. Качаем пресс. Дарим счастье.\nЗапись онлайн...\nМосковская 329, Brest, Belarus\nplay.google.com/store/apps/details?id=by.alga.mira2&hl=ru и ещё 3",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "kseniya_zelinskaya_",
+      "url": "https://www.instagram.com/kseniya_zelinskaya_/",
+      "first": "Vitebsk",
+      "last": "Личный",
+      "nameNote": "parsed",
+      "city": "Витебск",
+      "places": [
+        "ул. Ивановского, д. 5"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Агат\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Личный блог\nПомогаю прийти в форму без изнуряющих тренировок 💪🏋🏼‍♀️\nПерсональные и групповые тренировки в @agat_gym_vitebsk 💪",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "anastasnaz",
+      "url": "https://www.instagram.com/anastasnaz/",
+      "first": "Anastasiya",
+      "last": "",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Ивановского, д. 5"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Агат\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "figura"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Коррекция фигуры"
+      ],
+      "description": "Я для тех, кто устал худеть и срываться\nМинус жир и отёки за МЕСЯЦ\nСтройное тело без курогрудки и голодовок🧘‍♀️...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "shikardos.vitebsk",
+      "url": "https://www.instagram.com/shikardos.vitebsk/",
+      "first": "Пространство",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Витебск",
+      "places": [
+        "ул. Ивановского, д. 5"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Агат\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Пространство для весёлых встреч, игр и отдыха с друзьями🥂\n• для всех возрастов\n• 5+ программ на выбор\n👉Пишите в директ...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "daniilzabarovskiy",
+      "url": "https://www.instagram.com/daniilzabarovskiy/",
+      "first": "Даниил",
+      "last": "Забаровский",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Ивановского, д. 5"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Агат\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Тренер для жизни - не сцены\n👇\nЗдоровое тело🤝\nКрасивая форма👀\nУд...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "alesya_vitebsk",
+      "url": "https://www.instagram.com/alesya_vitebsk/",
+      "first": "Праздник",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Витебск",
+      "places": [
+        "ул. Ивановского, д. 5"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Агат\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "🧩 Праздник под ключ\n🎂Игровая зона + банкетный зал\n🔒 Только ваша компания\n👶 2 площадки: 3-10 и 7-15 лет.\n👇 Бронь...\nt.me/Alesyacentrbot и ещё 2",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "soborchowa",
+      "url": "https://www.instagram.com/soborchowa/",
+      "first": "Катя",
+      "last": "Соборшова",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Ивановского, д. 5"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Агат\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Персональный тренер\nИндивидуальные тренировки 💪🏾\n🌰Прокачаю твои ягодицы\n🗒️Возьму тебя на ОНЛАЙН ВЕДЕНИЕ\nТренер команды @athletic_team_vtb",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "ovsiana_",
+      "url": "https://www.instagram.com/ovsiana_/",
+      "first": "Ксения",
+      "last": "",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Пушкинская, д. 16/1"
+      ],
+      "clubs": [
+        "Студия растяжки и фитнеса \"Studio Ok\" г. Брест"
+      ],
+      "slugs": [
+        "ofp",
+        "stretching",
+        "pilates"
+      ],
+      "labels": [
+        "ОФП",
+        "Растяжка",
+        "Пилатес"
+      ],
+      "description": "Личный блог\nТренер по пилатесу, мотиватор и основатель @studio_ok_brest @studio_ok_by\nВоспитываю щеночка-сыночка @nord_cane_corso\nwww.tiktok.com/@nord_cane_corso?_t=ZM-8xtTOxWeau5&_r=1 и ещё 2",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "tati_pilates_fit",
+      "url": "https://www.instagram.com/tati_pilates_fit/",
+      "first": "Здоровье",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Брест",
+      "places": [
+        "ул. Пушкинская, д. 16/1"
+      ],
+      "clubs": [
+        "Студия растяжки и фитнеса \"Studio Ok\" г. Брест"
+      ],
+      "slugs": [
+        "ofp",
+        "stretching",
+        "osanka"
+      ],
+      "labels": [
+        "ОФП",
+        "Растяжка",
+        "Осанка"
+      ],
+      "description": "Здоровье/красота\n🔸 улучшаю качество жизни через движение\n🔸 научу ощущать своё тело\n🔸 избавляю от болей в теле",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "jul.sheshko",
+      "url": "https://www.instagram.com/jul.sheshko/",
+      "first": "Юлия",
+      "last": "",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Пушкинская, д. 16/1"
+      ],
+      "clubs": [
+        "Студия растяжки и фитнеса \"Studio Ok\" г. Брест"
+      ],
+      "slugs": [
+        "ofp",
+        "stretching"
+      ],
+      "labels": [
+        "ОФП",
+        "Растяжка"
+      ],
+      "description": "ПЕРСОНАЛЬНО | ГРУППЫ | ОНЛАЙН\n• амбасадор гибкости\n• ко мне приходят за результатом\n• здесь лайфстайл | спорт |...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "irashulzhik",
+      "url": "https://www.instagram.com/irashulzhik/",
+      "first": "Ирина",
+      "last": "Шульжик",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Пушкинская, д. 16/1"
+      ],
+      "clubs": [
+        "Студия растяжки и фитнеса \"Studio Ok\" г. Брест"
+      ],
+      "slugs": [
+        "ofp",
+        "stretching",
+        "osanka"
+      ],
+      "labels": [
+        "ОФП",
+        "Растяжка",
+        "Осанка"
+      ],
+      "description": "Высшее медицинское образование\nЗдоровая спина, правильная осанка\nи женская грация.\nСоединяю разум с телом\nВеду голосом...\nt.me/irynashulzhik",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "svetikoyoga",
+      "url": "https://www.instagram.com/svetikoyoga/",
+      "first": "Преподаватель",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Могилёв",
+      "places": [
+        "пр-т Пушкинский, д. 28"
+      ],
+      "clubs": [
+        "Центр открытой йоги \"Намастэ\" - Пушкинский"
+      ],
+      "slugs": [
+        "sovremennye",
+        "ofp",
+        "yoga",
+        "osanka"
+      ],
+      "labels": [
+        "Современные танцы",
+        "ОФП",
+        "Йога",
+        "Осанка"
+      ],
+      "description": "👌ТВОЙ Преподаватель йоги для спины и осанки\nСреда19:10-20:10 Йога для спины и осанки (Могилев, Пр-т Пушкинский, 28)...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "blackbrooklyn.by",
+      "url": "https://www.instagram.com/blackbrooklyn.by/",
+      "first": "Бруклин",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Новополоцк",
+      "places": [
+        "пр-д. Измерительский, д. 6А"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Black Brooklyn\" - Новополоцк"
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka",
+        "pilates"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал",
+        "Пилатес"
+      ],
+      "description": "Спортзал/фитнес-центр\nМЕСТО СИЛЫ нашего города\nСила. Форма. Результат.\n+375333651000\n📍Центр города 👇🏻\nул. Ленина, 26a 1 этаж, Vitebsk",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "tatiana_daybova",
+      "url": "https://www.instagram.com/tatiana_daybova/",
+      "first": "Отправить",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Брест",
+      "places": [
+        "ул. Рябиновая, д. 26"
+      ],
+      "clubs": [
+        "Студия растяжки и пилатеса \"Fit Style\""
+      ],
+      "slugs": [
+        "pilates"
+      ],
+      "labels": [
+        "Пилатес"
+      ],
+      "description": "Отправить сообщение\nМои студии\nОБУЧАЮ\nУЧУСЬ\nОбо мне\nОБО МНЕ\nО ПИЛАТЕСЕ\nОбразование\nРЕЗУЛЬТАТЫ\nОтзывы\nМой путь",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "spa.tafi.vitebsk",
+      "url": "https://www.instagram.com/spa.tafi.vitebsk/",
+      "first": "Витебск",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Витебск",
+      "places": [
+        "ул. Белорусская, д. 6В"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"ТАФИ КЛУБ\""
+      ],
+      "slugs": [
+        "ofp",
+        "stretching",
+        "yoga",
+        "massazh"
+      ],
+      "labels": [
+        "ОФП",
+        "Растяжка",
+        "Йога",
+        "Массаж"
+      ],
+      "description": "SPA-программы и массаж в двух зонах отдыха\nСауна • джакузи • для себя, вдвоём и компанией\nВыбрать программу и записаться...\nБелорусская 6 В, Vitebsk\nn1270263.yclients.com и ещё 1",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "wellness.tafi.club.vitebsk",
+      "url": "https://www.instagram.com/wellness.tafi.club.vitebsk/",
+      "first": "Витебск",
+      "last": "Здоровье",
+      "nameNote": "parsed",
+      "city": "Витебск",
+      "places": [
+        "ул. Белорусская, д. 6В"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"ТАФИ КЛУБ\""
+      ],
+      "slugs": [
+        "ofp",
+        "stretching",
+        "yoga",
+        "pilates",
+        "massazh"
+      ],
+      "labels": [
+        "ОФП",
+        "Растяжка",
+        "Йога",
+        "Пилатес",
+        "Массаж"
+      ],
+      "description": "Здоровье/красота\nДвижение и восстановление в одном пространстве\nЙога • пилатес • фитнес • массаж • SPA @spa.tafi.vitebsk\n💌 Запись в...\nBelorusskaya 6 \"B\", Vitebsk\nn1270263.yclients.com и ещё 2",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "viktoriya_po1i",
+      "url": "https://www.instagram.com/viktoriya_po1i/",
+      "first": "Виктория",
+      "last": "Полякова",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Белорусская, д. 6В"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"ТАФИ КЛУБ\""
+      ],
+      "slugs": [
+        "ofp",
+        "stretching",
+        "yoga"
+      ],
+      "labels": [
+        "ОФП",
+        "Растяжка",
+        "Йога"
+      ],
+      "description": "Личный блог\nВитебск\nФитнес/йога/творчество/маникюр",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "galamartsynkevich",
+      "url": "https://www.instagram.com/galamartsynkevich/",
+      "first": "Гала",
+      "last": "Марцинкевич",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Белорусская, д. 6В"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"ТАФИ КЛУБ\""
+      ],
+      "slugs": [
+        "ofp",
+        "stretching",
+        "yoga",
+        "meditaciya"
+      ],
+      "labels": [
+        "ОФП",
+        "Растяжка",
+        "Йога",
+        "Медитация"
+      ],
+      "description": "Личный блог\n🌿Эксперт по релаксации, пранаяме и медитации\nПодробнее про мой курс медитаций в актуальном «Три кита»👇🏻\n@wellness.tafi...\ntaficlub.by и ещё 2",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "evgeniya_cigankova",
+      "url": "https://www.instagram.com/evgeniya_cigankova/",
+      "first": "Евгения",
+      "last": "Цыганкова",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Белорусская, д. 6В"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"ТАФИ КЛУБ\""
+      ],
+      "slugs": [
+        "ofp",
+        "stretching",
+        "yoga",
+        "silovoj-trening",
+        "pilates",
+        "osanka"
+      ],
+      "labels": [
+        "ОФП",
+        "Растяжка",
+        "Йога",
+        "Силовой тренинг",
+        "Пилатес",
+        "Осанка"
+      ],
+      "description": "Здоровье/красота\n◾Тренер по фитнесу\n◾Хореограф\n▪️Групповое и индивидуальное ведение\n▪️Йога, пилатес, стретчинг, МФР, силовыекардио...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "helenfit__",
+      "url": "https://www.instagram.com/helenfit__/",
+      "first": "Elena",
+      "last": "Kozlova",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Белорусская, д. 6В"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"ТАФИ КЛУБ\""
+      ],
+      "slugs": [
+        "ofp",
+        "stretching",
+        "yoga",
+        "akrobatika",
+        "pilates",
+        "osanka"
+      ],
+      "labels": [
+        "ОФП",
+        "Растяжка",
+        "Йога",
+        "Акробатика",
+        "Пилатес",
+        "Осанка"
+      ],
+      "description": "🇧🇾🇷🇺🇷🇴🇨🇾🇫🇮🇹🇷🇦🇩🇻🇳🇪🇬🇬🇪🇦🇿",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "darya.yoga.grodno",
+      "url": "https://www.instagram.com/darya.yoga.grodno/",
+      "first": "Дарья",
+      "last": "",
+      "nameNote": "",
+      "city": "Гродно",
+      "places": [
+        "пер. Поповича, д. 10"
+      ],
+      "clubs": [
+        "Студия фитнеса и йоги \"Кипарис\""
+      ],
+      "slugs": [
+        "ofp",
+        "pilates",
+        "stretching",
+        "yoga"
+      ],
+      "labels": [
+        "ОФП",
+        "Пилатес",
+        "Растяжка",
+        "Йога"
+      ],
+      "description": "Блогер\nYoga teacher @sacrum.yoga\nHedonism\nAesthetic\nt.me/dariayogagrodno",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "olegryshkevich",
+      "url": "https://www.instagram.com/olegryshkevich/",
+      "first": "Олег",
+      "last": "Рышкевич",
+      "nameNote": "",
+      "city": "Гродно",
+      "places": [
+        "ул. Мостовая, д. 39"
+      ],
+      "clubs": [
+        "Royal Gym"
+      ],
+      "slugs": [
+        "trenazherka",
+        "bodibilding"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Бодибилдинг"
+      ],
+      "description": "Мастер спорта по бодибилдингу РБ IFBB 🇧🇾\nПерсональный тренер ROYAL GYM.",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "andreicyprusevich",
+      "url": "https://www.instagram.com/andreicyprusevich/",
+      "first": "Худеем",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гродно",
+      "places": [
+        "ул. Мостовая, д. 39"
+      ],
+      "clubs": [
+        "Royal Gym"
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Тренер по фитнесу\n🚀ЗАПИСЬ НА НОЯБРЬ\n🍰Худеем правильно и вкусно\n🏋️‍♀️Тренировки для дома и зала\n— 10 КГ без запретов и срывов🤩",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "st.medejko",
+      "url": "https://www.instagram.com/st.medejko/",
+      "first": "Растяжка",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гродно",
+      "places": [
+        "ул. Мостовая, д. 39"
+      ],
+      "clubs": [
+        "Royal Gym"
+      ],
+      "slugs": [
+        "trenazherka",
+        "silovoj-trening",
+        "stretching"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Силовой тренинг",
+        "Растяжка"
+      ],
+      "description": "Здоровье/красота\n• Создаю ту самую форму, на которую оборачиваются✨\n• Растяжка & мобильность\n• Силовой тренинг",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "nika.fit.online",
+      "url": "https://www.instagram.com/nika.fit.online/",
+      "first": "Создаю",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Брест",
+      "places": [
+        "ул. Лейтенанта Рябцева, д. 33А"
+      ],
+      "clubs": [
+        "Спортивный клуб \"Baza\""
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал"
+      ],
+      "description": "Создаю спортивные тела\nс женственными формами🍑\nПомогла 200+ девушкам🙌🏻\nРезультат без диет и жестких тренировок💪🏻...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "dombrovskaia_olka",
+      "url": "https://www.instagram.com/dombrovskaia_olka/",
+      "first": "Ольга",
+      "last": "Домбровская",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Лейтенанта Рябцева, д. 33А"
+      ],
+      "clubs": [
+        "Спортивный клуб \"Baza\""
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал"
+      ],
+      "description": "🔗Инструктор в @grafit_brest\n🔗Мини-группы в ТЗ\n🔗Групповые занятия",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "vlad_merlyak",
+      "url": "https://www.instagram.com/vlad_merlyak/",
+      "first": "Здоровье",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гродно",
+      "places": [
+        "ш. Индурское, д. 9"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Athletic\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "nutriciolog"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Питание"
+      ],
+      "description": "Здоровье/красота\n💪🏻Основатель и тренер @athletic_gym_grodno\n🏋🏻‍♂️Более 300 ДО/ПОСЛЕ\n🥩Работаю с питанием\n🏆Чемпион РБ по легкой...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "viktoriya_merlyak_",
+      "url": "https://www.instagram.com/viktoriya_merlyak_/",
+      "first": "Директор",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гродно",
+      "places": [
+        "ш. Индурское, д. 9"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Athletic\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "figura"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Коррекция фигуры"
+      ],
+      "description": "Директор и тренер @athletic_gym_grodno\n▫️Высшее спортивное образование\n▫️Достижение ваших целей (похудение/набор)...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "_natallia_viktorovna",
+      "url": "https://www.instagram.com/_natallia_viktorovna/",
+      "first": "Наталья",
+      "last": "",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Московская, д. 329 (цокольный этаж)"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Мира. Больше, чем фитнес\" - Московская"
+      ],
+      "slugs": [
+        "stretching",
+        "ofp",
+        "pilates",
+        "aerobika",
+        "yoga"
+      ],
+      "labels": [
+        "Растяжка",
+        "ОФП",
+        "Пилатес",
+        "Спортивная аэробика",
+        "Йога"
+      ],
+      "description": "Высшее спортивное образование.\nАэростретчинг, ОФП дети, стретчинг, здоровая спина,пилатес\nгруппы | онлайн\nЛичная...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "leush_juli",
+      "url": "https://www.instagram.com/leush_juli/",
+      "first": "Юлия",
+      "last": "Леуш",
+      "nameNote": "",
+      "city": "Барановичи",
+      "places": [
+        "ул. Домейко, д. 15"
+      ],
+      "clubs": [
+        "Тренажерный зал ReForma"
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Тренер по фитнесу\nТренирую в ФОК ReForma Барановичи\nВеду к цели и сохраняю здоровье ♥️\nВ сфере фитнеса с 2010 года, высшее...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "yuliya_kandrychina",
+      "url": "https://www.instagram.com/yuliya_kandrychina/",
+      "first": "Юлия",
+      "last": "Кандрухина",
+      "nameNote": "",
+      "city": "Барановичи",
+      "places": [
+        "ул. Домейко, д. 15",
+        "ул. Пролетарская, д. 32"
+      ],
+      "clubs": [
+        "Тренажерный зал ReForma",
+        "Фитнес-клуб \"К2\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Персональный тренер\nВысшее физкультурное образование\nСо мной ты полюбишь спорт и тренажерный зал\nПомогаю девушкам обрести тело своей мечты...",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "miliushadima",
+      "url": "https://www.instagram.com/miliushadima/",
+      "first": "Дмитрий",
+      "last": "Милюша",
+      "nameNote": "",
+      "city": "Барановичи",
+      "places": [
+        "ул. Домейко, д. 15"
+      ],
+      "clubs": [
+        "Тренажерный зал ReForma"
+      ],
+      "slugs": [
+        "trenazherka",
+        "boks"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Бокс"
+      ],
+      "description": "тренер по боксу для всех) 🥊🏅\nдовольный как слон🐘🐘🐘🐘😁😁😁.\nПодписаны fightershop.by и dzmitry_asanau",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "stefaniyavai",
+      "url": "https://www.instagram.com/stefaniyavai/",
+      "first": "Здоровье",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Барановичи",
+      "places": [
+        "ул. Домейко, д. 15"
+      ],
+      "clubs": [
+        "Тренажерный зал ReForma"
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Здоровье/красота\n• тренировки в тренажерном зале\n• научу упражнениям,составлю тренировочную программу😉...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "egorchuiko_",
+      "url": "https://www.instagram.com/egorchuiko_/",
+      "first": "Мастер",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Барановичи",
+      "places": [
+        "ул. Домейко, д. 15"
+      ],
+      "clubs": [
+        "Тренажерный зал ReForma"
+      ],
+      "slugs": [
+        "trenazherka",
+        "legkaya-atletika"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Лёгкая атлетика"
+      ],
+      "description": "•Мастер спорта по легкой атлетике\n•Участник Чемпионатов Европы и Юн. олимпийских игр\n•Персональный тренер",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "olga.boris_",
+      "url": "https://www.instagram.com/olga.boris_/",
+      "first": "Ольга",
+      "last": "Борис",
+      "nameNote": "",
+      "city": "Барановичи",
+      "places": [
+        "ул. Домейко, д. 15"
+      ],
+      "clubs": [
+        "Тренажерный зал ReForma"
+      ],
+      "slugs": [
+        "trenazherka",
+        "pilates",
+        "stretching"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Пилатес",
+        "Растяжка"
+      ],
+      "description": "ТРЕНЕР ПО СТРЕТЧИНГУ/ПИЛАТЕСУ| ГАМАКИ|КОНТЕНТ-МЕНЕДЖЕР | ВЕБ-РЕДАКТОР\nПОШИВ ОДЕЖДЫ @v.e.a.by\nРАЗРАБОТКА САЙТОВ\nТРЕНЕР...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "mikhailov_artyom_fitness",
+      "url": "https://www.instagram.com/mikhailov_artyom_fitness/",
+      "first": "Михайлов",
+      "last": "Артем",
+      "nameNote": "parsed",
+      "city": "Гомель",
+      "places": [
+        "пр-т. Речицкий, д. 80"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Адреналин\" - Речицкий пр-т"
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Помогаю менять тело без насилия над собой 🏋️‍♀️\n🤸Техника, которая бережет спину и колени\n🏋️‍♂️Программы под твою цель,...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "marina_smogl",
+      "url": "https://www.instagram.com/marina_smogl/",
+      "first": "Pole",
+      "last": "Dance",
+      "nameNote": "parsed",
+      "city": "Бобруйск",
+      "places": [
+        "ул. Чонгарская, д. 98"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Eva.by\" - Чонгарская"
+      ],
+      "slugs": [
+        "akvaaerobika",
+        "ofp",
+        "sovremennye"
+      ],
+      "labels": [
+        "Аквааэробика",
+        "ОФП",
+        "Современные танцы"
+      ],
+      "description": "Добро пожаловать в мой мир😁\n@marina_lifedance Тренер в @fitness.leto по Exotic Pole Dance\nПеку тортики🍰\nРазвиваюсь в...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "dianagoncha",
+      "url": "https://www.instagram.com/dianagoncha/",
+      "first": "Водоевич",
+      "last": "",
+      "nameNote": "",
+      "city": "Бобруйск",
+      "places": [
+        "ул. Чонгарская, д. 98",
+        "ул. Горелика, д. 33"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Eva.by\" - Чонгарская",
+        "Фитнес клуб \"Днепровец\""
+      ],
+      "slugs": [
+        "akvaaerobika",
+        "ofp",
+        "aerobika",
+        "sovremennye",
+        "trenazherka",
+        "pilates",
+        "plavanie",
+        "yoga"
+      ],
+      "labels": [
+        "Аквааэробика",
+        "ОФП",
+        "Спортивная аэробика",
+        "Современные танцы",
+        "Тренажёрный зал",
+        "Пилатес",
+        "Плавание",
+        "Йога"
+      ],
+      "description": "Хореограф @lift.dance_space\nФитнес инструктор групповых программ @eva__by",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "kinezio.fitness",
+      "url": "https://www.instagram.com/kinezio.fitness/",
+      "first": "Обучение",
+      "last": "",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Воинов-интернационалистов, д. 1Д"
+      ],
+      "clubs": [
+        "Студия фитнеса и танца \"Аура\""
+      ],
+      "slugs": [
+        "osanka",
+        "high-heels",
+        "pilates",
+        "sovremennye",
+        "massazh"
+      ],
+      "labels": [
+        "Осанка",
+        "High Heels",
+        "Пилатес",
+        "Современные танцы",
+        "Массаж"
+      ],
+      "description": "Юрий и Алексей\nПомогаем понимать движение и уверенно работать с клиентами любой сложности\n1000+ учеников\nkineziofitness.online/taplink",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "meteluyshka",
+      "url": "https://www.instagram.com/meteluyshka/",
+      "first": "Настасья",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Витебск",
+      "places": [
+        "ул. Воинов-интернационалистов, д. 1Д"
+      ],
+      "clubs": [
+        "Студия фитнеса и танца \"Аура\""
+      ],
+      "slugs": [
+        "osanka",
+        "high-heels",
+        "pilates",
+        "sovremennye"
+      ],
+      "labels": [
+        "Осанка",
+        "High Heels",
+        "Пилатес",
+        "Современные танцы"
+      ],
+      "description": "Личный блог\nПомогу на пути к здоровому и красивому телу\nОнлайн/офлайн\nСертифицированный тренер PolestarPilates\nТренирую @lifestyle...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "al.esia7144",
+      "url": "https://www.instagram.com/al.esia7144/",
+      "first": "al.esia7144",
+      "last": "",
+      "nameNote": "handle-as-name",
+      "city": "Витебск",
+      "places": [
+        "ул. Воинов-интернационалистов, д. 1Д"
+      ],
+      "clubs": [
+        "Студия фитнеса и танца \"Аура\""
+      ],
+      "slugs": [
+        "osanka",
+        "high-heels",
+        "pilates",
+        "sovremennye"
+      ],
+      "labels": [
+        "Осанка",
+        "High Heels",
+        "Пилатес",
+        "Современные танцы"
+      ],
+      "description": "В жизни нужно выиграть самую главную битву - битву с самим собой 🏆💪",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "aura_fit_dance",
+      "url": "https://www.instagram.com/aura_fit_dance/",
+      "first": "Танцы",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Витебск",
+      "places": [
+        "пр-т. Московский, д. 55, корп. Л, оф. 410"
+      ],
+      "clubs": [
+        "Студия танца и фитнеса \"VipDance\""
+      ],
+      "slugs": [
+        "figura",
+        "osanka",
+        "dzhamping",
+        "pilates",
+        "sovremennye"
+      ],
+      "labels": [
+        "Коррекция фигуры",
+        "Осанка",
+        "Джампинг",
+        "Пилатес",
+        "Современные танцы"
+      ],
+      "description": "•АУРА•\nСтудия фитнеса и танца\nОткрой себя через движение\n📍Витебск, Воинов Интернационалистов 1Д около GREEN\n3...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "mariia__dobrovolskaya",
+      "url": "https://www.instagram.com/mariia__dobrovolskaya/",
+      "first": "Помогу",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Могилёв",
+      "places": [
+        "ул. Первомайская, д. 2"
+      ],
+      "clubs": [
+        "Фитнес студия \"Тонус клуб\""
+      ],
+      "slugs": [
+        "aerobika",
+        "ofp",
+        "trenazherka",
+        "dzhamping",
+        "pilates",
+        "nutriciolog"
+      ],
+      "labels": [
+        "Спортивная аэробика",
+        "ОФП",
+        "Тренажёрный зал",
+        "Джампинг",
+        "Пилатес",
+        "Питание"
+      ],
+      "description": "▫️Помогу скорректировать фигуру и питание 🥦\n▫️Худеем без голодовок и диет 🥗\n▫️Первая консультация БЕСПЛАТНО!...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "newborn_swimming_kobrin",
+      "url": "https://www.instagram.com/newborn_swimming_kobrin/",
+      "first": "Кобрине",
+      "last": "Здоровье",
+      "nameNote": "parsed",
+      "city": "Кобрин",
+      "places": [
+        "Брестская обл., г. Кобрин, ул. Гастелло, д. 15"
+      ],
+      "clubs": [
+        "Аквапарк г. Кобрин"
+      ],
+      "slugs": [
+        "aerobika",
+        "akvaaerobika",
+        "trenazherka",
+        "plavanie"
+      ],
+      "labels": [
+        "Спортивная аэробика",
+        "Аквааэробика",
+        "Тренажёрный зал",
+        "Плавание"
+      ],
+      "description": "Здоровье/красота\n#кобрин #грудничковоеплавание\n-осознанное погружение\n-плавание в ваннах 0+\n-обучение детей и взрослых 🏊‍♀️\nМой основной ...\nconnect.viber.com/business/a42506a6-7040-11f0-a2c1-b29d60a770a2",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "missis.leonovets",
+      "url": "https://www.instagram.com/missis.leonovets/",
+      "first": "Наталья",
+      "last": "Терновая",
+      "nameNote": "",
+      "city": "Кобрин",
+      "places": [
+        "Брестская обл., г. Кобрин, ул. Гастелло, д. 15"
+      ],
+      "clubs": [
+        "Аквапарк г. Кобрин"
+      ],
+      "slugs": [
+        "aerobika",
+        "akvaaerobika",
+        "trenazherka",
+        "plavanie"
+      ],
+      "labels": [
+        "Спортивная аэробика",
+        "Аквааэробика",
+        "Тренажёрный зал",
+        "Плавание"
+      ],
+      "description": "Инструктор по плаванию\n28 y.o.♈🏊\nРабочий аккаунт @swim_kobrin\nРаботаю в @akvaparkkobrin",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "coffeetime_kobrin",
+      "url": "https://www.instagram.com/coffeetime_kobrin/",
+      "first": "Твоё",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Кобрин",
+      "places": [
+        "Брестская обл., г. Кобрин, ул. Гастелло, д. 15"
+      ],
+      "clubs": [
+        "Аквапарк г. Кобрин"
+      ],
+      "slugs": [
+        "aerobika",
+        "akvaaerobika",
+        "trenazherka",
+        "plavanie"
+      ],
+      "labels": [
+        "Спортивная аэробика",
+        "Аквааэробика",
+        "Тренажёрный зал",
+        "Плавание"
+      ],
+      "description": "📍Твоё любимое место с летней террасой\nс 9:00-21:00\n- кофейня с душой\n- только приятное обслуживание с заботой о каждом\n...\nул. Суворова 39 Б, Kobrin",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "telo.gomel",
+      "url": "https://www.instagram.com/telo.gomel/",
+      "first": "София",
+      "last": "",
+      "nameNote": "",
+      "city": "Гомель",
+      "places": [
+        "ул. Федосеенко, д. 4"
+      ],
+      "clubs": [
+        "Спортивный клуб UNBRKN"
+      ],
+      "slugs": [
+        "krossfit",
+        "massazh"
+      ],
+      "labels": [
+        "Кроссфит",
+        "Массаж"
+      ],
+      "description": "Массаж\nВрач\nПрофессиональный подход к каждому телу\nСо мной комфортно и полезно 🫶🏻",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "sonechka_kalashnikova_",
+      "url": "https://www.instagram.com/sonechka_kalashnikova_/",
+      "first": "Гомель",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гомель",
+      "places": [
+        "ул. Юбилейная, д. 50"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Vault GYM\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "23 y.o.\nГомель | Беларусь\nтренер в @vault_gym_gomel 📍\nЗАПИСЬ НА ПЕРСОНАЛЬНЫЕ ТРЕНИРОВКИ В DIRECT📩\nt.me/Kalashnikovastt",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "grishaniha",
+      "url": "https://www.instagram.com/grishaniha/",
+      "first": "Яна",
+      "last": "Гришаева",
+      "nameNote": "",
+      "city": "Гомель",
+      "places": [
+        "ул. Юбилейная, д. 50"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Vault GYM\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "nutriciolog"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Питание"
+      ],
+      "description": "про жизнь • тренировки • питание\nтренирую в @vault_gym_gomel\n📍Гомель",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "andreybondarenk",
+      "url": "https://www.instagram.com/andreybondarenk/",
+      "first": "Бондаренко",
+      "last": "Андрей",
+      "nameNote": "",
+      "city": "Гомель",
+      "places": [
+        "ул. Юбилейная, д. 50"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Vault GYM\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Андрей Бондаренко Персональный тренер Расписание занятий Среда: 3:00 pm - 8:30 pm Среда: 6:00 pm - 9:00 pm Среда: 9:30 am - 11:30 am Среда: 6:00 pm - 9:00 pm Среда: 6:00 pm - 9:00 pm Четверг: 9:00 am - 4:30 am Четверг: 9:00 am - 4:30 am Четверг: 9:00 am - 4:30 am Четверг: 9:30 am - 1:00 pm Воскресенье: 9:30 am - 2:30 pm Вторник: 9:00 am - 2:00 pm В",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "ksenia_gym.trainer",
+      "url": "https://www.instagram.com/ksenia_gym.trainer/",
+      "first": "Аккредитованый",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Могилёв",
+      "places": [
+        "ул. Турова, д. 1 ("
+      ],
+      "clubs": [
+        "Тренажерный зал \"S-Fit\""
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал"
+      ],
+      "description": "Тренер по фитнесу\n📌Аккредитованый тренер с высшим спортивно-педагогическим образованием\n❗️Тренирую в @sfit_mogilev❗️\nДля записи - в...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "max_batura_",
+      "url": "https://www.instagram.com/max_batura_/",
+      "first": "Помогаю",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Могилёв",
+      "places": [
+        "ул. Турова, д. 1 ("
+      ],
+      "clubs": [
+        "Тренажерный зал \"S-Fit\""
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka",
+        "nutriciolog"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал",
+        "Питание"
+      ],
+      "description": "• Помогаю держать форму круглый год\n• Набор массы / снижение веса\n• Консультация по питанию\n• Ведение офлайн/ онлайн\n•...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "sergeevna_coach",
+      "url": "https://www.instagram.com/sergeevna_coach/",
+      "first": "Алина",
+      "last": "Ярошук",
+      "nameNote": "",
+      "city": "Гродно",
+      "places": [
+        "ул. Коммунальная, д. 13/1"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Gard-Fitness\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "sportivnaya"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Спортивная гимнастика"
+      ],
+      "description": "Мастер Спорта Республики Беларусь.\nДипломированный специалист.\nТренер по художественной гимнастике.\nТренировки для деток...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "damaskdkg",
+      "url": "https://www.instagram.com/damaskdkg/",
+      "first": "Сергей",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гродно",
+      "places": [
+        "ул. Коммунальная, д. 13/1"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Gard-Fitness\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "boks",
+        "silovoj-trening"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Бокс",
+        "Силовой тренинг"
+      ],
+      "description": "Тренер по фитнесу\nДелаю девушек прекрасными и здоровыми✨\nСиловые без страха, стеснения и боли в спине💪\nСтроим сочные формы и упругое тело ...\nПодписан(-а) andronik_kickboxing",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "hrrrecha",
+      "url": "https://www.instagram.com/hrrrecha/",
+      "first": "Гречная",
+      "last": "Евгения",
+      "nameNote": "",
+      "city": "Лида",
+      "places": [
+        "пр-т Победы, д. 23"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"VandYou\" - Победы"
+      ],
+      "slugs": [
+        "ofp",
+        "silovoj-trening"
+      ],
+      "labels": [
+        "ОФП",
+        "Силовой тренинг"
+      ],
+      "description": "• Групповые / персональные тренировки @fitnessvandyou\n• Силовые, функциональные\n• Тренирую здесь ➡️ проспект Победы,...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "tat.mutilovich",
+      "url": "https://www.instagram.com/tat.mutilovich/",
+      "first": "Онлайн",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Лида",
+      "places": [
+        "пр-т Победы, д. 23"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"VandYou\" - Победы"
+      ],
+      "slugs": [
+        "ofp",
+        "nutriciolog"
+      ],
+      "labels": [
+        "ОФП",
+        "Питание"
+      ],
+      "description": "ТАТЬЯНА МУТИЛОВИЧ\n😊Тренер @fitnessvandyou\n⌨️Онлайн/офлайн сопровождение\n💕Более 93 довольных своей фигурой клиентов...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "sivkoaleksandra",
+      "url": "https://www.instagram.com/sivkoaleksandra/",
+      "first": "Медитации",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Лида",
+      "places": [
+        "пр-т Победы, д. 23"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"VandYou\" - Победы"
+      ],
+      "slugs": [
+        "ofp",
+        "meditaciya",
+        "pilates",
+        "stretching",
+        "yoga",
+        "osanka"
+      ],
+      "labels": [
+        "ОФП",
+        "Медитация",
+        "Пилатес",
+        "Растяжка",
+        "Йога",
+        "Осанка"
+      ],
+      "description": "•Тренирую тело и разум🧘‍♀️\n•PILATES/ YOGA/ STRETCHING/МФР/ ABL/ FLY-yoga (персонально)\n•Начинающий Психолог РПП👩‍🎓🍏...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "angelina.koshkoo",
+      "url": "https://www.instagram.com/angelina.koshkoo/",
+      "first": "Ангелина",
+      "last": "Кошко",
+      "nameNote": "",
+      "city": "Лида",
+      "places": [
+        "пр-т Победы, д. 23"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"VandYou\" - Победы"
+      ],
+      "slugs": [
+        "ofp",
+        "silovoj-trening"
+      ],
+      "labels": [
+        "ОФП",
+        "Силовой тренинг"
+      ],
+      "description": "Подтянутое и сильное тело без фитнес-фанатизма\nСиловые и коррекционные тренировки\nПерсонально • группы • онлайн\nКлуб...\nt.me/+HDi8iacxWVNlOTc6",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "olgapredko",
+      "url": "https://www.instagram.com/olgapredko/",
+      "first": "Ольга",
+      "last": "",
+      "nameNote": "",
+      "city": "Лида",
+      "places": [
+        "пр-т Победы, д. 23"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"VandYou\" - Победы"
+      ],
+      "slugs": [
+        "ofp"
+      ],
+      "labels": [
+        "ОФП"
+      ],
+      "description": "Здоровье/красота\nТренер-групповик с авторским стилем.\nУчу тренироваться красиво и эффективно.\ntaplink.cc/olgapredko и ещё 1",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "piligrimtourbrest",
+      "url": "https://www.instagram.com/piligrimtourbrest/",
+      "first": "Турагентство",
+      "last": "",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Морозова, д. 5"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Шакира\" - Морозова"
+      ],
+      "slugs": [
+        "aerobika",
+        "ofp",
+        "sovremennye",
+        "pilates",
+        "figura",
+        "stretching",
+        "yoga"
+      ],
+      "labels": [
+        "Спортивная аэробика",
+        "ОФП",
+        "Современные танцы",
+        "Пилатес",
+        "Коррекция фигуры",
+        "Растяжка",
+        "Йога"
+      ],
+      "description": "Туристическое агентство\n🌍 Организуем путешествия по миру\n🚍 Популярные направления по РБ из Бреста\n🕰️ Пн - Пт: с 10.00 до 19.00\nСб: с 11.00...\nСоветская 49, Brest, Belarus 22400\ntaplink.cc/piligrimtourbrest и ещё 3",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "ihnatovich_life_",
+      "url": "https://www.instagram.com/ihnatovich_life_/",
+      "first": "Елена",
+      "last": "Игнатович",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Морозова, д. 5"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Шакира\" - Морозова"
+      ],
+      "slugs": [
+        "aerobika",
+        "ofp",
+        "sovremennye",
+        "pilates",
+        "figura",
+        "stretching",
+        "yoga"
+      ],
+      "labels": [
+        "Спортивная аэробика",
+        "ОФП",
+        "Современные танцы",
+        "Пилатес",
+        "Коррекция фигуры",
+        "Растяжка",
+        "Йога"
+      ],
+      "description": "Красивая попа и 94 кг харизмы 🐆\n👩🏽‍🎓Автор IHsta school про блогинг и монетизацию 💵\n4-й поток в разгаре.\nОпоздавшим —...\nt.me/blog_bezhaosa и ещё 1",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "alena____nowik",
+      "url": "https://www.instagram.com/alena____nowik/",
+      "first": "Алена",
+      "last": "Новик",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Советская, д. 12"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Brutto\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "silovoj-trening",
+        "nutriciolog",
+        "pilates",
+        "yoga"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Силовой тренинг",
+        "Питание",
+        "Пилатес",
+        "Йога"
+      ],
+      "description": "от боли - к легкости и стройности\nйога в гамаке/пилатес/силовые/питание\nгештальт-консультант",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "kms_dimantos",
+      "url": "https://www.instagram.com/kms_dimantos/",
+      "first": "Дима",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Брест",
+      "places": [
+        "ул. Советская, д. 12"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Brutto\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Предприниматель\n• тренировки для жизни\n• знаю какое тело ты хочешь\n* атлетическая тгшка зож-культурной романтики\nt.me/teresh_live",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "brest.philharmonic",
+      "url": "https://www.instagram.com/brest.philharmonic/",
+      "first": "Брестская",
+      "last": "",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Советская, д. 12"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Brutto\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Искусство\nПрекрасная музыка для прекрасных людей 🎼\nКассы: ☎️ 95-93-01, 95-93-02\nУлица Орджоникидзе 14￼, Brest, Belarus 224005\nwww.philart-brest.by и ещё 2",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "sveta.terehova",
+      "url": "https://www.instagram.com/sveta.terehova/",
+      "first": "Светлана",
+      "last": "Терехова",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Советская, д. 12"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Brutto\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Личный блог\nwww.instagram.com/bruttobrest?igsh=Z2d4ZDFma210b2I5",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "salamaxa.fit",
+      "url": "https://www.instagram.com/salamaxa.fit/",
+      "first": "Екатерина",
+      "last": "",
+      "nameNote": "",
+      "city": "Жлобин",
+      "places": [
+        "1-й микрорайон, д. 1А"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"ALFA FITNESS\" - 1-ый микрорайон"
+      ],
+      "slugs": [
+        "trenazherka",
+        "nutriciolog"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Питание"
+      ],
+      "description": "Здоровье/красота\n🏋️ персональный тренер / online тренер\n🥗 еда без запретов\n📖 выпускник @nikiforov.colledg\n📍 тренирую в @alfa_fitness...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "spn_fit",
+      "url": "https://www.instagram.com/spn_fit/",
+      "first": "Сергей",
+      "last": "",
+      "nameNote": "",
+      "city": "Жлобин",
+      "places": [
+        "1-й микрорайон, д. 1А"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"ALFA FITNESS\" - 1-ый микрорайон"
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Персональный тренер\n▪️Сделаю тебя лучше в @mirfitnesaby\n▪️Пишу программы тренировок\n▪️Онлайн ведение из любой точки мира",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "znaharev_yury",
+      "url": "https://www.instagram.com/znaharev_yury/",
+      "first": "Юра",
+      "last": "Знахарев",
+      "nameNote": "",
+      "city": "Барановичи",
+      "places": [
+        "ул. Чурилина, д. 13"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Наутилус\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Тренер по фитнесу\nТренер. Фитнес методолог\nАнатомия | Биомеханика | Периодизация\nБез мистики и волшебных таблеток\nФанат научного метода...\nt.me/ZnaharevZnaet/713\nПодписан(-а) a_bulahov",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "nika_sparroww",
+      "url": "https://www.instagram.com/nika_sparroww/",
+      "first": "Здоровье",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гродно",
+      "places": [
+        "ул. В. Макаровой, д. 2Б"
+      ],
+      "clubs": [
+        "Студия пилатеса и йоги \"Гармония\""
+      ],
+      "slugs": [
+        "pilates",
+        "yoga"
+      ],
+      "labels": [
+        "Пилатес",
+        "Йога"
+      ],
+      "description": "Здоровье/красота\nИнструктор по Body Pilates в @garmonija.yoga |\nВаше тело становится мечтой в собственных глазах 🩷\nИндивидуальные и...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "nastassia_fursa",
+      "url": "https://www.instagram.com/nastassia_fursa/",
+      "first": "Анастасия",
+      "last": "",
+      "nameNote": "",
+      "city": "Гродно",
+      "places": [
+        "ул. В. Макаровой, д. 2Б"
+      ],
+      "clubs": [
+        "Студия пилатеса и йоги \"Гармония\""
+      ],
+      "slugs": [
+        "pilates",
+        "yoga",
+        "stretching"
+      ],
+      "labels": [
+        "Пилатес",
+        "Йога",
+        "Растяжка"
+      ],
+      "description": "Здоровье/красота\nТренер\nФит Микс/ Пилатес/ Стретчинг- фитнес групповые тренировки в @fitzone.by",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "visual_elya",
+      "url": "https://www.instagram.com/visual_elya/",
+      "first": "Элеонора",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гродно",
+      "places": [
+        "ул. В. Макаровой, д. 2Б"
+      ],
+      "clubs": [
+        "Студия пилатеса и йоги \"Гармония\""
+      ],
+      "slugs": [
+        "pilates",
+        "yoga"
+      ],
+      "labels": [
+        "Пилатес",
+        "Йога"
+      ],
+      "description": "Элеонора - СММ-специалист с\nчетырех-им стажем работы🔥\n⠀\n📍Здесь про красивый и продающий визуал для вашего бизнеса\n⠀...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "_tatiana_dadelo_",
+      "url": "https://www.instagram.com/_tatiana_dadelo_/",
+      "first": "Спорт",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Полоцк",
+      "places": [
+        "пр-т. Ф. Скорины, д. 2"
+      ],
+      "clubs": [
+        "Спортивный клуб \"Стимул\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Набираю силу и уверенность тем, кто хочет изменить тело\nИндивидуальный подход🤌🏻\nПрограммы— только под ваши цели и...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "lenskaya_yuliya",
+      "url": "https://www.instagram.com/lenskaya_yuliya/",
+      "first": "Ленская",
+      "last": "Юлия",
+      "nameNote": "",
+      "city": "Полоцк",
+      "places": [
+        "пр-т. Ф. Скорины, д. 2"
+      ],
+      "clubs": [
+        "Спортивный клуб \"Стимул\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Тренер🤸‍♀️",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "nechaevofficial",
+      "url": "https://www.instagram.com/nechaevofficial/",
+      "first": "Илья",
+      "last": "Нечаев",
+      "nameNote": "",
+      "city": "Полоцк",
+      "places": [
+        "пр-т. Ф. Скорины, д. 2"
+      ],
+      "clubs": [
+        "Спортивный клуб \"Стимул\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Публичная личность\n👍Веду важные события\n📺 Ведущий на TV @novoe.utro.rtr\n🧑‍💻 Программирую вечерком\nt.me/topvecherinki",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "renata._.samuilik",
+      "url": "https://www.instagram.com/renata._.samuilik/",
+      "first": "Спорт",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Мозырь",
+      "places": [
+        "ул. Юрия Гагарина, д. 85Б"
+      ],
+      "clubs": [
+        "Тренажёрный зал \"Фитнес база\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "greblya",
+        "sup"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Гребля",
+        "Сап"
+      ],
+      "description": "Спорт и отдых\n🐈‍⬛ | 𝐑𝐞𝐧𝐚𝐭𝐚 𝐒𝐚𝐦𝐮𝐢𝐥𝐢𝐤\nРаботаю в трёх направлениях 🦾\n~веду запись на персональные тренировки в Direct⤵️\ncontent•model...\nwww.instagram.com/fitness.baza?igsh=aTl4OXlkZHgwdnll",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "pantera_krisss",
+      "url": "https://www.instagram.com/pantera_krisss/",
+      "first": "Здоровье",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Мозырь",
+      "places": [
+        "ул. Юрия Гагарина, д. 85Б"
+      ],
+      "clubs": [
+        "Тренажёрный зал \"Фитнес база\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Здоровье/красота\n♥️Инструктор по фитнесу 🏋🏻‍♀️🏃🏻‍♀️\n♥️👯‍♀️групповые тренировки💪🏻\n♥️Помогу похудеть, привести себя в форму жду в л/с🫂\nwww.instagram.com/fitnessclub_reforma?igsh=MXUxaTQ4em9ucDFyMQ%3D%3D",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "natalikislyak",
+      "url": "https://www.instagram.com/natalikislyak/",
+      "first": "Наталия",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Барановичи",
+      "places": [
+        "Брестская обл., г. Барановичи, пр-т. Советский, д. 35",
+        "Брестская обл., г. Барановичи, ул. Тельмана, д. 110"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Волат\" - Советский проспект",
+        "Фитнес-клуб \"Волат\" - Тельмана"
+      ],
+      "slugs": [
+        "trenazherka",
+        "nutriciolog",
+        "lfk"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Питание",
+        "ЛФК"
+      ],
+      "description": "Здоровье/красота\nФИТНЕС ТРЕНЕР💪\nИнструктор-методист ЛФК🤸‍♂️\nНутрициолог🥑\nБарановичи\nwww.tiktok.com/@natalli1193?_t=8s8Fqhwcwpq&_r=1 и ещё 1",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "pashamikhalchuk",
+      "url": "https://www.instagram.com/pashamikhalchuk/",
+      "first": "Павел",
+      "last": "Михальчук",
+      "nameNote": "",
+      "city": "Барановичи",
+      "places": [
+        "Брестская обл., г. Барановичи, пр-т. Советский, д. 35",
+        "Брестская обл., г. Барановичи, ул. Тельмана, д. 110"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Волат\" - Советский проспект",
+        "Фитнес-клуб \"Волат\" - Тельмана"
+      ],
+      "slugs": [
+        "trenazherka",
+        "pauerlifting"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Пауэрлифтинг"
+      ],
+      "description": "Спортсмен\nТРЕНЕР/БАРАНОВИЧИ\n🔹️Мастер спорта РБ по пауэрлифтингу IPF.\n🔹️Морж со стажем.\nvk.com/id173279507",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "chip_volatfit",
+      "url": "https://www.instagram.com/chip_volatfit/",
+      "first": "Онлайн",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Барановичи",
+      "places": [
+        "Брестская обл., г. Барановичи, пр-т. Советский, д. 35",
+        "Брестская обл., г. Барановичи, ул. Тельмана, д. 110"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Волат\" - Советский проспект",
+        "Фитнес-клуб \"Волат\" - Тельмана"
+      ],
+      "slugs": [
+        "trenazherka",
+        "nutriciolog",
+        "osanka"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Питание",
+        "Осанка"
+      ],
+      "description": "Персональный тренер\nДипломированный специалист\nПрограммы тренировок / питания\nРабота с осанкой\nОнлайн ведение",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "elena_bylinskaya",
+      "url": "https://www.instagram.com/elena_bylinskaya/",
+      "first": "Здоровье",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Барановичи",
+      "places": [
+        "Брестская обл., г. Барановичи, пр-т. Советский, д. 35",
+        "Брестская обл., г. Барановичи, ул. Тельмана, д. 110"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Волат\" - Советский проспект",
+        "Фитнес-клуб \"Волат\" - Тельмана"
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Здоровье/красота\n🧐ИЗ УЧИЛКИ В БОДИБИЛДЕРА💪😎\n#тренербарановичи\n📌0 запретов и 💯результат\n🔥СОЗДАЮ ФИГУРЫ МЕЧТЫ🔥\n📌я про красивое тело без 🥲...\nwww.instagram.com/elena_bylinskaya?igsh=eTFteXVwdXo4Mndr&utm_source=qr и ещё 2",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "pumpevgeniifilipchik103",
+      "url": "https://www.instagram.com/pumpevgeniifilipchik103/",
+      "first": "Евгений",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Барановичи",
+      "places": [
+        "Брестская обл., г. Барановичи, пр-т. Советский, д. 35",
+        "Брестская обл., г. Барановичи, ул. Тельмана, д. 110"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Волат\" - Советский проспект",
+        "Фитнес-клуб \"Волат\" - Тельмана"
+      ],
+      "slugs": [
+        "trenazherka",
+        "lfk",
+        "posttravma"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "ЛФК",
+        "После травмы"
+      ],
+      "description": "Медицина и здоровье\n📎 Аккредитованный тренер с мед образованием\n📎Реабилитация,лфк,тренировки\n📎КМС по пауэрлифтигу\n📎 Составление плана...\nvk.com/pumpmashine и ещё 1",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "gintovleonid",
+      "url": "https://www.instagram.com/gintovleonid/",
+      "first": "Гинтов",
+      "last": "Леонид",
+      "nameNote": "",
+      "city": "Барановичи",
+      "places": [
+        "Брестская обл., г. Барановичи, пр-т. Советский, д. 35",
+        "Брестская обл., г. Барановичи, ул. Тельмана, д. 110"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Волат\" - Советский проспект",
+        "Фитнес-клуб \"Волат\" - Тельмана"
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Спортивный и фитнес-инструктор\nПерсональный тренер. Инструктор-методист высшей категории. Высшее физкультурно-педагогическое образование. Тел...",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "yana_volat",
+      "url": "https://www.instagram.com/yana_volat/",
+      "first": "Тельмана",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Барановичи",
+      "places": [
+        "Брестская обл., г. Барановичи, пр-т. Советский, д. 35",
+        "Брестская обл., г. Барановичи, ул. Тельмана, д. 110"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Волат\" - Советский проспект",
+        "Фитнес-клуб \"Волат\" - Тельмана"
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "РАБОТАЮ В ВОЛАТ (ул. Тельмана 110, пр-т Советский 35)\n✨ЗДЕСЬ О НИХ! ✨ДО/ПОСЛЕ✨😍\nИСТОРИИ ПОДОПЕЧНЫХ и их портфолио",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "victoria_rakuts",
+      "url": "https://www.instagram.com/victoria_rakuts/",
+      "first": "Виктория",
+      "last": "Ракуть",
+      "nameNote": "",
+      "city": "Барановичи",
+      "places": [
+        "Брестская обл., г. Барановичи, пр-т. Советский, д. 35",
+        "Брестская обл., г. Барановичи, ул. Тельмана, д. 110"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Волат\" - Советский проспект",
+        "Фитнес-клуб \"Волат\" - Тельмана"
+      ],
+      "slugs": [
+        "trenazherka",
+        "silovoj-trening",
+        "osanka"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Силовой тренинг",
+        "Осанка"
+      ],
+      "description": "Тренер по фитнесу\n• силовые тренировки @volatfit\n• ОСАНКА. ЗДОРОВАЯ СПИНА\n• ПОСЛЕРОДОВОЕ восстановление(работа с дыханием, диастазом и...\nt.me/+ps_wRhHEGcBjNzE6 и ещё 1\nПодписан(-а) ctv83_",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "alexandra_volatfit",
+      "url": "https://www.instagram.com/alexandra_volatfit/",
+      "first": "Александра",
+      "last": "Феохаридис",
+      "nameNote": "",
+      "city": "Барановичи",
+      "places": [
+        "Брестская обл., г. Барановичи, пр-т. Советский, д. 35",
+        "Брестская обл., г. Барановичи, ул. Тельмана, д. 110"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Волат\" - Советский проспект",
+        "Фитнес-клуб \"Волат\" - Тельмана"
+      ],
+      "slugs": [
+        "trenazherka",
+        "osanka"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Осанка"
+      ],
+      "description": "Персональный тренер\n📍Специалист по движению\n📍Коррекция осанки, восстановление после родов\n📍Движения без боли\n📍ОНЛАЙН - сопровождение...",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "d.shevchenya",
+      "url": "https://www.instagram.com/d.shevchenya/",
+      "first": "Дарья",
+      "last": "Шевченя",
+      "nameNote": "",
+      "city": "Барановичи",
+      "places": [
+        "Брестская обл., г. Барановичи, пр-т. Советский, д. 35",
+        "Брестская обл., г. Барановичи, ул. Тельмана, д. 110"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Волат\" - Советский проспект",
+        "Фитнес-клуб \"Волат\" - Тельмана"
+      ],
+      "slugs": [
+        "trenazherka",
+        "nutriciolog"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Питание"
+      ],
+      "description": "Тренер по фитнесу\nlifestyle | спорт | мотивация\n📍@volatfit\n• Ягодицы без больших ног 🍑\n• ЛИЧНОЕ ВЕДЕНИЕ по питанию + тренировки...",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "oleg4228",
+      "url": "https://www.instagram.com/oleg4228/",
+      "first": "Олег",
+      "last": "Мацкевич",
+      "nameNote": "",
+      "city": "Барановичи",
+      "places": [
+        "Брестская обл., г. Барановичи, пр-т. Советский, д. 35",
+        "Брестская обл., г. Барановичи, ул. Тельмана, д. 110"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Волат\" - Советский проспект",
+        "Фитнес-клуб \"Волат\" - Тельмана"
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Персональные тренеры фитнес-клуба ВОЛАТ главная наша команда Профессиональная команда тренеров Наша команда - квалифицированные и сертифицированные специалисты Мы учитываем состояние вашего здоровья при планировании тренировочных программ Тренер – это наставник и лучший друг в одном лице. \n                                            Именно его раб",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "nadin_kudina",
+      "url": "https://www.instagram.com/nadin_kudina/",
+      "first": "Надежда",
+      "last": "Кудина",
+      "nameNote": "",
+      "city": "Барановичи",
+      "places": [
+        "Брестская обл., г. Барановичи, пр-т. Советский, д. 35",
+        "Брестская обл., г. Барановичи, ул. Тельмана, д. 110"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Волат\" - Советский проспект",
+        "Фитнес-клуб \"Волат\" - Тельмана"
+      ],
+      "slugs": [
+        "trenazherka",
+        "yoga"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Йога"
+      ],
+      "description": "Подружу разум с телом, научу худеть без диет👌🏼\n• основатель @yoga.soulstudio\n• составлю индивидуальный план...",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "ev_ledovskih",
+      "url": "https://www.instagram.com/ev_ledovskih/",
+      "first": "Эвелина",
+      "last": "Ледовских",
+      "nameNote": "",
+      "city": "Могилёв",
+      "places": [
+        "ул. Комсомольская, д. 5"
+      ],
+      "clubs": [
+        "Студия танцев \"THE PLACE\""
+      ],
+      "slugs": [
+        "sovremennye",
+        "trenazherka",
+        "stretching",
+        "yoga",
+        "high-heels"
+      ],
+      "labels": [
+        "Современные танцы",
+        "Тренажёрный зал",
+        "Растяжка",
+        "Йога",
+        "High Heels"
+      ],
+      "description": "Эля | Хореограф тренер танцор\ncontemp&high heels&stretching&latina\n-》@place.mog",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "diana.begunkova",
+      "url": "https://www.instagram.com/diana.begunkova/",
+      "first": "Di",
+      "last": "",
+      "nameNote": "",
+      "city": "Могилёв",
+      "places": [
+        "ул. Комсомольская, д. 5"
+      ],
+      "clubs": [
+        "Студия танцев \"THE PLACE\""
+      ],
+      "slugs": [
+        "sovremennye",
+        "trenazherka",
+        "stretching",
+        "yoga"
+      ],
+      "labels": [
+        "Современные танцы",
+        "Тренажёрный зал",
+        "Растяжка",
+        "Йога"
+      ],
+      "description": "Ретриты по всему миру @yoga__cult\nБлижайший ретрит 11-15 ноября | Яншо 🇨🇳\n🔖все подробности — dm",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "yudanceshow",
+      "url": "https://www.instagram.com/yudanceshow/",
+      "first": "Yulia",
+      "last": "Goroshkova",
+      "nameNote": "",
+      "city": "Могилёв",
+      "places": [
+        "ул. Комсомольская, д. 5"
+      ],
+      "clubs": [
+        "Студия танцев \"THE PLACE\""
+      ],
+      "slugs": [
+        "sovremennye",
+        "trenazherka",
+        "stretching",
+        "yoga"
+      ],
+      "labels": [
+        "Современные танцы",
+        "Тренажёрный зал",
+        "Растяжка",
+        "Йога"
+      ],
+      "description": "Деятель искусств\ndancer, choreographer\n•основатель, преподаватель @place.mog\n•руководитель @dance.show_mogilev\nСотрудничество, запись на...\nt.me/danceshow_mogilev",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "nastya_florida",
+      "url": "https://www.instagram.com/nastya_florida/",
+      "first": "Настя",
+      "last": "Флорида",
+      "nameNote": "",
+      "city": "Гродно",
+      "places": [
+        "ул. Горького, д. 72"
+      ],
+      "clubs": [
+        "Танцевальный центр \"No Flex\" - Горького"
+      ],
+      "slugs": [
+        "sovremennye"
+      ],
+      "labels": [
+        "Современные танцы"
+      ],
+      "description": "International choreographer, judge\nГений, не миллиардер, плейбой, филантроп 😂\nProfessional dancer\nFounder @noflex_dc\nwww.instagram.com/stories/fairplaydancecamp/3659219951013799690?utm_source=ig_story_item_share&igsh=bDBrZjRwM3BhNnFh",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "marina_lavrova_psiholog",
+      "url": "https://www.instagram.com/marina_lavrova_psiholog/",
+      "first": "Личный",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гродно",
+      "places": [
+        "ул. Кабяка, д. 8а"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"IFIT\""
+      ],
+      "slugs": [
+        "ofp",
+        "pilates",
+        "stretching",
+        "yoga"
+      ],
+      "labels": [
+        "ОФП",
+        "Пилатес",
+        "Растяжка",
+        "Йога"
+      ],
+      "description": "Личный блог\nБлог для женщин, ведет психолог\nОтношения. Предназначение. Деньги. Жизнь без тревожности\n☄️Помогаю женщинам раскрыть...\nt.me/marina_lavrova_psiholog",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "shamko_pro",
+      "url": "https://www.instagram.com/shamko_pro/",
+      "first": "Дмитрий",
+      "last": "Шамко",
+      "nameNote": "",
+      "city": "Гомель",
+      "places": [
+        "ул. Карповича, д. 45 (ТЦ \"Европа\")"
+      ],
+      "clubs": [
+        "Студия танцев \"Havana dance club\""
+      ],
+      "slugs": [
+        "balnye",
+        "sovremennye"
+      ],
+      "labels": [
+        "Бальные танцы",
+        "Современные танцы"
+      ],
+      "description": "Настраиваю работу отдела продаж через управление людьми.\n- РОП руководит, а не работает за специалистов.\n- Продавцы...\nwww.youtube.com/@DmitryShamko и ещё 2\nПодписан(-а) jaroslava_v",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "ira_zakhavay",
+      "url": "https://www.instagram.com/ira_zakhavay/",
+      "first": "Персональный",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Борисов",
+      "places": [
+        "ул. Трусова, д. 32"
+      ],
+      "clubs": [
+        "Тренажерный зал \"ORION\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "nutriciolog"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Питание"
+      ],
+      "description": "Персональный тренер\n🤍Помогаю полюбить спорт и заботу о себе\n🏋🏼‍♀️Индивидуальные тренировки\n🥦Онлайн-сопровождение по питанию\n💌Запись в Директ",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "dasha.shkrd",
+      "url": "https://www.instagram.com/dasha.shkrd/",
+      "first": "Здоровье",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Борисов",
+      "places": [
+        "ул. Трусова, д. 32"
+      ],
+      "clubs": [
+        "Тренажерный зал \"ORION\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Здоровье/красота\n•Фитнес без обмана, БАДов и изнуряющих диет 🙅🏼‍♀️ •Докажу, что спорт — это не каторга, а любовь к себе 🤍",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "rita.yoga_",
+      "url": "https://www.instagram.com/rita.yoga_/",
+      "first": "Рита",
+      "last": "",
+      "nameNote": "",
+      "city": "Гродно",
+      "places": [
+        "пр-т Янки Купалы, д. 4",
+        "ул. Мостовая, д. 39"
+      ],
+      "clubs": [
+        "Школа танцев \"Поток\"",
+        "Студия фитнеса \"Мотив\""
+      ],
+      "slugs": [
+        "klassika",
+        "sovremennye",
+        "ofp",
+        "yoga",
+        "stretching"
+      ],
+      "labels": [
+        "Балет",
+        "Современные танцы",
+        "ОФП",
+        "Йога",
+        "Растяжка"
+      ],
+      "description": "Спорт и отдых\nПомогаю стать сильнее, гибче и ближе к себе🌸\n• групповые занятия в @potok_grodno и @motive_grodno\n• индивидуальные...\nwww.instagram.com/motive_grodno?stkn=MWp4dmdhOGVvaTQwaA%253D%253D и ещё 1",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "alena_yukhnevich_pilates",
+      "url": "https://www.instagram.com/alena_yukhnevich_pilates/",
+      "first": "Алена",
+      "last": "Юхневич",
+      "nameNote": "parsed",
+      "city": "Гродно",
+      "places": [
+        "пр-т Янки Купалы, д. 4"
+      ],
+      "clubs": [
+        "Школа танцев \"Поток\""
+      ],
+      "slugs": [
+        "klassika",
+        "sovremennye",
+        "ofp",
+        "pilates",
+        "yoga"
+      ],
+      "labels": [
+        "Балет",
+        "Современные танцы",
+        "ОФП",
+        "Пилатес",
+        "Йога"
+      ],
+      "description": "🟠Алена Юхневич\n🔴Пилатес 🤸\n🟡Йогалатес 🧘‍♀️\n🟣Помогаю убрать боли в спине, обрести гибкость и укрепить здоровье 💪\n📍Запись...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "m_o_e.mesto",
+      "url": "https://www.instagram.com/m_o_e.mesto/",
+      "first": "Надежда",
+      "last": "",
+      "nameNote": "",
+      "city": "Гродно",
+      "places": [
+        "пр-т Янки Купалы, д. 4"
+      ],
+      "clubs": [
+        "Школа танцев \"Поток\""
+      ],
+      "slugs": [
+        "klassika",
+        "sovremennye",
+        "ofp",
+        "stretching"
+      ],
+      "labels": [
+        "Балет",
+        "Современные танцы",
+        "ОФП",
+        "Растяжка"
+      ],
+      "description": "🔲⠀ Тренер BODY BALLET в студии @potok_grodno\nтвоё тело в моих руках 🤍 ⠀\n⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀\nGrodno",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "pilatespolina",
+      "url": "https://www.instagram.com/pilatespolina/",
+      "first": "Полина",
+      "last": "",
+      "nameNote": "",
+      "city": "Смолевичи",
+      "places": [
+        "ул. Советская, д. 119"
+      ],
+      "clubs": [
+        "Студия пилатеса \"Актиv\""
+      ],
+      "slugs": [
+        "pilates"
+      ],
+      "labels": [
+        "Пилатес"
+      ],
+      "description": "Полина Мельникова 📍Тренер по пилатесу 📍Жодино",
+      "extraCities": [
+        "Жодино"
+      ],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "jaya__dancer",
+      "url": "https://www.instagram.com/jaya__dancer/",
+      "first": "Танцы",
+      "last": "Могилев",
+      "nameNote": "",
+      "city": "Могилёв",
+      "places": [
+        "ул. Ленинская, д. 50Б"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"В движении\""
+      ],
+      "slugs": [
+        "sovremennye",
+        "stretching"
+      ],
+      "labels": [
+        "Современные танцы",
+        "Растяжка"
+      ],
+      "description": "Танцор\n❣️Временно не работаю\nДарья Башаримова | ВОСТОЧНАЯ КРАСАВИЦА ДЖАЯ\n▪️Научу женственному восточному танцу\n▪️Инструктор по...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "marina_bellydancer",
+      "url": "https://www.instagram.com/marina_bellydancer/",
+      "first": "Восточные",
+      "last": "",
+      "nameNote": "",
+      "city": "Могилёв",
+      "places": [
+        "ул. Ленинская, д. 50Б"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"В движении\""
+      ],
+      "slugs": [
+        "sovremennye"
+      ],
+      "labels": [
+        "Современные танцы"
+      ],
+      "description": "💎Bellydancer\nProfessional bellydance teacher, 15 years of experience.\nJudge, life coach.\nCostume designer...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "amelllkaa",
+      "url": "https://www.instagram.com/amelllkaa/",
+      "first": "Anna",
+      "last": "",
+      "nameNote": "",
+      "city": "Могилёв",
+      "places": [
+        "ул. Ленинская, д. 50Б",
+        "ул. Первомайская, д. 16"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"В движении\"",
+        "Фитнес-центр \"Олимп\""
+      ],
+      "slugs": [
+        "sovremennye",
+        "ofp",
+        "stretching",
+        "trenazherka"
+      ],
+      "labels": [
+        "Современные танцы",
+        "ОФП",
+        "Растяжка",
+        "Тренажёрный зал"
+      ],
+      "description": "Спортивный и фитнес-инструктор\nИндивидуальный подход под твои цели 🎯\nКоррекционный тренинг (сколиоз, диастаз, вальгус и тд), Barre, Stretching\nдетский ...\nt.me/amelllkaaFit",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "hanna_stashkevich",
+      "url": "https://www.instagram.com/hanna_stashkevich/",
+      "first": "Анна",
+      "last": "Сташкевич",
+      "nameNote": "",
+      "city": "Могилёв",
+      "places": [
+        "ул. Ленинская, д. 50Б"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"В движении\""
+      ],
+      "slugs": [
+        "sovremennye"
+      ],
+      "labels": [
+        "Современные танцы"
+      ],
+      "description": "Личный блог\nРепортер @vestnikmogileva и видеограф @my.mogilev в одном флаконе 🔮\nЛягушка-путешественница 🐸\n📍Могилёв\nwww.tiktok.com/@hanna_stash?_t=ZM-8yyF65ok5WY&_r=1",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "maxikolosov",
+      "url": "https://www.instagram.com/maxikolosov/",
+      "first": "Макс",
+      "last": "Колосов",
+      "nameNote": "",
+      "city": "Лида",
+      "places": [
+        "ул. Победы, д. 30"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Prosto Sport\" - Победы"
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал"
+      ],
+      "description": "Инструктор\nПреподаватель @fitness_pro_ru • групповик\nГоворю серьёзно о «несерьезной» профессии\n👇🏼 Музыка и кейсы тренировок\nt.me/maxwell_fitnessmusic и ещё 2",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "dasha_chipurnykh",
+      "url": "https://www.instagram.com/dasha_chipurnykh/",
+      "first": "Dasha",
+      "last": "Chipurnykh",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Куйбышева, д. 13"
+      ],
+      "clubs": [
+        "Студия танца \"ZAL.13\""
+      ],
+      "slugs": [
+        "sovremennye",
+        "osanka",
+        "hip-hop"
+      ],
+      "labels": [
+        "Современные танцы",
+        "Осанка",
+        "Хип-хоп"
+      ],
+      "description": "Танцор\n▫️Учу танцевать с нуля в @zal.13.brest\n▫️Индивидуальные и групповые тренировки\n🤍 house, hip-hop, electro, krump\n👻...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "_illinita_",
+      "url": "https://www.instagram.com/_illinita_/",
+      "first": "Деятель",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Брест",
+      "places": [
+        "ул. Куйбышева, д. 13"
+      ],
+      "clubs": [
+        "Студия танца \"ZAL.13\""
+      ],
+      "slugs": [
+        "sovremennye",
+        "osanka",
+        "hip-hop"
+      ],
+      "labels": [
+        "Современные танцы",
+        "Осанка",
+        "Хип-хоп"
+      ],
+      "description": "Деятель искусств\nмать ангелочка @zal.13.brest 🩷\nпсихолог @ill.own🤝\nтанцы «с нуля» для девушек\nиндивидуальные/сплит/4-5 человек\n❌...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "vladislavayanchhuk",
+      "url": "https://www.instagram.com/vladislavayanchhuk/",
+      "first": "Хореограф",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Брест",
+      "places": [
+        "ул. Куйбышева, д. 13"
+      ],
+      "clubs": [
+        "Студия танца \"ZAL.13\""
+      ],
+      "slugs": [
+        "sovremennye",
+        "osanka",
+        "hip-hop",
+        "high-heels"
+      ],
+      "labels": [
+        "Современные танцы",
+        "Осанка",
+        "Хип-хоп",
+        "High Heels"
+      ],
+      "description": "Хореограф\ndancer/choreographer\nstrip/high heels\nПреподаватель @zal.13.brest\nЗапись на индивы в лс",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "mary_pinch",
+      "url": "https://www.instagram.com/mary_pinch/",
+      "first": "Мария",
+      "last": "Пинчук",
+      "nameNote": "",
+      "city": "Брест",
+      "places": [
+        "ул. Куйбышева, д. 13"
+      ],
+      "clubs": [
+        "Студия танца \"ZAL.13\""
+      ],
+      "slugs": [
+        "sovremennye",
+        "osanka",
+        "hip-hop",
+        "high-heels"
+      ],
+      "labels": [
+        "Современные танцы",
+        "Осанка",
+        "Хип-хоп",
+        "High Heels"
+      ],
+      "description": "Танцор\n24 y.o. 🦂\n◾ Преподаю High Heels, Hip-hop, Jazz-funk @zal.13.brest ❤️‍🔥\n◼ «Duende», «SBF», «MonsterKids»\n◼ Брест,...\nt.me/mary_pinch",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "_bebochkaa_",
+      "url": "https://www.instagram.com/_bebochkaa_/",
+      "first": "Анастасия",
+      "last": "Бебко",
+      "nameNote": "",
+      "city": "Гомель",
+      "places": [
+        "ул. Кленковская, д. 68"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Бунтарка\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Гомель\n25\nмое увлечение @_mek.be",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "liyarm_",
+      "url": "https://www.instagram.com/liyarm_/",
+      "first": "Лия",
+      "last": "",
+      "nameNote": "",
+      "city": "Могилёв",
+      "places": [
+        "пр-т. Пушкинский, д. 14"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"ENERGY FITNESS\" - Пушкинский"
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka",
+        "stretching",
+        "yoga"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал",
+        "Растяжка",
+        "Йога"
+      ],
+      "description": "| Персональный тренер в тренажерном зале\n| Онлайн тренировки\n| Групповые по йоге и растяжке\n📍Могилев\nbodis-fitness.by/team/show/70",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "boxing_trainer_muradcik_",
+      "url": "https://www.instagram.com/boxing_trainer_muradcik_/",
+      "first": "Бокс",
+      "last": "",
+      "nameNote": "",
+      "city": "Гомель",
+      "places": [
+        "ул. Привокзальная д. 4"
+      ],
+      "clubs": [
+        "Студия джампинга и фитнеса \"JumpTV\" - Привокзальная"
+      ],
+      "slugs": [
+        "dzhamping",
+        "silovoj-trening",
+        "stretching",
+        "yoga",
+        "sovremennye",
+        "mma",
+        "boks",
+        "nutriciolog"
+      ],
+      "labels": [
+        "Джампинг",
+        "Силовой тренинг",
+        "Растяжка",
+        "Йога",
+        "Современные танцы",
+        "MMA",
+        "Бокс",
+        "Питание"
+      ],
+      "description": "Спортсмен\n|🏆Чемпион Европы🥇Мастер Спорта🇦🇿\n|Women’s Boxing👸🏼🥊\n|Azerbaijan Scool👊🏻\n|Расчёт КБЖУ + Программа Питания + Меню🥗...\nt.me/Mariano_93",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "beautys_lips",
+      "url": "https://www.instagram.com/beautys_lips/",
+      "first": "Гомель",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гомель",
+      "places": [
+        "ул. Привокзальная д. 4"
+      ],
+      "clubs": [
+        "Студия джампинга и фитнеса \"JumpTV\" - Привокзальная"
+      ],
+      "slugs": [
+        "dzhamping",
+        "silovoj-trening",
+        "stretching",
+        "yoga",
+        "sovremennye",
+        "figura"
+      ],
+      "labels": [
+        "Джампинг",
+        "Силовой тренинг",
+        "Растяжка",
+        "Йога",
+        "Современные танцы",
+        "Коррекция фигуры"
+      ],
+      "description": "Анна\n• похудение без тренировок:\n🔝супер сушка",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "sabadash.vika",
+      "url": "https://www.instagram.com/sabadash.vika/",
+      "first": "Виктория",
+      "last": "Сабадаш",
+      "nameNote": "",
+      "city": "Гомель",
+      "places": [
+        "ул. Привокзальная д. 4"
+      ],
+      "clubs": [
+        "Студия джампинга и фитнеса \"JumpTV\" - Привокзальная"
+      ],
+      "slugs": [
+        "dzhamping",
+        "silovoj-trening",
+        "stretching",
+        "yoga",
+        "sovremennye"
+      ],
+      "labels": [
+        "Джампинг",
+        "Силовой тренинг",
+        "Растяжка",
+        "Йога",
+        "Современные танцы"
+      ],
+      "description": "42 года\nГомель",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "trainer_catherine",
+      "url": "https://www.instagram.com/trainer_catherine/",
+      "first": "Романова",
+      "last": "Катерина",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Чкалова, д. 42"
+      ],
+      "clubs": [
+        "Студия 3D-движения и женского здоровья \"Nadejda Health Body\""
+      ],
+      "slugs": [
+        "ofp",
+        "pilates",
+        "stretching"
+      ],
+      "labels": [
+        "ОФП",
+        "Пилатес",
+        "Растяжка"
+      ],
+      "description": "Здоровье/красота\nаэростретчинг\nрастяжка\nпилатес🧘@bbody_studio\nвоздушныеполотна @atom_continent\n...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "lera_fiery_yoga",
+      "url": "https://www.instagram.com/lera_fiery_yoga/",
+      "first": "Валерия",
+      "last": "",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Чкалова, д. 42"
+      ],
+      "clubs": [
+        "Студия 3D-движения и женского здоровья \"Nadejda Health Body\""
+      ],
+      "slugs": [
+        "ofp",
+        "yoga"
+      ],
+      "labels": [
+        "ОФП",
+        "Йога"
+      ],
+      "description": "Хатха-йога🧘🏼‍♀️\nЙога со мной в @yoga_vitebsk и\n@auroomyoga.vtb\nVitebsk,Belarus",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "montakyhni",
+      "url": "https://www.instagram.com/montakyhni/",
+      "first": "Кухни",
+      "last": "",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Чкалова, д. 42"
+      ],
+      "clubs": [
+        "Студия 3D-движения и женского здоровья \"Nadejda Health Body\""
+      ],
+      "slugs": [
+        "ofp"
+      ],
+      "labels": [
+        "ОФП"
+      ],
+      "description": "☎️ +375 44 703 50 30\nг.Витебск ул.Горовца 8\nРаботаем по всей обл.\n🔷ОНЛАЙН ПРОСЧЁТ🔷\n⏰...\nmontanja.by",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "olga_siamionava",
+      "url": "https://www.instagram.com/olga_siamionava/",
+      "first": "Ольга",
+      "last": "Семёнова",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Горького, д. 62"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Body Balance\""
+      ],
+      "slugs": [
+        "ofp",
+        "osanka",
+        "pilates",
+        "stretching",
+        "batut"
+      ],
+      "labels": [
+        "ОФП",
+        "Осанка",
+        "Пилатес",
+        "Растяжка",
+        "Батут"
+      ],
+      "description": "Артист цирка воздушная гимнастка высшей категории. Мастер спорта по прыжкам на батуте. Тренер преподаватель по...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "oooljazaharenko",
+      "url": "https://www.instagram.com/oooljazaharenko/",
+      "first": "Ольга",
+      "last": "",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Горького, д. 62"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Body Balance\""
+      ],
+      "slugs": [
+        "ofp",
+        "osanka",
+        "pilates",
+        "stretching",
+        "sovremennye"
+      ],
+      "labels": [
+        "ОФП",
+        "Осанка",
+        "Пилатес",
+        "Растяжка",
+        "Современные танцы"
+      ],
+      "description": "Личный блог\n🎹 @querencia.by ⬅️здесь научу играть на фортепиано от малыша до взрослого\n↪️Исполнитель восточного танца.\n⤵️здесь обо...\ntaplink.cc/oooljazaharenko и ещё 2",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "catty_romanova",
+      "url": "https://www.instagram.com/catty_romanova/",
+      "first": "Катерина",
+      "last": "Романова",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Горького, д. 62"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Body Balance\""
+      ],
+      "slugs": [
+        "ofp",
+        "osanka",
+        "pilates",
+        "stretching"
+      ],
+      "labels": [
+        "ОФП",
+        "Осанка",
+        "Пилатес",
+        "Растяжка"
+      ],
+      "description": "фитнес-тренер @trainer_catherine",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "d.yanina_yoga",
+      "url": "https://www.instagram.com/d.yanina_yoga/",
+      "first": "Янина",
+      "last": "",
+      "nameNote": "",
+      "city": "Солигорск",
+      "places": [
+        "ул. Гуляева, д. 2"
+      ],
+      "clubs": [
+        "Студия йоги \"Шакти\""
+      ],
+      "slugs": [
+        "yoga"
+      ],
+      "labels": [
+        "Йога"
+      ],
+      "description": "🔷 Личный блог о жизни, переменах и пути в йоге\n❕Сертифицированный инструктор хатха‑йоги\n🔹Масло ГХИ @ghee.story\n📨 Канал...\nGulyaeva 2,, Soligorsk\nt.me/+prpqgfxwM5FmOTBi",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "bogdana.stretch",
+      "url": "https://www.instagram.com/bogdana.stretch/",
+      "first": "Богдана",
+      "last": "",
+      "nameNote": "",
+      "city": "Солигорск",
+      "places": [
+        "ул. Гуляева, д. 2"
+      ],
+      "clubs": [
+        "Студия йоги \"Шакти\""
+      ],
+      "slugs": [
+        "yoga",
+        "stretching"
+      ],
+      "labels": [
+        "Йога",
+        "Растяжка"
+      ],
+      "description": "Здоровье/красота\nсила • мобильность • гибкость\n📍Солигорск\nгрупповые тренировки в @yoga_soll\nt.me/ssstretch_bot",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "anastasia_yoga_shakti",
+      "url": "https://www.instagram.com/anastasia_yoga_shakti/",
+      "first": "Трижды",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Солигорск",
+      "places": [
+        "ул. Гуляева, д. 2"
+      ],
+      "clubs": [
+        "Студия йоги \"Шакти\""
+      ],
+      "slugs": [
+        "yoga"
+      ],
+      "labels": [
+        "Йога"
+      ],
+      "description": "💜Трижды МАТЬ лучших СЫНОВЕЙ\n🧘🏼‍♀️БОГИНЯ-ЙОГИНЯ\n☀️ЖИВУ ЖИЗНЬ, которую ВЫБИРАЮ САМА\n🙏Всегда в моменте, в потоке, в...\nwww.instagram.com/yoga_soll?igsh=cnd5bHFxMDdlMnk5",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "kseniiamakarova6252",
+      "url": "https://www.instagram.com/kseniiamakarova6252/",
+      "first": "Ксения",
+      "last": "",
+      "nameNote": "",
+      "city": "Солигорск",
+      "places": [
+        "ул. Гуляева, д. 2"
+      ],
+      "clubs": [
+        "Студия йоги \"Шакти\""
+      ],
+      "slugs": [
+        "yoga"
+      ],
+      "labels": [
+        "Йога"
+      ],
+      "description": "Сертифицированный преподаватель Хатха-йоги\n🎓YTTC 400ч.\n🌿Хатха-йога: сила, гибкость и осознанность.\n👇 Запись на пробное...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "coachromangocor",
+      "url": "https://www.instagram.com/coachromangocor/",
+      "first": "Роман",
+      "last": "Валерьевич",
+      "nameNote": "parsed",
+      "city": "Гомель",
+      "places": [
+        "ул. Советская, д. 60",
+        "ул. Столярная, д. 2-3"
+      ],
+      "clubs": [
+        "Бойцовский клуб \"Sharks Fight Club\"",
+        "Гомельский областной ЦОР единоборств"
+      ],
+      "slugs": [
+        "boks"
+      ],
+      "labels": [
+        "Бокс"
+      ],
+      "description": "Спорт и отдых\nТРЕНЕР | ГОМЕЛЬ | БОКС\nМастер спорта 🇧🇾\nIBA 1-Star R&J\n📲+375255258744\nПодписаны barmaley_the_fighter и barmaleytattoo",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "aleksandr_kholaev",
+      "url": "https://www.instagram.com/aleksandr_kholaev/",
+      "first": "Персональный",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гомель",
+      "places": [
+        "ул. Советская, д. 60",
+        "ул. Столярная, д. 2-3"
+      ],
+      "clubs": [
+        "Бойцовский клуб \"Sharks Fight Club\"",
+        "Гомельский областной ЦОР единоборств"
+      ],
+      "slugs": [
+        "boks"
+      ],
+      "labels": [
+        "Бокс"
+      ],
+      "description": "Персональный тренер\nАлександр Холаев\n•Тренер высшей категории🥊\n•Мастер спорта по боксу\n2X bronze medalist of Europe🥉🥉\n•мини-группы |...",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "chernyankov_v",
+      "url": "https://www.instagram.com/chernyankov_v/",
+      "first": "Чернянков",
+      "last": "",
+      "nameNote": "",
+      "city": "Гомель",
+      "places": [
+        "ул. Советская, д. 60",
+        "ул. Столярная, д. 2-3"
+      ],
+      "clubs": [
+        "Бойцовский клуб \"Sharks Fight Club\"",
+        "Гомельский областной ЦОР единоборств"
+      ],
+      "slugs": [
+        "boks",
+        "mma"
+      ],
+      "labels": [
+        "Бокс",
+        "MMA"
+      ],
+      "description": "Деятель искусств\nГрупповые и индивидуальные занятия для 🚹🚺детей и взрослых 🥊бокс 🤼‍♂️ ММА\nг.Речица\n☎️+375291175644 Пет\nПодписан(-а) fightershop.by",
+      "extraCities": [
+        "Речица"
+      ],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "muay.thai.vtb",
+      "url": "https://www.instagram.com/muay.thai.vtb/",
+      "first": "Тайский",
+      "last": "",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Б. Хмельницкого, д. 30/1"
+      ],
+      "clubs": [
+        "Тренажёрный зал \"Artoriya fitness & Ludus GYM\""
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka",
+        "pilates",
+        "yoga",
+        "kikboksing",
+        "tajskij-boks",
+        "boks"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал",
+        "Пилатес",
+        "Йога",
+        "Кикбоксинг",
+        "Тайский бокс",
+        "Бокс"
+      ],
+      "description": "Иса - coach по тайскому боксу /est.2020/\n>КМС по тайскому боксу/призер республиканских соревнований\n🥊 поставлю технику ...\nБогдана Хмельницкого 30к1, Vitebsk",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "wildberriesss27",
+      "url": "https://www.instagram.com/wildberriesss27/",
+      "first": "wildberriesss27",
+      "last": "",
+      "nameNote": "handle-as-name",
+      "city": "Витебск",
+      "places": [
+        "ул. Б. Хмельницкого, д. 30/1"
+      ],
+      "clubs": [
+        "Тренажёрный зал \"Artoriya fitness & Ludus GYM\""
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka",
+        "pilates",
+        "yoga"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал",
+        "Пилатес",
+        "Йога"
+      ],
+      "description": "ВБ витебск",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "aanitaa.ss",
+      "url": "https://www.instagram.com/aanitaa.ss/",
+      "first": "Анастасия",
+      "last": "Садовникова",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Б. Хмельницкого, д. 30/1"
+      ],
+      "clubs": [
+        "Тренажёрный зал \"Artoriya fitness & Ludus GYM\""
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka",
+        "pilates",
+        "yoga"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал",
+        "Пилатес",
+        "Йога"
+      ],
+      "description": "Анастасия Садовникова | Фото & Видео Минск, Витебск",
+      "extraCities": [
+        "Минск"
+      ],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "an.shevtsovaa",
+      "url": "https://www.instagram.com/an.shevtsovaa/",
+      "first": "Anna",
+      "last": "Tolkacheva",
+      "nameNote": "",
+      "city": "Гомель",
+      "places": [
+        "ул. Свиридова, д. 23А"
+      ],
+      "clubs": [
+        "Студия танца \"Большая медведица\" - Свиридова"
+      ],
+      "slugs": [
+        "sovremennye"
+      ],
+      "labels": [
+        "Современные танцы"
+      ],
+      "description": "Блогер\n•Стилист в обучении ✨\n•Образы и эстетика в Гомеле 📷\n•Открыта к сотрудничеству с брендами💌\n•Work: @medvediza.dance 🤍\nmedvedizadance.by/anna-tolkachyova и ещё 1",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "nastya_bialko",
+      "url": "https://www.instagram.com/nastya_bialko/",
+      "first": "Спортсмен",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Кобрин",
+      "places": [
+        "ул. Ленина, д. 11"
+      ],
+      "clubs": [
+        "Тренажёрный зал \"Чемпион\""
+      ],
+      "slugs": [
+        "boks",
+        "ofp",
+        "trenazherka",
+        "nutriciolog"
+      ],
+      "labels": [
+        "Бокс",
+        "ОФП",
+        "Тренажёрный зал",
+        "Питание"
+      ],
+      "description": "Спортсмен\n-𝐓𝐫𝐚𝐢𝐧𝐞𝐫\nПрограммы тренировок/питания\n• Реклама/сотрудничество/съемки\n• Побуждаю на абсолютную любовь, вдохновляю\n📄𝑷𝒆𝒓𝒔𝒐...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "swimming_borisov",
+      "url": "https://www.instagram.com/swimming_borisov/",
+      "first": "Борисов",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Борисов",
+      "places": [
+        "ул. Гагарина, д. 50Б"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"New Style\""
+      ],
+      "slugs": [
+        "ofp",
+        "dzhamping",
+        "pilates",
+        "trx",
+        "sovremennye",
+        "plavanie"
+      ],
+      "labels": [
+        "ОФП",
+        "Джампинг",
+        "Пилатес",
+        "TRX",
+        "Современные танцы",
+        "Плавание"
+      ],
+      "description": "Инструктор по плаванию\nКОЖЕВНИКОВА ТАТЬЯНА АЛЕКСАНДРОВНА\n💦Оздоровительное плавание для детей от 7 лет 🏊🏻‍♀️🏊🏼‍♂️🏊\n💦Высшее физкультурное...\nChapaeva 47, Borisov, Belarus",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "yuliya_pylypko_j.nail",
+      "url": "https://www.instagram.com/yuliya_pylypko_j.nail/",
+      "first": "Маникюр",
+      "last": "",
+      "nameNote": "",
+      "city": "Борисов",
+      "places": [
+        "ул. Гагарина, д. 50Б"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"New Style\""
+      ],
+      "slugs": [
+        "ofp",
+        "dzhamping",
+        "pilates",
+        "trx",
+        "sovremennye"
+      ],
+      "labels": [
+        "ОФП",
+        "Джампинг",
+        "Пилатес",
+        "TRX",
+        "Современные танцы"
+      ],
+      "description": "Товар/услуга\nЮлия Пылыпко\nПобедитель международных чемпионатов🏆\nНаучу тебя делать идеальный маникюр.\nСертификат об обучении гос...\ninstagram.com/j_nail.studio?igshid=MTdqOW04M2VkdTBtdQ%253D%253D&utm_source=qr и ещё 1",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "chuha_fitness",
+      "url": "https://www.instagram.com/chuha_fitness/",
+      "first": "Олег",
+      "last": "Чухольский",
+      "nameNote": "",
+      "city": "Солигорск",
+      "places": [
+        "ул. Октябрьская, д. 106, этаж 2"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Фитнес Land\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "posttravma"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "После травмы"
+      ],
+      "description": "Тренер по фитнесу\n🔘Высшее образование (БГУФК)\n🔘Сделаю дряблое - упругим\n🔘Восстанавливаю после травм/операций\n🔘Иглами убираю боль в теле...\nvk.com/id497397510",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "zaramassageroomsoligorsk",
+      "url": "https://www.instagram.com/zaramassageroomsoligorsk/",
+      "first": "Зарина",
+      "last": "Массаж",
+      "nameNote": "parsed",
+      "city": "Солигорск",
+      "places": [
+        "ул. Октябрьская, д. 106, этаж 2"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Фитнес Land\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "klassika",
+        "massazh"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Балет",
+        "Массаж"
+      ],
+      "description": "Массаж\n▪️Опыт работы более 6 лет\n▪️Массаж Классический | Спортивный | Релакс\n▪️Массаж - удовольствие, которое еще и...\nOktyabrskaya 106, Soligorsk",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "gazeta_shahter",
+      "url": "https://www.instagram.com/gazeta_shahter/",
+      "first": "Всё",
+      "last": "",
+      "nameNote": "",
+      "city": "Солигорск",
+      "places": [
+        "ул. Октябрьская, д. 106, этаж 2"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Фитнес Land\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "СМИ\n⚠️ Отмечайте нас в своих сторис 🔥\n✍️ По вопросам рекламы в Direct 📩\nshahter.by и ещё 1",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "mark_elfing",
+      "url": "https://www.instagram.com/mark_elfing/",
+      "first": "Арсений",
+      "last": "",
+      "nameNote": "",
+      "city": "Молодечно",
+      "places": [
+        "ул. Будавников, д. 15А"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Титан\" - Будавников"
+      ],
+      "slugs": [
+        "trenazherka",
+        "osanka"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Осанка"
+      ],
+      "description": "Спортсмен\nAmbassador @reckful.ru⛽️ promo: ARS10\n🌏 Тренирую в Молодечно и онлайн📱\n🩻Коррекция осанки 👶\n🏆Призер соревнований по...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "lenn.moroz",
+      "url": "https://www.instagram.com/lenn.moroz/",
+      "first": "Питание",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Витебск",
+      "places": [
+        "ул. Белобородова, д. 1Д"
+      ],
+      "clubs": [
+        "Женский тренажерный зал \"SVfit\" на Белобородова"
+      ],
+      "slugs": [
+        "trenazherka",
+        "nutriciolog"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Питание"
+      ],
+      "description": "▫️Питание|тренировки онлайн\n▫️Офлайн @svfit_vitebsk, Белобородова 1Д\nt.me/elenamorozfit",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "anna.grachyova",
+      "url": "https://www.instagram.com/anna.grachyova/",
+      "first": "Персональный",
+      "last": "",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Белобородова, д. 1Д"
+      ],
+      "clubs": [
+        "Женский тренажерный зал \"SVfit\" на Белобородова"
+      ],
+      "slugs": [
+        "trenazherka",
+        "nutriciolog"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Питание"
+      ],
+      "description": "Анна Грачева\n▪️ Со мной ты будешь красиво выглядеть в купальнике 💪🏻\n▪️ твой коуч по питанию 🍎\n▪️ Провожу...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "prokofyeva_olga.tr",
+      "url": "https://www.instagram.com/prokofyeva_olga.tr/",
+      "first": "Спортивный",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Витебск",
+      "places": [
+        "ул. Белобородова, д. 1Д"
+      ],
+      "clubs": [
+        "Женский тренажерный зал \"SVfit\" на Белобородова"
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Спортивный и фитнес-инструктор\nВысшее спортивное образование\n🎓ВГУ им. П.М. Машерова\n💪Опыт работы тренером 7 лет\n🏋️‍♀️тренажёрный зал @svfit_vitebsk ...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "_mariiiiisha",
+      "url": "https://www.instagram.com/_mariiiiisha/",
+      "first": "Марина",
+      "last": "Барановская",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Белобородова, д. 1Д"
+      ],
+      "clubs": [
+        "Женский тренажерный зал \"SVfit\" на Белобородова"
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Персональный тренер\n🩺 Медицинское образование\n🧘 Индивидуальные | Групповые\n✨ Тренировки с заботой о здоровье\n🤍 Помогаю полюбить спорт\n📍...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "osteklim_okna",
+      "url": "https://www.instagram.com/osteklim_okna/",
+      "first": "Окна",
+      "last": "",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Белобородова, д. 1Д"
+      ],
+      "clubs": [
+        "Женский тренажерный зал \"SVfit\" на Белобородова"
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Товар/услуга\nОстеклим без проблем!\n• 35 лет производим окна\n• Сертифицированный монтаж\n• Рассрочка БЕЗ %\n+375295291909\nFrunze 37, Vitebsk\nosteklim.by",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "mineral.fit",
+      "url": "https://www.instagram.com/mineral.fit/",
+      "first": "Персональный",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Могилёв",
+      "places": [
+        "пр-т. Мира, д. 25Г"
+      ],
+      "clubs": [
+        "Фитнес клуб \"Refresh\""
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka",
+        "nutriciolog"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал",
+        "Питание"
+      ],
+      "description": "Персональный тренер\n💎 Готовлюсь к дебюту в фитнес-бикини\n💪🏻 Тренирую в @mogilev_refresh\n🔥 Онлайн/оффлайн ведение + питание\nЗапись на...\nt.me/new_mineral_day и ещё 1",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "anastasia_p_gym_",
+      "url": "https://www.instagram.com/anastasia_p_gym_/",
+      "first": "Анастасия",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Могилёв",
+      "places": [
+        "пр-т. Мира, д. 25Г"
+      ],
+      "clubs": [
+        "Фитнес клуб \"Refresh\""
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka",
+        "nutriciolog"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал",
+        "Питание"
+      ],
+      "description": "Анастасия-научу быть в форме 365 дней в году\nснижение веса|набор мышечной массы\nконсультации по питанию\n🏋️тренирую в...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "shish_boxing",
+      "url": "https://www.instagram.com/shish_boxing/",
+      "first": "Здоровье",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Жлобин",
+      "places": [
+        "ул. Барташова, д. 1"
+      ],
+      "clubs": [
+        "Клуб единоборств и фитнеса \"First fitness club\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "ofk",
+        "boks",
+        "ofp"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "ОФК",
+        "Бокс",
+        "ОФП"
+      ],
+      "description": "Здоровье/красота\n👨‍🦱Ярослав Шиш\n📳+375(44)5413104\n🏅Мастер спорта по боксу\n🤼‍♀️Фитбокс (Женский бокс)\n👶Дет...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "katysuvalova",
+      "url": "https://www.instagram.com/katysuvalova/",
+      "first": "Hhoreographer",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гомель",
+      "places": [
+        "ул. Красноармейская, д. 5а, этаж 3"
+      ],
+      "clubs": [
+        "Студия танцев и фитнеса \"BEST TIME\""
+      ],
+      "slugs": [
+        "sovremennye",
+        "ofp"
+      ],
+      "labels": [
+        "Современные танцы",
+        "ОФП"
+      ],
+      "description": "✨Hhoreographer STRIP PLASTIC/POLE ART - изящность в каждом движении\n✨Научу управлять женской энергией\n✨@el_gao_studio -...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "koroche__mogilev",
+      "url": "https://www.instagram.com/koroche__mogilev/",
+      "first": "Могилев",
+      "last": "Блогер",
+      "nameNote": "parsed",
+      "city": "Могилёв",
+      "places": [
+        "ул. Ленинская, д. 21/1"
+      ],
+      "clubs": [
+        "Йога и центр медитации \"Человеческий храм\""
+      ],
+      "slugs": [
+        "yoga"
+      ],
+      "labels": [
+        "Йога"
+      ],
+      "description": "Блогер\nХочешь узнать всё о Могилёве?\n◾️Обзоры в stories каждый день👌\n◾️Розыгрыши🎁\n🔝А еще смотри информацию о нас и наши...\nwww.tiktok.com/@koroche_mogilev?_t=ZM-8vCrAzug5QM&_r=1 и ещё 1",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "rubini_padel",
+      "url": "https://www.instagram.com/rubini_padel/",
+      "first": "Падел",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Брест",
+      "places": [
+        "ул. Ленина, д. 23"
+      ],
+      "clubs": [
+        "Теннисный клуб \"Золотой мяч\""
+      ],
+      "slugs": [
+        "bolshoj-tennis",
+        "padel"
+      ],
+      "labels": [
+        "Большой теннис",
+        "Падел"
+      ],
+      "description": "3 корта · аренда · оборудование\nНовички, дети, спортсмены — все могут играть 🔥\n📍 Краснознаменная, 4 В | 9:00-21:00\n👇...\nКраснознаменная 4В, Brest, Belarus 224000\nn1916178.yclients.com и ещё 1",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "ilh_brest",
+      "url": "https://www.instagram.com/ilh_brest/",
+      "first": "Консультант",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Брест",
+      "places": [
+        "ул. Ленина, д. 23"
+      ],
+      "clubs": [
+        "Теннисный клуб \"Золотой мяч\""
+      ],
+      "slugs": [
+        "bolshoj-tennis"
+      ],
+      "labels": [
+        "Большой теннис"
+      ],
+      "description": "Консультант по вопросам образования\nINTERNATIONAL LANGUAGE HOUSE\nУЧЕБНЫЙ ЦЕНТР 🇬🇧🇩🇪🇮🇹🇫🇷🇨🇳\nС 2002 года в г. БРЕСТЕ!\n📍Ленина 36\n📍Советская 80 офис 36\n📲+375297...\nLenina 36, Brest, Belarus 224000\nwww.ilh.by и ещё 2",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "evofit.by",
+      "url": "https://www.instagram.com/evofit.by/",
+      "first": "Тренируйтесь",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гродно",
+      "places": [
+        "ул. Кабяка, д. 15Б"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Sky\""
+      ],
+      "slugs": [
+        "figura",
+        "ofp",
+        "dzhamping",
+        "pilates",
+        "aerobika",
+        "trx"
+      ],
+      "labels": [
+        "Коррекция фигуры",
+        "ОФП",
+        "Джампинг",
+        "Пилатес",
+        "Спортивная аэробика",
+        "TRX"
+      ],
+      "description": "Образование\n🧠Тренируйтесь грамотно и увеличивайте доход\n🏆Команда профессионалов опыт более 10лет\n👨‍🎓Научный подход и доказательные...\nevofit.by и ещё 4\nПодписаны shum_ann и alex_bro_training",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "den_massage_vtb",
+      "url": "https://www.instagram.com/den_massage_vtb/",
+      "first": "Здоровье",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Витебск",
+      "places": [
+        "ул. П. Бровки, д. 22 ("
+      ],
+      "clubs": [
+        "Тренажерный зал и фитнес \"ДЕКСТ\""
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka",
+        "posttravma",
+        "massazh"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал",
+        "После травмы",
+        "Массаж"
+      ],
+      "description": "Здоровье/красота\nИнструктор физической реабилитации\nМассажист\nОтец 2 красоток\nФитнес-тренер с в/о...\nПроспект Генерала Людникова, 10, Vitebsk 210026\ndikidi.net/1561586 и ещё 4",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "lappofitness",
+      "url": "https://www.instagram.com/lappofitness/",
+      "first": "Личный",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Витебск",
+      "places": [
+        "ул. П. Бровки, д. 22 ("
+      ],
+      "clubs": [
+        "Тренажерный зал и фитнес \"ДЕКСТ\""
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал"
+      ],
+      "description": "Личный блог\nФитнес-тренер\n💢Специалист АФК\n💢20 лет стажа в профессии\n💢Высшее физкультурное образование\n#v...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "shawa_kawa",
+      "url": "https://www.instagram.com/shawa_kawa/",
+      "first": "Шаурма",
+      "last": "Витебск",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. П. Бровки, д. 22 ("
+      ],
+      "clubs": [
+        "Тренажерный зал и фитнес \"ДЕКСТ\""
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал"
+      ],
+      "description": "Шаурма хот-доги фри\nГ.Витебск Ул.П.Бровки 15А(возле магазина Маяк)\n+375336790571\nЕсть доставка.\nРаботаем с 10.00 до 22...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "pilates_drobot",
+      "url": "https://www.instagram.com/pilates_drobot/",
+      "first": "Верну",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гродно",
+      "places": [
+        "ул. Ленина, д. 5"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Women Fitness\" - Гродно"
+      ],
+      "slugs": [
+        "trenazherka",
+        "pilates",
+        "yoga"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Пилатес",
+        "Йога"
+      ],
+      "description": "✨ Верну вашему телу лёгкость, а уму — спокойствие\n🧘‍♀️В дипломе фитнес тренер , в душе йог\n🏃‍♀️более 10 лет делаю тела л...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "realfit_streletcz",
+      "url": "https://www.instagram.com/realfit_streletcz/",
+      "first": "График",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Могилёв",
+      "places": [
+        "ул. Якубовского, д. 20"
+      ],
+      "clubs": [
+        "Студия йоги \"Polakova Yoga\" - Якубовского"
+      ],
+      "slugs": [
+        "yoga",
+        "trenazherka"
+      ],
+      "labels": [
+        "Йога",
+        "Тренажёрный зал"
+      ],
+      "description": "ТРЕНАЖЕРНЫЙ ЗАЛ/ПЕРСОНАЛЬНЫЕ ТРЕНИРОВКИ\nГРУППОВЫЕ ЗАНЯТИЯ\nГрафик работы:ПН-ПТ 8.00-22.00, СУББ-ВОСКР 9.00-19.00...\nУл.Каштановая 4А, Mahilyow, Belarus\napps.apple.com/by/app/realfit7/id1623789728 и ещё 1",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "sheveleva__natasha",
+      "url": "https://www.instagram.com/sheveleva__natasha/",
+      "first": "Йога",
+      "last": "",
+      "nameNote": "",
+      "city": "Новополоцк",
+      "places": [
+        "ул. Нефтяников, д. 6"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Sunrise\""
+      ],
+      "slugs": [
+        "yoga",
+        "pilates"
+      ],
+      "labels": [
+        "Йога",
+        "Пилатес"
+      ],
+      "description": "Студия в тц «Зодиак» @sunrise_fitness_np ☀️\nВлюбляю через движение в жизнь ♥️\nБесплатные тренировки в ТГ ⤵️\nt.me/+r3dXV2-uXyg2ZjE6",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "yogawheelfit",
+      "url": "https://www.instagram.com/yogawheelfit/",
+      "first": "Елена",
+      "last": "Крюкова",
+      "nameNote": "",
+      "city": "Новополоцк",
+      "places": [
+        "ул. Нефтяников, д. 6"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Sunrise\""
+      ],
+      "slugs": [
+        "yoga",
+        "pilates"
+      ],
+      "labels": [
+        "Йога",
+        "Пилатес"
+      ],
+      "description": "Автор\n150 + тренеров по всему 🌐\nYoga Wheel Fit / Йога с колесом\nSri Lanka Yoga Wheel Reatret ⤵️",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "sofka.boom",
+      "url": "https://www.instagram.com/sofka.boom/",
+      "first": "Софка",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Новополоцк",
+      "places": [
+        "ул. Нефтяников, д. 6"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Sunrise\""
+      ],
+      "slugs": [
+        "yoga",
+        "pilates",
+        "ofk"
+      ],
+      "labels": [
+        "Йога",
+        "Пилатес",
+        "ОФК"
+      ],
+      "description": "🧸Счастливы дети — счастливы мамы\n🧸 Пространство для самых маленьких\n🧸 Магазин игрушек\n🧸 пн-пт с 10:00 до 19:00\n🧸...\nMolodezhnaya, 166A, Novopolatsk 211448",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "sk_olimpiets_mog",
+      "url": "https://www.instagram.com/sk_olimpiets_mog/",
+      "first": "Спортивный",
+      "last": "",
+      "nameNote": "",
+      "city": "Могилёв",
+      "places": [
+        "ул. Вавилова, д. 15",
+        "ул. 30 лет Победы, д. 1а"
+      ],
+      "clubs": [
+        "Гандбольный клуб \"Машека\"",
+        "Спортивный комплекс \"ОЛИМПИЕЦ\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "plavanie",
+        "bolshoj-tennis",
+        "badminton"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Плавание",
+        "Большой теннис",
+        "Бадминтон"
+      ],
+      "description": "Спорт и отдых\nОрганизация и проведение спортивно-массовых мероприятий\nУСЛУГИ\n👉тренажерный зал\n👉теннис\n👉...\nolimpiecmogilev.by и ещё 1",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "workshop_brothers_art",
+      "url": "https://www.instagram.com/workshop_brothers_art/",
+      "first": "Молодечно",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Молодечно",
+      "places": [
+        "ул. Космонавтов, д. 8А"
+      ],
+      "clubs": [
+        "Студия йоги \"Yoga Balance\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "МАСТЕРСКАЯ БРАТЬЕВ ART 📍Молодечно",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "thekaryna_",
+      "url": "https://www.instagram.com/thekaryna_/",
+      "first": "Карина",
+      "last": "Щукина",
+      "nameNote": "",
+      "city": "Орша",
+      "places": [
+        "ул. Ленина, д. 242"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Графит\" - Ленина"
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka",
+        "pauerlifting",
+        "nutriciolog"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал",
+        "Пауэрлифтинг",
+        "Питание"
+      ],
+      "description": "Спортсмен\n💪Тренер | КМС по пауэрлифтингу РБ (IPF)🏆\n🥗Нутрициолог | Индивидуальные программы |Онлайн-сопровождение📱\n📍Тренирую в @gar...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "natallia_zozh",
+      "url": "https://www.instagram.com/natallia_zozh/",
+      "first": "Наталья",
+      "last": "Ковалевская",
+      "nameNote": "",
+      "city": "Орша",
+      "places": [
+        "ул. Ленина, д. 242"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Графит\" - Ленина"
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka",
+        "nutriciolog"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал",
+        "Питание"
+      ],
+      "description": "Здоровье/красота\n🏋️‍Ваш гид в мире фитнеса от первого шага\n🇧🇾 Аккредитация\n👩‍🎓Физ.образование\n🥦Нутрициолог\n👩‍Мам...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "julia_pilates_",
+      "url": "https://www.instagram.com/julia_pilates_/",
+      "first": "Орша",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Орша",
+      "places": [
+        "ул. Ленина, д. 242"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Графит\" - Ленина"
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka",
+        "pilates"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал",
+        "Пилатес"
+      ],
+      "description": "Здоровье/красота\n☘Юлия Ефременко\n☘влюбляю в Пилатес и осознанное движение,\n☘восстанавливаю после родов;\n☘групповые и персональные...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "pashka_0013",
+      "url": "https://www.instagram.com/pashka_0013/",
+      "first": "Павел",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Орша",
+      "places": [
+        "ул. Ленина, д. 242"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Графит\" - Ленина"
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал"
+      ],
+      "description": "📌Персональный тренер / тренирую онлайн 🦾\nЗнаю как:\n▪️победить жир\n▪️увеличить мышечную массу\n▪...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "igor_figurenko",
+      "url": "https://www.instagram.com/igor_figurenko/",
+      "first": "Скиф",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гомель",
+      "places": [
+        "ул. Столярная, д. 2-3"
+      ],
+      "clubs": [
+        "Гомельский областной ЦОР единоборств"
+      ],
+      "slugs": [
+        "boks"
+      ],
+      "labels": [
+        "Бокс"
+      ],
+      "description": "Тренер по боксу +375297301312 Гомель",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "vpank0v",
+      "url": "https://www.instagram.com/vpank0v/",
+      "first": "Вадим",
+      "last": "",
+      "nameNote": "",
+      "city": "Гомель",
+      "places": [
+        "ул. Столярная, д. 2-3"
+      ],
+      "clubs": [
+        "Гомельский областной ЦОР единоборств"
+      ],
+      "slugs": [
+        "boks"
+      ],
+      "labels": [
+        "Бокс"
+      ],
+      "description": "Педагог-психолог для людей с нестабильным уровнем агрессии, эмпатии, самоконтролем и девиантным поведением, а также...\nПодписан(-а) barmaleytattoo",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "alina_chuvi",
+      "url": "https://www.instagram.com/alina_chuvi/",
+      "first": "Алина",
+      "last": "",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Ленина, д. 52"
+      ],
+      "clubs": [
+        "Школа танца и фитнеса \"PoleDeluxe\" - Ленина"
+      ],
+      "slugs": [
+        "sovremennye",
+        "ofp",
+        "stretching"
+      ],
+      "labels": [
+        "Современные танцы",
+        "ОФП",
+        "Растяжка"
+      ],
+      "description": "Тверк - это мой love language!🍑\nНаучу твою попу говорить на нем свободно.\nГруппы и индивидуальные тренировки 😌\nПо всем в...\nt.me/alina_twerk",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "wika.yaroshevich",
+      "url": "https://www.instagram.com/wika.yaroshevich/",
+      "first": "Вика",
+      "last": "",
+      "nameNote": "",
+      "city": "Гродно",
+      "places": [
+        "ул. Врублевского, д. 1а"
+      ],
+      "clubs": [
+        "Гродненский областной комплексный центр олимпийского резерва"
+      ],
+      "slugs": [
+        "akvaaerobika",
+        "ofp",
+        "trenazherka",
+        "plavanie",
+        "beg",
+        "massazh"
+      ],
+      "labels": [
+        "Аквааэробика",
+        "ОФП",
+        "Тренажёрный зал",
+        "Плавание",
+        "Бег",
+        "Массаж"
+      ],
+      "description": "Спортсмен\nВиктория Ярошевич ТРЕНЕР ПО БЕГУ📍Гродно| Специалист по физ.подготовке ⚽️🏒🎾 ⠀ ⠀ ⠀ ⠀ ⠀тренер @blackberry_crew ⠀ ⠀ ⠀...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "atletik_dv",
+      "url": "https://www.instagram.com/atletik_dv/",
+      "first": "Дмитрий",
+      "last": "Иванов",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Кирова, д. 14"
+      ],
+      "clubs": [
+        "Фитнес-Клуб \"Атлетик\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "silovoj-trening",
+        "massazh"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Силовой тренинг",
+        "Массаж"
+      ],
+      "description": "Тренер, массажист, мастер спорта, МСМК, преподаватель.\nВладелец @atletik_vitebsk\n⚫ Тренировки (силовой тренинг,...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "marinakisel.21",
+      "url": "https://www.instagram.com/marinakisel.21/",
+      "first": "Марина",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Пинск",
+      "places": [
+        "ул. Центральная, д. 15Б, этаж 2"
+      ],
+      "clubs": [
+        "Соляная пещера \"Солька\""
+      ],
+      "slugs": [
+        "nutriciolog"
+      ],
+      "labels": [
+        "Питание"
+      ],
+      "description": "Здоровье/красота\n🥗 консультации по питанию\n🏃‍♀️‍➡️ тренировки\nСолнечная, 82\n(напротив храма Петра и Февронии)\nНП Herbalife Nutrition🌿",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "liza_mardoyan",
+      "url": "https://www.instagram.com/liza_mardoyan/",
+      "first": "Сморгонь",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Смаргонь",
+      "places": [
+        "ул. Юбилейная, д. 31"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Титан\" - Юбилейная"
+      ],
+      "slugs": [
+        "trenazherka",
+        "nutriciolog"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Питание"
+      ],
+      "description": "🤸🏼‍♀️тренирую с заботой о здоровье\n🧘‍♀️избавлю от болей в спине\n🔥баланс в питании без ограничений\n👩‍🎓тренер с высшим...\nvk.com/liza_dragyn\nПодписан(-а) shum_ann",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "shmebyulook",
+      "url": "https://www.instagram.com/shmebyulook/",
+      "first": "Егор",
+      "last": "Васильевич",
+      "nameNote": "",
+      "city": "Смаргонь",
+      "places": [
+        "ул. Юбилейная, д. 31"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Титан\" - Юбилейная"
+      ],
+      "slugs": [
+        "trenazherka",
+        "legkaya-atletika"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Лёгкая атлетика"
+      ],
+      "description": "Тренер по легкой атлетике\nПерсональный тренер в @titanfitsmg\nCморгонь\n🍥Моя будующая мечта- стать величайшим Хокаге!🍥",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "mikhail_fitness_smorgon",
+      "url": "https://www.instagram.com/mikhail_fitness_smorgon/",
+      "first": "Михаил",
+      "last": "Бровко",
+      "nameNote": "",
+      "city": "Смаргонь",
+      "places": [
+        "ул. Юбилейная, д. 31"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Титан\" - Юбилейная"
+      ],
+      "slugs": [
+        "trenazherka",
+        "pauerlifting",
+        "ofp",
+        "lfk"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Пауэрлифтинг",
+        "ОФП",
+        "ЛФК"
+      ],
+      "description": "Здоровье/красота\nWR в жиме стоя федерации НАП.\nМСМК в пауэрлифтинге .\nВысшее физкультурное и медицинское образование.\nЛФК, ОФП, Фитнесс ...\nФитнесс - персональные тренировки, онлайн ведение",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "roman_team_fighting_grodno",
+      "url": "https://www.instagram.com/roman_team_fighting_grodno/",
+      "first": "Савицкий",
+      "last": "",
+      "nameNote": "",
+      "city": "Гродно",
+      "places": [
+        "ул. Лидская, д. 1"
+      ],
+      "clubs": [
+        "Стрелковый клуб TOP GUN"
+      ],
+      "slugs": [
+        "boks"
+      ],
+      "labels": [
+        "Бокс"
+      ],
+      "description": "🎖Мастер спорта БССР / Бокс\n🥇Многократный чемпион РБ / Бокс\n🥊Тренер: @fight_club_grodno\n🪨 Boxing/Kickboxing/Muay-Thai",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "fitness_trener_lida",
+      "url": "https://www.instagram.com/fitness_trener_lida/",
+      "first": "Лиде",
+      "last": "Дмитрий",
+      "nameNote": "parsed",
+      "city": "Лида",
+      "places": [
+        "ул. Железнодорожная, д. 12"
+      ],
+      "clubs": [
+        "СПА-центр \"Фитнес & Релакс\""
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал"
+      ],
+      "description": "Дмитрий, квалифицированный тренер.\nПомогу построить здоровое тело и улучшить физическую подготовку.\n☝️Персональные...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "anna_klimowich",
+      "url": "https://www.instagram.com/anna_klimowich/",
+      "first": "Анна",
+      "last": "Климович",
+      "nameNote": "",
+      "city": "Лида",
+      "places": [
+        "ул. Железнодорожная, д. 12"
+      ],
+      "clubs": [
+        "СПА-центр \"Фитнес & Релакс\""
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал"
+      ],
+      "description": "Руководитель и практикующий офтальмолог г.Лида медицинский центр «АМедис»",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "iron_cat666",
+      "url": "https://www.instagram.com/iron_cat666/",
+      "first": "Соколова",
+      "last": "Екатерина",
+      "nameNote": "",
+      "city": "Лида",
+      "places": [
+        "ул. Железнодорожная, д. 12"
+      ],
+      "clubs": [
+        "СПА-центр \"Фитнес & Релакс\""
+      ],
+      "slugs": [
+        "ofp",
+        "trenazherka"
+      ],
+      "labels": [
+        "ОФП",
+        "Тренажёрный зал"
+      ],
+      "description": "Тренер по фитнесу",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "redcatbrest",
+      "url": "https://www.instagram.com/redcatbrest/",
+      "first": "Брест",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Брест",
+      "places": [
+        "ул. Московская, д. 151"
+      ],
+      "clubs": [
+        "Скалодром \"Вершина\""
+      ],
+      "slugs": [
+        "skalolazanie"
+      ],
+      "labels": [
+        "Скалолазание"
+      ],
+      "description": "Образование\n🐈\"Рыжий кот\" Центр развития речи и коррекции поведения\nАВА-терапия\nБАК\nРаботаем детьми любой сложности\n⬇️\nИнтернациональная 17, Brest, Belarus",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "alina.hairc",
+      "url": "https://www.instagram.com/alina.hairc/",
+      "first": "Стрижки",
+      "last": "",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Жесткова, д. 12",
+        "ул. Чкалова д. 44/1",
+        "ул. Терешковой, д. 7А"
+      ],
+      "clubs": [
+        "Шейпинг-зал \"Центральный\"",
+        "Шейпинг-зал \"Южный\"",
+        "Шейпинг-клуб \"Мегаполис\""
+      ],
+      "slugs": [
+        "figura"
+      ],
+      "labels": [
+        "Коррекция фигуры"
+      ],
+      "description": "Привет, меня зовут Алина 👋🏻\nСо можно на \"ты\"\nСоздаю образ, который подчеркнёт твою внешность и стиль👸🏻",
+      "extraCities": [],
+      "rows": 3,
+      "droppedCities": []
+    },
+    {
+      "handle": "pavel_prenz",
+      "url": "https://www.instagram.com/pavel_prenz/",
+      "first": "Павел",
+      "last": "Пренз",
+      "nameNote": "",
+      "city": "Могилёв",
+      "places": [
+        "пер. Пожарный, д. 21"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Studio 17\" - Пожарный"
+      ],
+      "slugs": [
+        "ofp"
+      ],
+      "labels": [
+        "ОФП"
+      ],
+      "description": "Тренер\nПомогаю вернуть форму в 35+\nСохранить мышцы и улучшить самочувствие\nПоследовательно с учетом возраста и...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "antonova_ira_grodno",
+      "url": "https://www.instagram.com/antonova_ira_grodno/",
+      "first": "Блогер",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гродно",
+      "places": [
+        "ул. Мостовая, д. 39"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Мотив\""
+      ],
+      "slugs": [
+        "stretching",
+        "yoga"
+      ],
+      "labels": [
+        "Растяжка",
+        "Йога"
+      ],
+      "description": "Блогер\n•гуру логистики\n•амбассадор силы воли\n•тренируюсь и тренирую\n•живу жизнь...\nt.me/Antonova_Iryna и ещё 1",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "aleksa_khil",
+      "url": "https://www.instagram.com/aleksa_khil/",
+      "first": "Пилатес",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гродно",
+      "places": [
+        "ул. Мостовая, д. 39"
+      ],
+      "clubs": [
+        "Студия фитнеса \"Мотив\""
+      ],
+      "slugs": [
+        "stretching",
+        "yoga",
+        "pilates"
+      ],
+      "labels": [
+        "Растяжка",
+        "Йога",
+        "Пилатес"
+      ],
+      "description": "Деятель искусств\nНашла Вселенную внутри себя 🌍\nPilates в @motive_grodno и @oniks_studio\nJournalist (education)\nTravels ✈️ My Life 🦋",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "yandieva0707",
+      "url": "https://www.instagram.com/yandieva0707/",
+      "first": "Даша",
+      "last": "",
+      "nameNote": "",
+      "city": "Гродно",
+      "places": [
+        "ул. Волкова, д. 10"
+      ],
+      "clubs": [
+        "Спортивно-развлекательный центр \"Gagarin\""
+      ],
+      "slugs": [
+        "skalolazanie",
+        "batut"
+      ],
+      "labels": [
+        "Скалолазание",
+        "Батут"
+      ],
+      "description": "Персональный тренер\nСнимаюсь для брендов, ugc\nТренирую в @sporttimegrodno",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "anatomyfitness",
+      "url": "https://www.instagram.com/anatomyfitness/",
+      "first": "Для",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Витебск",
+      "places": [
+        "ул. Смоленская, д. 3а, корп. 1"
+      ],
+      "clubs": [
+        "Фитнес-зал \"Реформа\" на Смоленской"
+      ],
+      "slugs": [
+        "ofp",
+        "massazh"
+      ],
+      "labels": [
+        "ОФП",
+        "Массаж"
+      ],
+      "description": "⚪️BELARUS\n👨‍⚕️Для тренеров, врачей, массажистов 🌍 Преподаватели с международным опытом 👩🏼‍🏫 Узкие профессиональные темы...\ntaplink.cc/anatomyfitness и ещё 3\nПодписан(-а) shum_ann",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "valtervikki",
+      "url": "https://www.instagram.com/valtervikki/",
+      "first": "Вика",
+      "last": "Вальтер",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Смоленская, д. 3а, корп. 1"
+      ],
+      "clubs": [
+        "Фитнес-зал \"Реформа\" на Смоленской"
+      ],
+      "slugs": [
+        "ofp",
+        "nutriciolog"
+      ],
+      "labels": [
+        "ОФП",
+        "Питание"
+      ],
+      "description": "Инструктор фитнес-программ, нутрициолог",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "viktoria.stretching",
+      "url": "https://www.instagram.com/viktoria.stretching/",
+      "first": "Виктория",
+      "last": "Алейникова",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Смоленская, д. 3а, корп. 1"
+      ],
+      "clubs": [
+        "Фитнес-зал \"Реформа\" на Смоленской"
+      ],
+      "slugs": [
+        "ofp",
+        "sportivnaya",
+        "pilates",
+        "stretching",
+        "osanka"
+      ],
+      "labels": [
+        "ОФП",
+        "Спортивная гимнастика",
+        "Пилатес",
+        "Растяжка",
+        "Осанка"
+      ],
+      "description": "Коррекция осанки. Растяжка без боли 🔥\nСтретчинг | Пилатес\nМФР | Калланетика\nСуставная гимнастика\n💙 тренер @mindbody.by",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "upgrade_vtb",
+      "url": "https://www.instagram.com/upgrade_vtb/",
+      "first": "Арт",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Витебск",
+      "places": [
+        "ул. Смоленская, д. 3а, корп. 1"
+      ],
+      "clubs": [
+        "Фитнес-зал \"Реформа\" на Смоленской"
+      ],
+      "slugs": [
+        "ofp"
+      ],
+      "labels": [
+        "ОФП"
+      ],
+      "description": "Площадка для выступлений и мероприятий\nUPGRADE – это организация концертов🔸мастер-классов🔸тренингов🔸лекториев🔸творческих мастерских\n📍 Октябрьская 2 (в картах...\nvk.com/albums-121713764 и ещё 4",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "elsakov_ivan",
+      "url": "https://www.instagram.com/elsakov_ivan/",
+      "first": "Иван",
+      "last": "",
+      "nameNote": "",
+      "city": "Пружаны",
+      "places": [
+        "ул. Октябрьская, д. 104"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Адреналин\" - Пружаны"
+      ],
+      "slugs": [
+        "trenazherka",
+        "boks",
+        "silovoj-trening"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Бокс",
+        "Силовой тренинг"
+      ],
+      "description": "Здоровье/красота\n🏆Призер этапов Кубка мира и Европы\n> 40 лет в спорте\nПерсональный тренер в @adrenalin_bogdanovicha\nЗапишись и получи ...\nbgd.adrenalin.by",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "akimoffandrey",
+      "url": "https://www.instagram.com/akimoffandrey/",
+      "first": "Андрей",
+      "last": "Акимов",
+      "nameNote": "",
+      "city": "Пружаны",
+      "places": [
+        "ул. Октябрьская, д. 104"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Адреналин\" - Пружаны"
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "Здоровье/красота\n📌 Тренер. Специалист по тренировкам людей с проблемным позвоночником.\n📌Преподаватель практики @adrenalin_school\nwww.powerdoc.by",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "lil_za_p",
+      "url": "https://www.instagram.com/lil_za_p/",
+      "first": "Пилатес",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Могилёв",
+      "places": [
+        "пр-т Пушкинский, д. 69"
+      ],
+      "clubs": [
+        "Студия йоги \"Shanti\" - Пушкинский"
+      ],
+      "slugs": [
+        "yoga",
+        "pilates",
+        "stretching"
+      ],
+      "labels": [
+        "Йога",
+        "Пилатес",
+        "Растяжка"
+      ],
+      "description": "Пилатес/растяжка\nОнлайн-запись:\nsportpriority.by/r/ShantiYoga",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "lyabik.irina",
+      "url": "https://www.instagram.com/lyabik.irina/",
+      "first": "Лябик",
+      "last": "Ирина",
+      "nameNote": "",
+      "city": "Могилёв",
+      "places": [
+        "пр-т Пушкинский, д. 69"
+      ],
+      "clubs": [
+        "Студия йоги \"Shanti\" - Пушкинский"
+      ],
+      "slugs": [
+        "yoga",
+        "pilates",
+        "massazh"
+      ],
+      "labels": [
+        "Йога",
+        "Пилатес",
+        "Массаж"
+      ],
+      "description": "Медицинский работник и ваш массажист\nПрофессиональный уход за телом нежно и эффективно.\n📍ул. Первомайская 29\n💌Для...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "bosika1818",
+      "url": "https://www.instagram.com/bosika1818/",
+      "first": "Юлия",
+      "last": "Иванова",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Чкалова д. 44/1",
+        "ул. Терешковой, д. 7А"
+      ],
+      "clubs": [
+        "Шейпинг-зал \"Южный\"",
+        "Шейпинг-клуб \"Мегаполис\""
+      ],
+      "slugs": [
+        "figura"
+      ],
+      "labels": [
+        "Коррекция фигуры"
+      ],
+      "description": "Витебск",
+      "extraCities": [],
+      "rows": 2,
+      "droppedCities": []
+    },
+    {
+      "handle": "vashtur_masha",
+      "url": "https://www.instagram.com/vashtur_masha/",
+      "first": "Калашникова",
+      "last": "Маша",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Чкалова д. 44/1"
+      ],
+      "clubs": [
+        "Шейпинг-зал \"Южный\""
+      ],
+      "slugs": [
+        "figura"
+      ],
+      "labels": [
+        "Коррекция фигуры"
+      ],
+      "description": "✈️ Честно о путешестешествиях.\n🎓 Обучаю туристов и турагентов.\n🎭 О туризме изнутри.\n🧐 Смотри мои сторис - всё там.",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "protelo_studio_orsha",
+      "url": "https://www.instagram.com/protelo_studio_orsha/",
+      "first": "Медицинское",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Орша",
+      "places": [
+        "ул. Молокова, д. 2"
+      ],
+      "clubs": [
+        "Фитнес-студия \"BodyFit\""
+      ],
+      "slugs": [
+        "ofp",
+        "massazh"
+      ],
+      "labels": [
+        "ОФП",
+        "Массаж"
+      ],
+      "description": "Медицинское образование👩🏼‍⚕️\n• КОСМЕТИК, АКНЕ\n• СПА | ДЛЯ ДВОИХ\n• МАССАЖ ЛИЦА И ТЕЛА\n•...\nMira 13, Orsha",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "mezhevich_fit",
+      "url": "https://www.instagram.com/mezhevich_fit/",
+      "first": "Кристина",
+      "last": "Межевич",
+      "nameNote": "",
+      "city": "Орша",
+      "places": [
+        "ул. Молокова, д. 2"
+      ],
+      "clubs": [
+        "Фитнес-студия \"BodyFit\""
+      ],
+      "slugs": [
+        "ofp",
+        "nutriciolog"
+      ],
+      "labels": [
+        "ОФП",
+        "Питание"
+      ],
+      "description": "Хочешь похудеть на - 10 кг online не приходя в зал🏋️?\nПиши «фигура », проведу бесплатный разбор твоей ситуации в 💌...\ndocs.google.com/forms/d/1chqorAsbgZEBdJD9pAkGW6f-3zR5E6G-JT1xofGeyLY/edit?usp=drivesdk и ещё 1",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "elena_bodylad",
+      "url": "https://www.instagram.com/elena_bodylad/",
+      "first": "Елена",
+      "last": "",
+      "nameNote": "",
+      "city": "Орша",
+      "places": [
+        "ул. Молокова, д. 2"
+      ],
+      "clubs": [
+        "Фитнес-студия \"BodyFit\""
+      ],
+      "slugs": [
+        "ofp"
+      ],
+      "labels": [
+        "ОФП"
+      ],
+      "description": "Помогаю женщинам и девушкам вернуть форму без жестких диет!!!🍑\nОнлайн-помощь с составлением плана тренировок. 🏋️\nНабор...\nt.me/elena_fit_orsha",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "vika29th",
+      "url": "https://www.instagram.com/vika29th/",
+      "first": "Mom",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Орша",
+      "places": [
+        "ул. Молокова, д. 2"
+      ],
+      "clubs": [
+        "Фитнес-студия \"BodyFit\""
+      ],
+      "slugs": [
+        "ofp"
+      ],
+      "labels": [
+        "ОФП"
+      ],
+      "description": "◾️ Mom 👧👦\n◾️ Sport 🏋️‍♀️\n◾️ Engineer-technologist 🍏🥒🥬\n◾️ Gold and diamond 💎\n◾️ to be continued ♾️",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "viktoriayogi",
+      "url": "https://www.instagram.com/viktoriayogi/",
+      "first": "Виктория",
+      "last": "",
+      "nameNote": "",
+      "city": "Гродно",
+      "places": [
+        "пр-т Янки Купалы, д. 53"
+      ],
+      "clubs": [
+        "Фитнес-клуб \"Фитнес Лайт\""
+      ],
+      "slugs": [
+        "ofp",
+        "yoga"
+      ],
+      "labels": [
+        "ОФП",
+        "Йога"
+      ],
+      "description": "практика 100\nвокруг\nЙога\nТренировки\nАйгир\nСтойки на руках\nMeta\nИнформация\nБлог\nВакансии\nПомощь",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "alekseisinitskii3",
+      "url": "https://www.instagram.com/alekseisinitskii3/",
+      "first": "Алексей",
+      "last": "Синицкий",
+      "nameNote": "",
+      "city": "Могилёв",
+      "places": [
+        "ул. Мовчанского, д. 53"
+      ],
+      "clubs": [
+        "Тренажерный зал \"Айсберг\""
+      ],
+      "slugs": [
+        "aerobika",
+        "ofp",
+        "trenazherka"
+      ],
+      "labels": [
+        "Спортивная аэробика",
+        "ОФП",
+        "Тренажёрный зал"
+      ],
+      "description": "Могилев",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "ruslanych40",
+      "url": "https://www.instagram.com/ruslanych40/",
+      "first": "Руслан",
+      "last": "Кравчук",
+      "nameNote": "",
+      "city": "Витебск",
+      "places": [
+        "ул. Чапаева, д. 29 (здание СШ №26)"
+      ],
+      "clubs": [
+        "Тренажерный зал \"МАНДАРИН\""
+      ],
+      "slugs": [
+        "trenazherka",
+        "pauerlifting"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Пауэрлифтинг"
+      ],
+      "description": "Помогу достичь совершенства,а также в подготовке к соревнованиям\nМастер спорта по пауэрлифтингу, тренер с многолетним...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "miss_janem",
+      "url": "https://www.instagram.com/miss_janem/",
+      "first": "Личный",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Могилёв",
+      "places": [
+        "ул. Первомайская, д. 2"
+      ],
+      "clubs": [
+        "Фитнес-студия \"JT-Fit\""
+      ],
+      "slugs": [
+        "aerobika",
+        "ofp",
+        "dzhamping",
+        "pilates",
+        "massazh",
+        "osanka"
+      ],
+      "labels": [
+        "Спортивная аэробика",
+        "ОФП",
+        "Джампинг",
+        "Пилатес",
+        "Массаж",
+        "Осанка"
+      ],
+      "description": "Личный блог\n◽️Руководитель студии фитнеса @jt_fit\n◽️Тренер по естественному омоложению\n•МФР•Массаж•Самомассаж•\nПомогаю освоить...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "marin_modern",
+      "url": "https://www.instagram.com/marin_modern/",
+      "first": "Молодечно",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Молодечно",
+      "places": [
+        "ул. Волынца, д. 12Б"
+      ],
+      "clubs": [
+        "Академия ММА Molodechno"
+      ],
+      "slugs": [
+        "trenazherka",
+        "kikboksing",
+        "mma",
+        "stretching"
+      ],
+      "labels": [
+        "Тренажёрный зал",
+        "Кикбоксинг",
+        "MMA",
+        "Растяжка"
+      ],
+      "description": "Личный блог\nГнёмся, но не ломаемся!😼",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "ekaterina_zozh",
+      "url": "https://www.instagram.com/ekaterina_zozh/",
+      "first": "Екатерина",
+      "last": "",
+      "nameNote": "",
+      "city": "Добруш",
+      "places": [
+        "ул. Комарова, д. 5"
+      ],
+      "clubs": [
+        "Студия танца, фитнеса и растяжки \"Liberty\""
+      ],
+      "slugs": [
+        "sovremennye",
+        "pilates",
+        "silovoj-trening",
+        "stretching",
+        "yoga"
+      ],
+      "labels": [
+        "Современные танцы",
+        "Пилатес",
+        "Силовой тренинг",
+        "Растяжка",
+        "Йога"
+      ],
+      "description": "🌿 Сильное тело. Спокойный ум.\n⠀\n⚡️ Йога для женщин всех возрастов\n⠀\n✨ Подписывайся и начни путь к сильному и здоровому...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "popelyukh.trainer",
+      "url": "https://www.instagram.com/popelyukh.trainer/",
+      "first": "Сергей",
+      "last": "Попелюх",
+      "nameNote": "",
+      "city": "Добруш",
+      "places": [
+        "ул. Комарова, д. 5"
+      ],
+      "clubs": [
+        "Студия танца, фитнеса и растяжки \"Liberty\""
+      ],
+      "slugs": [
+        "sovremennye",
+        "pilates",
+        "silovoj-trening",
+        "stretching",
+        "yoga",
+        "boks",
+        "ofp"
+      ],
+      "labels": [
+        "Современные танцы",
+        "Пилатес",
+        "Силовой тренинг",
+        "Растяжка",
+        "Йога",
+        "Бокс",
+        "ОФП"
+      ],
+      "description": "Тренер по боксу 🥊\nМастер спорта\nНаправления: Бокс, фитбокс, силовой тренинг, функциональный тренинг.\nПодробности в...\n246000",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "a.t.method",
+      "url": "https://www.instagram.com/a.t.method/",
+      "first": "Александра",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Добруш",
+      "places": [
+        "ул. Комарова, д. 5"
+      ],
+      "clubs": [
+        "Студия танца, фитнеса и растяжки \"Liberty\""
+      ],
+      "slugs": [
+        "sovremennye",
+        "pilates",
+        "silovoj-trening",
+        "stretching",
+        "yoga"
+      ],
+      "labels": [
+        "Современные танцы",
+        "Пилатес",
+        "Силовой тренинг",
+        "Растяжка",
+        "Йога"
+      ],
+      "description": "Александра✨\nИндивидуальный подход к каждому клиенту❤️\nЗапишись на процедуру и получи скидку на первое посещение 🔥...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "lena_fitcoach",
+      "url": "https://www.instagram.com/lena_fitcoach/",
+      "first": "Персональный",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гомель",
+      "places": [
+        "ул. Советская, д. 41"
+      ],
+      "clubs": [
+        "Школа танцев \"DDClub\""
+      ],
+      "slugs": [
+        "balnye",
+        "trenazherka"
+      ],
+      "labels": [
+        "Бальные танцы",
+        "Тренажёрный зал"
+      ],
+      "description": "Персональный тренер\nЕлена Нестерова\n🔥Со мной стройнеют БЕЗ ДИЕТ И СТРАДАНИЙ\n‼️ТРЕНИРОВКИ которые приносят 💯 результаты\nЗапись на...\nig.me/m/lena_fitcoach и ещё 1",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "yanejka",
+      "url": "https://www.instagram.com/yanejka/",
+      "first": "Личный",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Гомель",
+      "places": [
+        "ул. Советская, д. 41"
+      ],
+      "clubs": [
+        "Школа танцев \"DDClub\""
+      ],
+      "slugs": [
+        "balnye",
+        "sovremennye",
+        "yoga"
+      ],
+      "labels": [
+        "Бальные танцы",
+        "Современные танцы",
+        "Йога"
+      ],
+      "description": "Личный блог\nЯ Женя, ум и тело – моё дело\n«Если сидеть на *опе ровно, то хотя бы в падмасане»\nпо дороге к йоге, танцор в душе,...\nt.me/podorogekyoge\nПодписан(-а) barmaleytattoo",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "gamova_katya_hair",
+      "url": "https://www.instagram.com/gamova_katya_hair/",
+      "first": "Услуги",
+      "last": "",
+      "nameNote": "parsed",
+      "city": "Слуцк",
+      "places": [
+        "ул. Ленина, д. 319"
+      ],
+      "clubs": [
+        "Студия йоги и телесных практик \"Yoga Space\""
+      ],
+      "slugs": [
+        "yoga"
+      ],
+      "labels": [
+        "Йога"
+      ],
+      "description": "Услуги по наращиванию волос\nТоплю за стиль и качество 🔝\n🏆Участница Московского Фестиваля Meta Hairy Fest 2025\n🙌🏻Капсульное/биоленточное наращивание...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    },
+    {
+      "handle": "sasha_shell_",
+      "url": "https://www.instagram.com/sasha_shell_/",
+      "first": "Александра",
+      "last": "",
+      "nameNote": "",
+      "city": "Гомель",
+      "places": [
+        "ул. Междугородняя, д. 7"
+      ],
+      "clubs": [
+        "Тренажерный зал \"KSK\""
+      ],
+      "slugs": [
+        "trenazherka"
+      ],
+      "labels": [
+        "Тренажёрный зал"
+      ],
+      "description": "👩‍🎓ТВОЙ ЛИЧНЫЙ ФИТНЕС-ГУРУ|ГОМЕЛЬ\n🔥 Формирую фигуру мечты\n🎓 10 лет в движении,тренерское образование\n🤤Хочешь булки,от...",
+      "extraCities": [],
+      "rows": 1,
+      "droppedCities": []
+    }
+  ],
+  "held": [
+    {
+      "handle": "allsports.by",
+      "reason": "skip"
+    },
+    {
+      "handle": "nataliay.parfenova",
+      "reason": "skip"
+    },
+    {
+      "handle": "zenko.alina",
+      "reason": "city-tie",
+      "cities": [
+        "Молодечно",
+        "Смаргонь"
+      ]
+    },
+    {
+      "handle": "fitnessacademy.by",
+      "reason": "skip"
+    },
+    {
+      "handle": "leva.iz.mogileva",
+      "reason": "skip"
+    },
+    {
+      "handle": "niti_karaoke",
+      "reason": "skip"
+    },
+    {
+      "handle": "vodavoz.by",
+      "reason": "skip"
+    }
+  ]
+}

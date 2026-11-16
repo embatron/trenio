@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/tati_pilates_fit/",
+  "handle": "tati_pilates_fit",
+  "slug": "tati_pilates_fit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Татьяна",
+  "lastName": "",
+  "fullName": "Татьяна",
+  "gender": "female",
+  "nameQuotes": [
+    "Татьяна"
+  ],
+  "headline": "Тренер по осанке и инструктор по пилатесу",
+  "sourceBio": "Health/beauty 🔸 улучшаю качество жизни через движение 🔸 научу ощущать своё тело 🔸 избавляю от болей в теле",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. Татьяна. ул. Пушкинская, д. 16/1.",
+  "threadsUrl": "",
+  "bio": "Я Татьяна. Занимаюсь осанкой. Город Брест.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Pilates"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "osanka",
+    "parentSlug": "reabilitaciya",
+    "label": "Осанка"
+  },
+  "city": "Брест",
+  "address": "Пушкинская улица, 16/1",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/tati_pilates_fit.jpg",
+  "photos": [
+    "/trainers/instagram/tati_pilates_fit.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/tati_pilates_fit/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

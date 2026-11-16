@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/dasha.shkrd/",
+  "handle": "dasha.shkrd",
+  "slug": "dasha.shkrd",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Даша",
+  "lastName": "",
+  "fullName": "Даша",
+  "gender": "female",
+  "nameQuotes": [
+    "Даша"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "•Фитнес без обмана, БАДов и изнуряющих диет 🙅🏼‍♀️ •Докажу, что спорт — это не каторга, а любовь к себе 🤍",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Борисов. Даша. ул. Трусова, д. 32.",
+  "threadsUrl": "",
+  "bio": "Я Даша, фитнес-тренер. Город Борисов.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Борисов",
+  "address": "улица Трусова, 32",
+  "cityCandidates": [
+    "Борисов"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/dasha.shkrd.jpg",
+  "photos": [
+    "/trainers/instagram/dasha.shkrd.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/dasha.shkrd/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

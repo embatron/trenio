@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/olga_siamionava/",
+  "handle": "olga_siamionava",
+  "slug": "olga_siamionava",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ольга",
+  "lastName": "Семёнова",
+  "fullName": "Ольга Семёнова",
+  "gender": "female",
+  "nameQuotes": [
+    "Ольга Семёнова"
+  ],
+  "headline": "Тренер по гимнастике и акробатике",
+  "sourceBio": "Артист цирка воздушная гимнастка высшей категории. Мастер спорта по прыжкам на батуте. Тренер преподаватель по гимнастике.",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Ольга Семёнова. ул. Горького, д. 62.",
+  "threadsUrl": "",
+  "bio": "Я Ольга Семёнова, тренер по гимнастике. Город Витебск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "gimnastika",
+      "parentSlug": "gimnastika",
+      "label": "Гимнастика",
+      "evidence": "Гимнастика"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "batut",
+      "label": "Батут",
+      "quote": "батуте"
+    }
+  ],
+  "primarySport": {
+    "slug": "gimnastika",
+    "parentSlug": "gimnastika",
+    "label": "Гимнастика"
+  },
+  "city": "Витебск",
+  "address": "улица Максима Горького, 62 к2",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/olga_siamionava.jpg",
+  "photos": [
+    "/trainers/instagram/olga_siamionava.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/olga_siamionava/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

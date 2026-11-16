@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/telo.gomel/",
+  "handle": "telo.gomel",
+  "slug": "telo.gomel",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "София",
+  "lastName": "",
+  "fullName": "София",
+  "gender": "female",
+  "nameQuotes": [
+    "София"
+  ],
+  "headline": "Массажист и тренер по реабилитации и восстановлению",
+  "sourceBio": "Врач Профессиональный подход к каждому телу Со мной комфортно и полезно 🫶🏻",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гомель. София. ул. Федосеенко, д. 4.",
+  "threadsUrl": "",
+  "bio": "Я София. Массаж и восстановление. Город Гомель.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "massazh",
+      "parentSlug": "reabilitaciya",
+      "label": "Массаж",
+      "evidence": "Массаж"
+    },
+    {
+      "slug": "reabilitaciya",
+      "parentSlug": "reabilitaciya",
+      "label": "Реабилитация",
+      "evidence": "восстановление"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "massazh",
+    "parentSlug": "reabilitaciya",
+    "label": "Массаж"
+  },
+  "city": "Гомель",
+  "address": "улица Федосеенко, 4",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/telo.gomel.jpg",
+  "photos": [
+    "/trainers/instagram/telo.gomel.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/telo.gomel/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

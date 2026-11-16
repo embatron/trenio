@@ -1,0 +1,81 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/dombrovskaia_olka/",
+  "handle": "dombrovskaia_olka",
+  "slug": "dombrovskaia_olka",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ольга",
+  "lastName": "Домбровская",
+  "fullName": "Ольга Домбровская",
+  "gender": "female",
+  "nameQuotes": [
+    "Ольга Домбровская"
+  ],
+  "headline": "Инструктор тренажёрного зала",
+  "sourceBio": "🔗Инструктор в @grafit_brest 🔗Мини-группы в ТЗ 🔗Групповые занятия",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. Ольга Домбровская. ул. Лейтенанта Рябцева, д. 33А. Тренажёрный зал.",
+  "threadsUrl": "",
+  "bio": "Я Ольга Домбровская, инструктор. Тренажёрный зал. Город Брест.",
+  "about": [
+    "Я веду групповые занятия."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Брест",
+  "address": "улица Лейтенанта Рябцева, 33А",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/dombrovskaia_olka.jpg",
+  "photos": [
+    "/trainers/instagram/dombrovskaia_olka.jpg",
+    "/trainers/instagram/dombrovskaia_olka-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/dombrovskaia_olka/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/valtervikki/",
+  "handle": "valtervikki",
+  "slug": "valtervikki",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Вика",
+  "lastName": "Вальтер",
+  "fullName": "Вика Вальтер",
+  "gender": "female",
+  "nameQuotes": [
+    "Вика Вальтер"
+  ],
+  "headline": "Фитнес-тренер и тренер по питанию",
+  "sourceBio": "Инструктор фитнес-программ, нутрициолог",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Вика Вальтер. ул. Смоленская, д. 3а, корп. 1.",
+  "threadsUrl": "",
+  "bio": "Я Вика Вальтер, инструктор фитнес-программ и нутрициолог. Город Витебск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "нутрициолог"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Витебск",
+  "address": "Смоленская улица, 3А",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/valtervikki.jpg",
+  "photos": [
+    "/trainers/instagram/valtervikki.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/valtervikki/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

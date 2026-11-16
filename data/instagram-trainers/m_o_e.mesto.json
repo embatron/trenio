@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/m_o_e.mesto/",
+  "handle": "m_o_e.mesto",
+  "slug": "m_o_e.mesto",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Надежда",
+  "lastName": "",
+  "fullName": "Надежда",
+  "gender": "female",
+  "nameQuotes": [
+    "Надежда"
+  ],
+  "headline": "Инструктор по растяжке",
+  "sourceBio": "🔲⠀ Тренер BODY BALLET в студии @potok_grodno твоё тело в моих руках 🤍 ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ ⠀ Grodno",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Надежда. ТРЕНИРОВКИ. пр-т Янки Купалы, д. 4.",
+  "threadsUrl": "",
+  "bio": "Я Надежда. Растяжка. Город Гродно.",
+  "about": [
+    "Я веду эти тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "stretching"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Гродно",
+  "address": "проспект Янки Купалы, 4",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/m_o_e.mesto.jpg",
+  "photos": [
+    "/trainers/instagram/m_o_e.mesto.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/m_o_e.mesto/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

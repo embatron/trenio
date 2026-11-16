@@ -1,0 +1,70 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/sergei_guliakevich/",
+  "handle": "sergei_guliakevich",
+  "slug": "sergei_guliakevich",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Siarhei",
+  "lastName": "Guliakevich",
+  "fullName": "Siarhei Guliakevich",
+  "gender": "",
+  "nameQuotes": [
+    "Siarhei Guliakevich"
+  ],
+  "headline": "",
+  "sourceBio": "Чемпион Европы EBUх2 WBA(interconti). WBC World chall.",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Телефон:",
+  "threadsUrl": "",
+  "bio": "Я чемпион Европы EBU. Есть титулы WBA и WBC.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [
+    {
+      "slug": "boks",
+      "label": "Бокс",
+      "quote": "ar.boxing.by"
+    }
+  ],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/sergei_guliakevich.jpg",
+  "photos": [
+    "/trainers/instagram/sergei_guliakevich.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/sergei_guliakevich/",
+    "phone": "+375 29 140-05-73",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "email",
+    "telegram",
+    "gender",
+    "pinnedPosts"
+  ]
+}

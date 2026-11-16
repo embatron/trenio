@@ -1,0 +1,86 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yuliya_kandrychina/",
+  "handle": "yuliya_kandrychina",
+  "slug": "yuliya_kandrychina",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлия",
+  "lastName": "Кандрухина",
+  "fullName": "Юлия Кандрухина",
+  "gender": "female",
+  "nameQuotes": [
+    "Юлия Кандрухина"
+  ],
+  "headline": "Инструктор тренажёрного зала и фитнес-тренер",
+  "sourceBio": "Personal Coach Высшее физкультурное образование Со мной ты полюбишь спорт и тренажерный зал Помогаю девушкам обрести тело своей мечты Тренинг в @reforma_baranovichi",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Барановичи. Юлия Кандрухина. ул. Домейко, д. 15.",
+  "threadsUrl": "",
+  "bio": "Я Юлия Кандрухина, персональный тренер. Тренажерный зал. Город Барановичи.",
+  "about": [
+    "Я веду тренировки в тренажерном зале."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Барановичи",
+  "address": "улица Домейко, 15",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yuliya_kandrychina.jpg",
+  "photos": [
+    "/trainers/instagram/yuliya_kandrychina.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yuliya_kandrychina/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

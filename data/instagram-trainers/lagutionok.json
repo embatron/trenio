@@ -1,0 +1,81 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/lagutionok/",
+  "handle": "lagutionok",
+  "slug": "lagutionok",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Руслан",
+  "lastName": "Лагутенко",
+  "fullName": "Руслан Лагутенко",
+  "gender": "male",
+  "nameQuotes": [
+    "Руслан Лагутенко"
+  ],
+  "headline": "Тренер по рукопашному бою и самообороне",
+  "sourceBio": "Руслан Лагутёнок",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Руслан Лагутенко",
+  "threadsUrl": "",
+  "bio": "<p>Меня зовут Руслан Лагутенко. Преподаю рукопашный бой и самооборону в Могилёве, этим занимаюсь больше двадцати лет. У меня высшее образование. Я физиотерапевт и майор, работал международным инструктором в Африке и в Сирии.</p><p>Веду единоборства для детей со сложным развитием, в том числе нейроборьбу, и для тех, кто столкнулся с буллингом. Занимаюсь и со взрослыми. С родителями остаюсь на связи и после занятия присылаю отчёт о тренировке.</p>",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/lagutionok/reel/DfoiW7FIvok/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/lagutionok/reel/DfmFFeiobzJ/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/lagutionok/reel/DfPCb06IIU0/",
+      "caption": "",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    { "slug": "rukopashnyj", "parentSlug": "edinoborstva", "label": "Рукопашный бой" },
+    { "slug": "samooborona", "parentSlug": "edinoborstva", "label": "Самооборона" }
+  ],
+  "practicedSports": [],
+  "primarySport": { "slug": "rukopashnyj", "parentSlug": "edinoborstva", "label": "Рукопашный бой" },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": ["adult", "kid"],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/lagutionok.jpg",
+  "photos": [
+    "/trainers/instagram/lagutionok.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/lagutionok/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

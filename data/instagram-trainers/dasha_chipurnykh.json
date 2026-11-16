@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/dasha_chipurnykh/",
+  "handle": "dasha_chipurnykh",
+  "slug": "dasha_chipurnykh",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Даша",
+  "lastName": "Чипурных",
+  "fullName": "Даша Чипурных",
+  "gender": "female",
+  "nameQuotes": [
+    "Даша Чипурных"
+  ],
+  "headline": "Тренер по танцам и хореографии и хип-хопу",
+  "sourceBio": "▫️Учу танцевать с нуля в @zal.13.brest ▫️Индивидуальные и групповые тренировки 🤍 house, hip-hop, electro, krump 👻 kasper ▪️Беларусь, Брест 20 y.o.",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. Даша Чипурных. ул. Куйбышева, д. 13.",
+  "threadsUrl": "",
+  "bio": "Я Даша Чипурных. Танцы и hip-hop. Город Брест.",
+  "about": [
+    "Я веду индивидуальные и групповые тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    },
+    {
+      "slug": "hip-hop",
+      "parentSlug": "tancy",
+      "label": "Хип-хоп",
+      "evidence": "hip-hop"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Брест",
+  "address": "улица Куйбышева, 13",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/dasha_chipurnykh.jpg",
+  "photos": [
+    "/trainers/instagram/dasha_chipurnykh.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/dasha_chipurnykh/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

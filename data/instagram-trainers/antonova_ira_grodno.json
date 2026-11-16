@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/antonova_ira_grodno/",
+  "handle": "antonova_ira_grodno",
+  "slug": "antonova_ira_grodno",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ирина",
+  "lastName": "Антонова",
+  "fullName": "Ирина Антонова",
+  "gender": "female",
+  "nameQuotes": [
+    "Ирина Антонова"
+  ],
+  "headline": "Кроссфит-тренер и тренер по бегу",
+  "sourceBio": "•гуру логистики •амбассадор силы воли •тренируюсь и тренирую •живу жизнь •founder @tek_ansi •founder @motive_grodno t.me/Antonova_Iryna and 1 more",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Ирина Антонова. ул. Мостовая, д. 39.",
+  "threadsUrl": "",
+  "bio": "Я Ирина Антонова. Кроссфит и бег. Город Гродно.",
+  "about": [
+    "Я тренирую и тренируюсь."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "krossfit",
+      "parentSlug": "fitnes",
+      "label": "Кроссфит",
+      "evidence": "Кроссфит"
+    },
+    {
+      "slug": "beg",
+      "parentSlug": "beg",
+      "label": "Бег",
+      "evidence": "Бег"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "krossfit",
+    "parentSlug": "fitnes",
+    "label": "Кроссфит"
+  },
+  "city": "Гродно",
+  "address": "Мостовая улица, 39",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/antonova_ira_grodno.jpg",
+  "photos": [
+    "/trainers/instagram/antonova_ira_grodno.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/antonova_ira_grodno/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/Antonova_Iryna",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

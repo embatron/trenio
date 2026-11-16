@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/nika.fit.online/",
+  "handle": "nika.fit.online",
+  "slug": "nika.fit.online",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Вероника",
+  "lastName": "Деменкова",
+  "fullName": "Вероника Деменкова",
+  "gender": "female",
+  "nameQuotes": [
+    "Вероника Деменкова"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Создаю спортивные тела с женственными формами🍑 Помогла 200+ девушкам🙌🏻 Результат без диет и жестких тренировок💪🏻...",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. Вероника Деменкова. ул. Лейтенанта Рябцева, д. 33А.",
+  "threadsUrl": "",
+  "bio": "Я Вероника Деменкова, фитнес-тренер. Город Брест.",
+  "about": [
+    "Я работаю без жестких тренировок."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Брест",
+  "address": "улица Лейтенанта Рябцева, 33А",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/nika.fit.online.jpg",
+  "photos": [
+    "/trainers/instagram/nika.fit.online.jpg",
+    "/trainers/instagram/nika.fit.online-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/nika.fit.online/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

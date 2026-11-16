@@ -1,0 +1,94 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/katrinakuchinskaya/",
+  "handle": "katrinakuchinskaya",
+  "slug": "katrinakuchinskaya",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Екатерина",
+  "lastName": "Кучинская",
+  "fullName": "Екатерина Кучинская",
+  "gender": "female",
+  "nameQuotes": [
+    "Екатерина Кучинская"
+  ],
+  "headline": "Тренер по пауэрлифтингу",
+  "sourceBio": "Мастер Спорта по пауэрлифтингу Со мной ты станешь сильнее, сила поможет в жизни",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Екатерина Кучинская",
+  "threadsUrl": "",
+  "bio": "Я Екатерина Кучинская, тренер по пауэрлифтингу в Гродно. Со мной становятся сильнее, и эта сила помогает в жизни.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/katrinakuchinskaya/p/DfjdIXYiA90/",
+      "caption": "за то, что подарили возможность прохождения препятствий в г.Гродно. Без специальной подготовки, исключительно для удовольствия мы спортивно и активно провели 7 ноября в прекрасном месте вместе",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "pauerlifting",
+      "parentSlug": "fitnes",
+      "label": "Пауэрлифтинг",
+      "evidence": "Пауэрлифтинг"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "krossfit",
+      "label": "Кроссфит",
+      "quote": "crossfit"
+    }
+  ],
+  "primarySport": {
+    "slug": "pauerlifting",
+    "parentSlug": "fitnes",
+    "label": "Пауэрлифтинг"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/katrinakuchinskaya.jpg",
+  "photos": [
+    "/trainers/instagram/katrinakuchinskaya.jpg",
+    "/trainers/instagram/katrinakuchinskaya-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/katrinakuchinskaya/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

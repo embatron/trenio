@@ -1,0 +1,80 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ilya_shikolay/",
+  "handle": "ilya_shikolay",
+  "slug": "ilya_shikolay",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Илья",
+  "lastName": "Шиколай",
+  "fullName": "Илья Шиколай",
+  "gender": "male",
+  "nameQuotes": [
+    "Илья Шиколай"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Fitness Trainer Стань лучшей версией себя - Персональный тренер - Высшее образование - Дополнительное курсы по тренерству - Сертифицированный массажист",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кобрин Илья Шиколай",
+  "threadsUrl": "",
+  "bio": "Я Илья Шиколай, персональный тренер. Город Кобрин. Сертифицированный массажист.",
+  "about": [
+    "Работаю как персональный тренер."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Кобрин",
+  "address": "",
+  "cityCandidates": [
+    "Кобрин"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ilya_shikolay.jpg",
+  "photos": [
+    "/trainers/instagram/ilya_shikolay.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ilya_shikolay/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

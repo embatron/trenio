@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/maksim_semenchukov/",
+  "handle": "maksim_semenchukov",
+  "slug": "maksim_semenchukov",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Максим",
+  "lastName": "Семенчуков",
+  "fullName": "Максим Семенчуков",
+  "gender": "male",
+  "nameQuotes": [
+    "Максим Семенчуков"
+  ],
+  "headline": "Инструктор тренажёрного зала",
+  "sourceBio": "Стройное тело доступно каждому! - ПП-рецепты 🌮 - Тренировки: дом / зал🏃 - Упражнения на мобильность 🧘‍♂️",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гомель. Максим Семенчуков. пр-т Ленина, д. 3. ПлазаДжим. Тренажёрный зал.",
+  "threadsUrl": "",
+  "bio": "Я Максим Семенчуков, тренер. Город Гомель. Веду тренировки в тренажёрном зале и дома, и упражнения на мобильность.",
+  "about": [
+    "Я веду тренировки дома и в тренажёрном зале, и упражнения на мобильность."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Гомель",
+  "address": "проспект Ленина, 3",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/maksim_semenchukov.jpg",
+  "photos": [
+    "/trainers/instagram/maksim_semenchukov.jpg",
+    "/trainers/instagram/maksim_semenchukov-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/maksim_semenchukov/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

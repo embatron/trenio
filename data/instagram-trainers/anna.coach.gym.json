@@ -1,0 +1,120 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/anna.coach.gym/",
+  "handle": "anna.coach.gym",
+  "slug": "anna.coach.gym",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анна",
+  "lastName": "",
+  "fullName": "Анна",
+  "gender": "female",
+  "nameQuotes": [
+    "Анна"
+  ],
+  "headline": "Тренер по тренажёрному залу",
+  "sourceBio": "Personal Coach 📍Сертифицированный тренер 🤰 Послеродовое восстановление 🎓 Получаю высшее физкультурное 🥋 Спортивный судья по taekwondo",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Анна",
+  "threadsUrl": "",
+  "bio": "Я Анна, тренер в Q-GYM в Гродно. Веду персональные занятия, мини-группы и послеродовое восстановление.",
+  "about": [
+    "Персональные занятия и мини-группы. Зал входит в стоимость абонемента."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/anna.coach.gym/p/DfkI6FdMxLi/",
+      "caption": "Актуальный прайс Зал и тренер включены в оплату. Клиентам с инвалидностью вход в зал БЕСПЛАТНО И тренирую я БЕСПЛАТНО Всем здоровья, тренируйтесь с умом",
+      "imageText": [
+        "Q-GYM АННА ПЕРСОНАЛЬНЫЕ ЗАНЯТИЯ 1 ТРЕНИРОВКА 50 BYN 8 ТРЕНИРОВОК 320 BYN 12 ТРЕНИРОВОК 390 BYN МИНИ-ГРУППЫ 2-4 ЧЕЛОВЕКА 8 ЗАНЯТИЙ 220 BYN 12 ЗАНЯТИЙ 330 BYN ЗАЛ ВХОДИТ В СТОИМОСТЬ АБОНЕМЕНТА"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/anna.coach.gym/p/DcskU-5jNN0/",
+      "caption": "Если ты хочешь получить результат-бери и делай! Ведь всё зависит от нас. Если вы очень захотите. Нельзя идти вперёд с постоянно повернутой назад головой. А многие видят цель, хотят достичь, но идут в другую сторону яркий пример:-хочу похудеть, но кушать буду всё подряд...) Это провал. И не надо сравнивать себя с кем то, вы такой один, индивидуальный.",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/anna.coach.gym/p/DfENgZgM9rQ/",
+      "caption": "Зал и тренер включены в оплату. Клиентам с инвалидностью вход в зал БЕСПЛАТНО и тренирую я БЕСПЛАТНО Всем здоровья, тренируйтесь с умом, Ваша Аня",
+      "imageText": [
+        "BIG RON GYM ПРАЙС-ЛИСТ ЗАНЯТИЯ С ТРЕНЕРОМ Индивидуальные Сплит МИНИ-ГРУППЕ"
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    },
+    {
+      "slug": "reabilitaciya",
+      "parentSlug": "reabilitaciya",
+      "label": "Реабилитация",
+      "evidence": "восстановление"
+    },
+    {
+      "slug": "massazh",
+      "parentSlug": "reabilitaciya",
+      "label": "Массаж",
+      "evidence": "Массаж"
+    },
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Гродно",
+  "address": "улица Максима Горького, 49",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": 50,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/anna.coach.gym.jpg",
+  "photos": [
+    "/trainers/instagram/anna.coach.gym.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/anna.coach.gym/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kowalski.gym.coach/",
+  "handle": "kowalski.gym.coach",
+  "slug": "kowalski.gym.coach",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Игорь",
+  "lastName": "Ковальски",
+  "fullName": "Игорь Ковальски",
+  "gender": "male",
+  "nameQuotes": [
+    "Игорь Ковальски"
+  ],
+  "headline": "Тренер по бодибилдингу",
+  "sourceBio": "Призер РБ по бодибилдингу",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Игорь Ковальски",
+  "threadsUrl": "",
+  "bio": "Я Игорь Ковальски, тренер по бодибилдингу в Гродно. Призер РБ по бодибилдингу.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/kowalski.gym.coach/reel/DfndYB5R98d/",
+      "caption": "В этот ролик вложено много времени и сил. Съемка, подбор кадров, работа со звуком — когда ловишь вдохновение, хочется довести идею до идеала. Оцените результат: зашло или нет? Накидайте огней в комменты",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/kowalski.gym.coach/reel/DfV0hpRoboV/",
+      "caption": "No pain, no gain",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/kowalski.gym.coach/reel/DfQYMJLOzRg/",
+      "caption": "Строить себя с нуля трудно. Но ломаться — еще дороже. Продолжай пахать в тишине",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "bodibilding",
+      "parentSlug": "fitnes",
+      "label": "Бодибилдинг",
+      "evidence": "Бодибилдинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bodibilding",
+    "parentSlug": "fitnes",
+    "label": "Бодибилдинг"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kowalski.gym.coach.jpg",
+  "photos": [
+    "/trainers/instagram/kowalski.gym.coach.jpg",
+    "/trainers/instagram/kowalski.gym.coach-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 2,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 1
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kowalski.gym.coach/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

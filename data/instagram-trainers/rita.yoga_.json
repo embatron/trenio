@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/rita.yoga_/",
+  "handle": "rita.yoga_",
+  "slug": "rita.yoga_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Рита",
+  "lastName": "",
+  "fullName": "Рита",
+  "gender": "female",
+  "nameQuotes": [
+    "Рита"
+  ],
+  "headline": "Инструктор по йоге",
+  "sourceBio": "Помогаю стать сильнее, гибче и ближе к себе🌸 • групповые занятия в @potok_grodno и @motive_grodno • индивидуальные практики Запись в Директ 📩",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Рита. пр-т Янки Купалы, д. 4.",
+  "threadsUrl": "",
+  "bio": "Я Рита. Йога. Город Гродно.",
+  "about": [
+    "Я веду групповые занятия."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Гродно",
+  "address": "проспект Янки Купалы, 4",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/rita.yoga_.jpg",
+  "photos": [
+    "/trainers/instagram/rita.yoga_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/rita.yoga_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

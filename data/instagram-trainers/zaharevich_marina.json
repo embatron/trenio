@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/zaharevich_marina/",
+  "handle": "zaharevich_marina",
+  "slug": "zaharevich_marina",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Марина",
+  "lastName": "Захаревич",
+  "fullName": "Марина Захаревич",
+  "gender": "female",
+  "nameQuotes": [
+    "Захаревич Марина",
+    "МАРИНА ЗАХАРЕВИЧ"
+  ],
+  "headline": "Тренер по тренажёрному залу",
+  "sourceBio": "Инструктор тренажерного зала @gymstarsall 🔥-ПОМОГАЮ ДЕВУШКАМ МЕНЯТЬ СЕБЯ 🔥-ПОМОГУ ПОЛУЧИТЬ ТЕЛО МЕЧТЫ 🔥-ГОТОВЫ МЕНЯТЬСЯ? ТОГДА ЗАПИСЫВАЙТЕСЬ!",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Захаревич Марина",
+  "threadsUrl": "",
+  "bio": "Я Марина Захаревич, фитнес-тренер и инструктор тренажерного зала в Гродно. Помогаю девушкам получить тело мечты.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/zaharevich_marina.jpg",
+  "photos": [
+    "/trainers/instagram/zaharevich_marina.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/zaharevich_marina/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

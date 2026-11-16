@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/aleksa_khil/",
+  "handle": "aleksa_khil",
+  "slug": "aleksa_khil",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александра",
+  "lastName": "Хиль",
+  "fullName": "Александра Хиль",
+  "gender": "female",
+  "nameQuotes": [
+    "Александра Хиль"
+  ],
+  "headline": "Инструктор по пилатесу",
+  "sourceBio": "Нашла Вселенную внутри себя 🌍 Pilates в @motive_grodno и @oniks_studio Journalist (education) Travels ✈️ My Life 🦋",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Александра Хиль. ул. Мостовая, д. 39.",
+  "threadsUrl": "",
+  "bio": "Я Александра Хиль. Пилатес. Город Гродно.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Гродно",
+  "address": "Мостовая улица, 39",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/aleksa_khil.jpg",
+  "photos": [
+    "/trainers/instagram/aleksa_khil.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/aleksa_khil/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

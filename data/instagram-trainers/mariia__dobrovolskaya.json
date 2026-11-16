@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/mariia__dobrovolskaya/",
+  "handle": "mariia__dobrovolskaya",
+  "slug": "mariia__dobrovolskaya",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Мария",
+  "lastName": "",
+  "fullName": "Мария",
+  "gender": "female",
+  "nameQuotes": [
+    "МАРИЯ"
+  ],
+  "headline": "Тренер по питанию",
+  "sourceBio": "▫️Помогу скорректировать фигуру и питание 🥦 ▫️Худеем без голодовок и диет 🥗 ▫️Первая консультация БЕСПЛАТНО! ◽Независимый партнёр Herbalife ❤️",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв. Мария. ул. Первомайская, д. 2.",
+  "threadsUrl": "",
+  "bio": "Я Мария. Питание. Город Могилёв.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "nutriciolog",
+    "parentSlug": "fitnes",
+    "label": "Питание"
+  },
+  "city": "Могилёв",
+  "address": "Первомайская улица, 2",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/mariia__dobrovolskaya.jpg",
+  "photos": [
+    "/trainers/instagram/mariia__dobrovolskaya.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/mariia__dobrovolskaya/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

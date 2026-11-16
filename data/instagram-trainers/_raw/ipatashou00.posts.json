@@ -1,0 +1,101 @@
+{
+  posts: [
+    {
+      href: 'https://www.instagram.com/ipatashou00/p/DOTQFd-DF4p/',
+      pinned: true,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/p/DWA2wA7DLQ2/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/p/DVK_XqlDIIV/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/p/DOlBpynDPZk/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/p/DMwyotBsTpa/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/reel/DMDQYoqMbZz/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/p/DKFG77DsphZ/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/p/DHz6jmZNFJ2/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/p/DEeSslitJeV/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/p/DEP4oCnsUAb/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/p/DD4wlEuM9_8/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/reel/DDuNu_ssMHR/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/p/DDnBCiPMdmq/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/p/DDO66mqMpyG/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/p/C_k6zPrMYL2/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/p/C-TE4gQs8yf/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/ipatashou00/reel/C95kBQZM2oM/',
+      pinned: false,
+      kind: 'reel'
+    }
+  ],
+  pinned: [
+    {
+      href: 'https://www.instagram.com/ipatashou00/p/DOTQFd-DF4p/',
+      pinned: true,
+      kind: 'photo'
+    }
+  ],
+  avatar: {
+    w: 1080,
+    h: 1080,
+    src: 'https://scontent-fra3-2.cdninstagram.com/v/t51.82787-19/548654032_18033620570695831_7767195837287502404_n.jpg?_nc_cat=107&_nc_map=urlgen_bucketless&ig_cache_key=GNDLsyCXaCF8exFAAEQSai52n8prbmNDAQAB0j-ccb7-5&ccb=7-5&_nc_sid=669407&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=BHdZ0hoFpFAQ7kNvwF-NoDM&_nc_oc=AdqPmee_GEHWVbHjfAy-6N1j9LuxddMmO83nGtPQQb6vmR5JjnMPs28hX7Hk0cn0XkU&_nc_zt=24&_nc_ht=scontent-fra3-2.cdninstagram.com&_nc_gid=6uzi75wa3zUJjdNlkFIvDw&_nc_ss=7b6a8&oh=00_AQQ6Mmj3Yj85ZP-oMTkuzJlk9C0BigU-vFH8Ck4vt8qXmw&oe=6AFB5824'
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ilyaterekhov96/",
+  "handle": "ilyaterekhov96",
+  "slug": "ilyaterekhov96",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Илья",
+  "lastName": "Терехов",
+  "fullName": "Илья Терехов",
+  "gender": "male",
+  "nameQuotes": [
+    "Илья Терехов"
+  ],
+  "headline": "Тренер по борьбе и фитнес-тренер",
+  "sourceBio": "🤼‍♂️ МС по борьбе 🥋Чемпион РБ по грепплингу 💪Фитнес•Борьба 🫡8+ лет в тренерстве 📩Персонально / онлайн 🌍 t.me/Tereh96",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Бобруйск. Илья Терехов. ул. Сикорского, д. 11.",
+  "threadsUrl": "",
+  "bio": "Я Илья Терехов, тренер по борьбе. Город Бобруйск. Веду персональные тренировки и занимаюсь с детьми.",
+  "about": [
+    "Я веду персональные тренировки по борьбе."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "borba",
+      "parentSlug": "edinoborstva",
+      "label": "Борьба",
+      "evidence": "Борьба"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "grepling",
+      "label": "Грэпплинг",
+      "quote": "грепплингу"
+    }
+  ],
+  "primarySport": {
+    "slug": "borba",
+    "parentSlug": "edinoborstva",
+    "label": "Борьба"
+  },
+  "city": "Бобруйск",
+  "address": "улица Сикорского, 11",
+  "cityCandidates": [
+    "Бобруйск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ilyaterekhov96.jpg",
+  "photos": [
+    "/trainers/instagram/ilyaterekhov96.jpg",
+    "/trainers/instagram/ilyaterekhov96-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ilyaterekhov96/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/Tereh96",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

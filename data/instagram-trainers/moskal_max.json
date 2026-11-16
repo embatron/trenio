@@ -1,0 +1,105 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/moskal_max/",
+  "handle": "moskal_max",
+  "slug": "moskal_max",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Максим",
+  "lastName": "Москалев",
+  "fullName": "Максим Москалев",
+  "gender": "male",
+  "nameQuotes": [
+    "Максим Москалев"
+  ],
+  "headline": "Инструктор тренажёрного зала и тренер по боксу, тайскому боксу, питанию",
+  "sourceBio": "⚜️персональные тренировки ( тренажерный зал,🦾бокс 🥊, муай-тай🥊) ⚜️разбор питания ⚜️индивидуальный подход",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гомель. Максим Москалев. пр-т Ленина, д. 3. ПлазаДжим. Тренажёрный зал, бокс, муай-тай, питание.",
+  "threadsUrl": "",
+  "bio": "Я Максим Москалев, тренер. Город Гомель. Веду персональные тренировки в тренажерном зале, бокс и муай-тай.",
+  "about": [
+    "Я веду персональные тренировки в тренажерном зале."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "boxing"
+    },
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "муай тай"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "fitnes",
+      "label": "Фитнес",
+      "quote": "Фитнес образ"
+    }
+  ],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Гомель",
+  "address": "проспект Ленина, 3",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/moskal_max.jpg",
+  "photos": [
+    "/trainers/instagram/moskal_max.jpg",
+    "/trainers/instagram/moskal_max-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/moskal_max/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

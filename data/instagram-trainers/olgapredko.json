@@ -1,0 +1,70 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/olgapredko/",
+  "handle": "olgapredko",
+  "slug": "olgapredko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ольга",
+  "lastName": "Предко",
+  "fullName": "Ольга Предко",
+  "gender": "female",
+  "nameQuotes": [
+    "Ольга Предко"
+  ],
+  "headline": "",
+  "sourceBio": "Тренер-групповик с авторским стилем. Учу тренироваться красиво и эффективно.",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Лида. Ольга Предко. пр-т Победы, д. 23.",
+  "threadsUrl": "",
+  "bio": "Я Ольга Предко, тренер-групповик. Город Лида.",
+  "about": [
+    "Я провожу эти тренировки."
+  ],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Лида",
+  "address": "проспект Победы, 23",
+  "cityCandidates": [
+    "Лида"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/olgapredko.jpg",
+  "photos": [
+    "/trainers/instagram/olgapredko.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/olgapredko/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

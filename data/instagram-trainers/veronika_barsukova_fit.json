@@ -1,0 +1,111 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/veronika_barsukova_fit/",
+  "handle": "veronika_barsukova_fit",
+  "slug": "veronika_barsukova_fit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Вероника",
+  "lastName": "Барсукова",
+  "fullName": "Вероника Барсукова",
+  "gender": "female",
+  "nameQuotes": [
+    "Вероника Барсукова"
+  ],
+  "headline": "Тренер по питанию",
+  "sourceBio": "Personal Coach Фитнес-тренер @gard_fitness_grodno ❌НЕ УЧУ ЕСТЬ ГРЕЧКУ С ВОДОЙ 👌ДЕЛАЮ КРАСИВОЕ ТЕЛО В ЗАЛЕ ТРЕНИРОВКИ ⤵️ t.me/ZB_workout",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Вероника Барсукова",
+  "threadsUrl": "",
+  "bio": "Я Вероника Барсукова, фитнес-тренер в Гродно. Делаю красивое тело в зале.",
+  "about": [
+    "Я делаю красивое тело в зале."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/veronika_barsukova_fit/reel/C-qWHDjI-wo/",
+      "caption": "там я рассказываю про комфортную систему похудения",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/veronika_barsukova_fit/p/C3NQEN6IUCk/",
+      "caption": "Почему вы должны заниматься именно со мной? Я сертифицированный специалист в области фитнеса, мои знания полученные на обучении и на собственном опыте помогают моим клиентам: ❗️поддержать здоровье ❗️ улучшить осанку ❗️ повысить тонус и качество кожи. Прошла обучение по нутрициологии, что позволяет выстроить клиентам сбалансированный рацион и корректировать массу тела. Кейсы с крутыми результатами как у женщин так и у мужчин смотрите в актуальном «до/после» 🔥 первая тренировка со мной бесплатно На ней мы познакомися друг с другом, вы прочувствуете, насколько я ваш тренер. Ведь это важно найти своего тренера, правда? Для записи на пробную тренировку ✍️пишите в директ",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/veronika_barsukova_fit/p/DfZisk2sxlL/",
+      "caption": "Ну что отпуск официально окончен! Я вернулась! Надеюсь, вы успели соскучиться",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "нутрициология"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "beg",
+      "parentSlug": "beg",
+      "label": "Бег",
+      "evidence": "марафон"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "nutriciolog",
+    "parentSlug": "fitnes",
+    "label": "Питание"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/veronika_barsukova_fit.jpg",
+  "photos": [
+    "/trainers/instagram/veronika_barsukova_fit.jpg",
+    "/trainers/instagram/veronika_barsukova_fit-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/veronika_barsukova_fit/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/ZB_workout",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email"
+  ]
+}

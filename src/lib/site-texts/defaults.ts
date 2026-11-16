@@ -66,6 +66,30 @@ export function renderClaimInstagramMessage(firstName: string, doorUrl: string) 
     .replaceAll("{doorUrl}", doorUrl);
 }
 
+/**
+ * Instagram letter that introduces the project and the page already assembled.
+ * `{hello}` is the given name. `{doorUrl}` is that trainer's short link.
+ * It does not mention an application. Do not add sports or other profile facts.
+ */
+export const DEFAULT_READY_INSTAGRAM_MESSAGE = [
+  "{hello}",
+  "",
+  "Мы создаём https://trenio.by — единую базу тренеров Беларуси, которая помогает людям находить подходящих специалистов в разных спортивных направлениях.",
+  "",
+  "Нам очень понравился ваш профиль, поэтому мы уже собрали для вас страницу. Откройте её и посмотрите, всё ли на месте:",
+  "",
+  "{doorUrl}",
+  "",
+  "Страницу можно опубликовать в кабинете и менять в любой момент: править текст, фото и остальные сведения. Участие для тренера бесплатное. Продвижение анкеты тоже бесплатное.",
+].join("\n");
+
+/** The combined letter with this trainer's given name and short link. */
+export function renderReadyInstagramMessage(firstName: string, doorUrl: string) {
+  return DEFAULT_READY_INSTAGRAM_MESSAGE
+    .replaceAll("{hello}", outreachHello(firstName))
+    .replaceAll("{doorUrl}", doorUrl);
+}
+
 /** The saved row still holds an older letter that includes the short link. Do not send that as the first message. */
 export function outreachTemplate(saved: string) {
   const body = saved.trim();

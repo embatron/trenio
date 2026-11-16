@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/muay.thai.vtb/",
+  "handle": "muay.thai.vtb",
+  "slug": "muay.thai.vtb",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Иса",
+  "lastName": "",
+  "fullName": "Иса",
+  "gender": "female",
+  "nameQuotes": [
+    "Иса"
+  ],
+  "headline": "Тренер по тайскому боксу и кикбоксингу",
+  "sourceBio": "Иса - coach по тайскому боксу /est.2020/ >КМС по тайскому боксу/призер республиканских соревнований 🥊 поставлю технику с нуля до уверенного уровня Богдана Хмельницкого 30к1, Vitebsk",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Иса. ул. Богдана Хмельницкого, д. 30к1.",
+  "threadsUrl": "",
+  "bio": "Я Иса. Тайский бокс и кикбоксинг. Город Витебск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "Тайский бокс"
+    },
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tajskij-boks",
+    "parentSlug": "edinoborstva",
+    "label": "Тайский бокс"
+  },
+  "city": "Витебск",
+  "address": "улица Богдана Хмельницкого, 30",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/muay.thai.vtb.jpg",
+  "photos": [
+    "/trainers/instagram/muay.thai.vtb.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/muay.thai.vtb/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/andreybondarenk/",
+  "handle": "andreybondarenk",
+  "slug": "andreybondarenk",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Андрей",
+  "lastName": "Бондаренко",
+  "fullName": "Андрей Бондаренко",
+  "gender": "male",
+  "nameQuotes": [
+    "Бондаренко Андрей"
+  ],
+  "headline": "",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гомель. Андрей Бондаренко. ул. Юбилейная, д. 50.",
+  "threadsUrl": "",
+  "bio": "Я Андрей Бондаренко. Город Гомель.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Гомель",
+  "address": "Юбилейная улица, 50",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/andreybondarenk.jpg",
+  "photos": [
+    "/trainers/instagram/andreybondarenk.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/andreybondarenk/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

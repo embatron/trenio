@@ -1,0 +1,80 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/chuha_fitness/",
+  "handle": "chuha_fitness",
+  "slug": "chuha_fitness",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Олег",
+  "lastName": "Чухольский",
+  "fullName": "Олег Чухольский",
+  "gender": "male",
+  "nameQuotes": [
+    "Олег Чухольский"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "🔘Высшее образование (БГУФК) 🔘Сделаю дряблое - упругим 🔘Восстанавливаю после травм/операций 🔘Иглами убираю боль в теле 🔘Работаю со сколиозом vk.com/id497397510",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Солигорск. Олег Чухольский. ул. Октябрьская, д. 106.",
+  "threadsUrl": "",
+  "bio": "Я Олег Чухольский, персональный тренер. Город Солигорск.",
+  "about": [
+    "Я веду персональный тренинг."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Солигорск",
+  "address": "Октябрьская улица, 106",
+  "cityCandidates": [
+    "Солигорск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/chuha_fitness.jpg",
+  "photos": [
+    "/trainers/instagram/chuha_fitness.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/chuha_fitness/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

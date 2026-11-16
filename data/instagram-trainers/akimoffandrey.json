@@ -1,0 +1,69 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/akimoffandrey/",
+  "handle": "akimoffandrey",
+  "slug": "akimoffandrey",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Андрей",
+  "lastName": "Акимов",
+  "fullName": "Андрей Акимов",
+  "gender": "male",
+  "nameQuotes": [
+    "Андрей",
+    "Акимов"
+  ],
+  "headline": "",
+  "sourceBio": "Тренер. Специалист по тренировкам людей с проблемным позвоночником. 📌Преподаватель практики @adrenalin_school www.powerdoc.by",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Андрей Акимов. Город Пружаны. ул. Октябрьская, д. 104.",
+  "threadsUrl": "",
+  "bio": "Я Андрей Акимов, тренер. Город Пружаны.",
+  "about": [
+    "Я специалист по тренировкам людей с проблемным позвоночником."
+  ],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Пружаны",
+  "address": "Октябрьская улица, 104",
+  "cityCandidates": [
+    "Пружаны"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/akimoffandrey.jpg",
+  "photos": [
+    "/trainers/instagram/akimoffandrey.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/akimoffandrey/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

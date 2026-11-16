@@ -1,0 +1,93 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/shmebyulook/",
+  "handle": "shmebyulook",
+  "slug": "shmebyulook",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Егор",
+  "lastName": "",
+  "fullName": "Егор",
+  "gender": "male",
+  "nameQuotes": [
+    "Егор"
+  ],
+  "headline": "Тренер по лёгкой атлетике, фитнес-тренер и инструктор тренажёрного зала",
+  "sourceBio": "Тренер по легкой атлетике Персональный тренер в @titanfitsmg Cморгонь 🍥Моя будующая мечта- стать величайшим Хокаге!🍥",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Сморгонь. Егор. ул. Юбилейная, д. 31.",
+  "threadsUrl": "",
+  "bio": "Я Егор, тренер по легкой атлетике и персональный тренер. Город Сморгонь.",
+  "about": [
+    "Я веду персональный тренинг."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "legkaya-atletika",
+      "parentSlug": "beg",
+      "label": "Лёгкая атлетика",
+      "evidence": "Лёгкая атлетика"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "legkaya-atletika",
+    "parentSlug": "beg",
+    "label": "Лёгкая атлетика"
+  },
+  "city": "Сморгонь",
+  "address": "Юбилейная улица, 31",
+  "cityCandidates": [
+    "Сморгонь"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/shmebyulook.jpg",
+  "photos": [
+    "/trainers/instagram/shmebyulook.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/shmebyulook/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

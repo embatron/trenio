@@ -1,0 +1,89 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/darinitii/",
+  "handle": "darinitii",
+  "slug": "darinitii",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дарья",
+  "lastName": "Понимаш",
+  "fullName": "Дарья Понимаш",
+  "gender": "female",
+  "nameQuotes": [
+    "Понимаш Дарья"
+  ],
+  "headline": "Тренер по тренажёрному залу",
+  "sourceBio": "Fitness Trainer •Сделаю спорт твоей новой слабостью •Работа под ваши цели",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Понимаш Дарья",
+  "threadsUrl": "",
+  "bio": "Я Дарья Понимаш, фитнес-тренер в Гродно. Работаю в gym под ваши цели.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/darinitii/p/DWL_vXvjFHH/",
+      "caption": "Ну что, вот и новая глава моей жизни💪 Всем привет, меня зовут Даша и я фитнес-тренер!",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/darinitii.jpg",
+  "photos": [
+    "/trainers/instagram/darinitii.jpg",
+    "/trainers/instagram/darinitii-g2.jpg",
+    "/trainers/instagram/darinitii-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/darinitii/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

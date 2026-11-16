@@ -1,0 +1,94 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/maksimchik_denis/",
+  "handle": "maksimchik_denis",
+  "slug": "maksimchik_denis",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Денис",
+  "lastName": "Максимчик",
+  "fullName": "Денис Максимчик",
+  "gender": "male",
+  "nameQuotes": [
+    "Максимчик Денис"
+  ],
+  "headline": "Тренер по карате",
+  "sourceBio": "Чёрный пояс по каратэ (1 дан)",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Максимчик Денис",
+  "threadsUrl": "",
+  "bio": "Я Денис Максимчик, тренер по каратэ в Гродно. Чёрный пояс, 1 дан.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/maksimchik_denis/reel/DfDB7w2IX2w/",
+      "caption": "Группа первого года обучения",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/maksimchik_denis/p/DdEUPkUI_SG/",
+      "caption": "Наша команда к старту готова! Начинаем сезон с боевым настроем и правильными целями.",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/maksimchik_denis/p/C786sF7o9k5/",
+      "caption": "Диплом",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "karate",
+      "parentSlug": "edinoborstva",
+      "label": "Карате",
+      "evidence": "каратэ"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "karate",
+    "parentSlug": "edinoborstva",
+    "label": "Карате"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/maksimchik_denis.jpg",
+  "photos": [
+    "/trainers/instagram/maksimchik_denis.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/maksimchik_denis/",
+    "phone": "+375 29 525-36-99",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram"
+  ]
+}

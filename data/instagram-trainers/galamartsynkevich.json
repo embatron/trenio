@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/galamartsynkevich/",
+  "handle": "galamartsynkevich",
+  "slug": "galamartsynkevich",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Гала",
+  "lastName": "Марцинкевич",
+  "fullName": "Гала Марцинкевич",
+  "gender": "female",
+  "nameQuotes": [
+    "Гала Марцинкевич"
+  ],
+  "headline": "Инструктор по йоге и тренер по медитации, велнесу",
+  "sourceBio": "Personal blog 🌿Эксперт по релаксации, пранаяме и медитации Подробнее про мой курс медитаций в актуальном «Три кита»👇🏻 @wellness.tafi.club.vitebsk @spa.tafi.vitebsk taficlub.by and 2 more",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Гала Марцинкевич. ул. Белорусская, д. 6В.",
+  "threadsUrl": "",
+  "bio": "Я Гала Марцинкевич. Веду йогу и медитации. Город Витебск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    },
+    {
+      "slug": "meditaciya",
+      "parentSlug": "velnes",
+      "label": "Медитация",
+      "evidence": "Медитация"
+    },
+    {
+      "slug": "velnes",
+      "parentSlug": "velnes",
+      "label": "Велнес",
+      "evidence": "wellness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Витебск",
+  "address": "Белорусская улица",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [
+    "Беларуская"
+  ],
+  "avatarPath": "/trainers/instagram/galamartsynkevich.jpg",
+  "photos": [
+    "/trainers/instagram/galamartsynkevich.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/galamartsynkevich/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

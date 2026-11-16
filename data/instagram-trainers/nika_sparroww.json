@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/nika_sparroww/",
+  "handle": "nika_sparroww",
+  "slug": "nika_sparroww",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Вероника",
+  "lastName": "",
+  "fullName": "Вероника",
+  "gender": "female",
+  "nameQuotes": [
+    "ВЕРОНИКА"
+  ],
+  "headline": "Инструктор по пилатесу",
+  "sourceBio": "Инструктор по Body Pilates в @garmonija.yoga | Ваше тело становится мечтой в собственных глазах 🩷 Индивидуальные и групповые тренировки |",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Вероника. ул. В. Макаровой, д. 2Б.",
+  "threadsUrl": "",
+  "bio": "Я Вероника, инструктор Body Pilates. Город Гродно.",
+  "about": [
+    "Я веду индивидуальные и групповые тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Гродно",
+  "address": "улица Валентины Макаровой, 2Б",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/nika_sparroww.jpg",
+  "photos": [
+    "/trainers/instagram/nika_sparroww.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/nika_sparroww/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

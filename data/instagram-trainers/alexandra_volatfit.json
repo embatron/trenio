@@ -1,0 +1,89 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/alexandra_volatfit/",
+  "handle": "alexandra_volatfit",
+  "slug": "alexandra_volatfit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александра",
+  "lastName": "",
+  "fullName": "Александра",
+  "gender": "female",
+  "nameQuotes": [
+    "Александра"
+  ],
+  "headline": "Тренер по осанке, питанию и реабилитации и восстановлению",
+  "sourceBio": "📍Специалист по движению 📍Коррекция осанки, восстановление после родов 📍Движения без боли 📍ОНЛАЙН - сопровождение 📍Тренирую в @volatfit",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Барановичи. Александра. ул. Тельмана, д. 110.",
+  "threadsUrl": "",
+  "bio": "Я Александра. Коррекция осанки и нутрициолог. Город Барановичи.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "нутрициолог"
+    },
+    {
+      "slug": "reabilitaciya",
+      "parentSlug": "reabilitaciya",
+      "label": "Реабилитация",
+      "evidence": "восстановление"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "osanka",
+    "parentSlug": "reabilitaciya",
+    "label": "Осанка"
+  },
+  "city": "Барановичи",
+  "address": "улица Тельмана, 110",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/alexandra_volatfit.jpg",
+  "photos": [
+    "/trainers/instagram/alexandra_volatfit.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/alexandra_volatfit/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

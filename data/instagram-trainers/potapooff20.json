@@ -1,0 +1,80 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/potapooff20/",
+  "handle": "potapooff20",
+  "slug": "potapooff20",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "potapooff20",
+  "lastName": "",
+  "fullName": "potapooff20",
+  "gender": "",
+  "nameQuotes": [],
+  "headline": "Тренер по боксу",
+  "sourceBio": "📍Тренерую по системе #2stepboxing 🔶Любой возраст и пол 📌Индивидуальный подход 🔑Научу боксировать любого",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв Без имени",
+  "threadsUrl": "",
+  "bio": "Я тренер по боксу. Город Могилёв. Тренерую по системе. Индивидуальный подход: любой возраст и пол.",
+  "about": [
+    "Индивидуальный подход. Научу боксировать любого."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/potapooff20.jpg",
+  "photos": [
+    "/trainers/instagram/potapooff20.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/potapooff20/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "gender",
+    "pinnedPosts"
+  ]
+}

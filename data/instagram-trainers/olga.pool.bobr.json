@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/olga.pool.bobr/",
+  "handle": "olga.pool.bobr",
+  "slug": "olga.pool.bobr",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ольга",
+  "lastName": "",
+  "fullName": "Ольга",
+  "gender": "female",
+  "nameQuotes": [
+    "ОЛЬГА"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "Обучение плаванию детей и взрослых Групповые и индивидуальные тренировки @basseyn_texas Запись по номеру телефона: или в Директ 👇",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Бобруйск. Ольга. ул. Сикорского, д. 11. ФОК Техас.",
+  "threadsUrl": "",
+  "bio": "Я Ольга, тренер по плаванию. Город Бобруйск. Обучаю плаванию детей и взрослых.",
+  "about": [
+    "Я веду групповые и индивидуальные тренировки по плаванию."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "обучение плаванию"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Бобруйск",
+  "address": "улица Сикорского, 11",
+  "cityCandidates": [
+    "Бобруйск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/olga.pool.bobr.jpg",
+  "photos": [
+    "/trainers/instagram/olga.pool.bobr.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/olga.pool.bobr/",
+    "phone": "+375 29 103-88-89",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

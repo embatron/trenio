@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/olga.boris_/",
+  "handle": "olga.boris_",
+  "slug": "olga.boris_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ольга",
+  "lastName": "Борис",
+  "fullName": "Ольга Борис",
+  "gender": "female",
+  "nameQuotes": [
+    "Ольга Борис"
+  ],
+  "headline": "Инструктор по растяжке и пилатесу",
+  "sourceBio": "ТРЕНЕР ПО СТРЕТЧИНГУ/ПИЛАТЕСУ| ГАМАКИ|КОНТЕНТ-МЕНЕДЖЕР | ВЕБ-РЕДАКТОР ПОШИВ ОДЕЖДЫ @v.e.a.by РАЗРАБОТКА САЙТОВ ТРЕНЕР @reforma_baranovichi",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Барановичи. Ольга Борис. ул. Домейко, д. 15.",
+  "threadsUrl": "",
+  "bio": "Я Ольга Борис, тренер по стретчингу и пилатесу. Город Барановичи.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "стретчинг"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Барановичи",
+  "address": "улица Домейко, 15",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/olga.boris_.jpg",
+  "photos": [
+    "/trainers/instagram/olga.boris_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/olga.boris_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

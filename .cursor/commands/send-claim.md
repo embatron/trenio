@@ -5,7 +5,7 @@ Send the prepared-page letter from the `trenioby` Instagram account. The letter 
 ## Project context
 
 - Follow `.cursor/skills/trenio-send-claim/SKILL.md` for the whole run.
-- The letter is `DEFAULT_CLAIM_INSTAGRAM_MESSAGE`. Do not send the cold outreach from `/send-msgs`, and do not add sports or other profile facts.
+- The letter is `DEFAULT_CLAIM_INSTAGRAM_MESSAGE`. Do not send the cold outreach from `/send-msgs` or the combined letter from `/send-ready`, and do not add sports or other profile facts.
 - A sent letter sets «Сообщение» and «Ссылка». The short link is inside the letter. `mark {handle} claim` writes both. Copying the link in the admin table still sets «Ссылка» when the letter was not sent this way.
 
 ## Arguments

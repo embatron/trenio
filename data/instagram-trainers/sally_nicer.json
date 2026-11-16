@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/sally_nicer/",
+  "handle": "sally_nicer",
+  "slug": "sally_nicer",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Светлана",
+  "lastName": "Гецольд",
+  "fullName": "Светлана Гецольд",
+  "gender": "female",
+  "nameQuotes": [
+    "Гецольд Светлана",
+    "Светлана"
+  ],
+  "headline": "Тренер по питанию",
+  "sourceBio": "УВЕРЕННОСТЬ ЧЕРЕЗ ТЕЛО 🧘‍♀️ Групповые/ индивид/ онлайн тренировки смотри актуальное «работа со мной» мое комьюнити по ссылке ниже 👇🏼 t.me/+hDcFk6FZ6AJiZDcy",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гецольд Светлана",
+  "threadsUrl": "",
+  "bio": "Я Светлана Гецольд, фитнес-тренер в Гродно. Веду групповые и онлайн тренировки и разбираю питание.",
+  "about": [
+    "Я веду групповые и онлайн тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "nutriciolog",
+    "parentSlug": "fitnes",
+    "label": "Питание"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/sally_nicer.jpg",
+  "photos": [
+    "/trainers/instagram/sally_nicer.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/sally_nicer/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

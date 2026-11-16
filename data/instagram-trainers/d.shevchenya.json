@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/d.shevchenya/",
+  "handle": "d.shevchenya",
+  "slug": "d.shevchenya",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дарья",
+  "lastName": "Шевченя",
+  "fullName": "Дарья Шевченя",
+  "gender": "female",
+  "nameQuotes": [
+    "Дарья Шевченя"
+  ],
+  "headline": "Фитнес-тренер, тренер по питанию и инструктор тренажёрного зала",
+  "sourceBio": "lifestyle | спорт | мотивация 📍@volatfit • Ягодицы без больших ног 🍑 • ЛИЧНОЕ ВЕДЕНИЕ по питанию + тренировки Сотрудничество - 💌",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Барановичи. Дарья Шевченя. ул. Тельмана, д. 110.",
+  "threadsUrl": "",
+  "bio": "Я Дарья Шевченя, фитнес-тренер. Ведение по питанию. Город Барановичи.",
+  "about": [
+    "Я веду эти тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Барановичи",
+  "address": "улица Тельмана, 110",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/d.shevchenya.jpg",
+  "photos": [
+    "/trainers/instagram/d.shevchenya.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/d.shevchenya/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

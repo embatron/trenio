@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/anastasia_kasatkina_/",
+  "handle": "anastasia_kasatkina_",
+  "slug": "anastasia_kasatkina_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анастасия",
+  "lastName": "Касаткина",
+  "fullName": "Анастасия Касаткина",
+  "gender": "female",
+  "nameQuotes": [
+    "Анастасия",
+    "Касаткина"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "🔝Блог про марафон ,тренировки и десерты 📚 медицинское и высшее физкультурное образование; 📌Курс «Женское здоровье»; 📌Марафон «Прощай 5️⃣» t.me/anastasiakasatkina",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв Анастасия Касаткина",
+  "threadsUrl": "",
+  "bio": "Я Анастасия Касаткина, фитнес-тренер. Город Могилёв. У меня медицинское и высшее физкультурное образование. Веду блог про тренировки и десерты.",
+  "about": [
+    "Веду тренировки онлайн и офлайн."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/anastasia_kasatkina_.jpg",
+  "photos": [
+    "/trainers/instagram/anastasia_kasatkina_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/anastasia_kasatkina_/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/anastasiakasatkina",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

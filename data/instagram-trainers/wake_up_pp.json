@@ -1,0 +1,88 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/wake_up_pp/",
+  "handle": "wake_up_pp",
+  "slug": "wake_up_pp",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Полина",
+  "lastName": "",
+  "fullName": "Полина",
+  "gender": "female",
+  "nameQuotes": [
+    "Полина"
+  ],
+  "headline": "Тренер по танцам и хореографии и инструктор по растяжке",
+  "sourceBio": "•Dance Fit / Стретчинг / Здоровая спина📍Кобрин Пространство @studio_ok_by Групповые и индивидуальные тренировки",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кобрин Полина",
+  "threadsUrl": "",
+  "bio": "Я Полина, тренер. Город Кобрин. Веду Dance Fit, стретчинг и здоровую спину.",
+  "about": [
+    "Групповые и индивидуальные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "dance"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "здоровая спина"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Кобрин",
+  "address": "",
+  "cityCandidates": [
+    "Кобрин"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/wake_up_pp.jpg",
+  "photos": [
+    "/trainers/instagram/wake_up_pp.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/wake_up_pp/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -3,12 +3,28 @@ import tinify from "tinify";
 /**
  * TinyPNG / TinyJPG. JPEG, PNG, WebP, and AVIF only.
  * An empty `TINIFY_API_KEY` keeps the original bytes so uploads still succeed.
+ * `TINIFY_API_KEY_FALLBACK` is used after the first key reaches its account limit.
  */
 
 let appliedKey = "";
+const exhaustedKeys = new Set<string>();
+let fallbackNoted = false;
+
+/** Primary key, then the spare key once the first account limit is reached. */
+export function tinifyKeyList(env: Record<string, string | undefined> = process.env): string[] {
+  const seen = new Set<string>();
+  const keys: string[] = [];
+  for (const value of [env.TINIFY_API_KEY, env.TINIFY_API_KEY_FALLBACK]) {
+    const key = value?.trim() ?? "";
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    keys.push(key);
+  }
+  return keys;
+}
 
 export function tinifyKey(): string {
-  return process.env.TINIFY_API_KEY?.trim() ?? "";
+  return tinifyKeyList().find((key) => !exhaustedKeys.has(key)) ?? "";
 }
 
 function applyKey(key: string) {
@@ -54,17 +70,56 @@ async function compressOnce(input: Buffer): Promise<Buffer> {
   return output.length > 0 && output.length < input.length ? output : input;
 }
 
+function noteFallback() {
+  if (fallbackNoted) return;
+  fallbackNoted = true;
+  void import("@/lib/log/logger")
+    .then(({ writeLog }) =>
+      writeLog({
+        level: "warn",
+        domain: "system",
+        action: "system.image",
+        outcome: "failure",
+        message: "Лимит TinyPNG исчерпан, взят следующий ключ.",
+      }),
+    )
+    .catch(() => undefined);
+}
+
 /** Returns the same buffer when the key is missing, the file is not a photo, or TinyPNG is not smaller. */
 export async function tinifyImage(input: Buffer): Promise<Buffer> {
-  const key = tinifyKey();
-  if (!key || !isCompressibleImage(input)) return input;
-  applyKey(key);
-  try {
-    return await compressOnce(input);
-  } catch (error) {
-    const retry = error instanceof tinify.ServerError || error instanceof tinify.ConnectionError;
-    if (!retry) throw error;
-    return compressOnce(input);
+  if (!isCompressibleImage(input)) return input;
+  let last: unknown;
+  for (;;) {
+    const key = tinifyKey();
+    if (!key) {
+      if (last) throw last;
+      return input;
+    }
+    applyKey(key);
+    try {
+      return await compressOnce(input);
+    } catch (error) {
+      const retry = error instanceof tinify.ServerError || error instanceof tinify.ConnectionError;
+      if (retry) {
+        try {
+          return await compressOnce(input);
+        } catch (again) {
+          if (!(again instanceof tinify.AccountError)) throw again;
+          exhaustedKeys.add(key);
+          last = again;
+          if (tinifyKey()) noteFallback();
+          continue;
+        }
+      }
+      if (error instanceof tinify.AccountError) {
+        exhaustedKeys.add(key);
+        last = error;
+        if (tinifyKey()) noteFallback();
+        continue;
+      }
+      throw error;
+    }
   }
 }
 

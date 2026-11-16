@@ -1,0 +1,67 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/natallia.kulvinskaya/",
+  "handle": "natallia.kulvinskaya",
+  "slug": "natallia.kulvinskaya",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Наталья",
+  "lastName": "Кульвинская",
+  "fullName": "Наталья Кульвинская",
+  "gender": "female",
+  "nameQuotes": [
+    "Наталья Кульвинская"
+  ],
+  "headline": "",
+  "sourceBio": "•Всё для беременных и после родов •Совмещаю материнство,работу в колледже,тренировки,медицину •Готовлю красивые завтраки, скупаю косметику",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Мозырь Наталья Кульвинская",
+  "threadsUrl": "",
+  "bio": "Я Наталья Кульвинская, врач акушер-гинеколог и тренер. Город Мозырь. Сейчас в декрете. Пишу всё для беременных и после родов.",
+  "about": [
+    "Совмещаю материнство, работу в колледже, тренировки и медицину."
+  ],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Мозырь",
+  "address": "",
+  "cityCandidates": [
+    "Мозырь"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/natallia.kulvinskaya.jpg",
+  "photos": [
+    "/trainers/instagram/natallia.kulvinskaya.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/natallia.kulvinskaya/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/NatalliaKulvinskaya",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

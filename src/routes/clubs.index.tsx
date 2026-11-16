@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { BELARUS_OBLAST_CENTERS } from "@/lib/catalog/city-taxonomy";
 import { pluralRu } from "@/lib/ru-plural";
+import { localClubCards } from "@/lib/catalog/local-clubs";
 import { CLUBS_CRUMB, clubsIndexHead } from "@/lib/seo/pages";
 
 export const Route = createFileRoute("/clubs/")({
@@ -25,7 +26,7 @@ type ClubItem = {
   amenities: string[];
 };
 
-const CLUBS_LIST: ClubItem[] = [];
+const CLUBS_LIST: ClubItem[] = localClubCards();
 
 const CITIES = ["Все города", ...BELARUS_OBLAST_CENTERS];
 const DIRECTIONS = ["Все направления", "Бокс", "Единоборства", "Фитнес", "Йога", "Плавание", "Теннис", "Бег"];
@@ -124,12 +125,16 @@ function ClubsListPage() {
           <span className="is-current" aria-current="page">{CLUBS_CRUMB}</span>
         </div>
         <h1>Спортивные клубы и залы Беларуси</h1>
-        <p>Клубы, студии и залы. Адреса и направления появятся в карточке, когда она будет опубликована.</p>
+        <p>
+          {CLUBS_LIST.length === 0
+            ? "Клубы, студии и залы. Адреса и направления появятся в карточке, когда она будет опубликована."
+            : "Клубы, студии и залы: адрес, направления, цены и тренеры."}
+        </p>
         <div className="clubs-hero__stats">
-          <div className="clubs-hero__stat"><strong>—</strong><span>клубов и студий</span></div>
-          <div className="clubs-hero__stat"><strong>—</strong><span>городов</span></div>
-          <div className="clubs-hero__stat"><strong>—</strong><span>направлений</span></div>
-          <div className="clubs-hero__stat"><strong>—</strong><span>средний рейтинг</span></div>
+          <div className="clubs-hero__stat"><strong>{CLUBS_LIST.length === 0 ? "—" : CLUBS_LIST.length}</strong><span>клубов и студий</span></div>
+          <div className="clubs-hero__stat"><strong>{CLUBS_LIST.length === 0 ? "—" : new Set(CLUBS_LIST.map((club) => club.city)).size}</strong><span>городов</span></div>
+          <div className="clubs-hero__stat"><strong>{CLUBS_LIST.length === 0 ? "—" : new Set(CLUBS_LIST.flatMap((club) => club.directions)).size}</strong><span>направлений</span></div>
+          <div className="clubs-hero__stat"><strong>{CLUBS_LIST.length === 0 ? "—" : (CLUBS_LIST.reduce((sum, club) => sum + club.rating, 0) / CLUBS_LIST.length).toFixed(1)}</strong><span>средний рейтинг</span></div>
         </div>
       </section>
 

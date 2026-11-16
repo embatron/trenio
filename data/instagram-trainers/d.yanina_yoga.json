@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/d.yanina_yoga/",
+  "handle": "d.yanina_yoga",
+  "slug": "d.yanina_yoga",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Янина",
+  "lastName": "",
+  "fullName": "Янина",
+  "gender": "female",
+  "nameQuotes": [
+    "Янина"
+  ],
+  "headline": "Инструктор по йоге и тренер по медитации",
+  "sourceBio": "🔷 Личный блог о жизни, переменах и пути в йоге ❕Сертифицированный инструктор хатха‑йоги 🔹Масло ГХИ @ghee.story 📨 Канал «йога с Яниной» ⤵️ Gulyaeva 2,, Soligorsk t.me/+prpqgfxwM5FmOTBi",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Солигорск. Янина. ул. Гуляева, д. 2.",
+  "threadsUrl": "",
+  "bio": "Я Янина. Хатха-йога и йога-нидра. Город Солигорск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "хатха"
+    },
+    {
+      "slug": "meditaciya",
+      "parentSlug": "velnes",
+      "label": "Медитация",
+      "evidence": "йога-нидра"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Солигорск",
+  "address": "улица Гуляева, 2",
+  "cityCandidates": [
+    "Солигорск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/d.yanina_yoga.jpg",
+  "photos": [
+    "/trainers/instagram/d.yanina_yoga.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/d.yanina_yoga/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

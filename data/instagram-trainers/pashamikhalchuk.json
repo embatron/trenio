@@ -1,0 +1,72 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pashamikhalchuk/",
+  "handle": "pashamikhalchuk",
+  "slug": "pashamikhalchuk",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Павел",
+  "lastName": "Михальчук",
+  "fullName": "Павел Михальчук",
+  "gender": "male",
+  "nameQuotes": [
+    "Павел Михальчук"
+  ],
+  "headline": "",
+  "sourceBio": "ТРЕНЕР/БАРАНОВИЧИ 🔹️Мастер спорта РБ по пауэрлифтингу IPF. 🔹️Морж со стажем.",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Барановичи. Павел Михальчук. пр-т Советский, д. 35.",
+  "threadsUrl": "",
+  "bio": "Я Павел Михальчук, тренер. Город Барановичи.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [
+    {
+      "slug": "pauerlifting",
+      "label": "Пауэрлифтинг",
+      "quote": "пауэрлифтингу"
+    }
+  ],
+  "primarySport": null,
+  "city": "Барановичи",
+  "address": "пр-т Советский, д. 35",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/pashamikhalchuk.jpg",
+  "photos": [
+    "/trainers/instagram/pashamikhalchuk.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pashamikhalchuk/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

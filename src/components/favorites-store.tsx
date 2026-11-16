@@ -17,9 +17,17 @@ function favoriteKey(target: FavoriteTarget) {
   return `${target.type}:${target.slug}`;
 }
 
-export function FavoritesProvider({ userId, children }: { userId: string | null; children: ReactNode }) {
-  const [keys, setKeys] = useState<string[]>([]);
-  const [ready, setReady] = useState(!userId);
+export function FavoritesProvider({
+  userId,
+  initialKeys,
+  children,
+}: {
+  userId: string | null;
+  initialKeys: string[] | null;
+  children: ReactNode;
+}) {
+  const [keys, setKeys] = useState<string[]>(initialKeys ?? []);
+  const [ready, setReady] = useState(initialKeys !== null || !userId);
   const keysRef = useRef(keys);
   const requestId = useRef(0);
   const pending = useRef(0);
@@ -28,6 +36,11 @@ export function FavoritesProvider({ userId, children }: { userId: string | null;
   useEffect(() => {
     if (!userId) {
       setKeys([]);
+      setReady(true);
+      return;
+    }
+    if (initialKeys !== null) {
+      setKeys((current) => (sameList(current, initialKeys) ? current : initialKeys));
       setReady(true);
       return;
     }
@@ -46,7 +59,7 @@ export function FavoritesProvider({ userId, children }: { userId: string | null;
     return () => {
       cancelled = true;
     };
-  }, [userId]);
+  }, [userId, initialKeys]);
 
   const replaceKeys = useCallback((keys: string[]) => {
     if (pending.current > 0) return;

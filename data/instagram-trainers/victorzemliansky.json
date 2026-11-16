@@ -1,0 +1,94 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/victorzemliansky/",
+  "handle": "victorzemliansky",
+  "slug": "victorzemliansky",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктор",
+  "lastName": "",
+  "fullName": "Виктор",
+  "gender": "male",
+  "nameQuotes": [
+    "Виктор"
+  ],
+  "headline": "Тренер по силовому тренингу, инструктор тренажёрного зала и фитнес-тренер",
+  "sourceBio": "Personal Coach 🦾 Силовые тренировки Тренирую в @plazagym_gomel",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Виктор Гомель Персональный тренер Силовые тренировки Тренирую в @plazagym_gomel Тренажёрный зал Силовой тренинг пр-т Ленина, д. 3",
+  "threadsUrl": "",
+  "bio": "Я Виктор, тренер по силовому тренингу. Город Гомель. Веду силовые тренировки.",
+  "about": [
+    "Я веду силовые тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "silovoj-trening",
+      "parentSlug": "fitnes",
+      "label": "Силовой тренинг",
+      "evidence": "силовые тренировки"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "silovoj-trening",
+    "parentSlug": "fitnes",
+    "label": "Силовой тренинг"
+  },
+  "city": "Гомель",
+  "address": "проспект Ленина, 3",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/victorzemliansky.jpg",
+  "photos": [
+    "/trainers/instagram/victorzemliansky.jpg",
+    "/trainers/instagram/victorzemliansky-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/victorzemliansky/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

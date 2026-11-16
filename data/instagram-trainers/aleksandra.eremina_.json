@@ -1,0 +1,67 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/aleksandra.eremina_/",
+  "handle": "aleksandra.eremina_",
+  "slug": "aleksandra.eremina_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александра",
+  "lastName": "",
+  "fullName": "Александра",
+  "gender": "female",
+  "nameQuotes": [
+    "Александра"
+  ],
+  "headline": "",
+  "sourceBio": "📍Помогаю полюбить своё тело 🏋️‍♀️МСМК и мировой рекорд по становой тяге #wrpf 🫶🏻Тренирую в @qgym.loft",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Александра",
+  "threadsUrl": "",
+  "bio": "Я Александра, тренер в Гродно. Тренирую становую тягу и помогаю полюбить своё тело.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/aleksandra.eremina_.jpg",
+  "photos": [
+    "/trainers/instagram/aleksandra.eremina_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/aleksandra.eremina_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

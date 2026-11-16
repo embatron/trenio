@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/anastasnaz/",
+  "handle": "anastasnaz",
+  "slug": "anastasnaz",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анастасия",
+  "lastName": "",
+  "fullName": "Анастасия",
+  "gender": "female",
+  "nameQuotes": [
+    "Анастасия"
+  ],
+  "headline": "Инструктор тренажёрного зала",
+  "sourceBio": "Я для тех, кто устал худеть и срываться Минус жир и отёки за МЕСЯЦ Стройное тело без курогрудки и голодовок🧘‍♀️ Тренирую в @agat_gym_vitebsk 💛",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Анастасия. ул. Ивановского, д. 5. тренажёрный зал.",
+  "threadsUrl": "",
+  "bio": "Я Анастасия. Тренирую в тренажёрном зале. Город Витебск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Витебск",
+  "address": "улица Генерала Ивановского, 5",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/anastasnaz.jpg",
+  "photos": [
+    "/trainers/instagram/anastasnaz.jpg",
+    "/trainers/instagram/anastasnaz-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/anastasnaz/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

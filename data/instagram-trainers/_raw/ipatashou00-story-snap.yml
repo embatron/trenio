@@ -1,0 +1,32 @@
+- generic [ref=f18e10]:
+  - generic [ref=f18e13]:
+    - generic [ref=f18e15]:
+      - generic [ref=f18e33]:
+        - generic [ref=f18e35]:
+          - link [ref=f18e37] [cursor=pointer]:
+            - /url: /ipatashou00/
+          - generic [ref=f18e39]:
+            - link "Обо мне" [ref=f18e41] [cursor=pointer]:
+              - /url: /ipatashou00/
+            - time [ref=f18e46]: 106w
+        - button [ref=f18e48] [cursor=pointer]:
+          - img "Pause" [ref=f18e50]
+        - button [ref=f18e52] [cursor=pointer]:
+          - img "Menu" [ref=f18e54]
+      - generic [ref=f18e65]:
+        - textbox "Reply to ipatashou00..." [ref=f18e68]
+        - generic [ref=f18e69]:
+          - button [ref=f18e72] [cursor=pointer]:
+            - img "Like" [ref=f18e75]
+          - button [ref=f18e77] [cursor=pointer]:
+            - img "Direct" [ref=f18e79]
+    - generic:
+      - button [ref=f18e83] [cursor=pointer]:
+        - img "Previous" [ref=f18e85]
+      - button [ref=f18e88] [cursor=pointer]:
+        - img "Next" [ref=f18e90]
+  - link [ref=f18e93] [cursor=pointer]:
+    - /url: /
+    - img "Instagram" [ref=f18e94]
+  - button [ref=f18e103] [cursor=pointer]:
+    - img "Close" [ref=f18e105]

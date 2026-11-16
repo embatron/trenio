@@ -1,0 +1,81 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/maksim_zhyravlev/",
+  "handle": "maksim_zhyravlev",
+  "slug": "maksim_zhyravlev",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Максим",
+  "lastName": "Журавлев",
+  "fullName": "Максим Журавлев",
+  "gender": "male",
+  "nameQuotes": [
+    "Максим",
+    "Журавлев"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "ПЕРСОНАЛЬНЫЙ ТРЕНЕР | МОГИЛЕВ Personal Coach Твой тренер и наставник в @bodis.fitness Мастер спорта в толкании ядра Высшее профильное образование",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв Максим Журавлев",
+  "threadsUrl": "",
+  "bio": "Я Максим Журавлев, персональный тренер. Город Могилёв. Мастер спорта в толкании ядра. У меня высшее профильное образование.",
+  "about": [
+    "Я персональный тренер и наставник."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/maksim_zhyravlev.jpg",
+  "photos": [
+    "/trainers/instagram/maksim_zhyravlev.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/maksim_zhyravlev/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

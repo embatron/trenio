@@ -8,7 +8,7 @@ import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
 import { instagramProfileSlug } from "@/lib/catalog/trainer-slugs";
 import { SITE_ORIGIN } from "@/lib/seo/site";
 import { writeLog } from "@/lib/log/logger";
-import { renderClaimInstagramMessage } from "@/lib/site-texts/defaults";
+import { renderClaimInstagramMessage, renderReadyInstagramMessage } from "@/lib/site-texts/defaults";
 import { relayDoorMark } from "@/lib/sync/relay";
 
 const DOOR_ALPHABET = "23456789abcdefghijkmnpqrstuvwxyz";
@@ -197,8 +197,8 @@ function claimBlock(status: string, outreachSentAt: Date | null) {
   return null;
 }
 
-/** Application welcome: the given name and the short link stored on this draft. */
-export async function claimOutreachText(handle: string) {
+/** A prepared-page letter: the given name and the short link stored on this draft. */
+async function preparedPageLetter(handle: string, render: (firstName: string, url: string) => string) {
   await ensureTrainerDoorSchema();
   const db = getDb();
   const needle = handle.trim().replace(/^@/, "");
@@ -230,12 +230,22 @@ export async function claimOutreachText(handle: string) {
   const stillBlocked = claimBlock(fresh.status, fresh.outreachSentAt);
   if (stillBlocked) return { ok: false as const, reason: stillBlocked };
   if (!isDoorCode(fresh.previewToken)) return { ok: false as const, reason: "link" as const };
-  return { ok: true as const, text: renderClaimInstagramMessage(fresh.firstName, doorUrl(fresh.previewToken)) };
+  return { ok: true as const, text: render(fresh.firstName, doorUrl(fresh.previewToken)) };
+}
+
+/** Application welcome: the given name and the short link stored on this draft. */
+export function claimOutreachText(handle: string) {
+  return preparedPageLetter(handle, renderClaimInstagramMessage);
+}
+
+/** Combined letter: the project, the page already assembled, and that draft's short link. */
+export function readyOutreachText(handle: string) {
+  return preparedPageLetter(handle, renderReadyInstagramMessage);
 }
 
 /**
  * Mark the first Instagram message on both databases.
- * The application welcome also carries the short link, so `link` sets «Ссылка».
+ * A letter that carries the short link sets «Ссылка»: the application welcome and `/send-ready`.
  * The cold outreach leaves that column to the copy button.
  */
 export async function markOutreachSent(handle: string, options?: { link?: boolean }) {

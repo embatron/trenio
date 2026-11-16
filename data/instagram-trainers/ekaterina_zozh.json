@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ekaterina_zozh/",
+  "handle": "ekaterina_zozh",
+  "slug": "ekaterina_zozh",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Екатерина",
+  "lastName": "",
+  "fullName": "Екатерина",
+  "gender": "female",
+  "nameQuotes": [
+    "Екатерина"
+  ],
+  "headline": "Инструктор по йоге и фитнес-тренер",
+  "sourceBio": "Сильное тело. Спокойный ум. ⠀ ⚡️ Йога для женщин всех возрастов ⠀ ✨ Подписывайся и начни путь к сильному и здоровому телу",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Екатерина. Город Добруш. ул. Комарова, д. 5.",
+  "threadsUrl": "",
+  "bio": "Я Екатерина. Йога и фитнес. Город Добруш.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Добруш",
+  "address": "улица Владимира Комарова, 5",
+  "cityCandidates": [
+    "Добруш"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "",
+  "photos": [],
+  "certificates": [],
+  "photoSearch": {
+    "face": false,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ekaterina_zozh/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "avatar",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

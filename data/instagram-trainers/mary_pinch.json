@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/mary_pinch/",
+  "handle": "mary_pinch",
+  "slug": "mary_pinch",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Мария",
+  "lastName": "Пинчук",
+  "fullName": "Мария Пинчук",
+  "gender": "female",
+  "nameQuotes": [
+    "Мария Пинчук"
+  ],
+  "headline": "Тренер по танцам и хореографии, high heels и хип-хопу",
+  "sourceBio": "24 y.o. 🦂 ◾ Преподаю High Heels, Hip-hop, Jazz-funk @zal.13.brest ❤️‍🔥 ◼ «Duende», «SBF», «MonsterKids» ◼ Брест, Беларусь t.me/mary_pinch",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. Мария Пинчук. ул. Куйбышева, д. 13.",
+  "threadsUrl": "",
+  "bio": "Я Мария Пинчук. Танцы, high heels и hip-hop. Город Брест.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    },
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "High Heels"
+    },
+    {
+      "slug": "hip-hop",
+      "parentSlug": "tancy",
+      "label": "Хип-хоп",
+      "evidence": "hip-hop"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Брест",
+  "address": "улица Куйбышева, 13",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/mary_pinch.jpg",
+  "photos": [
+    "/trainers/instagram/mary_pinch.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/mary_pinch/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/mary_pinch",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

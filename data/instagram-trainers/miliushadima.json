@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/miliushadima/",
+  "handle": "miliushadima",
+  "slug": "miliushadima",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дмитрий",
+  "lastName": "Милюша",
+  "fullName": "Дмитрий Милюша",
+  "gender": "male",
+  "nameQuotes": [
+    "Дмитрий Милюша"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "тренер по боксу для всех) 🥊🏅 довольный как слон🐘🐘🐘🐘😁😁😁.",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Барановичи. Дмитрий Милюша. ул. Домейко, д. 15.",
+  "threadsUrl": "",
+  "bio": "Я Дмитрий Милюша, тренер по боксу. Город Барановичи.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "boxing"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Барановичи",
+  "address": "улица Домейко, 15",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/miliushadima.jpg",
+  "photos": [
+    "/trainers/instagram/miliushadima.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/miliushadima/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/nastya_bialko/",
+  "handle": "nastya_bialko",
+  "slug": "nastya_bialko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Настя",
+  "lastName": "Бялко",
+  "fullName": "Настя Бялко",
+  "gender": "female",
+  "nameQuotes": [
+    "Настя Бялко"
+  ],
+  "headline": "Фитнес-тренер и тренер по питанию",
+  "sourceBio": "-𝐓𝐫𝐚𝐢𝐧𝐞𝐫 Программы тренировок/питания • Реклама/сотрудничество/съемки • Побуждаю на абсолютную любовь, вдохновляю 📄𝑷𝒆𝒓𝒔𝒐𝒏𝒂𝒍𝒏𝒚𝒚 𝒕𝒓𝒆𝒏𝒆𝒓",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кобрин. Настя Бялко. ул. Ленина, д. 11.",
+  "threadsUrl": "",
+  "bio": "Я Настя Бялко. Фитнес и программы питания. Город Кобрин.",
+  "about": [
+    "Я веду программы тренировок."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Кобрин",
+  "address": "улица Ленина, 11",
+  "cityCandidates": [
+    "Кобрин"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/nastya_bialko.jpg",
+  "photos": [
+    "/trainers/instagram/nastya_bialko.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/nastya_bialko/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

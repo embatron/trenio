@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yanejka/",
+  "handle": "yanejka",
+  "slug": "yanejka",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Женя",
+  "lastName": "",
+  "fullName": "Женя",
+  "gender": "",
+  "nameQuotes": [
+    "Женя"
+  ],
+  "headline": "Инструктор по йоге",
+  "sourceBio": "Я Женя, ум и тело – моё дело «Если сидеть на *опе ровно, то хотя бы в падмасане» по дороге к йоге, танцор в душе, ученик по жизни, дом и дети в нём t.me/podorogekyoge",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Женя. Город Гомель. ул. Советская, д. 41, эт. 3.",
+  "threadsUrl": "",
+  "bio": "Я Женя. Йога. Город Гомель.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "хатха"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Гомель",
+  "address": "ул. Советская, д. 41, эт. 3",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yanejka.jpg",
+  "photos": [
+    "/trainers/instagram/yanejka.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yanejka/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/podorogekyoge",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "gender",
+    "pinnedPosts"
+  ]
+}

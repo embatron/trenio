@@ -1,0 +1,99 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/valiantsin_laikhtser/",
+  "handle": "valiantsin_laikhtser",
+  "slug": "valiantsin_laikhtser",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Валентин",
+  "lastName": "Лайхтер",
+  "fullName": "Валентин Лайхтер",
+  "gender": "male",
+  "nameQuotes": [
+    "Валентин Лайхтер"
+  ],
+  "headline": "Тренер по MMA и боксу",
+  "sourceBio": "⚡️ Матчмейкер BFC | Pro-боец🏆 2х «Нокаут года» & «Бой года»🎓 БГУФК | От новичков до профи📍 Зал на Петровщине (Минск)👇 Группы & VIP 1-на-1. Пиши!",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Валентин Лайхтер",
+  "threadsUrl": "",
+  "bio": "Я тренер по ММА и боксу в Минске. Занимаюсь от новичков до профи. Веду группы.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/valiantsin_laikhtser/reel/DalBy0iMN8I/",
+      "caption": "Секс, бокс и рок-н-ролл",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/valiantsin_laikhtser/reel/DJTlZmaI9DY/",
+      "caption": "BMF",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/valiantsin_laikhtser/reel/DW8VBNDjFfF/",
+      "caption": "Не то, что входит в уста, оскверняет человека, но то, что выходит из уст",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "mma",
+      "parentSlug": "edinoborstva",
+      "label": "MMA",
+      "evidence": "мма"
+    },
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "mma",
+    "parentSlug": "edinoborstva",
+    "label": "MMA"
+  },
+  "city": "Минск",
+  "address": "проспект Газеты Правда, 50",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/valiantsin_laikhtser.jpg",
+  "photos": [
+    "/trainers/instagram/valiantsin_laikhtser.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/valiantsin_laikhtser/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

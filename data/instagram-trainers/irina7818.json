@@ -1,0 +1,95 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/irina7818/",
+  "handle": "irina7818",
+  "slug": "irina7818",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ирина",
+  "lastName": "Чучвага",
+  "fullName": "Ирина Чучвага",
+  "gender": "female",
+  "nameQuotes": [
+    "Ирина Чучвага"
+  ],
+  "headline": "Тренер по бодибилдингу, инструктор тренажёрного зала, тренер по питанию и фитнес-тренер",
+  "sourceBio": "Научу любить себя, зал и железо🔗 Сопровождение по питанию🥗 онлайн/оффлайн. КМС-Бодибилдинг. Фитнес бикини до160 РБ🥈2026, РБ🥉2025. Калуга🥉 instagram.com/fok.texas?igshid=MzRlODBiNWFlZA%3D%3D",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Бобруйск. Ирина Чучвага. ул. Сикорского, д. 11. ФОК Техас.",
+  "threadsUrl": "",
+  "bio": "Я Ирина Чучвага, тренер по бодибилдингу. Город Бобруйск. Научу любить зал и железо и сопровождаю по питанию.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "bodibilding",
+      "parentSlug": "fitnes",
+      "label": "Бодибилдинг",
+      "evidence": "Бодибилдинг"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bodibilding",
+    "parentSlug": "fitnes",
+    "label": "Бодибилдинг"
+  },
+  "city": "Бобруйск",
+  "address": "улица Сикорского, 11",
+  "cityCandidates": [
+    "Бобруйск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/irina7818.jpg",
+  "photos": [
+    "/trainers/instagram/irina7818.jpg",
+    "/trainers/instagram/irina7818-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/irina7818/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

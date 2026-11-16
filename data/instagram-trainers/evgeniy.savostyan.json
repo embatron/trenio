@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/evgeniy.savostyan/",
+  "handle": "evgeniy.savostyan",
+  "slug": "evgeniy.savostyan",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгений",
+  "lastName": "Савостьян",
+  "fullName": "Евгений Савостьян",
+  "gender": "male",
+  "nameQuotes": [
+    "Евгений Савостьян"
+  ],
+  "headline": "Тренер по питанию",
+  "sourceBio": "Personal Coach 🏋🏽Online/Offline 📊Проконсультирую в direct 🫶Не бойся - это не больно",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Евгений Савостьян",
+  "threadsUrl": "",
+  "bio": "Я Евгений Савостьян, тренер по питанию и боксу в Гродно. Работаю онлайн и офлайн.",
+  "about": [
+    "Я веду тренировки онлайн и офлайн."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    },
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "nutriciolog",
+    "parentSlug": "fitnes",
+    "label": "Питание"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/evgeniy.savostyan.jpg",
+  "photos": [
+    "/trainers/instagram/evgeniy.savostyan.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/evgeniy.savostyan/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

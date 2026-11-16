@@ -1,0 +1,64 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/artemzaec/",
+  "handle": "artemzaec",
+  "slug": "artemzaec",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Артем",
+  "lastName": "Зайцев",
+  "fullName": "Артем Зайцев",
+  "gender": "male",
+  "nameQuotes": [
+    "Артем Андреевич Зайцев"
+  ],
+  "headline": "",
+  "sourceBio": "Профессиональный спортсмен Мастер спорта международного класса t.me/artemzaec",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "имя: Артем фамилия: Зайцев Телефон: Telegram: @artemzaec",
+  "threadsUrl": "",
+  "bio": "Я профессиональный спортсмен, мастер спорта международного класса.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/artemzaec.jpg",
+  "photos": [
+    "/trainers/instagram/artemzaec.jpg",
+    "/trainers/instagram/artemzaec-g2.jpg",
+    "/trainers/instagram/artemzaec-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/artemzaec/",
+    "phone": "+375 29 109-35-42",
+    "email": "",
+    "telegram": "https://t.me/artemzaec",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "email",
+    "pinnedPosts"
+  ]
+}

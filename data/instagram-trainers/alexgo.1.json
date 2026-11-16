@@ -1,0 +1,80 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/alexgo.1/",
+  "handle": "alexgo.1",
+  "slug": "alexgo.1",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Alex",
+  "lastName": "Go",
+  "fullName": "Alex Go",
+  "gender": "male",
+  "nameQuotes": [
+    "Alex Go"
+  ],
+  "headline": "Тренер по бегу",
+  "sourceBio": "Personal Coach Chief @atmorun Ambassador @public_bionova 🍮Coffee lover",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Alex Go имя: Alex фамилия: Go Telegram: @alexnrc",
+  "threadsUrl": "",
+  "bio": "Я Alex Go, тренер по бегу. Веду персональные и групповые тренировки.",
+  "about": [
+    "Тренировки проходят персонально и в группе. Есть и онлайн-ведение."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "beg",
+      "parentSlug": "beg",
+      "label": "Бег",
+      "evidence": "running"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "beg",
+    "parentSlug": "beg",
+    "label": "Бег"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/alexgo.1.jpg",
+  "photos": [
+    "/trainers/instagram/alexgo.1.jpg",
+    "/trainers/instagram/alexgo.1-g2.jpg",
+    "/trainers/instagram/alexgo.1-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/alexgo.1/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/alexnrc",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/mark_elfing/",
+  "handle": "mark_elfing",
+  "slug": "mark_elfing",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Арсений",
+  "lastName": "",
+  "fullName": "Арсений",
+  "gender": "male",
+  "nameQuotes": [
+    "Арсений"
+  ],
+  "headline": "Фитнес-тренер и тренер по осанке, питанию",
+  "sourceBio": "Ambassador @reckful.ru⛽️ promo: ARS10 🌏 Тренирую в Молодечно и онлайн📱 🩻Коррекция осанки 👶 🏆Призер соревнований по бодибилдингу",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Молодечно. Арсений. ул. Будавников, д. 15А.",
+  "threadsUrl": "",
+  "bio": "Я Арсений. Фитнес, осанка и питание. Город Молодечно.",
+  "about": [
+    "Я тренирую в Молодечно и онлайн."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "bodibilding",
+      "label": "Бодибилдинг",
+      "quote": "бодибилдингу"
+    }
+  ],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Молодечно",
+  "address": "улица Будавников",
+  "cityCandidates": [
+    "Молодечно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/mark_elfing.jpg",
+  "photos": [
+    "/trainers/instagram/mark_elfing.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/mark_elfing/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

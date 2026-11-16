@@ -5,6 +5,7 @@ import { reviewTextLength } from "@/lib/catalog/review-html";
 import {
   DEFAULT_CLAIM_INSTAGRAM_MESSAGE,
   DEFAULT_INSTAGRAM_MESSAGE,
+  DEFAULT_READY_INSTAGRAM_MESSAGE,
   DEFAULT_TRAINER_WELCOME,
   DEFAULT_USER_WELCOME,
   OUTREACH_SITE_LINK,
@@ -14,6 +15,7 @@ import {
   outreachTemplate,
   parseUserWelcome,
   renderClaimInstagramMessage,
+  renderReadyInstagramMessage,
   renderInstagramMessage,
   renderTrainerWelcome,
   resolvedSiteText,
@@ -84,4 +86,24 @@ test("the application letter substitutes the given name and that trainer's short
   assert.equal(renderClaimInstagramMessage("  ", "https://trenio.by/hi/k4n8pq2w").startsWith("Добрый день!"), true);
   assert.match(DEFAULT_CLAIM_INSTAGRAM_MESSAGE, /\{hello\}/);
   assert.match(DEFAULT_CLAIM_INSTAGRAM_MESSAGE, /\{doorUrl\}/);
+});
+
+test("the combined letter introduces the project and that trainer's prepared page", () => {
+  const text = renderReadyInstagramMessage("Ирина", "https://trenio.by/hi/k4n8pq2w");
+  assert.match(text, /^Ирина, добрый день!/);
+  assert.match(text, /Мы создаём https:\/\/trenio\.by — единую базу тренеров Беларуси/);
+  assert.match(text, /уже собрали для вас страницу/);
+  assert.match(text, /посмотрите, всё ли на месте:\n\nhttps:\/\/trenio\.by\/hi\/k4n8pq2w\n\nСтраницу можно опубликовать/);
+  assert.match(text, /Участие для тренера бесплатное/);
+  assert.match(text, /Продвижение анкеты тоже бесплатное/);
+  assert.equal(text.includes("{hello}"), false);
+  assert.equal(text.includes("{doorUrl}"), false);
+  assert.equal(text.includes("заявк"), false);
+  assert.equal(text.includes("ОФП"), false);
+  assert.equal(text.includes("/hi/k4n8pq2w"), true);
+  assert.equal(renderReadyInstagramMessage("  ", "https://trenio.by/hi/k4n8pq2w").startsWith("Добрый день!"), true);
+  assert.match(DEFAULT_READY_INSTAGRAM_MESSAGE, /\{hello\}/);
+  assert.match(DEFAULT_READY_INSTAGRAM_MESSAGE, /\{doorUrl\}/);
+  assert.equal(DEFAULT_READY_INSTAGRAM_MESSAGE === DEFAULT_CLAIM_INSTAGRAM_MESSAGE, false);
+  assert.equal(DEFAULT_READY_INSTAGRAM_MESSAGE === DEFAULT_INSTAGRAM_MESSAGE, false);
 });

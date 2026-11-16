@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/lenn.moroz/",
+  "handle": "lenn.moroz",
+  "slug": "lenn.moroz",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Елена",
+  "lastName": "Мороз",
+  "fullName": "Елена Мороз",
+  "gender": "female",
+  "nameQuotes": [
+    "Елена Мороз"
+  ],
+  "headline": "Фитнес-тренер и тренер по питанию",
+  "sourceBio": "▫️Питание|тренировки онлайн ▫️Офлайн @svfit_vitebsk, Белобородова 1Д t.me/elenamorozfit",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Елена Мороз. ул. Белобородова, д. 1Д.",
+  "threadsUrl": "",
+  "bio": "Я Елена Мороз, персональный тренер и нутрициолог. Город Витебск.",
+  "about": [
+    "Я веду тренировки онлайн."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "нутрициолог"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Витебск",
+  "address": "улица Генерала Белобородова, 1Д",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/lenn.moroz.jpg",
+  "photos": [
+    "/trainers/instagram/lenn.moroz.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/lenn.moroz/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/elenamorozfit",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

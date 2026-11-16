@@ -1,0 +1,81 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/jul.sheshko/",
+  "handle": "jul.sheshko",
+  "slug": "jul.sheshko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлия",
+  "lastName": "Шешко",
+  "fullName": "Юлия Шешко",
+  "gender": "female",
+  "nameQuotes": [
+    "Юлия Шешко"
+  ],
+  "headline": "Инструктор по растяжке",
+  "sourceBio": "ПЕРСОНАЛЬНО | ГРУППЫ | ОНЛАЙН • амбасадор гибкости • ко мне приходят за результатом • здесь лайфстайл | спорт | мотивация | дисциплина",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. Юлия Шешко. ул. Пушкинская, д. 16/1.",
+  "threadsUrl": "",
+  "bio": "Я Юлия Шешко, инструктор по стретчингу. Город Брест. Веду персональные и групповые занятия.",
+  "about": [
+    "Я веду персональные и групповые занятия."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "здоровая спина"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Брест",
+  "address": "Пушкинская улица, 16/1",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/jul.sheshko.jpg",
+  "photos": [
+    "/trainers/instagram/jul.sheshko.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/jul.sheshko/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

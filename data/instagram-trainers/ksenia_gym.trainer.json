@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ksenia_gym.trainer/",
+  "handle": "ksenia_gym.trainer",
+  "slug": "ksenia_gym.trainer",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ксения",
+  "lastName": "",
+  "fullName": "Ксения",
+  "gender": "female",
+  "nameQuotes": [
+    "КСЕНИЯ"
+  ],
+  "headline": "Фитнес-тренер и инструктор тренажёрного зала",
+  "sourceBio": "Fitness Trainer 📌Аккредитованый тренер с высшим спортивно-педагогическим образованием ❗️Тренирую в @sfit_mogilev❗️ Для записи - в DIRECT✍️",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв. Ксения. ул. Турова, д. 1.",
+  "threadsUrl": "",
+  "bio": "Я Ксения, тренер. Fitness. Город Могилёв.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Могилёв",
+  "address": "улица Турова, 1",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ksenia_gym.trainer.jpg",
+  "photos": [
+    "/trainers/instagram/ksenia_gym.trainer.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ksenia_gym.trainer/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

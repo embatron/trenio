@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pilates_drobot/",
+  "handle": "pilates_drobot",
+  "slug": "pilates_drobot",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Вероника",
+  "lastName": "Дробот",
+  "fullName": "Вероника Дробот",
+  "gender": "female",
+  "nameQuotes": [
+    "Вероника Дробот"
+  ],
+  "headline": "Инструктор по пилатесу и фитнес-тренер",
+  "sourceBio": "✨ Верну вашему телу лёгкость, а уму — спокойствие 🧘‍♀️В дипломе фитнес тренер , в душе йог 🏃‍♀️более 10 лет делаю тела людей красивыми и здоровыми",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Вероника Дробот. ул. Ленина, д. 5.",
+  "threadsUrl": "",
+  "bio": "Я Вероника Дробот. Пилатес и фитнес. Город Гродно.",
+  "about": [
+    "Я веду эти тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Гродно",
+  "address": "улица Ленина, 5",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/pilates_drobot.jpg",
+  "photos": [
+    "/trainers/instagram/pilates_drobot.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pilates_drobot/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

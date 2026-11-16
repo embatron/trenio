@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/viktoriya_merlyak_/",
+  "handle": "viktoriya_merlyak_",
+  "slug": "viktoriya_merlyak_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктория",
+  "lastName": "Мерляк",
+  "fullName": "Виктория Мерляк",
+  "gender": "female",
+  "nameQuotes": [
+    "Виктория Мерляк"
+  ],
+  "headline": "Фитнес-тренер и инструктор тренажёрного зала",
+  "sourceBio": "Директор и тренер @athletic_gym_grodno ▫️Высшее спортивное образование ▫️Достижение ваших целей (похудение/набор)...",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Виктория Мерляк. ш. Индурское, д. 9.",
+  "threadsUrl": "",
+  "bio": "Я Виктория Мерляк, фитнес-тренер. Город Гродно.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Гродно",
+  "address": "Индурское шоссе, 9",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/viktoriya_merlyak_.jpg",
+  "photos": [
+    "/trainers/instagram/viktoriya_merlyak_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/viktoriya_merlyak_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

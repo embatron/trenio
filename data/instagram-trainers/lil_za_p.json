@@ -1,0 +1,81 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/lil_za_p/",
+  "handle": "lil_za_p",
+  "slug": "lil_za_p",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "lil_za_p",
+  "lastName": "",
+  "fullName": "lil_za_p",
+  "gender": "male",
+  "nameQuotes": [],
+  "headline": "Инструктор по пилатесу и растяжке",
+  "sourceBio": "Пилатес/растяжка Онлайн-запись: sportpriority.by/r/ShantiYoga",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Аккаунт lil_za_p. Город Могилёв. пр-т Пушкинский, д. 69.",
+  "threadsUrl": "",
+  "bio": "Я веду пилатес и растяжку. Город Могилёв.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "Растяжка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Могилёв",
+  "address": "Пушкинский проспект",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/lil_za_p.jpg",
+  "photos": [
+    "/trainers/instagram/lil_za_p.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/lil_za_p/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

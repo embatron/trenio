@@ -1,0 +1,80 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/soborchowa/",
+  "handle": "soborchowa",
+  "slug": "soborchowa",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Катя",
+  "lastName": "Соборшова",
+  "fullName": "Катя Соборшова",
+  "gender": "female",
+  "nameQuotes": [
+    "Катя Соборшова"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Personal Coach Индивидуальные тренировки 💪🏾 🌰Прокачаю твои ягодицы 🗒️Возьму тебя на ОНЛАЙН ВЕДЕНИЕ Тренер команды @athletic_team_vtb",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Катя Соборшова. ул. Ивановского, д. 5. Персональный тренер.",
+  "threadsUrl": "",
+  "bio": "Я Катя Соборшова, персональный тренер. Город Витебск. Веду индивидуальные тренировки.",
+  "about": [
+    "Я веду индивидуальные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Витебск",
+  "address": "улица Генерала Ивановского, 5",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/soborchowa.jpg",
+  "photos": [
+    "/trainers/instagram/soborchowa.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/soborchowa/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

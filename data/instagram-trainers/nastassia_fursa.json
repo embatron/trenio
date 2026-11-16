@@ -1,0 +1,99 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/nastassia_fursa/",
+  "handle": "nastassia_fursa",
+  "slug": "nastassia_fursa",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анастасия",
+  "lastName": "",
+  "fullName": "Анастасия",
+  "gender": "female",
+  "nameQuotes": [
+    "Анастасия"
+  ],
+  "headline": "Инструктор по пилатесу, растяжке и фитнес-тренер",
+  "sourceBio": "Тренер Фит Микс/ Пилатес/ Стретчинг- фитнес групповые тренировки в @fitzone.by",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно. Анастасия. ул. В. Макаровой, д. 2Б.",
+  "threadsUrl": "",
+  "bio": "Я Анастасия. Пилатес, стретчинг и фитнес. Город Гродно.",
+  "about": [
+    "Я веду групповые тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "стретчинг"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "tancy",
+      "label": "Танцы",
+      "quote": "dance"
+    }
+  ],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Гродно",
+  "address": "улица Валентины Макаровой, 2Б",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/nastassia_fursa.jpg",
+  "photos": [
+    "/trainers/instagram/nastassia_fursa.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/nastassia_fursa/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/julia_pilates_/",
+  "handle": "julia_pilates_",
+  "slug": "julia_pilates_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлия",
+  "lastName": "Ефременко",
+  "fullName": "Юлия Ефременко",
+  "gender": "female",
+  "nameQuotes": [
+    "Юлия Ефременко"
+  ],
+  "headline": "Инструктор по пилатесу и тренер по восстановлению после родов",
+  "sourceBio": "☘Юлия Ефременко ☘влюбляю в Пилатес и осознанное движение, ☘восстанавливаю после родов; ☘групповые и персональные тренировки ☘мама троих мальчишек",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Орша. Юлия Ефременко. ул. Ленина, д. 242.",
+  "threadsUrl": "",
+  "bio": "Я Юлия Ефременко. Пилатес и восстановление после родов. Город Орша.",
+  "about": [
+    "Я веду групповые и персональные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "posle-rodov",
+      "parentSlug": "reabilitaciya",
+      "label": "После родов",
+      "evidence": "послеродовое восстановление"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Орша",
+  "address": "улица Владимира Ленина",
+  "cityCandidates": [
+    "Орша"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/julia_pilates_.jpg",
+  "photos": [
+    "/trainers/instagram/julia_pilates_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/julia_pilates_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

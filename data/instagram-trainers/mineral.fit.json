@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/mineral.fit/",
+  "handle": "mineral.fit",
+  "slug": "mineral.fit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Лина",
+  "lastName": "",
+  "fullName": "Лина",
+  "gender": "female",
+  "nameQuotes": [
+    "Лина"
+  ],
+  "headline": "Фитнес-тренер и тренер по питанию",
+  "sourceBio": "💎 Готовлюсь к дебюту в фитнес-бикини 💪🏻 Тренирую в @mogilev_refresh 🔥 Онлайн/оффлайн ведение + питание Запись на тренировку в Direct ✍🏻 t.me/new_mineral_day and 1 more",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв. Лина. пр-т Мира, д. 25Г.",
+  "threadsUrl": "",
+  "bio": "Я Лина. Фитнес и питание. Город Могилёв.",
+  "about": [
+    "Я тренирую онлайн и оффлайн."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Могилёв",
+  "address": "проспект Мира, 25Г",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/mineral.fit.jpg",
+  "photos": [
+    "/trainers/instagram/mineral.fit.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/mineral.fit/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/new_mineral_day",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

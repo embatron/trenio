@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/fitness_trener_lida/",
+  "handle": "fitness_trener_lida",
+  "slug": "fitness_trener_lida",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дмитрий",
+  "lastName": "",
+  "fullName": "Дмитрий",
+  "gender": "male",
+  "nameQuotes": [
+    "Дмитрий"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Дмитрий, квалифицированный тренер. Помогу построить здоровое тело и улучшить физическую подготовку. ☝️Персональные тренировки ☝️Фитнес тренировки",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Лида. Дмитрий. ул. Железнодорожная, д. 12.",
+  "threadsUrl": "",
+  "bio": "Я Дмитрий, фитнес-тренер. Персональные и групповые тренировки. Город Лида.",
+  "about": [
+    "Я веду персональные и групповые тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Лида",
+  "address": "Железнодорожная улица, 12",
+  "cityCandidates": [
+    "Лида"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/fitness_trener_lida.jpg",
+  "photos": [
+    "/trainers/instagram/fitness_trener_lida.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/fitness_trener_lida/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

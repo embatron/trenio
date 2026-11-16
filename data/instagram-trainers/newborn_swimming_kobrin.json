@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/newborn_swimming_kobrin/",
+  "handle": "newborn_swimming_kobrin",
+  "slug": "newborn_swimming_kobrin",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "newborn_swimming_kobrin",
+  "lastName": "",
+  "fullName": "newborn_swimming_kobrin",
+  "gender": "male",
+  "nameQuotes": [],
+  "headline": "Тренер по плаванию и инструктор по аквааэробике",
+  "sourceBio": "#кобрин #грудничковоеплавание -осознанное погружение -плавание в ваннах 0+ -обучение детей и взрослых 🏊‍♀️ Мой основной аккаунт: @hanna_lukyanionak",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кобрин. ул. Гастелло, д. 15.",
+  "threadsUrl": "",
+  "bio": "Плавание для детей и взрослых. Аквааэробика. Город Кобрин.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "плавание для детей"
+    },
+    {
+      "slug": "akvaaerobika",
+      "parentSlug": "plavanie",
+      "label": "Аквааэробика",
+      "evidence": "Аквааэробика"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Кобрин",
+  "address": "улица Гастелло, 15",
+  "cityCandidates": [
+    "Кобрин"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/newborn_swimming_kobrin.jpg",
+  "photos": [
+    "/trainers/instagram/newborn_swimming_kobrin.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/newborn_swimming_kobrin/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

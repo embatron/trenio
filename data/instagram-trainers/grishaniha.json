@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/grishaniha/",
+  "handle": "grishaniha",
+  "slug": "grishaniha",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Яна",
+  "lastName": "Гришаева",
+  "fullName": "Яна Гришаева",
+  "gender": "female",
+  "nameQuotes": [
+    "Яна Гришаева"
+  ],
+  "headline": "Фитнес-тренер, инструктор тренажёрного зала и тренер по питанию",
+  "sourceBio": "про жизнь • тренировки • питание тренирую в @vault_gym_gomel 📍Гомель",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гомель. Яна Гришаева. ул. Юбилейная, д. 50.",
+  "threadsUrl": "",
+  "bio": "Я Яна Гришаева, фитнес-тренер. Питание. Город Гомель.",
+  "about": [
+    "Я рассказываю про тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Гомель",
+  "address": "Юбилейная улица, 50",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/grishaniha.jpg",
+  "photos": [
+    "/trainers/instagram/grishaniha.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/grishaniha/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

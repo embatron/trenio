@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/egorchuiko_/",
+  "handle": "egorchuiko_",
+  "slug": "egorchuiko_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Егор",
+  "lastName": "",
+  "fullName": "Егор",
+  "gender": "male",
+  "nameQuotes": [
+    "Егор"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "•Мастер спорта по легкой атлетике •Участник Чемпионатов Европы и Юн. олимпийских игр •Персональный тренер",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Барановичи. Егор. ул. Домейко, д. 15.",
+  "threadsUrl": "",
+  "bio": "Я Егор, персональный тренер. Город Барановичи.",
+  "about": [
+    "Я персональный тренер."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "legkaya-atletika",
+      "label": "Лёгкая атлетика",
+      "quote": "легкой атлетике"
+    }
+  ],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Барановичи",
+  "address": "улица Домейко, 15",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/egorchuiko_.jpg",
+  "photos": [
+    "/trainers/instagram/egorchuiko_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/egorchuiko_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

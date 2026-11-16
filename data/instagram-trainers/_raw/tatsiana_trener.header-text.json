@@ -1,0 +1,135 @@
+{
+  title: '(2) Instagram',
+  og: '1,547 Followers, 283 Following, 296 Posts - See Instagram photos and videos from Тренер /Тренировки в зале/Онлайн тренер/Питание/ Гродно (@tatsiana_trener)',
+  header: 'tatsiana_trener\n' +
+    'Тренер /Тренировки в зале/Онлайн тренер/Питание/ Гродно\n' +
+    '296 posts\n' +
+    '1,547 followers\n' +
+    '275 following\n' +
+    'Product/service\n' +
+    'Тренирую онлайн и офлайн в тренажёрном зале\n' +
+    'Похудение, набор мышечной массы💪, сочные ягодицы\n' +
+    'Ведение онлайн (программы ... \n' +
+    'more\n' +
+    'tatsiana_trener\n' +
+    'Follow\n' +
+    'Message\n' +
+    'Онлайн ведение\n' +
+    'Еда\n' +
+    'Тренировки\n' +
+    'Отзывы\n' +
+    'До/после\n' +
+    'Актуальное\n' +
+    'Как проходят тре\n' +
+    'Лайфхаки',
+  highlights: [
+    {
+      title: 'Онлайн ведение',
+      href: 'https://www.instagram.com/stories/highlights/18065290021055935/'
+    },
+    {
+      title: 'Еда',
+      href: 'https://www.instagram.com/stories/highlights/17962027843031689/'
+    },
+    {
+      title: 'Тренировки',
+      href: 'https://www.instagram.com/stories/highlights/17973670126011814/'
+    },
+    {
+      title: 'Отзывы',
+      href: 'https://www.instagram.com/stories/highlights/17846271598411659/'
+    },
+    {
+      title: 'До/после',
+      href: 'https://www.instagram.com/stories/highlights/18064022569002695/'
+    },
+    {
+      title: 'Актуальное',
+      href: 'https://www.instagram.com/stories/highlights/17855931655252683/'
+    },
+    {
+      title: 'Как проходят тре',
+      href: 'https://www.instagram.com/stories/highlights/18088921910475132/'
+    },
+    {
+      title: 'Лайфхаки',
+      href: 'https://www.instagram.com/stories/highlights/17977516474716739/'
+    }
+  ],
+  posts: [
+    {
+      href: 'https://www.instagram.com/tatsiana_trener/reel/DQwBTwbiLJV/',
+      pinned: true,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/tatsiana_trener/p/Dfebh90CPQl/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/tatsiana_trener/reel/DfFOE3rIkty/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/tatsiana_trener/reel/DdzRZMFo3jp/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/tatsiana_trener/reel/DcJfEf4ICB6/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/tatsiana_trener/reel/DbyuJMhoc51/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/tatsiana_trener/reel/DbqrtNMIpMY/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/tatsiana_trener/p/DbiISt_iItz/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/tatsiana_trener/p/DbiHNi2iJ0l/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/tatsiana_trener/reel/DT78hbgCDN4/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/tatsiana_trener/reel/DTiqn2qCPpZ/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/tatsiana_trener/reel/DSJ9JpFiKOT/',
+      pinned: false,
+      kind: 'reel'
+    }
+  ],
+  pinned: [
+    {
+      href: 'https://www.instagram.com/tatsiana_trener/reel/DQwBTwbiLJV/',
+      pinned: true,
+      kind: 'reel'
+    }
+  ],
+  imgs: [
+    {
+      w: 1080,
+      h: 1080
+    }
+  ],
+  clickedMore: true
+}

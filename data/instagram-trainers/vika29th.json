@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vika29th/",
+  "handle": "vika29th",
+  "slug": "vika29th",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктория",
+  "lastName": "",
+  "fullName": "Виктория",
+  "gender": "female",
+  "nameQuotes": [
+    "ВИКТОРИЯ"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Mom 👧👦 ◾️ Sport 🏋️‍♀️ ◾️ Engineer-technologist 🍏🥒🥬 ◾️ Gold and diamond 💎 ◾️ to be continued ♾️",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Виктория. Город Орша. ул. Молокова, д. 2.",
+  "threadsUrl": "",
+  "bio": "Я Виктория, фитнес-тренер. Город Орша.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Орша",
+  "address": "улица Василия Молокова, 2",
+  "cityCandidates": [
+    "Орша"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vika29th.jpg",
+  "photos": [
+    "/trainers/instagram/vika29th.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vika29th/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

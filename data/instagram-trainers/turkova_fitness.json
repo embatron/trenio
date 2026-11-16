@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/turkova_fitness/",
+  "handle": "turkova_fitness",
+  "slug": "turkova_fitness",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Екатерина",
+  "lastName": "Туркова",
+  "fullName": "Екатерина Туркова",
+  "gender": "female",
+  "nameQuotes": [
+    "Екатерина",
+    "Туркова"
+  ],
+  "headline": "Фитнес-тренер и тренер по питанию",
+  "sourceBio": "Разбор питания Персональные тренировки Не важно какая у тебя сейчас полоса, черная или белая. Главное, что каждая из них взлетная 🚀 @oxygen_fitness_",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв Туркова Екатерина",
+  "threadsUrl": "",
+  "bio": "Я Екатерина Туркова, фитнес-тренер. Город Могилёв. Делаю разбор питания и персональные тренировки. Не важно, какая сейчас полоса, черная или белая: каждая из них взлетная.",
+  "about": [
+    "Провожу персональные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/turkova_fitness.jpg",
+  "photos": [
+    "/trainers/instagram/turkova_fitness.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/turkova_fitness/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

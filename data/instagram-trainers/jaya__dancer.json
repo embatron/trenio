@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/jaya__dancer/",
+  "handle": "jaya__dancer",
+  "slug": "jaya__dancer",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дарья",
+  "lastName": "Башаримова",
+  "fullName": "Дарья Башаримова",
+  "gender": "female",
+  "nameQuotes": [
+    "Дарья Башаримова"
+  ],
+  "headline": "Тренер по танцам и хореографии, инструктор по растяжке и тренер по современным танцам",
+  "sourceBio": "❣️Временно не работаю Дарья Башаримова | ВОСТОЧНАЯ КРАСАВИЦА ДЖАЯ ▪️Научу женственному восточному танцу ▪️Инструктор по степ-аэробике,стретчингу",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв. Дарья Башаримова. ул. Ленинская, д. 50Б.",
+  "threadsUrl": "",
+  "bio": "Я Дарья Башаримова. Восточные танцы и растяжка. Город Могилёв.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "стретчинг"
+    },
+    {
+      "slug": "sovremennye",
+      "parentSlug": "tancy",
+      "label": "Современные танцы",
+      "evidence": "зумба"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Могилёв",
+  "address": "Ленинская улица, 50Б",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/jaya__dancer.jpg",
+  "photos": [
+    "/trainers/instagram/jaya__dancer.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/jaya__dancer/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

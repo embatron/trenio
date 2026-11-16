@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/dariakozlova._/",
+  "handle": "dariakozlova._",
+  "slug": "dariakozlova._",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дарья",
+  "lastName": "Козлова",
+  "fullName": "Дарья Козлова",
+  "gender": "female",
+  "nameQuotes": [
+    "Дарья Козлова"
+  ],
+  "headline": "Инструктор по растяжке",
+  "sourceBio": "Personal blog",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. Дарья Козлова. ул. Куйбышева д. 13. стретчинг.",
+  "threadsUrl": "",
+  "bio": "Я Дарья Козлова, инструктор по стретчингу. Город Брест.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "стретчинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Брест",
+  "address": "улица Куйбышева, 13",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/dariakozlova._.jpg",
+  "photos": [
+    "/trainers/instagram/dariakozlova._.jpg",
+    "/trainers/instagram/dariakozlova._-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/dariakozlova._/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

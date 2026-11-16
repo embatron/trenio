@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/gintovleonid/",
+  "handle": "gintovleonid",
+  "slug": "gintovleonid",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Леонид",
+  "lastName": "Гинтов",
+  "fullName": "Леонид Гинтов",
+  "gender": "male",
+  "nameQuotes": [
+    "Гинтов Леонид"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Персональный тренер. Инструктор-методист высшей категории. Высшее физкультурно-педагогическое образование. Тел. ; (Viber)",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Барановичи. Леонид Гинтов. пр-т Советский, д. 35.",
+  "threadsUrl": "",
+  "bio": "Я Леонид Гинтов, персональный тренер. Город Барановичи.",
+  "about": [
+    "Я персональный тренер."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Барановичи",
+  "address": "пр-т Советский, д. 35",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/gintovleonid.jpg",
+  "photos": [
+    "/trainers/instagram/gintovleonid.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/gintovleonid/",
+    "phone": "+375 29 134-97-77",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/zaramassageroomsoligorsk/",
+  "handle": "zaramassageroomsoligorsk",
+  "slug": "zaramassageroomsoligorsk",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Зарина",
+  "lastName": "",
+  "fullName": "Зарина",
+  "gender": "female",
+  "nameQuotes": [
+    "Зарина"
+  ],
+  "headline": "Массажист",
+  "sourceBio": "▪️Опыт работы более 6 лет ▪️Массаж Классический | Спортивный | Релакс ▪️Массаж - удовольствие, которое еще и полезно💆🏻‍♀️ 💌 Запись в Direct и 📞 Oktyabrskaya 106, Soligorsk",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Солигорск. Зарина. ул. Октябрьская, д. 106.",
+  "threadsUrl": "",
+  "bio": "Я Зарина. Массаж классический, спортивный и релакс. Город Солигорск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "massazh",
+      "parentSlug": "reabilitaciya",
+      "label": "Массаж",
+      "evidence": "Массаж"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "massazh",
+    "parentSlug": "reabilitaciya",
+    "label": "Массаж"
+  },
+  "city": "Солигорск",
+  "address": "Октябрьская улица, 106",
+  "cityCandidates": [
+    "Солигорск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/zaramassageroomsoligorsk.jpg",
+  "photos": [
+    "/trainers/instagram/zaramassageroomsoligorsk.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/zaramassageroomsoligorsk/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

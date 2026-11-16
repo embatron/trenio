@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/valnas_/",
+  "handle": "valnas_",
+  "slug": "valnas_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александра",
+  "lastName": "",
+  "fullName": "Александра",
+  "gender": "female",
+  "nameQuotes": [
+    "Александра"
+  ],
+  "headline": "Фитнес-тренер и тренер по питанию",
+  "sourceBio": "Fitness Trainer Сбросила -40 кг с 86 до 46! Делюсь опытом и знаниями о здоровом питании и тренировках Персональные тренировки оффлайн/онлайн",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв Александра",
+  "threadsUrl": "",
+  "bio": "Я Александра, фитнес-тренер. Город Могилёв. Сбросила 40 кг, с 86 до 46. Делюсь опытом о здоровом питании и тренировках.",
+  "about": [
+    "Персональные тренировки провожу офлайн и онлайн."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/valnas_.jpg",
+  "photos": [
+    "/trainers/instagram/valnas_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/valnas_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

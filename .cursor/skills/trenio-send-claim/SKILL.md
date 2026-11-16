@@ -10,7 +10,7 @@ description: >-
 
 # Application welcome
 
-This is the letter for a trainer whose page is already prepared. It is not the cold outreach. `/send-msgs` stays that other letter and still has no short link.
+This is the letter for a trainer whose page is already prepared after an application. It is not the cold outreach. `/send-msgs` stays that other letter and still has no short link. `/send-ready` introduces the project and the page already assembled, and it does not mention an application. Do not send that letter from this command.
 
 The saved text is `DEFAULT_CLAIM_INSTAGRAM_MESSAGE` in `src/lib/site-texts/defaults.ts`. The only substitutions are the given name and that trainer's short link. Do not add a sport, a city, a price, or any other fact from the profile.
 
@@ -61,7 +61,7 @@ IG_ACCOUNT=trenioby ./node_modules/.bin/tsx --env-file=.env scripts/outreach-tra
 ## Do not
 
 - Rewrite the letter, list sports, or fill a field the template does not name.
-- Use the cold `instagram_message` text for this command.
+- Use the cold `instagram_message` text, or the `/send-ready` letter, for this command.
 - Leave «Ссылка» empty. This letter contains the short link, so `mark {handle} claim` sets it together with «Сообщение».
 - Message a published, hidden, or archived card, or a draft that already has a message mark.
 - Type a short link that `text` did not just print for this handle.

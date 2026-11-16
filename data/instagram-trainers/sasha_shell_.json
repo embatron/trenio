@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/sasha_shell_/",
+  "handle": "sasha_shell_",
+  "slug": "sasha_shell_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александра",
+  "lastName": "",
+  "fullName": "Александра",
+  "gender": "female",
+  "nameQuotes": [
+    "Александра"
+  ],
+  "headline": "Фитнес-тренер и тренер по питанию",
+  "sourceBio": "ТВОЙ ЛИЧНЫЙ ФИТНЕС-ГУРУ|ГОМЕЛЬ 🔥 Формирую фигуру мечты 🎓 10 лет в движении,тренерское образование 🤤Хочешь булки,от которых все пускают слюни—Пиши!",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Александра. Город Гомель. ул. Междугородняя, д. 7.",
+  "threadsUrl": "",
+  "bio": "Я Александра, персональный тренер. Город Гомель.",
+  "about": [
+    "Я веду персональный формат."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "рацион"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Гомель",
+  "address": "Междугородняя улица, 7",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/sasha_shell_.jpg",
+  "photos": [
+    "/trainers/instagram/sasha_shell_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/sasha_shell_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

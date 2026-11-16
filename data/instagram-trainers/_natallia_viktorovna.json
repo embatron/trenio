@@ -1,0 +1,101 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/_natallia_viktorovna/",
+  "handle": "_natallia_viktorovna",
+  "slug": "_natallia_viktorovna",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Наталья",
+  "lastName": "",
+  "fullName": "Наталья",
+  "gender": "female",
+  "nameQuotes": [
+    "Наталья"
+  ],
+  "headline": "Инструктор по растяжке, тренер по общефизической подготовке, инструктор по пилатесу и тренер по волейболу",
+  "sourceBio": "Высшее спортивное образование. Аэростретчинг, ОФП дети, стретчинг, здоровая спина,пилатес группы | онлайн Личная страница ⬇️ @andruschkevitch_nat",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. Наталья. ул. Московская, д. 329.",
+  "threadsUrl": "",
+  "bio": "Я Наталья. Стретчинг, пилатес и ОФП. Город Брест.",
+  "about": [
+    "Я веду тренировки в группах."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "здоровая спина"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "volejbol",
+      "parentSlug": "komandnye",
+      "label": "Волейбол",
+      "evidence": "Волейбол"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Брест",
+  "address": "Московская улица, 329",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/_natallia_viktorovna.jpg",
+  "photos": [
+    "/trainers/instagram/_natallia_viktorovna.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/_natallia_viktorovna/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

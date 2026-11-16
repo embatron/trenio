@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/sasha_valerevna/",
+  "handle": "sasha_valerevna",
+  "slug": "sasha_valerevna",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александра",
+  "lastName": "Милаш",
+  "fullName": "Александра Милаш",
+  "gender": "female",
+  "nameQuotes": [
+    "Александра Милаш"
+  ],
+  "headline": "Тренер по бальным танцам",
+  "sourceBio": "СолоЛатина для женщин в Молодечно✨ Можно с нуля, без пары и опыта20+ лет танцую | 15 лет преподаю 📩 Пробная тренировка - запись в Директ",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Телефон: Telegram: @mamaritma",
+  "threadsUrl": "",
+  "bio": "Я преподаю соло-латину для женщин в Молодечно. Начать можно с нуля, без пары и без опыта.",
+  "about": [
+    "Пробная тренировка нужна, чтобы начать с нуля, без пары и без опыта."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "balnye",
+      "parentSlug": "tancy",
+      "label": "Бальные танцы",
+      "evidence": "латина"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "tancy",
+      "label": "Танцы",
+      "quote": "танцую"
+    }
+  ],
+  "primarySport": {
+    "slug": "balnye",
+    "parentSlug": "tancy",
+    "label": "Бальные танцы"
+  },
+  "city": "Молодечно",
+  "address": "",
+  "cityCandidates": [
+    "Молодечно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/sasha_valerevna.jpg",
+  "photos": [
+    "/trainers/instagram/sasha_valerevna.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/sasha_valerevna/",
+    "phone": "+375 29 122-16-62",
+    "email": "",
+    "telegram": "https://t.me/mamaritma",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "pinnedPosts"
+  ]
+}

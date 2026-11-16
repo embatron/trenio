@@ -1,0 +1,75 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/igor_figurenko/",
+  "handle": "igor_figurenko",
+  "slug": "igor_figurenko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Игорь",
+  "lastName": "Фигуренко",
+  "fullName": "Игорь Фигуренко",
+  "gender": "male",
+  "nameQuotes": [
+    "Игорь Фигуренко"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "Тренер по боксу Гомель",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гомель. Игорь Фигуренко. ул. Столярная, д. 2-3.",
+  "threadsUrl": "",
+  "bio": "Я Игорь Фигуренко, тренер по боксу. Город Гомель.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Гомель",
+  "address": "Столярная улица, 2",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/igor_figurenko.jpg",
+  "photos": [
+    "/trainers/instagram/igor_figurenko.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/igor_figurenko/",
+    "phone": "+375 29 730-13-12",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

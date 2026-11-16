@@ -1,0 +1,94 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/irashulzhik/",
+  "handle": "irashulzhik",
+  "slug": "irashulzhik",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ирина",
+  "lastName": "Шульжик",
+  "fullName": "Ирина Шульжик",
+  "gender": "female",
+  "nameQuotes": [
+    "Ирина Шульжик"
+  ],
+  "headline": "Инструктор по растяжке и тренер по осанке",
+  "sourceBio": "Высшее медицинское образование Здоровая спина, правильная осанка и женская грация. Соединяю разум с телом Веду голосом Запись📩 t.me/irynashulzhik",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. Ирина Шульжик. ул. Пушкинская, д. 16/1.",
+  "threadsUrl": "",
+  "bio": "Я Ирина Шульжик. Занимаюсь здоровой спиной и осанкой. Город Брест.",
+  "about": [
+    "Я веду тренировки голосом."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "здоровая спина"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "tancy",
+      "label": "Танцы",
+      "quote": "Танцы"
+    },
+    {
+      "slug": "beg",
+      "label": "Бег",
+      "quote": "Бег 26"
+    }
+  ],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Брест",
+  "address": "Пушкинская улица, 16/1",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/irashulzhik.jpg",
+  "photos": [
+    "/trainers/instagram/irashulzhik.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/irashulzhik/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/irynashulzhik",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

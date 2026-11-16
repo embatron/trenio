@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/tusya_na_bachata/",
+  "handle": "tusya_na_bachata",
+  "slug": "tusya_na_bachata",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Наталья",
+  "lastName": "Шункевич",
+  "fullName": "Наталья Шункевич",
+  "gender": "female",
+  "nameQuotes": [
+    "Наталья Шункевич"
+  ],
+  "headline": "Тренер по танцам и хореографии",
+  "sourceBio": "Artist Инструктор программы БачатаДенсФит. Открою дверь в мир бачаты. Докажу, что ты можешь больше, чем думаешь!!! tiktok.com/@tusya_na",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Бобруйск. Наталья Шункевич. ул. Сикорского, д. 11. Танцы. тренировки.",
+  "threadsUrl": "",
+  "bio": "Я Наталья Шункевич, тренер по танцам. Город Бобруйск. Веду тренировки по бачате.",
+  "about": [
+    "Я веду тренировки по бачате."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "beg",
+      "label": "Бег",
+      "quote": "BDF МАРАФОН"
+    }
+  ],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Бобруйск",
+  "address": "улица Сикорского, 11",
+  "cityCandidates": [
+    "Бобруйск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/tusya_na_bachata.jpg",
+  "photos": [
+    "/trainers/instagram/tusya_na_bachata.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/tusya_na_bachata/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

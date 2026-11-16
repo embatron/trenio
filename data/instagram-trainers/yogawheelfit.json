@@ -1,0 +1,75 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yogawheelfit/",
+  "handle": "yogawheelfit",
+  "slug": "yogawheelfit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Елена",
+  "lastName": "Крюкова",
+  "fullName": "Елена Крюкова",
+  "gender": "female",
+  "nameQuotes": [
+    "Елена Крюкова"
+  ],
+  "headline": "Инструктор по йоге",
+  "sourceBio": "150 + тренеров по всему 🌐 Yoga Wheel Fit / Йога с колесом Sri Lanka Yoga Wheel Reatret ⤵️",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Новополоцк. Елена Крюкова. ул. Нефтяников, д. 6.",
+  "threadsUrl": "",
+  "bio": "Я Елена Крюкова. Йога с колесом. Город Новополоцк.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Новополоцк",
+  "address": "улица Нефтяников, 6",
+  "cityCandidates": [
+    "Новополоцк"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "",
+  "photos": [],
+  "certificates": [],
+  "photoSearch": {
+    "face": false,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yogawheelfit/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "avatar",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

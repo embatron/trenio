@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/svetikoyoga/",
+  "handle": "svetikoyoga",
+  "slug": "svetikoyoga",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Света",
+  "lastName": "",
+  "fullName": "Света",
+  "gender": "female",
+  "nameQuotes": [
+    "Света"
+  ],
+  "headline": "Инструктор по йоге и тренер по осанке",
+  "sourceBio": "👌ТВОЙ Преподаватель йоги для спины и осанки Среда19:10-20:10 Йога для спины и осанки (Могилев, Пр-т Пушкинский, 28) Путь к желанной осанке💕",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв. Света. Пр-т Пушкинский, 28.",
+  "threadsUrl": "",
+  "bio": "Я Света, преподаватель йоги для осанки. Город Могилёв.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Могилёв",
+  "address": "Пушкинский проспект, 28",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/svetikoyoga.jpg",
+  "photos": [
+    "/trainers/instagram/svetikoyoga.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/svetikoyoga/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -857,10 +857,28 @@ async function saveOne(rawPath: string, settlements: string[]) {
       .filter((part) => part.length >= 4),
   );
   // A surname that is also a village (Князева) is the person's name, not the city they named.
-  const notThePerson = (name: string) => !nameTokens.has(name.toLowerCase());
+  const notThePerson = (name: string) => {
+    const city = name.toLowerCase();
+    if (nameTokens.has(city)) return false;
+    // «Горошкова» is the surname, not the town Горошков.
+    for (const token of nameTokens) {
+      const rest = token.startsWith(city) ? token.slice(city.length) : "";
+      if (rest && /^(?:[еуаыию]|ом|ой|ах|ях|ою)$/iu.test(rest)) return false;
+    }
+    return true;
+  };
   const notAStreet = (text: string) => {
     const streets = streetNameTokens(text);
-    return (name: string) => !streets.has(name.toLowerCase());
+    return (name: string) => {
+      const city = name.toLowerCase();
+      for (const street of streets) {
+        if (street === city) return false;
+        // «ул. Турова» is the street, not the town Туров.
+        const rest = street.startsWith(city) ? street.slice(city.length) : "";
+        if (rest && /^(?:[еуаыию]|ом|ой|ах|ях|ою)$/iu.test(rest)) return false;
+      }
+      return true;
+    };
   };
   const noteCities = matchCities(note, settlements).filter(notThePerson).filter(notAStreet(note));
   const pageCityHits = matchCities(pageCorpus, settlements).filter(notThePerson).filter(notAStreet(pageCorpus));
@@ -1000,7 +1018,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
   if (sportInProfile && !catalogPhrases().some((phrase) => phrase.slug === primary?.slug && sportAliasRegex(phrase.alias).test(foldYo(presentation)))) {
     fail(rawPath, `presentation must name the coached sport (${primary?.label}).`);
   }
-  const namedCities = matchCities(cardSurface, settlements).filter((name) => !nameTokens.has(name.toLowerCase()));
+  const namedCities = matchCities(cardSurface, settlements).filter(notThePerson);
   const extraCities = namedCities.filter((name) => name !== statedCity);
   if (extraCities.length) fail(rawPath, `Card text names ${extraCities.join(", ")}. The saved city is ${statedCity || "empty"}.`);
   if (statedCity && matchCities(cardCorpus, settlements).includes(statedCity) && !matchCities(presentation, settlements).includes(statedCity)) {
@@ -1106,7 +1124,9 @@ async function saveOne(rawPath: string, settlements: string[]) {
   removeStaleExtras(handle, keptMasters);
   const photos = [...(avatarPath ? [avatarPath] : []), ...galleryPaths];
   const fullName = [firstName, lastName].filter(Boolean).join(" ");
-  const gender = inferTrainerGender(firstName, corpus);
+  const notedWoman = /(?:^|[^\p{L}])это женщина(?:[^\p{L}]|$)/iu.test(note);
+  const notedMan = /(?:^|[^\p{L}])это мужчина(?:[^\p{L}]|$)/iu.test(note);
+  const gender = notedWoman ? "female" : notedMan ? "male" : inferTrainerGender(firstName, corpus);
   const storedNotes = stripPhones(cleanLine(note));
   const storedThreads = stripPhones(threadsText);
   const slug = handle.trim().toLowerCase().replace(/[^a-z0-9._]/g, "").slice(0, 30);

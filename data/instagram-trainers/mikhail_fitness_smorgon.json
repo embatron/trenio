@@ -1,0 +1,98 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/mikhail_fitness_smorgon/",
+  "handle": "mikhail_fitness_smorgon",
+  "slug": "mikhail_fitness_smorgon",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Михаил",
+  "lastName": "Бровко",
+  "fullName": "Михаил Бровко",
+  "gender": "male",
+  "nameQuotes": [
+    "Михаил Бровко"
+  ],
+  "headline": "Фитнес-тренер, инструктор ЛФК и тренер по общефизической подготовке",
+  "sourceBio": "WR в жиме стоя федерации НАП. МСМК в пауэрлифтинге . Высшее физкультурное и медицинское образование. ЛФК, ОФП, Фитнесс . >16 лет тренерского стажа . Фитнесс - персональные тренировки, онлайн ведение",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Сморгонь. Михаил Бровко. ул. Юбилейная, д. 31.",
+  "threadsUrl": "",
+  "bio": "Я Михаил Бровко, фитнес-тренер. ЛФК и ОФП. Город Сморгонь.",
+  "about": [
+    "Я веду персональные тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "lfk",
+      "parentSlug": "reabilitaciya",
+      "label": "ЛФК",
+      "evidence": "ЛФК"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "pauerlifting",
+      "label": "Пауэрлифтинг",
+      "quote": "пауэрлифтинге"
+    }
+  ],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Сморгонь",
+  "address": "Юбилейная улица, 31",
+  "cityCandidates": [
+    "Сморгонь"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/mikhail_fitness_smorgon.jpg",
+  "photos": [
+    "/trainers/instagram/mikhail_fitness_smorgon.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/mikhail_fitness_smorgon/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

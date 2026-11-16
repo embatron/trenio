@@ -1,0 +1,92 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/gres_helen/",
+  "handle": "gres_helen",
+  "slug": "gres_helen",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Елена",
+  "lastName": "Грес",
+  "fullName": "Елена Грес",
+  "gender": "female",
+  "nameQuotes": [
+    "Елена Грес"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "Тренер по плаванию Минск Фок «Серебрянка» Telegram, Viber Групповые занятия с детьми с 9 лет Индивидуальные занятия (взрослые и дети)",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Telegram: @Helen_gres Телефон:",
+  "threadsUrl": "",
+  "bio": "Я тренер по плаванию. Веду групповые занятия с детьми с 9 лет. Индивидуальные занятия провожу для взрослых и детей.",
+  "about": [
+    "Групповые занятия я веду с детьми с 9 лет. Индивидуальные занятия провожу для взрослых и детей."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/gres_helen/reel/DB0W_YzNTmL/",
+      "caption": "Современные дети большую часть своего времени проводят перед экранами гаджетов. Это приводит к негативным последствиям для их здоровья. Но родители могут помочь своим детям найти баланс, записав на тренировки по плаванию. Плавание является отличным решением , чтобы дети могли провести время с пользой-укрепить здоровье и найти новых друзей!!! #плаваниедлядетей #плаваниеминск #спортивныйминск #тренерпоплаваниюминск #фоксеребрянкабассейн #серебрянкаминск #минск #минсксейчас #детиминск #зожминск #обучениеплаваниюминск #бассейныминск",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/gres_helen/reel/C51iXIKtCzq/",
+      "caption": "23 likes, 5 comments - gres_helen on April 16, 2024: \"Скоро лето!!! А ты ещё не научился плавать? Тогда быстрей записывайся на занятия- Удобное расписание, отличная цена!!! Запись в директ или по телефону +375297261806 Стоимость занятий-37 рублей Занятия проходят в бассейне Фок «Серебрянка» #минск #минск2024 #спортивныйминск #зожминск #бассейныминск #индивидуальныезанятияпоплаваниюминск #бассейныминскадлядетей #обучениеплаваниюминск #техникаплаванияминск #детиминск #секцииминскнабор #секцииминск #плаваниеминск #плаваниевзрослыеминск #серебрянкаминск #фоксеребрянкабассейн #лошицаминск #чижовкаминск #тренировкапоплаваниюминск #минсксейчас\".",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "плавание для детей"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Минск",
+  "address": "проспект Рокоссовского, 44",
+  "cityCandidates": [
+    "Минск",
+    "Серебрянка"
+  ],
+  "priceFrom": 37,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/gres_helen.jpg",
+  "photos": [
+    "/trainers/instagram/gres_helen.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/gres_helen/",
+    "phone": "+375 29 726-18-06",
+    "email": "",
+    "telegram": "https://t.me/Helen_gres",
+    "website": ""
+  },
+  "missing": [
+    "email"
+  ]
+}

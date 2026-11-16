@@ -1,0 +1,93 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/salamaxa.fit/",
+  "handle": "salamaxa.fit",
+  "slug": "salamaxa.fit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Екатерина",
+  "lastName": "",
+  "fullName": "Екатерина",
+  "gender": "female",
+  "nameQuotes": [
+    "Екатерина"
+  ],
+  "headline": "Фитнес-тренер, тренер по питанию и инструктор тренажёрного зала",
+  "sourceBio": "🏋️ персональный тренер / online тренер 🥗 еда без запретов 📖 выпускник @nikiforov.colledg 📍 тренирую в @alfa_fitness.by 📌 запись в Директ",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Жлобин. Екатерина. 1-й микрорайон, д. 1А.",
+  "threadsUrl": "",
+  "bio": "Я Екатерина, фитнес-тренер. Нутрициолог. Город Жлобин.",
+  "about": [
+    "Я персональный тренер на тренировках."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "нутрициолог"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "gym"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Жлобин",
+  "address": "1-й микрорайон, д. 1А",
+  "cityCandidates": [
+    "Жлобин"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/salamaxa.fit.jpg",
+  "photos": [
+    "/trainers/instagram/salamaxa.fit.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/salamaxa.fit/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

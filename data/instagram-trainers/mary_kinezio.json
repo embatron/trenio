@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/mary_kinezio/",
+  "handle": "mary_kinezio",
+  "slug": "mary_kinezio",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Марина",
+  "lastName": "Челочева",
+  "fullName": "Марина Челочева",
+  "gender": "female",
+  "nameQuotes": [
+    "Марина",
+    "Челочева"
+  ],
+  "headline": "Тренер по реабилитации и восстановлению, питанию и фитнес-тренер",
+  "sourceBio": "Марина Чéлочева На страже женского здоровья Тренирую в @skalagym Консультирую по питанию Ведение online/offline t.me/mary_kinezio_face",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв Марина Челочева",
+  "threadsUrl": "",
+  "bio": "Я Марина Челочева, тренер по восстановлению после родов. Город Могилёв. Консультирую по питанию и стою на страже женского здоровья.",
+  "about": [
+    "Тренирую и консультирую по питанию."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "reabilitaciya",
+      "parentSlug": "reabilitaciya",
+      "label": "Реабилитация",
+      "evidence": "восстановление"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "reabilitaciya",
+    "parentSlug": "reabilitaciya",
+    "label": "Реабилитация"
+  },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/mary_kinezio.jpg",
+  "photos": [
+    "/trainers/instagram/mary_kinezio.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/mary_kinezio/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/mary_kinezio_face",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

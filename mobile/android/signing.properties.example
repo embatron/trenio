@@ -1,0 +1,7 @@
+# Copy to signing.properties. That file is gitignored.
+# storeFile is relative to mobile/android. The keystore itself stays out of git.
+# This is the upload key. Play Console holds the app signing key.
+storeFile=android.keystore
+storePassword=
+keyAlias=trenio
+keyPassword=

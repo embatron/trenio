@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ev_ledovskih/",
+  "handle": "ev_ledovskih",
+  "slug": "ev_ledovskih",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Эвелина",
+  "lastName": "Ледовских",
+  "fullName": "Эвелина Ледовских",
+  "gender": "female",
+  "nameQuotes": [
+    "Эвелина Ледовских"
+  ],
+  "headline": "Тренер по high heels и инструктор по растяжке",
+  "sourceBio": "Эля | Хореограф тренер танцор contemp&high heels&stretching&latina -》@place.mog",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв. Эвелина Ледовских. ул. Комсомольская, д. 5.",
+  "threadsUrl": "",
+  "bio": "Я Эвелина Ледовских. High heels и stretching. Город Могилёв.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "High Heels"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "stretching"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "high-heels",
+    "parentSlug": "tancy",
+    "label": "High Heels"
+  },
+  "city": "Могилёв",
+  "address": "Комсомольская улица, 5",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ev_ledovskih.jpg",
+  "photos": [
+    "/trainers/instagram/ev_ledovskih.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ev_ledovskih/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

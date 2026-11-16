@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/coachromangocor/",
+  "handle": "coachromangocor",
+  "slug": "coachromangocor",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Роман",
+  "lastName": "",
+  "fullName": "Роман",
+  "gender": "male",
+  "nameQuotes": [
+    "Роман"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "ТРЕНЕР | ГОМЕЛЬ | БОКС Мастер спорта 🇧🇾 IBA 1-Star R&J",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гомель. Роман. ул. Советская, д. 60.",
+  "threadsUrl": "",
+  "bio": "Я Роман, тренер по боксу. Город Гомель.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "boxing"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Гомель",
+  "address": "Советская улица, 60",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/coachromangocor.jpg",
+  "photos": [
+    "/trainers/instagram/coachromangocor.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/coachromangocor/",
+    "phone": "+375 25 525-87-44",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

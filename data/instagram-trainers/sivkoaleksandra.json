@@ -1,0 +1,97 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/sivkoaleksandra/",
+  "handle": "sivkoaleksandra",
+  "slug": "sivkoaleksandra",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "sivkoaleksandra",
+  "lastName": "",
+  "fullName": "sivkoaleksandra",
+  "gender": "female",
+  "nameQuotes": [],
+  "headline": "Фитнес-тренер и инструктор по пилатесу, йоге, растяжке",
+  "sourceBio": "•Тренирую тело и разум🧘‍♀️ •PILATES/ YOGA/ STRETCHING/МФР/ ABL/ FLY-yoga (персонально) •Начинающий Психолог РПП👩‍🎓🍏 Лида 🇧🇾 @fitnessvandyou",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Лида. йога. пр-т Победы, д. 23.",
+  "threadsUrl": "",
+  "bio": "Я фитнес-тренер. PILATES, йога и STRETCHING. Медитации. Город Лида.",
+  "about": [
+    "Я работаю персонально."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Pilates"
+    },
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "stretching"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Лида",
+  "address": "проспект Победы, 23",
+  "cityCandidates": [
+    "Лида"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/sivkoaleksandra.jpg",
+  "photos": [
+    "/trainers/instagram/sivkoaleksandra.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/sivkoaleksandra/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

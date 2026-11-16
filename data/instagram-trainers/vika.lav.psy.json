@@ -1,0 +1,80 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vika.lav.psy/",
+  "handle": "vika.lav.psy",
+  "slug": "vika.lav.psy",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктория",
+  "lastName": "",
+  "fullName": "Виктория",
+  "gender": "female",
+  "nameQuotes": [
+    "Виктория"
+  ],
+  "headline": "Тренер по осанке",
+  "sourceBio": "Виктория Онлайн консультации --- Веду занятия в @mira.fit.brest",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Брест. Виктория. ул. Куйбышева д. 13.",
+  "threadsUrl": "",
+  "bio": "Я Виктория, тренер. Город Брест. Веду занятия по осанке.",
+  "about": [
+    "Я веду занятия по осанке."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "osanka",
+    "parentSlug": "reabilitaciya",
+    "label": "Осанка"
+  },
+  "city": "Брест",
+  "address": "улица Куйбышева, 13",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vika.lav.psy.jpg",
+  "photos": [
+    "/trainers/instagram/vika.lav.psy.jpg",
+    "/trainers/instagram/vika.lav.psy-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vika.lav.psy/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

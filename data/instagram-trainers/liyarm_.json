@@ -1,0 +1,94 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/liyarm_/",
+  "handle": "liyarm_",
+  "slug": "liyarm_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Лия",
+  "lastName": "",
+  "fullName": "Лия",
+  "gender": "female",
+  "nameQuotes": [
+    "Лия"
+  ],
+  "headline": "Фитнес-тренер, инструктор тренажёрного зала и тренер по йоге, пилатесу и растяжке",
+  "sourceBio": "| Персональный тренер в тренажерном зале | Онлайн тренировки | Групповые по йоге и растяжке 📍Могилев bodis-fitness.by/team/show/70",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв. Лия. пр-т Пушкинский, д. 14.",
+  "threadsUrl": "",
+  "bio": "Я Лия, персональный тренер. Групповые по йоге и растяжке. Город Могилёв.",
+  "about": [
+    "Я веду онлайн тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога и растяжка",
+      "evidence": "Йога и растяжка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Могилёв",
+  "address": "Пушкинский проспект, 14",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/liyarm_.jpg",
+  "photos": [
+    "/trainers/instagram/liyarm_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/liyarm_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

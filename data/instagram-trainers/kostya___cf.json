@@ -1,0 +1,97 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kostya___cf/",
+  "handle": "kostya___cf",
+  "slug": "kostya___cf",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Константин",
+  "lastName": "",
+  "fullName": "Константин",
+  "gender": "male",
+  "nameQuotes": [
+    "Константин"
+  ],
+  "headline": "Тренер по общефизической подготовке, фитнес-тренер и кроссфит-тренер",
+  "sourceBio": "Personal Coach 🏆Лучший персональный тренер и тренер групповых программ 2022г в @bodis.fitness ☝️Требовательный тренер 📜Веду онлайн 🔥 Проект «Худеем здорово»👇🏻",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Константин",
+  "threadsUrl": "",
+  "bio": "Я Константин, персональный тренер по ОФП и фитнесу. Веду групповые программы и кроссфит, а также онлайн.",
+  "about": [
+    "Веду персональные тренировки и групповые программы. Онлайн тоже веду."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/kostya___cf/reel/CuJJsG1odGb/",
+      "caption": "Долгожданный ОТПУСК и реакция КЛИЕНТОВ🤣🤣🤣",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "krossfit",
+      "parentSlug": "fitnes",
+      "label": "Кроссфит",
+      "evidence": "crossfit"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "ofp",
+    "parentSlug": "fitnes",
+    "label": "ОФП"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kostya___cf.jpg",
+  "photos": [
+    "/trainers/instagram/kostya___cf.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kostya___cf/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://instagram.com/hude_em_zdorovo?igshid=YmMyMTA2M2Y%3D"
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kartashova050582/",
+  "handle": "kartashova050582",
+  "slug": "kartashova050582",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Светлана",
+  "lastName": "Карташова",
+  "fullName": "Светлана Карташова",
+  "gender": "female",
+  "nameQuotes": [
+    "Карташова Светлана"
+  ],
+  "headline": "Фитнес-тренер, тренер по силовому тренингу и инструктор по пилатесу, растяжке",
+  "sourceBio": "Функциональные,силовые тренировки,пилатес,стретчинг, коррекция фигуры,осанки",
+  "sourceAbout": [
+    "Меня зовут Светлана Я - фитнес тренер Персональный тренер Индивидуальный подход Коррекция фигуры, осанки, набора массы, похудения Очные тренировки Гродно"
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Светлана",
+  "threadsUrl": "",
+  "bio": "Я Светлана Карташова, фитнес-тренер в Гродно. Тренерский стаж более 7 лет.",
+  "about": [
+    "Каждую тренировку в зале."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/kartashova050582/p/DTlQm-5jCO6/",
+      "caption": "Меня зовут Светлана- я дипломированный тренер- методист физической оздоровительной культуры.",
+      "imageText": [
+        "КАРТАШОВА СВЕТЛАНА ВЛАДИМИРОВНА",
+        "СИЛОВЫЕ ТРЕНИРОВКИ, ФИТНЕС НАПРАВЛЕНИЯ (ПИЛАТЕС, СТРЕТЧИНГ, ФУНКЦИОНАЛ И ДРУГИЕ), СНИЖЕНИЕ ВЕСА",
+        "Тренерский стаж более 7 лет",
+        "а каждую тренировку в зале - чуткой заботой о себе"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/kartashova050582/p/Dc4I7ycDK-l/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/kartashova050582/p/DapDv5XDD-k/",
+      "caption": "Рабочие моменты",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "silovoj-trening",
+      "parentSlug": "fitnes",
+      "label": "Силовой тренинг",
+      "evidence": "силовые тренировки"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "стретчинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": 7,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kartashova050582.jpg",
+  "photos": [
+    "/trainers/instagram/kartashova050582.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kartashova050582/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

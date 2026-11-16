@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/prokofyeva_olga.tr/",
+  "handle": "prokofyeva_olga.tr",
+  "slug": "prokofyeva_olga.tr",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ольга",
+  "lastName": "Прокофьева",
+  "fullName": "Ольга Прокофьева",
+  "gender": "female",
+  "nameQuotes": [
+    "Ольга Прокофьева"
+  ],
+  "headline": "Фитнес-тренер и инструктор тренажёрного зала",
+  "sourceBio": "Высшее спортивное образование 🎓ВГУ им. П.М. Машерова 💪Опыт работы тренером 7 лет 🏋️‍♀️тренажёрный зал @svfit_vitebsk 📍Белобородова 1д",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Витебск. Ольга Прокофьева. ул. Белобородова, д. 1Д.",
+  "threadsUrl": "",
+  "bio": "Я Ольга Прокофьева. Фитнес и тренажёрный зал. Город Витебск.",
+  "about": [
+    "Я веду эти тренировки."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Витебск",
+  "address": "улица Генерала Белобородова, 1Д",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/prokofyeva_olga.tr.jpg",
+  "photos": [
+    "/trainers/instagram/prokofyeva_olga.tr.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/prokofyeva_olga.tr/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

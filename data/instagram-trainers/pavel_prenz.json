@@ -1,0 +1,66 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pavel_prenz/",
+  "handle": "pavel_prenz",
+  "slug": "pavel_prenz",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Павел",
+  "lastName": "Пренз",
+  "fullName": "Павел Пренз",
+  "gender": "male",
+  "nameQuotes": [
+    "Павел Пренз"
+  ],
+  "headline": "",
+  "sourceBio": "Тренер Помогаю вернуть форму в 35+ Сохранить мышцы и улучшить самочувствие Последовательно с учетом возраста и самочувствия Прохожу свой эксперимент",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Могилёв. Павел Пренз. пер. Пожарный, д. 21.",
+  "threadsUrl": "",
+  "bio": "Я Павел Пренз, тренер. Помогаю вернуть форму. Город Могилёв.",
+  "about": [],
+  "pinned": [],
+  "sports": [],
+  "practicedSports": [],
+  "primarySport": null,
+  "city": "Могилёв",
+  "address": "Пожарный переулок, 21",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/pavel_prenz.jpg",
+  "photos": [
+    "/trainers/instagram/pavel_prenz.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pavel_prenz/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "sport",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

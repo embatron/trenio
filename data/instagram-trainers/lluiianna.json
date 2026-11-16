@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/lluiianna/",
+  "handle": "lluiianna",
+  "slug": "lluiianna",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анна-Луиза",
+  "lastName": "Белькевич",
+  "fullName": "Анна-Луиза Белькевич",
+  "gender": "female",
+  "nameQuotes": [
+    "Белькевич Анна-Луиза"
+  ],
+  "headline": "Инструктор по пилатесу и йоге",
+  "sourceBio": "путь к себе через движение ✨ занятия со мной на реформере пилатес | йога",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Белькевич Анна-Луиза",
+  "threadsUrl": "",
+  "bio": "Я Анна-Луиза Белькевич. Занятия веду по пилатесу и йоге. Путь к себе у меня через движение.",
+  "about": [
+    "Занятия со мной проходят на реформере."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Pilates"
+    },
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/lluiianna.jpg",
+  "photos": [
+    "/trainers/instagram/lluiianna.jpg",
+    "/trainers/instagram/lluiianna-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/lluiianna/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://n1931336.yclients.ru/company/1702543/activity/select?o="
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

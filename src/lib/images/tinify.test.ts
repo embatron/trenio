@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { isCompressibleImage, shouldTinifyStoredFile, tinifyImage } from "@/lib/images/tinify";
+import { isCompressibleImage, shouldTinifyStoredFile, tinifyImage, tinifyKeyList } from "@/lib/images/tinify";
 
 const JPEG = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0, 0, 0, 0, 0, 0, 0, 0]);
 const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0]);
@@ -36,12 +36,29 @@ test("stored trainer files stay out of the backlog", () => {
 
 test("a missing key does not call TinyPNG", async () => {
   const previous = process.env.TINIFY_API_KEY;
+  const spare = process.env.TINIFY_API_KEY_FALLBACK;
   delete process.env.TINIFY_API_KEY;
+  delete process.env.TINIFY_API_KEY_FALLBACK;
   try {
     const output = await tinifyImage(JPEG);
     assert.equal(output, JPEG);
   } finally {
     if (previous === undefined) delete process.env.TINIFY_API_KEY;
     else process.env.TINIFY_API_KEY = previous;
+    if (spare === undefined) delete process.env.TINIFY_API_KEY_FALLBACK;
+    else process.env.TINIFY_API_KEY_FALLBACK = spare;
   }
+});
+
+test("the spare TinyPNG key follows the first and a repeat is dropped", () => {
+  assert.deepEqual(
+    tinifyKeyList({ TINIFY_API_KEY: " first ", TINIFY_API_KEY_FALLBACK: "second" }),
+    ["first", "second"],
+  );
+  assert.deepEqual(
+    tinifyKeyList({ TINIFY_API_KEY: "same", TINIFY_API_KEY_FALLBACK: " same " }),
+    ["same"],
+  );
+  assert.deepEqual(tinifyKeyList({ TINIFY_API_KEY: "", TINIFY_API_KEY_FALLBACK: "spare" }), ["spare"]);
+  assert.deepEqual(tinifyKeyList({}), []);
 });
