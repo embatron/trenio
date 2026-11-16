@@ -18,6 +18,7 @@ import {
 import { AuthError, isAuthError } from "@/lib/auth/errors";
 import { storedGivenName } from "@/lib/auth/login-name";
 import { reviewPlainText, reviewTextLength } from "@/lib/catalog/review-html";
+import { instagramAccountNeedle } from "@/lib/instagram/account-query";
 import { collapseMessageHtml } from "@/lib/messages/breaks";
 import { isGodUser } from "@/lib/auth/god";
 import { isStaff } from "@/lib/auth/roles";
@@ -1291,6 +1292,9 @@ export async function listConversations(
     filters.push(sql`(${activityAt}, ${conversations.id}) < (${at.toISOString()}::timestamptz, ${input.cursor.id}::uuid)`);
   }
   const pattern = messageSearchPattern(input.query);
+  const instagramPattern = input.view === "staff"
+    ? messageSearchPattern(instagramAccountNeedle(input.query ?? "") ?? input.query)
+    : null;
   if (pattern) {
     const nameIds = await conversationIdsByPerson(actor, input.view, input.query ?? "");
     const byName = nameIds.length > 0
@@ -1306,6 +1310,11 @@ export async function listConversations(
       OR coalesce(${trainerProfiles.lastName}, '') ILIKE ${pattern} ESCAPE '\\'
       OR coalesce(${hostUsers.firstName}, '') ILIKE ${pattern} ESCAPE '\\'
       OR (${hostUsers.firstName} || ' ' || coalesce(${hostUsers.lastName}, '')) ILIKE ${pattern} ESCAPE '\\'
+      OR ${instagramPattern
+        ? sql`coalesce(${trainerProfiles.instagramHandle}, '') ILIKE ${instagramPattern} ESCAPE '\\'
+          OR coalesce(${trainerProfiles.slug}, '') ILIKE ${instagramPattern} ESCAPE '\\'
+          OR coalesce(${trainerProfiles.instagramUrl}, '') ILIKE ${pattern} ESCAPE '\\'`
+        : sql`false`}
       OR EXISTS (
         SELECT 1 FROM messages AS found
         WHERE found.conversation_id = ${conversations.id}

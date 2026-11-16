@@ -6,6 +6,7 @@ import { TablePager, useTablePage } from "@/components/table-pager";
 import { TrainerName } from "@/components/trainer-name";
 import { UserAvatar } from "@/components/user-avatar";
 import { ACCOUNT_STATUS_LABEL, type AdminAccount } from "@/lib/admin/accounts";
+import { adminSearchTokens } from "@/lib/instagram/account-query";
 import { displayUserId } from "@/lib/auth/god";
 import { useLiveAvatar } from "@/lib/auth/live-avatar";
 import { displayAccountLogin } from "@/lib/auth/login-name";
@@ -35,6 +36,7 @@ function searchHaystack(account: AdminAccount) {
     account.roles.join(" "),
     ACCOUNT_STATUS_LABEL[account.status] ?? account.status,
     account.status,
+    account.instagram,
     account.createdAt ? dateFormat.format(new Date(account.createdAt)) : "",
     account.lastLoginAt ? dateFormat.format(new Date(account.lastLoginAt)) : "",
   ].join(" ").toLocaleLowerCase("ru").replaceAll("ё", "е");
@@ -49,7 +51,7 @@ export function AdminAccountsTable({ accounts }: { accounts: AdminAccount[] }) {
   const [sort, setSort] = useState<"date-desc" | "date-asc" | "login-desc" | "login-asc" | "name">("date-desc");
 
   const visible = useMemo(() => {
-    const tokens = query.trim().toLocaleLowerCase("ru").replaceAll("ё", "е").split(/\s+/).filter(Boolean);
+    const tokens = adminSearchTokens(query);
     const rows = accounts.filter((account) => {
       if (role && !account.roles.includes(role)) return false;
       if (status && account.status !== status) return false;
@@ -91,7 +93,7 @@ export function AdminAccountsTable({ accounts }: { accounts: AdminAccount[] }) {
           <input
             type="search"
             value={query}
-            placeholder="Имя, почта, телефон, роль"
+            placeholder="Имя, почта, телефон, роль, Instagram"
             onChange={(event) => setQuery(event.target.value)}
           />
         </label>

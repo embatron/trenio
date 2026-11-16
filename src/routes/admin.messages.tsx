@@ -332,6 +332,7 @@ function StaffThreads() {
         loadingMore={loadingMore}
         query={searchInput}
         onQuery={setSearchInput}
+        placeholder="Имя, текст или Instagram"
         onOpen={setOpenId}
         onMore={() => {
           if (!next) return;

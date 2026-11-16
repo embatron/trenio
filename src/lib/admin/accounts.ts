@@ -32,6 +32,8 @@ export type AdminAccount = {
   createdAt: string;
   lastLoginAt: string;
   avatarPath: string;
+  /** Owned cards: Instagram account, slug, and profile URL, for the staff search. */
+  instagram: string;
 };
 
 export type AdminAccountTrainer = {
@@ -87,6 +89,9 @@ export const getAdminAccountsFn = createServerFn({ method: "GET" })
           ownerUserId: trainerProfiles.ownerUserId,
           avatarPath: trainerProfiles.avatarPath,
           photos: trainerProfiles.photos,
+          slug: trainerProfiles.slug,
+          instagramHandle: trainerProfiles.instagramHandle,
+          instagramUrl: trainerProfiles.instagramUrl,
         })
         .from(trainerProfiles)
         .where(isNotNull(trainerProfiles.ownerUserId)),
@@ -100,10 +105,19 @@ export const getAdminAccountsFn = createServerFn({ method: "GET" })
     }
 
     const cardByOwner = new Map<string, string>();
+    const instagramByOwner = new Map<string, string[]>();
     for (const card of cards) {
-      if (!card.ownerUserId || cardByOwner.has(card.ownerUserId)) continue;
-      const face = cardFace(card.avatarPath, card.photos);
-      if (face) cardByOwner.set(card.ownerUserId, face);
+      if (!card.ownerUserId) continue;
+      if (!cardByOwner.has(card.ownerUserId)) {
+        const face = cardFace(card.avatarPath, card.photos);
+        if (face) cardByOwner.set(card.ownerUserId, face);
+      }
+      const bits = instagramByOwner.get(card.ownerUserId) ?? [];
+      for (const bit of [card.instagramHandle, card.slug, card.instagramUrl]) {
+        const value = bit?.trim();
+        if (value && !bits.includes(value)) bits.push(value);
+      }
+      instagramByOwner.set(card.ownerUserId, bits);
     }
 
     const hidden = await hiddenStaffIds(context.user.roles);
@@ -121,6 +135,7 @@ export const getAdminAccountsFn = createServerFn({ method: "GET" })
         createdAt: row.createdAt.toISOString(),
         lastLoginAt: row.lastLoginAt ? row.lastLoginAt.toISOString() : "",
         avatarPath: accountFace(row.avatarPath, cardByOwner.get(row.id) ?? ""),
+        instagram: (instagramByOwner.get(row.id) ?? []).join(" "),
       }];
     });
   });
@@ -166,6 +181,8 @@ export const getAdminAccountFn = createServerFn({ method: "GET" })
           status: trainerProfiles.status,
           avatarPath: trainerProfiles.avatarPath,
           photos: trainerProfiles.photos,
+          instagramHandle: trainerProfiles.instagramHandle,
+          instagramUrl: trainerProfiles.instagramUrl,
         })
         .from(trainerProfiles)
         .where(eq(trainerProfiles.ownerUserId, data.id)),
@@ -201,6 +218,7 @@ export const getAdminAccountFn = createServerFn({ method: "GET" })
         row.avatarPath,
         trainerRows.map((item) => cardFace(item.avatarPath, item.photos)).find(Boolean) ?? "",
       ),
+      instagram: [...new Set(trainerRows.flatMap((item) => [item.instagramHandle, item.slug, item.instagramUrl].map((bit) => bit.trim()).filter(Boolean)))].join(" "),
       emailVerifiedAt: row.emailVerifiedAt ? row.emailVerifiedAt.toISOString() : "",
       phoneVerifiedAt: row.phoneVerifiedAt ? row.phoneVerifiedAt.toISOString() : "",
       lastSignupIntent: row.lastSignupIntent,

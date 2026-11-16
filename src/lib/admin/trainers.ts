@@ -99,6 +99,7 @@ export type AdminTrainer = {
   languages: string;
   phone: string;
   instagram: string;
+  instagramHandle: string;
   telegram: string;
   email: string;
   experienceYears: number;
@@ -426,6 +427,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       languages: row.languages.join(", "),
       phone: formatBelarusPhone(row.phone) || row.phone,
       instagram: row.instagramUrl,
+      instagramHandle: row.instagramHandle,
       telegram: row.telegram,
       email: row.ownerId
         ? hidden.has(row.ownerId) ? "" : (row.email ?? "")
@@ -500,6 +502,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       languages: "",
       phone: trainer.phone,
       instagram: trainer.instagram,
+      instagramHandle: trainer.instagram.match(/instagram\.com\/([A-Za-z0-9._]{1,30})/i)?.[1]?.toLowerCase() ?? "",
       telegram: "",
       email: "",
       experienceYears: trainer.experience ?? 0,
@@ -986,6 +989,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         languages: row.languages.join(", "),
         phone: formatBelarusPhone(row.phone) || row.phone,
         instagram: row.instagramUrl,
+        instagramHandle: row.instagramHandle,
         telegram: row.telegram,
         email: owner ? owner.email : row.email,
         experienceYears: row.experienceYears,

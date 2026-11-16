@@ -6,6 +6,7 @@ import { TablePager, useTablePage } from "@/components/table-pager";
 import { ReviewHtml } from "@/components/review-html";
 import { UserAvatar } from "@/components/user-avatar";
 import { getAdminReviewsFn, type AdminReview } from "@/lib/admin/reviews";
+import { adminSearchTokens } from "@/lib/instagram/account-query";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { getSportTaxonomyChild, getTopLevelSportCategory, listPublishedSportCategories, listSecondLevelSports } from "@/lib/catalog/sport-taxonomy";
 import { REVIEW_STATUSES, setTrainerReviewStatusFn, type ReviewStatus as ReviewStatusValue } from "@/lib/catalog/trainer-reviews";
@@ -65,6 +66,7 @@ function IconButton({
 function AdminReviewsPage() {
   const reviews = Route.useLoaderData();
   const router = useRouter();
+  const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"" | ReviewStatusValue>("");
   const [category, setCategory] = useState("");
   const [sport, setSport] = useState("");
@@ -80,17 +82,29 @@ function AdminReviewsPage() {
     [category],
   );
   const visible = useMemo(() => {
+    const tokens = adminSearchTokens(query);
     const rows = reviews.filter((review) => {
       const parents = review.trainerSportSlugs.map((slug) => getSportTaxonomyChild(slug)?.parentSlug ?? (getTopLevelSportCategory(slug) ? slug : undefined));
       if (status && review.status !== status) return false;
       if (category && !parents.includes(category)) return false;
       if (sport && !review.trainerSportSlugs.includes(sport)) return false;
+      if (tokens.length) {
+        const haystack = [
+          review.trainerName,
+          review.trainerSlug,
+          review.trainerInstagram,
+          review.authorName,
+          review.authorEmail,
+          review.body,
+        ].join(" ").toLocaleLowerCase("ru").replaceAll("ё", "е");
+        if (!tokens.every((token) => haystack.includes(token))) return false;
+      }
       return true;
     });
     rows.sort((a, b) => compareReviews(a, b, sort));
     return rows;
-  }, [reviews, status, category, sport, sort]);
-  const pager = useTablePage(visible, `${status}|${category}|${sport}|${sort}`);
+  }, [reviews, query, status, category, sport, sort]);
+  const pager = useTablePage(visible, `${query}|${status}|${category}|${sport}|${sort}`);
 
   useEffect(() => {
     if (!rejecting) return;
@@ -119,7 +133,16 @@ function AdminReviewsPage() {
       <h2>Модерация отзывов</h2>
       {reviews.length === 0 ? <p className="cabinet-empty">Отзывов пока нет.</p> : (
         <>
-          <CabinetFilterBar active={[status, category, sport].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}>
+          <CabinetFilterBar active={[query.trim(), status, category, sport].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}>
+            <label className="cabinet-filters__search">
+              <span>Поиск</span>
+              <input
+                type="search"
+                value={query}
+                placeholder="Тренер, Instagram, автор"
+                onChange={(event) => setQuery(event.target.value)}
+              />
+            </label>
             <label>
               <span>Статус</span>
               <select value={status} onChange={(event) => setStatus(event.target.value as "" | ReviewStatusValue)}>

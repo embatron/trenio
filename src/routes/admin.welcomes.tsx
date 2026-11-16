@@ -2,7 +2,9 @@ import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 
 import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
+import { CabinetFilterBar } from "@/components/cabinet";
 import { TablePager, useTablePage } from "@/components/table-pager";
+import { adminSearchTokens } from "@/lib/instagram/account-query";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import {
   getAdminWelcomesFn,
@@ -162,14 +164,32 @@ function welcomeIsQueued(row: AdminWelcome) {
   });
 }
 
+function welcomeHaystack(row: AdminWelcome) {
+  return [
+    row.instagram,
+    row.telegram,
+    row.phone,
+    row.phone.replace(/\D/g, ""),
+    row.trainer?.name ?? "",
+    row.trainer?.slug ?? "",
+  ].join(" ").toLocaleLowerCase("ru").replaceAll("ё", "е");
+}
+
 function AdminWelcomesPage() {
   const rows = Route.useLoaderData();
   const router = useRouter();
+  const [query, setQuery] = useState("");
   const [tab, setTab] = useState<"open" | "done">("open");
   const openRows = rows.filter(welcomeIsQueued);
   const doneRows = rows.filter((row) => !welcomeIsQueued(row));
-  const visible = tab === "open" ? openRows : doneRows;
-  const pager = useTablePage(visible, tab);
+  const tokens = adminSearchTokens(query);
+  const matches = (row: AdminWelcome) => tokens.length === 0 || tokens.every((token) => welcomeHaystack(row).includes(token));
+  const matchedOpen = openRows.filter(matches);
+  const matchedDone = doneRows.filter(matches);
+  const searching = tokens.length > 0;
+  const visible = searching ? [...matchedOpen, ...matchedDone] : tab === "open" ? openRows : doneRows;
+  const widened = searching && (tab === "open" ? matchedDone.length > 0 : matchedOpen.length > 0);
+  const pager = useTablePage(visible, `${query}|${tab}`);
   const setStatus = useAuthServerFn(setAdminWelcomeStatusFn);
   const [busyId, setBusyId] = useState<string | null>(null);
 
@@ -187,17 +207,31 @@ function AdminWelcomesPage() {
         <p className="cabinet-empty">Заявок пока нет.</p>
       ) : (
         <>
+          <CabinetFilterBar active={query.trim() ? 1 : 0}>
+            <label className="cabinet-filters__search">
+              <span>Поиск</span>
+              <input
+                type="search"
+                value={query}
+                placeholder="Instagram, Telegram, телефон"
+                onChange={(event) => setQuery(event.target.value)}
+              />
+            </label>
+          </CabinetFilterBar>
           <div className="cabinet-tabs" role="tablist" aria-label="Заявки">
             <button type="button" role="tab" aria-selected={tab === "open"} onClick={() => setTab("open")}>
-              {`Новые и черновики (${openRows.length})`}
+              {`Новые и черновики (${searching ? matchedOpen.length : openRows.length})`}
             </button>
             <button type="button" role="tab" aria-selected={tab === "done"} onClick={() => setTab("done")}>
-              {`Опубликованные и обработанные (${doneRows.length})`}
+              {`Опубликованные и обработанные (${searching ? matchedDone.length : doneRows.length})`}
             </button>
           </div>
+          {widened ? (
+            <p className="cabinet-note">Запрос нашёл заявки и на другой вкладке. Они тоже в таблице.</p>
+          ) : null}
           {visible.length === 0 ? (
             <p className="cabinet-empty">
-              {tab === "open" ? "Новых заявок нет." : "Обработанных заявок нет."}
+              {searching ? "Нет заявок с таким фильтром." : tab === "open" ? "Новых заявок нет." : "Обработанных заявок нет."}
             </p>
           ) : (
           <>

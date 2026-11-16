@@ -8,6 +8,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { TrainerName } from "@/components/trainer-name";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { confirmedAccountValue } from "@/lib/admin/account-channel";
+import { adminSearchTokens } from "@/lib/instagram/account-query";
 import { TRAINER_PUBLISH_LABEL, type AdminTrainer } from "@/lib/admin/trainers";
 import { TrainerEditDialog } from "@/components/admin-trainer-page";
 import { issueTrainerInviteFn, markTrainerInviteSentFn } from "@/lib/catalog/trainer-magic";
@@ -344,6 +345,8 @@ function searchHaystack(trainer: AdminTrainer) {
     trainer.phone,
     trainer.phone.replace(/\D/g, ""),
     trainer.instagram,
+    trainer.instagramHandle,
+    trainer.instagramHandle ? `@${trainer.instagramHandle}` : "",
     trainer.telegram,
     trainer.email,
     trainer.languages,
@@ -438,20 +441,20 @@ export function AdminTrainersTable({
   const [publishTab, setPublishTab] = useState<TrainerPublishTab>("unpublished");
   const [editSlug, setEditSlug] = useState<string | null>(null);
   const [linkPatch, setLinkPatch] = useState<Record<string, string>>({});
-  const listed = useMemo(
-    () => {
-      const patched = trainers.map((trainer) => {
-        const link = linkPatch[trainer.slug];
-        if (!link) return trainer;
-        return { ...trainer, inviteSentAt: link };
-      });
-      if (list === "unvisited") return patched.filter((trainer) => !trainer.doorEnteredAt);
-      if (list === "published") return patched.filter((trainer) => trainer.status === "published");
-      if (list === "unclear") return patched.filter(isUnclearTrainer);
-      return patched;
-    },
-    [trainers, linkPatch, list],
+  const patched = useMemo(
+    () => trainers.map((trainer) => {
+      const link = linkPatch[trainer.slug];
+      if (!link) return trainer;
+      return { ...trainer, inviteSentAt: link };
+    }),
+    [trainers, linkPatch],
   );
+  const listed = useMemo(() => {
+    if (list === "unvisited") return patched.filter((trainer) => !trainer.doorEnteredAt);
+    if (list === "published") return patched.filter((trainer) => trainer.status === "published");
+    if (list === "unclear") return patched.filter(isUnclearTrainer);
+    return patched;
+  }, [patched, list]);
   const [category, setCategory] = useState("");
   const [sport, setSport] = useState("");
   const [city, setCity] = useState("");
@@ -466,8 +469,8 @@ export function AdminTrainersTable({
     [category],
   );
   const visibleBuckets = useMemo(() => {
-    const tokens = query.trim().toLocaleLowerCase("ru").replaceAll("ё", "е").split(/\s+/).filter(Boolean);
-    const rows = listed.filter((trainer) => {
+    const tokens = adminSearchTokens(query);
+    const match = (trainer: AdminTrainer) => {
       const parents = categoryParents(trainer.sportSlugs);
       if (category === UNSET_CATEGORY) {
         if (parents.length > 0) return false;
@@ -487,33 +490,52 @@ export function AdminTrainersTable({
         if (!tokens.every((token) => haystack.includes(token))) return false;
       }
       return true;
-    });
+    };
+    const pageRows = listed.filter(match);
+    const rows = tokens.length ? patched.filter(match) : pageRows;
+    const narrowed = list === "published"
+      ? pageRows.filter((trainer) => trainer.status === "published")
+      : list === "unvisited" || list === "unclear"
+        ? pageRows
+        : publishTab === "published"
+          ? pageRows.filter((trainer) => trainer.status === "published")
+          : pageRows.filter((trainer) => trainer.status !== "published");
     const unpublished = sortTrainers(rows.filter((trainer) => trainer.status !== "published"), sort);
     const published = sortTrainers(rows.filter((trainer) => trainer.status === "published"), sort);
-    return { unpublished, published };
-  }, [listed, query, category, sport, city, format, audience, message, link, visit, sort]);
-  const visible = list === "published"
-    ? visibleBuckets.published
-    : list === "unvisited" || list === "unclear"
-      ? sortTrainers(
-          visibleBuckets.unpublished.concat(visibleBuckets.published),
-          sort,
-        )
-      : publishTab === "published"
-        ? visibleBuckets.published
-        : visibleBuckets.unpublished;
+    return {
+      unpublished,
+      published,
+      widened: tokens.length > 0 && rows.length > narrowed.length,
+    };
+  }, [patched, listed, list, publishTab, query, category, sport, city, format, audience, message, link, visit, sort]);
+  const searching = query.trim().length > 0;
+  const visible = searching
+    ? sortTrainers(visibleBuckets.unpublished.concat(visibleBuckets.published), sort)
+    : list === "published"
+      ? visibleBuckets.published
+      : list === "unvisited" || list === "unclear"
+        ? sortTrainers(
+            visibleBuckets.unpublished.concat(visibleBuckets.published),
+            sort,
+          )
+        : publishTab === "published"
+          ? visibleBuckets.published
+          : visibleBuckets.unpublished;
   const pager = useTablePage(
     visible,
     `${query}|${category}|${sport}|${city}|${format}|${audience}|${message}|${link}|${visit}|${sort}|${publishTab}`,
     TRAINER_PAGE_SIZE,
   );
 
-  if (listed.length === 0) {
-    const empty = list === "unvisited" && trainers.length > 0
+  if (patched.length === 0) {
+    return <p className="cabinet-empty">Тренеров пока нет.</p>;
+  }
+  if (!searching && listed.length === 0) {
+    const empty = list === "unvisited"
       ? "Драфтов нет: по всем карточкам уже был заход."
-      : list === "unclear" && trainers.length > 0
+      : list === "unclear"
         ? "Таких карточек нет."
-        : list === "published" && trainers.length > 0
+        : list === "published"
           ? "Опубликованных карточек нет."
           : "Тренеров пока нет.";
     return <p className="cabinet-empty">{empty}</p>;
@@ -640,6 +662,9 @@ export function AdminTrainersTable({
           </select>
         </label>
       </CabinetFilterBar>
+      {visibleBuckets.widened ? (
+        <p className="cabinet-note">Запрос нашёл карточки и вне этого списка. Они тоже в таблице. Поиск смотрит и аккаунт Instagram.</p>
+      ) : null}
       {visible.length === 0 ? <p className="cabinet-empty">Нет тренеров с таким фильтром.</p> : (
         <>
         <div className="cabinet-table-wrap">

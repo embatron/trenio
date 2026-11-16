@@ -47,6 +47,7 @@ export function ConversationList({
   onOpen,
   query = "",
   onQuery,
+  placeholder = "Имя или текст",
 }: {
   view: "own" | "inbox" | "staff";
   items: ConversationListItem[];
@@ -59,6 +60,7 @@ export function ConversationList({
   onOpen?: (id: string) => void;
   query?: string;
   onQuery?: (value: string) => void;
+  placeholder?: string;
 }) {
   const searching = query.trim().length >= 2;
   return (
@@ -75,7 +77,7 @@ export function ConversationList({
           <input
             type="search"
             value={query}
-            placeholder="Имя или текст"
+            placeholder={placeholder}
             enterKeyHint="search"
             onChange={(event) => onQuery(event.target.value)}
           />

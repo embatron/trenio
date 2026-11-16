@@ -13,6 +13,7 @@ export type AdminReview = {
   id: string;
   trainerSlug: string;
   trainerName: string;
+  trainerInstagram: string;
   trainerSportSlugs: string[];
   authorId: string;
   authorName: string;
@@ -59,6 +60,8 @@ export const getAdminReviewsFn = createServerFn({ method: "GET" })
           slug: trainerProfiles.slug,
           fullName: trainerProfiles.fullName,
           sports: trainerProfiles.sports,
+          instagramHandle: trainerProfiles.instagramHandle,
+          instagramUrl: trainerProfiles.instagramUrl,
         })
         .from(trainerProfiles),
     ]);
@@ -76,6 +79,7 @@ export const getAdminReviewsFn = createServerFn({ method: "GET" })
           id: row.id,
           trainerSlug: row.trainerSlug,
           trainerName: profile?.fullName || published?.name || row.trainerSlug,
+          trainerInstagram: [profile?.instagramHandle, profile?.instagramUrl].filter(Boolean).join(" "),
           trainerSportSlugs: sportSlugs(profile?.sports, published?.sports.map((item) => item.slug) ?? []),
           authorId: row.userId,
           authorName: row.authorName,
