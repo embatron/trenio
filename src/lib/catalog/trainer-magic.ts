@@ -30,6 +30,7 @@ import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { readCertificates } from "@/lib/catalog/certificate-file";
 import { sanitizeReviewHtml, reviewPlainText } from "@/lib/catalog/review-html";
 import { publicTrainerCityLabel } from "@/lib/catalog/trainer-city";
+import { isLinkPreviewVisit } from "@/lib/catalog/door-visit";
 import { relayDoorMark } from "@/lib/sync/relay";
 import { ensurePublicDoorLink } from "@/lib/catalog/trainer-outreach";
 import { publishConfirmedDraft } from "@/lib/catalog/trainer-door-claim";
@@ -560,6 +561,10 @@ export const publishMagicTrainerFn = createServerFn({ method: "POST" })
 async function markDoorEntered(row: { id: string; slug: string; doorEnteredAt: Date | null }) {
   if (row.doorEnteredAt) return;
   try {
+    const request = getRequest();
+    const userAgent = request.headers.get("user-agent") ?? "";
+    const ip = clientIpFromHeaders(request.headers.get("x-real-ip"));
+    if (isLinkPreviewVisit(userAgent, ip)) return;
     await getDb()
       .update(trainerProfiles)
       .set({ doorEnteredAt: new Date() })

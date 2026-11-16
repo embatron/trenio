@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 
 import { getDb } from "@/db";
+import { isLinkPreviewVisit } from "@/lib/catalog/door-visit";
 
 let ready: Promise<void> | null = null;
 
@@ -34,18 +35,41 @@ async function apply() {
   const found = await db.execute(sql`SELECT to_regclass('public.app_logs') AS rel`);
   const rel = found[0]?.rel;
   if (!rel) return;
-  await db.execute(sql.raw(`
-    UPDATE trainer_profiles AS profile
-    SET door_entered_at = entered.at
-    FROM (
-      SELECT target, MIN(created_at) AS at
-      FROM app_logs
-      WHERE action IN ('catalog.trainer_preview', 'catalog.trainer_edit')
-        AND outcome = 'success'
-        AND target <> ''
-      GROUP BY target
-    ) AS entered
-    WHERE profile.slug = entered.target
-      AND profile.door_entered_at IS NULL
-  `));
+  await backfillHumanVisits(db);
+}
+
+type VisitRow = {
+  target: string;
+  at: Date | string;
+  user_agent: string | null;
+  ip: string | null;
+};
+
+/** Fill an empty visit from the earliest person in the journal. A preview robot does not count. */
+async function backfillHumanVisits(db: ReturnType<typeof getDb>) {
+  const logs = await db.execute<VisitRow>(sql`
+    SELECT l.target, l.created_at AS at, l.user_agent, l.ip
+    FROM app_logs l
+    INNER JOIN trainer_profiles p ON p.slug = l.target
+    WHERE p.door_entered_at IS NULL
+      AND l.action IN ('catalog.trainer_preview', 'catalog.trainer_edit')
+      AND l.outcome = 'success'
+      AND l.target <> ''
+  `);
+  const earliest = new Map<string, Date>();
+  for (const row of logs) {
+    const at = row.at instanceof Date ? row.at : new Date(row.at);
+    if (Number.isNaN(at.getTime())) continue;
+    if (isLinkPreviewVisit(row.user_agent ?? "", row.ip ?? "")) continue;
+    const have = earliest.get(row.target);
+    if (!have || at.getTime() < have.getTime()) earliest.set(row.target, at);
+  }
+  for (const [slug, at] of earliest) {
+    await db.execute(sql`
+      UPDATE trainer_profiles
+      SET door_entered_at = ${at}
+      WHERE slug = ${slug}
+        AND door_entered_at IS NULL
+    `);
+  }
 }
