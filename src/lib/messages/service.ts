@@ -694,7 +694,9 @@ export async function ensureConversation(actor: MessageActor, trainerProfileSlug
   const profile = await profileBySlug(trainerProfileSlug);
   if (!profile) throw new AuthError("Профиль не найден.", "VALIDATION");
   const exact = await findExactThread(actor.id, profile.id);
-  if (exact) {
+  const exactCount = exact ? (await messageCounts([exact.id])).get(exact.id) ?? 0 : 0;
+  const keepExact = Boolean(exact) && !(exact?.status === "open" && exactCount === 0);
+  if (exact && keepExact) {
     if (exact.userHiddenAt) {
       await getDb().update(conversations).set({ userHiddenAt: null }).where(eq(conversations.id, exact.id));
     }
@@ -705,6 +707,13 @@ export async function ensureConversation(actor: MessageActor, trainerProfileSlug
   if (paired) {
     await reviveViewer(actor.id, paired.id);
     return { conversationId: paired.id, dropped: paired.dropped };
+  }
+  if (exact) {
+    if (exact.userHiddenAt) {
+      await getDb().update(conversations).set({ userHiddenAt: null }).where(eq(conversations.id, exact.id));
+    }
+    await reviveViewer(actor.id, exact.id);
+    return { conversationId: exact.id, dropped: 0 };
   }
   const conversation = await openOrCreate(actor.id, profile);
   return { conversationId: conversation.id, dropped: 0 };

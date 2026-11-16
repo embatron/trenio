@@ -14,13 +14,20 @@ export type PairCandidate = {
  * One pair of accounts keeps a single thread.
  * A thread that already has messages wins. An empty duplicate is dropped.
  */
-/** The clicked card's own thread wins over another dialog of the same two accounts. */
-export function preferClickedProfile<T extends { trainerProfileId: string | null }>(
+/**
+ * The clicked card's own thread wins over another card of the same pair.
+ * An empty open of this card does not hide the portal welcome that already has the letter.
+ */
+export function preferClickedProfile<T extends { trainerProfileId: string | null; messages?: number }>(
   rows: T[],
   profileId: string,
 ): T[] {
   const exact = rows.filter((row) => row.trainerProfileId === profileId);
-  return exact.length > 0 ? exact : rows;
+  if (exact.length === 0) return rows;
+  const exactHasMessages = exact.some((row) => (row.messages ?? 0) > 0);
+  const welcome = rows.filter((row) => row.trainerProfileId == null && (row.messages ?? 0) > 0);
+  if (!exactHasMessages && welcome.length > 0) return [...exact, ...welcome];
+  return exact;
 }
 
 export function pickPairThread(

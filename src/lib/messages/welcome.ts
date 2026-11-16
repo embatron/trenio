@@ -1,15 +1,15 @@
 import { randomUUID } from "node:crypto";
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray, or, sql } from "drizzle-orm";
 
 import { getDb } from "@/db";
-import { conversations, messages, userRoles, users } from "@/db/schema";
+import { conversations, messageAttachments, messageReports, messages, trainerProfiles, userRoles, users } from "@/db/schema";
 import { isGodUser } from "@/lib/auth/god";
 import { SITE_EMAIL } from "@/lib/seo/site";
 import { logCaught, writeLog } from "@/lib/log/logger";
 import { reviewTextLength } from "@/lib/catalog/review-html";
 import { scheduleMessageNotification } from "@/lib/messages/notify";
-import { shouldSendPublishWelcome } from "@/lib/messages/welcome-publish";
+import { planTrainerWelcome, shouldSendPublishWelcome, type WelcomePairThread } from "@/lib/messages/welcome-publish";
 import { renderTrainerWelcome } from "@/lib/site-texts/defaults";
 import { loadSiteText } from "@/lib/site-texts/store";
 
@@ -49,16 +49,65 @@ async function deliverTrainerWelcome(user: { id: string; firstName: string }) {
     .where(eq(userRoles.userId, user.id));
   if (roles.some((item) => item.role === "admin" || item.role === "superadmin")) return;
   const db = getDb();
-  const [open] = await db
-    .select({ id: conversations.id })
+  const rows = await db
+    .select({
+      id: conversations.id,
+      userId: conversations.userId,
+      hostUserId: conversations.hostUserId,
+    })
     .from(conversations)
+    .leftJoin(trainerProfiles, eq(trainerProfiles.id, conversations.trainerProfileId))
     .where(and(
-      eq(conversations.userId, user.id),
-      eq(conversations.hostUserId, admin.id),
       eq(conversations.status, "open"),
-    ))
-    .limit(1);
-  if (open) return;
+      or(
+        and(
+          eq(conversations.userId, user.id),
+          or(eq(conversations.hostUserId, admin.id), eq(trainerProfiles.ownerUserId, admin.id)),
+        ),
+        and(
+          eq(conversations.userId, admin.id),
+          or(eq(conversations.hostUserId, user.id), eq(trainerProfiles.ownerUserId, user.id)),
+        ),
+      ),
+    ));
+  const ids = rows.map((row) => row.id);
+  const messageCounts = new Map<string, number>();
+  if (ids.length > 0) {
+    const counted = await db
+      .select({
+        conversationId: messages.conversationId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(messages)
+      .where(inArray(messages.conversationId, ids))
+      .groupBy(messages.conversationId);
+    for (const row of counted) messageCounts.set(row.conversationId, Number(row.count));
+    const attached = await db
+      .select({ conversationId: messageAttachments.conversationId })
+      .from(messageAttachments)
+      .where(inArray(messageAttachments.conversationId, ids));
+    for (const row of attached) {
+      messageCounts.set(row.conversationId, (messageCounts.get(row.conversationId) ?? 0) + 1);
+    }
+  }
+  const threads: WelcomePairThread[] = rows.map((row) => ({
+    id: row.id,
+    portal: row.userId === user.id && row.hostUserId === admin.id,
+    messages: messageCounts.get(row.id) ?? 0,
+  }));
+  const plan = planTrainerWelcome(threads);
+  if (plan.dropIds.length > 0) {
+    const [files, reports] = await Promise.all([
+      db.select({ conversationId: messageAttachments.conversationId }).from(messageAttachments).where(inArray(messageAttachments.conversationId, plan.dropIds)),
+      db.select({ conversationId: messageReports.conversationId }).from(messageReports).where(inArray(messageReports.conversationId, plan.dropIds)),
+    ]);
+    const busy = new Set([...files, ...reports].map((row) => row.conversationId));
+    const safe = plan.dropIds.filter((id) => !busy.has(id));
+    if (safe.length > 0) {
+      await db.delete(conversations).where(inArray(conversations.id, safe));
+    }
+  }
+  if (!plan.create && !plan.conversationId) return;
 
   const body = trainerWelcomeHtml(user.firstName, await loadSiteText("trainer_welcome"));
   if (reviewTextLength(body) > 4000) {
@@ -74,21 +123,25 @@ async function deliverTrainerWelcome(user: { id: string; firstName: string }) {
   }
 
   const saved = await db.transaction(async (tx) => {
-    const [conversation] = await tx.insert(conversations).values({
-      userId: user.id,
-      hostUserId: admin.id,
-      status: "open",
-    }).returning();
-    if (!conversation) return null;
+    let conversationId = plan.conversationId;
+    if (!conversationId) {
+      const [conversation] = await tx.insert(conversations).values({
+        userId: user.id,
+        hostUserId: admin.id,
+        status: "open",
+      }).returning();
+      if (!conversation) return null;
+      conversationId = conversation.id;
+    }
     const [message] = await tx.insert(messages).values({
-      conversationId: conversation.id,
+      conversationId,
       senderId: admin.id,
       body,
       clientId: randomUUID(),
     }).returning({ id: messages.id, createdAt: messages.createdAt });
     if (!message) return null;
-    await tx.update(conversations).set({ lastMessageAt: message.createdAt }).where(eq(conversations.id, conversation.id));
-    return { conversationId: conversation.id, messageId: message.id };
+    await tx.update(conversations).set({ lastMessageAt: message.createdAt }).where(eq(conversations.id, conversationId));
+    return { conversationId, messageId: message.id };
   });
   if (!saved) return;
   scheduleMessageNotification({

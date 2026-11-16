@@ -11,6 +11,18 @@ test("the clicked card stays open when another thread of the pair has more messa
   assert.deepEqual(preferClickedProfile(rows, "clicked-card").map((row) => row.id), ["clicked"]);
 });
 
+test("an empty open of this card does not hide the portal welcome", () => {
+  const rows = [
+    { id: "card", trainerProfileId: "profile", messages: 0 },
+    { id: "welcome", trainerProfileId: null, messages: 1 },
+    { id: "other", trainerProfileId: "other", messages: 5 },
+  ];
+  assert.deepEqual(
+    preferClickedProfile(rows, "profile").map((row) => row.id),
+    ["card", "welcome"],
+  );
+});
+
 test("a pair with no thread for the clicked card stays intact", () => {
   const rows = [{ id: "welcome", trainerProfileId: null, messages: 1 }];
   assert.equal(preferClickedProfile(rows, "clicked-card").length, 1);
