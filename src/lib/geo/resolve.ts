@@ -1,6 +1,6 @@
 import { AuthError } from "@/lib/auth/errors";
 import { logCaught, writeLog } from "@/lib/log/logger";
-import { readGeocodeCache, writeGeocodeCache, type CachedGeocode } from "@/lib/geo/cache";
+import { readGeocodeCache, readGeocodeCacheMany, writeGeocodeCache, type CachedGeocode } from "@/lib/geo/cache";
 import { probeAddressCountry, searchNominatim, type GeocodeHit } from "@/lib/geo/nominatim";
 import { addressHitScore, addressQueryReady, addressSearches, normalizeQuery, sanitizeQuery, type AddressSearch } from "@/lib/geo/normalize";
 import {
@@ -53,8 +53,8 @@ async function writeCache(queryNorm: string, hit: GeocodeHit | null, countryCode
   }
 }
 
-function planKey(plan: AddressSearch): string | null {
-  const raw = plan.street ? `street ${plan.street} ${plan.city ?? ""}` : plan.q;
+function planKey(plan: AddressSearch, structured: boolean): string | null {
+  const raw = structured && plan.street ? `street ${plan.street} ${plan.city ?? ""}` : plan.q;
   return normalizeQuery(raw);
 }
 
@@ -67,28 +67,63 @@ function rankedHits(plan: AddressSearch, hits: GeocodeHit[]): GeocodeHit[] {
     .map((row) => row.hit);
 }
 
-/**
- * Try the canonical street, then a spelling or word-order variant.
- * A cached miss on one variant does not hide a later variant.
- * A hit that does not share the street or the place name is not accepted.
- * `remoteBudget` caps Nominatim calls. Suggestions use two, a save uses four.
- */
-async function lookup(
-  query: string,
-  cityHint: string,
-  bypassCache: boolean,
-  remoteBudget: number,
-  probeForeign: boolean,
-): Promise<
+type LookupResult =
   | { kind: "ok"; hit: GeocodeHit; hits: GeocodeHit[] }
   | { kind: "not_found" }
   | { kind: "foreign" }
   | { kind: "unavailable" }
-> {
-  const plans = addressSearches(query, cityHint).slice(0, 4);
+  | { kind: "limited" }
+  | { kind: "stale" };
+
+type LookupOptions = {
+  bypassCache?: boolean;
+  /** Caps Nominatim calls. A suggestion uses two, and the second only after a miss. Saving a place uses four. */
+  remoteBudget: number;
+  probeForeign?: boolean;
+  /** A suggestion does not store an empty result. Saving a place does. */
+  rememberMiss?: boolean;
+  /** Structured street search. A suggestion uses the free-text line instead. */
+  structured?: boolean;
+  /** False once this field has a newer line. Checked before a remote call. */
+  stillCurrent?: () => boolean;
+  /** Called once, and only when a remote call is about to start. */
+  allowRemote?: () => Promise<boolean>;
+};
+
+function stillCurrent(options: LookupOptions) {
+  return options.stillCurrent == null || options.stillCurrent();
+}
+
+async function rememberHit(key: string, hit: GeocodeHit, hits: GeocodeHit[], original: string | null) {
+  const writes = new Map<string, GeocodeHit>();
+  writes.set(key, hit);
+  if (original && original !== key) writes.set(original, hit);
+  for (const item of hits) {
+    const displayNorm = normalizeQuery(item.displayName);
+    if (displayNorm && !writes.has(displayNorm)) writes.set(displayNorm, item);
+  }
+  await Promise.all([...writes].map(([cacheKey, value]) => writeCache(cacheKey, value)));
+}
+
+/**
+ * Try the canonical street, then a spelling or word-order variant.
+ * A cached miss on one variant does not hide a later variant.
+ * A hit that does not share the street or the place name is not accepted.
+ * Variants are read from the cache in one query. A remote call starts only
+ * for a variant that is still the latest line of that field.
+ */
+async function lookup(query: string, cityHint: string, options: LookupOptions): Promise<LookupResult> {
+  const bypassCache = options.bypassCache === true;
+  const rememberMiss = options.rememberMiss !== false;
+  const structured = options.structured !== false;
+  const plans = addressSearches(query, cityHint);
   if (!plans.length) return { kind: "not_found" };
-  const keys = plans.map(planKey);
+  const keys = plans.map((plan) => planKey(plan, structured));
   if (!keys.some(Boolean)) return { kind: "not_found" };
+
+  const cachedRows = bypassCache
+    ? new Map<string, CachedGeocode>()
+    : await readCaches(keys.filter((key): key is string => Boolean(key)));
 
   if (!bypassCache) {
     let everyVariantCached = true;
@@ -97,8 +132,8 @@ async function lookup(
         everyVariantCached = false;
         continue;
       }
-      const cached = await readCache(key);
-      if (cached === "miss") {
+      const cached = cachedRows.get(key);
+      if (!cached) {
         everyVariantCached = false;
         continue;
       }
@@ -112,49 +147,53 @@ async function lookup(
   }
 
   let remoteCalls = 0;
+  let remoteAllowed: Promise<boolean> | null = null;
   for (const [index, plan] of plans.entries()) {
     const key = keys[index];
     if (!key) continue;
-    if (!bypassCache) {
-      const cached = await readCache(key);
-      if (cached !== "miss") continue;
-    }
-    if (remoteCalls >= remoteBudget) break;
+    if (!bypassCache && cachedRows.has(key)) continue;
+    if (remoteCalls >= options.remoteBudget) break;
+    if (!stillCurrent(options)) return { kind: "stale" };
+    remoteAllowed ??= options.allowRemote?.() ?? Promise.resolve(true);
+    if (!(await remoteAllowed)) return { kind: "limited" };
+    if (!stillCurrent(options)) return { kind: "stale" };
     remoteCalls += 1;
     const remote = await searchNominatim(plan.q, {
       limit: 5,
       countrycodes: "by",
       belarusOnly: true,
-      street: plan.street,
-      city: plan.city,
+      street: structured ? plan.street : null,
+      city: structured ? plan.city : null,
     });
     if (remote.kind === "unavailable") return remote;
     const hits = remote.kind === "ok" ? rankedHits(plan, remote.hits) : [];
     const hit = hits[0] ?? null;
     if (!hit) {
-      await writeCache(key, null);
+      if (rememberMiss) await writeCache(key, null);
       continue;
     }
-    await writeCache(key, hit);
-    const original = normalizeQuery(query);
-    if (original && original !== key) await writeCache(original, hit);
-    for (const item of hits) {
-      const displayNorm = normalizeQuery(item.displayName);
-      if (displayNorm && displayNorm !== key) await writeCache(displayNorm, item);
-    }
+    await rememberHit(key, hit, hits, normalizeQuery(query));
     return { kind: "ok", hit, hits };
   }
 
-  if (remoteCalls === 0 || !probeForeign) return { kind: "not_found" };
+  if (remoteCalls === 0 || !options.probeForeign) return { kind: "not_found" };
+  if (!stillCurrent(options)) return { kind: "stale" };
   const probe = await probeAddressCountry(plans[0]?.q ?? query);
   if (probe === "foreign") {
-    for (const key of keys) {
-      if (key) await writeCache(key, null, "other");
-    }
+    await Promise.all(keys.filter((key): key is string => Boolean(key)).map((key) => writeCache(key, null, "other")));
     return { kind: "foreign" };
   }
   if (probe === "unavailable") return { kind: "unavailable" };
   return { kind: "not_found" };
+}
+
+async function readCaches(keys: string[]): Promise<Map<string, CachedGeocode>> {
+  try {
+    return await readGeocodeCacheMany(keys);
+  } catch (error) {
+    logCaught("geo", "geo.cache.read", error);
+    return new Map();
+  }
 }
 
 /**
@@ -205,7 +244,7 @@ export async function resolveProfileAddress(
     }
   }
 
-  const result = await lookup(address, "", force, 4, true);
+  const result = await lookup(address, "", { bypassCache: force, remoteBudget: 4, probeForeign: true });
   if (result.kind === "ok") {
     return {
       address,
@@ -248,14 +287,20 @@ export type SuggestLookup =
 
 export async function suggestCachedOrRemote(
   query: string,
-  allowRemote: () => boolean,
+  allowRemote: () => Promise<boolean>,
+  stillCurrent?: () => boolean,
 ): Promise<SuggestLookup> {
   if (!addressQueryReady(query)) return { kind: "ok", hits: [] };
-  const remote = allowRemote();
-  const result = await lookup(query, "", false, remote ? 2 : 0, false);
+  const result = await lookup(query, "", {
+    remoteBudget: 2,
+    rememberMiss: false,
+    structured: false,
+    stillCurrent,
+    allowRemote,
+  });
   if (result.kind === "unavailable") return { kind: "unavailable" };
+  if (result.kind === "limited") return { kind: "limited" };
   if (result.kind === "ok") return { kind: "ok", hits: result.hits.slice(0, 5) };
-  if (!remote) return { kind: "limited" };
   return { kind: "ok", hits: [] };
 }
 
@@ -314,7 +359,7 @@ export async function resolveTrainingPlaces(
         continue;
       }
     }
-    const result = await lookup(row.address, row.city, force, 4, true);
+    const result = await lookup(row.address, row.city, { bypassCache: force, remoteBudget: 4, probeForeign: true });
     if (result.kind === "foreign") throw new AuthError(FOREIGN_ADDRESS_MESSAGE, "VALIDATION");
     if (result.kind === "ok") {
       resolved.push(fromHit(row, result.hit));

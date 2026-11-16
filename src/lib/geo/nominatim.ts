@@ -1,3 +1,5 @@
+import https from "node:https";
+
 import { expandStreetQuery, normalizeQuery, sanitizeQuery } from "@/lib/geo/normalize";
 
 /**
@@ -12,6 +14,63 @@ const NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
 const USER_AGENT = "Trenio.by/1.0 (https://trenio.by)";
 const TIMEOUT_MS = 8_000;
 const MIN_INTERVAL_MS = 1_100;
+
+/**
+ * IPv6 to this host does not connect, and a fresh TCP handshake is about a second.
+ * One IPv4 socket stays open so the next address does not pay that handshake again.
+ */
+const nominatimAgent = new https.Agent({
+  keepAlive: true,
+  keepAliveMsecs: 30_000,
+  maxSockets: 1,
+});
+
+function nominatimGet(url: URL, signal: AbortSignal): Promise<{ ok: boolean; json: () => Promise<unknown> }> {
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const req = https.get(url, {
+      agent: nominatimAgent,
+      family: 4,
+      headers: {
+        Accept: "application/json",
+        "Accept-Language": "ru,ru;q=0.9",
+        "User-Agent": USER_AGENT,
+      },
+      timeout: TIMEOUT_MS,
+    }, (res) => {
+      const chunks: Buffer[] = [];
+      let size = 0;
+      res.on("data", (chunk: Buffer) => {
+        size += chunk.length;
+        if (size > 1_000_000) {
+          req.destroy();
+          return;
+        }
+        chunks.push(chunk);
+      });
+      res.on("end", () => {
+        if (settled) return;
+        settled = true;
+        signal.removeEventListener("abort", abort);
+        const status = res.statusCode ?? 0;
+        const text = Buffer.concat(chunks).toString("utf8");
+        resolve({
+          ok: status >= 200 && status < 300,
+          json: async () => JSON.parse(text) as unknown,
+        });
+      });
+    });
+    const abort = () => req.destroy();
+    signal.addEventListener("abort", abort, { once: true });
+    req.on("timeout", () => req.destroy());
+    req.on("error", (error) => {
+      if (settled) return;
+      settled = true;
+      signal.removeEventListener("abort", abort);
+      reject(error);
+    });
+  });
+}
 
 export type GeocodeHit = {
   lat: number;
@@ -116,14 +175,7 @@ export async function searchNominatim(query: string, options: NominatimSearchOpt
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
-    const response = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        Accept: "application/json",
-        "Accept-Language": "ru,ru;q=0.9",
-        "User-Agent": USER_AGENT,
-      },
-    });
+    const response = await nominatimGet(url, controller.signal);
     if (!response.ok) return { kind: "unavailable" };
     const body: unknown = await response.json().catch(() => null);
     if (!Array.isArray(body)) return { kind: "unavailable" };

@@ -142,4 +142,6 @@ export const placesShape = {
 
 export const suggestAddressSchema = z.object({
   query: z.string().trim().min(3).max(200),
+  /** One address field. A newer line from the same field replaces an older lookup. */
+  ticket: z.string().trim().min(1).max(80).optional(),
 });

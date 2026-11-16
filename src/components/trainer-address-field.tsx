@@ -84,7 +84,7 @@ function PlaceInput({
       let scheduled = false;
       setLoading(true);
       void suggestRef
-        .current({ data: { query: lookupQuery } })
+        .current({ data: { query: lookupQuery, ticket: listId } })
         .then((result) => {
           if (cancelled || gaveUp) return;
           window.clearTimeout(fail);
@@ -124,7 +124,7 @@ function PlaceInput({
       window.clearTimeout(fail);
       window.clearTimeout(retryTimer);
     };
-  }, [lookupQuery, showMenu]);
+  }, [listId, lookupQuery, showMenu]);
 
   function finishEditing() {
     setOpen(false);

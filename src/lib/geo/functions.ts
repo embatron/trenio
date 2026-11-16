@@ -26,19 +26,35 @@ function toSuggestions(hits: AddressSuggestion[]): AddressSuggestion[] {
   return hits.filter((hit) => hit.displayName && hit.lat != null && hit.lng != null).slice(0, 5);
 }
 
+const suggestSlots = new Map<string, string>();
+
+function watchSuggest(userId: string, ticket: string | undefined, query: string) {
+  if (!ticket) return undefined;
+  const slot = `${userId}:${ticket}`;
+  suggestSlots.set(slot, query);
+  return () => suggestSlots.get(slot) === query;
+}
+
 export const suggestAddress = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
   .validator(suggestAddressSchema)
   .handler(async ({ data, context }): Promise<{ suggestions: AddressSuggestion[]; unavailable: boolean }> => {
     if (!addressQueryReady(data.query)) return { suggestions: [], unavailable: false };
-    const limit = await consumeRateLimit(
-      `geo:suggest:${context.user.id}`,
-      RATE_LIMITS.geocodeUser.windowMs,
-      RATE_LIMITS.geocodeUser.max,
+    const stillCurrent = watchSuggest(context.user.id, data.ticket, data.query);
+    let gate: Promise<boolean> | null = null;
+    const found = await suggestCachedOrRemote(
+      data.query,
+      () => {
+        gate ??= consumeRateLimit(
+          `geo:suggest:${context.user.id}`,
+          RATE_LIMITS.geocodeSuggest.windowMs,
+          RATE_LIMITS.geocodeSuggest.max,
+        ).then((limit) => limit.ok);
+        return gate;
+      },
+      stillCurrent,
     );
-    if (!limit.ok) throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
-    const found = await suggestCachedOrRemote(data.query, () => true);
-    if (found.kind === "limited") return { suggestions: [], unavailable: false };
+    if (found.kind === "limited") throw new AuthError(RATE_LIMITED_MESSAGE, "RATE_LIMITED");
     if (found.kind === "unavailable") {
       void writeLog({
         level: "warn",

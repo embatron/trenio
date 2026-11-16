@@ -16,6 +16,8 @@ export const RATE_LIMITS = {
   forgotIp: { windowMs: 15 * 60_000, max: 5 },
   forgotEmail: { windowMs: 15 * 60_000, max: 5 },
   geocodeUser: { windowMs: 1_000, max: 1 },
+  /** Address suggestions. Nominatim stays at one call per second for the whole process. */
+  geocodeSuggest: { windowMs: 10_000, max: 8 },
 } as const;
 
 export const RATE_LIMITED_MESSAGE = "Слишком много попыток. Подождите и попробуйте снова.";

@@ -49,11 +49,10 @@ test("expandStreetQuery unfolds a street abbreviation and leaves a full word", (
 
 test("addressLookupQueries canonicalizes case, house letters, corpus, and a repeated city", () => {
   const cyrillicA = "\u0410";
-  assert.deepEqual(addressLookupQueries(`пр Независимости, 32${cyrillicA}, стр. 2`), [
-    `Проспект Независимости, 32${cyrillicA}`,
-    `Независимости Проспект, 32${cyrillicA}`,
-    `Независимости, 32${cyrillicA}`,
-  ]);
+  const independence = addressLookupQueries(`пр Независимости, 32${cyrillicA}, стр. 2`);
+  assert.equal(independence[0], `Проспект Независимости, 32${cyrillicA}`);
+  assert.ok(independence.includes(`Независимости Проспект, 32${cyrillicA}`));
+  assert.ok(independence.includes(`Независимости, 32${cyrillicA}`));
   assert.ok(addressLookupQueries("вул. Незалежнасці, 10").includes("Улица Независимости, 10"));
   assert.deepEqual(addressLookupQueries("проспект Победителей, 11"), addressLookupQueries("Проспект Победителей, 11"));
   assert.equal(addressLookupQueries("ул. Ленина д.5 к.2")[0], "Улица Ленина, 5");
@@ -73,6 +72,21 @@ test("addressLookupQueries canonicalizes case, house letters, corpus, and a repe
   assert.equal(addressQueryReady("пр."), false);
   assert.equal(addressQueryReady("проспект"), false);
   assert.equal(addressQueryReady("пр-т Победителей"), true);
+  assert.equal(addressLookupQueries("Пушкина12", "Минск")[0], "Пушкина, 12, Минск");
+  assert.equal(addressLookupQueries("ул.Пушкина12а", "Минск")[0], `Улица Пушкина, 12${cyrillicA}, Минск`);
+  assert.equal(addressLookupQueries(`Независимости32${cyrillicA}`, "Минск")[0], `Независимости, 32${cyrillicA}, Минск`);
+  assert.equal(addressLookupQueries("Пушкина12/2", "Минск")[0], "Пушкина, 12/2, Минск");
+  assert.equal(addressLookupQueries("Улица.Пушкина12", "Минск")[0], "Улица Пушкина, 12, Минск");
+  assert.equal(addressLookupQueries("Проспект.Независимости 11", "Минск")[0], "Проспект Независимости, 11, Минск");
+  assert.equal(addressLookupQueries("Пушкинад.12", "Минск")[0], "Пушкина, 12, Минск");
+  assert.equal(addressLookupQueries("1-я Пушкина12", "Минск")[0], "Пушкина, 12, Минск");
+  assert.equal(addressLookupQueries("Притыцкаго 27", "Минск")[1], "Притыцкого, 27, Минск");
+  assert.equal(addressLookupQueries("Альшевского 11", "Минск")[1], "Ольшевского, 11, Минск");
+  assert.ok(addressHitScore("Альшевского, 11", {
+    street: "улица Ольшевского, 11",
+    displayName: "11, улица Ольшевского, Минск, Беларусь",
+    city: "Минск",
+  }) > 0);
 });
 
 test("every street word is recognized before the name, after it, and with the city around it", () => {

@@ -243,11 +243,44 @@ function preclean(raw: string): string {
   );
 }
 
+const FULL_STREET_TYPE = "улица|проспект|переулок|бульвар|набережная|площадь|шоссе|проезд|тупик|тракт|микрорайон";
+
+/** «Улица.Пушкина» keeps the type word and the period does not swallow the name. */
+function spaceAfterTypeDot(value: string): string {
+  return value.replace(
+    new RegExp(`(?<![\\p{L}])(${FULL_STREET_TYPE})\\.(?=\\p{L})`, "giu"),
+    "$1 ",
+  );
+}
+
+/** «Пушкинад.12» and «Пушкина№12» keep the street and the house. */
+function separateHouseMarker(value: string): string {
+  return value.replace(/(\p{L}{3,})(?:дом|д\.|№)(?=\d)/giu, "$1 ");
+}
+
+/**
+ * A pasted house number often sticks to the street: «Пушкина12», «Пушкина12а», «Пушкина12/2».
+ * A year glued to a word stays put.
+ */
+function separateGluedHouse(value: string): string {
+  return value.replace(
+    /(\p{L}{3,})(\d{1,4})(?:\/(\d{1,4})|([а-яёА-ЯЁa-zA-Z]))?(?![\p{L}\d])/gu,
+    (match, word: string, house: string, fraction?: string, letter?: string) => {
+      if (/^(?:19|20)\d{2}$/.test(house) && !fraction && !letter) return match;
+      const tail = fraction ? `/${fraction}` : letter ?? "";
+      return `${word} ${house}${tail}`;
+    },
+  );
+}
+
 export function expandStreetQuery(raw: string): string {
   let value = preclean(raw);
   for (const [pattern, replacement] of abbreviations()) {
     value = value.replace(pattern, replacement);
   }
+  value = spaceAfterTypeDot(value);
+  value = separateHouseMarker(value);
+  value = separateGluedHouse(value);
   return collapse(value);
 }
 
@@ -519,7 +552,8 @@ function plansFor(parsed: ParsedAddress, typePosition: "before" | "after" | "non
 
 /**
  * Lookup attempts, most specific first.
- * At most four. A repeated city and the word «Беларусь» are not part of them.
+ * At most five. A repeated city and the word «Беларусь» are not part of them.
+ * The second and third lines are one а/о slip, used only when the exact line misses.
  */
 export function addressSearches(raw: string, cityHint = ""): AddressSearch[] {
   const expanded = expandStreetQuery(raw);
@@ -530,7 +564,11 @@ export function addressSearches(raw: string, cityHint = ""): AddressSearch[] {
     const parsed = parseChunk(chunk, cityHint);
     if (!parsed) return;
     if (index === 0) {
-      pushPlan(plans, plansFor(parsed, parsed.type ? "before" : "none", parsed.name));
+      const position = parsed.type ? "before" : "none";
+      pushPlan(plans, plansFor(parsed, position, parsed.name));
+      for (const slipped of letterSlipNames(parsed.name)) {
+        pushPlan(plans, plansFor(parsed, position, slipped));
+      }
       if (parsed.type) pushPlan(plans, plansFor(parsed, "after", parsed.name));
       if (parsed.alternateName) {
         pushPlan(plans, plansFor(parsed, parsed.type ? "before" : "none", parsed.alternateName));
@@ -540,7 +578,7 @@ export function addressSearches(raw: string, cityHint = ""): AddressSearch[] {
     }
     pushPlan(plans, plansFor(parsed, parsed.type ? "before" : "none", parsed.name));
   });
-  return plans.slice(0, 4);
+  return plans.slice(0, 5);
 }
 
 /** The free-text form of `addressSearches`. */
@@ -585,7 +623,55 @@ function hitStreetType(value: string): StreetType | null {
 function namesAgree(left: string, right: string): boolean {
   if (left === right) return true;
   if (left.length < 5 || right.length < 5) return false;
-  return left.startsWith(right.slice(0, 5)) || right.startsWith(left.slice(0, 5));
+  if (left.startsWith(right.slice(0, 5)) || right.startsWith(left.slice(0, 5))) return true;
+  const a = [...left];
+  const b = [...right];
+  if (a.length !== b.length) return false;
+  let slips = 0;
+  for (let index = 0; index < a.length; index += 1) {
+    if (a[index] === b[index]) continue;
+    const pair = `${a[index] ?? ""}${b[index] ?? ""}`;
+    if (pair !== "ао" && pair !== "оа") return false;
+    slips += 1;
+    if (slips > 1) return false;
+  }
+  return slips === 1;
+}
+
+/** One banal а/о slip. «…аго» becomes «…ого». Otherwise the first а/о, then the last. */
+function letterSlipNames(name: string): string[] {
+  const parts = name.split(" ");
+  const word = parts.reduce((best, part) => (part.length > best.length ? part : best), "");
+  if (word.length < 5) return [];
+  const chars = [...word];
+  const indexes: number[] = [];
+  chars.forEach((char, index) => {
+    const lower = char.toLocaleLowerCase("ru");
+    if (lower === "а" || lower === "о") indexes.push(index);
+  });
+  if (!indexes.length) return [];
+  const preferred: number[] = [];
+  if (word.toLocaleLowerCase("ru").endsWith("аго")) preferred.push(chars.length - 3);
+  if (indexes[0] === 0) preferred.push(0);
+  preferred.push(indexes[indexes.length - 1] ?? 0);
+  const slipped: string[] = [];
+  const seen = new Set<string>();
+  for (const index of preferred) {
+    const char = chars[index] ?? "";
+    const lower = char.toLocaleLowerCase("ru");
+    const swapped = lower === "а" ? "о" : lower === "о" ? "а" : "";
+    if (!swapped) continue;
+    const upper = char.toLocaleUpperCase("ru") === char && char.toLocaleLowerCase("ru") !== char;
+    const nextChars = chars.slice();
+    nextChars[index] = upper ? swapped.toLocaleUpperCase("ru") : swapped;
+    const nextWord = nextChars.join("");
+    const key = nextWord.toLocaleLowerCase("ru");
+    if (nextWord === word || seen.has(key)) continue;
+    seen.add(key);
+    slipped.push(parts.map((part) => (part === word ? nextWord : part)).join(" "));
+    if (slipped.length === 2) break;
+  }
+  return slipped;
 }
 
 /**
