@@ -532,6 +532,13 @@ async function saveFromCookie(data: z.infer<typeof cardSchema>, publish: boolean
     updatedAt: new Date(),
   };
   await getDb().update(trainerProfiles).set(values).where(eq(trainerProfiles.id, row.id));
+  const { sendWelcomeOnPublish } = await import("@/lib/messages/welcome");
+  await sendWelcomeOnPublish({
+    previous: row.status,
+    next: publish ? "published" : data.status,
+    ownerUserId: row.ownerUserId,
+    firstName: data.firstName,
+  });
   void writeLog({
     level: "info",
     domain: "catalog",
@@ -871,6 +878,14 @@ export const confirmDoorPhoneFn = createServerFn({ method: "POST" })
       actorUserId: user.id,
       target: row.slug,
     });
+    const { sendWelcomeOnPublish } = await import("@/lib/messages/welcome");
+    await sendWelcomeOnPublish({
+      previous: row.status,
+      next: row.status === "draft" ? "published" : row.status,
+      ownerUserId: user.id,
+      firstName: row.firstName,
+      ownerAttached: true,
+    });
     if (next === "/auth/totp") return { ok: true as const, slug: row.slug, needsPassword: false, redirectTo: next };
     return { ok: true as const, slug: row.slug, needsPassword: user.needsPassword, redirectTo: "/me" };
   });
@@ -1024,6 +1039,14 @@ export const openTrainerMailFn = createServerFn({ method: "POST" })
       actorUserId: user.id,
       target: row.slug,
     });
+    const { sendWelcomeOnPublish } = await import("@/lib/messages/welcome");
+    await sendWelcomeOnPublish({
+      previous: row.status,
+      next: row.status === "draft" ? "published" : row.status,
+      ownerUserId: user.id,
+      firstName: row.firstName,
+      ownerAttached: true,
+    });
     return { ok: true as const, slug: row.slug, needsPassword: user.needsPassword };
   });
 /** Password chosen after the confirmation letter. The letter already published the card. */
@@ -1065,9 +1088,6 @@ export const setDoorPasswordFn = createServerFn({ method: "POST" })
       actorUserId: context.user.id,
       target: owned.slug,
     });
-
-    const { sendTrainerWelcome } = await import("@/lib/messages/welcome");
-    await sendTrainerWelcome({ id: context.user.id, firstName: owned.firstName || context.user.firstName });
 
     let mailed = false;
     if (isPendingSignupEmail(context.user.email)) {

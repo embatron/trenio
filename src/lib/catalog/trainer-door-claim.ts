@@ -168,8 +168,14 @@ export async function claimDoorAfterGoogle(input: DoorClaimInput): Promise<DoorG
     target: row.slug,
   });
 
-  const { sendTrainerWelcome } = await import("@/lib/messages/welcome");
-  await sendTrainerWelcome({ id: input.userId, firstName: row.firstName.trim() || "Тренер" });
+  const { sendWelcomeOnPublish } = await import("@/lib/messages/welcome");
+  await sendWelcomeOnPublish({
+    previous: row.status,
+    next: row.status === "draft" ? "published" : row.status,
+    ownerUserId: input.userId,
+    firstName: row.firstName,
+    ownerAttached: true,
+  });
   return "claimed";
 }
 

@@ -561,11 +561,6 @@ export async function registerUser(input: {
     role: input.signupRole,
   });
 
-  if (input.signupRole === "trainer") {
-    const { sendTrainerWelcome } = await import("@/lib/messages/welcome");
-    await sendTrainerWelcome({ id: user.id, firstName });
-  }
-
   const verification = await issueEmailVerification(user.id);
   const userLetter = input.signupRole === "user"
     ? parseUserWelcome(await loadSiteText("user_welcome"))

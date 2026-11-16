@@ -96,7 +96,12 @@ export const setOwnTrainerPageStatusFn = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     assertTrainer(context.user.roles);
     const [row] = await getDb()
-      .select({ id: trainerProfiles.id, slug: trainerProfiles.slug, status: trainerProfiles.status })
+      .select({
+        id: trainerProfiles.id,
+        slug: trainerProfiles.slug,
+        status: trainerProfiles.status,
+        firstName: trainerProfiles.firstName,
+      })
       .from(trainerProfiles)
       .where(eq(trainerProfiles.ownerUserId, context.user.id))
       .limit(1);
@@ -116,6 +121,13 @@ export const setOwnTrainerPageStatusFn = createServerFn({ method: "POST" })
       actorUserId: context.user.id,
       subject: context.user.email,
       mode: "save",
+    });
+    const { sendWelcomeOnPublish } = await import("@/lib/messages/welcome");
+    await sendWelcomeOnPublish({
+      previous: row.status,
+      next: data.status,
+      ownerUserId: context.user.id,
+      firstName: row.firstName,
     });
     void writeLog({
       level: "info",
@@ -468,6 +480,13 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       subject: context.user.email,
       source: "self",
       mode: "save",
+    });
+    const { sendWelcomeOnPublish } = await import("@/lib/messages/welcome");
+    await sendWelcomeOnPublish({
+      previous: existing?.status ?? null,
+      next: data.status,
+      ownerUserId: context.user.id,
+      firstName,
     });
     void writeLog({
       level: "info",

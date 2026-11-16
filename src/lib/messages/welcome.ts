@@ -9,6 +9,7 @@ import { SITE_EMAIL } from "@/lib/seo/site";
 import { logCaught, writeLog } from "@/lib/log/logger";
 import { reviewTextLength } from "@/lib/catalog/review-html";
 import { scheduleMessageNotification } from "@/lib/messages/notify";
+import { shouldSendPublishWelcome } from "@/lib/messages/welcome-publish";
 import { renderTrainerWelcome } from "@/lib/site-texts/defaults";
 import { loadSiteText } from "@/lib/site-texts/store";
 
@@ -107,11 +108,31 @@ async function deliverTrainerWelcome(user: { id: string; firstName: string }) {
   });
 }
 
-/** One welcome thread from the admin account Trenioby. A later call does not send a second letter. Failures stay out of signup. */
+/** One welcome thread from the admin account Trenioby. A later call does not send a second letter. Failures stay out of publish. */
 export async function sendTrainerWelcome(user: { id: string; firstName: string }) {
   try {
     await deliverTrainerWelcome(user);
   } catch (error) {
     logCaught("message", "message.welcome", error, { actorUserId: user.id });
   }
+}
+
+/** The first time this owner's card is in the catalog. A hide and a later publish do not send again. */
+export async function sendWelcomeOnPublish(input: {
+  previous: string | null;
+  next: string;
+  ownerUserId: string | null;
+  firstName: string;
+  ownerAttached?: boolean;
+}) {
+  if (!shouldSendPublishWelcome({
+    previous: input.previous,
+    next: input.next,
+    hasOwner: Boolean(input.ownerUserId),
+    ownerAttached: input.ownerAttached,
+  }) || !input.ownerUserId) return;
+  await sendTrainerWelcome({
+    id: input.ownerUserId,
+    firstName: input.firstName.trim() || "Тренер",
+  });
 }

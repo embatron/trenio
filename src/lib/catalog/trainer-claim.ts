@@ -155,8 +155,6 @@ export const claimTrainerProfileFn = createServerFn({ method: "POST" })
 
     const session = await createSession(user.id, { remember: true });
     setSessionCookie(session.token, true);
-    const { sendTrainerWelcome } = await import("@/lib/messages/welcome");
-    await sendTrainerWelcome({ id: user.id, firstName: user.firstName });
     void writeLog({
       level: "info",
       domain: "account",

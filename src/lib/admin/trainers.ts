@@ -704,6 +704,13 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       source: existing ? null : "admin_created",
       mode: "save",
     });
+    const { sendWelcomeOnPublish } = await import("@/lib/messages/welcome");
+    await sendWelcomeOnPublish({
+      previous: existing?.status ?? null,
+      next: data.status,
+      ownerUserId: existing?.ownerUserId ?? null,
+      firstName,
+    });
     void writeLog({
       level: "info",
       domain: "form",
