@@ -1129,7 +1129,14 @@ const PAGE_CSS = `
   .map-people { grid-template-columns: 1fr; }
 }
 @media (max-width: 767px) {
-  .map-people { gap: 20px; }
+  .map-people { gap: calc(20px * 0.92); }
+  .map-people .trainer-card__body { padding: calc(9px * 0.92) calc(10px * 0.92) calc(11px * 0.92); }
+  .map-people .trainer-card__footer { padding-top: calc(7px * 0.92); }
+}
+@media (max-width: 400px) {
+  .map-people { gap: 14px; }
+  .map-people .trainer-card__body { padding: 8px 8px 10px; }
+  .map-people .trainer-card__footer { padding-top: 6px; }
 }
 @media (min-width: 720px) {
   .map-people { grid-template-columns: repeat(3, minmax(0, 1fr)); }

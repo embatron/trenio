@@ -518,7 +518,10 @@ a.review-item__author:focus-visible { color: var(--primary); }
   .review-item__pair { flex-wrap: wrap; justify-content: flex-start; }
 }
 @media (max-width: 767px) {
-  .similar-trainers__track { gap: 20px; }
+  .similar-trainers__track { gap: calc(20px * 0.92); }
+}
+@media (max-width: 400px) {
+  .similar-trainers__track { gap: 14px; }
 }
 
 `;
