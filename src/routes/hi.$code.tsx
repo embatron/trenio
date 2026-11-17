@@ -18,6 +18,10 @@ export const Route = createFileRoute("/hi/$code")({
       if (!peek) return { ready: false };
       const door = await enterTrainerDoorFn({ data: { code: params.code } });
       if (!door) return { ready: false };
+      if (peek.renew) {
+        if (door.published) return { ready: false };
+        throw redirect({ to: "/trainers/$slug", params: { slug: door.slug } });
+      }
       const query = new URLSearchParams({ mail, door: params.code });
       throw redirect({ href: `/trainers/${door.slug}?${query.toString()}` });
     }

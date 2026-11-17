@@ -225,7 +225,15 @@ export function TrainerDoorMail({
   );
 }
 
-function DoorMailSent({ email }: { email: string }) {
+function DoorMailSent({
+  email,
+  expired = false,
+  onOther,
+}: {
+  email: string;
+  expired?: boolean;
+  onOther?: () => void;
+}) {
   const requestEmail = useAuthServerFn(requestDoorEmailFn);
   const [pending, setPending] = useState(false);
   const [again, setAgain] = useState(false);
@@ -242,16 +250,18 @@ function DoorMailSent({ email }: { email: string }) {
 
   return (
     <>
-      <h2 id="door-mail-sent">{again ? "Ссылка отправлена" : "Ссылка уже отправлена"}</h2>
+      <h2 id="door-mail-sent">{again ? "Ссылка отправлена" : expired ? "Ссылка уже не действует" : "Ссылка уже отправлена"}</h2>
       {again ? (
         <p>
-          Новая ссылка на {email} отправлена. Проверьте почту, в том числе папку «Спам». Откройте
-          последнее письмо: предыдущая ссылка уже не действует.
+          Новая ссылка на {email} отправлена. Она действует 1 час. Проверьте почту, в том числе
+          папку «Спам». Откройте последнее письмо: предыдущая ссылка уже не действует.
         </p>
+      ) : expired ? (
+        <p>Прежняя ссылка на {email} больше не открывает страницу. Новая будет действовать 1 час.</p>
       ) : (
         <>
           <p>Ссылка на {email} уже отправлена. Проверьте почту, в том числе папку «Спам».</p>
-          <p>Если письма нет, вышлем ссылку ещё раз.</p>
+          <p>Если письма нет, вышлем ссылку ещё раз. Новая действует 1 час.</p>
         </>
       )}
       {error ? (
@@ -268,6 +278,11 @@ function DoorMailSent({ email }: { email: string }) {
       >
         {pending ? "Отправка…" : "Выслать еще раз"}
       </button>
+      {expired && !again && onOther ? (
+        <button type="button" className="door-mail-modal__other" onClick={onOther}>
+          Другой способ
+        </button>
+      ) : null}
     </>
   );
 }
@@ -275,10 +290,12 @@ function DoorMailSent({ email }: { email: string }) {
 export function TrainerDoorMailDialog({
   onClose,
   sentTo,
+  expired = false,
   onRemember,
 }: {
   onClose: () => void;
   sentTo: string | null;
+  expired?: boolean;
   onRemember?: (email: string) => void;
 }) {
   const router = useRouter();
@@ -314,7 +331,7 @@ export function TrainerDoorMailDialog({
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </button>
         {sent ? (
-          <DoorMailSent email={sent} />
+          <DoorMailSent email={sent} expired={expired} onOther={() => setSent(null)} />
         ) : (
           <>
             <h2 id="door-mail-title">Создание аккаунта тренера</h2>
@@ -341,6 +358,7 @@ export function TrainerDoorMailDialog({
         .door-mail-modal__x:hover { color: var(--dark); }
         .door-mail-modal__ok { justify-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-weight: var(--fw-title); cursor: pointer; }
         .door-mail-modal__ok:disabled { opacity: 0.6; cursor: default; }
+        .door-mail-modal__other { justify-self: start; min-height: 44px; padding: 0; border: 0; background: transparent; color: var(--primary); font: inherit; font-weight: var(--fw-title); cursor: pointer; }
         .door-mail-modal__card .door-mail__error { margin: 0; color: var(--primary-dark); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
       `}</style>
     </div>,

@@ -30,7 +30,7 @@ import {
 } from "@/lib/catalog/trainer-reviews";
 import { CabinetNotice } from "@/components/cabinet";
 import { AccountLikeButton } from "@/components/account-like-button";
-import { CardDirectLink } from "@/components/messages/card-direct-link";
+import { CardDirectLink, ProfileDirectButton } from "@/components/messages/card-direct-link";
 import { FavoriteButton } from "@/components/favorite-button";
 import { ShareProfileButton } from "@/components/share-profile";
 import { TrainerAddressMap } from "@/components/trainer-address-map";
@@ -341,6 +341,18 @@ const CSS = `
 .photo-thumbs button { width: 64px; height: 80px; flex: 0 0 auto; padding: 0; border: 2px solid transparent; border-radius: 10px; overflow: hidden; background: var(--neutral-bg); cursor: pointer; }
 .photo-thumbs button.is-active { border-color: var(--primary); }
 .photo-thumbs img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+.profile-message-cta {
+  width: calc(100% - 24px); min-height: 52px; margin: 12px; padding: 0 18px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  border-radius: 999px; background: var(--primary); color: #fff;
+  font-size: 15px; font-weight: var(--fw-title); text-decoration: none;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+.profile-message-cta:hover, .profile-message-cta:focus-visible { background: var(--primary-dark); transform: translateY(-1px); }
+.profile-message-cta svg {
+  width: 21px; height: 21px; flex: 0 0 auto; fill: none; stroke: currentColor;
+  stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round;
+}
 
 .contact-panel { padding: 4px 18px 18px; background: var(--light-bg); }
 .contact-prices { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px 14px; margin: 0 0 14px; }
@@ -503,6 +515,7 @@ a.review-item__author:focus-visible { color: var(--primary); }
 
 @media (prefers-reduced-motion: reduce) {
   .photo-slider__viewport, .photo-thumbs { scroll-behavior: auto; }
+  .profile-message-cta { transition: none; }
 }
 
 @media (max-width: 960px) {
@@ -830,20 +843,30 @@ function TrainerPage() {
   const magicDoor = Boolean(editor?.magicDoor) && !isOwner && !openingMail;
   const [mailOpen, setMailOpen] = useState(magicDoor);
   const doorMailKey = `trenio-door-mail-to:${t.slug}`;
-  const [mailSentTo, setMailSentTo] = useState<string | null>(editor?.mailSentTo ?? null);
-  const [mailChecked, setMailChecked] = useState(Boolean(editor?.mailSentTo));
+  const [mailSentTo, setMailSentTo] = useState<string | null>(editor?.mailSentTo ?? editor?.renewMail ?? null);
+  const [mailExpired, setMailExpired] = useState(!editor?.mailSentTo && Boolean(editor?.renewMail));
+  const [mailChecked, setMailChecked] = useState(Boolean(editor?.mailSentTo || editor?.renewMail));
   function rememberMail(email: string) {
     setMailSentTo(email);
+    setMailExpired(false);
     try { sessionStorage.setItem(doorMailKey, email); } catch { /* the open window already shows the address */ }
   }
   useEffect(() => {
     if (editor?.mailSentTo) {
       setMailSentTo(editor.mailSentTo);
+      setMailExpired(false);
       try { sessionStorage.setItem(doorMailKey, editor.mailSentTo); } catch { /* the server value stays on the page */ }
       setMailChecked(true);
       return;
     }
+    if (editor?.renewMail) {
+      setMailSentTo(editor.renewMail);
+      setMailExpired(true);
+      setMailChecked(true);
+      return;
+    }
     if (editor?.magicDoor) {
+      setMailExpired(false);
       setMailSentTo((current) => {
         if (current) return current;
         try { sessionStorage.removeItem(doorMailKey); } catch { /* the form is shown from the server */ }
@@ -1060,6 +1083,7 @@ function TrainerPage() {
                   </ul>
                 ) : null}
               </div>
+              {access === "public" ? <ProfileDirectButton slug={t.slug} /> : null}
             </div>
           </aside>
 
@@ -1297,6 +1321,7 @@ function TrainerPage() {
       {mailOpen && (mailSentTo || mailChecked) ? (
         <TrainerDoorMailDialog
           sentTo={mailSentTo}
+          expired={mailExpired}
           onRemember={rememberMail}
           onClose={() => setMailOpen(false)}
         />

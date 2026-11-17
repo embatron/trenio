@@ -943,8 +943,13 @@ describe("auth cases", { concurrency: false }, () => {
       source.indexOf("export const confirmDoorEmailFn"),
       source.indexOf("async function freshDoorClaim"),
     );
-    assert.match(source, /const DOOR_MAIL_HOURS = 24/);
-    assert.match(source, /Ссылка действует 24 часа и сразу открывает вашу страницу/);
+    const { doorMailHours } = await import("@/lib/catalog/trainer-magic");
+    assert.match(source, /const DOOR_MAIL_FIRST_HOURS = 48/);
+    assert.match(source, /const DOOR_MAIL_REPEAT_HOURS = 1/);
+    assert.equal(doorMailHours(false), 48);
+    assert.equal(doorMailHours(true), 1);
+    assert.match(source, /Ссылка действует 48 часов и сразу открывает вашу страницу/);
+    assert.match(source, /Ссылка действует 1 час и сразу открывает вашу страницу/);
     assert.match(handler, /INVALID_TOKEN/);
     assert.equal(handler.includes("hashToken"), false);
   });

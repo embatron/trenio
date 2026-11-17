@@ -51,8 +51,18 @@ const PREVIEW_COOKIE = "trenio_trainer_preview";
 const EDIT_COOKIE = "trenio_trainer_edit";
 /** Preview and edit cookies on the short link. Not the letter button. */
 const LINK_MAX_AGE = 60 * 30;
-/** The mailbox button in «Ваш профиль». A newer letter retires the previous one. */
-const DOOR_MAIL_HOURS = 24;
+/** The first mailbox button in «Ваш профиль». A later letter is the short one. */
+export const DOOR_MAIL_FIRST_HOURS = 48;
+export const DOOR_MAIL_REPEAT_HOURS = 1;
+
+export function doorMailHours(hasEarlier: boolean) {
+  return hasEarlier ? DOOR_MAIL_REPEAT_HOURS : DOOR_MAIL_FIRST_HOURS;
+}
+
+export function doorMailLifetimeLine(hours: number) {
+  if (hours === 1) return "Ссылка действует 1 час и сразу открывает вашу страницу.";
+  return "Ссылка действует 48 часов и сразу открывает вашу страницу.";
+}
 
 function requestOrigin() {
   const fallback = appOrigin();
@@ -435,6 +445,8 @@ export type MagicTrainerDraft = {
   magicDoor: boolean;
   /** Mailbox that still has an unused profile link. Empty when none is waiting. */
   mailSentTo: string | null;
+  /** Mailbox from a letter that can no longer be opened. Empty while a live link is waiting. */
+  renewMail: string | null;
   photos: string[];
   certificates: ReturnType<typeof readCertificates>;
 };
@@ -454,6 +466,16 @@ export const getMagicTrainerFn = createServerFn({ method: "GET" })
       ))
       .orderBy(desc(authDoorClaims.createdAt))
       .limit(1);
+    let lastMail: { email: string } | undefined;
+    if (!pendingMail && !row.ownerUserId && row.status !== "published") {
+      const [last] = await getDb()
+        .select({ email: authDoorClaims.email })
+        .from(authDoorClaims)
+        .where(eq(authDoorClaims.profileId, row.id))
+        .orderBy(desc(authDoorClaims.createdAt))
+        .limit(1);
+      lastMail = last;
+    }
     return {
       slug: row.slug,
       status: row.status,
@@ -478,6 +500,7 @@ export const getMagicTrainerFn = createServerFn({ method: "GET" })
       phoneLocked: Boolean(row.ownerUserId),
       magicDoor: getCookie(PREVIEW_COOKIE) === row.slug && Boolean(row.previewToken) && !row.ownerUserId && row.status !== "published",
       mailSentTo: pendingMail?.email ?? null,
+      renewMail: lastMail?.email ?? null,
       photos: (row.photos?.length ? row.photos : row.avatarPath ? [row.avatarPath] : []).slice(0, 9),
       certificates: readCertificates(row.certificates),
     };
@@ -657,6 +680,12 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
     const db = getDb();
     const now = new Date();
     const linkToken = generateSecureToken();
+    const [earlier] = await db
+      .select({ id: authDoorClaims.id })
+      .from(authDoorClaims)
+      .where(eq(authDoorClaims.profileId, row.id))
+      .limit(1);
+    const hours = doorMailHours(Boolean(earlier));
     const retired = await db
       .select({ id: authDoorClaims.id })
       .from(authDoorClaims)
@@ -669,7 +698,7 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
       profileId: row.id,
       email,
       tokenHash: hashToken(`${row.id}:${linkToken}`),
-      expiresAt: addMinutes(now, DOOR_MAIL_HOURS * 60),
+      expiresAt: addMinutes(now, hours * 60),
     }).returning({ id: authDoorClaims.id });
     if (!created) {
       if (retiredIds.length > 0) {
@@ -688,7 +717,7 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
           avatarUrl: row.avatarPath,
           caption: "Ваш профиль",
         },
-        lines: ["Ссылка действует 24 часа и сразу открывает вашу страницу."],
+        lines: [doorMailLifetimeLine(hours)],
         action: { href: link, label: "Открыть профиль" },
         note: "Если вы не запрашивали это письмо, просто удалите его.",
       });
@@ -726,7 +755,7 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
       message: "Ссылка на профиль отправлена на почту.",
       subject: email,
       target: row.slug,
-      context: { hours: DOOR_MAIL_HOURS },
+      context: { hours },
     });
     return { ok: true as const, message: "Ссылка уже отправлена.", email };
   });
@@ -924,17 +953,26 @@ const doorMailSchema = z.object({
 });
 
 async function freshDoorClaim(code: string, token: string) {
+  const look = await lookDoorMail(code, token);
+  if (look.kind !== "live") return null;
+  return { row: look.row, claim: look.claim };
+}
+
+function doorMailCanRenew(row: { ownerUserId: string | null; status: string }) {
+  return !row.ownerUserId && row.status !== "published";
+}
+
+async function lookDoorMail(code: string, token: string) {
   const parsed = doorCodeSchema.safeParse(code);
   if (!parsed.success) {
     noteDoorMailFault("missing", null, null);
-    return null;
+    return { kind: "dead" as const };
   }
   const row = await doorByCode(parsed.data);
   if (!row) {
     noteDoorMailFault("missing", null, null);
-    return null;
+    return { kind: "dead" as const };
   }
-  const now = new Date();
   const [claim] = await getDb()
     .select()
     .from(authDoorClaims)
@@ -947,38 +985,39 @@ async function freshDoorClaim(code: string, token: string) {
     .limit(1);
   if (!claim) {
     noteDoorMailFault("missing", row.slug, null);
-    return null;
+    return { kind: "dead" as const };
   }
   if (claim.usedAt) {
     noteDoorMailFault("used", row.slug, claim.email);
-    return null;
+    return doorMailCanRenew(row) ? { kind: "renew" as const, row, claim } : { kind: "dead" as const };
   }
-  if (claim.expiresAt.getTime() <= now.getTime()) {
+  if (claim.expiresAt.getTime() <= Date.now()) {
     noteDoorMailFault("expired", row.slug, claim.email);
-    return null;
+    return doorMailCanRenew(row) ? { kind: "renew" as const, row, claim } : { kind: "dead" as const };
   }
   if (row.ownerUserId) {
     noteDoorMailFault("owned", row.slug, claim.email);
-    return null;
+    return { kind: "dead" as const };
   }
-  return { row, claim };
+  return { kind: "live" as const, row, claim };
 }
 
 export const peekTrainerMailFn = createServerFn({ method: "GET" })
   .validator(doorMailSchema)
   .handler(async ({ data }) => {
-    const found = await freshDoorClaim(data.code, data.token);
-    if (!found) return null;
+    const look = await lookDoorMail(data.code, data.token);
+    if (look.kind === "renew") return { ok: false as const, renew: true as const };
+    if (look.kind !== "live") return null;
     void writeLog({
       level: "info",
       domain: "account",
       action: "account.claim",
       outcome: "success",
       message: "Ссылка из письма ещё действует.",
-      subject: found.claim.email,
-      target: found.row.slug,
+      subject: look.claim.email,
+      target: look.row.slug,
     });
-    return { ok: true as const };
+    return { ok: true as const, renew: false as const };
   });
 
 export const openTrainerMailFn = createServerFn({ method: "POST" })
