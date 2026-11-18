@@ -185,11 +185,24 @@ test("a trainer title lists every sport and the city", () => {
   ]);
   assert.equal(
     trainerDocumentPhrase(datives, { slug: "minsk", label: "Минск" }, "Владимир Антипенко"),
-    "Тренер по боксу, кикбоксингу и общефизической подготовке Владимир Антипенко в Минске",
+    "Владимир Антипенко — тренер по боксу, кикбоксингу и общефизической подготовке в Минске",
   );
   assert.equal(
     trainerDocumentPhrase(["боксу"], { slug: "minsk", label: "Минск" }, "Артём Романович"),
-    "Тренер по боксу Артём Романович в Минске",
+    "Артём Романович — тренер по боксу в Минске",
+  );
+  assert.equal(
+    trainerDocumentPhrase(
+      ["лечебной физической культуре"],
+      { slug: "minsk", label: "Минск" },
+      "Виктория Шкредова",
+      "Инструктор ЛФК и тренер по осанке, реабилитации и восстановлению",
+    ),
+    "Виктория Шкредова — инструктор ЛФК и тренер по осанке, реабилитации и восстановлению в Минске",
+  );
+  assert.equal(
+    trainerDocumentPhrase(["ЛФК"], { slug: "minsk", label: "Минск" }, "Юрий Усатов", "ЛФК"),
+    "Юрий Усатов — ЛФК в Минске",
   );
   assert.equal(
     trainerDocumentPhrase(
@@ -233,21 +246,21 @@ test("a trainer document names the person, the sport, and the city", () => {
     priceLines: ["35 BYN"],
   });
   const title = head.meta.find((item) => "title" in item && item.title);
-  assert.equal(title && "title" in title ? title.title : "", "Тренер по кикбоксингу Владимир Антипенко в Минске | Я ищу тренера на trenio.by");
+  assert.equal(title && "title" in title ? title.title : "", "Владимир Антипенко — тренер по кикбоксингу в Минске | Я ищу тренера на trenio.by");
   const description = head.meta.find((item) => "name" in item && item.name === "description");
   assert.equal(
     description && "content" in description ? description.content : "",
-    "Тренер по кикбоксингу Владимир Антипенко в Минске. Зал в Минске.",
+    "Владимир Антипенко — тренер по кикбоксингу в Минске. Зал в Минске.",
   );
   const alt = head.meta.find((item) => "property" in item && item.property === "og:image:alt");
   assert.equal(
     alt && "content" in alt ? alt.content : "",
-    "Тренер по кикбоксингу Владимир Антипенко в Минске",
+    "Владимир Антипенко — тренер по кикбоксингу в Минске",
   );
   const ogTitle = head.meta.find((item) => "property" in item && item.property === "og:title");
   assert.equal(
     ogTitle && "content" in ogTitle ? ogTitle.content : "",
-    "Тренер по кикбоксингу Владимир Антипенко в Минске",
+    "Владимир Антипенко — тренер по кикбоксингу в Минске",
   );
   const ogDescription = head.meta.find((item) => "property" in item && item.property === "og:description");
   assert.equal(ogDescription && "content" in ogDescription ? ogDescription.content : "", "Зал в Минске.");
@@ -266,9 +279,9 @@ test("a trainer document names the person, the sport, and the city", () => {
     mainEntity?: { telephone?: string; jobTitle?: string; mainEntityOfPage?: string; makesOffer?: { price: string } };
   }).find((node) => node["@type"] === "ProfilePage");
   assert.ok(graph);
-  assert.equal(graph.name, "Тренер по кикбоксингу Владимир Антипенко в Минске");
+  assert.equal(graph.name, "Владимир Антипенко — тренер по кикбоксингу в Минске");
   assert.equal(graph.mainEntity?.telephone, undefined);
-  assert.equal(graph.mainEntity?.jobTitle, "Тренер по кикбоксингу Владимир Антипенко в Минске");
+  assert.equal(graph.mainEntity?.jobTitle, "Владимир Антипенко — тренер по кикбоксингу в Минске");
   assert.equal(graph.mainEntity?.mainEntityOfPage, "https://trenio.by/trainers/antipenko.training");
   assert.equal(graph.mainEntity?.makesOffer?.price, "35");
   assert.equal(graphTypes(head).has("AggregateRating"), false);
@@ -290,7 +303,7 @@ test("a trainer document names the person, the sport, and the city", () => {
   });
   const longDescription = long.meta.find((item) => "name" in item && item.name === "description");
   const longText = longDescription && "content" in longDescription ? longDescription.content ?? "" : "";
-  assert.match(longText, /^Тренер по кикбоксингу, боксу и общефизической подготовке Владимир Антипенко в Минске\./);
+  assert.match(longText, /^Владимир Антипенко — тренер по кикбоксингу, боксу и общефизической подготовке в Минске\./);
   assert.match(longText, /Кикбоксинг и бокс/);
   const longOg = long.meta.find((item) => "property" in item && item.property === "og:description");
   const longShare = longOg && "content" in longOg ? longOg.content ?? "" : "";
@@ -367,7 +380,7 @@ test("each indexable page kind emits its schema types", () => {
   const person = trainer.scripts
     ?.map((script) => JSON.parse(script.children) as { "@type"?: string; mainEntity?: { jobTitle?: string; sameAs?: string[]; aggregateRating?: { reviewCount: number } } })
     .find((node) => node["@type"] === "ProfilePage")?.mainEntity;
-  assert.equal(person?.jobTitle, "Тренер по кикбоксингу Владимир Антипенко в Минске");
+  assert.equal(person?.jobTitle, "Владимир Антипенко — тренер по кикбоксингу в Минске");
   assert.deepEqual(person?.sameAs, [
     "https://www.instagram.com/antipenko.training/",
     "https://t.me/antipenko",
@@ -387,7 +400,7 @@ test("each indexable page kind emits its schema types", () => {
   assert.equal(profile?.mainEntity?.alternateName, "antipenko.training");
   assert.equal(profile?.mainEntity?.image?.url, "https://trenio.by/og/trainers/antipenko.training.jpg?v=20261104T120000Z-antipenko.training");
   assert.equal(profile?.mainEntity?.image?.width, 1200);
-  assert.equal(profile?.mainEntity?.image?.caption, "Тренер по кикбоксингу Владимир Антипенко в Минске");
+  assert.equal(profile?.mainEntity?.image?.caption, "Владимир Антипенко — тренер по кикбоксингу в Минске");
   assert.equal(profile?.primaryImageOfPage?.url, profile?.mainEntity?.image?.url);
   assert.equal(profile?.primaryImageOfPage?.width, 1200);
   assert.equal(profile?.primaryImageOfPage?.height, 630);
@@ -631,11 +644,11 @@ test("a published trainer is a sitemap url and a draft slug is not", () => {
     path: "/trainers/antipenko.training",
     lastmod: "2026-11-04",
     image: "https://trenio.by/trainers/instagram/antipenko.training.jpg",
-    imageTitle: "Владимир Антипенко — Тренер по кикбоксингу в Минске",
+    imageTitle: "Владимир Антипенко — тренер по кикбоксингу в Минске",
   }]);
   assert.match(xml, /<loc>https:\/\/trenio\.by\/trainers\/antipenko\.training<\/loc>/);
   assert.match(xml, /<lastmod>2026-11-04<\/lastmod>/);
-  assert.match(xml, /Владимир Антипенко — Тренер по кикбоксингу в Минске/);
+  assert.match(xml, /Владимир Антипенко — тренер по кикбоксингу в Минске/);
   assert.match(xml, /<loc>https:\/\/trenio\.by\/about<\/loc>/);
   assert.equal(xml.includes("/trainers/draft"), false);
 });

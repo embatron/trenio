@@ -818,7 +818,7 @@ function TrainerPage() {
     if (access !== "public") return;
     void recordTrainerProfileViewFn({ data: { slug: t.slug } });
   }, [access, t.slug]);
-  const documentPhrase = trainerDocumentPhrase(t.sportDatives, t.city, t.name);
+  const documentPhrase = trainerDocumentPhrase(t.sportDatives, t.city, t.name, t.headline);
   const { user } = useRouteContext({ from: "__root__" });
   const [photoIdx, setPhotoIdx] = useState(0);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -1049,7 +1049,7 @@ function TrainerPage() {
                   >
                     {photos.map((src, i) => (
                       <div key={src} className="photo-slider__slide">
-                        <PhotoImage src={src} alt={i === 0 ? `${t.name} — ${documentPhrase}` : `${t.name} — фото ${i + 1}`} preset="profile" width={680} height={850} loading={i === 0 ? "eager" : "lazy"} />
+                        <PhotoImage src={src} alt={i === 0 ? documentPhrase : `${t.name} — фото ${i + 1}`} preset="profile" width={680} height={850} loading={i === 0 ? "eager" : "lazy"} />
                       </div>
                     ))}
                   </div>

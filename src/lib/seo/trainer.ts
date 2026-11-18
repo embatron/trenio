@@ -30,7 +30,19 @@ export type TrainerSeoSource = {
   intro?: string;
 };
 
-/** Document phrase, without the site name: «Тренер по боксу Артём Романович в Минске». */
+/** The headline follows the name, so a short snippet still shows who the page is. */
+function roleAfterName(role: string) {
+  const value = role.trim();
+  const firstWord = value.split(/[\s—–-]/)[0] ?? "";
+  const letters = [...firstWord].filter((char) => /\p{L}/u.test(char)).join("");
+  if (letters.length > 1 && letters === letters.toUpperCase()) return value;
+  const chars = [...value];
+  if (chars.length === 0) return value;
+  chars[0] = chars[0].toLocaleLowerCase("ru");
+  return chars.join("");
+}
+
+/** Document phrase, without the site name: «Артём Романович — тренер по боксу в Минске». */
 export function trainerDocumentPhrase(
   datives: string[],
   city: { slug: string; label: string },
@@ -39,8 +51,10 @@ export function trainerDocumentPhrase(
 ) {
   const place = city.label.trim() ? cityIn(city.slug, city.label) : "Беларуси";
   const person = name.trim();
-  const sports = intro.trim() || trainerByPhrase(datives);
-  return person ? `${sports} ${person} в ${place}` : `${sports} в ${place}`;
+  const sports = (intro.trim() || trainerByPhrase(datives)).replace(/\s+/g, " ").trim();
+  if (!person) return sports ? `${sports} в ${place}` : `Тренер в ${place}`;
+  if (!sports) return `${person} в ${place}`;
+  return `${person} — ${roleAfterName(sports)} в ${place}`;
 }
 
 function isoStamp(value: string | undefined) {
