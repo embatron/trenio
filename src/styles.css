@@ -714,7 +714,8 @@ input.is-locked {
 /* Phone trainer cards share one tighter grid.
    Below 768px the gap and the card padding are 92% of the 20px phone values.
    Below 400px the gap is 14px and the body padding is 13px 8px 15px,
-   so a long given name sits beside the rating. The home tile shows 12 of the 16.
+   so a long given name sits beside the rating. The home tile starts with 12 of 16.
+   «Ещё» reveals the rest of that first page and then another 12.
    The map list keeps its own compact padding in map.tsx and uses the same gaps. */
 @media (max-width: 767px) {
   .trainer-grid,
@@ -738,7 +739,7 @@ input.is-locked {
   .similar-trainers .trainer-card__footer {
     padding-top: calc(11px * 0.92);
   }
-  .trainer-grid--home > :nth-child(n + 13) { display: none; }
+  .trainer-grid--home[data-collapsed="true"] > :nth-child(n + 13) { display: none; }
 }
 @media (max-width: 400px) {
   .trainer-grid,

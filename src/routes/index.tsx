@@ -15,13 +15,62 @@ import { getHomeStatsFn, type HomeStats } from "@/lib/catalog/home-stats";
 import { listTrainerPricesFn, priceForCard } from "@/lib/catalog/trainer-price";
 import { listTrainerRatingSummariesFn } from "@/lib/catalog/trainer-reviews";
 import { CatalogEmpty } from "@/components/catalog-empty";
-import { CatalogTrainerCard } from "@/components/catalog-trainer-card";
+import { CatalogTrainerCard, type CatalogTrainerCardData } from "@/components/catalog-trainer-card";
 import { SiteFaq } from "@/components/site-faq";
 import { HOME_FAQ } from "@/lib/catalog/site-faq";
 import { homePageHead } from "@/lib/seo/pages";
 import { TRAINER_INVITE_LINE } from "@/lib/catalog/trainer-welcome";
 
 const HOMEPAGE_CATEGORIES = listPublishedSportCategories();
+const HOME_PAGE_WIDE = 16;
+const HOME_PAGE_NARROW = 12;
+
+function HomeTrainerList({ trainers }: { trainers: CatalogTrainerCardData[] }) {
+  const [steps, setSteps] = useState(0);
+  const [narrow, setNarrow] = useState<boolean | null>(null);
+  const [revealFrom, setRevealFrom] = useState<number | null>(null);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const apply = () => setNarrow(media.matches);
+    apply();
+    media.addEventListener("change", apply);
+    return () => media.removeEventListener("change", apply);
+  }, []);
+
+  const page = narrow ? HOME_PAGE_NARROW : HOME_PAGE_WIDE;
+  const count = steps === 0 ? HOME_PAGE_WIDE : page * (steps + 1);
+  const shown = narrow && steps === 0 ? trainers.slice(0, HOME_PAGE_NARROW) : trainers.slice(0, count);
+  const canMore = trainers.length > shown.length;
+
+  function showMore() {
+    setRevealFrom(shown.length);
+    setSteps((value) => value + 1);
+  }
+
+  return (
+    <>
+      <div className="trainer-grid trainer-grid--home" data-collapsed={steps === 0 ? "true" : "false"}>
+        {shown.map((trainer, index) => {
+          const entering = revealFrom != null && index >= revealFrom;
+          return (
+            <CatalogTrainerCard
+              key={trainer.slug}
+              trainer={trainer}
+              className={entering ? "home-card-in" : undefined}
+              style={entering ? { animationDelay: `${Math.min(index - revealFrom, 10) * 35}ms` } : undefined}
+            />
+          );
+        })}
+      </div>
+      {canMore ? (
+        <button type="button" className="home-more" onClick={showMore}>
+          Ещё
+        </button>
+      ) : null}
+    </>
+  );
+}
 
 function CategoryStrip() {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -683,9 +732,28 @@ body:has(.trenio-root) { background: var(--white); }
 @media (hover: hover) and (pointer: fine) {
   .stat-item:hover { transform: translateY(-3px); }
 }
+.home-more {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; max-width: 280px; min-height: 48px; margin: 22px auto 0; padding: 0 22px;
+  border: 0; border-radius: 999px; background: var(--primary); color: #fff;
+  font: inherit; font-size: 15px; font-weight: var(--fw-title); cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+.home-more:hover { transform: translateY(-1px); background: var(--primary-dark); box-shadow: 0 12px 26px rgba(var(--primary-rgb), 0.28); }
+.home-more:focus-visible { outline: 2px solid var(--primary-dark); outline-offset: 3px; }
+@keyframes home-card-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.home-card-in { animation: home-card-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+@media (max-width: 767px) {
+  .home-more { max-width: none; }
+}
 @media (prefers-reduced-motion: reduce) {
   .stats-band { cursor: default; }
   .stat-item { transition: none; }
+  .home-card-in { animation: none; }
+  .home-more { transition: none; }
 }
 `;
 
@@ -852,7 +920,7 @@ function Index() {
       telegram: trainer.telegram,
       email: trainer.email,
     };
-  }).sort(compareByPopularity).slice(0, 16);
+  }).sort(compareByPopularity);
   useEffect(() => {
     const siteHeader = document.querySelector<HTMLElement>("#site-header");
     if (!siteHeader) return;
@@ -905,11 +973,7 @@ function Index() {
             {trainers.length === 0 ? (
               <CatalogEmpty title={`Тренеров в ${homeWhere} пока нет`} />
             ) : (
-              <div className="trainer-grid trainer-grid--home">
-                {trainers.map((t) => (
-                  <CatalogTrainerCard key={t.slug} trainer={t} />
-                ))}
-              </div>
+              <HomeTrainerList trainers={trainers} />
             )}
           </section>
 

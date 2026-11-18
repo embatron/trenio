@@ -173,6 +173,17 @@ test("addressHitScore accepts the same street and rejects the city alone", () =>
     displayName: "Дворец спорта, проспект Победителей, 4, Минск, Беларусь",
     city: "Минск",
   }) > 0);
+  const nalibokStreet = addressHitScore("Налибокская улица, 2", {
+    street: "Налибокская улица",
+    displayName: "Налибокская улица, Каменная Горка, Минск, Беларусь",
+    city: "Минск",
+  }, { streetType: "улица", house: "2" });
+  assert.ok(nalibokStreet > 0);
+  assert.ok(addressHitScore("Налибокская улица, 2", {
+    street: "Налибокская улица, 2",
+    displayName: "2, Налибокская улица, Минск, Беларусь",
+    city: "Минск",
+  }, { streetType: "улица", house: "2" }) > nalibokStreet);
 });
 
 test("a street abbreviation is a specific address and a practice word is not", () => {

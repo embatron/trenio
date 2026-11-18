@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 
 import { AccountLikeButton } from "@/components/account-like-button";
 import { FavoriteButton } from "@/components/favorite-button";
@@ -50,6 +50,8 @@ export function CatalogTrainerCard({
   countImpression = true,
   onHover,
   fromSport,
+  className,
+  style,
 }: {
   trainer: CatalogTrainerCardData;
   marked?: boolean;
@@ -57,6 +59,8 @@ export function CatalogTrainerCard({
   onHover?: (slug: string | null) => void;
   /** Child sport of the list that opened this card. Omitted on a general list. */
   fromSport?: string;
+  className?: string;
+  style?: CSSProperties;
 }) {
   const cardRef = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -70,7 +74,8 @@ export function CatalogTrainerCard({
   return (
     <article
       ref={cardRef}
-      className={`trainer-card${marked ? " is-marked" : ""}`}
+      className={`trainer-card${marked ? " is-marked" : ""}${className ? ` ${className}` : ""}`}
+      style={style}
       data-map-trainer={trainer.slug}
       onMouseEnter={onHover ? () => onHover(trainer.slug) : undefined}
       onMouseLeave={onHover ? () => onHover(null) : undefined}
