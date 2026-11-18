@@ -53,7 +53,7 @@ import { pluralRu } from "@/lib/ru-plural";
 import { DoorPasswordDialog } from "@/components/auth/door-password-dialog";
 import { TrainerDoorMailDialog } from "@/components/trainer-door-editor";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
-import { getMagicTrainerFn, loadVisibleTrainerFn, openTrainerMailFn, type MagicTrainerDraft } from "@/lib/catalog/trainer-magic";
+import { getMagicTrainerFn, loadVisibleTrainerFn, openTrainerMailFn, openTrainerPhoneFn, type MagicTrainerDraft } from "@/lib/catalog/trainer-magic";
 import { TRAINER_LEGACY_SLUGS } from "@/lib/catalog/trainer-slugs";
 
 type Trainer = {
@@ -282,11 +282,13 @@ export const Route = createFileRoute("/trainers/$slug")({
   validateSearch: (search: Record<string, unknown>): {
     sport?: string;
     mail?: string;
+    phone?: string;
     door?: string;
     created?: 1;
   } => ({
     sport: typeof search.sport === "string" && /^[a-z0-9-]{1,30}$/.test(search.sport) ? search.sport : undefined,
     mail: typeof search.mail === "string" ? search.mail : undefined,
+    phone: typeof search.phone === "string" ? search.phone : undefined,
     door: typeof search.door === "string" ? search.door : undefined,
     created: search.created === "1" || search.created === 1 ? 1 : undefined,
   }),
@@ -882,6 +884,7 @@ function TrainerPage() {
   }, [doorMailKey, editor]);
   const [mailError, setMailError] = useState("");
   const openMail = useAuthServerFn(openTrainerMailFn);
+  const openPhone = useAuthServerFn(openTrainerPhoneFn);
   const [createdOpen, setCreatedOpen] = useState(false);
   const createdAudience = isOwner || access === "owner";
   useEffect(() => {
@@ -914,6 +917,36 @@ function TrainerPage() {
         setMailError(authErrorMessage(error) || "Ссылка уже не действует.");
       });
   }, [openMail]);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const phone = params.get("phone") ?? "";
+    const door = params.get("door") ?? "";
+    if (!phone || !door || params.get("mail")) return;
+    const key = `trenio-door-phone:${door}:${phone.slice(0, 16)}`;
+    try {
+      if (sessionStorage.getItem(key) === "1") return;
+      sessionStorage.setItem(key, "1");
+    } catch {
+      /* a second open is refused once the card has an owner */
+    }
+    void openPhone({ data: { code: door, token: phone } })
+      .then((result) => {
+        const slug = result?.slug ?? "";
+        if (!/^[a-z0-9._]{1,30}$/.test(slug)) {
+          setMailError("Ссылка уже не действует.");
+          return;
+        }
+        window.location.replace(result.needsPassword ? `/trainers/${slug}` : "/me/profile?created=1");
+      })
+      .catch((error: unknown) => {
+        try {
+          sessionStorage.removeItem(key);
+        } catch {
+          /* the message stays on the page */
+        }
+        setMailError(authErrorMessage(error) || "Ссылка уже не действует.");
+      });
+  }, [openPhone]);
   useEffect(() => {
     if (!createdAudience || user?.needsDoorPassword) return;
     const params = new URLSearchParams(window.location.search);

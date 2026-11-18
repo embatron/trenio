@@ -2,7 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { ExpiredLink } from "@/components/expired-link";
 import { authErrorMessage } from "@/lib/auth/errors";
-import { enterTrainerDoorFn, peekTrainerMailFn } from "@/lib/catalog/trainer-magic";
+import { enterTrainerDoorFn, peekTrainerMailFn, peekTrainerPhoneFn } from "@/lib/catalog/trainer-magic";
 
 export const Route = createFileRoute("/hi/$code")({
   head: () => ({
@@ -12,7 +12,17 @@ export const Route = createFileRoute("/hi/$code")({
     ],
   }),
   loader: async ({ params, location }) => {
-    const mail = new URLSearchParams(location.searchStr).get("mail") ?? "";
+    const paramsQuery = new URLSearchParams(location.searchStr);
+    const phone = paramsQuery.get("phone") ?? "";
+    if (phone) {
+      const peek = await peekTrainerPhoneFn({ data: { code: params.code, token: phone } });
+      if (!peek) return { ready: false };
+      const door = await enterTrainerDoorFn({ data: { code: params.code } });
+      if (!door) return { ready: false };
+      const query = new URLSearchParams({ phone, door: params.code });
+      throw redirect({ href: `/trainers/${door.slug}?${query.toString()}` });
+    }
+    const mail = paramsQuery.get("mail") ?? "";
     if (mail) {
       const peek = await peekTrainerMailFn({ data: { code: params.code, token: mail } });
       if (!peek) return { ready: false };

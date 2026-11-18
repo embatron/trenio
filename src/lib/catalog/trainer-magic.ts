@@ -797,6 +797,186 @@ export const requestDoorPhoneFn = createServerFn({ method: "POST" })
     return { ok: true as const, retryAfterSec: issued.retryAfterSec, devCode: issued.devCode };
   });
 
+async function ensureDoorPhoneClaims() {
+  await getDb().execute(sql`
+    CREATE TABLE IF NOT EXISTS auth_door_phone_claims (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      profile_id uuid NOT NULL REFERENCES trainer_profiles(id) ON DELETE CASCADE,
+      phone varchar(16) NOT NULL,
+      token_hash varchar(64) NOT NULL UNIQUE,
+      created_at timestamptz NOT NULL DEFAULT now()
+    )
+  `);
+}
+
+type DoorPhoneFault = "missing" | "owned" | "taken" | "closed";
+
+function noteDoorPhoneFault(reason: DoorPhoneFault, slug: string | null, phoneDigits: string | null) {
+  const message = {
+    missing: "Ссылка на телефон не найдена.",
+    owned: "Ссылка на телефон не открыла профиль: карточка уже привязана.",
+    taken: "Ссылка на телефон не открыла профиль: номер уже привязан.",
+    closed: "Ссылка на телефон не открыла профиль: аккаунт закрыт.",
+  }[reason];
+  void writeLog({
+    level: "warn",
+    domain: "account",
+    action: "account.claim",
+    outcome: "denied",
+    message,
+    subject: phoneDigits ? maskPhone(phoneDigits) : null,
+    target: slug,
+    context: { reason },
+  });
+}
+
+async function liveDoorPhone(code: string, token: string) {
+  await ensureDoorPhoneClaims();
+  const parsed = doorCodeSchema.safeParse(code);
+  if (!parsed.success) {
+    noteDoorPhoneFault("missing", null, null);
+    return null;
+  }
+  const row = await doorByCode(parsed.data);
+  if (!row) {
+    noteDoorPhoneFault("missing", null, null);
+    return null;
+  }
+  const found = await getDb().execute(sql`
+    SELECT phone
+    FROM auth_door_phone_claims
+    WHERE profile_id = ${row.id}
+      AND token_hash = ${hashToken(`${row.id}:${token}`)}
+    LIMIT 1
+  `);
+  const claim = found[0];
+  const phone = typeof claim?.phone === "string" ? claim.phone : "";
+  if (!phone) {
+    noteDoorPhoneFault("missing", row.slug, null);
+    return null;
+  }
+  if (row.ownerUserId) {
+    noteDoorPhoneFault("owned", row.slug, phone);
+    return null;
+  }
+  return { row, phone };
+}
+
+/** The link proves the mobile stored with the token. The number is not in the URL. */
+async function claimDoorWithPhone(row: {
+  id: string;
+  slug: string;
+  status: string;
+  firstName: string;
+  lastName: string;
+  avatarPath: string;
+}, phoneDigits: string) {
+  const phone = normalizeBelarusMobile(phoneDigits);
+  const stored = phone ? storedBelarusPhone(phone) : null;
+  if (!phone || !stored) throw new AuthError("Ссылка уже не действует.", "VALIDATION");
+  const db = getDb();
+  const [owner] = await db.select().from(users).where(belarusPhoneEquals(users.phone, phone)).limit(1);
+  if (owner && (owner.status === "deleted" || owner.status === "suspended")) {
+    noteDoorPhoneFault("closed", row.slug, phone);
+    throw new AuthError("Ссылка уже не действует.", "VALIDATION");
+  }
+  if (owner) {
+    noteDoorPhoneFault("taken", row.slug, phone);
+    throw new AuthError("Ссылка уже не действует.", "VALIDATION");
+  }
+  const now = new Date();
+  const id = randomUUID();
+  const passwordHash = await hashPassword(randomBytes(32).toString("base64url"));
+  const [created] = await db.insert(users).values({
+    id,
+    email: pendingSignupEmail(id),
+    phone: stored,
+    phoneVerifiedAt: now,
+    passwordHash,
+    firstName: row.firstName || "Тренер",
+    lastName: row.lastName || null,
+    status: "active",
+    lastSignupIntent: "trainer_claim",
+    needsPassword: true,
+  }).returning();
+  if (!created) throw new AuthError("Не удалось открыть кабинет. Попробуйте ещё раз.", "VALIDATION");
+  await db.insert(userRoles).values({ userId: created.id, role: "user" });
+  const [face] = await db.select({
+    avatarPath: trainerProfiles.avatarPath,
+    photos: trainerProfiles.photos,
+  }).from(trainerProfiles).where(eq(trainerProfiles.id, row.id)).limit(1);
+  const updated = await db
+    .update(trainerProfiles)
+    .set({
+      ownerUserId: created.id,
+      claimStatus: "claimed",
+      claimedAt: now,
+      phone: stored,
+      updatedAt: now,
+    })
+    .where(and(eq(trainerProfiles.id, row.id), isNull(trainerProfiles.ownerUserId)))
+    .returning({ id: trainerProfiles.id });
+  if (updated.length === 0) {
+    await db.delete(users).where(eq(users.id, created.id));
+    noteDoorPhoneFault("owned", row.slug, phone);
+    throw new AuthError("Ссылка уже не действует.", "VALIDATION");
+  }
+  await db.insert(userRoles).values({ userId: created.id, role: "trainer" }).onConflictDoNothing();
+  await copyCardFaceToAccount(created.id, face?.avatarPath ?? row.avatarPath, face?.photos ?? []);
+  await publishConfirmedDraft(row);
+  return created;
+}
+
+const doorTokenSchema = z.object({
+  code: z.string().trim().min(1).max(80),
+  token: z.string().trim().min(1).max(500),
+});
+
+export const peekTrainerPhoneFn = createServerFn({ method: "GET" })
+  .validator(doorTokenSchema)
+  .handler(async ({ data }) => {
+    const found = await liveDoorPhone(data.code, data.token);
+    if (!found) return null;
+    void writeLog({
+      level: "info",
+      domain: "account",
+      action: "account.claim",
+      outcome: "success",
+      message: "Ссылка на телефон ещё действует.",
+      subject: maskPhone(found.phone),
+      target: found.row.slug,
+    });
+    return { ok: true as const };
+  });
+
+export const openTrainerPhoneFn = createServerFn({ method: "POST" })
+  .validator(doorTokenSchema)
+  .handler(async ({ data }) => {
+    const found = await liveDoorPhone(data.code, data.token);
+    if (!found) throw new AuthError("Ссылка уже не действует.", "INVALID_TOKEN");
+    const user = await claimDoorWithPhone(found.row, found.phone);
+    await openDoorSession(user.id);
+    void writeLog({
+      level: "info",
+      domain: "account",
+      action: "account.claim",
+      outcome: "success",
+      message: "Ссылка открыла профиль. Телефон подтверждён.",
+      subject: maskPhone(found.phone),
+      actorUserId: user.id,
+      target: found.row.slug,
+    });
+    const { sendWelcomeOnPublish } = await import("@/lib/messages/welcome");
+    await sendWelcomeOnPublish({
+      previous: found.row.status,
+      next: found.row.status === "draft" ? "published" : found.row.status,
+      ownerUserId: user.id,
+      firstName: found.row.firstName,
+      ownerAttached: true,
+    });
+    return { ok: true as const, slug: found.row.slug, needsPassword: user.needsPassword };
+  });
+
 export const confirmDoorPhoneFn = createServerFn({ method: "POST" })
   .validator(doorPhoneSchema.extend({ code: z.string().trim().min(4).max(12) }))
   .handler(async ({ data }) => {
