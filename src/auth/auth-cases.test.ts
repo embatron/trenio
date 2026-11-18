@@ -943,13 +943,14 @@ describe("auth cases", { concurrency: false }, () => {
       source.indexOf("export const confirmDoorEmailFn"),
       source.indexOf("async function freshDoorClaim"),
     );
-    const { doorMailHours } = await import("@/lib/catalog/trainer-magic");
-    assert.match(source, /const DOOR_MAIL_FIRST_HOURS = 48/);
-    assert.match(source, /const DOOR_MAIL_REPEAT_HOURS = 1/);
-    assert.equal(doorMailHours(false), 48);
-    assert.equal(doorMailHours(true), 1);
-    assert.match(source, /Ссылка действует 48 часов и сразу открывает вашу страницу/);
-    assert.match(source, /Ссылка действует 1 час и сразу открывает вашу страницу/);
+    const { doorMailStillOpens } = await import("@/lib/catalog/trainer-magic");
+    assert.equal(doorMailStillOpens({ ownerUserId: null, claimEmail: email("door"), latestEmail: email("door") }), true);
+    assert.equal(doorMailStillOpens({ ownerUserId: null, claimEmail: "Old@Mail.ru", latestEmail: "old@mail.ru" }), true);
+    assert.equal(doorMailStillOpens({ ownerUserId: null, claimEmail: email("door"), latestEmail: email("other") }), false);
+    assert.equal(doorMailStillOpens({ ownerUserId: profile.id, claimEmail: email("door"), latestEmail: email("door") }), false);
+    assert.equal(source.includes("DOOR_MAIL_FIRST_HOURS"), false);
+    assert.equal(source.includes("claim.expiresAt"), false);
+    assert.match(source, /Ссылка сразу открывает вашу страницу/);
     assert.match(handler, /INVALID_TOKEN/);
     assert.equal(handler.includes("hashToken"), false);
   });

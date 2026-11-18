@@ -55,7 +55,9 @@ export const authLoginTickets = pgTable("auth_login_tickets", {
 
 /**
  * Trainer cabinet link mailed before an account exists.
- * The user row is created when the letter is confirmed with POST.
+ * The user row is created when the letter is opened with POST.
+ * expires_at stays filled because the column is required; opening ignores it.
+ * used_at means a later letter named another mailbox. The same mailbox stays open until the card has an owner.
  */
 export const authDoorClaims = pgTable("auth_door_claims", {
   id: uuid("id").primaryKey().defaultRandom(),

@@ -2,7 +2,7 @@ import { randomBytes, randomUUID } from "node:crypto";
 
 import { createServerFn } from "@tanstack/react-start";
 import { getCookie, getRequest, setCookie } from "@tanstack/react-start/server";
-import { and, desc, eq, gt, inArray, isNull, ne, or } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, ne, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { optionalAuthMiddleware, requireAuthMiddleware, requireSessionMiddleware } from "@/auth/middleware";
@@ -13,7 +13,7 @@ import { isSmsByEnabled } from "@/auth/sms";
 import { hashPassword, normalizeEmail, validatePasswordStrength } from "@/auth/password";
 import { setSessionCookie, setTotpTicketCookie } from "@/auth/session";
 import { beginLogin, findUserByEmail } from "@/auth/service";
-import { addMinutes, generateSecureToken, hashToken } from "@/auth/tokens";
+import { generateSecureToken, hashToken } from "@/auth/tokens";
 import { getDb } from "@/db";
 import { authDoorClaims, trainerProfiles, userRoles, users, type TrainerProfile } from "@/db/schema";
 import { renderLetter } from "@/lib/mail/letter";
@@ -51,17 +51,23 @@ const PREVIEW_COOKIE = "trenio_trainer_preview";
 const EDIT_COOKIE = "trenio_trainer_edit";
 /** Preview and edit cookies on the short link. Not the letter button. */
 const LINK_MAX_AGE = 60 * 30;
-/** The first mailbox button in «Ваш профиль». A later letter is the short one. */
-export const DOOR_MAIL_FIRST_HOURS = 48;
-export const DOOR_MAIL_REPEAT_HOURS = 1;
+/** `auth_door_claims.expires_at` is required. This letter does not expire; opening ignores the timestamp. */
+const DOOR_MAIL_KEPT = new Date("9999-12-31T00:00:00.000Z");
 
-export function doorMailHours(hasEarlier: boolean) {
-  return hasEarlier ? DOOR_MAIL_REPEAT_HOURS : DOOR_MAIL_FIRST_HOURS;
+/** The letter opens while the card has no owner and this mailbox is still the latest one. No clock. */
+export function doorMailStillOpens(input: {
+  ownerUserId: string | null;
+  claimEmail: string;
+  latestEmail: string;
+}): boolean {
+  if (input.ownerUserId) return false;
+  const claim = input.claimEmail.trim().toLowerCase();
+  const latest = input.latestEmail.trim().toLowerCase();
+  return claim.length > 0 && claim === latest;
 }
 
-export function doorMailLifetimeLine(hours: number) {
-  if (hours === 1) return "Ссылка действует 1 час и сразу открывает вашу страницу.";
-  return "Ссылка действует 48 часов и сразу открывает вашу страницу.";
+export function doorMailLifetimeLine() {
+  return "Ссылка сразу открывает вашу страницу.";
 }
 
 function requestOrigin() {
@@ -443,9 +449,9 @@ export type MagicTrainerDraft = {
   phoneLocked: boolean;
   /** Short Instagram link is open and the profile is still unclaimed. */
   magicDoor: boolean;
-  /** Mailbox that still has an unused profile link. Empty when none is waiting. */
+  /** Latest profile-letter mailbox. Empty once the card has an owner. The letter has no clock. */
   mailSentTo: string | null;
-  /** Mailbox from a letter that can no longer be opened. Empty while a live link is waiting. */
+  /** Empty. A profile letter no longer expires, so the dialog does not ask for a fresh one on time. */
   renewMail: string | null;
   photos: string[];
   certificates: ReturnType<typeof readCertificates>;
@@ -456,26 +462,7 @@ export const getMagicTrainerFn = createServerFn({ method: "GET" })
     const row = await profileFromEditCookie();
     if (!row) return null;
     const sports = trainerSportSlugs((row.sports ?? []).map((sport) => sport.slug));
-    const [pendingMail] = await getDb()
-      .select({ email: authDoorClaims.email })
-      .from(authDoorClaims)
-      .where(and(
-        eq(authDoorClaims.profileId, row.id),
-        isNull(authDoorClaims.usedAt),
-        gt(authDoorClaims.expiresAt, new Date()),
-      ))
-      .orderBy(desc(authDoorClaims.createdAt))
-      .limit(1);
-    let lastMail: { email: string } | undefined;
-    if (!pendingMail && !row.ownerUserId && row.status !== "published") {
-      const [last] = await getDb()
-        .select({ email: authDoorClaims.email })
-        .from(authDoorClaims)
-        .where(eq(authDoorClaims.profileId, row.id))
-        .orderBy(desc(authDoorClaims.createdAt))
-        .limit(1);
-      lastMail = last;
-    }
+    const latestMail = row.ownerUserId ? null : await latestDoorMailbox(row.id);
     return {
       slug: row.slug,
       status: row.status,
@@ -499,8 +486,8 @@ export const getMagicTrainerFn = createServerFn({ method: "GET" })
       phone: row.phone,
       phoneLocked: Boolean(row.ownerUserId),
       magicDoor: getCookie(PREVIEW_COOKIE) === row.slug && Boolean(row.previewToken) && !row.ownerUserId && row.status !== "published",
-      mailSentTo: pendingMail?.email ?? null,
-      renewMail: lastMail?.email ?? null,
+      mailSentTo: latestMail,
+      renewMail: null,
       photos: (row.photos?.length ? row.photos : row.avatarPath ? [row.avatarPath] : []).slice(0, 9),
       certificates: readCertificates(row.certificates),
     };
@@ -680,25 +667,21 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
     const db = getDb();
     const now = new Date();
     const linkToken = generateSecureToken();
-    const [earlier] = await db
-      .select({ id: authDoorClaims.id })
-      .from(authDoorClaims)
-      .where(eq(authDoorClaims.profileId, row.id))
-      .limit(1);
-    const hours = doorMailHours(Boolean(earlier));
     const retired = await db
-      .select({ id: authDoorClaims.id })
-      .from(authDoorClaims)
-      .where(and(eq(authDoorClaims.profileId, row.id), isNull(authDoorClaims.usedAt)));
+      .update(authDoorClaims)
+      .set({ usedAt: now })
+      .where(and(
+        eq(authDoorClaims.profileId, row.id),
+        isNull(authDoorClaims.usedAt),
+        sql`lower(${authDoorClaims.email}) <> ${email}`,
+      ))
+      .returning({ id: authDoorClaims.id });
     const retiredIds = retired.map((item) => item.id);
-    if (retiredIds.length > 0) {
-      await db.update(authDoorClaims).set({ usedAt: now }).where(inArray(authDoorClaims.id, retiredIds));
-    }
     const [created] = await db.insert(authDoorClaims).values({
       profileId: row.id,
       email,
       tokenHash: hashToken(`${row.id}:${linkToken}`),
-      expiresAt: addMinutes(now, hours * 60),
+      expiresAt: DOOR_MAIL_KEPT,
     }).returning({ id: authDoorClaims.id });
     if (!created) {
       if (retiredIds.length > 0) {
@@ -717,7 +700,7 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
           avatarUrl: row.avatarPath,
           caption: "Ваш профиль",
         },
-        lines: [doorMailLifetimeLine(hours)],
+        lines: [doorMailLifetimeLine()],
         action: { href: link, label: "Открыть профиль" },
         note: "Если вы не запрашивали это письмо, просто удалите его.",
       });
@@ -755,7 +738,6 @@ export const requestDoorEmailFn = createServerFn({ method: "POST" })
       message: "Ссылка на профиль отправлена на почту.",
       subject: email,
       target: row.slug,
-      context: { hours },
     });
     return { ok: true as const, message: "Ссылка уже отправлена.", email };
   });
@@ -925,13 +907,12 @@ export const confirmDoorEmailFn = createServerFn({ method: "POST" })
     throw new AuthError("Ссылка недействительна или устарела.", "INVALID_TOKEN");
   });
 
-type DoorMailFault = "missing" | "used" | "expired" | "owned" | "closed";
+type DoorMailFault = "missing" | "used" | "owned" | "closed";
 
 function noteDoorMailFault(reason: DoorMailFault, slug: string | null, subject: string | null) {
   const message = {
     missing: "Ссылка из письма не найдена.",
-    used: "Ссылка из письма уже использована.",
-    expired: "Ссылка из письма просрочена.",
+    used: "Ссылка из письма не открыла профиль: на карточку указана другая почта.",
     owned: "Ссылка из письма не открыла профиль: карточка уже привязана.",
     closed: "Ссылка из письма не открыла профиль: аккаунт закрыт.",
   }[reason];
@@ -962,6 +943,16 @@ function doorMailCanRenew(row: { ownerUserId: string | null; status: string }) {
   return !row.ownerUserId && row.status !== "published";
 }
 
+async function latestDoorMailbox(profileId: string): Promise<string | null> {
+  const [latest] = await getDb()
+    .select({ email: authDoorClaims.email })
+    .from(authDoorClaims)
+    .where(eq(authDoorClaims.profileId, profileId))
+    .orderBy(desc(authDoorClaims.createdAt))
+    .limit(1);
+  return latest?.email ?? null;
+}
+
 async function lookDoorMail(code: string, token: string) {
   const parsed = doorCodeSchema.safeParse(code);
   if (!parsed.success) {
@@ -987,17 +978,14 @@ async function lookDoorMail(code: string, token: string) {
     noteDoorMailFault("missing", row.slug, null);
     return { kind: "dead" as const };
   }
-  if (claim.usedAt) {
-    noteDoorMailFault("used", row.slug, claim.email);
-    return doorMailCanRenew(row) ? { kind: "renew" as const, row, claim } : { kind: "dead" as const };
-  }
-  if (claim.expiresAt.getTime() <= Date.now()) {
-    noteDoorMailFault("expired", row.slug, claim.email);
-    return doorMailCanRenew(row) ? { kind: "renew" as const, row, claim } : { kind: "dead" as const };
-  }
   if (row.ownerUserId) {
     noteDoorMailFault("owned", row.slug, claim.email);
     return { kind: "dead" as const };
+  }
+  const latest = await latestDoorMailbox(row.id);
+  if (!doorMailStillOpens({ ownerUserId: null, claimEmail: claim.email, latestEmail: latest ?? "" })) {
+    noteDoorMailFault("used", row.slug, claim.email);
+    return doorMailCanRenew(row) ? { kind: "renew" as const, row, claim } : { kind: "dead" as const };
   }
   return { kind: "live" as const, row, claim };
 }
@@ -1031,16 +1019,6 @@ export const openTrainerMailFn = createServerFn({ method: "POST" })
       throw new AuthError("Ссылка уже не действует.", "VALIDATION");
     }
     const now = new Date();
-    const [spent] = await getDb()
-      .update(authDoorClaims)
-      .set({ usedAt: now })
-      .where(and(eq(authDoorClaims.id, claim.id), isNull(authDoorClaims.usedAt)))
-      .returning({ id: authDoorClaims.id });
-    if (!spent) {
-      noteDoorMailFault("used", row.slug, claim.email);
-      throw new AuthError("Ссылка уже не действует.", "INVALID_TOKEN");
-    }
-
     const email = claim.email;
     let user = await findUserByEmail(email);
     if (user && (user.status === "deleted" || user.status === "suspended")) {
@@ -1049,23 +1027,39 @@ export const openTrainerMailFn = createServerFn({ method: "POST" })
     }
     if (!user) {
       const passwordHash = await hashPassword(randomBytes(32).toString("base64url"));
-      const [created] = await getDb()
-        .insert(users)
-        .values({
-          email,
-          passwordHash,
-          emailVerifiedAt: now,
-          firstName: row.firstName || "Тренер",
-          lastName: row.lastName || null,
-          status: "active",
-          lastSignupIntent: "trainer_claim",
-          needsPassword: true,
-        })
-        .returning();
-      user = created;
-      await getDb().insert(userRoles).values({ userId: user.id, role: "trainer" });
+      try {
+        const [created] = await getDb()
+          .insert(users)
+          .values({
+            email,
+            passwordHash,
+            emailVerifiedAt: now,
+            firstName: row.firstName || "Тренер",
+            lastName: row.lastName || null,
+            status: "active",
+            lastSignupIntent: "trainer_claim",
+            needsPassword: true,
+          })
+          .returning();
+        user = created;
+      } catch (error) {
+        user = await findUserByEmail(email);
+        if (!user) throw error;
+      }
+      if (!user) throw new AuthError("Ссылка уже не действует.", "VALIDATION");
+      await getDb().insert(userRoles).values({ userId: user.id, role: "trainer" }).onConflictDoNothing();
     }
-    await attachDoorProfile(row.id, user.id, email);
+    try {
+      await attachDoorProfile(row.id, user.id, email);
+    } catch (error) {
+      if (!(error instanceof AuthError)) throw error;
+      const [again] = await getDb()
+        .select({ ownerUserId: trainerProfiles.ownerUserId })
+        .from(trainerProfiles)
+        .where(eq(trainerProfiles.id, row.id))
+        .limit(1);
+      if (again?.ownerUserId !== user.id) throw error;
+    }
     await publishConfirmedDraft(row);
     await openDoorSession(user.id);
     void writeLog({
