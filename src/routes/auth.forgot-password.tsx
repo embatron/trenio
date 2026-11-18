@@ -2,6 +2,7 @@ import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 
 import { AuthStyles } from "@/components/auth-styles";
+import { SMS_METHOD_LABEL, SmsMethodIcon } from "@/components/auth/sms-method-icon";
 import { honeypotFromForm, HoneypotField } from "@/components/auth/honeypot-field";
 import {
   clientValidatePhone,
@@ -91,7 +92,7 @@ function ForgotPasswordPage() {
               {(
                 [
                   ["email", "E-mail"],
-                  ["phone", "Телефон"],
+                  ["phone", SMS_METHOD_LABEL],
                 ] as const
               ).map(([value, label]) => (
                 <button
@@ -102,7 +103,10 @@ function ForgotPasswordPage() {
                   className={`auth-role auth-role--compact${method === value ? " is-active" : ""}`}
                   onClick={() => setMethod(value)}
                 >
-                  <strong>{label}</strong>
+                  <strong>
+                    {value === "phone" ? <SmsMethodIcon /> : null}
+                    {label}
+                  </strong>
                 </button>
               ))}
             </div>

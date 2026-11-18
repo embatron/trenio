@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 
 import { AuthStyles } from "@/components/auth-styles";
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
+import { SMS_METHOD_LABEL, SmsMethodIcon } from "@/components/auth/sms-method-icon";
 import { AppleLoginButton } from "@/components/auth/apple-login-button";
 import { YandexLoginButton } from "@/components/auth/yandex-login-button";
 import { honeypotFromForm, HoneypotField } from "@/components/auth/honeypot-field";
@@ -45,7 +46,7 @@ export const Route = createFileRoute("/auth/signup")({
       NOINDEX_FOLLOW,
       {
         name: "description",
-        content: "Создайте аккаунт trenio.by по почте, Google, Яндексу или телефону.",
+        content: "Создайте аккаунт trenio.by по почте, Google, Яндексу или SMS.",
       },
     ],
   }),
@@ -138,7 +139,7 @@ function SignupPage() {
             {(
               [
                 ["email", "Email"],
-                ["phone", "Телефон"],
+                ["phone", SMS_METHOD_LABEL],
               ] as const
             ).map(([value, label]) => (
               <button
@@ -153,7 +154,10 @@ function SignupPage() {
                   setRestoreOffer(false);
                 }}
               >
-                <strong>{label}</strong>
+                <strong>
+                  {value === "phone" ? <SmsMethodIcon /> : null}
+                  {label}
+                </strong>
               </button>
             ))}
           </div>

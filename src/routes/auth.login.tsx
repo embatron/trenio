@@ -9,6 +9,7 @@ import {
   useCountdown,
 } from "@/components/auth/phone-otp-fields";
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
+import { SMS_METHOD_LABEL, SmsMethodIcon } from "@/components/auth/sms-method-icon";
 import { AppleLoginButton } from "@/components/auth/apple-login-button";
 import { YandexLoginButton } from "@/components/auth/yandex-login-button";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
@@ -52,7 +53,7 @@ export const Route = createFileRoute("/auth/login")({
       NOINDEX_FOLLOW,
       {
         name: "description",
-        content: "Войдите в trenio.by по e-mail, Google, Яндексу или телефону, чтобы искать тренировки и вести профиль.",
+        content: "Войдите в trenio.by по e-mail, Google, Яндексу или SMS, чтобы искать тренировки и вести профиль.",
       },
     ],
   }),
@@ -139,7 +140,7 @@ function LoginPage() {
             {(
               [
                 ["email", "Email"],
-                ["phone", "Телефон"],
+                ["phone", SMS_METHOD_LABEL],
               ] as const
             ).map(([value, label]) => (
               <button
@@ -154,7 +155,10 @@ function LoginPage() {
                   setRestoreOffer(false);
                 }}
               >
-                <strong>{label}</strong>
+                <strong>
+                  {value === "phone" ? <SmsMethodIcon /> : null}
+                  {label}
+                </strong>
               </button>
             ))}
           </div>
