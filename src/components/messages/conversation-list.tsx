@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
 import { PresenceDot } from "@/components/messages/presence-dot";
 import { UnreadBadge } from "@/components/messages/unread-badge";
@@ -48,6 +49,7 @@ export function ConversationList({
   query = "",
   onQuery,
   placeholder = "Имя или текст",
+  empty = null,
 }: {
   view: "own" | "inbox" | "staff";
   items: ConversationListItem[];
@@ -61,6 +63,8 @@ export function ConversationList({
   query?: string;
   onQuery?: (value: string) => void;
   placeholder?: string;
+  /** Replaces the empty sentence when this inbox has no dialogs at all. */
+  empty?: ReactNode;
 }) {
   const searching = query.trim().length >= 2;
   return (
@@ -90,7 +94,9 @@ export function ConversationList({
       ) : error ? (
         <p className="direct-empty">{error}</p>
       ) : items.length === 0 ? (
-        <p className="direct-empty">{searching ? "Ничего не найдено" : view === "own" ? "Сообщений пока нет — напишите тренеру с его карточки" : view === "staff" ? "Переписок пока нет" : "Сообщений пока нет"}</p>
+        searching || !empty ? (
+          <p className="direct-empty">{searching ? "Ничего не найдено" : view === "own" ? "Сообщений пока нет — напишите тренеру с его карточки" : view === "staff" ? "Переписок пока нет" : "Сообщений пока нет"}</p>
+        ) : empty
       ) : (
         <ul>
           {items.map((item) => {

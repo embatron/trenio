@@ -589,7 +589,7 @@ export function Logo({ className }: { className?: string }) {
   );
 }
 
-type AccountMenuTo = "/account" | "/account/messages" | "/account/reviews" | "/account/bookings" | "/account/favorites" | "/account/settings";
+type AccountMenuTo = "/account" | "/account/messages" | "/account/reviews" | "/account/bookings" | "/account/favorites" | "/account/settings" | "/join/trainer";
 type AdminMenuTo =
   | "/admin"
   | "/admin/trainers"
@@ -617,6 +617,7 @@ const ACCOUNT_MENU: HeaderMenuItem[] = [
   { id: "bookings", label: "Мои записи", icon: "bookings", kind: "account", to: "/account/bookings" },
   { id: "favorites", label: "Избранное", icon: "favorites", kind: "account", to: "/account/favorites" },
   { id: "settings", label: "Настройки", icon: "profile", kind: "account", to: "/account/settings" },
+  { id: "join", label: "Стать тренером", icon: "join", kind: "account", to: "/join/trainer" },
 ];
 
 const TRAINER_MENU: HeaderMenuItem[] = [

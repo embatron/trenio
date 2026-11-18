@@ -22,6 +22,7 @@ const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: Accoun
   { id: "bookings", label: "Мои записи", icon: "bookings", to: "/account/bookings" },
   { id: "favorites", label: "Избранное", icon: "favorites", to: "/account/favorites" },
   { id: "settings", label: "Настройки", icon: "profile", to: "/account/settings" },
+  { id: "join", label: "Стать тренером", icon: "join", to: "/join/trainer" },
 ];
 
 export const Route = createFileRoute("/account")({

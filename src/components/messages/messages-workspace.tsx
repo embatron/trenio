@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { CabinetNotice } from "@/components/cabinet";
 import { ConversationList } from "@/components/messages/conversation-list";
+import { RecentTrainers } from "@/components/messages/recent-trainers";
 import { useMessaging, useNoteMessagesRead, useRefreshMessages } from "@/components/messages/messages-live";
 import { ConversationThread, type ThreadMessage } from "@/components/messages/conversation-thread";
 import type { ComposerFile } from "@/components/messages/message-composer";
@@ -26,6 +27,9 @@ import {
 import { newMessageClientId } from "@/lib/messages/attachments";
 import { backShouldOpenDialogList, isMessageThreadPath, messageListPath, PHONE_SHEET } from "@/lib/messages/phone-history";
 import { DAILY_TRAINER_LIMIT_MESSAGE, type ConversationCursor, type ConversationListItem, type MessageCursor, type MessageDto } from "@/lib/messages/schemas";
+import type { PublishedTrainer } from "@/lib/catalog/published-trainers";
+import type { TrainerPriceMap } from "@/lib/catalog/trainer-price";
+import type { TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const quietLists = new Set<string>();
@@ -71,12 +75,19 @@ export function MessagesWorkspace({
   conversationId,
   openError,
   holdOpen = false,
+  recentTrainers = [],
+  ratings = {},
+  prices = {},
 }: {
   view: "own" | "inbox";
   conversationId: string | null;
   openError?: string | null;
   /** A card click is still resolving its own dialog. Do not open the newest row. */
   holdOpen?: boolean;
+  /** Published cards this browser opened. Shown only on an empty account inbox. */
+  recentTrainers?: PublishedTrainer[];
+  ratings?: Record<string, TrainerRatingSnapshot>;
+  prices?: TrainerPriceMap;
 }) {
   const mobile = useIsMobile();
   const router = useRouter();
@@ -418,15 +429,23 @@ export function MessagesWorkspace({
   const shown = (message: string | null | undefined) => message === DAILY_TRAINER_LIMIT_MESSAGE ? null : message ?? null;
   const threadError = shown(openError) || shown(actionError) || (threadQuery.error ? shown(authErrorMessage(threadQuery.error)) : null);
   const listError = listQuery.error ? authErrorMessage(listQuery.error) : null;
+  const showRecent = view === "own"
+    && recentTrainers.length > 0
+    && !conversationId
+    && !(listQuery.isPending && !listQuery.data)
+    && !listError
+    && items.length === 0
+    && searchInput.trim().length < 2;
 
   return (
-    <div className={`direct${mobile ? " is-mobile" : ""}${conversationId ? " is-thread is-open" : ""}`}>
+    <div className={`direct${mobile ? " is-mobile" : ""}${conversationId ? " is-thread is-open" : ""}${showRecent ? " is-suggest" : ""}`}>
       <ConversationList
         view={view}
         items={items}
         activeId={conversationId}
         loading={listQuery.isPending && !listQuery.data}
         error={listError}
+        empty={showRecent ? <RecentTrainers trainers={recentTrainers} ratings={ratings} prices={prices} /> : null}
         hasMore={Boolean(nextListCursor)}
         loadingMore={loadingMore}
         query={searchInput}
@@ -815,6 +834,18 @@ export const DIRECT_CSS = `
 @media (max-width: 480px) {
   .direct-back { width: 44px; padding: 0; justify-content: center; }
   .direct-back__label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+}
+.direct.is-suggest { display: block; min-height: 0; height: auto; overflow: visible; }
+.direct.is-suggest .direct-list { min-height: 0; border-bottom: 0; }
+.direct-recent { display: grid; gap: 12px; padding: 0 12px 16px; }
+.direct-recent .direct-empty { padding: 12px 4px 0; }
+.direct-recent h2 { margin: 0; color: var(--dark); font-size: 18px; font-weight: var(--fw-title); line-height: 1.3; }
+@media (min-width: 768px) {
+  .direct.is-suggest:not(.is-mobile) { grid-template-rows: none; min-height: 0; height: auto; overflow: visible; }
+}
+@media (max-width: 767px) {
+  .direct.is-suggest { min-height: 0; }
+  .direct.is-suggest:not(.is-thread) .direct-list { min-height: 0; flex: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .direct-thread__pane, .direct.is-thread, .direct.is-thread .direct-thread, .is-arriving, .direct-thread__typing, .direct-banner, .direct-menu__list, .direct-day, .direct-cleared, .direct-bubble__like { animation: none; transition: none; }

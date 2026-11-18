@@ -1,8 +1,11 @@
-import { createFileRoute, Outlet, redirect, useParams } from "@tanstack/react-router";
+import { createFileRoute, getRouteApi, Outlet, redirect, useParams } from "@tanstack/react-router";
 
 import { MessagesWorkspace } from "@/components/messages/messages-workspace";
 import { useOpenTrainerThread } from "@/components/messages/open-trainer-thread";
 import { hasAnyRole } from "@/lib/auth/roles";
+import { listRecentViewedTrainersFn } from "@/lib/catalog/catalog-trainers";
+
+const accountRoute = getRouteApi("/account");
 
 export const Route = createFileRoute("/account/messages")({
   beforeLoad: ({ context, location, search }) => {
@@ -17,6 +20,7 @@ export const Route = createFileRoute("/account/messages")({
     const trainer = typeof search.trainer === "string" ? search.trainer.trim().slice(0, 30) : "";
     return trainer ? { trainer } : {};
   },
+  loader: () => listRecentViewedTrainersFn(),
   head: () => ({
     meta: [
       { title: "Сообщения · Я ищу тренера на trenio.by" },
@@ -28,6 +32,8 @@ export const Route = createFileRoute("/account/messages")({
 });
 
 function AccountMessagesPage() {
+  const recentTrainers = Route.useLoaderData();
+  const { ratings, prices } = accountRoute.useLoaderData();
   const { trainer } = Route.useSearch();
   const params = useParams({ strict: false });
   const conversationId = typeof params.conversationId === "string" ? params.conversationId : null;
@@ -41,6 +47,9 @@ function AccountMessagesPage() {
         conversationId={validId}
         openError={conversationId && !validId ? "Переписка не найдена." : opened.error}
         holdOpen={opened.hold}
+        recentTrainers={recentTrainers}
+        ratings={ratings}
+        prices={prices}
       />
       <Outlet />
     </>

@@ -1,8 +1,8 @@
-import { eq } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { createServerFn } from "@tanstack/react-start";
 
 import { getDb } from "@/db";
-import { trainerProfiles, users } from "@/db/schema";
+import { trainerProfileViews, trainerProfiles, users } from "@/db/schema";
 import { formatBelarusPhone } from "@/lib/auth/phone";
 import { cityCatalogByName, cityCatalogBySlug } from "@/lib/catalog/city-pages";
 import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
@@ -11,6 +11,10 @@ import { effectiveAudiences, type PublishedTrainer } from "@/lib/catalog/publish
 import { MAX_TRAINER_SPORTS } from "@/lib/catalog/sport-taxonomy";
 import { popularityChecklist } from "@/lib/catalog/trainer-popularity";
 import { logCaught } from "@/lib/log/logger";
+import { readVisitorId } from "@/lib/catalog/trainer-visitor";
+
+/** Cards under an empty account inbox. One page, the same size as a phone category. */
+export const RECENT_VIEWED_LIMIT = 12;
 
 type SportSource = { slug?: string; parentSlug?: string; label?: string };
 
@@ -143,52 +147,100 @@ function catalogRank(row: CatalogTrainerSource, account: CatalogTrainerAccount, 
 export const listCatalogTrainersFn = createServerFn({ method: "GET" }).handler(async () => {
   try {
     const rows = await getDb()
-      .select({
-        slug: trainerProfiles.slug,
-        firstName: trainerProfiles.firstName,
-        lastName: trainerProfiles.lastName,
-        fullName: trainerProfiles.fullName,
-        avatarPath: trainerProfiles.avatarPath,
-        photos: trainerProfiles.photos,
-        bio: trainerProfiles.bio,
-        about: trainerProfiles.about,
-        sports: trainerProfiles.sports,
-        primarySport: trainerProfiles.primarySport,
-        audiences: trainerProfiles.audiences,
-        formats: trainerProfiles.formats,
-        city: trainerProfiles.city,
-        citySlug: trainerProfiles.citySlug,
-        district: trainerProfiles.district,
-        createdSource: trainerProfiles.createdSource,
-        address: trainerProfiles.address,
-        trainingPlaces: trainerProfiles.trainingPlaces,
-        certificates: trainerProfiles.certificates,
-        priceFrom: trainerProfiles.priceFrom,
-        experienceYears: trainerProfiles.experienceYears,
-        phone: trainerProfiles.phone,
-        email: trainerProfiles.email,
-        emailVerifiedAt: trainerProfiles.emailVerifiedAt,
-        instagramUrl: trainerProfiles.instagramUrl,
-        instagramHandle: trainerProfiles.instagramHandle,
-        telegram: trainerProfiles.telegram,
-        telegramVerifiedAt: trainerProfiles.telegramVerifiedAt,
-        ownerUserId: trainerProfiles.ownerUserId,
-        accountEmail: users.email,
-        accountEmailVerifiedAt: users.emailVerifiedAt,
-        accountPhone: users.phone,
-        phoneVerifiedAt: users.phoneVerifiedAt,
-      })
+      .select(catalogRowSelect)
       .from(trainerProfiles)
       .leftJoin(users, eq(users.id, trainerProfiles.ownerUserId))
       .where(eq(trainerProfiles.status, "published"));
-    return rows.map((row) => catalogTrainerFromSources(row, {
-      email: row.accountEmail,
-      emailVerifiedAt: row.accountEmailVerifiedAt,
-      phone: row.accountPhone,
-      phoneVerifiedAt: row.phoneVerifiedAt,
-    }));
+    return rows.map((row) => catalogTrainerFromSources(row, catalogAccount(row)));
   } catch (error) {
     logCaught("catalog", "catalog.list", error);
     throw error;
+  }
+});
+
+type CatalogAccountRow = {
+  accountEmail: string | null;
+  accountEmailVerifiedAt: Date | null;
+  accountPhone: string | null;
+  phoneVerifiedAt: Date | null;
+};
+
+function catalogAccount(row: CatalogAccountRow): CatalogTrainerAccount {
+  return {
+    email: row.accountEmail,
+    emailVerifiedAt: row.accountEmailVerifiedAt,
+    phone: row.accountPhone,
+    phoneVerifiedAt: row.phoneVerifiedAt,
+  };
+}
+
+const catalogRowSelect = {
+  slug: trainerProfiles.slug,
+  firstName: trainerProfiles.firstName,
+  lastName: trainerProfiles.lastName,
+  fullName: trainerProfiles.fullName,
+  avatarPath: trainerProfiles.avatarPath,
+  photos: trainerProfiles.photos,
+  bio: trainerProfiles.bio,
+  about: trainerProfiles.about,
+  sports: trainerProfiles.sports,
+  primarySport: trainerProfiles.primarySport,
+  audiences: trainerProfiles.audiences,
+  formats: trainerProfiles.formats,
+  city: trainerProfiles.city,
+  citySlug: trainerProfiles.citySlug,
+  district: trainerProfiles.district,
+  createdSource: trainerProfiles.createdSource,
+  address: trainerProfiles.address,
+  trainingPlaces: trainerProfiles.trainingPlaces,
+  certificates: trainerProfiles.certificates,
+  priceFrom: trainerProfiles.priceFrom,
+  experienceYears: trainerProfiles.experienceYears,
+  phone: trainerProfiles.phone,
+  email: trainerProfiles.email,
+  emailVerifiedAt: trainerProfiles.emailVerifiedAt,
+  instagramUrl: trainerProfiles.instagramUrl,
+  instagramHandle: trainerProfiles.instagramHandle,
+  telegram: trainerProfiles.telegram,
+  telegramVerifiedAt: trainerProfiles.telegramVerifiedAt,
+  ownerUserId: trainerProfiles.ownerUserId,
+  accountEmail: users.email,
+  accountEmailVerifiedAt: users.emailVerifiedAt,
+  accountPhone: users.phone,
+  phoneVerifiedAt: users.phoneVerifiedAt,
+};
+
+/** Published trainers this browser opened, newest day first. */
+export const listRecentViewedTrainersFn = createServerFn({ method: "GET" }).handler(async () => {
+  const visitor = readVisitorId();
+  if (!visitor) return [];
+  try {
+    const db = getDb();
+    const seen = await db
+      .select({
+        id: trainerProfileViews.profileId,
+        day: sql<string>`max(${trainerProfileViews.day})`.as("day"),
+      })
+      .from(trainerProfileViews)
+      .where(eq(trainerProfileViews.visitorId, visitor))
+      .groupBy(trainerProfileViews.profileId)
+      .orderBy(desc(sql`max(${trainerProfileViews.day})`))
+      .limit(RECENT_VIEWED_LIMIT);
+    if (seen.length === 0) return [];
+    const order = new Map(seen.map((row, index) => [row.id, index]));
+    const rows = await db
+      .select({ id: trainerProfiles.id, ...catalogRowSelect })
+      .from(trainerProfiles)
+      .leftJoin(users, eq(users.id, trainerProfiles.ownerUserId))
+      .where(and(
+        eq(trainerProfiles.status, "published"),
+        inArray(trainerProfiles.id, seen.map((row) => row.id)),
+      ));
+    return rows
+      .sort((left, right) => (order.get(left.id) ?? 0) - (order.get(right.id) ?? 0))
+      .map((row) => catalogTrainerFromSources(row, catalogAccount(row)));
+  } catch (error) {
+    logCaught("catalog", "catalog.recent", error);
+    return [];
   }
 });

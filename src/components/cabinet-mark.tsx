@@ -16,6 +16,7 @@ const ICONS = {
   contacts: "M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM9 8h6M9 12h6M9 16h4",
   site: "M6 3h8l5 5v13H6zM14 3v5h5M8 13h8M8 17h5",
   edit: "M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z",
+  join: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M19 8v6M16 11h6",
 } as const;
 
 export type CabinetIcon = keyof typeof ICONS;

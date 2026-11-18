@@ -1,4 +1,4 @@
-import { Link, useRouter } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { flushSync } from "react-dom";
 
@@ -115,7 +115,6 @@ export function AccountProfileForm({
   const [deleteError, setDeleteError] = useState("");
   const [deletePending, setDeletePending] = useState(false);
   const canDelete = !isStaff(user.roles);
-  const canBecomeTrainer = !hasAnyRole(user.roles, ["trainer", "club", "admin", "superadmin"]);
   const surnameOptional = hasAnyRole(user.roles, ["trainer", "club"]);
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName ?? "");
@@ -530,11 +529,6 @@ export function AccountProfileForm({
         <button className="cabinet-form__submit" type="submit" disabled={pending}>
           {pending ? "Сохранение…" : "Сохранить"}
         </button>
-        ) : null}
-        {canBecomeTrainer ? (
-          <p className="cabinet-note">
-            <Link to="/join/trainer" className="cabinet-text-link">Стать тренером</Link>
-          </p>
         ) : null}
       </form>
       <form

@@ -101,7 +101,7 @@ export function CabinetNotice({
   );
 }
 
-export type AccountSectionPath = "/account" | "/account/reviews" | "/account/bookings" | "/account/favorites" | "/account/settings" | "/account/messages";
+export type AccountSectionPath = "/account" | "/account/reviews" | "/account/bookings" | "/account/favorites" | "/account/settings" | "/account/messages" | "/join/trainer";
 
 export type AdminSectionPath =
   | "/admin"
