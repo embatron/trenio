@@ -179,7 +179,7 @@ body.is-search-docked .site-header__search {
 }
 .account-menu__item svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
 .account-menu__item:hover { background: var(--white); color: var(--primary-dark); }
-.account-menu__count { margin-left: auto; min-width: 1.5em; color: var(--muted); font-size: 11px; font-weight: var(--fw-ui); font-variant-numeric: tabular-nums; line-height: 1; text-align: right; }
+.account-menu__count { margin-left: auto; min-width: 1.5em; color: var(--muted); font-size: 11px; font-weight: var(--fw-ui); font-variant-numeric: tabular-nums; line-height: 1; text-align: right; white-space: nowrap; }
 .account-menu__count.is-hot { color: var(--primary); }
 .account-menu__rule { height: 1px; margin: 4px 8px; background: rgba(var(--primary-rgb), 0.16); }
 .account-menu__logout { color: var(--muted); }
@@ -657,10 +657,11 @@ function trainerMenu(ownedSlugs: string[]) {
   return TRAINER_MENU.filter((item) => hasCard || item.id !== "profile");
 }
 
-function MenuCount({ count, hot }: { count?: number; hot?: boolean }) {
+function MenuCount({ count, hot, full }: { count?: number; hot?: boolean; full?: boolean }) {
   if (typeof count !== "number") return null;
   const brand = (hot ?? true) && count > 0;
-  return <span className={`account-menu__count${brand ? " is-hot" : ""}`}>{count > 99 ? "99+" : count}</span>;
+  const text = full || count <= 99 ? count : "99+";
+  return <span className={`account-menu__count${brand ? " is-hot" : ""}`}>{text}</span>;
 }
 
 function menuCounts(
@@ -681,7 +682,7 @@ function menuCounts(
 function HeaderMenuLink({ item, count, onNavigate }: { item: HeaderMenuItem; count?: number; onNavigate: () => void }) {
   const props = { className: "account-menu__item", onClick: onNavigate };
   const hot = item.id === "messages";
-  const body = <><CabinetMark icon={item.icon} /><span className="account-menu__label">{item.label}</span><MenuCount count={count} hot={hot} /></>;
+  const body = <><CabinetMark icon={item.icon} /><span className="account-menu__label">{item.label}</span><MenuCount count={count} hot={hot} full={item.id === "drafts"} /></>;
   if (item.kind === "me") {
     return <Link to={item.to} activeOptions={item.to === "/me" ? { exact: true } : undefined} {...props}>{body}</Link>;
   }

@@ -42,7 +42,7 @@ import { loadSiteText } from "@/lib/site-texts/store";
 import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
 import { popularityChecklist, popularityScore, recentReviewStart } from "@/lib/catalog/trainer-popularity";
 import { emptyTrainerInterest, loadTrainerInterest, type TrainerInterest } from "@/lib/catalog/trainer-interest";
-import { stampTrainerPublished } from "@/lib/catalog/trainer-published";
+import { ensureTrainerPublishedAt, stampTrainerPublished } from "@/lib/catalog/trainer-published";
 import { getSportTaxonomyChild, getTopLevelSportCategory, listSecondLevelSports, MAX_TRAINER_SPORTS, trainerSectionBySlug, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
 import { placesFromProfile, placesShape, savedWithMapNotice, type TrainerPlace } from "@/lib/geo/schemas";
@@ -107,6 +107,8 @@ export type AdminTrainer = {
   audiences: TrainerAudience[];
   avatarPath: string;
   createdAt: string;
+  /** First time the card entered the catalog. Empty until it is published. */
+  publishedAt: string;
   reviews: number;
   rating: string;
   popularity: number;
@@ -319,12 +321,33 @@ function isCatalog(slug: string) {
   return PUBLISHED_TRAINERS.some((trainer) => trainer.slug === slug);
 }
 
+/** First catalog appearance, keyed by slug. Empty when the column cannot be read. */
+async function loadPublishedAt() {
+  if (!(await ensureTrainerPublishedAt())) return new Map<string, string>();
+  const rows = await getDb().execute(sql`
+    SELECT slug, published_at
+    FROM trainer_profiles
+    WHERE published_at IS NOT NULL
+  `);
+  const ages = new Map<string, string>();
+  for (const row of rows) {
+    const slug = String(row.slug ?? "");
+    const raw = row.published_at;
+    if (!slug || raw == null || raw === "") continue;
+    const date = raw instanceof Date ? raw : new Date(String(raw));
+    if (Number.isNaN(date.getTime())) continue;
+    ages.set(slug, date.toISOString());
+  }
+  return ages;
+}
+
 export const getAdminTrainersFn = createServerFn({ method: "GET" })
   .middleware([requireAuthMiddleware])
   .handler(async ({ context }): Promise<{ trainers: AdminTrainer[]; outreachText: string }> => {
     assertStaff(context.user.roles);
     await ensureTrainerDoorSchema();
     const db = getDb();
+    const publishedAtBySlug = await loadPublishedAt();
     const recentSince = recentReviewStart();
     const [profileRows, ratingRows, interest] = await Promise.all([
       db
@@ -437,6 +460,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       audiences: effectiveAudiences(row.audiences),
       avatarPath: row.avatarPath,
       createdAt: row.createdAt.toISOString(),
+      publishedAt: publishedAtBySlug.get(row.slug) ?? "",
       ...trainerStats(row.slug, ratings, interest, popularityChecklist({
         photo: row.avatarPath,
         photos: row.photos,
@@ -510,6 +534,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       audiences: trainer.audiences,
       avatarPath: trainer.photo,
       createdAt: "",
+      publishedAt: publishedAtBySlug.get(trainer.slug) ?? "",
       ...trainerStats(trainer.slug, ratings, interest, popularityChecklist({
         photo: trainer.photo,
         bio: trainer.bio,

@@ -88,6 +88,11 @@ function PublishMark({ status }: { status: AdminTrainer["status"] }) {
   );
 }
 
+function listedOn(trainer: AdminTrainer, list: "all" | "unvisited" | "published" | "unclear") {
+  const iso = list === "published" ? (trainer.publishedAt || trainer.createdAt) : trainer.createdAt;
+  return iso ? addedOn(iso) : "—";
+}
+
 function addedOn(iso: string) {
   return addedFormat.format(new Date(iso));
 }
@@ -360,6 +365,7 @@ function searchHaystack(trainer: AdminTrainer) {
     trainer.doorEnteredAt ? "был заходил" : "не заходил",
     trainer.lastLoginAt ? visitedOn(trainer.lastLoginAt) : "",
     trainer.createdAt ? addedOn(trainer.createdAt) : "",
+    trainer.publishedAt ? addedOn(trainer.publishedAt) : "",
     trainer.rating,
     String(trainer.reviews),
     String(trainer.popularity),
@@ -372,8 +378,12 @@ function searchHaystack(trainer: AdminTrainer) {
   ].join(" ").toLocaleLowerCase("ru").replaceAll("ё", "е");
 }
 
-function sortTrainers(rows: AdminTrainer[], sort: TrainerSort) {
+function sortTrainers(rows: AdminTrainer[], sort: TrainerSort, when: "added" | "activated" = "added") {
   const byName = (a: AdminTrainer, b: AdminTrainer) => a.fullName.localeCompare(b.fullName, "ru");
+  const stampOf = (row: AdminTrainer) => {
+    const iso = when === "activated" ? (row.publishedAt || row.createdAt) : row.createdAt;
+    return iso ? Date.parse(iso) : 0;
+  };
   rows.sort((a, b) => {
     if (sort === "reviews") return b.reviews - a.reviews || byName(a, b);
     if (sort === "rating") return Number(b.rating) - Number(a.rating) || b.reviews - a.reviews || byName(a, b);
@@ -398,8 +408,8 @@ function sortTrainers(rows: AdminTrainer[], sort: TrainerSort) {
       const right = b.lastLoginAt ? Date.parse(b.lastLoginAt) : 0;
       return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
     }
-    const left = a.createdAt ? Date.parse(a.createdAt) : 0;
-    const right = b.createdAt ? Date.parse(b.createdAt) : 0;
+    const left = stampOf(a);
+    const right = stampOf(b);
     if (!left && !right) return byName(a, b);
     if (!left) return 1;
     if (!right) return -1;
@@ -500,8 +510,9 @@ export function AdminTrainersTable({
         : publishTab === "published"
           ? pageRows.filter((trainer) => trainer.status === "published")
           : pageRows.filter((trainer) => trainer.status !== "published");
-    const unpublished = sortTrainers(rows.filter((trainer) => trainer.status !== "published"), sort);
-    const published = sortTrainers(rows.filter((trainer) => trainer.status === "published"), sort);
+    const when = list === "published" ? "activated" : "added";
+    const unpublished = sortTrainers(rows.filter((trainer) => trainer.status !== "published"), sort, when);
+    const published = sortTrainers(rows.filter((trainer) => trainer.status === "published"), sort, when);
     return {
       unpublished,
       published,
@@ -510,7 +521,7 @@ export function AdminTrainersTable({
   }, [patched, listed, list, publishTab, query, category, sport, city, format, audience, message, link, visit, sort]);
   const searching = query.trim().length > 0;
   const visible = searching
-    ? sortTrainers(visibleBuckets.unpublished.concat(visibleBuckets.published), sort)
+    ? sortTrainers(visibleBuckets.unpublished.concat(visibleBuckets.published), sort, list === "published" ? "activated" : "added")
     : list === "published"
       ? visibleBuckets.published
       : list === "unvisited" || list === "unclear"
@@ -682,7 +693,7 @@ export function AdminTrainersTable({
                 <th>Категория</th>
                 <th>С кем</th>
                 <th>Город</th>
-                <th>Добавлен</th>
+                <th>{list === "published" ? "Активирован" : "Добавлен"}</th>
                 <th>Оценка</th>
                 <th>Рейтинг</th>
                 <th>Аккаунт</th>
@@ -726,7 +737,7 @@ export function AdminTrainersTable({
                   <td>{categoryLabels(trainer.sportSlugs) || "—"}</td>
                   <td className="is-audience">{audienceLabels(trainer.audiences) || "—"}</td>
                   <td>{trainer.city || "—"}</td>
-                  <td>{trainer.createdAt ? addedOn(trainer.createdAt) : "—"}</td>
+                  <td>{listedOn(trainer, list)}</td>
                   <td><TrainerStars rating={trainer.rating} reviews={trainer.reviews} /></td>
                   <td title={`Рейтинг ${trainer.popularity} из 100`}>{Number.isInteger(trainer.popularity) ? trainer.popularity : trainer.popularity.toFixed(1)}</td>
                   <td title={accountTitle(trainer)}>

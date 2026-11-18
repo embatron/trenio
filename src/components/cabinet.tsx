@@ -195,6 +195,12 @@ function navBadgeClass(id: string, count: number) {
   return `cabinet-nav__badge${id === "messages" && count > 0 ? " is-hot" : ""}`;
 }
 
+/** Drafts are a queue, so the sidebar shows the whole number. Other counts stop at 99. */
+function navBadgeText(id: string, count: number) {
+  if (id === "drafts") return String(count);
+  return count > 99 ? "99+" : String(count);
+}
+
 export function CabinetShell({
   title,
   lede,
@@ -407,7 +413,7 @@ export function CabinetShell({
                   {currentItem ? <CabinetMark icon={currentItem.icon} /> : null}
                   <span className="cabinet-nav__label">{toggleLabel}</span>
                   {typeof toggleBadge === "number" ? (
-                    <span className={navBadgeClass(toggleBadgeId, toggleBadge)}>{toggleBadge > 99 ? "99+" : toggleBadge}</span>
+                    <span className={navBadgeClass(toggleBadgeId, toggleBadge)}>{navBadgeText(toggleBadgeId, toggleBadge)}</span>
                   ) : null}
                 </span>
                 <svg className="cabinet-nav__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6" /></svg>
@@ -427,7 +433,7 @@ export function CabinetShell({
                   const current = item.id === active && !onChild ? "page" as const : undefined;
                   const icon = <CabinetMark icon={item.icon} />;
                   const badge = typeof item.badge === "number" ? (
-                    <span className={navBadgeClass(item.id, item.badge)}>{item.badge > 99 ? "99+" : item.badge}</span>
+                    <span className={navBadgeClass(item.id, item.badge)}>{navBadgeText(item.id, item.badge)}</span>
                   ) : null;
                   const pages = item.id === active && item.pages?.length ? (
                     <div className="cabinet-nav__sub" aria-label={item.label}>
@@ -442,7 +448,7 @@ export function CabinetShell({
                           >
                             <span className="cabinet-nav__label">{page.label}</span>
                             {typeof page.badge === "number" ? (
-                              <span className={navBadgeClass(page.id, page.badge)}>{page.badge > 99 ? "99+" : page.badge}</span>
+                              <span className={navBadgeClass(page.id, page.badge)}>{navBadgeText(page.id, page.badge)}</span>
                             ) : null}
                           </Link>
                         );
@@ -579,7 +585,7 @@ a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
 }
 .cabinet-nav button svg, .cabinet-nav a svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
 .cabinet-nav__label { min-width: 0; }
-.cabinet-nav__badge { margin-left: auto; min-width: 1.5em; color: var(--muted); font-size: 11px; font-weight: var(--fw-ui); font-variant-numeric: tabular-nums; line-height: 1; text-align: right; }
+.cabinet-nav__badge { margin-left: auto; min-width: 1.5em; color: var(--muted); font-size: 11px; font-weight: var(--fw-ui); font-variant-numeric: tabular-nums; line-height: 1; text-align: right; white-space: nowrap; }
 .cabinet-nav__badge.is-hot { color: var(--primary); }
 .cabinet-nav button.is-active, .cabinet-nav a.is-active { background: rgba(var(--primary-rgb), 0.1); color: var(--primary-dark); }
 .cabinet-nav button:hover, .cabinet-nav a:hover, .cabinet-logout:hover { background: rgba(var(--dark-rgb), 0.04); }
