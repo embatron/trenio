@@ -16,7 +16,7 @@ export type VisitorPlace = {
 export type CatalogPlace = {
   cities: string[];
   query: string;
-  source: "detected" | "saved" | "none";
+  source: "detected" | "saved" | "cleared" | "none";
   /** Request had no public IP, so the browser should send its own for a lookup. */
   lookupOnClient: boolean;
 };

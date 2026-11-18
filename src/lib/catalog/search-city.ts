@@ -8,8 +8,9 @@ import {
 
 export const DEFAULT_SEARCH_CITY = "Минск";
 
-/** City pills for a catalog filter: saved cities, or Минск when nothing is known. */
-export function catalogFilterCities(place: { cities: string[]; query: string }): string[] {
+/** City pills for a catalog filter: saved cities, or Минск when nothing is known. A cleared place stays empty. */
+export function catalogFilterCities(place: { cities: string[]; query: string; source?: string }): string[] {
+  if (place.source === "cleared") return [];
   if (place.cities.length > 0) return place.cities;
   if (place.query.trim()) return [];
   return [DEFAULT_SEARCH_CITY];

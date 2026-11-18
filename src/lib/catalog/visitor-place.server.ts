@@ -198,7 +198,7 @@ function placeFromCity(city: string): CatalogPlace {
 
 /** A city the person picked stays. A detected city is looked up again on the next visit. */
 function chosenPlace(saved: VisitorPlace | null): CatalogPlace | null {
-  if (saved?.dismissed) return { cities: [], query: "", source: "none", lookupOnClient: false };
+  if (saved?.dismissed) return { cities: [], query: "", source: "cleared", lookupOnClient: false };
   if (saved?.origin === "chosen" && (saved.cities.length > 0 || saved.query)) {
     return { cities: saved.cities, query: saved.query, source: "saved", lookupOnClient: false };
   }

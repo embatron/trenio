@@ -1,9 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { leadCityNames } from "./search-city";
+import { catalogFilterCities, leadCityNames } from "./search-city";
 
 const hints = ["Минск", "Гомель", "Гродно", "Витебск", "Могилёв"];
+
+test("a cleared place does not put Минск back into the filter", () => {
+  assert.deepEqual(catalogFilterCities({ cities: [], query: "", source: "cleared" }), []);
+  assert.deepEqual(catalogFilterCities({ cities: [], query: "" }), ["Минск"]);
+  assert.deepEqual(catalogFilterCities({ cities: ["Гродно"], query: "" }), ["Гродно"]);
+});
 
 test("the visitor city leads the filter chips", () => {
   assert.deepEqual(leadCityNames(["Гродно"], hints), ["Гродно", "Минск", "Гомель", "Витебск", "Могилёв"]);

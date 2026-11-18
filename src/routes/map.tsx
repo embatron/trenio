@@ -16,7 +16,9 @@ import {
   filterCatalogSports,
   type CatalogSport,
 } from "@/lib/catalog/catalog-sports";
-import { cityCatalogByName, cityCatalogBySlug } from "@/lib/catalog/city-pages";
+import { cityCatalogByName, cityCatalogBySlug, listCityCatalogPages } from "@/lib/catalog/city-pages";
+import { explicitMapCity, MAP_ALL_CITIES } from "@/lib/catalog/map-city";
+import { leadCityNames } from "@/lib/catalog/search-city";
 import { resolveBelarusCity } from "@/lib/catalog/city-taxonomy";
 import { MAP_CRUMB, MAP_DESCRIPTION, mapPageHead } from "@/lib/seo/pages";
 import { TRAINER_FORMAT_OPTIONS } from "@/lib/catalog/published-trainers";
@@ -28,6 +30,7 @@ import { reportClientEvent } from "@/lib/log/client-reporter";
 import { pluralRu } from "@/lib/ru-plural";
 
 const MINSK: CatalogMapUser = { lat: 53.9006, lng: 27.559 };
+const BELARUS_VIEW: CatalogMapUser = { lat: 53.7, lng: 28, zoom: 6 };
 
 function MapListedCard({
   trainer,
@@ -87,8 +90,9 @@ export const Route = createFileRoute("/map")({
   }),
   head: ({ match }) => {
     const sports = selectedMapSports(match.search.sports);
-    const city = cityCatalogBySlug(match.search.city ?? "");
-    return mapPageHead(sports.length > 0 || Boolean(city));
+    const cityParam = match.search.city ?? "";
+    const city = cityCatalogBySlug(cityParam);
+    return mapPageHead(sports.length > 0 || Boolean(city) || cityParam === MAP_ALL_CITIES);
   },
   loader: async () => {
     const [point, place] = await Promise.all([resolveVisitorPointFn(), resolveVisitorPlaceFn()]);
@@ -157,13 +161,23 @@ function MapRoute() {
   const { point, place } = Route.useLoaderData();
   const { sports, city } = Route.useSearch();
   const detected = city ? undefined : cityCatalogByName(place.cities[0]?.trim() ?? "")?.slug;
-  return <CatalogMapScreen mode="map" sportsQuery={sports} citySlug={city || detected} visitor={point} />;
+  const choice = explicitMapCity(city, detected);
+  return (
+    <CatalogMapScreen
+      mode="map"
+      sportsQuery={sports}
+      citySlug={choice.slug ?? undefined}
+      nationwide={choice.nationwide}
+      visitor={point}
+    />
+  );
 }
 
 export function CatalogMapScreen({
   mode,
   sportsQuery,
   citySlug,
+  nationwide = false,
   sportText = "",
   locationText = "",
   audience: audienceQuery = null,
@@ -173,6 +187,7 @@ export function CatalogMapScreen({
   mode: "map" | "search";
   sportsQuery?: string;
   citySlug?: string;
+  nationwide?: boolean;
   sportText?: string;
   locationText?: string;
   audience?: "adult" | "child" | null;
@@ -195,9 +210,15 @@ export function CatalogMapScreen({
     ? (citySlug ? cityCatalogBySlug(citySlug) : null)
     : cityCatalogByName(resolvedCity ?? locationText);
   const cityName = mode === "map" ? (cityPage?.name ?? "") : (resolvedCity ?? locationText.trim());
+  const wholeCountry = mode === "map" ? nationwide : cityName.trim().length === 0;
   const point = visitor;
   const cityPoint: CatalogMapUser | null = cityPage ? { lat: cityPage.lat, lng: cityPage.lng } : null;
-  const openingFocus = cityPoint ?? visitorFocus(point.lat, point.lng);
+  const openingFocus = wholeCountry ? BELARUS_VIEW : (cityPoint ?? visitorFocus(point.lat, point.lng));
+  const cityPills = leadCityNames(
+    cityName ? [cityName] : [],
+    listCityCatalogPages().slice(0, 5).map((city) => city.name),
+  );
+  const placeLabel = cityName.trim() || "Вся Беларусь";
   const [userPoint, setUserPoint] = useState<CatalogMapUser | null>(null);
   const [locating, setLocating] = useState(false);
   const [frame, setFrame] = useState<CatalogMapBounds | null>(null);
@@ -265,7 +286,30 @@ export function CatalogMapScreen({
     const sports = next.slice(0, 24).map((sport) => sport.id).join(",");
     void navigate({
       to: "/map",
-      search: { sports: sports || undefined, city: cityPage?.slug },
+      search: { sports: sports || undefined, city: wholeCountry ? MAP_ALL_CITIES : cityPage?.slug },
+      replace: true,
+    });
+  };
+
+  const chooseCity = (slug: string | null) => {
+    if (mode === "search") {
+      const name = slug ? cityCatalogBySlug(slug)?.name ?? "" : "";
+      void navigate({
+        to: "/search",
+        search: {
+          sport: sportText,
+          location: name,
+          audience: audience === "child" ? "child" : "adult",
+          format: formats.length === 1 ? formats[0] : undefined,
+        },
+        replace: true,
+      });
+      return;
+    }
+    const sports = selectedSports.map((sport) => sport.id).join(",");
+    void navigate({
+      to: "/map",
+      search: { sports: sports || undefined, city: slug ?? MAP_ALL_CITIES },
       replace: true,
     });
   };
@@ -291,22 +335,27 @@ export function CatalogMapScreen({
     + (formats.length > 0 ? 1 : 0)
     + (minExperience != null ? 1 : 0)
     + (price != null ? 1 : 0);
-  const filterCount = selectedSports.length + extraActive + (unmatchedSport ? 1 : 0);
+  const filterCount = selectedSports.length + extraActive + (unmatchedSport ? 1 : 0) + (wholeCountry ? 0 : 1);
   const appliedFilters = [
-    ...selectedSports.map((sport) => ({ key: `sport:${sport.id}`, label: sport.label })),
-    ...(unmatchedSport && sportText.trim() ? [{ key: "sport:unmatched", label: sportText.trim() }] : []),
-    ...(audience === "self" ? [{ key: "audience", label: "для себя" }] : []),
-    ...(audience === "child" ? [{ key: "audience", label: "для ребёнка" }] : []),
+    { key: "city", label: placeLabel, fixed: wholeCountry },
+    ...selectedSports.map((sport) => ({ key: `sport:${sport.id}`, label: sport.label, fixed: false })),
+    ...(unmatchedSport && sportText.trim() ? [{ key: "sport:unmatched", label: sportText.trim(), fixed: false }] : []),
+    ...(audience === "self" ? [{ key: "audience", label: "для себя", fixed: false }] : []),
+    ...(audience === "child" ? [{ key: "audience", label: "для ребёнка", fixed: false }] : []),
     ...formats.flatMap((id) => {
       const label = TRAINER_FORMAT_OPTIONS.find((option) => option.id === id)?.label;
-      return label ? [{ key: `format:${id}`, label }] : [];
+      return label ? [{ key: `format:${id}`, label, fixed: false }] : [];
     }),
     ...(minExperience == null ? [] : EXPERIENCE_OPTIONS.flatMap((option) => (
-      option.years === minExperience ? [{ key: `exp:${option.years}`, label: option.label }] : []
+      option.years === minExperience ? [{ key: `exp:${option.years}`, label: option.label, fixed: false }] : []
     ))),
-    ...(price != null ? [{ key: "price", label: `от ${priceMin} до ${priceMax} BYN` }] : []),
+    ...(price != null ? [{ key: "price", label: `от ${priceMin} до ${priceMax} BYN`, fixed: false }] : []),
   ];
   const removeApplied = (key: string) => {
+    if (key === "city") {
+      chooseCity(null);
+      return;
+    }
     if (key === "sport:unmatched") {
       applySports([]);
       return;
@@ -651,6 +700,8 @@ export function CatalogMapScreen({
                 ? "Карта и карточки по этому запросу. Наведите на метку — подсказка, на карточку — его метки. Если точек много, они собираются в группы."
                 : cityPage
                 ? `Места в ${cityPage.locative}. Наведите на метку — подсказка, на карточку — его метки. Если точек много, они собираются в группы.`
+                : wholeCountry
+                ? "Тренеры по всей Беларуси. Наведите на метку — подсказка, на карточку — его метки. Если точек много, они собираются в группы."
                 : MAP_DESCRIPTION}
             </p>
             {mode === "search" ? (
@@ -685,13 +736,15 @@ export function CatalogMapScreen({
               {appliedFilters.length > 0 ? (
                 <ul className="map-more__applied" aria-label="Отмеченные фильтры">
                   {appliedFilters.map((item) => (
-                    <li key={item.key}>
+                    <li key={item.key} className={item.fixed ? "is-fixed" : undefined}>
                       <span>{item.label}</span>
-                      <button type="button" aria-label={`Убрать ${item.label}`} onClick={() => removeApplied(item.key)}>
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M6 6l12 12M18 6L6 18" />
-                        </svg>
-                      </button>
+                      {item.fixed ? null : (
+                        <button type="button" aria-label={`Убрать ${item.label}`} onClick={() => removeApplied(item.key)}>
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M6 6l12 12M18 6L6 18" />
+                          </svg>
+                        </button>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -699,6 +752,36 @@ export function CatalogMapScreen({
             </div>
             {moreOpen ? (
               <div className="map-more__panel">
+                <div className="map-more__group">
+                  <h2>Город</h2>
+                  <div className="map-more__opts" role="group" aria-label="Город">
+                    <button
+                      type="button"
+                      className={`map-more__pill${wholeCountry ? " is-active" : ""}`}
+                      aria-pressed={wholeCountry}
+                      onClick={() => chooseCity(null)}
+                    >
+                      Вся Беларусь
+                    </button>
+                    {cityPills.map((name) => {
+                      const slug = cityCatalogByName(name)?.slug;
+                      const active = cityName === name;
+                      return (
+                        <button
+                          key={name}
+                          type="button"
+                          className={`map-more__pill${active ? " is-active" : ""}`}
+                          aria-pressed={active}
+                          onClick={() => {
+                            if (slug) chooseCity(slug);
+                          }}
+                        >
+                          {name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
                 <div className="map-more__group">
                   <h2>Вид спорта</h2>
                   <div className="map-filter__search">
@@ -910,6 +993,8 @@ export function CatalogMapScreen({
                   {areaReady ? (
                     <>
                       Найдено <b>{total + unlocatedTotal}</b> {pluralRu(total + unlocatedTotal, "тренер", "тренера", "тренеров")}
+                      {" · "}
+                      {placeLabel}
                       {unlocatedTotal > 0 ? (
                         <>
                           {" ("}
@@ -1023,6 +1108,7 @@ const PAGE_CSS = `
 .map-more__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
 .map-more__applied { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; min-width: 0; }
 .map-more__applied li { display: inline-flex; align-items: center; min-height: 44px; padding-left: 12px; border-radius: 999px; background: rgba(var(--primary-rgb), 0.1); color: var(--primary); }
+.map-more__applied li.is-fixed { padding-right: 12px; }
 .map-more__applied li span { font-size: 13px; font-weight: var(--fw-title); line-height: 1.2; }
 .map-more__applied button { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: inherit; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
 .map-more__applied button svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; }

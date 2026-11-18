@@ -1,8 +1,25 @@
-import { listCityCatalogPages } from "@/lib/catalog/city-pages";
+import { cityCatalogBySlug, listCityCatalogPages } from "@/lib/catalog/city-pages";
 import { BELARUS_CITIES, resolveBelarusCity } from "@/lib/catalog/city-taxonomy";
 
 /** One frame lists at most this many cities in the address-less block. */
 export const MAP_FRAME_CITY_CAP = 50;
+
+/** Map search value that means every city, not a detected one. */
+export const MAP_ALL_CITIES = "all";
+
+/** The city the map filter should show. `nationwide` is the explicit whole-country choice. */
+export function explicitMapCity(param: string | undefined, detectedSlug: string | undefined): {
+  slug: string | null;
+  nationwide: boolean;
+} {
+  if (param === MAP_ALL_CITIES) return { slug: null, nationwide: true };
+  if (param) {
+    const page = cityCatalogBySlug(param);
+    return { slug: page?.slug ?? null, nationwide: false };
+  }
+  const detected = detectedSlug ? cityCatalogBySlug(detectedSlug) : null;
+  return detected ? { slug: detected.slug, nationwide: false } : { slug: null, nationwide: false };
+}
 
 export type MapCityFrame = {
   south: number;

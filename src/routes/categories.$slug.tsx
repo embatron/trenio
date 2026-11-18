@@ -28,6 +28,7 @@ import { pluralRu } from "@/lib/ru-plural";
 import { toggleFilterValue } from "@/lib/catalog/belarus-settlements";
 import { filterBelarusCities, resolveBelarusCity } from "@/lib/catalog/city-taxonomy";
 import { cityCatalogSlug, listCityCatalogPages } from "@/lib/catalog/city-pages";
+import { MAP_ALL_CITIES } from "@/lib/catalog/map-city";
 import {
   catalogCategorySports,
   catalogSportById,
@@ -814,6 +815,7 @@ a.cat-pill { text-decoration: none; }
 .cat-filter-bar__row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
 .cat-filter-bar__applied { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; min-width: 0; }
 .cat-filter-bar__applied li { display: inline-flex; align-items: center; min-height: 44px; padding-left: 12px; border-radius: 999px; background: rgba(var(--primary-rgb), 0.1); color: var(--primary); }
+.cat-filter-bar__applied li.is-fixed { padding-right: 12px; }
 .cat-filter-bar__applied li span { font-size: 13px; font-weight: var(--fw-title); line-height: 1.2; }
 .cat-filter-bar__applied button { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: inherit; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
 .cat-filter-bar__applied button svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; }
@@ -931,7 +933,7 @@ export function CategoryCatalogPage({
   const [cityQuery, setCityQuery] = useState(cityCatalog ? "" : place.query);
   const [cityFocused, setCityFocused] = useState(false);
   const [placeNote, setPlaceNote] = useState<"detected" | "saved" | null>(
-    place.source === "none" ? null : place.source,
+    place.source === "detected" || place.source === "saved" ? place.source : null,
   );
   const citySuggestions = useMemo(() => {
     const found = filterBelarusCities(cityQuery);
@@ -1094,7 +1096,7 @@ export function CategoryCatalogPage({
   };
 
   useEffect(() => {
-    if (cityCatalog || place.cities.length > 0 || place.query.trim()) return;
+    if (cityCatalog || place.source === "cleared" || place.cities.length > 0 || place.query.trim()) return;
     let cancel = false;
     void resolveSearchCity().then((city) => {
       if (cancel || userTouchedPlace.current) return;
@@ -1106,7 +1108,7 @@ export function CategoryCatalogPage({
     return () => {
       cancel = true;
     };
-  }, [cityCatalog, place.cities, place.query]);
+  }, [cityCatalog, place.cities, place.query, place.source]);
 
   const openCity = (slug: string) => {
     if (pageSport) {
@@ -1181,11 +1183,34 @@ export function CategoryCatalogPage({
     { years: 5, label: "от 5 лет" },
     { years: 10, label: "от 10 лет" },
   ];
+  const chooseAllBelarus = () => {
+    writeVisitorPlace({ cities: [], query: "", dismissed: true, origin: "chosen" });
+    if (!cityCatalog) {
+      applyPlace([], "");
+      return;
+    }
+    const sport = pageSport ?? null;
+    if (sport?.level === 2) {
+      void navigate({
+        to: "/categories/$parentSlug/$childSlug",
+        params: { parentSlug: sport.parentSlug, childSlug: sport.slug },
+      });
+      return;
+    }
+    if (sport?.level === 1) {
+      void navigate({ to: "/categories/$slug", params: { slug: sport.slug } });
+      return;
+    }
+    void navigate({ to: "/map", search: { city: MAP_ALL_CITIES } });
+  };
+
   const typedCity = cityQuery.trim();
+  const countryWide = selectedCities.length === 0 && typedCity.length === 0;
   const appliedFilters = [
     ...selectedSports
       .filter((sport) => cityCatalog || sport.id !== categorySport?.id)
       .map((sport) => ({ key: `sport:${sport.id}`, label: sport.label })),
+    ...(countryWide ? [{ key: "city:all", label: "Вся Беларусь" }] : []),
     ...selectedCities.map((city) => ({ key: `city:${city}`, label: city })),
     ...(typedCity && !selectedCities.some((city) => city.toLowerCase().replaceAll("ё", "е") === typedCity.toLowerCase().replaceAll("ё", "е"))
       ? [{ key: "city:query", label: typedCity }]
@@ -1211,8 +1236,13 @@ export function CategoryCatalogPage({
       applyPlace(selectedCities, "");
       return;
     }
+    if (key === "city:all") return;
     if (key.startsWith("city:")) {
       const city = key.slice("city:".length);
+      if (cityCatalog && selectedCities.length === 1 && selectedCities[0] === city) {
+        chooseAllBelarus();
+        return;
+      }
       applyPlace(selectedCities.filter((item) => item !== city), cityQuery);
       return;
     }
@@ -1447,13 +1477,15 @@ export function CategoryCatalogPage({
               {appliedFilters.length > 0 ? (
                 <ul className="cat-filter-bar__applied" aria-label="Отмеченные фильтры">
                   {appliedFilters.map((item) => (
-                    <li key={item.key}>
+                    <li key={item.key} className={item.key === "city:all" ? "is-fixed" : undefined}>
                       <span>{item.label}</span>
-                      <button type="button" aria-label={`Убрать ${item.label}`} onClick={() => removeApplied(item.key)}>
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M6 6l12 12M18 6L6 18" />
-                        </svg>
-                      </button>
+                      {item.key === "city:all" ? null : (
+                        <button type="button" aria-label={`Убрать ${item.label}`} onClick={() => removeApplied(item.key)}>
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M6 6l12 12M18 6L6 18" />
+                          </svg>
+                        </button>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -1702,6 +1734,14 @@ export function CategoryCatalogPage({
                 </ul>
               ) : null}
               <div className="cat-city-quick" role="group" aria-label="Крупные города">
+                <button
+                  type="button"
+                  className={`cat-pill${countryWide ? " is-active" : ""}`}
+                  aria-pressed={countryWide}
+                  onClick={chooseAllBelarus}
+                >
+                  Вся Беларусь
+                </button>
                 {cityPills.map((city) => (
                   <button
                     key={city}
@@ -1710,8 +1750,8 @@ export function CategoryCatalogPage({
                     aria-pressed={selectedCities.includes(city)}
                     onClick={() => {
                       const nextSlug = cityCatalogSlug(city);
-                      if (cityCatalog && nextSlug && nextSlug !== cityCatalog.slug) {
-                        openCity(nextSlug);
+                      if (cityCatalog && nextSlug) {
+                        if (nextSlug !== cityCatalog.slug) openCity(nextSlug);
                         return;
                       }
                       applyPlace(toggleFilterValue(selectedCities, city), cityQuery);
@@ -1817,7 +1857,7 @@ export function CategoryCatalogPage({
           <div>
             <div className="cat-results__head">
               <div className="cat-results__count">
-                <b>{filtered.length}</b> {pluralRu(filtered.length, "тренер", "тренера", "тренеров")}{locationSummary ? ` · ${locationSummary}` : ""}
+                <b>{filtered.length}</b> {pluralRu(filtered.length, "тренер", "тренера", "тренеров")}{locationSummary ? ` · ${locationSummary}` : countryWide ? " · вся Беларусь" : ""}
                 {" "}
                 <Link
                   className="cat-results__map"

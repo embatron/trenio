@@ -2,10 +2,17 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { BELARUS_CITIES } from "./city-taxonomy";
-import { MAP_FRAME_CITY_CAP, mapFrameCities } from "./map-city";
+import { explicitMapCity, MAP_ALL_CITIES, MAP_FRAME_CITY_CAP, mapFrameCities } from "./map-city";
 
 const minsk = { south: 53.82, west: 27.4, north: 53.98, east: 27.72 };
 const neighborhood = { south: 53.925, west: 27.59, north: 53.94, east: 27.62 };
+
+test("the map filter keeps a detected city and a whole-country choice apart", () => {
+  assert.deepEqual(explicitMapCity(undefined, "minsk"), { slug: "minsk", nationwide: false });
+  assert.deepEqual(explicitMapCity("gomel", "minsk"), { slug: "gomel", nationwide: false });
+  assert.deepEqual(explicitMapCity(MAP_ALL_CITIES, "minsk"), { slug: null, nationwide: true });
+  assert.deepEqual(explicitMapCity(undefined, undefined), { slug: null, nationwide: false });
+});
 
 test("a chosen catalog city stays the list city", () => {
   assert.deepEqual(mapFrameCities("минск", { south: 52, west: 23, north: 56, east: 33 }), ["Минск"]);

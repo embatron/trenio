@@ -31,7 +31,7 @@ function openingZoom() {
 }
 const PIN = `<svg viewBox="0 0 24 24" width="36" height="36" aria-hidden="true"><path d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12z" fill="currentColor" stroke="#fff" stroke-width="1.2"/><circle cx="12" cy="9" r="2.4" fill="#fff"/></svg>`;
 
-export type CatalogMapUser = { lat: number; lng: number };
+export type CatalogMapUser = { lat: number; lng: number; zoom?: number };
 
 export type CatalogMapBounds = {
   south: number;
@@ -180,7 +180,7 @@ export function TrainerCatalogMapView({
   onUnavailableRef.current = onUnavailable;
   const focusRef = useRef(focus);
   focusRef.current = focus;
-  const focusKey = focus ? `${focus.lat.toFixed(5)},${focus.lng.toFixed(5)}` : "";
+  const focusKey = focus ? `${focus.lat.toFixed(5)},${focus.lng.toFixed(5)},${focus.zoom ?? ""}` : "";
   const userKey = user ? `${user.lat.toFixed(5)},${user.lng.toFixed(5)}` : "";
   const openKey = hoverKey ?? pinnedKey;
   pinnedRef.current = pinnedKey;
@@ -371,7 +371,7 @@ export function TrainerCatalogMapView({
     if (!map || !ready) return;
     const next = focusRef.current ?? MINSK_POINT;
     const center = map.center;
-    const zoom = openingZoom();
+    const zoom = next.zoom ?? openingZoom();
     const same = Math.abs(center[1] - next.lat) < 0.0001
       && Math.abs(center[0] - next.lng) < 0.0001
       && Math.round(map.zoom) === zoom;
