@@ -35,6 +35,8 @@ type PinnedPost = {
   ogDescription?: string;
   heading?: string;
   visibleText?: string;
+  /** Semantic use of this pinned text. Only about/training may support public prose. */
+  textRole?: "about" | "training" | "facts" | "promotion" | "none";
   /** Words read off a pinned photo: about the trainer, the session, or the facts. */
   imageText?: string[];
   /** True when the opened post is a reel or another video. A video stores no frame. */
@@ -80,6 +82,8 @@ type ResolvedProfile = {
   /** Verbatim profile biography. The card text is `presentation`, not this field. */
   sourceBio?: string;
   aboutProfile?: string[];
+  /** `source` keeps the trainer's wording; `adapted` edits fragments into natural prose. */
+  presentationMode?: "source" | "adapted";
   presentation?: string;
   presentationQuotes?: string[];
   /** Plain «Как проходят мои тренировки». Empty when the source never describes a session. */
@@ -120,6 +124,8 @@ type RawExtract = {
   contacts?: { emails?: string[]; phones?: string[]; telegrams?: string[] };
   aboutFrames?: string[];
   pinned?: PinnedPost[];
+  /** Primary trainer-written description from a CSV or another supplied source. */
+  sourceDescription?: string;
   /** Other grid posts. Photos only. Their captions are not card-text quotes. */
   extraPosts?: PinnedPost[];
   /** Facts the operator wrote for this Instagram account. Verbatim. */
@@ -163,6 +169,16 @@ function cleanLine(value: string): string {
   return value.replace(/\s+/g, " ").trim();
 }
 
+function cleanMultiline(value: string): string {
+  return value
+    .replace(/\r\n?/g, "\n")
+    .split("\n")
+    .map((line) => line.replace(/[ \t]+/g, " ").trim())
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 function norm(value: string): string {
   return value.replace(/\s+/g, " ").trim().toLowerCase();
 }
@@ -185,6 +201,7 @@ function corpusOf(raw: RawExtract): string {
     raw.ogTitle || "",
     raw.ogDescription || "",
     raw.headerText || "",
+    raw.sourceDescription || "",
     ...(raw.aboutFrames || []),
     ...(raw.highlights || []),
     ...pins.flatMap((post) => [
@@ -272,7 +289,22 @@ function givenNamesBeside(corpus: string, lastName: string): string[] {
     const candidate = match[1] || match[2] || "";
     if (candidate && !ROLE_WORDS.test(candidate)) found.add(candidate);
   }
-  return [...found];
+  return collapseNameCase([...found]);
+}
+
+/** «Игоря Мирутенко» is the genitive of «Игорь», not a second person. */
+function collapseNameCase(names: string[]): string[] {
+  const stem = (value: string) => value.toLowerCase().replace(/ь$/u, "").replace(/[аеёиоуыэюя]$/iu, "");
+  const groups = new Map<string, string[]>();
+  for (const name of names) {
+    const key = stem(name);
+    groups.set(key, [...(groups.get(key) || []), name]);
+  }
+  return [...groups.values()].map((group) => {
+    if (group.length === 1) return group[0];
+    return group.find((name) => stem(name) === name.toLowerCase().replace(/ь$/u, ""))
+      || group.slice().sort((a, b) => a.length - b.length)[0];
+  });
 }
 
 const HOBBY_CUE = /занима(юсь|ется|лась|лся)|увлека(юсь|ется)|хожу в|для себя|хобби|практикую|испытал[аи]? на себе|в свой тренировочный план/iu;
@@ -403,7 +435,7 @@ function matchPhones(text: string): string[] {
 
 /** The number stays in the phone field. Description text does not repeat it. */
 function stripPhones(text: string): string {
-  return cleanLine(text.replace(PHONE_IN_TEXT, " "));
+  return cleanMultiline(text.replace(PHONE_IN_TEXT, " "));
 }
 
 function matchEmails(text: string): string[] {
@@ -466,10 +498,16 @@ function matchAudiences(text: string): Array<"adult" | "kid" | "teen"> {
   return found;
 }
 
-const SESSION_CUE = /тренировк|заняти|в зале|группов|индивидуальн|персональн|разминк|спарринг/iu;
+const SESSION_CUE =
+  /разминк|заминк|спарринг|техник\p{L}*\s+(?:выполн|движен)|тренировк\p{L}*\s+(?:стро|состо|начина|проход)|на\s+заняти\p{L}*\s+(?:мы|я|разбира|работа)|работа\p{L}*\s+над|разбира\p{L}*\s+(?:техник|ошиб|движ)|подбира\p{L}*\s+(?:нагруз|упражнен|программ)|череду\p{L}*\s+(?:нагруз|упражнен)/iu;
 const PLACE_CUE = /улиц|вуліц|проспект|праспект|пр-т|(?<![\p{L}])пр(?:\.|(?![\p{L}]))|(?<![\p{L}])ул(?:\.|(?![\p{L}]))|(?<![\p{L}])вул(?:\.|(?![\p{L}]))|переул|завулак|бульвар|проезд|площад|плошч|набереж|шоссе|pushkin|пушкин/iu;
 const CARD_NOISE = /[#|•·\p{Extended_Pictographic}\uFE0F]|https?:\/\/|t\.me\/|@[\p{L}\d_]/iu;
+const SOURCE_CARD_NOISE = /https?:\/\/|t\.me\/|@[\p{L}\d_]|#[\p{L}\d_]+/iu;
 const CARD_CTA = /директ|в\s+лс\b|подпиши|пиши(?:те)?|ссылка в шапке|для записи/iu;
+const CTA_ONLY_TRAINING = /^(?:запись|записывайтесь|приходите|пишите|напишите|жду)\b/iu;
+const ROBOTIC_PRESENTATION =
+  /(?:^|[.!?]\s+)(?:город\s+[А-ЯЁ][\p{L}-]+|я\s+(?:[\p{L}-]+\s+[\p{L}-]+,\s+)?(?:фитнес-)?тренер\b|я\s+(?:[\p{L}-]+\s*,\s*)?(?:инструктор|массажист)\b)/iu;
+const PIN_TEXT_ROLES = new Set(["about", "training", "facts", "promotion", "none"]);
 const SKIP_REASONS = new Set(["text", "logo", "flyer", "duplicate", "not-trainer", "crop", "clutter", "crowd", "back", "blur"]);
 const CERTIFICATE_WORD = /диплом|сертификат|удостоверен/iu;
 
@@ -496,16 +534,77 @@ function numbersIn(text: string): string[] {
   return [...text.matchAll(/\d+/g)].map((match) => match[0]);
 }
 
-function assertCardText(rawPath: string, label: string, text: string, quotes: string[], corpus: string, limit: number, maxSentences: number) {
-  if (!text) return;
-  if (text.length > limit) fail(rawPath, `${label} is longer than ${limit} characters.`);
-  if (text.length < 20) fail(rawPath, `${label} is too short to read.`);
-  if (sentenceCount(text) > maxSentences) fail(rawPath, `${label} is at most ${maxSentences} sentences.`);
-  if (/[<>]/.test(text) || CARD_NOISE.test(text) || CARD_CTA.test(text)) {
-    fail(rawPath, `${label} must be plain sentences: no emoji, hashtags, links, @names, or a call to write in direct.`);
+function sourceWordCoverage(text: string, corpus: string): number {
+  const words = text.toLocaleLowerCase("ru").match(/[\p{L}]{4,}/gu) || [];
+  if (!words.length) return 1;
+  const source = new Set(corpus.toLocaleLowerCase("ru").match(/[\p{L}]{4,}/gu) || []);
+  return words.filter((word) => source.has(word)).length / words.length;
+}
+
+/** A sentence or a list line the operator wrote. A name, a city, or a sport heading is a field, not this text. */
+function noteProseLines(note: string): string[] {
+  const verb = /(?:тренирую|помогаю|работа(?:л|ла|ю)|имел[аи]|провожу|учу|занимаюсь|ставлю|веду|перенимал[аи])/iu;
+  const lines: string[] = [];
+  for (const rawLine of note.split(/\n+/)) {
+    const bullet = /^[ \t]*[•·*]+[ \t]+/u.test(rawLine);
+    const text = cleanLine(rawLine.replace(/^[ \t]*[•·*]+[ \t]+/u, ""));
+    if (!text) continue;
+    const sentence = /[.!?…]/.test(text);
+    if (!bullet && !sentence && !(text.length >= 50 && verb.test(text))) continue;
+    const bare = text.replace(/[:.\s]+$/u, "").trim();
+    const label = catalogPhrases().some((phrase) => phrase.label.toLocaleLowerCase("ru") === bare.toLocaleLowerCase("ru") || phrase.alias.toLocaleLowerCase("ru") === bare.toLocaleLowerCase("ru"));
+    if (label) continue;
+    lines.push(text);
   }
-  if (!/[.!?…]/.test(text)) fail(rawPath, `${label} must be sentences a person can read aloud.`);
-  if (!quotes.length) fail(rawPath, `${label} needs verbatim quotes from the biography, the about highlight, a pinned photo, Threads, or the operator note.`);
+  return lines;
+}
+
+/** True when the card is those operator lines and nothing else. */
+function cardCopiesNote(card: string, lines: string[]): boolean {
+  if (!lines.length) return false;
+  let rest = norm(card);
+  const sorted = [...lines].sort((a, b) => norm(b).length - norm(a).length);
+  for (const line of sorted) {
+    const needle = norm(line);
+    const at = rest.indexOf(needle);
+    if (at === -1) return false;
+    rest = `${rest.slice(0, at)} ${rest.slice(at + needle.length)}`;
+  }
+  return !/[\p{L}\p{N}]/u.test(rest);
+}
+
+function assertCardText(
+  rawPath: string,
+  label: string,
+  text: string,
+  quotes: string[],
+  corpus: string,
+  limit: number,
+  maxSentences: number,
+  verbatim = false,
+  mode: "source" | "adapted" = "adapted",
+) {
+  if (!text) return;
+  const capped = verbatim ? Math.max(limit, text.length) : limit;
+  const sentences = verbatim ? Math.max(maxSentences, sentenceCount(text)) : maxSentences;
+  if (text.length > capped) fail(rawPath, `${label} is longer than ${capped} characters.`);
+  if (text.length < 20) fail(rawPath, `${label} is too short to read.`);
+  if (sentenceCount(text) > sentences) fail(rawPath, `${label} is at most ${sentences} sentences.`);
+  const noise = verbatim ? text.replace(/[•·]/gu, "") : text;
+  const invalidNoise = mode === "source" ? SOURCE_CARD_NOISE.test(noise) : CARD_NOISE.test(noise);
+  if (!verbatim && (/[<>]/.test(text) || invalidNoise || CARD_CTA.test(text))) {
+    fail(rawPath, `${label} contains markup, promotional noise, a link, an @name, a hashtag, or a booking call.`);
+  }
+  if (!verbatim && mode === "adapted" && !/[.!?…]/.test(text)) {
+    fail(rawPath, `${label} must be sentences a person can read aloud.`);
+  }
+  if (!verbatim && label === "presentation" && mode === "adapted" && ROBOTIC_PRESENTATION.test(text)) {
+    fail(rawPath, "presentation uses the robotic «Я … тренер … / Город …» template. Keep the trainer's voice or open with a concrete point from the source.");
+  }
+  if (!verbatim && mode === "source" && sourceWordCoverage(text, corpus) < 0.7) {
+    fail(rawPath, "presentationMode source must preserve the trainer's wording. Use adapted when the text was substantially rewritten.");
+  }
+  if (!quotes.length) fail(rawPath, `${label} needs verbatim quotes from the primary description, biography, about highlight, approved pinned text, Threads, or operator note.`);
   for (const quote of quotes) {
     if (quote.trim().length < 4 || !includesNorm(corpus, quote)) {
       fail(rawPath, `${label} quote is not in the source: ${quote}`);
@@ -774,13 +873,20 @@ async function saveOne(rawPath: string, settlements: string[]) {
   }
 
   const profileSurface = `${raw.ogDescription || ""}\n${raw.headerText || ""}`;
-  const sourceBio = cleanLine(resolved.sourceBio || "");
-  if (sourceBio && !includesNorm(profileSurface, sourceBio)) fail(rawPath, "sourceBio is not a verbatim piece of the profile text.");
+  const sourceDescription = cleanMultiline(raw.sourceDescription || "");
+  const sourceBio = cleanMultiline(resolved.sourceBio || "");
+  const sourceSurface = sourceDescription || profileSurface;
+  if (sourceBio && !includesNorm(sourceSurface, sourceBio)) {
+    fail(rawPath, "sourceBio is not a verbatim piece of the primary source description.");
+  }
 
   pins.forEach((post, index) => {
     const caption = cleanLine(post.caption || "");
     const postSource = `${post.ogDescription || ""}\n${post.heading || ""}\n${post.visibleText || ""}`;
     if (caption && !includesNorm(postSource, caption)) fail(rawPath, `Pinned caption ${index + 1} is not in that post.`);
+    if (!PIN_TEXT_ROLES.has(post.textRole || "")) {
+      fail(rawPath, `Pinned post ${index + 1} needs textRole: about, training, facts, promotion, or none.`);
+    }
     if ((post.photos || []).length > 2) fail(rawPath, "A pinned post stores at most 2 photos.");
     assertStillPhotos(rawPath, post, true);
   });
@@ -798,15 +904,25 @@ async function saveOne(rawPath: string, settlements: string[]) {
     if (!includesNorm(corpus, quote)) fail(rawPath, `Sport quote is not in the source: ${quote}`);
   }
   const imageText = pins.flatMap((post) => (post.imageText || []).map(cleanLine).filter(Boolean));
+  const prosePins = pins.filter((post) => post.textRole === "about" || post.textRole === "training");
+  const prosePinText = prosePins.flatMap((post) => [
+    cleanLine(post.caption || ""),
+    ...(post.imageText || []).map(cleanLine),
+  ]).filter(Boolean);
+  const trainingPinText = pins.filter((post) => post.textRole === "training").flatMap((post) => [
+    cleanLine(post.caption || ""),
+    ...(post.imageText || []).map(cleanLine),
+  ]).filter(Boolean);
   const pageEvidence = [
     profileSurface,
+    sourceBio,
     ...aboutFrames,
     ...imageText,
     ...pins.map((post) => `${post.caption || ""}\n${post.visibleText || ""}`),
     threadsText,
   ].join("\n");
   const evidence = [pageEvidence, note].join("\n");
-  const cardCorpus = [profileSurface, ...aboutFrames, ...imageText, threadsText, note].join("\n");
+  const cardCorpus = [profileSurface, sourceBio, ...aboutFrames, ...prosePinText, threadsText, note].join("\n");
   const placeQueries = placeQueriesOf(resolved.address || "");
   for (const query of placeQueries) {
     if (!includesNorm(evidence, query)) {
@@ -839,7 +955,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
   const unrelated = readRoles(resolved.unrelatedSports, "unrelated");
   const classified = new Set([...coached, ...practiced, ...unrelated].map((role) => role.slug));
   const missingSport = expected.filter((sport) => !classified.has(sport.slug)).map((sport) => sport.label);
-  if (missingSport.length) fail(rawPath, `Classify every sport phrase as coached or practiced: ${missingSport.join(", ")}.`);
+  if (missingSport.length) fail(rawPath, `Classify every sport phrase as coached, practiced, or unrelated: ${missingSport.join(", ")}.`);
   for (const role of coached) {
     if (sportIsHobbyOnly(evidence, role.sport.alias, settlements)) {
       fail(rawPath, `${role.sport.label} is only something this person does, not a sport they coach. Quote: ${role.quote}`);
@@ -960,43 +1076,72 @@ async function saveOne(rawPath: string, settlements: string[]) {
     fail(rawPath, `Audiences must be ${audiencesInText.join(", ") || "empty"}, matching the text. Order is adult, kid, teen.`);
   }
 
-  const presentation = cleanLine(resolved.presentation || "");
+  const presentationMode = resolved.presentationMode === "source" ? "source" : "adapted";
+  const presentation = cleanMultiline(resolved.presentation || "");
   const presentationQuotes = (resolved.presentationQuotes || []).map(cleanLine).filter(Boolean);
   const trainingParagraphs = paragraphsOf(resolved.training || "");
   const training = trainingParagraphs.join("\n\n");
   const trainingQuotes = (resolved.trainingQuotes || []).map(cleanLine).filter(Boolean);
   const cardSurface = `${presentation}\n${training}`;
+  const proseLines = noteProseLines(note);
+  const copied = cardCopiesNote(cardSurface, proseLines);
+  if (proseLines.length && !copied) {
+    const missing = proseLines.find((line) => !includesNorm(cardSurface, line));
+    if (missing) fail(rawPath, `Copy the operator's line into the card. Do not rewrite it: ${missing}`);
+    fail(rawPath, "The card adds words the operator did not write. Do not add a sentence, a city, or a role.");
+  }
   const vagueExperience = evidence.match(/стаж\s*(\d{1,2})\s*(?:год|года|лет)/iu);
   if (vagueExperience && experienceYears == null && cardSurface.includes(vagueExperience[1])) {
     fail(rawPath, `The source says «стаж ${vagueExperience[1]}» without saying it is coaching experience. Leave that number out of the card.`);
   }
   if (/[\p{L}]{4,}/u.test(cardCorpus) && !presentation) {
-    fail(rawPath, "Write presentation («Как меня представить») from the biography, the about highlight, the words on a pinned photo, Threads, or the operator note.");
+    fail(rawPath, "Write presentation («Как меня представить») from the primary description, biography, about highlight, approved pinned text, Threads, or operator note.");
   }
-  assertCardText(rawPath, "presentation", presentation, presentationQuotes, cardCorpus, 700, 4);
-  assertCardText(rawPath, "training", training, trainingQuotes, cardCorpus, 1600, 8);
-  if (trainingParagraphs.length > 3) fail(rawPath, "training has at most 3 paragraphs.");
-  const sessionInProfile = SESSION_CUE.test(cardCorpus);
+  assertCardText(
+    rawPath,
+    "presentation",
+    presentation,
+    presentationQuotes,
+    cardCorpus,
+    presentationMode === "source" ? 1600 : 900,
+    presentationMode === "source" ? 12 : 6,
+    copied,
+    presentationMode,
+  );
+  assertCardText(rawPath, "training", training, trainingQuotes, cardCorpus, 1600, 8, copied, "adapted");
+  const trainingCap = copied ? Math.max(3, proseLines.length) : 3;
+  if (trainingParagraphs.length > trainingCap) fail(rawPath, `training has at most ${trainingCap} paragraphs.`);
+  const sessionSources = [sourceBio, ...aboutFrames, ...trainingPinText, threadsText, note].join("\n");
+  const sessionInProfile = SESSION_CUE.test(sessionSources);
   const trainingQuoted = trainingQuotes.length > 0 && trainingQuotes.every((quote) =>
     includesNorm(sourceBio, quote)
     || includesNorm(note, quote)
     || includesNorm(threadsText, quote)
     || aboutFrames.some((frame) => includesNorm(frame, quote))
-    || imageText.some((frame) => includesNorm(frame, quote)),
+    || trainingPinText.some((frame) => includesNorm(frame, quote)),
   );
-  if (sessionInProfile && !training) fail(rawPath, "The biography, the about highlight, a pinned photo, Threads, or the operator note describes a session. Write training («Как проходят мои тренировки»).");
-  if (!sessionInProfile && training && !trainingQuoted) fail(rawPath, "training describes a session the biography, the about highlight, a pinned photo, Threads, and the operator note do not. A pinned caption fills fields and stays out of the card.");
+  if (training && CTA_ONLY_TRAINING.test(training)) {
+    fail(rawPath, "A booking invitation is not a training description. Leave training empty unless the source explains how a session works.");
+  }
+  if (sessionInProfile && !training) fail(rawPath, "An approved source describes the session process. Write training («Как проходят мои тренировки»).");
+  if (!sessionInProfile && training && !trainingQuoted) fail(rawPath, "training describes a session that no approved training source supports.");
   if (training && !trainingQuotes.some((quote) => SESSION_CUE.test(quote)) && !trainingQuoted) {
     fail(rawPath, "trainingQuotes must include the line that describes the session.");
   }
   const storedSourceBio = stripPhones(sourceBio);
-  if (storedSourceBio && norm(presentation) === norm(storedSourceBio) && CARD_NOISE.test(sourceBio)) {
-    fail(rawPath, "Rewrite the biography into plain sentences. Do not paste it into presentation.");
+  if (storedSourceBio && norm(presentation) === norm(storedSourceBio) && presentationMode !== "source") {
+    fail(rawPath, "The source description was copied. Set presentationMode to source, or adapt it substantially.");
   }
   for (const post of pins) {
     const caption = cleanLine(post.caption || "");
-    if (caption && (norm(caption) === norm(presentation) || norm(caption) === norm(training))) {
-      fail(rawPath, "Write the card text. Do not paste a pinned caption.");
+    if (caption && norm(caption) === norm(presentation)) {
+      const reusable = post.textRole === "about" || post.textRole === "training";
+      if (!reusable || presentationMode !== "source") {
+        fail(rawPath, "A full pinned caption may be the presentation only in source mode when textRole is about or training.");
+      }
+    }
+    if (caption && norm(caption) === norm(training) && post.textRole !== "training") {
+      fail(rawPath, "A full pinned caption may be the training text only when textRole is training.");
     }
   }
   for (const post of raw.threads?.posts || []) {
@@ -1007,23 +1152,14 @@ async function saveOne(rawPath: string, settlements: string[]) {
   }
   const allowedSports = new Set([...coached, ...practiced].map((role) => role.slug));
   for (const hit of matchSports(cardSurface, settlements)) {
-    if (!allowedSports.has(hit.slug)) {
-      fail(rawPath, `${hit.label} is not a coached or practiced sport. Leave it out of the card text.`);
-    }
-  }
-  const sportAliases = catalogPhrases().map((phrase) => phrase.alias);
-  const sportInProfile = primary
-    ? catalogPhrases().some((phrase) => phrase.slug === primary.slug && sportAliasRegex(phrase.alias).test(prepareSportText(cardCorpus, settlements, sportAliases)))
-    : false;
-  if (sportInProfile && !catalogPhrases().some((phrase) => phrase.slug === primary?.slug && sportAliasRegex(phrase.alias).test(foldYo(presentation)))) {
-    fail(rawPath, `presentation must name the coached sport (${primary?.label}).`);
+    if (allowedSports.has(hit.slug)) continue;
+    const operatorWords = unrelated.some((role) => role.slug === hit.slug) && sportAliasRegex(hit.alias).test(note);
+    if (operatorWords) continue;
+    fail(rawPath, `${hit.label} is not a coached or practiced sport. If those words are the operator's sentence, mark the phrase unrelated and keep the sentence. Otherwise leave it out of the card text.`);
   }
   const namedCities = matchCities(cardSurface, settlements).filter(notThePerson);
   const extraCities = namedCities.filter((name) => name !== statedCity);
   if (extraCities.length) fail(rawPath, `Card text names ${extraCities.join(", ")}. The saved city is ${statedCity || "empty"}.`);
-  if (statedCity && matchCities(cardCorpus, settlements).includes(statedCity) && !matchCities(presentation, settlements).includes(statedCity)) {
-    fail(rawPath, `presentation must name ${statedCity}.`);
-  }
 
   if (raw.avatarBase64 || raw.avatarUrl || raw.avatarMime) {
     const avatarBytes = raw.avatarBase64 ? Buffer.from(raw.avatarBase64, "base64") : Buffer.alloc(0);
@@ -1183,11 +1319,13 @@ async function saveOne(rawPath: string, settlements: string[]) {
     sourceThreads: storedThreads,
     operatorNotes: storedNotes,
     threadsUrl: (raw.threads?.url || "").trim(),
+    presentationMode,
     bio: stripPhones(presentation),
     about: trainingParagraphs.map(stripPhones).filter(Boolean),
     pinned: pins.map((post) => ({
       url: post.url || "",
       caption: cleanLine(post.caption || ""),
+      textRole: post.textRole || "none",
       imageText: (post.imageText || []).map(cleanLine).filter(Boolean),
     })),
     sports: storedSports.map((sport) => ({
@@ -1288,7 +1426,7 @@ try {
     const trainingState = draft.about.length ? "yes" : "no";
     const noteState = draft.operatorNotes ? "yes" : "no";
     const threadsState = draft.threadsUrl ? "yes" : "no";
-    console.log(`${draft.handle}\t${draft.fullName || "—"}\t${draft.primarySport?.label || "—"}\t${draft.city || "—"}\tgallery:${draft.photoSearch.gallery}\tcertificates:${draft.photoSearch.certificates}\ttraining:${trainingState}\tnotes:${noteState}\tthreads:${threadsState}\tmissing:${draft.missing.join(",") || "none"}`);
+    console.log(`${draft.handle}\t${draft.fullName || "—"}\t${draft.primarySport?.label || "—"}\t${draft.city || "—"}\ttext:${draft.presentationMode}\tgallery:${draft.photoSearch.gallery}\tcertificates:${draft.photoSearch.certificates}\ttraining:${trainingState}\tnotes:${noteState}\tthreads:${threadsState}\tmissing:${draft.missing.join(",") || "none"}`);
   }
 } finally {
   await closeDb();
