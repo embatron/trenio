@@ -13,10 +13,8 @@ import {
   optionalBelarusPhone,
   parseInstagramHandle,
   parseTelegramHandle,
-  type TrainerCardStatus,
 } from "@/lib/catalog/trainer-welcome";
 import { infoPageCopy, infoPageHead } from "@/lib/seo/pages";
-import { SITE_EMAIL } from "@/lib/seo/site";
 
 const page = infoPageCopy("join");
 
@@ -46,6 +44,13 @@ const CSS = `
 }
 .welcome-copy h1 { margin: 0 0 16px; font-size: var(--fs-display); letter-spacing: -0.04em; color: var(--dark); }
 .welcome-copy p { margin: 0 0 14px; max-width: 38ch; font-size: 16px; line-height: 1.55; color: var(--text); }
+.welcome-copy a {
+  color: var(--primary);
+  font-weight: var(--fw-title);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.welcome-copy a:hover { color: var(--primary-dark); }
 .welcome-points { display: grid; gap: 10px; margin: 22px 0 0; padding: 0; list-style: none; }
 .welcome-points li { display: flex; align-items: flex-start; gap: 10px; color: var(--dark); font-size: 15px; font-weight: var(--fw-ui); line-height: 1.4; }
 .welcome-points svg { width: 18px; height: 18px; flex: 0 0 auto; margin-top: 1px; stroke: var(--primary); fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
@@ -64,7 +69,14 @@ const CSS = `
 .welcome-field { display: grid; gap: 8px; margin: 0 0 12px; }
 .welcome-label { display: flex; align-items: baseline; gap: 8px; font-size: 14px; font-weight: var(--fw-ui); color: var(--dark); }
 .welcome-field small { color: var(--primary-dark); font-size: 12px; font-weight: var(--fw-title); letter-spacing: 0.02em; }
-.welcome-field.is-main { margin-bottom: 16px; }
+.welcome-field.is-main { margin-bottom: 4px; }
+.welcome-skip { margin: 0 0 14px; }
+.welcome-skip a {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 4px 0;
+  color: var(--primary); font: inherit; font-size: 15px; font-weight: var(--fw-title);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.welcome-skip a:hover { color: var(--primary-dark); }
 .welcome-field.is-main .welcome-label { font-size: 18px; }
 .welcome-input {
   display: flex; align-items: center; gap: 12px; min-height: 52px;
@@ -138,13 +150,6 @@ function TrainerWelcomePage() {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [done, setDone] = useState(false);
-  const [opening, setOpening] = useState(false);
-  const [known, setKnown] = useState<{
-    status: TrainerCardStatus;
-    email: string | null;
-    slug: string;
-    hasAccount: boolean;
-  } | null>(null);
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -164,43 +169,16 @@ function TrainerWelcomePage() {
     }
     setError(null);
     setPending(true);
-    let redirecting = false;
     void submit({ data: { channel: "instagram", instagram, telegram, phone, honeypot } })
       .then((result) => {
         if (!result.ok) {
           setError(result.message);
           return;
         }
-        if ("existing" in result && result.existing === "draft") {
-          if (!/^\/hi\/[23456789abcdefghijkmnpqrstuvwxyz]{8}$/.test(result.door)) {
-            setError("Не получилось открыть профиль. Попробуйте ещё раз.");
-            return;
-          }
-          redirecting = true;
-          setOpening(true);
-          window.location.assign(result.door);
-          return;
-        }
-        if ("existing" in result && result.existing === "account") {
-          if (result.home === "/me") {
-            redirecting = true;
-            window.location.assign("/me");
-            return;
-          }
-          setKnown({
-            status: result.status,
-            email: result.email,
-            slug: result.slug,
-            hasAccount: result.hasAccount,
-          });
-          return;
-        }
         setDone(true);
       })
       .catch((err: unknown) => setError(authErrorMessage(err)))
-      .finally(() => {
-        if (!redirecting) setPending(false);
-      });
+      .finally(() => setPending(false));
   };
 
   return (
@@ -224,7 +202,9 @@ function TrainerWelcomePage() {
                   Оставь Instagram — мы бережно соберём по нему предварительный профиль и пришлём
                   тебе ссылку. Ты получишь полный доступ к аккаунту: сможешь проверить, дополнить и
                   в любое время редактировать профиль. Без твоего решения ничего не опубликуем.
-                  Telegram и телефон можно добавить, если удобно. Размещение бесплатное.
+                  Telegram и телефон можно добавить, если удобно. Размещение бесплатное. Нет
+                  Instagram —{" "}
+                  <Link to="/join/account">создай свой тренерский профиль вручную</Link>.
                 </p>
                 <ul className="welcome-points">
                   <li>
@@ -255,14 +235,7 @@ function TrainerWelcomePage() {
               </div>
               <form className="welcome-card" onSubmit={onSubmit}>
                 <HoneypotField />
-                {known ? (
-                  <KnownAccount status={known.status} email={known.email} slug={known.slug} hasAccount={known.hasAccount} />
-                ) : opening ? (
-                  <div className="welcome-done" role="status">
-                    <h2>Открываем твой профиль…</h2>
-                    <p>Сейчас попросим почту и подтверждение — как по короткой ссылке.</p>
-                  </div>
-                ) : done ? (
+                {done ? (
                   <div className="welcome-done">
                     <h2>Спасибо</h2>
                     <p>
@@ -291,6 +264,9 @@ function TrainerWelcomePage() {
                           }}
                         />
                     </Field>
+                    <p className="welcome-skip">
+                      <Link to="/join/account">У меня не Instagram</Link>
+                    </p>
                     <Field label="Telegram">
                       <TelegramIcon />
                       <input
@@ -326,7 +302,7 @@ function TrainerWelcomePage() {
                       {pending ? "Отправляем…" : "Отправить"}
                     </button>
                     <div className="welcome-alt">
-                      <Link to="/join/account">У меня нет Instagram</Link>
+                      <Link to="/join/account">Создать свой профиль вручную</Link>
                     </div>
                   </>
                 )}
@@ -336,72 +312,6 @@ function TrainerWelcomePage() {
         </section>
       </main>
       <SiteFooter />
-    </div>
-  );
-}
-
-function knownLead(status: TrainerCardStatus) {
-  if (status === "hidden") return "Твой профиль уже есть, сейчас он скрыт из каталога.";
-  if (status === "archived") return "Твой профиль уже был на сайте и сейчас снят с каталога.";
-  if (status === "draft") return "Этот Instagram уже привязан к аккаунту.";
-  return "Твой профиль уже в каталоге.";
-}
-
-function knownTail(status: TrainerCardStatus) {
-  if (status === "hidden") return "Войди, чтобы открыть кабинет.";
-  if (status === "archived") return "Войди в кабинет.";
-  if (status === "draft") return "Войди.";
-  return "Войди — и откроется кабинет.";
-}
-
-function KnownAccount({
-  status,
-  email,
-  slug,
-  hasAccount,
-}: {
-  status: TrainerCardStatus;
-  email: string | null;
-  slug: string;
-  hasAccount: boolean;
-}) {
-  const openProfile = !hasAccount && status === "published" && /^[a-z0-9._]{1,30}$/.test(slug);
-  return (
-    <div className="welcome-done">
-      <h2>Хм… мы видим, что ты уже с нами</h2>
-      <p>
-        {knownLead(status)}
-        {email ? (
-          <>
-            {" "}
-            Аккаунт висит на почте <strong>{email}</strong>. {knownTail(status)}
-          </>
-        ) : openProfile ? (
-          " Страница уже открыта для всех."
-        ) : hasAccount ? (
-          ` ${knownTail(status)}`
-        ) : (
-          <>
-            {" "}
-            Если это твоя страница, напиши на{" "}
-            <a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>.
-          </>
-        )}
-      </p>
-      {openProfile ? (
-        <Link className="welcome-submit welcome-login" to="/trainers/$slug" params={{ slug }}>
-          Открыть профиль
-        </Link>
-      ) : hasAccount ? (
-        <>
-          <Link className="welcome-submit welcome-login" to="/auth/login" search={{ redirect: "/me" }}>
-            Войти
-          </Link>
-          <div className="welcome-alt">
-            <Link to="/auth/forgot-password">Не помню пароль</Link>
-          </div>
-        </>
-      ) : null}
     </div>
   );
 }
