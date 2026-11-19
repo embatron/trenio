@@ -5,11 +5,11 @@ import { CABINET_HINT_MS } from "@/lib/cabinet/live";
 import { shouldReceiveThread, shouldReceiveTyping } from "@/lib/messages/live";
 import { attachLiveSocket, publishCabinet, publishReaction, publishThread, publishTyping } from "@/lib/messages/live-hub";
 
-test("a thread update reaches both people and a staff reader", () => {
+test("a thread update reaches the two people and not a staff reader", () => {
   const party = ["client", "trainer"];
   assert.equal(shouldReceiveThread("client", false, party), true);
   assert.equal(shouldReceiveThread("trainer", false, party), true);
-  assert.equal(shouldReceiveThread("admin", true, party), true);
+  assert.equal(shouldReceiveThread("admin", true, party), false);
   assert.equal(shouldReceiveThread("stranger", false, party), false);
 });
 
@@ -34,14 +34,14 @@ test("the hub keeps the message text off the socket", () => {
   assert.deepEqual(sent.client.filter((payload) => payload.includes("typing")), []);
   assert.equal(sent.trainer.filter((payload) => payload.includes("typing")).length, 1);
   assert.deepEqual(sent.admin.filter((payload) => payload.includes("typing")), []);
-  assert.equal(sent.admin.filter((payload) => payload.includes('"thread"')).length, 1);
+  assert.equal(sent.admin.filter((payload) => payload.includes('"thread"')).length, 0);
   assert.equal(sent.admin.filter((payload) => payload.includes('"unread"')).length, 0);
   assert.equal(sent.client.filter((payload) => payload.includes('"unread"')).length, 1);
   assert.equal(sent.trainer.filter((payload) => payload.includes('"unread"')).length, 1);
   const reaction = sent.trainer.find((payload) => payload.includes('"reaction"'));
   assert.equal(reaction, JSON.stringify({ type: "reaction", conversationId: "conv", messageId: 42, actorId: "client", on: true }));
   assert.equal(sent.client.filter((payload) => payload.includes('"reaction"')).length, 1);
-  assert.equal(sent.admin.filter((payload) => payload.includes('"reaction"')).length, 1);
+  assert.equal(sent.admin.filter((payload) => payload.includes('"reaction"')).length, 0);
   assert.equal(reaction?.includes("body"), false);
 });
 

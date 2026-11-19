@@ -47,6 +47,13 @@ test("sanitizeReviewHtml keeps editor marks and drops a pasted document", () => 
   );
 });
 
+test("sanitizeReviewHtml turns a tag that never closes into text", () => {
+  const safe = sanitizeReviewHtml("привет <img src=x onerror=alert(1)");
+  assert.equal(safe.includes("<"), false);
+  assert.equal(safe.includes("привет"), true);
+  assert.equal(sanitizeReviewHtml("<svg onload=alert(1)").includes("<"), false);
+});
+
 test("pastedReviewHtml prefers cleaned HTML and falls back to plain text", () => {
   assert.equal(
     pastedReviewHtml("<p>Одна строка.</p><div>Вторая</div>", "Одна строка.\nВторая"),

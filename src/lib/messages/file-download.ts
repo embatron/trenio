@@ -78,6 +78,7 @@ export async function sendMessageFile(id: string, preview = false): Promise<Resp
         "content-disposition": disposition(name, mime),
         "cache-control": "private, no-store",
         "x-content-type-options": "nosniff",
+        "content-security-policy": "default-src 'none'; style-src 'none'; sandbox",
       },
     });
   } catch (error) {

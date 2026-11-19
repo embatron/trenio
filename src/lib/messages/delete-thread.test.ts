@@ -87,7 +87,7 @@ test("an opened empty dialog stays with the opener and never appears for the oth
     assert.equal(has(clientList.items, opened.conversationId), true);
     assert.equal(clientList.items.find((item) => item.id === opened.conversationId)?.preview ?? "", "");
     assert.equal(has(trainerList.items, opened.conversationId), false);
-    assert.equal(has(staffList.items, opened.conversationId), true);
+    assert.equal(has(staffList.items, opened.conversationId), false);
 
     const clientThread = await listMessages(box.client, { conversationId: opened.conversationId });
     const trainerThread = await listMessages(box.trainer, { conversationId: opened.conversationId });
@@ -112,7 +112,7 @@ test("an opened empty dialog stays with the opener and never appears for the oth
     const afterStaff = await listConversations(box.staff, { view: "staff", query: box.tag });
     assert.equal(has(afterClient.items, opened.conversationId), false);
     assert.equal(has(afterTrainer.items, opened.conversationId), false);
-    assert.equal(has(afterStaff.items, opened.conversationId), true);
+    assert.equal(has(afterStaff.items, opened.conversationId), false);
     const cleared = await listMessages(box.trainer, { conversationId: opened.conversationId });
     assert.equal(cleared.listed, false);
     assert.equal(cleared.deletedByCounterpart, false);

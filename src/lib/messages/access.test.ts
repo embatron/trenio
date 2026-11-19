@@ -43,9 +43,15 @@ test("the owner id can read and write any thread", () => {
   assert.equal(canMessage({ actorId: GOD_USER_ID, ownerUserId: ownerId, published: false, blocked: true }).ok, true);
 });
 
-test("staff can read any thread and cannot write into it", () => {
-  assert.doesNotThrow(() => assertConversationAccess(actor(staffId, ["admin"]), openRow, "read"));
+test("staff read a thread they are not in only when it was reported", () => {
+  assert.throws(() => assertConversationAccess(actor(staffId, ["admin"]), openRow, "read"), AuthError);
+  assert.doesNotThrow(() => assertConversationAccess(actor(staffId, ["admin"]), { ...openRow, reported: true }, "read"));
   assert.throws(() => assertConversationAccess(actor(staffId, ["superadmin"]), openRow, "write"), AuthError);
+});
+
+test("the god account cannot read someone else's thread unless it was reported", () => {
+  assert.throws(() => assertConversationAccess(actor(GOD_USER_ID, ["superadmin"]), openRow, "read"), AuthError);
+  assert.doesNotThrow(() => assertConversationAccess(actor(GOD_USER_ID, ["superadmin"]), { ...openRow, reported: true }, "read"));
 });
 
 test("closed, blocked and unpublished threads reject new messages", () => {

@@ -43,7 +43,7 @@ export function sanitizeReviewHtml(raw: string): string {
 
   let openAnchors = 0;
   let spoilers = 0;
-  return withoutDanger.replace(
+  const cleaned = withoutDanger.replace(
     /<\/?([a-z0-9]+)([^>]*)>/gi,
     (match, tagName: string, attrs: string) => {
       const tag = tagName.toLowerCase();
@@ -82,6 +82,20 @@ export function sanitizeReviewHtml(raw: string): string {
       return `<${tag}>`;
     },
   );
+  return sealMarkup(cleaned);
+}
+
+/** A tag this cleaner itself emits. Anything else, including a tag that never closes, is text. */
+function keptTag(chunk: string) {
+  if (/^<\/(?:b|strong|i|em|u|s|code|pre|span|ul|ol|li|p|a)>$/.test(chunk)) return true;
+  if (/^<(?:b|strong|i|em|u|s|code|pre|ul|ol|li|p|br)>$/.test(chunk)) return true;
+  if (chunk === '<span class="tg-spoiler">') return true;
+  const anchor = /^<a href="([^"]*)" rel="nofollow noopener">$/.exec(chunk);
+  return Boolean(anchor && /^(?:https?:\/\/|mailto:)/i.test(anchor[1]));
+}
+
+function sealMarkup(html: string) {
+  return html.replace(/<[^<>]*>?|<|>/g, (chunk) => (keptTag(chunk) ? chunk : escapeText(chunk)));
 }
 
 /**

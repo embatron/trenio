@@ -98,6 +98,13 @@ test("reports from both sides survive a burst, and a block stops only that train
     const fresh = [...clientBurst, ...trainerBurst].filter((item) => item.status === "fulfilled" && item.value.duplicate === false);
     assert.equal(fresh.length, 2);
 
+    await assert.rejects(
+      () => listMessages(staff, { conversationId: otherConversation.id }),
+      (error: unknown) => error instanceof AuthError && error.code === "FORBIDDEN",
+    );
+    const openedReport = await listMessages(staff, { conversationId: conversation.id });
+    assert.equal(openedReport.canWrite, false);
+
     const queued = (await listReports(staff)).filter((row) => row.conversationId === conversation.id);
     assert.equal(queued.length, 2);
     assert.deepEqual(queued.map((row) => row.reporterSide).sort(), ["client", "trainer"]);
@@ -219,7 +226,10 @@ test("a portal welcome cannot be reported, blocked, or deleted", async () => {
 
     const hostView = await listMessages(host, { conversationId: conversation.id });
     const trainerView = await listMessages(trainer, { conversationId: conversation.id });
-    const staffView = await listMessages(staff, { conversationId: conversation.id });
+    await assert.rejects(
+      () => listMessages(staff, { conversationId: conversation.id }),
+      refused,
+    );
     assert.equal(hostView.canReport, false);
     assert.equal(hostView.canMarkRead, true);
     assert.equal(hostView.canBlock, false);
@@ -228,10 +238,6 @@ test("a portal welcome cannot be reported, blocked, or deleted", async () => {
     assert.equal(trainerView.canMarkRead, true);
     assert.equal(trainerView.canBlock, false);
     assert.equal(trainerView.canDelete, false);
-    assert.equal(staffView.canReport, false);
-    assert.equal(staffView.canMarkRead, false);
-    assert.equal(staffView.canBlock, false);
-    assert.equal(staffView.canDelete, false);
 
     await assert.rejects(
       () => reportMessage(trainer, { conversationId: conversation.id, reason: "spam", comment: "это приветствие" }),

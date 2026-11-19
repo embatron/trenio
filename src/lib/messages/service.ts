@@ -17,7 +17,7 @@ import {
 } from "@/db/schema";
 import { AuthError, isAuthError } from "@/lib/auth/errors";
 import { storedGivenName } from "@/lib/auth/login-name";
-import { reviewPlainText, reviewTextLength } from "@/lib/catalog/review-html";
+import { reviewPlainText, reviewTextLength, sanitizeReviewHtml } from "@/lib/catalog/review-html";
 import { instagramAccountNeedle } from "@/lib/instagram/account-query";
 import { collapseMessageHtml } from "@/lib/messages/breaks";
 import { isGodUser } from "@/lib/auth/god";
@@ -75,16 +75,18 @@ export type ConversationAccess = {
   status: "open" | "closed";
   blocked: boolean;
   published: boolean;
+  /** Set only for a staff or god read when this conversation has a complaint. */
+  reported?: boolean;
 };
 
 type AccessMode = "read" | "write" | "close" | "reopen" | "block";
 
 export function assertConversationAccess(actor: MessageActor, row: ConversationAccess, mode: AccessMode): void {
-  if (isGodUser(actor.id)) return;
   const staff = isStaff(actor.roles);
   const participant = actor.id === row.userId || (row.ownerUserId != null && actor.id === row.ownerUserId);
+  if (isGodUser(actor.id) && mode !== "read") return;
   if (mode === "read") {
-    if (participant || staff) return;
+    if (participant || (row.reported && (staff || isGodUser(actor.id)))) return;
     throw new AuthError("Нет доступа к этой переписке.", "FORBIDDEN");
   }
   if (mode === "write") {
@@ -539,10 +541,26 @@ export async function liveParticipants(conversationId: string, actorId: string) 
   return ids;
 }
 
+async function conversationHasReport(conversationId: string) {
+  const [row] = await getDb()
+    .select({ id: messageReports.id })
+    .from(messageReports)
+    .where(eq(messageReports.conversationId, conversationId))
+    .limit(1);
+  return Boolean(row);
+}
+
 export async function requireConversation(actor: MessageActor, conversationId: string, mode: AccessMode) {
   const loaded = await loadConversation(conversationId);
   if (!loaded) {
     throw new AuthError(isStaff(actor.roles) ? "Переписка не найдена." : "Нет доступа к этой переписке.", "FORBIDDEN");
+  }
+  if (
+    mode === "read"
+    && !isParticipant(actor.id, loaded.access)
+    && (isStaff(actor.roles) || isGodUser(actor.id))
+  ) {
+    loaded.access.reported = await conversationHasReport(loaded.conversation.id);
   }
   assertConversationAccess(actor, loaded.access, mode);
   return loaded;
@@ -753,14 +771,14 @@ function quotePreview(body: string, deleted: boolean) {
   return messagePreview(body) || "Вложение";
 }
 
-async function quotesById(ids: number[]) {
+async function quotesById(ids: number[], conversationId: string) {
   const unique = [...new Set(ids)];
   const map = new Map<number, { id: number; body: string; deletedAt: Date | null }>();
   if (unique.length === 0) return map;
   const rows = await getDb()
     .select({ id: messages.id, body: messages.body, deletedAt: messages.deletedAt })
     .from(messages)
-    .where(inArray(messages.id, unique));
+    .where(and(inArray(messages.id, unique), eq(messages.conversationId, conversationId)));
   for (const row of rows) map.set(asNumber(row.id), { id: asNumber(row.id), body: row.body, deletedAt: row.deletedAt });
   return map;
 }
@@ -784,7 +802,7 @@ async function toMessageDto(row: {
     id,
     conversationId: row.conversationId,
     senderId: row.senderId,
-    body: deleted && !staffSeesBody ? "" : row.body,
+    body: deleted && !staffSeesBody ? "" : sanitizeReviewHtml(row.body),
     clientId: row.clientId,
     createdAt,
     editedAt: iso(row.editedAt ?? null),
@@ -1072,7 +1090,7 @@ export async function sendMessage(
 
   const files = await attachmentDtos([asNumber(saved.row.id)]);
   const quoteId = saved.row.replyToId == null ? null : asNumber(saved.row.replyToId);
-  const quotes = await quotesById(quoteId == null ? [] : [quoteId]);
+  const quotes = await quotesById(quoteId == null ? [] : [quoteId], conversationId);
   const quoted = quoteId == null ? null : quotes.get(quoteId);
   return {
     message: await toMessageDto(
@@ -1132,7 +1150,7 @@ export async function editMessage(actor: MessageActor, input: { messageId: numbe
   notifyThread(loaded);
   const files = await attachmentDtos([asNumber(saved.id)]);
   const quoteId = saved.replyToId == null ? null : asNumber(saved.replyToId);
-  const quotes = await quotesById(quoteId == null ? [] : [quoteId]);
+  const quotes = await quotesById(quoteId == null ? [] : [quoteId], row.conversationId);
   const quoted = quoteId == null ? null : quotes.get(quoteId);
   const readUpTo = await counterpartReadUpTo(actor, loaded.conversation, loaded.profile.ownerUserId);
   return {
@@ -1191,14 +1209,11 @@ const activityAt = sql<Date>`COALESCE(${conversations.lastMessageAt}, ${conversa
 
 function conversationViewFilter(actor: MessageActor, view: "own" | "inbox" | "staff") {
   if (view === "own") return eq(conversations.userId, actor.id);
-  if (view === "inbox") {
-    return or(
-      eq(conversations.userId, actor.id),
-      eq(trainerProfiles.ownerUserId, actor.id),
-      eq(conversations.hostUserId, actor.id),
-    );
-  }
-  return undefined;
+  return or(
+    eq(conversations.userId, actor.id),
+    eq(trainerProfiles.ownerUserId, actor.id),
+    eq(conversations.hostUserId, actor.id),
+  );
 }
 
 /** Conversations whose given name or surname survives a human typing error. */
@@ -1272,20 +1287,10 @@ export async function listConversations(
   if (input.view === "inbox" && !actor.roles.some((role) => role === "trainer" || role === "club" || role === "admin" || role === "superadmin")) {
     throw new AuthError("Нет доступа к перепискам профиля.", "FORBIDDEN");
   }
-  if (input.view === "staff") {
-    const chars = input.query?.trim().length ?? 0;
-    noteStaffAudit(
-      actor,
-      "message.staff.list",
-      null,
-      "Сотрудник открыл список переписок.",
-      chars >= 2 ? { searchChars: chars } : undefined,
-    );
-  }
   const filters = [];
   const viewFilter = conversationViewFilter(actor, input.view);
   if (viewFilter) filters.push(viewFilter);
-  if (input.view !== "staff") filters.push(stillListedFor(actor.id));
+  filters.push(stillListedFor(actor.id));
   if (input.cursor) {
     const at = new Date(input.cursor.at);
     if (Number.isNaN(at.getTime())) throw new AuthError("Некорректная страница.", "VALIDATION");
@@ -1321,8 +1326,7 @@ export async function listConversations(
           AND found.deleted_at IS NULL
           AND found.body ILIKE ${pattern} ESCAPE '\\'
           AND (
-            ${input.view === "staff"}
-            OR found.created_at > COALESCE(
+            found.created_at > COALESCE(
               CASE
                 WHEN ${conversations.userId} = ${actor.id}::uuid THEN ${conversations.userDeletedAt}
                 WHEN ${conversations.userId} <> ${actor.id}::uuid
@@ -1384,7 +1388,7 @@ export async function listConversations(
       LEFT JOIN trainer_profiles p ON p.id = c.trainer_profile_id
       WHERE m.conversation_id IN (${sql.join(ids.map((id) => sql`${id}::uuid`), sql`, `)})
         AND m.deleted_at IS NULL
-        AND (${input.view === "staff"} OR ${messageAfterClear(actor.id)})
+        AND ${messageAfterClear(actor.id)}
       ORDER BY m.conversation_id, m.created_at DESC, m.id DESC
     `);
     for (const row of previewRows) {
@@ -1413,7 +1417,7 @@ export async function listConversations(
         AND m.deleted_at IS NULL
         AND m.sender_id <> ${actor.id}::uuid
         AND (r.last_read_message_id IS NULL OR m.id > r.last_read_message_id)
-        AND (${input.view === "staff"} OR ${messageAfterClear(actor.id)})
+        AND ${messageAfterClear(actor.id)}
       GROUP BY m.conversation_id
     `);
     for (const row of unreadRows) unread.set(row.conversationId, asNumber(row.count));
@@ -1423,7 +1427,11 @@ export async function listConversations(
 
   let total: number | undefined;
   if (input.view === "staff") {
-    const [counted] = await getDb().select({ n: sql<number>`count(*)::int` }).from(conversations);
+    const [counted] = await getDb()
+      .select({ n: sql<number>`count(*)::int` })
+      .from(conversations)
+      .leftJoin(trainerProfiles, eq(trainerProfiles.id, conversations.trainerProfileId))
+      .where(and(conversationViewFilter(actor, "staff"), stillListedFor(actor.id)));
     total = Number(counted?.n ?? 0);
   }
 
@@ -1557,7 +1565,7 @@ export async function listMessages(
     counterpartReadUpTo(actor, loaded.conversation, loaded.profile.ownerUserId),
     viewerReadUpTo(actor.id, loaded.conversation.id),
     attachmentDtos(messageIds),
-    quotesById(replyIds),
+    quotesById(replyIds, loaded.conversation.id),
     presenceFor(otherId ? [otherId] : []),
     reactionMarks(messageIds, actor.id),
     peerReactionMarks(messageIds, actor.id),
