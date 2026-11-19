@@ -71,6 +71,11 @@ export type OwnTrainerProfile = {
   phoneVerified: boolean;
   emailVerified: boolean;
   telegramVerified: boolean;
+  /** «Не показывать на странице» is on. The contact stays in the cabinet. */
+  hidePhone: boolean;
+  hideInstagram: boolean;
+  hideTelegram: boolean;
+  hideEmail: boolean;
   offerAccepted: boolean;
   privacyAccepted: boolean;
   status: OwnProfileStatus;
@@ -240,6 +245,10 @@ const emptyProfile: OwnTrainerProfile = {
   phoneVerified: false,
   emailVerified: false,
   telegramVerified: false,
+  hidePhone: false,
+  hideInstagram: false,
+  hideTelegram: false,
+  hideEmail: false,
   offerAccepted: false,
   privacyAccepted: false,
   status: "published",
@@ -333,11 +342,54 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
       phoneVerified,
       emailVerified,
       telegramVerified: row.telegramVerifiedAt != null,
+      hidePhone: row.hidePhone,
+      hideInstagram: row.hideInstagram,
+      hideTelegram: row.hideTelegram,
+      hideEmail: row.hideEmail,
       offerAccepted: row.offerAcceptedAt != null,
       privacyAccepted: row.privacyAcceptedAt != null,
       status: ownFacingStatus(row.status),
       pageStatus: pageStatusOf(row.status),
     };
+  });
+
+const CONTACT_CHANNELS = ["phone", "instagram", "telegram", "email"] as const;
+
+export const setOwnContactHiddenFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(z.object({
+    channel: z.enum(CONTACT_CHANNELS),
+    hidden: z.boolean(),
+  }))
+  .handler(async ({ data, context }) => {
+    assertTrainer(context.user.roles);
+    const [row] = await getDb()
+      .select({ id: trainerProfiles.id, slug: trainerProfiles.slug })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.ownerUserId, context.user.id))
+      .limit(1);
+    if (!row) throw new AuthError("Карточка ещё не создана.", "VALIDATION");
+    const hidden = {
+      phone: { hidePhone: data.hidden },
+      instagram: { hideInstagram: data.hidden },
+      telegram: { hideTelegram: data.hidden },
+      email: { hideEmail: data.hidden },
+    }[data.channel];
+    await getDb()
+      .update(trainerProfiles)
+      .set({ ...hidden, updatedAt: new Date() })
+      .where(eq(trainerProfiles.id, row.id));
+    void writeLog({
+      level: "info",
+      domain: "form",
+      action: "form.trainer_contact",
+      outcome: "success",
+      message: data.hidden ? "hidden" : "shown",
+      actorUserId: context.user.id,
+      subject: context.user.email,
+      target: `${row.slug}:${data.channel}`,
+    });
+    return { ok: true as const };
   });
 
 export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })

@@ -22,6 +22,19 @@ const emptyContacts: PublicTrainerContacts = {
   email: "",
 };
 
+/** A contact the trainer marked «Не показывать на странице» leaves the public page. */
+export function omitHiddenContacts(
+  contacts: PublicTrainerContacts,
+  hidden: { phone: boolean; instagram: boolean; telegram: boolean; email: boolean },
+): PublicTrainerContacts {
+  return {
+    phone: hidden.phone ? "" : contacts.phone,
+    instagram: hidden.instagram ? "" : contacts.instagram,
+    telegram: hidden.telegram ? "" : contacts.telegram,
+    email: hidden.email ? "" : contacts.email,
+  };
+}
+
 /** Phone needs SMS. Telegram needs the bot. The public email is the verified login email. Instagram stays visible. */
 export const getPublicTrainerContactsFn = createServerFn({ method: "GET" })
   .validator(z.object({ slug: z.string().trim().min(1).max(40) }))
@@ -38,6 +51,10 @@ export const getPublicTrainerContactsFn = createServerFn({ method: "GET" })
         createdSource: trainerProfiles.createdSource,
         telegram: trainerProfiles.telegram,
         telegramVerifiedAt: trainerProfiles.telegramVerifiedAt,
+        hidePhone: trainerProfiles.hidePhone,
+        hideInstagram: trainerProfiles.hideInstagram,
+        hideTelegram: trainerProfiles.hideTelegram,
+        hideEmail: trainerProfiles.hideEmail,
         ownerUserId: trainerProfiles.ownerUserId,
         accountEmail: users.email,
         accountEmailVerifiedAt: users.emailVerifiedAt,
@@ -65,5 +82,13 @@ export const getPublicTrainerContactsFn = createServerFn({ method: "GET" })
     const telegram = row?.telegramVerifiedAt ? row.telegram : "";
 
     if (!listed && !row) return emptyContacts;
-    return { phone, instagram, telegram, email };
+    return omitHiddenContacts(
+      { phone, instagram, telegram, email },
+      {
+        phone: row?.hidePhone ?? false,
+        instagram: row?.hideInstagram ?? false,
+        telegram: row?.hideTelegram ?? false,
+        email: row?.hideEmail ?? false,
+      },
+    );
   });

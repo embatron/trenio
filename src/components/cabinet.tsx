@@ -640,7 +640,7 @@ a.cabinet-stat:hover { border-color: var(--primary); }
 .cabinet-stat--brand .cabinet-stat__delta.is-flat { color: rgba(255, 255, 255, 0.88); }
 .cabinet-contacts { display: grid; }
 .cabinet-contacts > .cabinet-form { border-bottom: 1px solid var(--line); }
-.cabinet-contact { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; grid-template-areas: "icon body marks" "panel panel panel"; column-gap: 12px; row-gap: 8px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+.cabinet-contact { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; grid-template-areas: "icon body marks" "hide hide hide" "panel panel panel"; column-gap: 12px; row-gap: 8px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--line); }
 .cabinet-contact:last-child { border-bottom: 0; }
 .cabinet-contact__icon { grid-area: icon; display: grid; place-items: center; width: 28px; height: 28px; color: var(--dark); }
 .cabinet-contact__icon svg { width: 20px; height: 20px; }
@@ -651,6 +651,9 @@ a.cabinet-stat:hover { border-color: var(--primary); }
 .cabinet-contact__value:empty { display: none; }
 .cabinet-contact__marks { grid-area: marks; display: flex; justify-content: flex-end; align-items: center; }
 .cabinet-contact__marks .cabinet-mark--off { height: auto; min-height: 28px; max-width: 11rem; padding: 6px 10px; white-space: normal; text-align: right; line-height: 1.25; }
+.cabinet-contact__hide { grid-area: hide; display: flex; align-items: center; gap: 8px; width: fit-content; min-height: 44px; margin: 0; cursor: pointer; color: var(--muted); font-size: 14px; font-weight: var(--fw-body); line-height: 1.3; }
+.cabinet-contact__hide input { width: 18px; height: 18px; margin: 0; flex: 0 0 auto; accent-color: var(--primary); }
+.cabinet-contact__hide span { font-weight: var(--fw-body); }
 .cabinet-contact__panel { grid-area: panel; display: grid; gap: 8px; }
 .cabinet-contact__panel label { display: grid; gap: 6px; }
 .cabinet-contact__panel label span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
