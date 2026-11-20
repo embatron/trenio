@@ -457,15 +457,8 @@ body.is-search-docked .site-header__search {
     grid-row: 1;
     justify-self: end;
   }
-  .site-header__search { display: none; }
-  body.is-search-docked .site-header__search {
-    display: flex;
-    grid-column: 1 / -1;
-    grid-row: 2;
-    width: 100%;
-  }
-  body.is-search-docked .search-block--header,
-  body.is-search-docked .search-block--header .search-shell { width: 100%; }
+  .site-header__search,
+  body.is-search-docked .site-header__search { display: none; }
   .mega-sports__toggle {
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     width: 100%; min-height: 44px; margin: 0; padding: 0 4px;
