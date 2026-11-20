@@ -35,7 +35,7 @@ export const SITE_THREADS_URL = "https://www.threads.com/@trenioby";
 /** Square mark for the organization logo in structured data. */
 export const SITE_LOGO = "/logo-mark.png";
 
-/** 1200×630 card: the white wordmark on the footer background. */
+/** Brand share card, 1200×630, path /og.png. */
 export const DEFAULT_SHARE_IMAGE = "/og.png";
 
 export function absoluteUrl(pathOrUrl: string) {

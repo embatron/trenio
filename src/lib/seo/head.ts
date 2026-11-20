@@ -19,9 +19,9 @@ export type SeoHeadInput = {
   path: string;
   index?: boolean;
   follow?: boolean;
-  /** Site-relative or absolute image. Omit to use the 1200×630 wordmark card. */
+  /** Site-relative or absolute image. Omit to use the brand share card, 1200×630, path /og.png. */
   image?: string | null;
-  /** Alt for a page photo. The wordmark card keeps its own alt. */
+  /** Alt for a page photo. The brand share card keeps its own alt. */
   imageAlt?: string;
   /** Pixel size of `image`. Declared so a root 1200×630 does not stay attached to another file. */
   imageWidth?: number;

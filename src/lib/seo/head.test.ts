@@ -77,7 +77,7 @@ function assertKind(kind: SeoPageKind, head: HeadWithGraph) {
   assert.equal(JSON.stringify(head.scripts).includes("telephone"), false, kind);
 }
 
-test("the default share image is the wide wordmark card", () => {
+test("the default share image is the brand share card", () => {
   const head = seoHead({
     title: "Найти тренера",
     description: "Каталог тренеров.",
@@ -161,9 +161,9 @@ test("city and category snippets use the Belarus query, not an alias dump", () =
   assert.equal(head.meta.some((item) => "property" in item && item.property === "og:site_name"), false);
   const cityOnly = catalogPageHead(brest, null);
   assert.equal(metaContent(cityOnly, "property", "og:title"), "Найти тренера в Бресте");
-  const wordmark = cityOnly.meta.find((item) => "property" in item && item.property === "og:image");
+  const share = cityOnly.meta.find((item) => "property" in item && item.property === "og:image");
   assert.equal(
-    wordmark && "content" in wordmark ? wordmark.content : "",
+    share && "content" in share ? share.content : "",
     "https://trenio.by/og.png",
   );
   const fitness = categorySearchDescription("Найти тренера по фитнесу", "длинный текст", [
