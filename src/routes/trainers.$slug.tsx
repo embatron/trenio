@@ -309,6 +309,17 @@ const CSS = `
 .profile-access__text { margin: 0; min-width: 0; }
 .profile-access__open { display: inline; position: relative; margin: 0; padding: 0; border: 0; background: none; color: var(--primary); font: inherit; font-weight: var(--fw-title); line-height: inherit; text-decoration: underline; text-underline-offset: 3px; vertical-align: baseline; cursor: pointer; }
 .profile-access__open::after { content: ""; position: absolute; left: -6px; right: -6px; top: 50%; height: 44px; transform: translateY(-50%); }
+.door-publish { position: fixed; z-index: 55; inset-inline: 0; bottom: 0; display: flex; justify-content: center; padding: 12px var(--layout-gutter) calc(12px + env(safe-area-inset-bottom)); pointer-events: none; }
+.trainer-page:has(.door-publish) { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
+.door-publish button { pointer-events: auto; width: min(420px, 100%); min-height: 52px; padding: 0 18px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-size: 15px; font-weight: var(--fw-title); cursor: pointer; box-shadow: 0 12px 28px rgba(var(--primary-rgb), 0.28); }
+.door-publish button:hover, .door-publish button:focus-visible { background: var(--primary-dark); }
+.door-publish button:focus-visible { outline: 2px solid var(--dark); outline-offset: 3px; }
+body:has(.shell-tabs) .door-publish { bottom: calc(56px + env(safe-area-inset-bottom)); }
+body:has(.tg-tabbar.is-telegram) .door-publish { bottom: calc(76px + env(safe-area-inset-bottom)); }
+@media (max-width: 767px) {
+  .door-publish { bottom: calc(76px + env(safe-area-inset-bottom)); }
+  .trainer-page:has(.door-publish) { padding-bottom: calc(152px + env(safe-area-inset-bottom)); }
+}
 
 .profile-layout { display: grid; grid-template-columns: var(--aside-w) minmax(0, 1fr); gap: 32px; align-items: start; }
 .profile-main { position: relative; display: grid; gap: 22px; min-width: 0; }
@@ -843,8 +854,37 @@ function TrainerPage() {
   const searchStr = useRouterState({ select: (state) => state.location.searchStr });
   const openingMail = new URLSearchParams(searchStr).get("mail");
   const magicDoor = Boolean(editor?.magicDoor) && !isOwner && !openingMail;
-  const [mailOpen, setMailOpen] = useState(magicDoor);
+  const [mailOpen, setMailOpen] = useState(false);
+  const [doorMailHeld, setDoorMailHeld] = useState(false);
   const doorMailKey = `trenio-door-mail-to:${t.slug}`;
+  const doorArrivedKey = `trenio-door-arrived:${t.slug}`;
+  const doorHeldKey = `trenio-door-mail-held:${t.slug}`;
+  function openDoorMail() {
+    setMailOpen(true);
+  }
+  function closeDoorMail() {
+    setMailOpen(false);
+    setDoorMailHeld(true);
+    try { sessionStorage.setItem(doorHeldKey, "1"); } catch { /* this visit keeps the window closed */ }
+  }
+  useEffect(() => {
+    if (!magicDoor || doorMailHeld) return;
+    let arrived = Date.now();
+    try {
+      if (sessionStorage.getItem(doorHeldKey) === "1") {
+        setDoorMailHeld(true);
+        return;
+      }
+      const stored = Number(sessionStorage.getItem(doorArrivedKey));
+      if (Number.isFinite(stored) && stored > 0) arrived = stored;
+      else sessionStorage.setItem(doorArrivedKey, String(arrived));
+    } catch {
+      /* the timer starts from this paint */
+    }
+    const wait = Math.max(0, 15_000 - (Date.now() - arrived));
+    const timer = window.setTimeout(() => setMailOpen(true), wait);
+    return () => window.clearTimeout(timer);
+  }, [magicDoor, doorMailHeld, doorArrivedKey, doorHeldKey]);
   const [mailSentTo, setMailSentTo] = useState<string | null>(editor?.mailSentTo ?? editor?.renewMail ?? null);
   const [mailExpired, setMailExpired] = useState(!editor?.mailSentTo && Boolean(editor?.renewMail));
   const [mailChecked, setMailChecked] = useState(Boolean(editor?.mailSentTo || editor?.renewMail));
@@ -1038,7 +1078,7 @@ function TrainerPage() {
                   {magicDoor ? (
                     <>
                       {" "}
-                      <button type="button" className="profile-access__open" onClick={() => setMailOpen(true)}>
+                      <button type="button" className="profile-access__open" onClick={openDoorMail}>
                         Завершить создание кабинета
                       </button>
                     </>
@@ -1134,7 +1174,7 @@ function TrainerPage() {
                   </Link>
                 ) : null}
                 {magicDoor ? (
-                  <button type="button" className="profile-edit" aria-haspopup="dialog" aria-label="Создать аккаунт" title="Создать аккаунт" onClick={() => setMailOpen(true)}>
+                  <button type="button" className="profile-edit" aria-haspopup="dialog" aria-label="Создать аккаунт" title="Создать аккаунт" onClick={openDoorMail}>
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
                   </button>
                 ) : null}
@@ -1248,7 +1288,7 @@ function TrainerPage() {
                       {ownNote}{t.ownComment ? `. ${t.ownComment}` : null}
                     </p>
                   ) : isOwner ? null : magicDoor ? (
-                    <button type="button" className="review-add" onClick={() => setMailOpen(true)}>
+                    <button type="button" className="review-add" onClick={openDoorMail}>
                       {reviewLabel}
                     </button>
                   ) : user ? (
@@ -1348,6 +1388,11 @@ function TrainerPage() {
         </div>
       </main>
 
+      {magicDoor ? (
+        <div className="door-publish">
+          <button type="button" onClick={openDoorMail}>Опубликовать страницу</button>
+        </div>
+      ) : null}
       <SiteFooter />
       {user?.needsDoorPassword && !user.needsCredentials ? <DoorPasswordDialog /> : null}
       {createdOpen ? <CabinetCreatedDialog trainer={t} onClose={closeCreated} /> : null}
@@ -1356,7 +1401,7 @@ function TrainerPage() {
           sentTo={mailSentTo}
           expired={mailExpired}
           onRemember={rememberMail}
-          onClose={() => setMailOpen(false)}
+          onClose={closeDoorMail}
         />
       ) : null}
       {reviewSent ? (
