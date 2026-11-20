@@ -683,7 +683,7 @@ function menuCounts(
 function HeaderMenuLink({ item, count, onNavigate }: { item: HeaderMenuItem; count?: number; onNavigate: () => void }) {
   const props = { className: "account-menu__item", onClick: onNavigate };
   const hot = item.id === "messages";
-  const body = <><CabinetMark icon={item.icon} /><span className="account-menu__label">{item.label}</span><MenuCount count={count} hot={hot} full={item.id === "drafts"} /></>;
+  const body = <><CabinetMark icon={item.icon} /><span className="account-menu__label">{item.label}</span><MenuCount count={count} hot={hot} full={item.id === "drafts" || item.id === "active"} /></>;
   if (item.kind === "me") {
     return <Link to={item.to} activeOptions={item.to === "/me" ? { exact: true } : undefined} {...props}>{body}</Link>;
   }

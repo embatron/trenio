@@ -195,9 +195,9 @@ function navBadgeClass(id: string, count: number) {
   return `cabinet-nav__badge${id === "messages" && count > 0 ? " is-hot" : ""}`;
 }
 
-/** Drafts are a queue, so the sidebar shows the whole number. Other counts stop at 99. */
+/** Drafts and published trainers are inventory, so the sidebar shows the whole number. Other counts stop at 99. */
 function navBadgeText(id: string, count: number) {
-  if (id === "drafts") return String(count);
+  if (id === "drafts" || id === "active") return String(count);
   return count > 99 ? "99+" : String(count);
 }
 
