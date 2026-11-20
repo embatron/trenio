@@ -70,6 +70,8 @@ export function InstallBanner() {
     };
     const showBrowser = () => {
       if (cancelled || getTelegramWebApp()?.initData?.trim()) return;
+      if (document.documentElement.classList.contains("is-magic-door")) return;
+      if (window.location.pathname.startsWith("/hi/")) return;
       if (launchedInstalled()) {
         hideInstalled();
         return;
@@ -107,6 +109,10 @@ export function InstallBanner() {
       window.clearTimeout(timer);
       prepareTelegramWebApp();
       const webApp = getTelegramWebApp();
+      if (document.documentElement.classList.contains("is-magic-door") || window.location.pathname.startsWith("/hi/")) {
+        setPlace(null);
+        return;
+      }
       if (!webApp?.initData?.trim()) {
         showBrowser();
         return;

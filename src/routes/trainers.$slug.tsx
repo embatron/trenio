@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound, redirect, useRouteContext, useRouter, useRouterState } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { CabinetModal } from "@/components/cabinet";
 import { ReviewStars, STAR_PATH } from "@/components/review-stars";
 import { PhotoImage } from "@/components/photo-image";
@@ -309,16 +309,17 @@ const CSS = `
 .profile-access__text { margin: 0; min-width: 0; }
 .profile-access__open { display: inline; position: relative; margin: 0; padding: 0; border: 0; background: none; color: var(--primary); font: inherit; font-weight: var(--fw-title); line-height: inherit; text-decoration: underline; text-underline-offset: 3px; vertical-align: baseline; cursor: pointer; }
 .profile-access__open::after { content: ""; position: absolute; left: -6px; right: -6px; top: 50%; height: 44px; transform: translateY(-50%); }
-.door-publish { position: fixed; z-index: 55; inset-inline: 0; bottom: 0; display: flex; justify-content: center; padding: 12px var(--layout-gutter) calc(12px + env(safe-area-inset-bottom)); pointer-events: none; }
+html.is-magic-door .install-banner { display: none; }
+.door-publish { --door-publish-bottom: 0px; position: fixed; z-index: 80; inset-inline: 0; bottom: var(--door-publish-bottom); display: flex; justify-content: center; padding: 8px var(--layout-gutter) calc(8px + env(safe-area-inset-bottom)); pointer-events: none; }
 .trainer-page:has(.door-publish) { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
 .door-publish button { pointer-events: auto; width: min(420px, 100%); min-height: 52px; padding: 0 18px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-size: 15px; font-weight: var(--fw-title); cursor: pointer; box-shadow: 0 12px 28px rgba(var(--primary-rgb), 0.28); }
 .door-publish button:hover, .door-publish button:focus-visible { background: var(--primary-dark); }
 .door-publish button:focus-visible { outline: 2px solid var(--dark); outline-offset: 3px; }
-body:has(.shell-tabs) .door-publish { bottom: calc(56px + env(safe-area-inset-bottom)); }
-body:has(.tg-tabbar.is-telegram) .door-publish { bottom: calc(76px + env(safe-area-inset-bottom)); }
+body:has(.shell-tabs) .door-publish { --door-publish-bottom: calc(56px + env(safe-area-inset-bottom)); }
+body:has(.tg-tabbar.is-telegram) .door-publish { --door-publish-bottom: calc(69px + env(safe-area-inset-bottom)); }
 @media (max-width: 767px) {
-  .door-publish { bottom: calc(76px + env(safe-area-inset-bottom)); }
-  .trainer-page:has(.door-publish) { padding-bottom: calc(152px + env(safe-area-inset-bottom)); }
+  body:has(.tg-tabbar) .door-publish { --door-publish-bottom: calc(69px + env(safe-area-inset-bottom)); }
+  .trainer-page:has(.door-publish) { padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
 }
 
 .profile-layout { display: grid; grid-template-columns: var(--aside-w) minmax(0, 1fr); gap: 32px; align-items: start; }
@@ -332,9 +333,9 @@ body:has(.tg-tabbar.is-telegram) .door-publish { bottom: calc(76px + env(safe-ar
 
 .photo-slider { position: relative; }
 .photo-slider__frame { position: relative; aspect-ratio: 4/5; overflow: hidden; background: var(--white); }
-.photo-slider__viewport { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.photo-slider__viewport { display: flex; width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; }
 .photo-slider__viewport::-webkit-scrollbar { display: none; }
-.photo-slider__slide { flex: 0 0 100%; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; }
+.photo-slider__slide { flex: 0 0 100%; height: 100%; scroll-snap-align: start; }
 .photo-slider__slide img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; user-select: none; }
 .photo-slider__badge { position: absolute; top: 12px; left: 12px; z-index: 2; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,0.94); color: var(--primary-dark); font-size: 11px; font-weight: var(--fw-title); letter-spacing: 0.02em; text-transform: uppercase; box-shadow: 0 6px 18px rgba(var(--dark-rgb),0.08); }
 .profile-actions { position: absolute; top: 0; right: 0; z-index: 3; display: flex; flex-direction: column; gap: 0; opacity: 0.85; transition: opacity 0.18s ease; }
@@ -1045,10 +1046,32 @@ function TrainerPage() {
     track.scrollTo({ left: Math.max(0, left), behavior: scrollMotion() });
   }, [photoIdx]);
 
-  useEffect(() => {
+  const publishRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
     document.body.classList.add("page-trainer");
-    return () => document.body.classList.remove("page-trainer");
-  }, []);
+    document.documentElement.classList.toggle("is-magic-door", magicDoor);
+    return () => {
+      document.body.classList.remove("page-trainer");
+      document.documentElement.classList.remove("is-magic-door");
+    };
+  }, [magicDoor]);
+  useEffect(() => {
+    const bar = publishRef.current;
+    if (!bar) return;
+    const pin = () => {
+      const vv = window.visualViewport;
+      const inset = vv ? Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop)) : 0;
+      const next = inset > 0 ? `calc(var(--door-publish-bottom, 0px) + ${inset}px)` : "";
+      if (bar.style.bottom !== next) bar.style.bottom = next;
+    };
+    pin();
+    window.visualViewport?.addEventListener("resize", pin);
+    window.visualViewport?.addEventListener("scroll", pin);
+    return () => {
+      window.visualViewport?.removeEventListener("resize", pin);
+      window.visualViewport?.removeEventListener("scroll", pin);
+    };
+  }, [magicDoor]);
 
   return (
     <div className="page-shell trainer-page">
@@ -1389,7 +1412,7 @@ function TrainerPage() {
       </main>
 
       {magicDoor ? (
-        <div className="door-publish">
+        <div className="door-publish" ref={publishRef}>
           <button type="button" onClick={openDoorMail}>Опубликовать страницу</button>
         </div>
       ) : null}
