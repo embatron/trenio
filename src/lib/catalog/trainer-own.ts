@@ -71,6 +71,7 @@ export type OwnTrainerProfile = {
   phoneVerified: boolean;
   emailVerified: boolean;
   telegramVerified: boolean;
+  createdSource: string;
   /** «Не показывать на странице» is on. The contact stays in the cabinet. */
   hidePhone: boolean;
   hideInstagram: boolean;
@@ -245,6 +246,7 @@ const emptyProfile: OwnTrainerProfile = {
   phoneVerified: false,
   emailVerified: false,
   telegramVerified: false,
+  createdSource: "",
   hidePhone: false,
   hideInstagram: false,
   hideTelegram: false,
@@ -342,6 +344,7 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
       phoneVerified,
       emailVerified,
       telegramVerified: row.telegramVerifiedAt != null,
+      createdSource: row.createdSource,
       hidePhone: row.hidePhone,
       hideInstagram: row.hideInstagram,
       hideTelegram: row.hideTelegram,

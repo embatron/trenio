@@ -19,6 +19,16 @@ export function cabinetInstagram(input: {
   return `https://instagram.com/${handle}`;
 }
 
+/**
+ * Cabinet mark for Instagram.
+ * A handle typed on /join/account is only saved. An imported nick is the account itself.
+ * Null means the mark says «Добавлен», not «Подтверждён».
+ */
+export function instagramCabinetVerified(createdSource: string, instagram: string): boolean | null {
+  if (!instagram.trim()) return null;
+  return createdSource === "self" ? null : true;
+}
+
 export type TelegramPhoneAction =
   | { kind: "ignore" }
   | { kind: "keep" }

@@ -20,6 +20,7 @@ import {
 } from "@/lib/auth/functions";
 import type { TelegramWidgetUser } from "@/lib/auth/telegram-widget";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
+import { instagramCabinetVerified } from "@/lib/catalog/trainer-contact-cross";
 import { saveOwnTrainerHeadlineFn, setOwnContactHiddenFn, type OwnTrainerProfile } from "@/lib/catalog/trainer-own";
 import { getTelegramWebAppInitData, requestTelegramContact } from "@/lib/telegram-webapp";
 
@@ -668,7 +669,7 @@ export function TrainerContactStatus({ profile }: { profile: OwnTrainerProfile }
         label="Instagram"
         value={channelLabel(instagram, "instagram")}
         added={Boolean(instagram)}
-        verified={instagram ? true : null}
+        verified={instagramCabinetVerified(profile.createdSource, instagram)}
         gender="m"
         channel="instagram"
         hidden={profile.hideInstagram}

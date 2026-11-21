@@ -293,7 +293,7 @@ function EmailField({
   );
 }
 
-function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean }) {
+function PhoneField({ phone, self, signup = false }: { phone: TrainerPhoneControl; self: boolean; signup?: boolean }) {
   const [editing, setEditing] = useState(phone.linked ? !phone.value : false);
   const [phoneCaret, setPhoneCaret] = useState(0);
   const [value, setValue] = useState(
@@ -322,7 +322,7 @@ function PhoneField({ phone, self }: { phone: TrainerPhoneControl; self: boolean
             onValue={(next) => phone.onChange(next === BY_PHONE_COUNTRY_PREFIX ? "" : next)}
           />
         </ContactControl>
-        <p className="cabinet-note">Подтверждение по SMS появится после привязки аккаунта.</p>
+        {signup ? null : <p className="cabinet-note">Подтверждение по SMS появится после привязки аккаунта.</p>}
       </label>
     );
   }
@@ -716,7 +716,7 @@ export function TrainerCardFields({
       ) : null}
       {showContacts ? (
       <ProfileSection id="trainer-contacts" title="Контакты" plain={mode === "contacts"}>
-        <PhoneField phone={phone} self={self} />
+        <PhoneField phone={phone} self={self} signup={signup} />
         <label>
           <span className="cabinet-form__label-row">
             <span>Instagram</span>
@@ -772,6 +772,11 @@ export function TrainerCardFields({
             </p>
           ) : null}
         </label>
+        {signup ? (
+          <p className="cabinet-note">
+            Телефон, Instagram и Telegram сохраняются на карточке. Телефон и Telegram подтверждаются в кабинете и до этого не показываются на странице.
+          </p>
+        ) : null}
         {signup ? null : emailConfirm ? (
           <EmailField email={values.email} {...emailConfirm} />
         ) : (

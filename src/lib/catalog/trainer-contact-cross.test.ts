@@ -6,6 +6,7 @@ import { readTelegramContact } from "@/auth/telegram-contact";
 import { parseTelegramWidgetUser, verifyTelegramWidgetUser } from "@/auth/telegram";
 import {
   cabinetInstagram,
+  instagramCabinetVerified,
   decideTelegramCard,
   decideTelegramPhone,
   planSmsPhone,
@@ -85,6 +86,13 @@ test("a broken URL falls back to the imported nick, and a synthetic nick stays h
     cabinetInstagram({ instagramUrl: "javascript:alert(1)", instagramHandle: "shum_ann", createdSource: "import" }),
     "https://instagram.com/shum_ann",
   );
+});
+
+test("a self-typed Instagram is saved and not marked confirmed", () => {
+  assert.equal(instagramCabinetVerified("self", "https://instagram.com/coach.name"), null);
+  assert.equal(instagramCabinetVerified("self", "  "), null);
+  assert.equal(instagramCabinetVerified("import", "https://instagram.com/shum_ann"), true);
+  assert.equal(instagramCabinetVerified("import", ""), null);
 });
 
 test("Telegram phone matrix", () => {

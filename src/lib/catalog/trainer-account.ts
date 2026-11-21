@@ -66,6 +66,7 @@ function cardFromDraft(draft: TrainerSignupDraft | null) {
     phone: draft.phone,
     instagramUrl: draft.instagram,
     telegram: draft.telegram,
+    telegramVerifiedAt: null,
   };
 }
 
