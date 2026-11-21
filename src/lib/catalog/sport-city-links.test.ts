@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { catalogSportById, linkedSportCities, trainersInCityPhrase } from "@/lib/catalog/catalog-sports";
+import { catalogSportById, linkedSportCities, sportCrowdPhrase, trainersInCityPhrase } from "@/lib/catalog/catalog-sports";
 import { cityCatalogBySlug, listCityCatalogPages } from "@/lib/catalog/city-pages";
 
 test("the city link uses the catalog case", () => {
@@ -26,6 +26,9 @@ test("the city link uses the catalog case", () => {
   assert.equal(trainersInCityPhrase(jumping, grodno), "Инструкторы по джампингу в Гродно");
   assert.equal(trainersInCityPhrase(lfk, minsk), "Инструкторы ЛФК в Минске");
   assert.equal(trainersInCityPhrase(ofp, minsk), "Тренеры по общефизической подготовке в Минске");
+  assert.equal(sportCrowdPhrase(gym), "Инструкторы по тренажёрному залу");
+  assert.equal(sportCrowdPhrase(fitness), "Инструкторы по фитнесу");
+  assert.equal(sportCrowdPhrase(boxing), "Тренеры по боксу");
 });
 
 test("a sport page links three to five other cities that already have a trainer", () => {

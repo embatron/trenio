@@ -37,6 +37,7 @@ import {
   catalogSportPhrase,
   filterCatalogSports,
   linkedSportCities,
+  sportCrowdPhrase,
   trainerMatchesSportSelection,
   trainersInCityPhrase,
   type CatalogSport,
@@ -79,9 +80,10 @@ export const Route = createFileRoute("/categories/$slug")({
     const voice = categoryVoice(c);
     const title = categoryPageTitle(voice.keyword, voice.po);
     const path = `/categories/${params.slug}`;
+    const sport = catalogSportById(params.slug);
     const desc = categorySearchDescription(
       documentLead(title),
-      categoryHeroLead(voice.keyword, categoryTopicLabels(c), [], voice.po),
+      categoryHeroLead(voice.keyword, categoryTopicLabels(c), [], voice.po, sport ? sportCrowdPhrase(sport) : undefined),
       getTopLevelSportCategory(params.slug)?.aliases,
     );
     return categoryRouteHead({
@@ -328,16 +330,23 @@ function topicInSentence(item: string) {
   return first.toLowerCase() + item.slice(1);
 }
 
-export function categoryHeroLead(keyword: string, topics: string[], aliases: string[] = [], po = true) {
+export function categoryHeroLead(
+  keyword: string,
+  topics: string[],
+  aliases: string[] = [],
+  po = true,
+  who?: string,
+) {
   const name = po ? `по ${keyword}` : keyword;
+  const crowd = who?.trim() || `Тренеры ${name}`;
   const list = topics.map(topicInSentence).join(", ");
   const extra = aliases
     .filter((alias) => alias.toLowerCase() !== keyword.toLowerCase())
     .slice(0, 2)
     .join(", ");
   const focus = list
-    ? `Тренеры ${name} в Беларуси: ${list}.`
-    : `Тренеры ${name} в Беларуси${extra ? `, в том числе ${extra}` : ""}.`;
+    ? `${crowd} в Беларуси: ${list}.`
+    : `${crowd} в Беларуси${extra ? `, в том числе ${extra}` : ""}.`;
   return `${focus} Подбор по городу, цене и формату — индивидуально или в группе, для взрослых и детей.`;
 }
 
@@ -897,9 +906,6 @@ export function CategoryCatalogPage({
   const heroAliases = parentCategory && category
     ? (getSportTaxonomyChildInCategory(parentCategory.slug, category.slug)?.aliases ?? [])
     : [];
-  const heroLead = category
-    ? categoryHeroLead(keyword, parentCategory ? [] : categoryTopicLabels(category), heroAliases, voice.po)
-    : "";
   const pageVoice = pageSport ? catalogSportPhrase(pageSport) : null;
   const topLevelCategory = parentSlug ? getTopLevelSportCategory(parentSlug) : undefined;
   const heroImage = pageSport
@@ -914,6 +920,16 @@ export function CategoryCatalogPage({
       ? catalogSportById(`${parentCategory.slug}/${category.slug}`) ?? catalogSportById(category.slug)
       : catalogSportById(category.slug)
     : null;
+  const crowdSport = pageSport ?? categorySport;
+  const heroLead = category
+    ? categoryHeroLead(
+        keyword,
+        parentCategory ? [] : categoryTopicLabels(category),
+        heroAliases,
+        voice.po,
+        crowdSport ? sportCrowdPhrase(crowdSport) : undefined,
+      )
+    : "";
 
   const [selectedSports, setSelectedSports] = useState<CatalogSport[]>(() =>
     pageSport ? [pageSport] : sportSelection.length > 0 ? sportSelection : categorySport ? [categorySport] : [],
@@ -1398,7 +1414,7 @@ export function CategoryCatalogPage({
               </div>
               <p className="cat-hero__lead">
                 {pageSport && cityCatalog && pageVoice
-                  ? `Тренеры ${pageVoice.po ? `по ${pageVoice.keyword}` : pageVoice.keyword} в ${cityCatalog.locative}. Подбор по цене и формату — индивидуально или в группе, для взрослых и детей.`
+                  ? `${sportCrowdPhrase(pageSport)} в ${cityCatalog.locative}. Подбор по цене и формату — индивидуально или в группе, для взрослых и детей.`
                   : cityCatalog
                     ? `Тренеры в ${cityCatalog.locative} по всем видам спорта. Подбор по направлению, цене и формату — индивидуально или в группе, для взрослых и детей.`
                     : heroLead}
@@ -2008,7 +2024,13 @@ export function CategoryCatalogPage({
                 ))}
                 {directionCities.length > 0 && directionSport ? (
                   <>
-                    <p>{mapCitySlug ? "Тот же список есть и в других городах." : "Тренеры этого вида уже есть в нескольких городах."}</p>
+                    <p>
+                      {mapCitySlug
+                        ? "Тот же список есть и в других городах."
+                        : directionSport && sportCrowdPhrase(directionSport).startsWith("Инструкторы")
+                          ? "Инструкторы этого вида уже есть в нескольких городах."
+                          : "Тренеры этого вида уже есть в нескольких городах."}
+                    </p>
                     <ul className="cat-city-links">
                       {directionCities.map((city) => {
                         const location = catalogSportLocation(city.slug, directionSport);

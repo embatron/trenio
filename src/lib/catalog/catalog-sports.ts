@@ -462,20 +462,25 @@ function pluralProfession(lead: string) {
 }
 
 /**
- * «Тренеры по боксу в Минске», «Инструкторы по тренажёрному залу в Гродно».
+ * «Тренеры по боксу», «Инструкторы по фитнесу», «Инструкторы по тренажёрному залу».
  * A gym line does not say «тренеры тренажёрного зала»: that role is «инструктор по …».
  */
-export function trainersInCityPhrase(sport: CatalogSport, city: Pick<CityCatalogPage, "locative">) {
-  if (sport.level === 1 && sport.slug === "fitnes") return `Инструкторы по фитнесу в ${city.locative}`;
+export function sportCrowdPhrase(sport: CatalogSport) {
+  if (sport.level === 1 && sport.slug === "fitnes") return "Инструкторы по фитнесу";
   const role = trainerSportRoles([{ slug: sport.slug, label: sport.label }])[0];
-  if (!role?.text) return `Тренеры в ${city.locative}`;
-  if (!role.lead) return `${pluralProfession(role.text)} в ${city.locative}`;
+  if (!role?.text) return "Тренеры";
+  if (!role.lead) return pluralProfession(role.text);
   const lead = pluralProfession(role.lead);
   if (role.lead === "Инструктор" && !role.po && sport.titleBare && sport.titleGenitive) {
-    return `${lead} по ${sport.titleGenitive} в ${city.locative}`;
+    return `${lead} по ${sport.titleGenitive}`;
   }
   const name = role.po ? `по ${role.text}` : role.text;
-  return `${lead} ${name} в ${city.locative}`;
+  return `${lead} ${name}`;
+}
+
+/** «Тренеры по боксу в Минске», «Инструкторы по тренажёрному залу в Гродно». */
+export function trainersInCityPhrase(sport: CatalogSport, city: Pick<CityCatalogPage, "locative">) {
+  return `${sportCrowdPhrase(sport)} в ${city.locative}`;
 }
 
 function stableCityPick(value: string) {

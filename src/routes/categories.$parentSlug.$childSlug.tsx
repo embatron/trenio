@@ -5,6 +5,7 @@ import {
   getTopLevelSportCategory,
   getSportTaxonomyChildInCategory,
 } from "@/lib/catalog/sport-taxonomy";
+import { catalogSportById, sportCrowdPhrase } from "@/lib/catalog/catalog-sports";
 import { categoryRouteHead } from "@/lib/seo/catalog";
 import { documentLead, siteTitle } from "@/lib/seo/site";
 import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
@@ -45,9 +46,10 @@ export const Route = createFileRoute("/categories/$parentSlug/$childSlug")({
     const voice = categoryVoice(category, params.parentSlug);
     const title = categoryPageTitle(voice.keyword, voice.po);
     const aliases = getSportTaxonomyChildInCategory(params.parentSlug, params.childSlug)?.aliases;
+    const sport = catalogSportById(`${params.parentSlug}/${params.childSlug}`) ?? catalogSportById(params.childSlug);
     const desc = categorySearchDescription(
       documentLead(title),
-      categoryHeroLead(voice.keyword, [], aliases, voice.po),
+      categoryHeroLead(voice.keyword, [], aliases, voice.po, sport ? sportCrowdPhrase(sport) : undefined),
       aliases,
     );
     const path = `/categories/${params.parentSlug}/${params.childSlug}`;
