@@ -4,6 +4,7 @@ import {
   TOP_LEVEL_SPORT_CATEGORIES,
   getTopLevelSportCategory,
   trainerSectionBySlug,
+  trainerSportRoles,
 } from "@/lib/catalog/sport-taxonomy";
 
 /** Public origin for canonical URLs and the sitemap. */
@@ -439,6 +440,72 @@ export function citySportPageIsOpen(
     city,
     sport,
   );
+}
+
+function capRu(value: string) {
+  const chars = [...value];
+  if (chars.length === 0) return value;
+  chars[0] = chars[0].toLocaleUpperCase("ru");
+  return chars.join("");
+}
+
+/** «Тренер» → «Тренеры», «Инструктор» → «Инструкторы», «фитнес-тренер» → «Фитнес-тренеры». */
+function pluralProfession(lead: string) {
+  const value = lead.trim();
+  const lower = value.toLocaleLowerCase("ru");
+  if (lower === "тренер") return "Тренеры";
+  if (lower === "инструктор") return "Инструкторы";
+  if (lower === "массажист") return "Массажисты";
+  if (lower.endsWith("-тренер")) return capRu(`${value.slice(0, -"тренер".length)}тренеры`);
+  if (lower.startsWith("инструктор ")) return `Инструкторы ${value.slice("инструктор ".length)}`;
+  return capRu(value);
+}
+
+/**
+ * «Тренеры по боксу в Минске», «Инструкторы по тренажёрному залу в Гродно».
+ * A gym line does not say «тренеры тренажёрного зала»: that role is «инструктор по …».
+ */
+export function trainersInCityPhrase(sport: CatalogSport, city: Pick<CityCatalogPage, "locative">) {
+  if (sport.level === 1 && sport.slug === "fitnes") return `Инструкторы по фитнесу в ${city.locative}`;
+  const role = trainerSportRoles([{ slug: sport.slug, label: sport.label }])[0];
+  if (!role?.text) return `Тренеры в ${city.locative}`;
+  if (!role.lead) return `${pluralProfession(role.text)} в ${city.locative}`;
+  const lead = pluralProfession(role.lead);
+  if (role.lead === "Инструктор" && !role.po && sport.titleBare && sport.titleGenitive) {
+    return `${lead} по ${sport.titleGenitive} в ${city.locative}`;
+  }
+  const name = role.po ? `по ${role.text}` : role.text;
+  return `${lead} ${name} в ${city.locative}`;
+}
+
+function stableCityPick(value: string) {
+  let hash = 0;
+  for (const char of value) hash = (Math.imul(hash, 33) + (char.codePointAt(0) ?? 0)) >>> 0;
+  return hash;
+}
+
+/**
+ * Three to five cities that already have a published trainer for this sport.
+ * The current city stays out. The set is stable for a sport, so a reload does not reshuffle the links.
+ */
+export function linkedSportCities(
+  trainers: CitySportPresence[],
+  sport: CatalogSport,
+  excludeSlug?: string | null,
+) {
+  const open = listCityCatalogPages().filter((city) => {
+    if (excludeSlug && city.slug === excludeSlug) return false;
+    return citySportHasTrainer(trainers, city, sport);
+  });
+  if (open.length === 0) return [];
+  const span = Math.min(5, open.length);
+  const floor = Math.min(3, span);
+  const count = floor + (span > floor ? stableCityPick(sport.id) % (span - floor + 1) : 0);
+  const ranked = open
+    .map((city) => ({ city, rank: stableCityPick(`${sport.id}:${city.slug}`) }))
+    .sort((a, b) => a.rank - b.rank || a.city.slug.localeCompare(b.city.slug));
+  const picked = new Set(ranked.slice(0, count).map((item) => item.city.slug));
+  return open.filter((city) => picked.has(city.slug));
 }
 
 /** City + sport paths that currently have a published trainer. */

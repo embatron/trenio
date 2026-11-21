@@ -36,7 +36,9 @@ import {
   catalogSportLocation,
   catalogSportPhrase,
   filterCatalogSports,
+  linkedSportCities,
   trainerMatchesSportSelection,
+  trainersInCityPhrase,
   type CatalogSport,
 } from "@/lib/catalog/catalog-sports";
 import {
@@ -792,6 +794,9 @@ a.cat-pill { text-decoration: none; }
 .cat-article { display: grid; grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr); gap: var(--layout-gap); align-items: start; }
 .cat-article__body { display: grid; gap: 16px; }
 .cat-article__body p { margin: 0; color: #4a4a4f; font-size: 15px; line-height: 1.65; }
+.cat-city-links { list-style: none; display: grid; gap: 4px; margin: 0; padding: 0; }
+.cat-city-links a { display: inline-flex; align-items: center; min-height: 44px; color: var(--primary); font-size: 15px; line-height: 1.35; text-decoration: none; }
+.cat-city-links a:hover { text-decoration: underline; }
 .cat-article__aside { background: var(--light-bg); border-radius: var(--card-radius); padding: 26px; }
 .cat-article__aside h4 { margin: 0 0 14px; font-size: 16px; font-weight: var(--fw-title); letter-spacing: -0.02em; }
 .cat-related { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -1042,6 +1047,28 @@ export function CategoryCatalogPage({
     }))];
     return slugs.length === 1 ? slugs[0] : undefined;
   }, [cityCatalog, selectedCities, cityQuery]);
+
+  const directionSport = pageSport ?? categorySport;
+  const directionCities = useMemo(() => {
+    if (!directionSport) return [];
+    return linkedSportCities(
+      trainers.map((trainer) => ({
+        city: trainer.city.label,
+        sportSlugs: trainer.sports.map((sport) => sport.slug),
+        sportParents: trainer.sports.map((sport) => sport.parentSlug),
+      })),
+      directionSport,
+      mapCitySlug,
+    );
+  }, [directionSport, mapCitySlug, trainers]);
+  const directionAbout = category?.about.length
+    ? category.about
+    : directionSport
+      ? categoryAbout(
+          directionSport.level === 1 ? directionSport.slug : directionSport.parentSlug,
+          directionSport.level === 2 ? directionSport.slug : undefined,
+        )
+      : [];
 
   const filtered = useMemo(() => {
     let list = allTrainers.filter((t) => {
@@ -1971,15 +1998,39 @@ export function CategoryCatalogPage({
         </div>
 
         <div className="layout-container cat-extra">
-          {category && category.about.length > 0 ? (
+          {directionAbout.length > 0 || directionCities.length > 0 ? (
           <section className="cat-block">
             <h2>О направлении</h2>
-            <div className="cat-article">
+            <div className={category && category.related.length > 0 ? "cat-article" : "cat-article__body"}>
               <div className="cat-article__body">
-                {category.about.map((paragraph) => (
+                {directionAbout.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
+                {directionCities.length > 0 && directionSport ? (
+                  <>
+                    <p>{mapCitySlug ? "Тот же список есть и в других городах." : "Тренеры этого вида уже есть в нескольких городах."}</p>
+                    <ul className="cat-city-links">
+                      {directionCities.map((city) => {
+                        const location = catalogSportLocation(city.slug, directionSport);
+                        const label = trainersInCityPhrase(directionSport, city);
+                        if (location.to === "/city/$slug/$sport/$child") {
+                          return (
+                            <li key={city.slug}>
+                              <Link to={location.to} params={location.params}>{label}</Link>
+                            </li>
+                          );
+                        }
+                        return (
+                          <li key={city.slug}>
+                            <Link to={location.to} params={location.params}>{label}</Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </>
+                ) : null}
               </div>
+              {category && category.related.length > 0 ? (
               <aside className="cat-article__aside">
                 <h4>Смежные направления</h4>
                 <div className="cat-related">
@@ -1990,6 +2041,7 @@ export function CategoryCatalogPage({
                   ))}
                 </div>
               </aside>
+              ) : null}
             </div>
           </section>
           ) : null}
