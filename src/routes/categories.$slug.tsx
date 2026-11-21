@@ -34,7 +34,8 @@ import {
   catalogSportById,
   catalogSportByName,
   catalogSportLocation,
-  catalogSportPhrase,
+  catalogFindRest,
+  catalogFindVoice,
   filterCatalogSports,
   linkedSportCities,
   sportCrowdPhrase,
@@ -78,9 +79,12 @@ export const Route = createFileRoute("/categories/$slug")({
   head: ({ params }) => {
     const c = resolveParentCategory(params.slug);
     const voice = categoryVoice(c);
-    const title = categoryPageTitle(voice.keyword, voice.po);
-    const path = `/categories/${params.slug}`;
     const sport = catalogSportById(params.slug);
+    const find = sport ? catalogFindVoice(sport) : null;
+    const title = find
+      ? categoryPageTitle(find.keyword, find.po, find.who)
+      : categoryPageTitle(voice.keyword, voice.po);
+    const path = `/categories/${params.slug}`;
     const desc = categorySearchDescription(
       documentLead(title),
       categoryHeroLead(voice.keyword, categoryTopicLabels(c), [], voice.po, sport ? sportCrowdPhrase(sport) : undefined),
@@ -310,8 +314,9 @@ export function categoryVoice(
   };
 }
 
-export function categoryPageTitle(keyword: string, po = true) {
-  return siteTitle(`Найти тренера ${po ? `по ${keyword}` : keyword}`);
+export function categoryPageTitle(keyword: string, po = true, who = "тренера") {
+  const rest = keyword ? (po ? ` по ${keyword}` : ` ${keyword}`) : "";
+  return siteTitle(`Найти ${who}${rest}`);
 }
 
 export function categoryTopicLabels(category: Pick<Category, "slug" | "subSports">, parentSlug?: string) {
@@ -906,7 +911,6 @@ export function CategoryCatalogPage({
   const heroAliases = parentCategory && category
     ? (getSportTaxonomyChildInCategory(parentCategory.slug, category.slug)?.aliases ?? [])
     : [];
-  const pageVoice = pageSport ? catalogSportPhrase(pageSport) : null;
   const topLevelCategory = parentSlug ? getTopLevelSportCategory(parentSlug) : undefined;
   const heroImage = pageSport
     ? getParentCategoryFeaturedImage(pageSport.parentSlug)
@@ -921,6 +925,7 @@ export function CategoryCatalogPage({
       : catalogSportById(category.slug)
     : null;
   const crowdSport = pageSport ?? categorySport;
+  const findVoice = crowdSport ? catalogFindVoice(crowdSport) : null;
   const heroLead = category
     ? categoryHeroLead(
         keyword,
@@ -1403,17 +1408,19 @@ export function CategoryCatalogPage({
                   )}
                 </nav>
                 <h1 className="cat-hero__title">
-                  {pageSport && cityCatalog && pageVoice ? (
-                    <>Найти тренера {pageVoice.po ? "по " : ""}<em>{pageVoice.keyword}</em> в {cityCatalog.locative}</>
+                  {pageSport && cityCatalog && findVoice ? (
+                    <>Найти {findVoice.who}{findVoice.keyword ? <> {findVoice.po ? "по " : ""}<em>{findVoice.keyword}</em></> : null} в {cityCatalog.locative}</>
                   ) : cityCatalog ? (
                     <>Найти тренера в <em>{cityCatalog.locative}</em></>
+                  ) : findVoice ? (
+                    <>Найти {findVoice.who}{findVoice.keyword ? <> {findVoice.po ? "по " : ""}<em>{findVoice.keyword}</em></> : null}</>
                   ) : (
                     <>Найти тренера {voice.po ? "по " : ""}<em>{keyword}</em></>
                   )}
                 </h1>
               </div>
               <p className="cat-hero__lead">
-                {pageSport && cityCatalog && pageVoice
+                {pageSport && cityCatalog && findVoice
                   ? `${sportCrowdPhrase(pageSport)} в ${cityCatalog.locative}. Подбор по цене и формату — индивидуально или в группе, для взрослых и детей.`
                   : cityCatalog
                     ? `Тренеры в ${cityCatalog.locative} по всем видам спорта. Подбор по направлению, цене и формату — индивидуально или в группе, для взрослых и детей.`
@@ -1939,11 +1946,13 @@ export function CategoryCatalogPage({
                 </div>
                 <h3>
                   {allTrainers.length === 0 || category?.isEmpty
-                    ? pageSport && cityCatalog
-                      ? `Тренеров ${pageVoice?.po === false ? pageVoice.keyword : `по ${pageVoice?.keyword ?? pageSport.titleGenitive}`} в ${cityCatalog.locative} пока нет`
+                    ? pageSport && cityCatalog && findVoice
+                      ? `${findVoice.none}${catalogFindRest(findVoice)} в ${cityCatalog.locative} пока нет`
                       : cityCatalog
                         ? `Тренеров в ${cityCatalog.locative} пока нет`
-                        : `Тренеров ${voice.po ? `по ${keyword}` : keyword} пока нет`
+                        : findVoice
+                          ? `${findVoice.none}${catalogFindRest(findVoice)} пока нет`
+                          : `Тренеров ${voice.po ? `по ${keyword}` : keyword} пока нет`
                     : "По вашим фильтрам ничего не нашлось"}
                 </h3>
                 <p>
@@ -2084,7 +2093,7 @@ export function CategoryCatalogPage({
 
           <section className="cat-cta">
             <div>
-              <h2>{pageSport && cityCatalog && pageVoice ? `Вы тренер ${pageVoice.po ? `по ${pageVoice.keyword}` : pageVoice.keyword} в ${cityCatalog.locative}?` : cityCatalog ? `Вы тренер в ${cityCatalog.locative}?` : `Вы тренер ${voice.po ? `по ${keyword}` : keyword}?`}</h2>
+              <h2>{pageSport && cityCatalog && findVoice ? `Вы ${findVoice.you}${catalogFindRest(findVoice)} в ${cityCatalog.locative}?` : cityCatalog ? `Вы тренер в ${cityCatalog.locative}?` : findVoice ? `Вы ${findVoice.you}${catalogFindRest(findVoice)}?` : `Вы тренер ${voice.po ? `по ${keyword}` : keyword}?`}</h2>
               <p>{TRAINER_INVITE_LINE}</p>
             </div>
             <Link to="/join/trainer">Стать тренером</Link>

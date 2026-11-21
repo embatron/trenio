@@ -169,7 +169,7 @@ test("a section can be stored, and the gym phrase drops по", () => {
   assert.equal(catalogSportPhrase(gym).keyword, "тренажёрного зала");
   assert.equal(
     catalogPagePhrase({ locative: "Минске" } as never, gym),
-    "Найти тренера тренажёрного зала в Минске",
+    "Найти инструктора по тренажёрному залу в Минске",
   );
   assert.equal(
     trainerIntroPhrase(trainerSportRoles([{ slug: "fitnes", label: "Фитнес" }])),

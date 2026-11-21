@@ -376,11 +376,60 @@ export function catalogSportPhrase(sport: Pick<CatalogSport, "titleGenitive" | "
     : { keyword: sport.titleGenitive, po: true };
 }
 
+export type CatalogFindVoice = {
+  /** Accusative after «Найти»: «тренера», «инструктора», «массажиста». */
+  who: string;
+  /** Nominative after «Вы». */
+  you: string;
+  /** Genitive plural when the list is empty: «Тренеров». */
+  none: string;
+  keyword: string;
+  po: boolean;
+};
+
+function professionCase(lead: string): Pick<CatalogFindVoice, "who" | "you" | "none"> {
+  const lower = lead.trim().toLocaleLowerCase("ru");
+  if (lower === "инструктор") return { who: "инструктора", you: "инструктор", none: "Инструкторов" };
+  if (lower === "массажист") return { who: "массажиста", you: "массажист", none: "Массажистов" };
+  return { who: "тренера", you: "тренер", none: "Тренеров" };
+}
+
+/**
+ * «Найти тренера по боксу», «Найти инструктора по тренажёрному залу», «Найти массажиста».
+ * The profession follows the profile role. A gym line keeps «по», so it does not read «тренера тренажёрного зала».
+ */
+export function catalogFindVoice(sport: CatalogSport): CatalogFindVoice {
+  if (sport.level === 1 && sport.slug === "fitnes") {
+    return { ...professionCase("инструктор"), keyword: "фитнесу", po: true };
+  }
+  const role = trainerSportRoles([{ slug: sport.slug, label: sport.label }])[0];
+  if (!role?.text) return { ...professionCase("тренер"), keyword: sport.titleGenitive, po: true };
+  if (!role.lead) {
+    const lower = role.text.toLocaleLowerCase("ru");
+    if (lower === "массажист") return { ...professionCase("массажист"), keyword: "", po: false };
+    if (lower.startsWith("инструктор ")) {
+      return { ...professionCase("инструктор"), keyword: role.text.slice("инструктор ".length), po: false };
+    }
+    const voice = catalogSportPhrase(sport);
+    return { ...professionCase("тренер"), keyword: voice.keyword, po: voice.po };
+  }
+  const person = professionCase(role.lead);
+  if (role.lead === "Инструктор" && !role.po && sport.titleGenitive) {
+    return { ...person, keyword: sport.titleGenitive, po: true };
+  }
+  return { ...person, keyword: role.text, po: role.po };
+}
+
+/** Sport words after the profession, with the leading space. Empty when the profession is the whole line. */
+export function catalogFindRest(voice: Pick<CatalogFindVoice, "keyword" | "po">) {
+  if (!voice.keyword) return "";
+  return voice.po ? ` по ${voice.keyword}` : ` ${voice.keyword}`;
+}
+
 export function catalogPagePhrase(city: CityCatalogPage, sport: CatalogSport | null) {
   if (!sport) return `Найти тренера в ${city.locative}`;
-  const voice = catalogSportPhrase(sport);
-  const name = voice.po ? `по ${voice.keyword}` : voice.keyword;
-  return `Найти тренера ${name} в ${city.locative}`;
+  const voice = catalogFindVoice(sport);
+  return `Найти ${voice.who}${catalogFindRest(voice)} в ${city.locative}`;
 }
 
 export function listCatalogSitemapPaths() {

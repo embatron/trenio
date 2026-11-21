@@ -738,7 +738,7 @@ export function pickSearchAlias(keyword: string, aliases?: string[]) {
 export function categorySearchDescription(title: string, _lead: string, aliases?: string[]) {
   const pipe = title.lastIndexOf(" | ");
   const phrase = (pipe === -1 ? title : title.slice(0, pipe)).trim();
-  const keyword = phrase.replace(/^Найти тренера(?: по)?\s+/i, "");
+  const keyword = phrase.replace(/^Найти (?:тренера|инструктора|массажиста)(?: по)?\s+/i, "");
   const extra = pickSearchAlias(keyword, aliases);
   const middle = extra ? ` ${extra.charAt(0).toUpperCase()}${extra.slice(1)}.` : "";
   return clipMeta(

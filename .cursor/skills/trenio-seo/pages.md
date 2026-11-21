@@ -8,10 +8,10 @@ JSON-LD for each row comes from the helper in [markup.md](markup.md). A `noindex
 | --- | --- | --- | --- |
 | Home | `/` | yes | `Найти тренера в Беларуси \| Я ищу тренера на trenio.by` |
 | Categories | `/categories` | yes | `Категории спорта — тренеры в Беларуси \| Я ищу тренера на trenio.by` |
-| Category | `/categories/{parent}` | yes | `Найти тренера по {titleGenitive} \| Я ищу тренера на trenio.by` |
-| Sport | `/categories/{parent}/{child}` | yes | same pattern, child dative |
+| Category | `/categories/{parent}` | yes | `Найти тренера по {titleGenitive} \| Я ищу тренера на trenio.by`. The fitness section says `Найти инструктора по фитнесу` |
+| Sport | `/categories/{parent}/{child}` | yes | same pattern, child dative. An instructor sport says `инструктора`, massage says `массажиста` |
 | City | `/city/{city}` | yes | `Найти тренера в {locative} \| Я ищу тренера на trenio.by` |
-| City + sport | `/city/{city}/{sport}` | yes, when a published trainer matches that city and sport. Otherwise `noindex` and out of the sitemap. The page stays open | `Найти тренера по {dative} в {locative} \| Я ищу тренера на trenio.by` |
+| City + sport | `/city/{city}/{sport}` | yes, when a published trainer matches that city and sport. Otherwise `noindex` and out of the sitemap. The page stays open | `Найти тренера по {dative} в {locative} \| Я ищу тренера на trenio.by`. Instructor and massage use that profession |
 | Nested sport | `/city/minsk/yoga/yoga` | same rule as city + sport | same, when the sport slug equals its parent |
 | Trainer | `/trainers/{slug}` | yes | `{имя фамилия} — {вся строка под именем} в {предложный город} \| Я ищу тренера на trenio.by`. Example: `Артём Романович — тренер по боксу в Минске \| Я ищу тренера на trenio.by`. The headline stays whole. Its first letter is lowercase unless that word is an abbreviation. A town outside the forty uses `в городе {name}`. The H1 stays the person's name. |
 | Map | `/map` | yes | `Тренеры на карте Беларуси \| Я ищу тренера на trenio.by` |
@@ -32,7 +32,7 @@ JSON-LD for each row comes from the helper in [markup.md](markup.md). A `noindex
 
 Forty cities have pages: Minsk, Gomel, Grodno, Vitebsk, Mogilev, Brest, then Bobruisk through Zhodino, then Svetlogorsk through Pruzhany. The list is `CITY_PAGES` in `src/lib/catalog/city-pages.ts`. A smaller town does not get a URL. On a trainer profile the locative falls back to `городе {name}`.
 
-H1 on a category or city page is the phrase without the brand: `Найти тренера по боксу в Бресте`. The dative comes from `titleGenitive`. `ОФП`, `ЛФК`, and `ОФК` expand only in that phrase. Crumbs, menus, and cards keep the short name.
+H1 on a category or city page is the phrase without the brand: `Найти тренера по боксу в Бресте`. An instructor sport and the fitness section say `Найти инструктора`. Massage says `Найти массажиста`. The dative comes from `titleGenitive`. `ОФП`, `ЛФК`, and `ОФК` expand only in that phrase. Crumbs, menus, and cards keep the short name.
 
 The home H1 is `Я ищу тренера`. Leave it. The title already matches `найти тренера в Беларуси`.
 

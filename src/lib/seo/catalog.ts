@@ -1,5 +1,5 @@
 import type { CatalogSport } from "@/lib/catalog/catalog-sports";
-import { catalogPagePhrase, catalogSportPath, catalogSportPhrase } from "@/lib/catalog/catalog-sports";
+import { catalogFindRest, catalogFindVoice, catalogPagePhrase, catalogSportPath } from "@/lib/catalog/catalog-sports";
 import type { CityCatalogPage } from "@/lib/catalog/city-pages";
 import {
   getParentCategoryFeaturedImage,
@@ -64,11 +64,11 @@ export function cityCatalogDescription(city: CityCatalogPage, sport: CatalogSpor
   if (!sport) {
     return `Тренеры в ${city.locative} по всем видам спорта. Подбор по направлению, цене и формату.`;
   }
-  const voice = catalogSportPhrase(sport);
-  const name = voice.po ? `по ${voice.keyword}` : voice.keyword;
-  const extra = sentenceAlias(pickSearchAlias(voice.keyword, sport.aliases));
+  const voice = catalogFindVoice(sport);
+  const person = `${voice.you.charAt(0).toLocaleUpperCase("ru")}${voice.you.slice(1)}`;
+  const extra = sentenceAlias(pickSearchAlias(voice.keyword || voice.you, sport.aliases));
   return clipMeta(
-    `Тренер ${name} в ${city.locative}.${extra} Цена, формат и опыт — индивидуально или в группе, для взрослых и детей.`,
+    `${person}${catalogFindRest(voice)} в ${city.locative}.${extra} Цена, формат и опыт — индивидуально или в группе, для взрослых и детей.`,
   );
 }
 
