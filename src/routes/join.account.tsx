@@ -66,6 +66,7 @@ function TrainerAccountPage() {
         .join-account .join-names > .auth-field { min-width: 0; }
         .join-account .join-basics { display: grid; gap: 16px; }
         .join-account .join-basics > div { display: grid; gap: 6px; }
+        .join-account .cabinet-form { padding: 0; }
         .join-account .auth-check { align-items: center; min-height: 44px; }
         .join-account .auth-check input { width: 22px; height: 22px; margin-top: 0; flex: 0 0 auto; }
         .join-account .auth-foot a { display: inline-flex; align-items: center; min-height: 44px; }
@@ -427,6 +428,7 @@ function ProfileFields({
     onChange(next);
   }
   return (
+    <div className="cabinet-form">
     <TrainerCardFields
       signup
       priceLabel="Сколько у меня стоит разовое занятие (персональная тренировка), BYN?"
@@ -476,6 +478,7 @@ function ProfileFields({
         },
       }}
     />
+    </div>
   );
 }
 
