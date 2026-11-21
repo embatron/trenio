@@ -68,3 +68,9 @@ export function cityCatalogByName(name: string): CityCatalogPage | null {
 export function listCityCatalogPages(): CityCatalogPage[] {
   return [...CITY_PAGES];
 }
+
+/** Twelve largest catalog cities, largest first. The mega menu shows them as two fixed columns of six. */
+export function menuTopCityColumns(): [CityCatalogPage[], CityCatalogPage[]] {
+  const top = CITY_PAGES.slice(0, 12);
+  return [top.slice(0, 6), top.slice(6, 12)];
+}

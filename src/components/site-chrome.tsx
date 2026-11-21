@@ -15,8 +15,7 @@ import { safeReturnPath } from "@/lib/auth/return-path";
 import type { UserRole } from "@/lib/auth/types";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { pluralRu } from "@/lib/ru-plural";
-import { BELARUS_OBLAST_CENTERS } from "@/lib/catalog/city-taxonomy";
-import { cityCatalogSlug } from "@/lib/catalog/city-pages";
+import { menuTopCityColumns, type CityCatalogPage } from "@/lib/catalog/city-pages";
 import { CabinetMark, type CabinetIcon } from "@/components/cabinet-mark";
 import { FavoriteMark } from "@/components/favorite-mark";
 import { CatalogSearchForm } from "@/components/catalog-search-form";
@@ -231,7 +230,7 @@ body.is-search-docked .site-header__search {
 .mega-account, .mega-cities { display: none; }
 .mega-cats__slider { position: relative; width: 100%; display: flex; align-items: center; }
 .mega-cats__nav {
-  position: absolute; top: 18px; z-index: 2; width: 44px; height: 44px;
+  position: absolute; top: 10px; z-index: 2; width: 44px; height: 44px;
   border: 0; border-radius: 50%; background: var(--white); color: var(--text);
   cursor: pointer; display: none; place-items: center; flex-shrink: 0;
   box-shadow: 0 4px 14px rgba(var(--dark-rgb), 0.08);
@@ -255,29 +254,32 @@ body.is-search-docked .site-header__search {
   display: flex; width: max-content; align-items: flex-start; gap: 14px;
   margin: 0; padding: 6px 0 8px; list-style: none;
 }
-.mega-cats__row > li { flex: 0 0 96px; width: 96px; min-width: 96px; }
+.mega-cats__row > li { flex: 0 0 80px; width: 80px; min-width: 80px; }
 .mega-cat {
-  display: grid; justify-items: center; align-content: start; gap: 8px;
+  display: grid; justify-items: center; align-content: start; gap: 6px;
   box-sizing: border-box; width: 100%; max-width: none; justify-self: center;
-  min-width: 0; min-height: 88px; padding: 0;
+  min-width: 0; min-height: 72px; padding: 0;
   color: var(--text); text-decoration: none; text-align: center;
-  font-size: 11px; font-weight: var(--fw-title); letter-spacing: -0.01em; line-height: 1.25;
+  font-size: 10px; font-weight: var(--fw-title); letter-spacing: -0.01em; line-height: 1.25;
 }
 .mega-cat:hover { color: var(--primary-dark); }
 .mega-cat:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: var(--radius-control); }
 .mega-cat__icon {
-  width: 64px; height: 64px; flex: 0 0 auto;
+  width: 52px; height: 52px; flex: 0 0 auto;
   display: grid; place-items: center;
 }
-.mega-cat__icon img { width: 64px; height: 64px; object-fit: contain; display: block; }
+.mega-cat__icon img { width: 52px; height: 52px; object-fit: contain; display: block; }
 .mega-cat__label { display: block; width: 100%; text-wrap: balance; }
 .mega-sheet {
   width: 100%; max-width: var(--layout-max); margin-inline: auto;
   padding: 32px var(--layout-gutter) 18px;
 }
 .mega-grid {
-  display: grid; grid-template-columns: minmax(220px, 1.2fr) repeat(3, minmax(0, 1fr));
-  gap: 32px; align-items: stretch;
+  display: grid; grid-template-columns: 240px repeat(3, minmax(0, 1fr));
+  gap: 16px; align-items: start;
+}
+.mega-grid--cities {
+  grid-template-columns: 240px repeat(4, minmax(0, 1fr));
 }
 .mega-col { min-width: 0; align-self: start; display: grid; gap: 14px; align-content: start; }
 .mega-col h5 {
@@ -298,6 +300,8 @@ body.is-search-docked .site-header__search {
 .mega-link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 @media (min-width: 768px) {
   .mega-grid > .mega-col:not(.mega-col__hero) { gap: 8px; }
+  .mega-link { min-height: 37px; padding-block: 6px; }
+  .mega-col--more { padding-top: 29px; }
 }
 .mega-mark {
   width: 16px; height: 16px; flex: 0 0 auto;
@@ -308,8 +312,9 @@ body.is-search-docked .site-header__search {
   stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round;
 }
 .mega-col__hero {
-  align-self: stretch; position: relative; overflow: hidden;
-  display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0;
+  align-self: start; position: relative; overflow: hidden;
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 0;
+  box-sizing: border-box; width: 240px; max-width: 100%; min-height: 220px;
   padding: 20px 22px; border-radius: var(--card-radius);
   background: linear-gradient(120deg, var(--primary) 0%, #ff7a5c 55%, var(--primary-dark) 100%);
   box-shadow: var(--shadow);
@@ -428,15 +433,7 @@ body.is-search-docked .site-header__search {
   .burger-btn { min-width: 0; width: 44px; padding: 0; }
   .mega-panel > .mega-sheet { padding-top: 22px; }
   .mega-cats { position: static; }
-  .mega-grid { grid-template-columns: 1fr 1fr; gap: 22px 28px; }
-  .mega-col__hero {
-    grid-column: 1 / -1;
-    display: grid; grid-template-columns: minmax(0, 1fr) auto;
-    column-gap: 24px; align-items: center;
-  }
-  .mega-kicker, .mega-col__hero h4, .mega-col__hero p { grid-column: 1; }
-  .mega-col__hero p { margin-bottom: 0; }
-  .mega-col__hero a.cta { grid-column: 2; grid-row: 1 / span 3; margin-top: 0; }
+  .mega-grid, .mega-grid--cities { grid-template-columns: 240px minmax(0, 1fr); gap: 16px; }
   .site-footer { padding-block: clamp(36px, 6vw, 44px) 24px; }
   .site-footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .site-footer__brand { grid-column: 1 / -1; }
@@ -483,12 +480,13 @@ body.is-search-docked .site-header__search {
   }
   .mega-cats__row > li { flex: none; width: auto; min-width: 0; }
   .mega-cat { min-height: 44px; padding: 0 8px; }
-  .mega-cat__icon, .mega-cat__icon img { width: 56px; height: 56px; }
+  .mega-cat__icon, .mega-cat__icon img { width: 48px; height: 48px; }
+  .mega-cities__list .mega-col { gap: 0; }
   .mega-cats.is-open .mega-sheet { padding-bottom: 18px; }
   .account-face { max-width: 44px; padding-right: 0; }
   .account-face__nick, .account-face .notice-mark { display: none; }
   .mega-account, .mega-cities { display: block; }
-  .mega-col--cities { display: none; }
+  .mega-col--cities, .mega-col--more { display: none; }
   .mega-account, .mega-cities {
     border-bottom: 1px solid var(--line); background: var(--white);
   }
@@ -546,11 +544,7 @@ body.is-search-docked .site-header__search {
   .search-block--header .search-field { padding-inline: 7px; }
   .logo__img, .site-header .logo__img { height: 22px; }
   .site-footer__brand .logo__img { height: 26px; }
-  .mega-grid { grid-template-columns: 1fr; }
-  .mega-col__hero { display: flex; flex-direction: column; align-items: flex-start; }
-  .mega-kicker, .mega-col__hero h4, .mega-col__hero p, .mega-col__hero a.cta { grid-column: auto; grid-row: auto; }
-  .mega-col__hero p { margin-bottom: 16px; }
-  .mega-col__hero a.cta { margin-top: 0; }
+  .mega-grid, .mega-grid--cities { grid-template-columns: 1fr; }
   .mega-footer__row { align-items: flex-start; }
   .mega-footer__links { display: grid; width: 100%; gap: 0; }
   .site-footer__grid { grid-template-columns: 1fr; }
@@ -889,7 +883,7 @@ function MegaCategoryRail({ open, onClose }: { open: boolean; onClose: () => voi
               <Link className="mega-cat" to="/categories/$slug" params={{ slug: category.slug }} onClick={onClose}>
                 <span className="mega-cat__icon" aria-hidden="true">
                   {category.featuredImage ? (
-                    <img src={category.featuredImage} alt="" width={64} height={64} />
+                    <img src={category.featuredImage} alt="" width={52} height={52} />
                   ) : null}
                 </span>
                 <span className="mega-cat__label">{category.label}</span>
@@ -911,27 +905,19 @@ function MegaCategoryRail({ open, onClose }: { open: boolean; onClose: () => voi
   );
 }
 
-function MegaCities({ onClose }: { onClose: () => void }) {
+const [MENU_CITY_FIRST, MENU_CITY_SECOND] = menuTopCityColumns();
+
+function MegaCityLinks({ cities, onClose }: { cities: CityCatalogPage[]; onClose: () => void }) {
   return (
     <ul>
-      {BELARUS_OBLAST_CENTERS.map((city) => {
-        const slug = cityCatalogSlug(city);
-        return (
-          <li key={city}>
-            {slug ? (
-              <Link className="mega-link" to="/city/$slug" params={{ slug }} onClick={onClose}>
-                <span className="mega-mark"><MegaPin /></span>
-                <span>{city}</span>
-              </Link>
-            ) : (
-              <Link className="mega-link" to="/" onClick={onClose}>
-                <span className="mega-mark"><MegaPin /></span>
-                <span>{city}</span>
-              </Link>
-            )}
-          </li>
-        );
-      })}
+      {cities.map((city) => (
+        <li key={city.slug}>
+          <Link className="mega-link" to="/city/$slug" params={{ slug: city.slug }} onClick={onClose}>
+            <span className="mega-mark"><MegaPin /></span>
+            <span>{city.name}</span>
+          </Link>
+        </li>
+      ))}
     </ul>
   );
 }
@@ -1077,13 +1063,14 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           </button>
           <div className="mega-cities__list" id="mega-cities-list">
             <div className="mega-col">
-              <MegaCities onClose={onClose} />
+              <MegaCityLinks cities={MENU_CITY_FIRST} onClose={onClose} />
+              <MegaCityLinks cities={MENU_CITY_SECOND} onClose={onClose} />
             </div>
           </div>
         </div>
       </div>
       <div className="mega-sheet">
-        <div className="mega-grid">
+        <div className="mega-grid mega-grid--cities">
           <div className="mega-col mega-col__hero">
             <span className="mega-kicker">Для тренеров</span>
             <h4>Стать тренером на trenio.by</h4>
@@ -1095,13 +1082,16 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           </div>
           <div className="mega-col mega-col--cities">
             <h5>Города</h5>
-            <MegaCities onClose={onClose} />
+            <MegaCityLinks cities={MENU_CITY_FIRST} onClose={onClose} />
+          </div>
+          <div className="mega-col mega-col--more">
+            <MegaCityLinks cities={MENU_CITY_SECOND} onClose={onClose} />
           </div>
           <div className="mega-col">
             <h5>Клиентам</h5>
             <ul>
               <li><Link className="mega-link mega-link--text" to="/" onClick={onClose}>Найти тренера</Link></li>
-              <li><Link className="mega-link mega-link--text" to="/map" search={{ sports: undefined, city: undefined }} onClick={onClose}>На карте</Link></li>
+              <li><Link className="mega-link mega-link--text" to="/map" search={{ sports: undefined, city: undefined }} onClick={onClose}>Тренеры на карте</Link></li>
               {user ? null : (
                 <>
                   <li><Link className="mega-link mega-link--text" to="/auth/signup" search={loginSearch} onClick={onClose}>Создать аккаунт</Link></li>
@@ -1115,6 +1105,7 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             <ul>
               <li><Link className="mega-link mega-link--text" to="/me" activeOptions={{ exact: true }} onClick={onClose}>Кабинет тренера</Link></li>
               <li><Link className="mega-link mega-link--text" to="/join/trainer" onClick={onClose}>Оставить Instagram</Link></li>
+              <li><Link className="mega-link mega-link--text" to="/join/account" onClick={onClose}>Создать профиль вручную</Link></li>
             </ul>
           </div>
         </div>
