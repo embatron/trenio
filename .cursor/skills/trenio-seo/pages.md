@@ -8,7 +8,7 @@ JSON-LD for each row comes from the helper in [markup.md](markup.md). A `noindex
 | --- | --- | --- | --- |
 | Home | `/` | yes | `Найти тренера в Беларуси \| Я ищу тренера на trenio.by` |
 | Categories | `/categories` | yes | `Категории спорта — тренеры в Беларуси \| Я ищу тренера на trenio.by` |
-| Category | `/categories/{parent}` | yes | `Найти тренера по {titleGenitive} \| Я ищу тренера на trenio.by`. The fitness section says `Найти инструктора по фитнесу` |
+| Category | `/categories/{parent}` | yes | `Найти тренера по {titleGenitive} \| Я ищу тренера на trenio.by` |
 | Sport | `/categories/{parent}/{child}` | yes | same pattern, child dative. An instructor sport says `инструктора`, massage says `массажиста` |
 | City | `/city/{city}` | yes | `Найти тренера в {locative} \| Я ищу тренера на trenio.by` |
 | City + sport | `/city/{city}/{sport}` | yes, when a published trainer matches that city and sport. Otherwise `noindex` and out of the sitemap. The page stays open | `Найти тренера по {dative} в {locative} \| Я ищу тренера на trenio.by`. Instructor and massage use that profession |
@@ -32,7 +32,7 @@ JSON-LD for each row comes from the helper in [markup.md](markup.md). A `noindex
 
 Forty cities have pages: Minsk, Gomel, Grodno, Vitebsk, Mogilev, Brest, then Bobruisk through Zhodino, then Svetlogorsk through Pruzhany. The list is `CITY_PAGES` in `src/lib/catalog/city-pages.ts`. A smaller town does not get a URL. On a trainer profile the locative falls back to `городе {name}`.
 
-H1 on a category or city page is the phrase without the brand: `Найти тренера по боксу в Бресте`. An instructor sport and the fitness section say `Найти инструктора`. Massage says `Найти массажиста`. The dative comes from `titleGenitive`. `ОФП`, `ЛФК`, and `ОФК` expand only in that phrase. Crumbs, menus, and cards keep the short name.
+H1 on a category or city page is the phrase without the brand: `Найти тренера по боксу в Бресте`. An instructor sport says `Найти инструктора`. Massage says `Найти массажиста`. Fitness, TRX, aqua aerobics, and sport aerobics stay `Найти тренера`. The dative comes from `titleGenitive`. `ОФП`, `ЛФК`, and `ОФК` expand only in that phrase. Crumbs, menus, and cards keep the short name.
 
 The home H1 is `Я ищу тренера`. Leave it. The title already matches `найти тренера в Беларуси`.
 

@@ -22,16 +22,16 @@ test("the city link uses the catalog case", () => {
   assert.equal(trainersInCityPhrase(boxing, minsk), "Тренеры по боксу в Минске");
   assert.equal(trainersInCityPhrase(boxing, grodno), "Тренеры по боксу в Гродно");
   assert.equal(trainersInCityPhrase(gym, minsk), "Инструкторы по тренажёрному залу в Минске");
-  assert.equal(trainersInCityPhrase(fitness, minsk), "Инструкторы по фитнесу в Минске");
+  assert.equal(trainersInCityPhrase(fitness, minsk), "Фитнес-тренеры в Минске");
   assert.equal(trainersInCityPhrase(yoga, minsk), "Инструкторы по йоге в Минске");
   assert.equal(trainersInCityPhrase(jumping, grodno), "Инструкторы по джампингу в Гродно");
   assert.equal(trainersInCityPhrase(lfk, minsk), "Инструкторы ЛФК в Минске");
   assert.equal(trainersInCityPhrase(ofp, minsk), "Тренеры по общефизической подготовке в Минске");
   assert.equal(sportCrowdPhrase(gym), "Инструкторы по тренажёрному залу");
-  assert.equal(sportCrowdPhrase(fitness), "Инструкторы по фитнесу");
+  assert.equal(sportCrowdPhrase(fitness), "Фитнес-тренеры");
   assert.equal(sportCrowdPhrase(boxing), "Тренеры по боксу");
   assert.equal(catalogPagePhrase(minsk, gym), "Найти инструктора по тренажёрному залу в Минске");
-  assert.equal(catalogPagePhrase(minsk, fitness), "Найти инструктора по фитнесу в Минске");
+  assert.equal(catalogPagePhrase(minsk, fitness), "Найти тренера по фитнесу в Минске");
   assert.equal(catalogPagePhrase(minsk, yoga), "Найти инструктора по йоге в Минске");
   assert.equal(catalogPagePhrase(minsk, boxing), "Найти тренера по боксу в Минске");
   const massage = catalogSportById("massazh");
@@ -39,7 +39,12 @@ test("the city link uses the catalog case", () => {
   const lfkSport = catalogSportById("lfk");
   assert.ok(massage && trx && lfkSport);
   assert.equal(catalogPagePhrase(minsk, massage), "Найти массажиста в Минске");
-  assert.equal(catalogPagePhrase(minsk, trx), "Найти инструктора TRX в Минске");
+  assert.equal(catalogPagePhrase(minsk, trx), "Найти тренера по TRX в Минске");
+  const aqua = catalogSportById("akvaaerobika");
+  const aerobic = catalogSportById("aerobika");
+  assert.ok(aqua && aerobic);
+  assert.equal(catalogPagePhrase(minsk, aqua), "Найти тренера по аквааэробике в Минске");
+  assert.equal(catalogPagePhrase(minsk, aerobic), "Найти тренера по спортивной аэробике в Минске");
   assert.equal(catalogPagePhrase(minsk, lfkSport), "Найти инструктора по лечебной физической культуре в Минске");
 });
 
@@ -49,7 +54,7 @@ test("an instructor sport does not invite a trainer", () => {
   for (const sport of listCatalogSports()) {
     const role = trainerSportRoles([{ slug: sport.slug, label: sport.label }])[0];
     const instructor = role?.lead === "Инструктор" || role?.text.toLocaleLowerCase("ru").startsWith("инструктор");
-    if (!instructor && !(sport.level === 1 && sport.slug === "fitnes")) continue;
+    if (!instructor) continue;
     const phrase = catalogPagePhrase(minsk, sport);
     assert.equal(phrase.includes("тренера"), false, sport.id);
     assert.equal(phrase.includes("инструктора"), true, sport.id);

@@ -399,9 +399,6 @@ function professionCase(lead: string): Pick<CatalogFindVoice, "who" | "you" | "n
  * The profession follows the profile role. A gym line keeps «по», so it does not read «тренера тренажёрного зала».
  */
 export function catalogFindVoice(sport: CatalogSport): CatalogFindVoice {
-  if (sport.level === 1 && sport.slug === "fitnes") {
-    return { ...professionCase("инструктор"), keyword: "фитнесу", po: true };
-  }
   const role = trainerSportRoles([{ slug: sport.slug, label: sport.label }])[0];
   if (!role?.text) return { ...professionCase("тренер"), keyword: sport.titleGenitive, po: true };
   if (!role.lead) {
@@ -511,11 +508,10 @@ function pluralProfession(lead: string) {
 }
 
 /**
- * «Тренеры по боксу», «Инструкторы по фитнесу», «Инструкторы по тренажёрному залу».
+ * «Тренеры по боксу», «Фитнес-тренеры», «Инструкторы по тренажёрному залу».
  * A gym line does not say «тренеры тренажёрного зала»: that role is «инструктор по …».
  */
 export function sportCrowdPhrase(sport: CatalogSport) {
-  if (sport.level === 1 && sport.slug === "fitnes") return "Инструкторы по фитнесу";
   const role = trainerSportRoles([{ slug: sport.slug, label: sport.label }])[0];
   if (!role?.text) return "Тренеры";
   if (!role.lead) return pluralProfession(role.text);

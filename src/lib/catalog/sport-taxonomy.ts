@@ -158,7 +158,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         slug: "trx",
         label: "TRX",
         titleGenitive: "TRX",
-        titleLine: "инструктор TRX",
+        titleLine: "TRX-тренер",
         aliases: ["подвесные петли"],
       },
       {
@@ -245,7 +245,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         titleGenitive: "плаванию",
         aliases: ["обучение плаванию", "научиться плавать", "спортивное плавание", "плавание для детей", "swimming"],
       },
-      { slug: "akvaaerobika", label: "Аквааэробика", titleGenitive: "аквааэробике", titleRole: "Инструктор", aliases: ["аквафитнес"] },
+      { slug: "akvaaerobika", label: "Аквааэробика", titleGenitive: "аквааэробике", aliases: ["аквафитнес"] },
       { slug: "pryzhki", label: "Прыжки в воду", titleGenitive: "прыжкам в воду" },
       {
         slug: "sinhronnoe",
@@ -468,7 +468,6 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
         slug: "aerobika",
         label: "Спортивная аэробика",
         titleGenitive: "спортивной аэробике",
-        titleRole: "Инструктор",
       },
     ],
   }),
