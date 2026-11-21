@@ -493,9 +493,8 @@ export function TrainerCatalogMapView({
                   )}
                   <span className="catalog-map__copy">
                     <TrainerName firstName={trainer.firstName} lastName={trainer.lastName} />
-                    <TrainerRating rating={trainer.rating} reviews={trainer.reviews} />
+                    <TrainerRating rating={trainer.rating} reviews={trainer.reviews} count={false} />
                     {trainer.tags.length > 0 ? <span className="catalog-map__sport">{trainer.tags.join(", ")}</span> : null}
-                    <span className="catalog-map__price">{trainer.price > 0 ? `От ${trainer.price} BYN` : "договорная"}</span>
                   </span>
                 </Link>
               </li>
@@ -576,15 +575,16 @@ const MAP_VIEW_CSS = `
 }
 .catalog-map__people a:hover { background: rgba(var(--primary-rgb), 0.08); }
 .catalog-map__photo { width: 48px; height: 64px; object-fit: cover; object-position: center; border-radius: 10px; display: block; background: var(--light-bg); }
-.catalog-map__photo--empty { display: grid; place-items: center; color: var(--primary); font-weight: var(--fw-title); font-size: 18px; }
+.catalog-map__photo--empty { display: grid; place-items: center; color: var(--primary); font-weight: var(--fw-title); font-size: 17px; }
 .catalog-map__copy { min-width: 0; display: grid; gap: 1px; align-content: start; }
 .catalog-map__tip:has(.catalog-map__close) .catalog-map__people > li:first-child .catalog-map__copy { padding-right: 48px; }
 .catalog-map__copy .trainer-name {
   flex-direction: column; align-items: flex-start; gap: 0;
-  font-size: 13px; line-height: 1.15; letter-spacing: 0; font-weight: var(--fw-title);
+  font-size: 12px; line-height: 1.15; letter-spacing: 0; font-weight: var(--fw-title);
 }
 .catalog-map__copy .trainer-name__line { overflow: visible; text-overflow: clip; white-space: normal; overflow-wrap: break-word; }
-.catalog-map__sport { color: var(--muted); font-size: var(--fs-caption); line-height: 1.3; font-weight: var(--fw-body); }
-.catalog-map__where, .catalog-map__more { margin: 0; padding: 0 6px 2px; color: var(--muted); font-size: 12px; line-height: 1.3; }
-.catalog-map__price { font-size: 13px; font-weight: var(--fw-title); color: var(--dark); }
+.catalog-map__copy .trainer-card__rating { font-size: 12px; }
+.catalog-map__copy .trainer-card__rating svg { width: 12px; height: 12px; }
+.catalog-map__sport { color: var(--muted); font-size: 11px; line-height: 1.3; font-weight: var(--fw-body); }
+.catalog-map__where, .catalog-map__more { margin: 0; padding: 0 6px 2px; color: var(--muted); font-size: 11px; line-height: 1.3; }
 `;
