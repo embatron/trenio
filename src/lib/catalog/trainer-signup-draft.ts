@@ -98,6 +98,9 @@ export async function buildTrainerSignupDraft(input: TrainerBasicsInput): Promis
     throw new AuthError("Введите мобильный номер Беларуси или оставьте поле пустым.", "VALIDATION");
   }
   const about = sanitizeReviewHtml(input.about);
+  if (input.photos.length < 1) {
+    throw new AuthError("Загрузите хотя бы одно фото.", "VALIDATION");
+  }
   const photos = input.photos.filter((item) => item.startsWith("data:image/jpeg;base64,"));
   if (photos.length !== input.photos.length) {
     throw new AuthError("Фото должно быть изображением JPEG, PNG или WebP.", "VALIDATION");

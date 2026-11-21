@@ -373,6 +373,7 @@ function validateBasics(values: JoinProfile): string | null {
   if (!values.city.trim()) return "Выберите город из списка населённых пунктов Беларуси.";
   if (values.formats.length < 1) return "Выберите формат тренировок.";
   if (values.audiences.length < 1) return "Выберите, с кем вы работаете.";
+  if (values.photos.length < 1) return "Загрузите хотя бы одно фото.";
   const typedPhone = values.phone.trim();
   if (typedPhone && typedPhone !== "+375" && !storedBelarusPhone(typedPhone)) {
     return "Введите мобильный номер Беларуси или оставьте поле пустым.";

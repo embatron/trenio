@@ -91,12 +91,14 @@ function ProfileSection({
   title,
   tone,
   plain,
+  required = false,
   children,
 }: {
   id: (typeof TRAINER_PROFILE_SECTIONS)[number]["id"];
   title: string;
   tone?: "place";
   plain?: boolean;
+  required?: boolean;
   children: ReactNode;
 }) {
   if (plain) return <>{children}</>;
@@ -106,7 +108,7 @@ function ProfileSection({
       className={tone ? `cabinet-section cabinet-section--${tone}` : "cabinet-section"}
       aria-labelledby={`${id}-title`}
     >
-      <h3 id={`${id}-title`}>{title}</h3>
+      <h3 id={`${id}-title`} className={required ? "is-required" : undefined}>{title}</h3>
       {children}
     </section>
   );
@@ -516,7 +518,7 @@ export function TrainerCardFields({
       {nickFirst ? nickBlock : null}
       {showProfile ? (
       <>
-      <ProfileSection id="trainer-photos" title="Фото">
+      <ProfileSection id="trainer-photos" title="Фото" required={signup}>
         {photos ? (
           <TrainerMediaField
             initial={photos.initial}
