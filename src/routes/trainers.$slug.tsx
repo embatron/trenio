@@ -393,8 +393,12 @@ body:has(.tg-tabbar.is-telegram) .door-publish { --door-publish-bottom: calc(69p
 .btn--instagram svg { fill: currentColor; stroke: none; }
 
 .profile-intro { min-width: 0; }
-.profile-headline { margin: 0 0 6px; font-size: 15px; font-weight: var(--fw-title); letter-spacing: -0.01em; text-transform: none; color: var(--primary-dark); }
-.profile-headline__name { color: var(--primary); }
+.profile-identity__sport {
+  margin: 0 0 6px; width: fit-content; max-width: 100%;
+  font-size: 15px; font-weight: var(--fw-title); letter-spacing: -0.01em; text-transform: none;
+  background: linear-gradient(120deg, var(--primary) 0%, #ff7a5c 55%, var(--primary-dark) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
 .profile-identity__title { display: flex; align-items: flex-start; flex-wrap: nowrap; gap: 0 2px; margin: 0 0 12px; }
 .profile-identity__name { min-width: 0; flex: 1 1 auto; margin: 0; font-size: var(--fs-page); font-weight: var(--fw-heading); letter-spacing: -0.035em; color: var(--dark); line-height: 1.05; }
 .profile-identity__name .trainer-name { flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 0.28em; max-width: 100%; }
@@ -1127,9 +1131,6 @@ function TrainerPage() {
             <li className="is-current" aria-current="page">{t.name}</li>
           </ol>
         </nav>
-        {t.headline && t.headline !== "Тренер" ? (
-          <p className="profile-headline"><span className="profile-headline__name">{t.headline}</span></p>
-        ) : null}
 
         <article className="profile-layout">
           <aside className="profile-aside">
@@ -1208,6 +1209,9 @@ function TrainerPage() {
             ) : null}
             <header className="profile-intro">
               <div className="profile-identity">
+                {t.headline && t.headline !== "Тренер" ? (
+                  <p className="profile-identity__sport">{t.headline}</p>
+                ) : null}
                 <div className="profile-identity__title">
                   <h1 className="profile-identity__name">
                     <TrainerName firstName={t.firstName} lastName={t.lastName} />
