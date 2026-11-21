@@ -456,6 +456,7 @@ export function TrainerCardFields({
   self = false,
   bioInvalid = false,
   telegramVerified = false,
+  signup = false,
   mode = "full",
 }: {
   values: TrainerCardValues;
@@ -473,13 +474,16 @@ export function TrainerCardFields({
   self?: boolean;
   bioInvalid?: boolean;
   telegramVerified?: boolean;
+  /** Public signup. Same card fields, without a nick and without a second mailbox. */
+  signup?: boolean;
   mode?: "full" | "profile" | "contacts";
 }) {
   function patch(partial: Partial<TrainerCardValues>) {
     onChange({ ...values, ...partial });
   }
   const showProfile = mode !== "contacts";
-  const showContacts = mode !== "profile" && !self;
+  const showContacts = mode !== "profile" && (!self || signup);
+  const own = self || signup;
   const nickBlock = nick ? (
     <div>
       <label>
@@ -531,7 +535,17 @@ export function TrainerCardFields({
       <ProfileSection id="trainer-main" title="Основное">
         {leading}
         {nickFirst ? null : nickBlock}
-        {self ? null : (
+        {self && !signup ? null : signup ? (
+          <label>
+            <span>Заголовок страницы</span>
+            <input
+              value={values.headline}
+              maxLength={200}
+              placeholder="Фитнес-тренер"
+              onChange={(event) => patch({ headline: event.target.value })}
+            />
+          </label>
+        ) : (
           <>
             <label>
               <span>Заголовок страницы</span>
@@ -565,9 +579,9 @@ export function TrainerCardFields({
             </div>
           </>
         )}
-        {self ? (
+        {own ? (
           <div>
-            <span className="cabinet-media__label">Как меня представить</span>
+            <span className={signup ? "cabinet-media__label is-required" : "cabinet-media__label"}>Как меня представить</span>
             <ReviewEditor
               value={values.bio}
               onChange={(bio) => patch({ bio })}
@@ -605,13 +619,13 @@ export function TrainerCardFields({
           />
         </div>
         <p className="cabinet-note">
-          {self
+          {own
             ? "Как и где проходят мои тренировки и чем они отличаются: место и формат."
             : "Расскажите подробно, как и где проходят тренировки и чем они отличаются: место и формат."}
         </p>
         <div>
-          <span className={self ? "cabinet-media__label is-required" : "cabinet-media__label"}>
-            {self ? "Мои виды спорта" : "Виды спорта"}
+          <span className={self || signup ? "cabinet-media__label is-required" : "cabinet-media__label"}>
+            {own ? "Мои виды спорта" : "Виды спорта"}
           </span>
           <SportEntityInput
             value={values.sportSlugs}
@@ -620,7 +634,7 @@ export function TrainerCardFields({
         </div>
         <p className="cabinet-note">Не больше пяти. Раздел, например фитнес, можно назначить целиком или выбрать вид внутри него.</p>
         <label>
-          <span>{self ? "Мой тренерский стаж, лет" : "Общий тренерский стаж, лет"}</span>
+          <span>{own ? "Мой тренерский стаж, лет" : "Общий тренерский стаж, лет"}</span>
           <input
             type="number"
             inputMode="numeric"
@@ -648,13 +662,13 @@ export function TrainerCardFields({
           сумму не указывать, останется «договорная».
         </p>
         <div>
-          <span className="cabinet-media__label">
-            {self ? "Формат моих тренировок" : "Формат занятий"}
+          <span className={signup ? "cabinet-media__label is-required" : "cabinet-media__label"}>
+            {own ? "Формат моих тренировок" : "Формат занятий"}
           </span>
           <div
             className="cabinet-choices"
             role="group"
-            aria-label={self ? "Формат моих тренировок" : "Формат занятий"}
+            aria-label={own ? "Формат моих тренировок" : "Формат занятий"}
           >
             {TRAINER_FORMAT_OPTIONS.map((option) => (
               <button
@@ -670,7 +684,7 @@ export function TrainerCardFields({
           </div>
         </div>
         <div>
-          <span className="cabinet-media__label">С кем я работаю</span>
+          <span className={signup ? "cabinet-media__label is-required" : "cabinet-media__label"}>С кем я работаю</span>
           <div className="cabinet-choices" role="group" aria-label="С кем я работаю">
             {TRAINER_AUDIENCE_OPTIONS.map((option) => (
               <button
@@ -693,7 +707,7 @@ export function TrainerCardFields({
         <TrainerPlacesField
           city={values.city}
           places={values.places}
-          cityRequired={self}
+          cityRequired={own}
           onChange={(next) => patch(next)}
         />
         {afterAddress}
@@ -714,16 +728,16 @@ export function TrainerCardFields({
               />
             ) : null}
           </span>
-          <ContactControl locked={self}>
+          <ContactControl locked={self && !signup}>
             <InstagramIcon />
             <input
               value={values.instagram}
               maxLength={300}
               placeholder="https://instagram.com/…"
-              readOnly={self}
-              aria-readonly={self || undefined}
-              className={self ? "is-locked" : undefined}
-              onChange={self ? undefined : (event) => patch({ instagram: event.target.value })}
+              readOnly={self && !signup}
+              aria-readonly={self && !signup ? true : undefined}
+              className={self && !signup ? "is-locked" : undefined}
+              onChange={self && !signup ? undefined : (event) => patch({ instagram: event.target.value })}
             />
           </ContactControl>
           {self ? (
@@ -758,7 +772,7 @@ export function TrainerCardFields({
             </p>
           ) : null}
         </label>
-        {emailConfirm ? (
+        {signup ? null : emailConfirm ? (
           <EmailField email={values.email} {...emailConfirm} />
         ) : (
           <label>

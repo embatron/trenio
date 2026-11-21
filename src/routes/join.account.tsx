@@ -1,26 +1,20 @@
 import { createFileRoute, Link, redirect, useRouteContext, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { AuthStyles } from "@/components/auth-styles";
 import { HoneypotField, honeypotFromForm } from "@/components/auth/honeypot-field";
 import { PasswordStrength } from "@/components/auth/password-strength";
 import { CabinetNotice, CabinetStyles } from "@/components/cabinet";
-import { CityEntityInput } from "@/components/city-entity-input";
-import { ReviewEditor } from "@/components/review-editor";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
-import { SportEntityInput } from "@/components/sport-entity-input";
+import { TrainerCardFields, type TrainerCardValues } from "@/components/trainer-card-fields";
+import { storedBelarusPhone } from "@/lib/auth/phone";
 import { MAX_TRAINER_SPORTS } from "@/lib/catalog/sport-taxonomy";
 import { AuthAlert, useAuthServerFn, useAuthSubmit } from "@/lib/auth/use-auth-form";
 import { hasAnyRole, isStaff } from "@/lib/auth/roles";
 import { isStandInAccountName } from "@/lib/auth/phone-label";
 import { reviewPlainText } from "@/lib/catalog/review-html";
+import type { TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { becomeTrainerFn, signupTrainerAccountFn } from "@/lib/catalog/trainer-account.functions";
-import {
-  TRAINER_AUDIENCE_OPTIONS,
-  TRAINER_FORMAT_OPTIONS,
-  type TrainerAudience,
-  type TrainerFormat,
-} from "@/lib/catalog/published-trainers";
 import { NOINDEX_FOLLOW } from "@/lib/seo/head";
 
 export const Route = createFileRoute("/join/account")({
@@ -35,7 +29,7 @@ export const Route = createFileRoute("/join/account")({
     meta: [
       { title: "Создать профиль тренера — Я ищу тренера на trenio.by" },
       NOINDEX_FOLLOW,
-      { name: "description", content: "Профиль тренера без Instagram: имя, город, виды спорта и почта. Подтверждение приходит на почту." },
+      { name: "description", content: "Профиль тренера без Instagram: фото, о себе, виды спорта, адреса, цена и контакты. Подтверждение приходит на почту." },
     ],
   }),
   component: TrainerAccountPage,
@@ -85,6 +79,8 @@ function TrainerAccountPage() {
         }
         @media (max-width: 767px) {
           .join-account .entity-input input,
+          .join-account .cabinet-section input,
+          .join-account .cabinet-section textarea,
           .join-account .review-editor .rsw-ce { font-size: 16px; }
         }
       `}</style>
@@ -137,7 +133,7 @@ function SignupForm() {
               passwordConfirm,
               privacy: true,
               honeypot: honeypotFromForm(event.currentTarget),
-              ...basics,
+              ...profilePayload(basics),
             },
           }),
           (result) => {
@@ -160,7 +156,7 @@ function SignupForm() {
             onFirst={setFirstName}
             onLast={setLastName}
           />
-          <BasicsFields
+          <ProfileFields
             values={basics}
             bioInvalid={bioInvalid}
             onChange={(next) => {
@@ -232,7 +228,7 @@ function UpgradeForm({ firstName: initialFirst, lastName: initialLast }: { first
           return;
         }
         void run(
-          () => become({ data: { firstName, lastName, ...basics } }),
+          () => become({ data: { firstName, lastName, ...profilePayload(basics) } }),
           async (result) => {
             if (!result || !("redirectTo" in result)) return;
             await router.invalidate();
@@ -244,7 +240,7 @@ function UpgradeForm({ firstName: initialFirst, lastName: initialLast }: { first
       <AuthAlert message={error} />
       <p className="auth-sub">Этот аккаунт станет кабинетом тренера. Instagram не нужен.</p>
       <NameFields firstName={firstName} lastName={lastName} onFirst={setFirstName} onLast={setLastName} />
-      <BasicsFields
+      <ProfileFields
         values={basics}
         bioInvalid={bioInvalid}
         onChange={(next) => {
@@ -338,92 +334,148 @@ function PasswordFields({
   );
 }
 
-type Basics = {
-  bio: string;
-  sportSlugs: string[];
-  city: string;
-  formats: TrainerFormat[];
-  audiences: TrainerAudience[];
+type SignupPhoto = { path: string; image: string };
+type SignupCertificate = TrainerCertificate & { fileName: string; dataUrl: string };
+
+type JoinProfile = TrainerCardValues & {
+  phone: string;
+  photos: SignupPhoto[];
+  certificates: SignupCertificate[];
 };
 
-const emptyBasics: Basics = { bio: "", sportSlugs: [], city: "", formats: [], audiences: [] };
+const emptyBasics: JoinProfile = {
+  firstName: "",
+  lastName: "",
+  headline: "",
+  bio: "",
+  about: "",
+  sportSlugs: [],
+  city: "",
+  district: "",
+  places: [],
+  priceFrom: null,
+  experienceYears: 0,
+  instagram: "",
+  telegram: "",
+  email: "",
+  phone: "",
+  formats: [],
+  audiences: [],
+  photos: [],
+  certificates: [],
+};
 
-function validateBasics(values: Basics): string | null {
+function validateBasics(values: JoinProfile): string | null {
   if (!reviewPlainText(values.bio)) return "Напишите, как вас представить.";
   if (values.sportSlugs.length < 1) return "Выберите хотя бы один вид спорта.";
   if (values.sportSlugs.length > MAX_TRAINER_SPORTS) return "Можно выбрать не больше пяти видов спорта.";
   if (!values.city.trim()) return "Выберите город из списка населённых пунктов Беларуси.";
   if (values.formats.length < 1) return "Выберите формат тренировок.";
   if (values.audiences.length < 1) return "Выберите, с кем вы работаете.";
+  const typedPhone = values.phone.trim();
+  if (typedPhone && typedPhone !== "+375" && !storedBelarusPhone(typedPhone)) {
+    return "Введите мобильный номер Беларуси или оставьте поле пустым.";
+  }
   return null;
 }
 
-function toggleChoice<T extends string>(list: T[], value: T): T[] {
-  return list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
+function profilePayload(values: JoinProfile) {
+  const phone = storedBelarusPhone(values.phone) ?? "";
+  return {
+    headline: values.headline,
+    bio: values.bio,
+    about: values.about,
+    sportSlugs: values.sportSlugs,
+    city: values.city,
+    places: values.places.map((place) => ({
+      city: place.city,
+      district: place.district,
+      address: place.address,
+      lat: place.lat,
+      lng: place.lng,
+    })),
+    priceFrom: values.priceFrom,
+    experienceYears: values.experienceYears,
+    phone,
+    instagram: values.instagram,
+    telegram: values.telegram,
+    formats: values.formats,
+    audiences: values.audiences,
+    photos: values.photos.map((item) => item.image),
+    certificates: values.certificates.map((item) => ({
+      fileName: item.fileName,
+      caption: item.caption,
+      dataUrl: item.dataUrl,
+    })),
+  };
 }
 
-function BasicsFields({
+function ProfileFields({
   values,
   bioInvalid,
   onChange,
 }: {
-  values: Basics;
+  values: JoinProfile;
   bioInvalid: boolean;
-  onChange: (values: Basics) => void;
+  onChange: (values: JoinProfile) => void;
 }) {
+  const latest = useRef(values);
+  latest.current = values;
+  function commit(partial: Partial<JoinProfile>) {
+    const next = { ...latest.current, ...partial };
+    latest.current = next;
+    onChange(next);
+  }
   return (
-    <div className="join-basics">
-      <div>
-        <span className="cabinet-media__label is-required">Как меня представить</span>
-        <ReviewEditor
-          value={values.bio}
-          invalid={bioInvalid}
-          placeholder="Коротко о себе"
-          onChange={(bio) => onChange({ ...values, bio })}
-        />
-      </div>
-      <div>
-        <span className="cabinet-media__label is-required">Мои виды спорта</span>
-        <SportEntityInput value={values.sportSlugs} onChange={(sportSlugs) => onChange({ ...values, sportSlugs })} />
-        <p className="cabinet-note">Не больше пяти видов. Раздел, например фитнес, можно назначить целиком или выбрать вид внутри него.</p>
-      </div>
-      <div>
-        <span className="cabinet-media__label is-required">Формат моих тренировок</span>
-        <div className="cabinet-choices" role="group" aria-label="Формат моих тренировок">
-          {TRAINER_FORMAT_OPTIONS.map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              className={values.formats.includes(option.id) ? "is-on" : undefined}
-              aria-pressed={values.formats.includes(option.id)}
-              onClick={() => onChange({ ...values, formats: toggleChoice(values.formats, option.id) })}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div>
-        <span className="cabinet-media__label is-required">С кем я работаю</span>
-        <div className="cabinet-choices" role="group" aria-label="С кем я работаю">
-          {TRAINER_AUDIENCE_OPTIONS.map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              className={values.audiences.includes(option.id) ? "is-on" : undefined}
-              aria-pressed={values.audiences.includes(option.id)}
-              onClick={() => onChange({ ...values, audiences: toggleChoice(values.audiences, option.id) })}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div>
-        <span className="cabinet-media__label is-required">Город</span>
-        <CityEntityInput value={values.city} onChange={(city) => onChange({ ...values, city })} />
-      </div>
-    </div>
+    <TrainerCardFields
+      signup
+      priceLabel="Сколько у меня стоит разовое занятие (персональная тренировка), BYN?"
+      values={values}
+      bioInvalid={bioInvalid}
+      onChange={(next) => {
+        const { photos: _photos, certificates: _certificates, phone: _phone, ...rest } = next as JoinProfile;
+        commit(rest);
+      }}
+      phone={{ linked: false, value: values.phone, onChange: (phone) => commit({ phone }) }}
+      photos={{
+        initial: values.photos.map((item) => item.path),
+        onUpload: async (image) => {
+          const path = `/signup-photo/${crypto.randomUUID()}`;
+          commit({ photos: [...latest.current.photos, { path, image }] });
+          return path;
+        },
+        onRemove: async (path) => {
+          const target = path.split("?")[0];
+          commit({ photos: latest.current.photos.filter((item) => item.path !== target) });
+        },
+        onReorder: async (paths) => {
+          const order = new Map(latest.current.photos.map((item) => [item.path, item]));
+          commit({
+            photos: paths.map((item) => order.get(item.split("?")[0])).filter((item): item is SignupPhoto => Boolean(item)),
+          });
+        },
+      }}
+      certificates={{
+        initial: values.certificates.map((item) => ({ path: item.path, caption: item.caption })),
+        onUpload: async (file, caption) => {
+          const path = `/signup-certificate/${crypto.randomUUID()}`;
+          commit({
+            certificates: [...latest.current.certificates, { path, caption, fileName: file.name, dataUrl: file.dataUrl }],
+          });
+          return { path, caption };
+        },
+        onCaption: async (path, caption) => {
+          const target = path.split("?")[0];
+          commit({
+            certificates: latest.current.certificates.map((item) => item.path === target ? { ...item, caption } : item),
+          });
+        },
+        onRemove: async (path) => {
+          const target = path.split("?")[0];
+          commit({ certificates: latest.current.certificates.filter((item) => item.path !== target) });
+        },
+      }}
+    />
   );
 }
 
