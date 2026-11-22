@@ -370,7 +370,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
     label: "Танцы",
     titleGenitive: "танцам и хореографии",
     iconKey: "dance",
-    description: "Современные, бальные, хип-хоп, балет, брейкинг, чирлидинг, Pole Dance + Exotic, high heels.",
+    description: "Современные, бальные, хип-хоп, балет, брейкинг, чирлидинг, Pole/Exotic Pole Dance, high heels.",
     aliases: ["dance", "dancing", "хореография"],
     count: "",
     bg: "linear-gradient(135deg, #ffe6f4 0%, #ffa8d4 100%)",
@@ -416,7 +416,7 @@ export const TOP_LEVEL_SPORT_CATEGORIES: TopLevelSportCategory[] = [
       },
       {
         slug: "pole-dance",
-        label: "Pole Dance + Exotic",
+        label: "Pole/Exotic Pole Dance",
         titleGenitive: "pole dance",
         aliases: ["танцы на пилоне", "пол-дэнс", "пилон", "пол дэнс", "пилонный танец", "pole dance", "poledance", "exotic pole", "exotic pd", "экзотик пол"],
       },
