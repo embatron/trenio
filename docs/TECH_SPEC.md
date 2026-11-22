@@ -333,7 +333,7 @@ IP берётся из `CF-Connecting-IP` или `X-Real-IP`. Если в зап
 | `public/logo-mail.png`                    | Светлый словесный знак для писем: белый фон, без прозрачности, чтобы почтовый клиент не рисовал его чёрным |
 | `public/brand/trenio-avatar-square.svg`   | Знак вместо фото, если у аккаунта нет портрета                                                |
 | `public/favicon.svg`, `public/favicon.ico`, `public/favicon-32.png`, `public/favicon-16.png`, `public/apple-touch-icon.png` | Круглый знак вкладки браузера и домашнего экрана |
-| `public/icons/icon-192.png`, `icon-512.png` | Те же круглые PWA-иконки на весь квадрат |
+| `public/icons/icon-192.png`, `icon-512.png` | Квадратная иконка Android: коралл до краёв, без прозрачных углов. iOS остаётся на круглом `apple-touch-icon.png` |
 | `public/manifest.webmanifest`             | Имя, `theme_color`, `display: standalone`, иконки 192/512                                      |
 | `public/offline.html`                     | Страница без сети. Её показывает `sw.js`, если навигация не дошла до сервера                  |
 | `public/maintenance.html`                 | Полноэкранная страница обновления без ссылок. Край отдаёт её, когда процесс не отвечает. Тот же экран показывает сбой сборки страницы |
