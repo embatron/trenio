@@ -13,7 +13,7 @@
   "nameQuotes": [
     "Марина"
   ],
-  "headline": "Тренер по танцам и хореографии",
+  "headline": "Тренер по танцам и хореографии и pole dance",
   "sourceBio": "Добро пожаловать в мой мир😁 @marina_lifedance Тренер в @fitness.leto по Exotic Pole Dance Пеку тортики🍰 Развиваюсь в инфографике @smoglmarina",
   "sourceAbout": [],
   "sourceThreads": "",
@@ -28,6 +28,12 @@
       "parentSlug": "tancy",
       "label": "Танцы",
       "evidence": "dance"
+    },
+    {
+      "slug": "pole-dance",
+      "parentSlug": "tancy",
+      "label": "Pole Dance + Exotic",
+      "evidence": "exotic pole"
     }
   ],
   "practicedSports": [],

@@ -163,7 +163,7 @@ test("a section can be stored, and the gym phrase drops по", () => {
   assert.equal(catalogSportByName("exotic pole")?.slug, "pole-dance");
   assert.equal(catalogSportByName("танцы на пилоне")?.slug, "pole-dance");
   assert.equal(catalogSportByName("хай хилс")?.slug, "high-heels");
-  assert.equal(trainerSportsFromSlugs(["pole-dance"]).sports[0]?.label, "Pole dance / Exotic pole");
+  assert.equal(trainerSportsFromSlugs(["pole-dance"]).sports[0]?.label, "Pole Dance + Exotic");
   assert.equal(trainerSportsFromSlugs(["pole-dance"]).sports[0]?.parentSlug, "tancy");
   assert.deepEqual(
     listCatalogSports().filter((sport) => sport.parentSlug === "tancy" && sport.level === 2).map((sport) => sport.slug),
