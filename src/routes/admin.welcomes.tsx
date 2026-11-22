@@ -207,17 +207,19 @@ function AdminWelcomesPage() {
         <p className="cabinet-empty">Заявок пока нет.</p>
       ) : (
         <>
-          <CabinetFilterBar active={query.trim() ? 1 : 0}>
-            <label className="cabinet-filters__search">
-              <span>Поиск</span>
-              <input
-                type="search"
-                value={query}
-                placeholder="Instagram, Telegram, телефон"
-                onChange={(event) => setQuery(event.target.value)}
-              />
-            </label>
-          </CabinetFilterBar>
+          <CabinetFilterBar
+            search={(
+              <label className="cabinet-filters__search">
+                <span>Поиск</span>
+                <input
+                  type="search"
+                  value={query}
+                  placeholder="Instagram, Telegram, телефон"
+                  onChange={(event) => setQuery(event.target.value)}
+                />
+              </label>
+            )}
+          />
           <div className="cabinet-tabs" role="tablist" aria-label="Заявки">
             <button type="button" role="tab" aria-selected={tab === "open"} onClick={() => setTab("open")}>
               {`Новые и черновики (${searching ? matchedOpen.length : openRows.length})`}

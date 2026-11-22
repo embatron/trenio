@@ -133,16 +133,20 @@ function AdminReviewsPage() {
       <h2>Модерация отзывов</h2>
       {reviews.length === 0 ? <p className="cabinet-empty">Отзывов пока нет.</p> : (
         <>
-          <CabinetFilterBar active={[query.trim(), status, category, sport].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}>
-            <label className="cabinet-filters__search">
-              <span>Поиск</span>
-              <input
-                type="search"
-                value={query}
-                placeholder="Тренер, Instagram, автор"
-                onChange={(event) => setQuery(event.target.value)}
-              />
-            </label>
+          <CabinetFilterBar
+            search={(
+              <label className="cabinet-filters__search">
+                <span>Поиск</span>
+                <input
+                  type="search"
+                  value={query}
+                  placeholder="Тренер, Instagram, автор"
+                  onChange={(event) => setQuery(event.target.value)}
+                />
+              </label>
+            )}
+            active={[status, category, sport].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}
+          >
             <label>
               <span>Статус</span>
               <select value={status} onChange={(event) => setStatus(event.target.value as "" | ReviewStatusValue)}>

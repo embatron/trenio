@@ -127,12 +127,10 @@ export function TelegramAppChrome() {
     };
   }, [current, inside]);
 
-  if (!inside) return null;
-
   return (
     <>
       <style>{TAB_CSS}</style>
-      <nav className="tg-tabbar" aria-label="Разделы">
+      <nav className={inside ? "tg-tabbar is-telegram" : "tg-tabbar"} aria-label="Разделы">
         <ScrollHint direction="start" on={more.start} />
         <div className="layout-rail">
           <div className="layout-rail__track" ref={trackRef}>
@@ -151,12 +149,21 @@ export function TelegramAppChrome() {
                 </a>
               );
             })}
-            <button type="button" onClick={() => openTelegramAccount(TELEGRAM_SUPPORT_URL)}>
+            <a
+              href={TELEGRAM_SUPPORT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(event) => {
+                if (!getTelegramWebApp()?.openTelegramLink) return;
+                event.preventDefault();
+                openTelegramAccount(TELEGRAM_SUPPORT_URL);
+              }}
+            >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M5 6h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H9l-4 3v-3H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z" />
               </svg>
-              <span>Вопросы</span>
-            </button>
+              <span>Менеджеру</span>
+            </a>
           </div>
         </div>
         <ScrollHint direction="end" on={more.end} />
@@ -166,15 +173,23 @@ export function TelegramAppChrome() {
 }
 
 const TAB_CSS = `
-html.telegram-webapp body { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
+@media (max-width: 767px) {
+  body { padding-bottom: calc(76px + env(safe-area-max-inset-bottom, env(safe-area-inset-bottom, 0px))); }
+}
+@media (min-width: 768px) {
+  .tg-tabbar:not(.is-telegram) { display: none; }
+}
+.tg-tabbar.is-telegram { display: block; }
+body:has(.tg-tabbar.is-telegram) { padding-bottom: calc(76px + env(safe-area-max-inset-bottom, env(safe-area-inset-bottom, 0px))); }
 .tg-tabbar {
   position: fixed;
   inset-inline: 0;
-  bottom: 0;
   z-index: 50;
   background: var(--white);
   border-top: 1px solid var(--line);
-  padding-bottom: env(safe-area-inset-bottom);
+  bottom: 0;
+  padding-bottom: env(safe-area-max-inset-bottom, env(safe-area-inset-bottom, 0px));
+  bottom: calc(env(safe-area-inset-bottom, 0px) - env(safe-area-max-inset-bottom, env(safe-area-inset-bottom, 0px)));
 }
 .tg-tabbar .layout-rail {
   width: 100%;
@@ -200,7 +215,7 @@ html.telegram-webapp body { padding-bottom: calc(76px + env(safe-area-inset-bott
   position: absolute;
   z-index: 1;
   top: 0;
-  bottom: env(safe-area-inset-bottom);
+  bottom: env(safe-area-max-inset-bottom, env(safe-area-inset-bottom, 0px));
   width: 28px;
   display: flex;
   align-items: center;

@@ -227,12 +227,13 @@ const TAB_CSS = `
   position: fixed;
   z-index: 40;
   inset-inline: 0;
-  bottom: 0;
   display: flex;
   align-items: stretch;
   justify-content: space-around;
   min-height: 56px;
-  padding-bottom: env(safe-area-inset-bottom);
+  bottom: 0;
+  padding-bottom: env(safe-area-max-inset-bottom, env(safe-area-inset-bottom, 0px));
+  bottom: calc(env(safe-area-inset-bottom, 0px) - env(safe-area-max-inset-bottom, env(safe-area-inset-bottom, 0px)));
   background: var(--white);
   border-top: 1px solid var(--line);
 }

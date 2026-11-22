@@ -1,5 +1,5 @@
 import { Link, useRouteContext, useRouterState } from "@tanstack/react-router";
-import { Fragment, useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { Children, Fragment, useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 import { CredentialsRequiredDialog } from "@/components/auth/credentials-required-dialog";
@@ -170,22 +170,26 @@ export function CabinetStyles() {
   return <style dangerouslySetInnerHTML={{ __html: CABINET_CSS }} />;
 }
 
-/** Admin table filters start closed, the same way the map and a category do. */
-export function CabinetFilterBar({ children, active = 0 }: { children: ReactNode; active?: number }) {
+/** Admin table filters start closed, the same way the map and a category do. The name search stays above that button. */
+export function CabinetFilterBar({ children, active = 0, search }: { children?: ReactNode; active?: number; search?: ReactNode }) {
   const [open, setOpen] = useState(false);
+  const hasFilters = Children.count(children) > 0;
   return (
     <div className="cabinet-filter-bar">
-      <button
-        type="button"
-        className={open ? "is-open" : undefined}
-        aria-expanded={open}
-        onClick={() => setOpen((value) => !value)}
-      >
-        Фильтры
-        {active > 0 ? <span className="cabinet-filter-bar__count">{active}</span> : null}
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
-      </button>
-      {open ? <div className="cabinet-filters">{children}</div> : null}
+      {search}
+      {hasFilters ? (
+        <button
+          type="button"
+          className={open ? "is-open" : undefined}
+          aria-expanded={open}
+          onClick={() => setOpen((value) => !value)}
+        >
+          Фильтры
+          {active > 0 ? <span className="cabinet-filter-bar__count">{active}</span> : null}
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+        </button>
+      ) : null}
+      {hasFilters && open ? <div className="cabinet-filters">{children}</div> : null}
     </div>
   );
 }
@@ -828,6 +832,9 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-table--trainers .cabinet-social__link svg { width: 22px; height: 22px; overflow: visible; }
 .cabinet-table--trainers .cabinet-social__link--line svg { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .cabinet-filter-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+.cabinet-filter-bar > .cabinet-filters__search { flex: 1 1 100%; display: grid; gap: 6px; }
+.cabinet-filter-bar > .cabinet-filters__search span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
+.cabinet-filter-bar > .cabinet-filters__search input { width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--text); font: inherit; font-size: 15px; }
 .cabinet-filter-bar > button { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-size: 14px; font-weight: var(--fw-ui); cursor: pointer; }
 .cabinet-filter-bar > button:hover, .cabinet-filter-bar > button.is-open { border-color: var(--primary); color: var(--primary); }
 .cabinet-filter-bar > button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; transition: transform 0.16s ease; }
@@ -841,7 +848,8 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-filters select, .cabinet-filters input { width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--text); font: inherit; font-size: 15px; }
 .cabinet-filters p { flex: 1 1 100%; }
 @media (max-width: 767px) {
-  .cabinet-filters select, .cabinet-filters input { font-size: 16px; }
+  .cabinet-filters select, .cabinet-filters input,
+  .cabinet-filter-bar > .cabinet-filters__search input { font-size: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .cabinet-filter-bar > button svg { transition: none; }

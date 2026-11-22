@@ -565,17 +565,19 @@ export function AdminTrainersTable({
         </div>
       ) : null}
       <CabinetFilterBar
-        active={[query.trim(), category, sport, city, format, audience, message, link, visit].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}
+        search={(
+          <label className="cabinet-filters__search">
+            <span>Поиск</span>
+            <input
+              type="search"
+              value={query}
+              placeholder="Имя, телефон, город, спорт, аккаунт, Instagram"
+              onChange={(event) => setQuery(event.target.value)}
+            />
+          </label>
+        )}
+        active={[category, sport, city, format, audience, message, link, visit].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}
       >
-        <label className="cabinet-filters__search">
-          <span>Поиск</span>
-          <input
-            type="search"
-            value={query}
-            placeholder="Имя, телефон, город, спорт, аккаунт, Instagram"
-            onChange={(event) => setQuery(event.target.value)}
-          />
-        </label>
         <label>
           <span>Категория</span>
           <select
