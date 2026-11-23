@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pilatespolina/",
+  "handle": "pilatespolina",
+  "slug": "pilatespolina",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Полина",
+  "lastName": "Мельникова",
+  "fullName": "Полина Мельникова",
+  "gender": "female",
+  "nameQuotes": [
+    "Полина Мельникова"
+  ],
+  "headline": "Инструктор по пилатесу и тренер по осанке",
+  "sourceBio": "•Ваша красивая осанка - моя специализация 👩‍🎓\n•Пилатес с заботой о вас. Медик и магистр физкультуры",
+  "sourceAbout": [
+    "Мой подход: точность, осознанность и уважение к телу. Не работаю наугад, а выстраиваю тренировки грамотно и системно. Результат - сильное, подтянутое тело и ощущение лёгкости в каждом движении.",
+    "Почему пилатес? это не просто тренировка, это диалог с телом; движение здесь осознанное, медленное и точное; вы учитесь слышать свои мышцы и управлять ими."
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Полина Мельникова Смолевичи пилатес",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Ваша красивая осанка — моя специализация. Пилатес с заботой о вас. Медик и магистр физкультуры. Не работаю наугад, а выстраиваю тренировки грамотно и системно.",
+  "about": [
+    "Не работаю наугад, а выстраиваю тренировки грамотно и системно. Движение здесь осознанное, медленное и точное."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Смолевичи",
+  "address": "ул. Деревянко 3",
+  "cityCandidates": [
+    "Смолевичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/pilatespolina.jpg",
+  "photos": [
+    "/trainers/instagram/pilatespolina.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pilatespolina/",
+    "phone": "+375 44 554-85-05",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

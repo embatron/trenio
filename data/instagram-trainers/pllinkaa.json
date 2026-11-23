@@ -1,0 +1,111 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pllinkaa/",
+  "handle": "pllinkaa",
+  "slug": "pllinkaa",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Полина",
+  "lastName": "",
+  "fullName": "Полина",
+  "gender": "female",
+  "nameQuotes": [
+    "Полина"
+  ],
+  "headline": "Тренер по high heels, танцам и хореографии, танцам и хореографии и инструктор по растяжке",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Полина Брест танцы всем и взрослым и детям хореография",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Меня зовут Полина, я являюсь тренером по направлениям strip и high heels в Бресте. Хореограф для детей, танцы от 3-х лет. Танцы взрослым и детям.",
+  "about": [
+    "На моих тренировках мы работаем над физической формой ,растяжкой и очень красиво танцуем."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/pllinkaa/reel/DVnqpGhjZ1i/",
+      "caption": "Танцевать может каждая! Всем привет!🤍 Меня зовут Полина,я являюсь тренером по направлениям strip и high heels в Бресте. Приглашаю вас к себе на тренировки. На моих тренировках мы работаем над физической формой ,растяжкой и очень красиво танцуем. Запись и вся информация в директ @pllinkaa! Буду ждать вас у себя на тренировках! 🤍",
+      "textRole": "training",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "High Heels"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "хореография"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "хореография"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "Растяжка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "high-heels",
+    "parentSlug": "tancy",
+    "label": "High Heels"
+  },
+  "city": "Брест",
+  "address": "",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/pllinkaa.jpg",
+  "photos": [
+    "/trainers/instagram/pllinkaa.jpg",
+    "/trainers/instagram/pllinkaa-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pllinkaa/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

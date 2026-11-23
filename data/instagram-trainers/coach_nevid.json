@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/coach_nevid/",
+  "handle": "coach_nevid",
+  "slug": "coach_nevid",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алексей",
+  "lastName": "Невидицин",
+  "fullName": "Алексей Невидицин",
+  "gender": "male",
+  "nameQuotes": [
+    "Алексей",
+    "Невидицин",
+    "Невидицин Алексей"
+  ],
+  "headline": "Тренер по хоккею",
+  "sourceBio": "🏒Тренер по хоккею школы им.Р.Салея\n🏆Двукратный обладатель Кубка Салея\n🥈Серебряный призер чемпионата РБ 2024/25\n👇🏻Запись на индивидуальные тренировки",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Алексей Невидицин Минск хоккей",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тренер по хоккею школы им.Р.Салея. Двукратный обладатель Кубка Салея. Серебряный призер чемпионата РБ 2024/25.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/coach_nevid/reel/DZHfVmpo1Je/",
+      "caption": "Откройте для вашего ребенка мир большого хоккея! Приглашаем мальчиков и девочек 2021 года рождения на занятия по хоккею с шайбой в СДЮШОР им. Руслана Салея! Если Ваш ребенок мечтает о захватывающих матчах и новых друзьях. Если Вы хотите чтобы ваш ребенок научился работать в команде и приобрел спортивные привычки на всю жизнь, то это именно то, что ему нужно! У нас: - Профессиональные тренеры с большим опытом работы с детьми -Индивидуальный подход к каждому ребенку -Регулярные тренировки на льду и в зале -Участие в турнирах и спортивных сборах Интересно? Тогда звоните по телефону +375(29)582-42-97 или пишите в телеграмм @Coach_Nevid. Главный тренер команды - Невидицин Алексей Владимирович, ответит на все Ваши вопросы. Подарите ребенку шанс стать чемпионом. ШРС — быть среди лучших!",
+      "textRole": "promotion",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "hokkej",
+      "parentSlug": "zima",
+      "label": "Хоккей",
+      "evidence": "Хоккей"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "hokkej",
+    "parentSlug": "zima",
+    "label": "Хоккей"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/coach_nevid.jpg",
+  "photos": [
+    "/trainers/instagram/coach_nevid.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/coach_nevid/",
+    "phone": "+375 29 582-42-97",
+    "email": "",
+    "telegram": "https://t.me/Coach_Nevid",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email"
+  ]
+}

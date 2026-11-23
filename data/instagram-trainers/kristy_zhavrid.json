@@ -1,0 +1,107 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kristy_zhavrid/",
+  "handle": "kristy_zhavrid",
+  "slug": "kristy_zhavrid",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Кристина",
+  "lastName": "Жаврид",
+  "fullName": "Кристина Жаврид",
+  "gender": "female",
+  "nameQuotes": [
+    "Кристина",
+    "Жаврид"
+  ],
+  "headline": "Фитнес-тренер, инструктор по пилатесу, тренер по гимнастике и акробатике и массажист",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кристина Жаврид Слуцк Пилатес",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Детский фитнес, пилатес и специальная гимнастика для лечения сколиозов. Занимаюсь со взрослыми и детьми.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/kristy_zhavrid/p/DdOJ7_QMqsk/",
+      "caption": "Пост-знакомство Краткий пост для тех, кто со мной близко не знаком♥️ Я Кристина- тренер с медицинским образованием. Опыт работы 10 лет. Мои направления- детский фитнес, коррекция, пилатес , специальная гимнастика для лечения сколиозов (Шрот) Занимаюсь со взрослыми и детьми. Работаю с нарушением осанки, сколиозами, кифозами, вальгусом/варусом у детей. Использую специальную гимнастику для лечения сколиозов- Шрот терапию. Так же имею кейсы по работе со взрослыми с тазовым дном/ восстановлением после родов, работе с диастазом, болями в спине и пояснице, грыжами, болями в плечевых/тазобедренных/ коленных суставах. Регулярно повышаю свою квалификацию и посещаю семинары, мастер-классы.",
+      "textRole": "about",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "gimnastika",
+      "parentSlug": "gimnastika",
+      "label": "Гимнастика",
+      "evidence": "Гимнастика"
+    },
+    {
+      "slug": "massazh",
+      "parentSlug": "reabilitaciya",
+      "label": "Массаж",
+      "evidence": "Массаж"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Слуцк",
+  "address": "",
+  "cityCandidates": [
+    "Слуцк"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kristy_zhavrid.jpg",
+  "photos": [
+    "/trainers/instagram/kristy_zhavrid.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kristy_zhavrid/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

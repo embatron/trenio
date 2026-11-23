@@ -1,0 +1,81 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kristarkids/",
+  "handle": "kristarkids",
+  "slug": "kristarkids",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Кристина",
+  "lastName": "Осинина",
+  "fullName": "Кристина Осинина",
+  "gender": "female",
+  "nameQuotes": [
+    "Кристина",
+    "Осинина"
+  ],
+  "headline": "Тренер по гимнастике и акробатике",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кристина Осинина Минск Гимнастика",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "14 лет прививаю девочкам к гимнастике. Провожу индивидуальные и групповые занятия.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "gimnastika",
+      "parentSlug": "gimnastika",
+      "label": "Гимнастика",
+      "evidence": "Гимнастика"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "gimnastika",
+    "parentSlug": "gimnastika",
+    "label": "Гимнастика"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kristarkids.jpg",
+  "photos": [
+    "/trainers/instagram/kristarkids.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kristarkids/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

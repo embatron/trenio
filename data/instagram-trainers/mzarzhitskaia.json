@@ -1,0 +1,95 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/mzarzhitskaia/",
+  "handle": "mzarzhitskaia",
+  "slug": "mzarzhitskaia",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Марина",
+  "lastName": "Заржицкая",
+  "fullName": "Марина Заржицкая",
+  "gender": "female",
+  "nameQuotes": [
+    "Марина",
+    "Заржицкая"
+  ],
+  "headline": "Тренер по спортивной гимнастике, гимнастике и акробатике и общефизической подготовке",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Марина Заржицкая Минск Гимнастика",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Групповые и персональные тренировки. Оздоровительная и спортивная гимнастика. ОФП и СФП.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "sportivnaya",
+      "parentSlug": "gimnastika",
+      "label": "Спортивная гимнастика",
+      "evidence": "Спортивная гимнастика"
+    },
+    {
+      "slug": "gimnastika",
+      "parentSlug": "gimnastika",
+      "label": "Гимнастика",
+      "evidence": "Гимнастика"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "sportivnaya",
+    "parentSlug": "gimnastika",
+    "label": "Спортивная гимнастика"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/mzarzhitskaia.jpg",
+  "photos": [
+    "/trainers/instagram/mzarzhitskaia.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/mzarzhitskaia/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

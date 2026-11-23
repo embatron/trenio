@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/nastya_filippova/",
+  "handle": "nastya_filippova",
+  "slug": "nastya_filippova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анастасия",
+  "lastName": "Филиппова",
+  "fullName": "Анастасия Филиппова",
+  "gender": "female",
+  "nameQuotes": [
+    "Анастасия Филиппова"
+  ],
+  "headline": "Тренер по бильярду",
+  "sourceBio": "Чемпионка Беларуси Мастер спорта",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Анастасия Филиппова Минск Русский бильярд",
+  "threadsUrl": "",
+  "bio": "Я Анастасия Филиппова, тренер по русскому бильярду в Минске. Чемпионка Беларуси.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "bilyard",
+      "parentSlug": "klub",
+      "label": "Бильярд",
+      "evidence": "русский бильярд"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bilyard",
+    "parentSlug": "klub",
+    "label": "Бильярд"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [
+    "Русский"
+  ],
+  "avatarPath": "/trainers/instagram/nastya_filippova.jpg",
+  "photos": [
+    "/trainers/instagram/nastya_filippova.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/nastya_filippova/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

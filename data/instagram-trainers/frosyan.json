@@ -1,0 +1,112 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/frosyan/",
+  "handle": "frosyan",
+  "slug": "frosyan",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анастасия",
+  "lastName": "",
+  "fullName": "Анастасия",
+  "gender": "female",
+  "nameQuotes": [
+    "АНАСТАСИЯ",
+    "Анастасия"
+  ],
+  "headline": "Тренер по high heels, современным танцам, инструктор по растяжке и тренер по танцам и хореографии",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Анастасия Витебск Современные танцы",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Учу танцевать с нуля в любом возрасте. Со мной о любви к себе, своему телу и женственности. Жить жизнь, быть собой.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/frosyan/reel/DezbUEMsndk/",
+      "caption": "Искренне поделюсь всем, что умею Приходите, пробуйте, будем бережно входить в танцы ❤️🫶ко мне много кто приходит танцевать с нуля. Отвечу на все вопросы - пишите ✍️",
+      "textRole": "promotion",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/frosyan/reel/DcdS28OMAWo/",
+      "caption": "РАСПИСАНИЕ НА СЕЗОН Мои группы ❤️👠 • УТРО • 💃High-heels : вт - пт 9.00 • ВЕЧЕР • 💃Dancehall нач. : пн -ср 18.00 💃Dancehall про. : вт - пт 18.00 💃High-heels нач.: вт - пт 19.30 💃High- heels про. : вт - пт 20.30 • СУББОТА• 💃10.00 - растяжка 💃11.00 - dancehall 💃12.30 - high-heels Так же возможен формат ИНДИВИДУАЛЬНЫХ ТРЕНИРОВОК - пишите , обсудим . И следите за мастер-классами и проектами . Много чего провожу. Проект БАСТЕТ @bastet.goddess.woman - отслеживаем , как только готов сам проект, так сразу я рекламирую нашу новую работу и выставляю его в реализацию. С искренним уважением и любовью. Приходите ко мне в творчество. Поделись моим расписанием на сезон с подружкой - украсим чью-то жизнь нашим присутствием ❤️❤️",
+      "textRole": "facts",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "High Heels"
+    },
+    {
+      "slug": "sovremennye",
+      "parentSlug": "tancy",
+      "label": "Современные танцы",
+      "evidence": "Современные танцы"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "Растяжка"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "high-heels",
+    "parentSlug": "tancy",
+    "label": "High Heels"
+  },
+  "city": "Витебск",
+  "address": "",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/frosyan.jpg",
+  "photos": [
+    "/trainers/instagram/frosyan.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/frosyan/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

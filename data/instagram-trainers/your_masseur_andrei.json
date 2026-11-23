@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/your_masseur_andrei/",
+  "handle": "your_masseur_andrei",
+  "slug": "your_masseur_andrei",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Андрей",
+  "lastName": "",
+  "fullName": "Андрей",
+  "gender": "male",
+  "nameQuotes": [
+    "Андрей"
+  ],
+  "headline": "Массажист",
+  "sourceBio": "ЭФФЕКТИВНЫЙ массаж по Вашему запросу",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Андрей Минск Массаж Выезд на дом",
+  "threadsUrl": "",
+  "bio": "Я Андрей, массажист в Минске. Выезжаю на дом. Делаю массаж по запросу: триггерные точки и силовая проработка.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/your_masseur_andrei/p/DcGi3UIDSki/",
+      "caption": "",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "massazh",
+      "parentSlug": "reabilitaciya",
+      "label": "Массаж",
+      "evidence": "Массаж"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "massazh",
+    "parentSlug": "reabilitaciya",
+    "label": "Массаж"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/your_masseur_andrei.jpg",
+  "photos": [
+    "/trainers/instagram/your_masseur_andrei.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/your_masseur_andrei/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

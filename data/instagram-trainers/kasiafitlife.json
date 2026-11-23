@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kasiafitlife/",
+  "handle": "kasiafitlife",
+  "slug": "kasiafitlife",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Кася",
+  "lastName": "",
+  "fullName": "Кася",
+  "gender": "female",
+  "nameQuotes": [
+    "Кася"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Тренер с высшим спортивным образованием. Выступающая спортсменка. Работаю с девочками всех возрастов от 16 до 99 лет",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кася Минск Фитнес",
+  "threadsUrl": "",
+  "presentationMode": "source",
+  "bio": "Тренер с высшим спортивным образованием. Выступающая спортсменка. Работаю с девочками всех возрастов от 16 до 99 лет.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kasiafitlife.jpg",
+  "photos": [
+    "/trainers/instagram/kasiafitlife.jpg",
+    "/trainers/instagram/kasiafitlife-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kasiafitlife/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

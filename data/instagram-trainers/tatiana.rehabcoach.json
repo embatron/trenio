@@ -1,0 +1,96 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/tatiana.rehabcoach/",
+  "handle": "tatiana.rehabcoach",
+  "slug": "tatiana.rehabcoach",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Таня",
+  "lastName": "",
+  "fullName": "Таня",
+  "gender": "female",
+  "nameQuotes": [
+    "Таня"
+  ],
+  "headline": "Тренер по осанке и реабилитации и восстановлению",
+  "sourceBio": "Осанка •стопы •восстановление после травм и операций",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Таня Брест Осанка",
+  "threadsUrl": "",
+  "bio": "Я Таня, тренер. Осанка. Город Брест.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/tatiana.rehabcoach/reel/De1Og_sAH0s/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/tatiana.rehabcoach/reel/De8kROagJ2Y/",
+      "caption": "",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "reabilitaciya",
+      "parentSlug": "reabilitaciya",
+      "label": "Реабилитация",
+      "evidence": "восстановление"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "osanka",
+    "parentSlug": "reabilitaciya",
+    "label": "Осанка"
+  },
+  "city": "Брест",
+  "address": "",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/tatiana.rehabcoach.jpg",
+  "photos": [
+    "/trainers/instagram/tatiana.rehabcoach.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/tatiana.rehabcoach/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

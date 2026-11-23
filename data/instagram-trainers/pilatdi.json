@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pilatdi/",
+  "handle": "pilatdi",
+  "slug": "pilatdi",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Диана",
+  "lastName": "Пилат",
+  "fullName": "Диана Пилат",
+  "gender": "female",
+  "nameQuotes": [
+    "Диана",
+    "Пилат"
+  ],
+  "headline": "Тренер по high heels",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Диана Пилат Минск",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Хореограф. HIGH HEELS. Minsk, Belarus.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "High Heels"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "high-heels",
+    "parentSlug": "tancy",
+    "label": "High Heels"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/pilatdi.jpg",
+  "photos": [
+    "/trainers/instagram/pilatdi.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pilatdi/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

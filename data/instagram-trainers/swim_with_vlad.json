@@ -1,0 +1,91 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/swim_with_vlad/",
+  "handle": "swim_with_vlad",
+  "slug": "swim_with_vlad",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Владислав",
+  "lastName": "",
+  "fullName": "Владислав",
+  "gender": "male",
+  "nameQuotes": [
+    "Владислав"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "🦈 НАУЧИМ ПЛАВАТЬ МАЛЫШЕЙ И ВЗРОСЛЫХ\n🐬ГРУППОВЫЕ И ИНДИВИДУАЛЬНЫЕ ЗАНЯТИЯ\n🐳КВАЛИФИЦИРОВАННЫЙ ТРЕНЕР\n🐙ИНДИВИДУАЛЬНЫЙ ПОДХОД К КАЖДОМУ\n🪼3 ФИЛИАЛА",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Владислав Минск",
+  "threadsUrl": "",
+  "presentationMode": "source",
+  "bio": "Привет, друзья! Меня зовут Влад, и я рад сообщить, что присоединился к команде клуба плавания Marlin. Хотя в нашем клубе я только начал работу, у меня уже более 15 лет опыта в плавании, а последние 2 года я тренировал и помогал ученикам достигать своих целей в воде.\n\nБуду рад видеть тебя на своих занятиях! Веду как групповые, так и индивидуальные тренировки для детей и взрослых. Давай вместе освоим технику плавания, укрепим здоровье и получим массу удовольствия!",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/swim_with_vlad/p/C_1LHJDCYMa/",
+      "caption": "Привет, друзья! 👋 Меня зовут Влад, и я рад сообщить, что присоединился к команде клуба плавания Marlin 🌊. Хотя в нашем клубе я только начал работу, у меня уже более 15 лет опыта в плавании 🏊‍♂️, а последние 2 года я тренировал и помогал ученикам достигать своих целей в воде 💪. Буду рад видеть тебя на своих занятиях! Веду как групповые, так и индивидуальные тренировки для детей и взрослых. Давай вместе освоим технику плавания, укрепим здоровье и получим массу удовольствия! 😎 Записывайся на тренировку — будет супер! 💦📲 #плавание #тренерпоплаванию #Marlin #тренировки #спорт #здоровье #детиплавание #плаваниедлявсех #успех #тренировкиМинск #спортвесело #командаMarlin",
+      "textRole": "about",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "Плавание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/swim_with_vlad.jpg",
+  "photos": [
+    "/trainers/instagram/swim_with_vlad.jpg",
+    "/trainers/instagram/swim_with_vlad-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 2,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 1
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/swim_with_vlad/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://marlin-club.by/"
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

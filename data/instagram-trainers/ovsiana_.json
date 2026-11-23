@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ovsiana_/",
+  "handle": "ovsiana_",
+  "slug": "ovsiana_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ксения",
+  "lastName": "",
+  "fullName": "Ксения",
+  "gender": "female",
+  "nameQuotes": [
+    "Ксения"
+  ],
+  "headline": "Инструктор по пилатесу",
+  "sourceBio": "Тренер по пилатесу, мотиватор и основатель @studio_ok_brest @studio_ok_by\nВоспитываю щеночка-сыночка @nord_cane_corso",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Ксения Брест",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тренер по пилатесу, мотиватор.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Брест",
+  "address": "",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ovsiana_.jpg",
+  "photos": [
+    "/trainers/instagram/ovsiana_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ovsiana_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://www.tiktok.com/@nord_cane_corso"
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

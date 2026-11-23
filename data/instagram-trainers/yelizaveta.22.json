@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yelizaveta.22/",
+  "handle": "yelizaveta.22",
+  "slug": "yelizaveta.22",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Елизавета",
+  "lastName": "",
+  "fullName": "Елизавета",
+  "gender": "female",
+  "nameQuotes": [
+    "Елизавета"
+  ],
+  "headline": "Тренер по балету и танцам и хореографии",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Елизавета Минск Балет",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Профессиональная балерина. Влюбляю в балет с первого занятия.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/yelizaveta.22/reel/DMvc0K0NmLS/",
+      "caption": "Луне почти 3 года, и за всю свою жизнь она ни разу не изъявила желания зайти хотя бы даже в лужу",
+      "textRole": "none",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "klassika",
+      "parentSlug": "tancy",
+      "label": "Балет",
+      "evidence": "классический танец"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "хореография"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "klassika",
+    "parentSlug": "tancy",
+    "label": "Балет"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yelizaveta.22.jpg",
+  "photos": [
+    "/trainers/instagram/yelizaveta.22.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yelizaveta.22/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

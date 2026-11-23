@@ -1,0 +1,279 @@
+- generic [ref=f57e4]:
+  - generic [ref=f57e9]:
+    - generic [ref=f57e12]:
+      - link [ref=f57e17] [cursor=pointer]:
+        - /url: /
+        - img "Instagram" [ref=f57e22]
+      - generic [ref=f57e25]:
+        - link [ref=f57e30] [cursor=pointer]:
+          - /url: /
+          - img "Home" [ref=f57e35]
+        - link [ref=f57e40] [cursor=pointer]:
+          - /url: /reels/
+          - img "Reels" [ref=f57e45]
+        - link [ref=f57e52] [cursor=pointer]:
+          - /url: /direct/inbox/
+          - generic [ref=f57e55]:
+            - img "Messages" [ref=f57e57]
+            - generic "Direct messaging - 3 new notifications link" [ref=f57e60]: "3"
+        - link [ref=f57e66] [cursor=pointer]:
+          - /url: /explore/
+          - img "Search" [ref=f57e71]
+        - link [ref=f57e78] [cursor=pointer]:
+          - /url: "#"
+          - img "Notifications" [ref=f57e83]
+        - link [ref=f57e89] [cursor=pointer]:
+          - /url: "#"
+          - img "New post" [ref=f57e94]
+        - link [ref=f57e99] [cursor=pointer]:
+          - /url: "#"
+          - img "Professional dashboard" [ref=f57e104]
+        - link [ref=f57e111] [cursor=pointer]:
+          - /url: /trenioby/
+          - link [ref=f57e116]:
+            - img "trenioby's profile picture" [ref=f57e117]
+      - generic [ref=f57e118]:
+        - link [ref=f57e121] [cursor=pointer]:
+          - /url: "#"
+          - img "Settings" [ref=f57e126]
+        - link [ref=f57e129] [cursor=pointer]:
+          - /url: "#"
+          - img "Also from Meta" [ref=f57e134]
+    - generic [ref=f57e137]:
+      - main [ref=f57e138]:
+        - generic [ref=f57e140]:
+          - generic [ref=f57e141]:
+            - generic [ref=f57e142]:
+              - link [ref=f57e148] [cursor=pointer]:
+                - /url: /yuragreben/
+                - img "yuragreben's profile picture" [ref=f57e149]
+              - generic [ref=f57e150]:
+                - generic [ref=f57e151]:
+                  - generic [ref=f57e152]:
+                    - link [ref=f57e154] [cursor=pointer]:
+                      - /url: "#"
+                      - heading "yuragreben" [level=2] [ref=f57e155]
+                    - button [ref=f57e157] [cursor=pointer]:
+                      - img "Options" [ref=f57e159]
+                  - generic [ref=f57e163]: Юра Гребень
+                  - generic [ref=f57e165]:
+                    - generic [ref=f57e167]:
+                      - generic [ref=f57e168]: "65"
+                      - text: posts
+                    - link "199 followers" [ref=f57e170] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f57e171]:
+                        - generic "199" [ref=f57e172]
+                        - text: followers
+                    - link "432 following" [ref=f57e174] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f57e175]:
+                        - generic [ref=f57e176]: "432"
+                        - text: following
+                - link "Followed by farkhad_akhmejanau and ar.boxing.by" [ref=f57e178] [cursor=pointer]:
+                  - /url: /yuragreben/followers/mutualOnly
+                  - generic [ref=f57e180]:
+                    - generic [ref=f57e182]:
+                      - button [ref=f57e183]:
+                        - link [ref=f57e184]
+                      - button [ref=f57e185]:
+                        - link [ref=f57e186]
+                    - generic [ref=f57e187]: Followed by farkhad_akhmejanau and ar.boxing.by
+            - generic [ref=f57e192]:
+              - button "Follow" [ref=f57e194] [cursor=pointer]
+              - button [ref=f57e198] [cursor=pointer]:
+                - img "Similar accounts" [ref=f57e200]
+            - menu [ref=f57e204]:
+              - list [ref=f57e208]:
+                - listitem [ref=f57e209]
+                - listitem [ref=f57e210]
+                - listitem [ref=f57e211]:
+                  - link "View Актуальное highlight" [ref=f57e214] [cursor=pointer]:
+                    - /url: /stories/highlights/17867227345928841/
+                    - button "yuragreben's highlight story picture Актуальное" [ref=f57e215]:
+                      - button [ref=f57e216]:
+                        - img "yuragreben's highlight story picture" [ref=f57e219]
+                      - generic [ref=f57e220]: Актуальное
+                - listitem [ref=f57e223]:
+                  - link "View Актуальное highlight" [ref=f57e226] [cursor=pointer]:
+                    - /url: /stories/highlights/17869721266821076/
+                    - button "yuragreben's highlight story picture Актуальное" [ref=f57e227]:
+                      - button [ref=f57e228]:
+                        - img "yuragreben's highlight story picture" [ref=f57e231]
+                      - generic [ref=f57e232]: Актуальное
+          - generic [ref=f57e235]:
+            - tablist [ref=f57e236]:
+              - link [ref=f57e238] [cursor=pointer]:
+                - /url: /yuragreben/
+                - img "Posts" [ref=f57e240]
+              - link [ref=f57e251] [cursor=pointer]:
+                - /url: /yuragreben/reels/
+                - img "Reels" [ref=f57e253]
+              - link [ref=f57e256] [cursor=pointer]:
+                - /url: /yuragreben/reposts/
+                - img "Reposts" [ref=f57e258]
+              - link [ref=f57e261] [cursor=pointer]:
+                - /url: /yuragreben/tagged/
+                - img "Tagged" [ref=f57e263]
+            - tabpanel
+          - generic [ref=f57e270]:
+            - generic [ref=f57e271]:
+              - link [ref=f57e273] [cursor=pointer]:
+                - /url: /yuragreben/p/DVLnPw9jdDp/
+              - link "Carousel" [ref=f57e279] [cursor=pointer]:
+                - /url: /yuragreben/p/DUxcv74DS4B/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f57e285] [cursor=pointer]:
+                - /url: /yuragreben/p/DUvjWN3jenh/
+                - img "СДЮШОР г.Гомель 5- борье 1 место . Норматив КМС" [ref=f57e288]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f57e291] [cursor=pointer]:
+                - /url: /yuragreben/p/DUBnXrhjQM9/
+            - generic [ref=f57e296]:
+              - link [ref=f57e298] [cursor=pointer]:
+                - /url: /yuragreben/p/DG7mWpJoWNh/
+              - link [ref=f57e304] [cursor=pointer]:
+                - /url: /yuragreben/p/DAk7vNdoLMc/
+              - link [ref=f57e310] [cursor=pointer]:
+                - /url: /yuragreben/p/C68TANno5kN/
+                - img "Мы с моим псом пробежали 9 км. Могёт ещё старичок; Ему 9 лет." [ref=f57e313]
+              - link [ref=f57e316] [cursor=pointer]:
+                - /url: /yuragreben/p/C663SGao4IS/
+                - img "Закат в НГ" [ref=f57e319]
+            - generic [ref=f57e321]:
+              - link [ref=f57e323] [cursor=pointer]:
+                - /url: /yuragreben/p/CuOmwZ1oN-O/
+              - link "Clip" [ref=f57e329] [cursor=pointer]:
+                - /url: /yuragreben/reel/Ctt0JD0Ihw7/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f57e335] [cursor=pointer]:
+                - /url: /yuragreben/p/CsvsjWBonUe/
+                - img "А Вот и результат нашей с Миланой работы. Спасибо всем кто верил в нас,а те кто не верили теперь будут верить:)" [ref=f57e338]
+              - link "Clip" [ref=f57e341] [cursor=pointer]:
+                - /url: /yuragreben/reel/CkH5W7KqTGZ/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+      - contentinfo [ref=f57e346]:
+        - generic [ref=f57e347]:
+          - generic [ref=f57e349]:
+            - link "Meta" [ref=f57e351] [cursor=pointer]:
+              - /url: https://about.meta.com/
+            - link "About" [ref=f57e354] [cursor=pointer]:
+              - /url: https://about.instagram.com/
+            - link "Blog" [ref=f57e357] [cursor=pointer]:
+              - /url: https://about.instagram.com/blog/
+            - link "Jobs" [ref=f57e360] [cursor=pointer]:
+              - /url: https://about.instagram.com/about-us/careers
+            - link "Help" [ref=f57e363] [cursor=pointer]:
+              - /url: https://help.instagram.com/
+            - link "API" [ref=f57e366] [cursor=pointer]:
+              - /url: https://developers.facebook.com/docs/instagram
+            - link "Privacy" [ref=f57e369] [cursor=pointer]:
+              - /url: /legal/privacy/
+            - link "Terms" [ref=f57e372] [cursor=pointer]:
+              - /url: /legal/terms/
+            - link "Locations" [ref=f57e375] [cursor=pointer]:
+              - /url: /explore/locations/
+            - link "Popular" [ref=f57e378] [cursor=pointer]:
+              - /url: /popular/
+            - link "Instagram Lite" [ref=f57e381] [cursor=pointer]:
+              - /url: /web/lite/
+            - link "Meta AI" [ref=f57e384] [cursor=pointer]:
+              - /url: https://www.meta.ai/?utm_source=foa_web_footer
+            - link "Muse" [ref=f57e387] [cursor=pointer]:
+              - /url: https://muse.ai/
+            - link "Threads" [ref=f57e390] [cursor=pointer]:
+              - /url: https://www.threads.com/
+            - link "Contact Uploading & Non-Users" [ref=f57e393] [cursor=pointer]:
+              - /url: https://www.facebook.com/help/instagram/261704639352628
+            - link "Meta Verified" [ref=f57e396] [cursor=pointer]:
+              - /url: /accounts/meta_verified/?entrypoint=web_footer
+          - generic [ref=f57e398]:
+            - generic [ref=f57e399] [cursor=pointer]:
+              - generic [ref=f57e400]:
+                - generic [ref=f57e401]: English
+                - img "Down chevron icon" [ref=f57e404]
+              - combobox "Switch Display Language" [ref=f57e406]:
+                - option "Afrikaans"
+                - option "العربية"
+                - option "Čeština"
+                - option "Dansk"
+                - option "Deutsch"
+                - option "Ελληνικά"
+                - option "English" [selected]
+                - option "English (UK)"
+                - option "Español (España)"
+                - option "Español"
+                - option "فارسی"
+                - option "Suomi"
+                - option "Français"
+                - option "עברית"
+                - option "Bahasa Indonesia"
+                - option "Italiano"
+                - option "日本語"
+                - option "한국어"
+                - option "Bahasa Melayu"
+                - option "Norsk"
+                - option "Nederlands"
+                - option "Polski"
+                - option "Português (Brasil)"
+                - option "Português (Portugal)"
+                - option "Русский"
+                - option "Svenska"
+                - option "ภาษาไทย"
+                - option "Filipino"
+                - option "Türkçe"
+                - option "中文(简体)"
+                - option "中文(台灣)"
+                - option "বাংলা"
+                - option "ગુજરાતી"
+                - option "हिन्दी"
+                - option "Hrvatski"
+                - option "Magyar"
+                - option "ಕನ್ನಡ"
+                - option "മലയാളം"
+                - option "मराठी"
+                - option "नेपाली"
+                - option "ਪੰਜਾਬੀ"
+                - option "සිංහල"
+                - option "Slovenčina"
+                - option "தமிழ்"
+                - option "తెలుగు"
+                - option "اردو"
+                - option "Tiếng Việt"
+                - option "中文(香港)"
+                - option "Български"
+                - option "Français (Canada)"
+                - option "Română"
+                - option "Српски"
+                - option "Українська"
+            - generic [ref=f57e407]: © 2026 Instagram from Meta
+  - button [ref=f57e410] [cursor=pointer]:
+    - generic "Messages - 3 new notifications" [ref=f57e411]:
+      - generic [ref=f57e412]:
+        - generic [ref=f57e414]:
+          - img "Messages" [ref=f57e415]
+          - generic "Direct messaging - 3 new notifications link" [ref=f57e418]: "3"
+        - generic [ref=f57e421]: Messages
+      - generic [ref=f57e422]:
+        - button "User avatar G R E K🫵" [ref=f57e424]:
+          - img "User avatar" [ref=f57e427]
+        - button "User avatar ПАША | ФИТНЕС ТРЕНЕР | ОНЛАЙН" [ref=f57e429]:
+          - img "User avatar" [ref=f57e432]
+        - button "User avatar Юрий Усатов" [ref=f57e434]:
+          - img "User avatar" [ref=f57e437]

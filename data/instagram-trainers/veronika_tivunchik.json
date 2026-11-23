@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/veronika_tivunchik/",
+  "handle": "veronika_tivunchik",
+  "slug": "veronika_tivunchik",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Вероника",
+  "lastName": "Тивунчик",
+  "fullName": "Вероника Тивунчик",
+  "gender": "female",
+  "nameQuotes": [
+    "Вероника",
+    "Тивунчик"
+  ],
+  "headline": "Инструктор по йоге",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Вероника Тивунчик Барановичи Йога",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Регулярные занятия — ключ к результату. А я помогаю сделать этот путь безопасным и понятным, чтобы вы чувствовали себя лучше.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Барановичи",
+  "address": "",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/veronika_tivunchik.jpg",
+  "photos": [
+    "/trainers/instagram/veronika_tivunchik.jpg",
+    "/trainers/instagram/veronika_tivunchik-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/veronika_tivunchik/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/yoga_manit",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

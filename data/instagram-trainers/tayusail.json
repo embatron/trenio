@@ -1,0 +1,86 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/tayusail/",
+  "handle": "tayusail",
+  "slug": "tayusail",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Макарий",
+  "lastName": "Мелехавец",
+  "fullName": "Макарий Мелехавец",
+  "gender": "male",
+  "nameQuotes": [
+    "Макарий",
+    "Мелехавец"
+  ],
+  "headline": "Тренер по бальным танцам и танцам и хореографии",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Макарий Мелехавец Минск Бальные танцы",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Чемпион РБ. Постановка танца и индивидуальные занятия. Начни свой путь на паркете.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "balnye",
+      "parentSlug": "tancy",
+      "label": "Бальные танцы",
+      "evidence": "Бальные танцы"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "balnye",
+    "parentSlug": "tancy",
+    "label": "Бальные танцы"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/tayusail.jpg",
+  "photos": [
+    "/trainers/instagram/tayusail.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/tayusail/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

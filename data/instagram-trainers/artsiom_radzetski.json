@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/artsiom_radzetski/",
+  "handle": "artsiom_radzetski",
+  "slug": "artsiom_radzetski",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Артём",
+  "lastName": "Радецкий",
+  "fullName": "Артём Радецкий",
+  "gender": "male",
+  "nameQuotes": [
+    "Артём",
+    "Артем",
+    "Радецкий"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "Мастер спорта по плаванию\nТренирую в @butterfly_swimschool\nУчу плавать детей и взрослых🏊‍♂️\nГрупповые и персональные тренировки💧\n📩запись в директ",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Артём Радецкий Могилёв",
+  "threadsUrl": "",
+  "presentationMode": "source",
+  "bio": "Привет! Меня зовут Артем, и я тренер по плаванию в Могилёве.\n\nНемного фактов обо мне: мастер спорта. За плечами — годы тренировок и соревнований. Высшее спортивное образование. Знаю не только, как грести, но и как работает тело. Тренирую в школе плавания.\n\nЕсли ты взрослый и до сих пор боишься воды — я помогу. Если твой ребёнок плачет и не хочет заходить в воду — я тоже помогу. Без криков и без «брошу в воду, сам выплывешь». Только техника, понимание и спокойствие. Здесь я буду показывать наши тренировки и разбирать технику.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/artsiom_radzetski/p/DfX7oQboErE/",
+      "caption": "Привет! Меня зовут Артем, и я тренер по плаванию в Могилёве. 👋 Немного фактов обо мне: 🏊‍♂️ Мастер спорта. За плечами — годы тренировок и соревнований. 🎓 Высшее спортивное образование. Знаю не только, как грести, но и как работает тело. 👨‍🏫 Тренирую в школе плавания @butterfly_swimschool Чем я могу быть полезен? Если ты взрослый и до сих пор боишься воды — я помогу. Если твой ребёнок плачет и не хочет заходить в воду — я тоже помогу. Без криков и без «брошу в воду, сам выплывешь». Только техника, понимание и спокойствие. Здесь я буду показывать наши тренировки и разбирать технику. 📩 Хочешь записаться? Пиши в директ или в Telegram (ссылка в шапке профиля). Либо звони: +375 44 707 7379. #плавание #тренерпоплаванию #могилев #научитьсяплавать #плаваниедлявзрослых",
+      "textRole": "about",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "научиться плавать"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/artsiom_radzetski.jpg",
+  "photos": [
+    "/trainers/instagram/artsiom_radzetski.jpg",
+    "/trainers/instagram/artsiom_radzetski-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/artsiom_radzetski/",
+    "phone": "+375 44 707-73-79",
+    "email": "",
+    "telegram": "https://t.me/swim_cool",
+    "website": "https://bflyswim.by"
+  },
+  "missing": [
+    "price",
+    "email"
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/small_nastyusha/",
+  "handle": "small_nastyusha",
+  "slug": "small_nastyusha",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анастасия",
+  "lastName": "Смолл",
+  "fullName": "Анастасия Смолл",
+  "gender": "female",
+  "nameQuotes": [
+    "Анастасия",
+    "Смолл"
+  ],
+  "headline": "Тренер по pole dance, танцам и хореографии и инструктор по растяжке",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Анастасия Смолл Минск Pole Dance",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Артист, хореограф и преподаватель. Exotic pole dance, strip plastic и stretching.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pole-dance",
+      "parentSlug": "tancy",
+      "label": "Pole/Exotic Pole Dance",
+      "evidence": "exotic pole"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "stretching"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pole-dance",
+    "parentSlug": "tancy",
+    "label": "Pole/Exotic Pole Dance"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/small_nastyusha.jpg",
+  "photos": [
+    "/trainers/instagram/small_nastyusha.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/small_nastyusha/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/nastyusha_small",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

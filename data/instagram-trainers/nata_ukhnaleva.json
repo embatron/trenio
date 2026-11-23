@@ -1,0 +1,98 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/nata_ukhnaleva/",
+  "handle": "nata_ukhnaleva",
+  "slug": "nata_ukhnaleva",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Наталья",
+  "lastName": "Ухналёва",
+  "fullName": "Наталья Ухналёва",
+  "gender": "female",
+  "nameQuotes": [
+    "Наталья",
+    "Ухналёва"
+  ],
+  "headline": "Инструктор по пилатесу, растяжке и фитнес-тренер",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Наталья Ухналёва Могилёв Пилатес Растяжка",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тренер по pilates и стретчингу. Групповые тренировки.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/nata_ukhnaleva/p/DZx3u2NOi_D/",
+      "caption": "",
+      "textRole": "none",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Pilates"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "стретчинг"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Могилёв",
+  "address": "Первомайская улица, 57",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/nata_ukhnaleva.jpg",
+  "photos": [
+    "/trainers/instagram/nata_ukhnaleva.jpg",
+    "/trainers/instagram/nata_ukhnaleva-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/nata_ukhnaleva/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/Nata_ukhnaleva",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email"
+  ]
+}

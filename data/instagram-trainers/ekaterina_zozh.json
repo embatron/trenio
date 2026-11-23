@@ -52,11 +52,13 @@
   "formats": [],
   "audiences": [],
   "languages": [],
-  "avatarPath": "",
-  "photos": [],
+  "avatarPath": "/trainers/instagram/ekaterina_zozh.jpg",
+  "photos": [
+    "/trainers/instagram/ekaterina_zozh.jpg"
+  ],
   "certificates": [],
   "photoSearch": {
-    "face": false,
+    "face": true,
     "pinned": 0,
     "candidates": 0,
     "gallery": 0,
@@ -73,7 +75,6 @@
   "missing": [
     "lastName",
     "price",
-    "avatar",
     "phone",
     "email",
     "telegram",

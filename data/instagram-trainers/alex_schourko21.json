@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/alex_schourko21/",
+  "handle": "alex_schourko21",
+  "slug": "alex_schourko21",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александр",
+  "lastName": "",
+  "fullName": "Александр",
+  "gender": "male",
+  "nameQuotes": [
+    "Александр"
+  ],
+  "headline": "Тренер по хоккею",
+  "sourceBio": "Тренировки, которые не хочется пропускать!\n🏆3-кратный чемпион РБ\n🥇Чемпион Мира U18, U20\n👨‍🦱>1.000 учеников\n🏒Катание, сухой лед, охм",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Александр Минск хоккей",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тренировки, которые не хочется пропускать. 3-кратный чемпион РБ. Чемпион мира U18 и U20.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "hokkej",
+      "parentSlug": "zima",
+      "label": "Хоккей",
+      "evidence": "Хоккей"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "hokkej",
+    "parentSlug": "zima",
+    "label": "Хоккей"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/alex_schourko21.jpg",
+  "photos": [
+    "/trainers/instagram/alex_schourko21.jpg",
+    "/trainers/instagram/alex_schourko21-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/alex_schourko21/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://trener.schourko.tilda.ws/page20343779.html"
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

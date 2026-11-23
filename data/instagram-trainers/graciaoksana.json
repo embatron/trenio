@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/graciaoksana/",
+  "handle": "graciaoksana",
+  "slug": "graciaoksana",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Оксана",
+  "lastName": "",
+  "fullName": "Оксана",
+  "gender": "female",
+  "nameQuotes": [
+    "Оксана"
+  ],
+  "headline": "Тренер по современным танцам и танцам и хореографии",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Оксана Гомель Современные танцы",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Обучаю женщин 45+ танцам индивидуально. Подходит тем, кто стесняется групповых занятий и нет времени на студию.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "sovremennye",
+      "parentSlug": "tancy",
+      "label": "Современные танцы",
+      "evidence": "Современные танцы"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "sovremennye",
+    "parentSlug": "tancy",
+    "label": "Современные танцы"
+  },
+  "city": "Гомель",
+  "address": "",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/graciaoksana.jpg",
+  "photos": [
+    "/trainers/instagram/graciaoksana.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/graciaoksana/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

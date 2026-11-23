@@ -1,0 +1,363 @@
+- generic [ref=f15e4]:
+  - generic [ref=f15e18]:
+    - generic [ref=f15e21]:
+      - link [ref=f15e26] [cursor=pointer]:
+        - /url: /
+        - img "Instagram" [ref=f15e31]
+      - generic [ref=f15e34]:
+        - link [ref=f15e39] [cursor=pointer]:
+          - /url: /
+          - img "Home" [ref=f15e44]
+        - link [ref=f15e49] [cursor=pointer]:
+          - /url: /reels/
+          - img "Reels" [ref=f15e54]
+        - link [ref=f15e61] [cursor=pointer]:
+          - /url: /direct/inbox/
+          - img "Messages" [ref=f15e66]
+        - link [ref=f15e72] [cursor=pointer]:
+          - /url: /explore/
+          - img "Search" [ref=f15e77]
+        - link [ref=f15e84] [cursor=pointer]:
+          - /url: "#"
+          - img "Notifications" [ref=f15e89]
+        - link [ref=f15e95] [cursor=pointer]:
+          - /url: "#"
+          - img "New post" [ref=f15e100]
+        - link [ref=f15e105] [cursor=pointer]:
+          - /url: "#"
+          - img "Professional dashboard" [ref=f15e110]
+        - link [ref=f15e117] [cursor=pointer]:
+          - /url: /trenioby/
+          - link [ref=f15e122]:
+            - img "trenioby's profile picture" [ref=f15e123]
+      - generic [ref=f15e124]:
+        - link [ref=f15e127] [cursor=pointer]:
+          - /url: "#"
+          - img "Settings" [ref=f15e132]
+        - link [ref=f15e135] [cursor=pointer]:
+          - /url: "#"
+          - img "Also from Meta" [ref=f15e140]
+    - generic [ref=f15e143]:
+      - main [ref=f15e144]:
+        - generic [ref=f15e146]:
+          - generic [ref=f15e147]:
+            - generic [ref=f15e148]:
+              - button [ref=f15e153] [cursor=pointer]:
+                - link [ref=f15e155]:
+                  - img "kristi_flexi's profile picture" [ref=f15e156]
+              - generic [ref=f15e157]:
+                - generic [ref=f15e158]:
+                  - generic [ref=f15e159]:
+                    - link [ref=f15e161] [cursor=pointer]:
+                      - /url: "#"
+                      - heading "kristi_flexi" [level=2] [ref=f15e162]
+                    - button [ref=f15e164] [cursor=pointer]:
+                      - img "Options" [ref=f15e166]
+                  - generic [ref=f15e170]: Kristina🪽
+                  - generic [ref=f15e172]:
+                    - generic [ref=f15e174]:
+                      - generic [ref=f15e175]: "483"
+                      - text: posts
+                    - link "1,420 followers" [ref=f15e177] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f15e178]:
+                        - generic "1,420" [ref=f15e179]
+                        - text: followers
+                    - link "736 following" [ref=f15e181] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f15e182]:
+                        - generic [ref=f15e183]: "736"
+                        - text: following
+                - generic [ref=f15e185]:
+                  - button [ref=f15e187] [cursor=pointer]:
+                    - generic [ref=f15e188]: pilates & yoga teacher moment collector 🪭photo model
+                  - heading [level=1]
+                  - link "Threads kristi_flexi" [ref=f15e191] [cursor=pointer]:
+                    - /url: https://www.threads.com/@kristi_flexi?xmt=AQG0L68jeIAJNGLuCL5u217IY5Lq_HnIHe5Fy2U-dL3bYvM
+                    - img "Threads" [ref=f15e193]
+                    - generic [ref=f15e195]: kristi_flexi
+            - generic [ref=f15e201]:
+              - button "Follow" [ref=f15e203] [cursor=pointer]
+              - button "Message" [ref=f15e207] [cursor=pointer]
+              - button [ref=f15e209] [cursor=pointer]:
+                - img "Similar accounts" [ref=f15e211]
+            - menu [ref=f15e215]:
+              - generic [ref=f15e217]:
+                - list [ref=f15e219]:
+                  - listitem [ref=f15e220]
+                  - listitem [ref=f15e221]
+                  - listitem [ref=f15e222]:
+                    - link "View • вдохновляет highlight" [ref=f15e225] [cursor=pointer]:
+                      - /url: /stories/highlights/17887976339652495/
+                      - button "kristi_flexi's highlight story picture • вдохновляет" [ref=f15e226]:
+                        - button [ref=f15e227]:
+                          - img "kristi_flexi's highlight story picture" [ref=f15e230]
+                        - generic [ref=f15e231]: • вдохновляет
+                  - listitem [ref=f15e234]:
+                    - link "View 🐈‍⬛ highlight" [ref=f15e237] [cursor=pointer]:
+                      - /url: /stories/highlights/17887273350329255/
+                      - button "kristi_flexi's highlight story picture 🐈‍⬛" [ref=f15e238]:
+                        - button [ref=f15e239]:
+                          - img "kristi_flexi's highlight story picture" [ref=f15e242]
+                        - generic [ref=f15e243]: 🐈‍⬛
+                  - listitem [ref=f15e246]:
+                    - link "View • yoga highlight" [ref=f15e249] [cursor=pointer]:
+                      - /url: /stories/highlights/17976423662808704/
+                      - button "kristi_flexi's highlight story picture • yoga" [ref=f15e250]:
+                        - button [ref=f15e251]:
+                          - img "kristi_flexi's highlight story picture" [ref=f15e254]
+                        - generic [ref=f15e255]: • yoga
+                  - listitem [ref=f15e258]:
+                    - link "View 👰🏼‍♀️ highlight" [ref=f15e261] [cursor=pointer]:
+                      - /url: /stories/highlights/18144249313605760/
+                      - button "kristi_flexi's highlight story picture 👰🏼‍♀️" [ref=f15e262]:
+                        - button [ref=f15e263]:
+                          - img "kristi_flexi's highlight story picture" [ref=f15e266]
+                        - generic [ref=f15e267]: 👰🏼‍♀️
+                  - listitem [ref=f15e270]:
+                    - link "View 💃🏻 highlight" [ref=f15e273] [cursor=pointer]:
+                      - /url: /stories/highlights/17914348748974084/
+                      - button "kristi_flexi's highlight story picture 💃🏻" [ref=f15e274]:
+                        - button [ref=f15e275]:
+                          - img "kristi_flexi's highlight story picture" [ref=f15e278]
+                        - generic [ref=f15e279]: 💃🏻
+                  - listitem [ref=f15e282]:
+                    - link "View • pilates highlight" [ref=f15e285] [cursor=pointer]:
+                      - /url: /stories/highlights/18081450478765258/
+                      - button "kristi_flexi's highlight story picture • pilates" [ref=f15e286]:
+                        - button [ref=f15e287]:
+                          - img "kristi_flexi's highlight story picture" [ref=f15e290]
+                        - generic [ref=f15e291]: • pilates
+                  - listitem [ref=f15e294]:
+                    - link "View • modeling highlight" [ref=f15e297] [cursor=pointer]:
+                      - /url: /stories/highlights/18137115391498662/
+                      - button "kristi_flexi's highlight story picture • modeling" [ref=f15e298]:
+                        - button [ref=f15e299]:
+                          - img "kristi_flexi's highlight story picture" [ref=f15e302]
+                        - generic [ref=f15e303]: • modeling
+                  - listitem [ref=f15e306]:
+                    - link "View Türkiye ☪︎ highlight" [ref=f15e309] [cursor=pointer]:
+                      - /url: /stories/highlights/17890516662477802/
+                      - button "kristi_flexi's highlight story picture Türkiye ☪︎" [ref=f15e310]:
+                        - button [ref=f15e311]:
+                          - img "kristi_flexi's highlight story picture" [ref=f15e314]
+                        - generic [ref=f15e315]: Türkiye ☪︎
+                  - listitem [ref=f15e318]:
+                    - link "View Abkhazia ⭒ highlight" [ref=f15e321] [cursor=pointer]:
+                      - /url: /stories/highlights/18141201376406637/
+                      - button "kristi_flexi's highlight story picture Abkhazia ⭒" [ref=f15e322]:
+                        - button [ref=f15e323]:
+                          - img "kristi_flexi's highlight story picture" [ref=f15e326]
+                        - generic [ref=f15e327]: Abkhazia ⭒
+                - button "Next" [ref=f15e330] [cursor=pointer]
+          - generic [ref=f15e332]:
+            - tablist [ref=f15e333]:
+              - link [ref=f15e335] [cursor=pointer]:
+                - /url: /kristi_flexi/
+                - img "Posts" [ref=f15e337]
+              - link [ref=f15e348] [cursor=pointer]:
+                - /url: /kristi_flexi/reels/
+                - img "Reels" [ref=f15e350]
+              - link [ref=f15e353] [cursor=pointer]:
+                - /url: /kristi_flexi/reposts/
+                - img "Reposts" [ref=f15e355]
+              - link [ref=f15e358] [cursor=pointer]:
+                - /url: /kristi_flexi/tagged/
+                - img "Tagged" [ref=f15e360]
+            - tabpanel
+          - generic [ref=f15e367]:
+            - generic [ref=f15e368]:
+              - link "Clip" [ref=f15e370] [cursor=pointer]:
+                - /url: /kristi_flexi/reel/Dfad2kHI0Ke/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link "Carousel" [ref=f15e375] [cursor=pointer]:
+                - /url: /kristi_flexi/p/DfU_3Z6CGSq/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link "Carousel" [ref=f15e380] [cursor=pointer]:
+                - /url: /kristi_flexi/p/DfMYXhSiFTP/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link "Clip" [ref=f15e385] [cursor=pointer]:
+                - /url: /kristi_flexi/reel/DfDAmx2o5RQ/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+            - generic [ref=f15e389]:
+              - link "Clip" [ref=f15e391] [cursor=pointer]:
+                - /url: /kristi_flexi/reel/Dew_e-_o1GS/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link "Carousel" [ref=f15e396] [cursor=pointer]:
+                - /url: /kristi_flexi/p/DepGztCCDWh/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link "Carousel" [ref=f15e401] [cursor=pointer]:
+                - /url: /kristi_flexi/p/DeRa2NqiKt8/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link "Clip" [ref=f15e406] [cursor=pointer]:
+                - /url: /kristi_flexi/reel/DeHtcItIV_p/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+            - generic [ref=f15e410]:
+              - link "Carousel" [ref=f15e412] [cursor=pointer]:
+                - /url: /kristi_flexi/p/DeFLi0sCB1-/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link "Clip" [ref=f15e417] [cursor=pointer]:
+                - /url: /kristi_flexi/reel/Dd15DLpucIq/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link "Clip" [ref=f15e422] [cursor=pointer]:
+                - /url: /kristi_flexi/reel/DdwpxEmoTl6/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f15e427] [cursor=pointer]:
+                - /url: /kristi_flexi/reel/DdrnPzCOmt5/
+                - img "проверенный годами метод от дурных мыслей 🧹" [ref=f15e430]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+      - contentinfo [ref=f15e432]:
+        - generic [ref=f15e433]:
+          - generic [ref=f15e435]:
+            - link "Meta" [ref=f15e437] [cursor=pointer]:
+              - /url: https://about.meta.com/
+            - link "About" [ref=f15e440] [cursor=pointer]:
+              - /url: https://about.instagram.com/
+            - link "Blog" [ref=f15e443] [cursor=pointer]:
+              - /url: https://about.instagram.com/blog/
+            - link "Jobs" [ref=f15e446] [cursor=pointer]:
+              - /url: https://about.instagram.com/about-us/careers
+            - link "Help" [ref=f15e449] [cursor=pointer]:
+              - /url: https://help.instagram.com/
+            - link "API" [ref=f15e452] [cursor=pointer]:
+              - /url: https://developers.facebook.com/docs/instagram
+            - link "Privacy" [ref=f15e455] [cursor=pointer]:
+              - /url: /legal/privacy/
+            - link "Terms" [ref=f15e458] [cursor=pointer]:
+              - /url: /legal/terms/
+            - link "Locations" [ref=f15e461] [cursor=pointer]:
+              - /url: /explore/locations/
+            - link "Popular" [ref=f15e464] [cursor=pointer]:
+              - /url: /popular/
+            - link "Instagram Lite" [ref=f15e467] [cursor=pointer]:
+              - /url: /web/lite/
+            - link "Meta AI" [ref=f15e470] [cursor=pointer]:
+              - /url: https://www.meta.ai/?utm_source=foa_web_footer
+            - link "Muse" [ref=f15e473] [cursor=pointer]:
+              - /url: https://muse.ai/
+            - link "Threads" [ref=f15e476] [cursor=pointer]:
+              - /url: https://www.threads.com/
+            - link "Contact Uploading & Non-Users" [ref=f15e479] [cursor=pointer]:
+              - /url: https://www.facebook.com/help/instagram/261704639352628
+            - link "Meta Verified" [ref=f15e482] [cursor=pointer]:
+              - /url: /accounts/meta_verified/?entrypoint=web_footer
+          - generic [ref=f15e484]:
+            - generic [ref=f15e485] [cursor=pointer]:
+              - generic [ref=f15e486]:
+                - generic [ref=f15e487]: English
+                - img "Down chevron icon" [ref=f15e490]
+              - combobox "Switch Display Language" [ref=f15e492]:
+                - option "Afrikaans"
+                - option "العربية"
+                - option "Čeština"
+                - option "Dansk"
+                - option "Deutsch"
+                - option "Ελληνικά"
+                - option "English" [selected]
+                - option "English (UK)"
+                - option "Español (España)"
+                - option "Español"
+                - option "فارسی"
+                - option "Suomi"
+                - option "Français"
+                - option "עברית"
+                - option "Bahasa Indonesia"
+                - option "Italiano"
+                - option "日本語"
+                - option "한국어"
+                - option "Bahasa Melayu"
+                - option "Norsk"
+                - option "Nederlands"
+                - option "Polski"
+                - option "Português (Brasil)"
+                - option "Português (Portugal)"
+                - option "Русский"
+                - option "Svenska"
+                - option "ภาษาไทย"
+                - option "Filipino"
+                - option "Türkçe"
+                - option "中文(简体)"
+                - option "中文(台灣)"
+                - option "বাংলা"
+                - option "ગુજરાતી"
+                - option "हिन्दी"
+                - option "Hrvatski"
+                - option "Magyar"
+                - option "ಕನ್ನಡ"
+                - option "മലയാളം"
+                - option "मराठी"
+                - option "नेपाली"
+                - option "ਪੰਜਾਬੀ"
+                - option "සිංහල"
+                - option "Slovenčina"
+                - option "தமிழ்"
+                - option "తెలుగు"
+                - option "اردو"
+                - option "Tiếng Việt"
+                - option "中文(香港)"
+                - option "Български"
+                - option "Français (Canada)"
+                - option "Română"
+                - option "Српски"
+                - option "Українська"
+            - generic [ref=f15e493]: © 2026 Instagram from Meta
+  - button [ref=f15e496] [cursor=pointer]:
+    - generic "Messages" [ref=f15e497]:
+      - generic [ref=f15e498]:
+        - img "Messages" [ref=f15e501]
+        - generic [ref=f15e504]: Messages
+      - generic [ref=f15e505]:
+        - button "User avatar Татьяна Илюкович" [ref=f15e507]:
+          - img "User avatar" [ref=f15e510]
+        - button "User avatar Трэнер✨Нутрыцыелаг✨ Князева Вольга✨ Мінск" [ref=f15e512]:
+          - img "User avatar" [ref=f15e515]
+        - button "User avatar Игорь Вашкевич" [ref=f15e517]:
+          - img "User avatar" [ref=f15e520]

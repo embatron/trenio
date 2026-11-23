@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/anaslenko/",
+  "handle": "anaslenko",
+  "slug": "anaslenko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анастасия",
+  "lastName": "Чистякова",
+  "fullName": "Анастасия Чистякова",
+  "gender": "female",
+  "nameQuotes": [
+    "АНАСТАСИЯ",
+    "ЧИСТЯКОВА"
+  ],
+  "headline": "Тренер по спортивной гимнастике и гимнастике и акробатике",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Минск Спортивная гимнастика",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тренер-преподаватель по спортивной гимнастике.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "sportivnaya",
+      "parentSlug": "gimnastika",
+      "label": "Спортивная гимнастика",
+      "evidence": "Спортивная гимнастика"
+    },
+    {
+      "slug": "gimnastika",
+      "parentSlug": "gimnastika",
+      "label": "Гимнастика",
+      "evidence": "Гимнастика"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "sportivnaya",
+    "parentSlug": "gimnastika",
+    "label": "Спортивная гимнастика"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/anaslenko.jpg",
+  "photos": [
+    "/trainers/instagram/anaslenko.jpg",
+    "/trainers/instagram/anaslenko-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/anaslenko/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

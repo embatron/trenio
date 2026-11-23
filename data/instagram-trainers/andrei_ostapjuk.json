@@ -1,0 +1,117 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/andrei_ostapjuk/",
+  "handle": "andrei_ostapjuk",
+  "slug": "andrei_ostapjuk",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Андрей",
+  "lastName": "Остапюк",
+  "fullName": "Андрей Остапюк",
+  "gender": "male",
+  "nameQuotes": [
+    "Андрей Остапюк"
+  ],
+  "headline": "Тренер по плаванию, триатлону и бегу",
+  "sourceBio": "Swim/bike/run coach & training program📝\n🔽Удаленное сопровождение спортсменов🖥️📲\n🔽Групповые/персональные тренировки🏊\n🔽Подготовка к стартам🚀",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Андрей Остапюк, Витебск",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Удаленное сопровождение спортсменов. Групповые и персональные тренировки. Подготовка к стартам.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/andrei_ostapjuk/p/DaUiLgWCMNZ/",
+      "caption": "Давно такого не было и вот опять: Swimrun short 🏊‍♂️🏃 - 2 место Swim Elite 🏊‍♂️ - 1 место @elkpath.by",
+      "textRole": "facts",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/andrei_ostapjuk/reel/C87lasIM5mf/",
+      "caption": "Pov: Тренер не только пишет задания и рассказывает что делать!!! Но и...",
+      "textRole": "promotion",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/andrei_ostapjuk/reel/C8ojw-esgSy/",
+      "caption": "Кросс-триатлон 🏊‍♂️🚴🏃на Витебском велофесте. Мокро, грязно, круто😜 Сейчас я дома уже 🤘 Вы можете увидеть это, либо прожить!",
+      "textRole": "facts",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "Плавание"
+    },
+    {
+      "slug": "triatlon",
+      "parentSlug": "beg",
+      "label": "Триатлон",
+      "evidence": "Триатлон"
+    },
+    {
+      "slug": "beg",
+      "parentSlug": "beg",
+      "label": "Бег",
+      "evidence": "Бег"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "trenazherka",
+      "label": "Тренажёрный зал",
+      "quote": "Gym"
+    }
+  ],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Витебск",
+  "address": "",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/andrei_ostapjuk.jpg",
+  "photos": [
+    "/trainers/instagram/andrei_ostapjuk.jpg",
+    "/trainers/instagram/andrei_ostapjuk-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/andrei_ostapjuk/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

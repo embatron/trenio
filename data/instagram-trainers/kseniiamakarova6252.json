@@ -54,11 +54,13 @@
   "formats": [],
   "audiences": [],
   "languages": [],
-  "avatarPath": "",
-  "photos": [],
+  "avatarPath": "/trainers/instagram/kseniiamakarova6252.jpg",
+  "photos": [
+    "/trainers/instagram/kseniiamakarova6252.jpg"
+  ],
   "certificates": [],
   "photoSearch": {
-    "face": false,
+    "face": true,
     "pinned": 0,
     "candidates": 0,
     "gallery": 0,
@@ -74,7 +76,6 @@
   },
   "missing": [
     "price",
-    "avatar",
     "phone",
     "email",
     "telegram",

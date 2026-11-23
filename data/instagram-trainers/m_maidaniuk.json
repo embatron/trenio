@@ -1,0 +1,86 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/m_maidaniuk/",
+  "handle": "m_maidaniuk",
+  "slug": "m_maidaniuk",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Михаил",
+  "lastName": "Майданюк",
+  "fullName": "Михаил Майданюк",
+  "gender": "male",
+  "nameQuotes": [
+    "Михаил",
+    "Майданюк"
+  ],
+  "headline": "Тренер по бальным танцам и танцам и хореографии",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Михаил Майданюк Минск Бальные танцы",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Обожаю бальные танцы и вам советую. Индивидуальные уроки. Постановка свадебных танцев.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "balnye",
+      "parentSlug": "tancy",
+      "label": "Бальные танцы",
+      "evidence": "Бальные танцы"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "balnye",
+    "parentSlug": "tancy",
+    "label": "Бальные танцы"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/m_maidaniuk.jpg",
+  "photos": [
+    "/trainers/instagram/m_maidaniuk.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/m_maidaniuk/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

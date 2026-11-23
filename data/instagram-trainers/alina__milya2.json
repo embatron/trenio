@@ -1,0 +1,103 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/alina__milya2/",
+  "handle": "alina__milya2",
+  "slug": "alina__milya2",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алина",
+  "lastName": "Милевская",
+  "fullName": "Алина Милевская",
+  "gender": "female",
+  "nameQuotes": [
+    "Алина",
+    "Милевская"
+  ],
+  "headline": "Тренер по high heels и современным танцам",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Алина Милевская Барановичи High Heels Современные танцы",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Учу танцевать чувственно и красиво. High Heels и Latina.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/alina__milya2/p/CouPNUgsrwC/",
+      "caption": "You can be a mess to some & a work of art to others, but none of it should affect the way you look at yourself",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/alina__milya2/reel/C1BprFnsjLG/",
+      "caption": "Dear me , Happy Birthday My sweet 30☺️ Be too much , be extra , trust yourself And remember that you are capable of amazing things Your energy is incredible, your love is powerful, your soul is so deep With love , me )",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/alina__milya2/p/DBZErw4MdUh/",
+      "caption": "California 🌹 Choreo: @alina__milya2 Camera: @lizanadele Place: @photostudio.1704 Sound : @mc_di_kovalyova Song : California @mylene.farmer.official Dancers : @tatianadegil @alesia_krem_ya @imvictoriakulikouskikh @valentina_matveichik @sergulpolina @pollinar.ia @nadya_browist @katy_lak @adeliya.tantasheva @olga_8827 Наконец начала реализовывать картинки из головы❤️‍🔥 Жаль , что пришлось порезать видео",
+      "textRole": "none",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "High Heels"
+    },
+    {
+      "slug": "sovremennye",
+      "parentSlug": "tancy",
+      "label": "Современные танцы",
+      "evidence": "Современные танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "high-heels",
+    "parentSlug": "tancy",
+    "label": "High Heels"
+  },
+  "city": "Барановичи",
+  "address": "",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/alina__milya2.jpg",
+  "photos": [
+    "/trainers/instagram/alina__milya2.jpg",
+    "/trainers/instagram/alina__milya2-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/alina__milya2/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

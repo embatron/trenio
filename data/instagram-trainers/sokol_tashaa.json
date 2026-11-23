@@ -1,0 +1,86 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/sokol_tashaa/",
+  "handle": "sokol_tashaa",
+  "slug": "sokol_tashaa",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Наталья",
+  "lastName": "Соколова",
+  "fullName": "Наталья Соколова",
+  "gender": "female",
+  "nameQuotes": [
+    "Наталья",
+    "Соколова"
+  ],
+  "headline": "Инструктор по спортивной аэробике и фитнес-тренер",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Наталья Соколова Могилёв Спортивная аэробика",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тренер и инструктор групповых программ. Step aerobics and pump. Фитнес в удовольствие.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "aerobika",
+      "parentSlug": "gimnastika",
+      "label": "Спортивная аэробика",
+      "evidence": "Спортивная аэробика"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "aerobika",
+    "parentSlug": "gimnastika",
+    "label": "Спортивная аэробика"
+  },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/sokol_tashaa.jpg",
+  "photos": [
+    "/trainers/instagram/sokol_tashaa.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/sokol_tashaa/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

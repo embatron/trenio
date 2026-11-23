@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/katsiaryyna_trener/",
+  "handle": "katsiaryyna_trener",
+  "slug": "katsiaryyna_trener",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Катерина",
+  "lastName": "",
+  "fullName": "Катерина",
+  "gender": "female",
+  "nameQuotes": [
+    "Катерина"
+  ],
+  "headline": "Тренер по гимнастике и акробатике и инструктор по растяжке",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Катерина Витебск",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Воздушная гимнастика, гамаки и стретчинг. Витебск. Работаю с детьми и взрослыми разных уровней подготовки.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "gimnastika",
+      "parentSlug": "gimnastika",
+      "label": "Гимнастика",
+      "evidence": "Гимнастика"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "стретчинг"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "gimnastika",
+    "parentSlug": "gimnastika",
+    "label": "Гимнастика"
+  },
+  "city": "Витебск",
+  "address": "",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/katsiaryyna_trener.jpg",
+  "photos": [
+    "/trainers/instagram/katsiaryyna_trener.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/katsiaryyna_trener/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

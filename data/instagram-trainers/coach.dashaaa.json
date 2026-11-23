@@ -1,0 +1,98 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/coach.dashaaa/",
+  "handle": "coach.dashaaa",
+  "slug": "coach.dashaaa",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дарья",
+  "lastName": "",
+  "fullName": "Дарья",
+  "gender": "female",
+  "nameQuotes": [
+    "➖ Дарья",
+    "Дарья"
+  ],
+  "headline": "Тренер по фигурному катанию, общефизической подготовке и конькам",
+  "sourceBio": "Тренер по фигурному катанию ➖ Дарья ➖Индивидуальные и групповые занятия ➖научу кататься на коньках с 0 детей и взрослых ➖заинтересовало?Пишите в лс",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Дарья",
+  "threadsUrl": "",
+  "bio": "Я тренер по фигурному катанию. Веду индивидуальные и групповые занятия. Научу кататься на коньках с нуля детей и взрослых.",
+  "about": [
+    "Занятия проходят индивидуально и в группе. Научу кататься на коньках с нуля детей и взрослых."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "figurnoe-katanie",
+      "parentSlug": "zima",
+      "label": "Фигурное катание",
+      "evidence": "Фигурное катание"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
+    },
+    {
+      "slug": "konki",
+      "parentSlug": "zima",
+      "label": "Коньки",
+      "evidence": "Коньки"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "figurnoe-katanie",
+    "parentSlug": "zima",
+    "label": "Фигурное катание"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/coach.dashaaa.jpg",
+  "photos": [
+    "/trainers/instagram/coach.dashaaa.jpg",
+    "/trainers/instagram/coach.dashaaa-g2.jpg",
+    "/trainers/instagram/coach.dashaaa-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/coach.dashaaa/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/mariami.rabchuk/",
+  "handle": "mariami.rabchuk",
+  "slug": "mariami.rabchuk",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Мария",
+  "lastName": "Рабчук",
+  "fullName": "Мария Рабчук",
+  "gender": "female",
+  "nameQuotes": [
+    "Мария",
+    "Рабчук"
+  ],
+  "headline": "Инструктор по пилатесу, растяжке и тренер по осанке",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Мария Рабчук Минск Пилатес Растяжка",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Уберу боль в спине за 3 занятия. Посажу на шпагат без травм.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/mariami.rabchuk/p/Dbl6j30IMyE/",
+      "caption": "Расписание готово! Открываю запись в мини-группы Почему стоит выбрать групповые тренировки со мной? Мини-формат: я не набираю огромные классы. На тренировке я вижу каждого, корректирую технику и мягко направляю. Атмосфера: это мощный заряд энергии, поддержка единомышленников и дисциплина, которая не даст пропустить занятие. Разнообразие: мы чередуем нагрузку, чтобы тело развивалось гармонично. Коротко о направлениях в расписании: Пилатес - укрепляем глубокие мышцы, вытягиваем силуэт и создаем красивую осанку без жестких нагрузок. Гибкость всего тела - убираем скованность, развиваем мобильность суставов и возвращаем легкость движений. Шпагат - бережная и глубокая работа над пластикой ног и раскрытием таза. Выбирайте удобные дни и время. Количество мест в группах ограничено. Запись в директ",
+      "textRole": "facts",
+      "imageText": [
+        "ТРЕНИРОВКИ В ГРУППАХ СО МНОЙ. понедельник 11:00 гибкость всего тела, 12:00 пилатес. среда 11:00 пилатес, 12:00 гибкость всего тела. пятница 11:00 шпагат, 12:00 гибкость всего тела."
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "Растяжка"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Минск",
+  "address": "Московская улица, 20",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/mariami.rabchuk.jpg",
+  "photos": [
+    "/trainers/instagram/mariami.rabchuk.jpg",
+    "/trainers/instagram/mariami.rabchuk-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/mariami.rabchuk/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

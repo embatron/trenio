@@ -1,0 +1,63 @@
+{
+  ogTitle: 'Леонид / Тренер / Минск (@leon1d_coach) • Instagram photos and videos',
+  headerText: 'leon1d_coach\n' +
+    'Леонид / Тренер / Минск\n' +
+    '11 posts\n' +
+    '73 followers\n' +
+    '74 following\n' +
+    '🎯Составлю программу под вашу цель и образ жизни\n' +
+    '🍔Помощь с питанием - без жестких диет\n' +
+    '🧑‍💻Работаю с подростками\n' +
+    '⛷️Биатлон (11 лет) - КМС\n' +
+    'leon1d_coach\n' +
+    'Follow\n' +
+    'Подопечные 💪\n' +
+    '☠️GYM☠️',
+  highlights: [
+    'Подопечные 💪',
+    '☠️GYM☠️'
+  ],
+  pinned: [
+    {
+      href: 'https://www.instagram.com/leon1d_coach/p/DeJdKOsC_94/',
+      pinned: true,
+      kind: 'photo'
+    }
+  ],
+  posts: [
+    {
+      href: 'https://www.instagram.com/leon1d_coach/p/DeJdKOsC_94/',
+      pinned: true,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/leon1d_coach/reel/DepSc9hizhJ/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/leon1d_coach/p/DegnzQ1gocX/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/leon1d_coach/reel/DeRIGOQCErY/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/leon1d_coach/reel/DXWiYHAgizZ/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/leon1d_coach/p/BknQTNUHTwu/',
+      pinned: false,
+      kind: 'photo'
+    }
+  ],
+  face: {
+    w: 1080,
+    h: 1080
+  }
+}

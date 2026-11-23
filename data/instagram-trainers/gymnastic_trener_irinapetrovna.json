@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/gymnastic_trener_irinapetrovna/",
+  "handle": "gymnastic_trener_irinapetrovna",
+  "slug": "gymnastic_trener_irinapetrovna",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ирина",
+  "lastName": "Петровна",
+  "fullName": "Ирина Петровна",
+  "gender": "female",
+  "nameQuotes": [
+    "Ирина",
+    "Петровна"
+  ],
+  "headline": "Тренер по спортивной гимнастике и гимнастике и акробатике",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Ирина Петровна Минск Спортивная гимнастика",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тренер и хореограф МГСДЮШОР по гимнастике. Набор мальчиков 5-6 лет и девочек 5-9 лет.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "sportivnaya",
+      "parentSlug": "gimnastika",
+      "label": "Спортивная гимнастика",
+      "evidence": "Спортивная гимнастика"
+    },
+    {
+      "slug": "gimnastika",
+      "parentSlug": "gimnastika",
+      "label": "Гимнастика",
+      "evidence": "Гимнастика"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "sportivnaya",
+    "parentSlug": "gimnastika",
+    "label": "Спортивная гимнастика"
+  },
+  "city": "Минск",
+  "address": "улица Ванеева, 11",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/gymnastic_trener_irinapetrovna.jpg",
+  "photos": [
+    "/trainers/instagram/gymnastic_trener_irinapetrovna.jpg",
+    "/trainers/instagram/gymnastic_trener_irinapetrovna-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/gymnastic_trener_irinapetrovna/",
+    "phone": "+375 29 507-10-56",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

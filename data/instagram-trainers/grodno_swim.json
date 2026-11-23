@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/grodno_swim/",
+  "handle": "grodno_swim",
+  "slug": "grodno_swim",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "grodno_swim",
+  "lastName": "",
+  "fullName": "grodno_swim",
+  "gender": "male",
+  "nameQuotes": [
+    "grodno_swim"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "Групповые тренировки по плаванию для взрослых 16+\n«от 0 до 1 старта»\n▫️индивидуальный подход\n▫️программа тренировок\n▫️подготовка к открытой вод\nул.Франтишка Богушевича 24, Grodno",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Групповые тренировки по плаванию для взрослых 16+. От 0 до 1 старта: индивидуальный подход, программа тренировок, подготовка к открытой вод.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "Плавание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Гродно",
+  "address": "улица Франтишка Богушевича, 24",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/grodno_swim.jpg",
+  "photos": [
+    "/trainers/instagram/grodno_swim.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/grodno_swim/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

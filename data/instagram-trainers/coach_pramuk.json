@@ -1,0 +1,109 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/coach_pramuk/",
+  "handle": "coach_pramuk",
+  "slug": "coach_pramuk",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Vitali",
+  "lastName": "Saskavets",
+  "fullName": "Vitali Saskavets",
+  "gender": "",
+  "nameQuotes": [
+    "Vitali Saskavets"
+  ],
+  "headline": "Тренер по бегу",
+  "sourceBio": "Результаты учеников - @begminsk\nПРОГРАММЫ - ссылка ⬇️\n1500m- 4:02\n3000m - 8:49\n5km - 15:20\n10km - 32:17\n21km - 1:10:40\n42km - 2:34:11\n50km - 3:14:09",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Vitali Saskavets Минск",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Результаты учеников: 1500m- 4:02, 3000m - 8:49, 5km - 15:20, 10km - 32:17, 21km - 1:10:40, 42km - 2:34:11, 50km - 3:14:09.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/coach_pramuk/p/DaVk8NrDIlK/",
+      "caption": "🏃‍♂️ Тренировочная программа Cadence — это, где каждая тренировка имеет цель, нагрузка развивается постепенно, а упражнения и техника объясняются на видео. В программах Cadence вы получаете: 📋 структурированный план подготовки ❤️ рекомендации по темпу и пульсу 💪 СБУ, силовые упражнения, разминку и растяжку 🎥 видеоуроки с техникой выполнения 📈 понятную последовательность тренировок 🏅 подготовку к дистанциям 5, 10, 21 и 42 км Программы подойдут тем, кто только готовится к первому старту, и тем, кто хочет улучшить личный результат без хаотичных тренировок. 🎯 Выбираете дистанцию и цель, получаете доступ к программе и постепенно выходите на нужную форму. 🔗 ССЫЛКА в шапке профиля «ПРОГРАММЫ ТРЕНИРОВОК»",
+      "textRole": "promotion",
+      "imageText": [
+        "ТРЕНИРОВОЧНЫЕ ПРОГРАММЫ CADENCE Мы не даем просто план Мы даем систему, результат и уверенность в каждом шаге ПРЕИМУЩЕСТВА ПРОГРАММ CADENCE СТРУКТУРА ПОДРОБНЫЕ ПОЯСНЕНИЯ ВИДЕО КАЖДОГО УПРАЖНЕНИЯ ПРОГРЕССИЯ Что вы получаете? Понятный план тренировок Работа с техникой и упражнениями Рекомендации по темпу и пульсу Силовые, СБУ, разминка, заминка"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/coach_pramuk/reel/DKHil5uo6Jc/",
+      "caption": "Мини отчет каждых 10км Как это было? Что чувствовал? Настроение?",
+      "textRole": "none",
+      "imageText": [
+        "Хронология Налибоки - 100км"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/coach_pramuk/p/DFZ015HIFx6/",
+      "caption": "Hi Vitali, Congratulations on your successful recertification! Thank you for taking the time to recertify and stay current with your UESCA certification. You did a wonderful job explaining some concepts in your paper in easy to understand terms and also had some helpful graphics. Каждые 2 года сдаю мини дипломную для подтверждения сертификации «тренер по бегу» ✅",
+      "textRole": "facts",
+      "imageText": [
+        "UESCA UNITED ENDURANCE SPORTS COACHING ACADEMY Has conferred upon Vitali Saskavets The title of Certified Running Coach For having successfully completed the requirements established by UESCA January 28, 2025 Issue Date February 7, 2027 Expiration Date"
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "beg",
+      "parentSlug": "beg",
+      "label": "Бег",
+      "evidence": "running"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "beg",
+    "parentSlug": "beg",
+    "label": "Бег"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/coach_pramuk.jpg",
+  "photos": [
+    "/trainers/instagram/coach_pramuk.jpg",
+    "/trainers/instagram/coach_pramuk-g2.jpg",
+    "/trainers/instagram/coach_pramuk-g3.jpg"
+  ],
+  "certificates": [
+    {
+      "path": "/trainers/instagram/coach_pramuk-d1.jpg",
+      "caption": "мини дипломную для подтверждения сертификации"
+    }
+  ],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 3,
+    "gallery": 2,
+    "certificates": 1,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/coach_pramuk/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "gender"
+  ]
+}

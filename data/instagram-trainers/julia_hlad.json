@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/julia_hlad/",
+  "handle": "julia_hlad",
+  "slug": "julia_hlad",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлия",
+  "lastName": "",
+  "fullName": "Юлия",
+  "gender": "female",
+  "nameQuotes": [
+    "Юлия"
+  ],
+  "headline": "Массажист",
+  "sourceBio": "Массаж тела Минск Мир Выезд на дом",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Юлия Минск Массаж Выезд на дом",
+  "threadsUrl": "",
+  "bio": "Я Юлия, массажист в Минске. Делаю массаж тела и выезжаю на дом.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "massazh",
+      "parentSlug": "reabilitaciya",
+      "label": "Массаж",
+      "evidence": "Массаж"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "massazh",
+    "parentSlug": "reabilitaciya",
+    "label": "Массаж"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/julia_hlad.jpg",
+  "photos": [
+    "/trainers/instagram/julia_hlad.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/julia_hlad/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/julia_hlad",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

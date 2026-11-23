@@ -1,0 +1,89 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/chernyankov_v/",
+  "handle": "chernyankov_v",
+  "slug": "chernyankov_v",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виталий",
+  "lastName": "Чернянков",
+  "fullName": "Виталий Чернянков",
+  "gender": "male",
+  "nameQuotes": [
+    "Виталий",
+    "Чернянков"
+  ],
+  "headline": "Тренер по боксу и MMA",
+  "sourceBio": "Групповые и индивидуальные занятия для 🚹🚺детей и взрослых 🥊бокс 🤼‍♂️ ММА\nг.Речица\nПет",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Чернянков ВиталийPETROVICHTEAM Гомель",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Групповые и индивидуальные занятия для детей и взрослых. Бокс и ММА.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    },
+    {
+      "slug": "mma",
+      "parentSlug": "edinoborstva",
+      "label": "MMA",
+      "evidence": "мма"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Гомель",
+  "address": "",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/chernyankov_v.jpg",
+  "photos": [
+    "/trainers/instagram/chernyankov_v.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/chernyankov_v/",
+    "phone": "+375 29 117-56-44",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,355 @@
+- generic [ref=f12e4]:
+  - generic [ref=f12e18]:
+    - generic [ref=f12e21]:
+      - link [ref=f12e26] [cursor=pointer]:
+        - /url: /
+        - img "Instagram" [ref=f12e31]
+      - generic [ref=f12e34]:
+        - link [ref=f12e39] [cursor=pointer]:
+          - /url: /
+          - img "Home" [ref=f12e44]
+        - link [ref=f12e49] [cursor=pointer]:
+          - /url: /reels/
+          - img "Reels" [ref=f12e54]
+        - link [ref=f12e61] [cursor=pointer]:
+          - /url: /direct/t/107333844001308
+          - img "Messages" [ref=f12e66]
+        - link [ref=f12e72] [cursor=pointer]:
+          - /url: /explore/
+          - img "Search" [ref=f12e77]
+        - link [ref=f12e84] [cursor=pointer]:
+          - /url: "#"
+          - img "Notifications" [ref=f12e89]
+        - link [ref=f12e95] [cursor=pointer]:
+          - /url: "#"
+          - img "New post" [ref=f12e100]
+        - link [ref=f12e105] [cursor=pointer]:
+          - /url: "#"
+          - img "Professional dashboard" [ref=f12e110]
+        - link [ref=f12e117] [cursor=pointer]:
+          - /url: /trenioby/
+          - link [ref=f12e122]:
+            - img "trenioby's profile picture" [ref=f12e123]
+      - generic [ref=f12e124]:
+        - link [ref=f12e127] [cursor=pointer]:
+          - /url: "#"
+          - img "Settings" [ref=f12e132]
+        - link [ref=f12e135] [cursor=pointer]:
+          - /url: "#"
+          - img "Also from Meta" [ref=f12e140]
+    - generic [ref=f12e143]:
+      - main [ref=f12e144]:
+        - generic [ref=f12e146]:
+          - generic [ref=f12e147]:
+            - generic [ref=f12e148]:
+              - link [ref=f12e154] [cursor=pointer]:
+                - /url: /vashkevich87/
+                - img "vashkevich87's profile picture" [ref=f12e155]
+              - generic [ref=f12e156]:
+                - generic [ref=f12e157]:
+                  - generic [ref=f12e158]:
+                    - link [ref=f12e160] [cursor=pointer]:
+                      - /url: "#"
+                      - heading "vashkevich87" [level=2] [ref=f12e161]
+                    - button [ref=f12e163] [cursor=pointer]:
+                      - img "Options" [ref=f12e165]
+                  - generic [ref=f12e169]: Игорь Вашкевич
+                  - generic [ref=f12e171]:
+                    - generic [ref=f12e173]:
+                      - generic [ref=f12e174]: "266"
+                      - text: posts
+                    - link "772 followers" [ref=f12e176] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f12e177]:
+                        - generic "772" [ref=f12e178]
+                        - text: followers
+                    - link "1,238 following" [ref=f12e180] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f12e181]:
+                        - generic [ref=f12e182]: 1,238
+                        - text: following
+                - generic [ref=f12e184]:
+                  - generic [ref=f12e185]: Community
+                  - generic [ref=f12e187]:
+                    - button [ref=f12e188] [cursor=pointer]:
+                      - generic [ref=f12e189]: "Занятия спортивным ушу и спочан для детей с 4 лет в Бресте.Тренер: Вашкевич Игорь НиколаевичКонт.тел.: +375(33)6709971"
+                    - generic [ref=f12e190]:
+                      - text: ...
+                      - button "more" [ref=f12e191] [cursor=pointer]
+                  - heading [level=1]
+                  - generic [ref=f12e193]:
+                    - generic [ref=f12e194]:
+                      - img "Link icon" [ref=f12e196]
+                      - link "m.vk.com/brestwushu" [ref=f12e200] [cursor=pointer]:
+                        - /url: https://l.instagram.com/?u=https%3A%2F%2Fm.vk.com%2Fbrestwushu%3Futm_source%3Dig%26utm_medium%3Dsocial%26utm_content%3Dlink_in_bio%26fbclid%3DPAZXh0bgNhZW0CMTEAcGRvZgJzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAadCzie23KwKYmxWZyGqLazZS_Tl0jTYxunAPeZukyH3_a5vhElGeHHeh-ek9w_aem_52vK9vB2WreBnzIe0AaHDA&e=AUBJGCdtEJ2WiyMlpoYjjrPMezugb8uaUvLAeeZRsgv5q_Y2RlZNF7M59y_SlSgd_B-deDhkNO7d2dQlV4LXj6O1NP-RL5VVSzU2jm-f8GTsjkkZ2CarzyVn405Ys0lbOz-VcZ4wZ8la
+                    - link "Threads vashkevich87" [ref=f12e203] [cursor=pointer]:
+                      - /url: https://www.threads.com/@vashkevich87?xmt=AQG0hCK-l1ukH1ZpdDz29T9YsV4TJbdG3J0MHjvHra3-_r4
+                      - img "Threads" [ref=f12e205]
+                      - generic [ref=f12e207]: vashkevich87
+            - generic [ref=f12e213]:
+              - button "Follow" [ref=f12e215] [cursor=pointer]
+              - button "Message" [ref=f12e219] [cursor=pointer]
+              - button [ref=f12e221] [cursor=pointer]:
+                - img "Similar accounts" [ref=f12e223]
+            - generic:
+              - menu
+          - generic [ref=f12e226]:
+            - tablist [ref=f12e227]:
+              - link [ref=f12e229] [cursor=pointer]:
+                - /url: /vashkevich87/
+                - img "Posts" [ref=f12e231]
+              - link [ref=f12e242] [cursor=pointer]:
+                - /url: /vashkevich87/reels/
+                - img "Reels" [ref=f12e244]
+              - link [ref=f12e247] [cursor=pointer]:
+                - /url: /vashkevich87/reposts/
+                - img "Reposts" [ref=f12e249]
+              - link [ref=f12e252] [cursor=pointer]:
+                - /url: /vashkevich87/tagged/
+                - img "Tagged" [ref=f12e254]
+            - tabpanel
+          - generic [ref=f12e261]:
+            - generic [ref=f12e262]:
+              - link "Clip" [ref=f12e264] [cursor=pointer]:
+                - /url: /vashkevich87/reel/DcvArl4OaR_/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f12e420] [cursor=pointer]:
+                - /url: /yarmak.dzmitry/p/DWQ1CXWDEv7/
+                - img "Завоевал 🥈 СЕРЕБРО в Открытом Чемпионате и Первенстве Брестской области по УШУ 🔥 Спасибо тренеру @vashkevich87" [ref=f12e421]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f12e275] [cursor=pointer]:
+                - /url: /vashkevich87/reel/DN3FzT42Etw/
+                - 'img "В марте 2025 г. наш клуб принимал участие в международном турнире по ушу Кайши 2025 в городе Москва, который собрал около 1000 участников! #ушу #ушубрест #wushubrest #ушутаолу #wushu_belarus #wushubresttaolu #wushu_by #ушузолотойдраконбрест #wushubrestbelarus #ушувбресте #тренерушу #спортбрест #тренерушувашкевич #ушуспорт #ушуразвитиебрест" [ref=f12e278]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f12e281] [cursor=pointer]:
+                - /url: /vashkevich87/reel/DN0Je362KM5/
+                - 'img "Наш традиционный турнир по ушу в городе Бресте, который ежегодно проходит в декабре и который мы организуем совместно с Институтом Конфуция УО « Брестский государственный университет имени А. С. Пушкина» #ушу #ушубрест #ушутаолу #ушузолотойдраконбрест #ушувбресте #wushubrest #wushu #wushu_belarus #wushubresttaolu #wushu_by #wushubrestbelarus #tournament #wushuchampionship #Brest #спортдетибрест #тренербрест #занятияушувбонсте" [ref=f12e284]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+            - generic [ref=f12e286]:
+              - link [ref=f12e422] [cursor=pointer]:
+                - /url: /vashkevich87/reel/DNxiGhG2E_S/
+                - 'img "-Знакомьтесь, руководитель Брестского клуба ушу «Золотой дракон» и тренер-преподаватель по ушу Вашкевич Игорь Николаевич. -Дата рождения 9 октября 1973г. -Образование: УО « Брестский государственный университет имени А. С. Пушкина» (1996) -Направления работы: Игорь Николаевич проводит как групповые занятия, так и индивидуальные тренировки (в период подготовки к соревнованиям). Его подход к обучению ушу основан на постулате, согласно которому не способных детей нет, необходимо увлечь каждого. Мир ушу настолько многогранен, что каждый найдёт что-то для себя! -Присоединяйтесь к команде Брестского клуба ушу «Золотой дракон» и откройте мир ушу для себя! #ушу #ушубрест #ушутаолу #ушузолотойдраконбрест #ушувбресте #ушудети #тренерпоушу #тренерпоушубрест #тренерушувашкевич #wushubrest #wushu_belarus #wushubresttaolu #wushu_by #goldendragonwushubrest #wushubrestbelarus" [ref=f12e423]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f12e424] [cursor=pointer]:
+                - /url: /vashkevich87/reel/DNpuQtts47p/
+                - 'img "Наш тренировочный процесс. Ушу занимаются дети от 4,5 лет. Но можно начинать в любом возрасте! #ушу #ушубрест #ушутаолу #ушузолотойдраконбрест #ушудети #тренерушу #wushubrest #ушутаолу #wushu_belarus #wushubresttaolu #wushu_by #goldendragonwushubrest" [ref=f12e425]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f12e426] [cursor=pointer]:
+                - /url: /vashkevich87/p/DNaLW02omXr/
+                - img [ref=f12e427]
+              - link [ref=f12e303] [cursor=pointer]:
+                - /url: /vashkevich87/reel/DNSjNQbodBG/
+                - 'img "Истории наших ПОБЕД: 2 командное место на Первенстве Республики Беларусь 🇧🇾 по УШУ в Гомеле! #ушу #брест #ушубрест #ушудлядетейбрест #ушувбресте #ушубеларусьбрест #ушутаолу #ушутаолудети #ушутаодубрест #кунфу #кунфубрест #ушутренербрест #wushu #wushubrest #wushubrestbelarus #brest_by #wushu_by #wushu_belarus #goldendragonbrest #goldendragonwushubrest #kunfu #champions" [ref=f12e306]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+            - generic [ref=f12e308]:
+              - link [ref=f12e310] [cursor=pointer]:
+                - /url: /vashkevich87/reel/DNQSfbYIX8m/
+                - 'img "Команда Брестского Клуб УШУ «Золотой дракон» ПОБЕДИТЕЛЬ 🏆 Кубка Республики Беларусь 🇧🇾 по УШУ в разделе таолу! #ушу #ушудлядетейвбресте #ушутаолу #ушутаолудети #ушузолотойдраконбрест #ушутаолубрест #ушубеларусь #ушубрест #ушубресттаолу #ушубрестбеларусь #wushutaolu #brestwushuteam #brestwushu #wushubrest #wushubresttaolu #goldendragonbrest #brestgoldendragon #wushuchampion #wushucup #wushucupbelarus #wushuchildrenbrest #brest_by #wushuminsk" [ref=f12e313]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f12e428] [cursor=pointer]:
+                - /url: /vashkevich87/reel/DM2L0eGoARx/
+                - img "Тренировочный процесс в Брестском клубе ушу «Золотой дракон»." [ref=f12e429]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f12e321] [cursor=pointer]:
+                - /url: /vashkevich87/reel/DMz3bctIfxA/
+                - img "Занятия по спортивному ушу в Бресте вместе с клубом ушу «Золотой дракон» - чемпионом Республики Беларусь по ушу в разделе таолу!" [ref=f12e324]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f12e430] [cursor=pointer]:
+                - /url: /vashkevich87/p/C34WSJvoGgd/
+                - 'img "23 декабря в Бресте прошли Открытое Первенство г. Бреста среди юношей (девушек) и Берестейский рождественский детский турнир по ушу Института Конфуция БрГУ имени А. С. Пушкина Он собрал участников из Беларуси: Минск, Гомель, Брест и России: Санкт-Петербург и Воронеж. Разыграно 50 комплектов медалей. Наш клуб завоевал 50 медалей: 13 золото 21 серебро 16 бронза Так держать! #ушу #турнирушу #турнирпоушубрест #ушудети #кунфу #брест #бргу #спорткомплекс #факультетфизвоспитания #ушутаолу #институтконфуция #ушуинститутконфуциябрест #ушузолотойдраконбрест #золотойдраконбрест #wushu #wushubrest #wushutaolu #wushutaolubrest #goldendragonbrest #wushuteambrest" [ref=f12e431]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+      - contentinfo [ref=f12e331]:
+        - generic [ref=f12e332]:
+          - generic [ref=f12e334]:
+            - link "Meta" [ref=f12e336] [cursor=pointer]:
+              - /url: https://about.meta.com/
+            - link "About" [ref=f12e339] [cursor=pointer]:
+              - /url: https://about.instagram.com/
+            - link "Blog" [ref=f12e342] [cursor=pointer]:
+              - /url: https://about.instagram.com/blog/
+            - link "Jobs" [ref=f12e345] [cursor=pointer]:
+              - /url: https://about.instagram.com/about-us/careers
+            - link "Help" [ref=f12e348] [cursor=pointer]:
+              - /url: https://help.instagram.com/
+            - link "API" [ref=f12e351] [cursor=pointer]:
+              - /url: https://developers.facebook.com/docs/instagram
+            - link "Privacy" [ref=f12e354] [cursor=pointer]:
+              - /url: /legal/privacy/
+            - link "Terms" [ref=f12e357] [cursor=pointer]:
+              - /url: /legal/terms/
+            - link "Locations" [ref=f12e360] [cursor=pointer]:
+              - /url: /explore/locations/
+            - link "Popular" [ref=f12e363] [cursor=pointer]:
+              - /url: /popular/
+            - link "Instagram Lite" [ref=f12e366] [cursor=pointer]:
+              - /url: /web/lite/
+            - link "Meta AI" [ref=f12e369] [cursor=pointer]:
+              - /url: https://www.meta.ai/?utm_source=foa_web_footer
+            - link "Muse" [ref=f12e372] [cursor=pointer]:
+              - /url: https://muse.ai/
+            - link "Threads" [ref=f12e375] [cursor=pointer]:
+              - /url: https://www.threads.com/
+            - link "Contact Uploading & Non-Users" [ref=f12e378] [cursor=pointer]:
+              - /url: https://www.facebook.com/help/instagram/261704639352628
+            - link "Meta Verified" [ref=f12e381] [cursor=pointer]:
+              - /url: /accounts/meta_verified/?entrypoint=web_footer
+          - generic [ref=f12e383]:
+            - generic [ref=f12e384] [cursor=pointer]:
+              - generic [ref=f12e385]:
+                - generic [ref=f12e386]: English
+                - img "Down chevron icon" [ref=f12e389]
+              - combobox "Switch Display Language" [ref=f12e391]:
+                - option "Afrikaans"
+                - option "العربية"
+                - option "Čeština"
+                - option "Dansk"
+                - option "Deutsch"
+                - option "Ελληνικά"
+                - option "English" [selected]
+                - option "English (UK)"
+                - option "Español (España)"
+                - option "Español"
+                - option "فارسی"
+                - option "Suomi"
+                - option "Français"
+                - option "עברית"
+                - option "Bahasa Indonesia"
+                - option "Italiano"
+                - option "日本語"
+                - option "한국어"
+                - option "Bahasa Melayu"
+                - option "Norsk"
+                - option "Nederlands"
+                - option "Polski"
+                - option "Português (Brasil)"
+                - option "Português (Portugal)"
+                - option "Русский"
+                - option "Svenska"
+                - option "ภาษาไทย"
+                - option "Filipino"
+                - option "Türkçe"
+                - option "中文(简体)"
+                - option "中文(台灣)"
+                - option "বাংলা"
+                - option "ગુજરાતી"
+                - option "हिन्दी"
+                - option "Hrvatski"
+                - option "Magyar"
+                - option "ಕನ್ನಡ"
+                - option "മലയാളം"
+                - option "मराठी"
+                - option "नेपाली"
+                - option "ਪੰਜਾਬੀ"
+                - option "සිංහල"
+                - option "Slovenčina"
+                - option "தமிழ்"
+                - option "తెలుగు"
+                - option "اردو"
+                - option "Tiếng Việt"
+                - option "中文(香港)"
+                - option "Български"
+                - option "Français (Canada)"
+                - option "Română"
+                - option "Српски"
+                - option "Українська"
+            - generic [ref=f12e392]: © 2026 Instagram from Meta
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - button [ref=f12e395] [cursor=pointer]:
+              - generic "Messages" [ref=f12e396]:
+                - generic [ref=f12e397]:
+                  - img "Messages" [ref=f12e400]
+                  - generic [ref=f12e403]: Messages
+                - generic [ref=f12e404]:
+                  - button "User avatar Виктория" [ref=f12e406]:
+                    - img "User avatar" [ref=f12e409]
+                  - button "User avatar Татьяна Илюкович" [ref=f12e411]:
+                    - img "User avatar" [ref=f12e414]
+                  - button "User avatar Трэнер✨Нутрыцыелаг✨ Князева Вольга✨ Мінск" [ref=f12e416]:
+                    - img "User avatar" [ref=f12e419]
+            - generic [ref=f12e477]:
+              - generic [ref=f12e479]:
+                - generic [ref=f12e480]:
+                  - button [ref=f12e482] [cursor=pointer]:
+                    - img "Go back" [ref=f12e484]
+                  - link "Open the profile page of vashkevich87" [ref=f12e487] [cursor=pointer]:
+                    - /url: /vashkevich87/
+                    - generic [ref=f12e488]:
+                      - img "user-profile-picture" [ref=f12e491]
+                      - heading "Игорь Вашкевич" [level=2] [ref=f12e495]
+                  - generic [ref=f12e497]:
+                    - button [ref=f12e498] [cursor=pointer]:
+                      - img "Expand" [ref=f12e500]
+                    - button [ref=f12e502] [cursor=pointer]:
+                      - img "Close" [ref=f12e504]
+                - separator [ref=f12e507]
+              - generic "Игорь Вашкевич" [ref=f12e508]:
+                - generic [ref=f12e510]:
+                  - generic [ref=f12e515]:
+                    - img "user-profile-picture" [ref=f12e519]
+                    - generic [ref=f12e520]:
+                      - heading "Игорь Вашкевич" [level=2] [ref=f12e523]
+                      - generic [ref=f12e525]: vashkevich87 · Instagram
+                      - link "View profile" [ref=f12e528] [cursor=pointer]:
+                        - /url: /vashkevich87/
+                  - generic [ref=f12e538]:
+                    - button [ref=f12e541] [cursor=pointer]:
+                      - img "Choose an emoji" [ref=f12e543]
+                    - generic [ref=f12e545]:
+                      - textbox [active] [ref=f12e546]:
+                        - paragraph [ref=f12e547]
+                      - generic: Message...
+                    - generic [ref=f12e548]:
+                      - button [ref=f12e549] [cursor=pointer]:
+                        - img "Voice Clip" [ref=f12e551]
+                      - button [ref=f12e554] [cursor=pointer]:
+                        - img "Add Photo or Video" [ref=f12e556]
+                      - button [ref=f12e561] [cursor=pointer]:
+                        - img "Choose a GIF or sticker" [ref=f12e563]

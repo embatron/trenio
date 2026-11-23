@@ -1,0 +1,91 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/alexandr_hodan/",
+  "handle": "alexandr_hodan",
+  "slug": "alexandr_hodan",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александр",
+  "lastName": "Ходан",
+  "fullName": "Александр Ходан",
+  "gender": "male",
+  "nameQuotes": [
+    "Александр",
+    "Ходан"
+  ],
+  "headline": "Тренер по бегу",
+  "sourceBio": "Подготовлю к первому забегу с нуля",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Александр Ходан Минск Бег",
+  "threadsUrl": "",
+  "bio": "Я Александр Ходан, тренер по бегу. Город Минск.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/alexandr_hodan/reel/Dbvr7ebNv97/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/alexandr_hodan/reel/DaSmqEItdjN/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/alexandr_hodan/reel/DWtrGliDTgn/",
+      "caption": "",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "beg",
+      "parentSlug": "beg",
+      "label": "Бег",
+      "evidence": "марафон"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "beg",
+    "parentSlug": "beg",
+    "label": "Бег"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/alexandr_hodan.jpg",
+  "photos": [
+    "/trainers/instagram/alexandr_hodan.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/alexandr_hodan/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/alexandr_hodan",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email"
+  ]
+}

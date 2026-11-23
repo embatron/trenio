@@ -1,0 +1,110 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/karina_kobrinets/",
+  "handle": "karina_kobrinets",
+  "slug": "karina_kobrinets",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Карина",
+  "lastName": "Кобринец",
+  "fullName": "Карина Кобринец",
+  "gender": "female",
+  "nameQuotes": [
+    "Карина",
+    "Кобринец"
+  ],
+  "headline": "Инструктор по пилатесу, фитнес-тренер и тренер по питанию",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Карина Кобринец Пинск Пилатес",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Здесь про спортивные будни, мотивацию и питание, здоровое и красивое тело. Помогаю строить фигуру мечты.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/karina_kobrinets/p/Dc3xgxbiCie/",
+      "caption": "Подловили меня на улице Питера 📸",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/karina_kobrinets/p/DcQvtIooFq3/",
+      "caption": "Всегда на страже ваших красивых тел ✨ Ваш тренер Карина 🫶🏼",
+      "textRole": "promotion",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/karina_kobrinets/reel/DeXdo72oYzx/",
+      "caption": "год выпуска 1998.",
+      "textRole": "none",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "Питание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Пинск",
+  "address": "",
+  "cityCandidates": [
+    "Пинск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/karina_kobrinets.jpg",
+  "photos": [
+    "/trainers/instagram/karina_kobrinets.jpg",
+    "/trainers/instagram/karina_kobrinets-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/karina_kobrinets/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "address",
+    "email",
+    "telegram"
+  ]
+}

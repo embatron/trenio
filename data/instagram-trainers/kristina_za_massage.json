@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kristina_za_massage/",
+  "handle": "kristina_za_massage",
+  "slug": "kristina_za_massage",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Кристина",
+  "lastName": "",
+  "fullName": "Кристина",
+  "gender": "female",
+  "nameQuotes": [
+    "Кристина"
+  ],
+  "headline": "Массажист",
+  "sourceBio": "Двигательный терапевт, массажист",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кристина Минск Массаж",
+  "threadsUrl": "",
+  "bio": "Я Кристина, массажист. Детский массаж. Город Минск.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/kristina_za_massage/reel/DcUAzE6Iwx-/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/kristina_za_massage/reel/C-qjhcyuhuu/",
+      "caption": "Занятие проходит с использованием мягких техник, подбираю индивидуальную программу занятий согласно моторному развитию малыша",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "massazh",
+      "parentSlug": "reabilitaciya",
+      "label": "Массаж",
+      "evidence": "Массаж"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "massazh",
+    "parentSlug": "reabilitaciya",
+    "label": "Массаж"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kristina_za_massage.jpg",
+  "photos": [
+    "/trainers/instagram/kristina_za_massage.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kristina_za_massage/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/kris_za_massage",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email"
+  ]
+}

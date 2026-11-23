@@ -1,0 +1,402 @@
+- generic [ref=f18e4]:
+  - generic [ref=f18e18]:
+    - generic [ref=f18e21]:
+      - link [ref=f18e26] [cursor=pointer]:
+        - /url: /
+        - img "Instagram" [ref=f18e31]
+      - generic [ref=f18e34]:
+        - link [ref=f18e39] [cursor=pointer]:
+          - /url: /
+          - img "Home" [ref=f18e44]
+        - link [ref=f18e49] [cursor=pointer]:
+          - /url: /reels/
+          - img "Reels" [ref=f18e54]
+        - link [ref=f18e61] [cursor=pointer]:
+          - /url: /direct/inbox/
+          - img "Messages" [ref=f18e66]
+        - link [ref=f18e72] [cursor=pointer]:
+          - /url: /explore/
+          - img "Search" [ref=f18e77]
+        - link [ref=f18e84] [cursor=pointer]:
+          - /url: "#"
+          - img "Notifications" [ref=f18e89]
+        - link [ref=f18e95] [cursor=pointer]:
+          - /url: "#"
+          - img "New post" [ref=f18e100]
+        - link [ref=f18e105] [cursor=pointer]:
+          - /url: "#"
+          - img "Professional dashboard" [ref=f18e110]
+        - link [ref=f18e117] [cursor=pointer]:
+          - /url: /trenioby/
+          - link [ref=f18e122]:
+            - img "trenioby's profile picture" [ref=f18e123]
+      - generic [ref=f18e124]:
+        - link [ref=f18e127] [cursor=pointer]:
+          - /url: "#"
+          - img "Settings" [ref=f18e132]
+        - link [ref=f18e135] [cursor=pointer]:
+          - /url: "#"
+          - img "Also from Meta" [ref=f18e140]
+    - generic [ref=f18e143]:
+      - main [ref=f18e144]:
+        - generic [ref=f18e146]:
+          - generic [ref=f18e147]:
+            - generic [ref=f18e148]:
+              - button [ref=f18e153] [cursor=pointer]:
+                - link [ref=f18e155]:
+                  - img "kulazh.trener's profile picture" [ref=f18e156]
+              - generic [ref=f18e157]:
+                - generic [ref=f18e158]:
+                  - generic [ref=f18e159]:
+                    - link [ref=f18e161] [cursor=pointer]:
+                      - /url: "#"
+                      - heading "kulazh.trener" [level=2] [ref=f18e162]
+                    - button [ref=f18e164] [cursor=pointer]:
+                      - img "Options" [ref=f18e166]
+                  - generic [ref=f18e170]: ИЛЬЯ┃ТРЕНЕР┃ОНЛАЙН┃ПОХУДЕНИЕ┃МИНСК
+                  - generic [ref=f18e172]:
+                    - generic [ref=f18e174]:
+                      - generic [ref=f18e175]: "13"
+                      - text: posts
+                    - link "712 followers" [ref=f18e177] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f18e178]:
+                        - generic "712" [ref=f18e179]
+                        - text: followers
+                    - link "693 following" [ref=f18e181] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f18e182]:
+                        - generic [ref=f18e183]: "693"
+                        - text: following
+                - generic [ref=f18e185]:
+                  - generic [ref=f18e186]: Fitness Trainer
+                  - generic [ref=f18e188]:
+                    - button [ref=f18e189] [cursor=pointer]:
+                      - generic [ref=f18e190]: Минус 5-10 кг за 2 месяца без диет и срывов | 150+ довольных клиентовПочему вес стоит, даже если ты ешь грудку с
+                    - generic [ref=f18e191]:
+                      - text: ...
+                      - button "more" [ref=f18e192] [cursor=pointer]
+                  - heading "Nalibokskaya, 2, Minsk, Belarus" [level=1] [ref=f18e194]
+                  - link "Threads kulazh.trener" [ref=f18e197] [cursor=pointer]:
+                    - /url: https://www.threads.com/@kulazh.trener?xmt=AQG0ar6GBmgzS8HnY2KV84zaDMSxXVjw09Pv_4WbV0m2cZk
+                    - img "Threads" [ref=f18e199]
+                    - generic [ref=f18e201]: kulazh.trener
+            - generic [ref=f18e207]:
+              - button "Follow" [ref=f18e209] [cursor=pointer]
+              - button "Message" [ref=f18e213] [cursor=pointer]
+              - button [ref=f18e215] [cursor=pointer]:
+                - img "Similar accounts" [ref=f18e217]
+            - menu [ref=f18e221]:
+              - generic [ref=f18e223]:
+                - list [ref=f18e225]:
+                  - listitem [ref=f18e226]
+                  - listitem [ref=f18e227]
+                  - listitem [ref=f18e228]:
+                    - link "View КЕЙС highlight" [ref=f18e231] [cursor=pointer]:
+                      - /url: /stories/highlights/17948423457054299/
+                      - button "kulazh.trener's highlight story picture КЕЙС" [ref=f18e232]:
+                        - button [ref=f18e233]:
+                          - img "kulazh.trener's highlight story picture" [ref=f18e236]
+                        - generic [ref=f18e237]: КЕЙС
+                  - listitem [ref=f18e240]:
+                    - link "View ЕМ 🍕И ХУДЕЮ highlight" [ref=f18e243] [cursor=pointer]:
+                      - /url: /stories/highlights/17861793894692244/
+                      - button "kulazh.trener's highlight story picture ЕМ 🍕И ХУДЕЮ" [ref=f18e244]:
+                        - button [ref=f18e245]:
+                          - img "kulazh.trener's highlight story picture" [ref=f18e248]
+                        - generic [ref=f18e249]: ЕМ 🍕И ХУДЕЮ
+                  - listitem [ref=f18e252]:
+                    - link "View МОЙ КЕЙС highlight" [ref=f18e255] [cursor=pointer]:
+                      - /url: /stories/highlights/18016781567138752/
+                      - button "kulazh.trener's highlight story picture МОЙ КЕЙС" [ref=f18e256]:
+                        - button [ref=f18e257]:
+                          - img "kulazh.trener's highlight story picture" [ref=f18e260]
+                        - generic [ref=f18e261]: МОЙ КЕЙС
+                  - listitem [ref=f18e264]:
+                    - link "View КЕЙС highlight" [ref=f18e267] [cursor=pointer]:
+                      - /url: /stories/highlights/17917844826447151/
+                      - button "kulazh.trener's highlight story picture КЕЙС" [ref=f18e268]:
+                        - button [ref=f18e269]:
+                          - img "kulazh.trener's highlight story picture" [ref=f18e272]
+                        - generic [ref=f18e273]: КЕЙС
+                  - listitem [ref=f18e276]:
+                    - link "View СЪЕМКИ highlight" [ref=f18e279] [cursor=pointer]:
+                      - /url: /stories/highlights/18119458942962765/
+                      - button "kulazh.trener's highlight story picture СЪЕМКИ" [ref=f18e280]:
+                        - button [ref=f18e281]:
+                          - img "kulazh.trener's highlight story picture" [ref=f18e284]
+                        - generic [ref=f18e285]: СЪЕМКИ
+                  - listitem [ref=f18e288]:
+                    - link "View МОЙ ДЕНЬ highlight" [ref=f18e291] [cursor=pointer]:
+                      - /url: /stories/highlights/18029403452909933/
+                      - button "kulazh.trener's highlight story picture МОЙ ДЕНЬ" [ref=f18e292]:
+                        - button [ref=f18e293]:
+                          - img "kulazh.trener's highlight story picture" [ref=f18e296]
+                        - generic [ref=f18e297]: МОЙ ДЕНЬ
+                  - listitem [ref=f18e300]:
+                    - link "View ЛАЙФ highlight" [ref=f18e303] [cursor=pointer]:
+                      - /url: /stories/highlights/18139255726624001/
+                      - button "kulazh.trener's highlight story picture ЛАЙФ" [ref=f18e304]:
+                        - button [ref=f18e305]:
+                          - img "kulazh.trener's highlight story picture" [ref=f18e308]
+                        - generic [ref=f18e309]: ЛАЙФ
+                  - listitem [ref=f18e312]:
+                    - link "View СТАТЬЯ highlight" [ref=f18e315] [cursor=pointer]:
+                      - /url: /stories/highlights/18436351867182048/
+                      - button "kulazh.trener's highlight story picture СТАТЬЯ" [ref=f18e316]:
+                        - button [ref=f18e317]:
+                          - img "kulazh.trener's highlight story picture" [ref=f18e320]
+                        - generic [ref=f18e321]: СТАТЬЯ
+                  - listitem [ref=f18e324]:
+                    - link "View ТРЕНЮ highlight" [ref=f18e327] [cursor=pointer]:
+                      - /url: /stories/highlights/18106318724122778/
+                      - button "kulazh.trener's highlight story picture ТРЕНЮ" [ref=f18e328]:
+                        - button [ref=f18e329]:
+                          - img "kulazh.trener's highlight story picture" [ref=f18e332]
+                        - generic [ref=f18e333]: ТРЕНЮ
+                  - listitem [ref=f18e336]:
+                    - link "View ПАУЭЛИФТ highlight" [ref=f18e339] [cursor=pointer]:
+                      - /url: /stories/highlights/17917730381406375/
+                      - button "kulazh.trener's highlight story picture ПАУЭЛИФТ" [ref=f18e340]:
+                        - button [ref=f18e341]:
+                          - img "kulazh.trener's highlight story picture" [ref=f18e344]
+                        - generic [ref=f18e345]: ПАУЭЛИФТ
+                  - listitem [ref=f18e348]:
+                    - link "View УЧЕНИКИ highlight" [ref=f18e351] [cursor=pointer]:
+                      - /url: /stories/highlights/17948674520281507/
+                      - button "kulazh.trener's highlight story picture УЧЕНИКИ" [ref=f18e352]:
+                        - button [ref=f18e353]:
+                          - img "kulazh.trener's highlight story picture" [ref=f18e356]
+                        - generic [ref=f18e357]: УЧЕНИКИ
+                  - listitem [ref=f18e360]:
+                    - link "View СОРЕВНОВАНИЯ highlight" [ref=f18e363] [cursor=pointer]:
+                      - /url: /stories/highlights/17914815666018741/
+                      - button "kulazh.trener's highlight story picture СОРЕВНОВАНИЯ" [ref=f18e364]:
+                        - button [ref=f18e365]:
+                          - img "kulazh.trener's highlight story picture" [ref=f18e368]
+                        - generic [ref=f18e369]: СОРЕВНОВАНИЯ
+                  - listitem [ref=f18e372]:
+                    - link "View ОБО МНЕ🏋️ highlight" [ref=f18e375] [cursor=pointer]:
+                      - /url: /stories/highlights/18014618567596080/
+                      - button "kulazh.trener's highlight story picture ОБО МНЕ🏋️" [ref=f18e376]:
+                        - button [ref=f18e377]:
+                          - img "kulazh.trener's highlight story picture" [ref=f18e380]
+                        - generic [ref=f18e381]: ОБО МНЕ🏋️
+                  - listitem [ref=f18e384]:
+                    - link "View ОТЗЫВЫ highlight" [ref=f18e387] [cursor=pointer]:
+                      - /url: /stories/highlights/17870595356780956/
+                      - button "kulazh.trener's highlight story picture ОТЗЫВЫ" [ref=f18e388]:
+                        - button [ref=f18e389]:
+                          - img "kulazh.trener's highlight story picture" [ref=f18e392]
+                        - generic [ref=f18e393]: ОТЗЫВЫ
+                - button "Next" [ref=f18e396] [cursor=pointer]
+          - generic [ref=f18e398]:
+            - tablist [ref=f18e399]:
+              - link [ref=f18e401] [cursor=pointer]:
+                - /url: /kulazh.trener/
+                - img "Posts" [ref=f18e403]
+              - link [ref=f18e414] [cursor=pointer]:
+                - /url: /kulazh.trener/reels/
+                - img "Reels" [ref=f18e416]
+              - link [ref=f18e419] [cursor=pointer]:
+                - /url: /kulazh.trener/reposts/
+                - img "Reposts" [ref=f18e421]
+              - link [ref=f18e424] [cursor=pointer]:
+                - /url: /kulazh.trener/tagged/
+                - img "Tagged" [ref=f18e426]
+            - tabpanel
+          - generic [ref=f18e433]:
+            - generic [ref=f18e434]:
+              - link [ref=f18e436] [cursor=pointer]:
+                - /url: /kulazh.trener/p/DePob69R3-1/
+              - link "Carousel" [ref=f18e441] [cursor=pointer]:
+                - /url: /kulazh.trener/p/DC4sgBloAX8/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f18e446] [cursor=pointer]:
+                - /url: /kulazh.trener/reel/C_gFlC7IPSq/
+                - 'img "😁 #персональныйтренер #тренер #тренировка #мотивация #тренажерныйзал #тренеровки #пауэрлифтинг #юмор #похуй" [ref=f18e449]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f18e452] [cursor=pointer]:
+                - /url: /kulazh.trener/reel/C_arM-lIYmN/
+                - 'img "ТЫ НИКОГДА НЕ НАКАЧАЕШЬ СЕБЕ МОЩНЫЕ ГРУДНЫЕ…. В данном видео я рассказал, почему важно делать БАЗУ, если ты действительно хочешь накачаться 😁. #персональныйтренер #тренер #тренировка #тренажерныйзал #тренеровки #грудныемышцы #похуй" [ref=f18e455]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+            - generic [ref=f18e457]:
+              - link [ref=f18e459] [cursor=pointer]:
+                - /url: /kulazh.trener/reel/C_WDS4som0r/
+                - 'img "😁😁😁 #персональныйтренер #мотивация #тренер #тренировка #тренажерныйзал #тренеровки #пауэрлифтинг #юмор #похуй" [ref=f18e462]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f18e465] [cursor=pointer]:
+                - /url: /kulazh.trener/reel/C_DepHjoOyW/
+                - 'img "😅 #персональныйтренер #мотивация #тренер #тренировка #пауэрлифтинг #тренеровки #питание #юмор #пауэрлифтер #похуй" [ref=f18e468]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f18e471] [cursor=pointer]:
+                - /url: /kulazh.trener/reel/C--T_LdolWn/
+                - 'img "ЛЮБИТЕ СЛАДКОЕ? Вот мой топ вкусняшек, который можно смело использовать при похудении/наборе мышечной массы 😁. #персональныйтренер #тренажерныйзал #тренер #тренировка #питание #пауэрлифтинг #мотивация #похуй" [ref=f18e474]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f18e477] [cursor=pointer]:
+                - /url: /kulazh.trener/reel/C-5KIYeoEza/
+                - 'img "А вы согласны 🤔? #персональныйтренер #мотивация #тренажерныйзал #тренер #тренировка #питание #тренеровки #пауэрлифтинг #похуй" [ref=f18e480]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+            - generic [ref=f18e482]:
+              - link [ref=f18e484] [cursor=pointer]:
+                - /url: /kulazh.trener/reel/C-uZ3xIo5iL/
+                - 'img "😅 #персональныйтренер #мотивация #тренажерныйзал #тренер #тренировка #пауэрлифтинг" [ref=f18e487]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f18e490] [cursor=pointer]:
+                - /url: /kulazh.trener/reel/C-ku7fQoXcN/
+                - 'img "SBDay#1 На днях прошёл мой первый SBD день перед соревновательным циклом 🎯. Задача была отработать 90% от ПМ. Справился легко, пока всё идёт по плану 😁. Были подняты: 📌 Присед-180 кг 📌 Жим-130 кг 📌 Тяга-210 кг #пауэрлифтинг #пауэрлифтер #мотивация #персональныйтренер #тренеровки" [ref=f18e493]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f18e496] [cursor=pointer]:
+                - /url: /kulazh.trener/reel/C-iKCJxopEE/
+                - 'img "СОУСЫ ДЛЯ ПОХУДЕНИЯ 🤨 #персональныйтренер #тренеронлайн #питание #мотивация #похудение" [ref=f18e499]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f18e502] [cursor=pointer]:
+                - /url: /kulazh.trener/p/C8xBAFyI53b/
+                - img "Пойдет для пауэрлифтера)" [ref=f18e505]
+      - contentinfo [ref=f18e507]:
+        - generic [ref=f18e508]:
+          - generic [ref=f18e510]:
+            - link "Meta" [ref=f18e512] [cursor=pointer]:
+              - /url: https://about.meta.com/
+            - link "About" [ref=f18e515] [cursor=pointer]:
+              - /url: https://about.instagram.com/
+            - link "Blog" [ref=f18e518] [cursor=pointer]:
+              - /url: https://about.instagram.com/blog/
+            - link "Jobs" [ref=f18e521] [cursor=pointer]:
+              - /url: https://about.instagram.com/about-us/careers
+            - link "Help" [ref=f18e524] [cursor=pointer]:
+              - /url: https://help.instagram.com/
+            - link "API" [ref=f18e527] [cursor=pointer]:
+              - /url: https://developers.facebook.com/docs/instagram
+            - link "Privacy" [ref=f18e530] [cursor=pointer]:
+              - /url: /legal/privacy/
+            - link "Terms" [ref=f18e533] [cursor=pointer]:
+              - /url: /legal/terms/
+            - link "Locations" [ref=f18e536] [cursor=pointer]:
+              - /url: /explore/locations/
+            - link "Popular" [ref=f18e539] [cursor=pointer]:
+              - /url: /popular/
+            - link "Instagram Lite" [ref=f18e542] [cursor=pointer]:
+              - /url: /web/lite/
+            - link "Meta AI" [ref=f18e545] [cursor=pointer]:
+              - /url: https://www.meta.ai/?utm_source=foa_web_footer
+            - link "Muse" [ref=f18e548] [cursor=pointer]:
+              - /url: https://muse.ai/
+            - link "Threads" [ref=f18e551] [cursor=pointer]:
+              - /url: https://www.threads.com/
+            - link "Contact Uploading & Non-Users" [ref=f18e554] [cursor=pointer]:
+              - /url: https://www.facebook.com/help/instagram/261704639352628
+            - link "Meta Verified" [ref=f18e557] [cursor=pointer]:
+              - /url: /accounts/meta_verified/?entrypoint=web_footer
+          - generic [ref=f18e559]:
+            - generic [ref=f18e560] [cursor=pointer]:
+              - generic [ref=f18e561]:
+                - generic [ref=f18e562]: English
+                - img "Down chevron icon" [ref=f18e565]
+              - combobox "Switch Display Language" [ref=f18e567]:
+                - option "Afrikaans"
+                - option "العربية"
+                - option "Čeština"
+                - option "Dansk"
+                - option "Deutsch"
+                - option "Ελληνικά"
+                - option "English" [selected]
+                - option "English (UK)"
+                - option "Español (España)"
+                - option "Español"
+                - option "فارسی"
+                - option "Suomi"
+                - option "Français"
+                - option "עברית"
+                - option "Bahasa Indonesia"
+                - option "Italiano"
+                - option "日本語"
+                - option "한국어"
+                - option "Bahasa Melayu"
+                - option "Norsk"
+                - option "Nederlands"
+                - option "Polski"
+                - option "Português (Brasil)"
+                - option "Português (Portugal)"
+                - option "Русский"
+                - option "Svenska"
+                - option "ภาษาไทย"
+                - option "Filipino"
+                - option "Türkçe"
+                - option "中文(简体)"
+                - option "中文(台灣)"
+                - option "বাংলা"
+                - option "ગુજરાતી"
+                - option "हिन्दी"
+                - option "Hrvatski"
+                - option "Magyar"
+                - option "ಕನ್ನಡ"
+                - option "മലയാളം"
+                - option "मराठी"
+                - option "नेपाली"
+                - option "ਪੰਜਾਬੀ"
+                - option "සිංහල"
+                - option "Slovenčina"
+                - option "தமிழ்"
+                - option "తెలుగు"
+                - option "اردو"
+                - option "Tiếng Việt"
+                - option "中文(香港)"
+                - option "Български"
+                - option "Français (Canada)"
+                - option "Română"
+                - option "Српски"
+                - option "Українська"
+            - generic [ref=f18e568]: © 2026 Instagram from Meta
+  - button [ref=f18e571] [cursor=pointer]:
+    - generic "Messages" [ref=f18e572]:
+      - generic [ref=f18e573]:
+        - img "Messages" [ref=f18e576]
+        - generic [ref=f18e579]: Messages
+      - generic [ref=f18e580]:
+        - button "User avatar Трэнер✨Нутрыцыелаг✨ Князева Вольга✨ Мінск" [ref=f18e582]:
+          - img "User avatar" [ref=f18e585]
+        - button "User avatar Игорь Вашкевич" [ref=f18e587]:
+          - img "User avatar" [ref=f18e590]
+        - button "User avatar Kristina🪽" [ref=f18e592]:
+          - img "User avatar" [ref=f18e595]

@@ -1,0 +1,118 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/margo.chistyakova/",
+  "handle": "margo.chistyakova",
+  "slug": "margo.chistyakova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Маргарита",
+  "lastName": "Чистякова",
+  "fullName": "Маргарита Чистякова",
+  "gender": "female",
+  "nameQuotes": [
+    "Маргарита",
+    "Чистякова"
+  ],
+  "headline": "Инструктор по пилатесу и тренер по спортивной гимнастике, батуту, гимнастике и акробатике",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Маргарита Чистякова Гродно Пилатес Спортивная гимнастика Батут",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Мастер спорта с высшим образованием. Реабилитация на физическом и духовном уровне. Групповые и индивидуальные занятия.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/margo.chistyakova/reel/DaSBetZIGPu/",
+      "caption": "чувствовать себя на своем месте - одно из лучших ощущений, что я испытываю. Желание развиваться, работать, получать и делиться всем, чем наполняю себя. А ваша ежедневная отдача - энергия. Thank you, my dear clients ❤️ Смысл в том, чтобы не просто собирать знания, а разделять, помогая ближнему. (человеку)",
+      "textRole": "about",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/margo.chistyakova/reel/DXUePcZCMRC/",
+      "caption": "Это был заключительный, третий ||| модуль на реформере..))) Огромная благодарность, лучшей: @denisova_tanyafit 🤙🏼 Международной, Американской школе пилатеса: @balanced_body Всем девушкам, группа у нас 🤙🏼🤙🏼🤙🏼😅 @moment.pilates 🤍 год, как мы все вместе прикоснулись к студийному пилатесу📕🪶",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/margo.chistyakova/reel/DabRzWfOOmx/",
+      "caption": "",
+      "textRole": "none",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "sportivnaya",
+      "parentSlug": "gimnastika",
+      "label": "Спортивная гимнастика",
+      "evidence": "Спортивная гимнастика"
+    },
+    {
+      "slug": "batut",
+      "parentSlug": "gimnastika",
+      "label": "Батут",
+      "evidence": "Батут"
+    },
+    {
+      "slug": "gimnastika",
+      "parentSlug": "gimnastika",
+      "label": "Гимнастика",
+      "evidence": "Гимнастика"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/margo.chistyakova.jpg",
+  "photos": [
+    "/trainers/instagram/margo.chistyakova.jpg",
+    "/trainers/instagram/margo.chistyakova-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/margo.chistyakova/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

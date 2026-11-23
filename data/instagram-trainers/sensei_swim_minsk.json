@@ -1,0 +1,116 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/sensei_swim_minsk/",
+  "handle": "sensei_swim_minsk",
+  "slug": "sensei_swim_minsk",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Данила",
+  "lastName": "",
+  "fullName": "Данила",
+  "gender": "male",
+  "nameQuotes": [
+    "Данила"
+  ],
+  "headline": "Тренер по плаванию, инструктор ЛФК и тренер по осанке",
+  "sourceBio": "🔹Опыт более 10 лет\n🔹Научу плавать с нуля\n🔹Избавлю от страха воды\n🔹Поставлю технику\n🔹Дети от года, подростки, взрослые без ограничений\nЗапись в Direct",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Данила Минск",
+  "threadsUrl": "",
+  "presentationMode": "source",
+  "bio": "Плавание без стресса и слёз. Игровой формат — чтобы ребёнку было интересно. Маленькие группы — чтобы тренер успевал ко всем. Опытные тренеры — чтобы всё было безопасно и по делу.",
+  "about": [
+    "Сначала 30 минут поработаем на бортике: выполним мягкие, но эффективные упражнения, чтобы укрепить стопы, мышцы спины и выстроить правильную осанку. Затем — 45 минут в воде. Здесь мы делаем специальные упражнения: на вытяжение позвоночника, расслабление напряжённых мышц, отработку правильного дыхания и укрепление мышечного корсета."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/sensei_swim_minsk/reel/Dfo1AuVhKxq/",
+      "caption": "Приглашаю вас в группу по плаванию с элементами ЛФК! Сначала 30 минут поработаем на бортике: выполним мягкие, но эффективные упражнения, чтобы укрепить стопы, мышцы спины и выстроить правильную осанку. Затем — 45 минут в воде. Здесь мы делаем специальные упражнения: на вытяжение позвоночника, расслабление напряжённых мышц, отработку правильного дыхания и укрепление мышечного корсета. Всё это бережно помогает поддержать здоровье ребёнка, сделать движения в воде увереннее, а тело — сильнее и гибче.",
+      "textRole": "training",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/sensei_swim_minsk/reel/DfHeptaBYiT/",
+      "caption": "Вот такое видео поздравление, сняли мои юные спортсмены ❤️",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/sensei_swim_minsk/reel/DfWVa-TsHwI/",
+      "caption": "«Плавание без стресса и слёз. Игровой формат — чтобы ребёнку было интересно. Маленькие группы — чтобы тренер успевал ко всем. Опытные тренеры — чтобы всё было безопасно и по делу. Записывайтесь на занятия — пусть первые метры будут в радость!»",
+      "textRole": "about",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "Плавание"
+    },
+    {
+      "slug": "lfk",
+      "parentSlug": "reabilitaciya",
+      "label": "ЛФК",
+      "evidence": "ЛФК"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Минск",
+  "address": "улица Сурганова, 4А",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid",
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/sensei_swim_minsk.jpg",
+  "photos": [
+    "/trainers/instagram/sensei_swim_minsk.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/sensei_swim_minsk/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

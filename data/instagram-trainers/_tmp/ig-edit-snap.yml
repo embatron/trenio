@@ -1,0 +1,80 @@
+- generic [ref=e4]:
+  - generic [ref=e18]:
+    - generic [ref=e21]:
+      - link "Instagram" [ref=e26] [cursor=pointer]:
+        - /url: /
+        - img "Instagram" [ref=e31]
+      - generic [ref=e34]:
+        - link "Home" [ref=e39] [cursor=pointer]:
+          - /url: /
+          - img "Home" [ref=e44]
+        - link "Reels" [ref=e49] [cursor=pointer]:
+          - /url: /reels/
+          - img "Reels" [ref=e54]
+        - link "Messages Direct messaging - 4 new notifications link" [ref=e61] [cursor=pointer]:
+          - /url: /direct/inbox/
+          - generic [ref=e64]:
+            - img "Messages" [ref=e66]
+            - generic "Direct messaging - 4 new notifications link" [ref=e69]: "4"
+        - link "Search" [ref=e75] [cursor=pointer]:
+          - /url: /explore/
+          - img "Search" [ref=e80]
+        - link "Notifications" [ref=e88] [cursor=pointer]:
+          - /url: "#"
+          - img "Notifications" [ref=e93]
+        - link "New post" [ref=e101] [cursor=pointer]:
+          - /url: "#"
+          - img "New post" [ref=e106]
+        - link "Professional dashboard" [ref=e111] [cursor=pointer]:
+          - /url: "#"
+          - img "Professional dashboard" [ref=e116]
+        - link "trenioby's profile picture" [ref=e123] [cursor=pointer]:
+          - /url: /trenioby/
+          - link "trenioby's profile picture" [ref=e128]:
+            - img "trenioby's profile picture" [ref=e129]
+      - generic [ref=e130]:
+        - link "Settings" [ref=e133] [cursor=pointer]:
+          - /url: "#"
+          - img "Settings" [ref=e138]
+        - link "Also from Meta" [ref=e141] [cursor=pointer]:
+          - /url: "#"
+          - img "Also from Meta" [ref=e146]
+    - main [ref=e150]:
+      - generic [ref=e151]:
+        - generic [ref=e154]:
+          - heading "Settings" [level=3] [ref=e156]
+          - generic [ref=e157]:
+            - generic [ref=e159]
+            - generic [ref=e165]
+            - generic [ref=e197]
+            - generic [ref=e234]
+            - generic [ref=e311]
+            - generic [ref=e376]
+            - generic [ref=e473]
+            - generic [ref=e538]
+            - generic [ref=e604]
+            - generic [ref=e627]
+        - generic [ref=e687]:
+          - generic [ref=e689]:
+            - heading "Edit profile" [level=2] [ref=e693]
+            - generic [ref=e695]
+            - generic [ref=e706]
+            - generic [ref=e713]
+          - contentinfo [ref=e772]:
+            - generic [ref=e773]
+  - button "Messages - 4 new notifications" [ref=e836] [cursor=pointer]:
+    - generic "Messages - 4 new notifications" [ref=e837]:
+      - generic [ref=e838]:
+        - generic [ref=e840]:
+          - img "Messages" [ref=e841]
+          - generic "Direct messaging - 4 new notifications link" [ref=e844]: "4"
+        - generic [ref=e847]: Messages
+      - generic [ref=e848]:
+        - button "4 unread chats" [ref=e849]:
+          - img "4 unread chats" [ref=e851]
+        - button "User avatar Юрий Усатов" [ref=e856]:
+          - img "User avatar" [ref=e859]
+        - button "User avatar Makhankov Konstantin" [ref=e861]:
+          - img "User avatar" [ref=e864]
+        - button "User avatar Анна Зубковская Фитнес-Тренер | ГОМЕЛЬ" [ref=e866]:
+          - img "User avatar" [ref=e869]

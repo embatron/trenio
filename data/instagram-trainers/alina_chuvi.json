@@ -1,0 +1,103 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/alina_chuvi/",
+  "handle": "alina_chuvi",
+  "slug": "alina_chuvi",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алина",
+  "lastName": "",
+  "fullName": "Алина",
+  "gender": "female",
+  "nameQuotes": [
+    "Алина"
+  ],
+  "headline": "Тренер по танцам и хореографии",
+  "sourceBio": "Тверк - это мой love language!🍑\nНаучу твою попу говорить на нем свободно.\nГруппы и индивидуальные тренировки 😌\nПо всем вопросам пиши в директ ❤️",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Алина Витебск танцы",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тверк — это мой love language. Научу твою попу говорить на нем свободно. Группы и индивидуальные тренировки.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/alina_chuvi/reel/DByNOdtsfKs/",
+      "caption": "Выход импровизацией",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/alina_chuvi/p/Dcssa-nDIpQ/",
+      "caption": "Актуальное расписание 💋 Для записи пишем в директ❤️",
+      "textRole": "promotion",
+      "imageText": [
+        "РАСПИСАНИЕ ВИТЕБСК/НОВОПОЛОЦК",
+        "TWERK ПРОДОЛЖАЮЩИЙ ПН 19:00 СР 20:30 7ая КЛИНИЧЕСКАЯ 29",
+        "TWERK Новая группа Уровень любой Суббота 15:30 Воскресенье 15:00 г. Новополоцк Ул. Молодежная 10"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/alina_chuvi/reel/DZQMJQmsHJI/",
+      "caption": "Кисы….. 💋НОВОСТИ💋 Я стала тренером по ТВЕРКУ в студии @relaxstudio_vitebsk Если вы хотите: ✨ Поднять свою энергетику ✨ Полюбить свое тело ✨ Научиться мощным связкам ✨ Просто выплеснуть всё накопившееся через танец Тогда Вам ко мне 👇 📍 Пишите в директ @relaxstudio_vitebsk",
+      "textRole": "facts",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Витебск",
+  "address": "7ая КЛИНИЧЕСКАЯ 29",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/alina_chuvi.jpg",
+  "photos": [
+    "/trainers/instagram/alina_chuvi.jpg",
+    "/trainers/instagram/alina_chuvi-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/alina_chuvi/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/alina_twerk",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email"
+  ]
+}

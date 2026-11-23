@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pauliorn/",
+  "handle": "pauliorn",
+  "slug": "pauliorn",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Полина",
+  "lastName": "Яковенко",
+  "fullName": "Полина Яковенко",
+  "gender": "female",
+  "nameQuotes": [
+    "Полина",
+    "Яковенко"
+  ],
+  "headline": "Инструктор по йоге и тренер по осанке",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Полина Яковенко Минск Йога",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тренер по йоге и осанке. Индивидуальные тренировки. Йога, коррекция осанки и подтянутое тело.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/pauliorn.jpg",
+  "photos": [
+    "/trainers/instagram/pauliorn.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pauliorn/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/tvoizaryadspolli",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

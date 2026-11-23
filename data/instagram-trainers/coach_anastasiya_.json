@@ -1,0 +1,112 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/coach_anastasiya_/",
+  "handle": "coach_anastasiya_",
+  "slug": "coach_anastasiya_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анастасия",
+  "lastName": "Дашкевич",
+  "fullName": "Анастасия Дашкевич",
+  "gender": "female",
+  "nameQuotes": [
+    "Анастасия Дашкевич"
+  ],
+  "headline": "Тренер по бегу",
+  "sourceBio": "Анастасия Дашкевич\n⚡️Научу бегать и кайфовать от тренировок\n👟Групповые/индивидуальные тренировки\nОснователь школы бега @prorun.by\nАнкета предзаписи⤵️",
+  "sourceAbout": [
+    "СЕГОДНЯ Я РАССКАЖУ ВАМ НЕБОЛЬШУЮ ИСТОРИЮ. КАК Я СТАЛА ТРЕНЕРОМ!",
+    "В спорт я попала, как это часто бывает, совершенно случайно!!! Меня заметил учитель физкультуры и сказал моей маме, что меня обязательно надо отдать в лёгкую атлетику, на БЕГ!!!",
+    "А ПОТОМ БЫЛО ПРОСТО НЕВЕРОЯТНОЕ ВРЕМЯ ПРОФЕССИОНАЛЬНОГО СПОРТА, БОЛЬШЕ 20 ЛЕТ!!! БЕСКОНЕЧНЫЕ СТАРТЫ, СБОРЫ, ПОЕЗДКИ ПО ВСЕМУ МИРУ, ПОБЕДЫ ВОПРЕКИ, ДОСАДНЫЕ ПОРАЖЕНИЯ, СЛЕЗЫ РАДОСТИ И РАЗОЧАРОВАНИЯ, И ТРАВМЫ...",
+    "ДА. К СОЖАЛЕНИЮ, Я ВЫНУЖДЕНА БЫЛА ЗАВЕРШИТЬ СВОЮ СПОРТИВНУЮ КАРЬЕРУ ИЗ-ЗА ТРАВМЫ!!! ПРОБЛЕМА С СЕДАЛИЩНЫМ НЕРВОМ.",
+    "ВОТ ТАК, ОТ БЕЗИСХОДНОСТИ, Я СОГЛАСИЛАСЬ ПОПРОБОВАТЬ СЕБЯ В РОЛИ ТРЕНЕРА ДЛЯ ЛЮБИТЕЛЕЙ БЕГА!!!",
+    "И ТЕПЕРЬ БЕЗУМНО СЧАСТЛИВА, ЧТО Я ТРЕНЕР!!!"
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Анастасия, Минск",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "В спорт я попала совершенно случайно. Меня заметил учитель физкультуры и сказал моей маме отдать меня на бег. Потом было больше 20 лет профессионального спорта: старты, сборы, поездки. Карьеру пришлось завершить из-за травмы. От безысходности я согласилась попробовать себя в роли тренера для любителей бега и теперь безумно счастлива, что я тренер. Научу бегать и кайфовать от тренировок.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/coach_anastasiya_/reel/DKcoy0OIKRP/",
+      "caption": "Нам шесть!!!",
+      "textRole": "promotion",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/coach_anastasiya_/reel/DB7BhJ4vjGi/",
+      "caption": "Welcome 42🎂",
+      "textRole": "promotion",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/coach_anastasiya_/reel/CnpT6aMrG-L/",
+      "caption": "Этим видео хочу напомнить вам, что вы можете приобрести сертификат на тренировку в моей беговой школе @prorun.by Можно выбрать любой формат тренировок - индивидуальную, групповую, онлайн, и на любое количество тренировок👌 Сертификат действителен в течение трех месяцев. Заметили, какой классный слоган на сертификате? За его разработку благодарю моих атлетов @iv_et_m @artsiomabukhov 🙏",
+      "textRole": "promotion",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "beg",
+      "parentSlug": "beg",
+      "label": "Бег",
+      "evidence": "Бег"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "legkaya-atletika",
+      "label": "Лёгкая атлетика",
+      "quote": "лёгкую атлетику"
+    }
+  ],
+  "primarySport": {
+    "slug": "beg",
+    "parentSlug": "beg",
+    "label": "Бег"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/coach_anastasiya_.jpg",
+  "photos": [
+    "/trainers/instagram/coach_anastasiya_.jpg",
+    "/trainers/instagram/coach_anastasiya_-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/coach_anastasiya_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://prorun.by/"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

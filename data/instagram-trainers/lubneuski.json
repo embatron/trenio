@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/lubneuski/",
+  "handle": "lubneuski",
+  "slug": "lubneuski",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Валерий",
+  "lastName": "Лубневский",
+  "fullName": "Валерий Лубневский",
+  "gender": "male",
+  "nameQuotes": [
+    "Валерий",
+    "Лубневский"
+  ],
+  "headline": "Тренер по горным лыжам",
+  "sourceBio": "Инструктор по горным лыжам",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Валерий Лубневский Логойск горнолыжный спорт",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Инструктор по горным лыжам.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "gornye-lyzhi",
+      "parentSlug": "zima",
+      "label": "Горные лыжи",
+      "evidence": "горнолыжный спорт"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "gornye-lyzhi",
+    "parentSlug": "zima",
+    "label": "Горные лыжи"
+  },
+  "city": "Логойск",
+  "address": "",
+  "cityCandidates": [
+    "Логойск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/lubneuski.jpg",
+  "photos": [
+    "/trainers/instagram/lubneuski.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/lubneuski/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

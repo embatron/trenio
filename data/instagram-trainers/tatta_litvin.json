@@ -1,0 +1,118 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/tatta_litvin/",
+  "handle": "tatta_litvin",
+  "slug": "tatta_litvin",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Татьяна",
+  "lastName": "Литвин",
+  "fullName": "Татьяна Литвин",
+  "gender": "female",
+  "nameQuotes": [
+    "Татьяна Литвин"
+  ],
+  "headline": "Инструктор по пилатесу, фитнес-тренер, тренер по акробатике и инструктор по растяжке",
+  "sourceBio": "Тренер по фитнесу\nМиксую пилатес и акробатику в гамаке 🧘‍♀️\nЗанятия и Мастер-классы в записи\nТренировки в Екатеринбурге @liany.ekb...\ntaplink.cc/tatta_litvin и ещё 2",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гродно Татьяна Литвин Акробатика Пилатес",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Миксую пилатес и акробатику в гамаке. Занятия и мастер-классы есть в записи. Спорт со мной - это про удовольствие. Тренировки в Екатеринбурге.",
+  "about": [
+    "В пилатесе на низком гамаке всё, что в положении стоя, чаще в конце: наименьшая площадь опоры, нужен наибольший контроль. Связки простые. Для новеньких в группе практика доступная, для бывалых добавляю вес. Логика урока в стиле Polestar Pilates: от простого к сложному, до связок, с ощущением как работает каждая мышца. Голосовые команды важны. В этой программе акробатики нет."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/tatta_litvin/reel/DWDU2heip8E/",
+      "caption": "Воздушный пилатес - это бомба 💣 Смотреть все занятие, забрать всю программу , подробности - в директ Длительность 70 минут, стоимость доступа 500р навсегда. #flyyoga #aerial #растяжкаекб #пилатесекб #екбсегодня",
+      "textRole": "promotion",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/tatta_litvin/reel/DY1qgjNo9Mn/",
+      "caption": "«Свобода ТБС и силовая растяжка» Наконец, звезды сошлись, и я нашла удачный ракурс для съемок в своей же студии! И сразу настроение другое 💃 Программа одна из любимых вышла, классные потоковые связки: будем крутиться, вертеться, а как еще улучшить подвижность ТБС ? Красивая связка в конце - хочется фотографировать каждый переход 🥹 Длительность: 1 час Сто💸мость: 500 🔥 Где смотрим : ВК 💿 Пишите + в директ! Забирайте себе и наслаждайтесь! #гамаки #flyyoga #flypilates #аэройога #гамакийога",
+      "textRole": "training",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/tatta_litvin/reel/DYZr0ODoOY_/",
+      "caption": "НОВАЯ ПРОГРАММА В ЗАПИСИ В КОПИЛОЧКУ 😍 «Пилатес+ Гамак» (Низкий гамак) Почему в пилатесе всё, что в положении стоя, мы делаем чаще всего в конце? - Наименьшая площадь опоры, а значит, наибольший контроль нужен! Эта практика мне понравилась своей простотой переходов и доступностью, так как в группе у меня сейчас много новеньких, но есть и бывалые 💪🏻 (для них я добавила дополнительно вес). Так же логика построения урока в стиле Polestar Pilates - когда от простого к сложному ты доходишь до классных связок, ощущая как работает каждая мышца. Это точно не просто набор упражнений, который вы видите рандомно в каруселях и рилс. Записывала с микрофоном. Голосовые команды очень важны, каждая деталь, любое слово - не просто так. Чего нет - акробатики. Здесь не стала смешивать. Почувствуйте эффект от fly Pilates 💛 Длительность - 1 честный час. Ст💸имость 500р Доступ в ВК навсегда 🙌🏻 Пиши + в директ и забирай 🗣️ ИЗ ЛЮБОЙ СТРАНЫ #aerial #flyyoga #гамаки #растяжкаекб #йогаекб",
+      "textRole": "training",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    },
+    {
+      "slug": "akrobatika",
+      "parentSlug": "gimnastika",
+      "label": "Акробатика",
+      "evidence": "Акробатика"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "Растяжка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/tatta_litvin.jpg",
+  "photos": [
+    "/trainers/instagram/tatta_litvin.jpg",
+    "/trainers/instagram/tatta_litvin-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/tatta_litvin/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/tatta_lit",
+    "website": "https://taplink.cc/tatta_litvin"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "address",
+    "email"
+  ]
+}

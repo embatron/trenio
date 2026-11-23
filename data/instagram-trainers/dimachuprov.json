@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/dimachuprov/",
+  "handle": "dimachuprov",
+  "slug": "dimachuprov",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дмитрий",
+  "lastName": "Чупров",
+  "fullName": "Дмитрий Чупров",
+  "gender": "male",
+  "nameQuotes": [
+    "Дмитрий Чупров"
+  ],
+  "headline": "Тренер по бильярду",
+  "sourceBio": "Руководитель школы бильярда",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Дмитрий Чупров Минск Бильярд",
+  "threadsUrl": "",
+  "bio": "Я Дмитрий Чупров, тренер по бильярду в Минске. Руководитель школы бильярда.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "bilyard",
+      "parentSlug": "klub",
+      "label": "Бильярд",
+      "evidence": "Бильярд"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bilyard",
+    "parentSlug": "klub",
+    "label": "Бильярд"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/dimachuprov.jpg",
+  "photos": [
+    "/trainers/instagram/dimachuprov.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/dimachuprov/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

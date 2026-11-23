@@ -1,0 +1,103 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vichechka.uvarova/",
+  "handle": "vichechka.uvarova",
+  "slug": "vichechka.uvarova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктория",
+  "lastName": "Уварова",
+  "fullName": "Виктория Уварова",
+  "gender": "female",
+  "nameQuotes": [
+    "Виктория",
+    "Уварова"
+  ],
+  "headline": "Инструктор по растяжке и тренажёрного зала",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Виктория Уварова Гродно Растяжка",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Осознанная нагрузка без травм. Учу тело работать правильно: от здоровой спины до шпагата.",
+  "about": [
+    "Таз фиксируется, а спина идёт по кругу. Наклоны в комфортной амплитуде, волны прогибом и круглой спиной."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/vichechka.uvarova/p/DUi_8YHDJyC/",
+      "caption": "Сохраняем и повторяем 1. Круги - таз фиксируется, а спина идёт по кругу, можно по точкам право-верх-лево-низ 2. Заезд с раскрытием, работа грудного отдела, ладони под плечами, вниз можно не опускаться до конца. 3. Наклоны - в той амплитуде, в которой вам комфортно, ягодицы стараемся не отрывать. 4. Волны прогибом толкаем таз вперёд, круглой спиной идём назад, можно делать и в обратную сторону.",
+      "textRole": "training",
+      "imageText": [
+        "Упражнения для здоровья спины"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/vichechka.uvarova/reel/DUd9_9RjJ9C/",
+      "caption": "Тренировки которые сделают тебя гибче и уверенее. Жду тебя на занятиях.",
+      "textRole": "promotion",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "здоровая спина"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vichechka.uvarova.jpg",
+  "photos": [
+    "/trainers/instagram/vichechka.uvarova.jpg",
+    "/trainers/instagram/vichechka.uvarova-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vichechka.uvarova/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/biodanzabelarus/",
+  "handle": "biodanzabelarus",
+  "slug": "biodanzabelarus",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Светлана",
+  "lastName": "Котовская",
+  "fullName": "Светлана Котовская",
+  "gender": "female",
+  "nameQuotes": [
+    "Светлана",
+    "Котовская"
+  ],
+  "headline": "Тренер по танцам и хореографии",
+  "sourceBio": "Биоданза- танцевально- двигательная практика\nЕженедельная группа в Бресте\nКлассы и семинары\nЗапись:\nСветлана Котовская",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Светлана Котовская Брест танцы",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Искала осознанно практику, где есть танец, свободный, не обремененный академическими формами. Танец, как средство самопознания и выражение себя в мире. Моя деятельность всегда была связана с людьми, их обучением и развитием.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/biodanzabelarus/p/Cx1Kk1cLPDU/",
+      "caption": "Биоданза – это интеграция с каждой своей частью, с людьми, с планетой, Вселенной.",
+      "textRole": "about",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/biodanzabelarus/p/CxyAz8vI8DY/",
+      "caption": "Искала осознанно практику, где есть танец, свободный, не обремененный академическими формами. Танец, как средство самопознания и выражение себя в мире. Моя деятельность всегда была связана с людьми, их обучением и развитием. Мне это нравилось, это меня вдохновляло.",
+      "textRole": "about",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/biodanzabelarus/p/CxxlBxPoLy1/",
+      "caption": "Наша группа создана, чтобы познакомить вас с Биоданзой",
+      "textRole": "facts",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Брест",
+  "address": "",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/biodanzabelarus.jpg",
+  "photos": [
+    "/trainers/instagram/biodanzabelarus.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/biodanzabelarus/",
+    "phone": "+375 29 794-48-67",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram"
+  ]
+}

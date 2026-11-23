@@ -1,0 +1,99 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/nastya.shilo/",
+  "handle": "nastya.shilo",
+  "slug": "nastya.shilo",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анастасия",
+  "lastName": "Шило",
+  "fullName": "Анастасия Шило",
+  "gender": "female",
+  "nameQuotes": [
+    "Анастасия",
+    "Шило"
+  ],
+  "headline": "Тренер по танцам и хореографии",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Анастасия Шило Минск Танцы",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Занятия реггетон. Индивидуальные занятия.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/nastya.shilo/reel/C_EA81fo45r/",
+      "caption": "Не своди глаз с горизонта…",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/nastya.shilo/reel/DHQNDV_IDI7/",
+      "caption": "Mami Wata",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/nastya.shilo/reel/CybswXEo28M/",
+      "caption": "",
+      "textRole": "none",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Минск",
+  "address": "улица Богдана Хмельницкого, 8",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/nastya.shilo.jpg",
+  "photos": [
+    "/trainers/instagram/nastya.shilo.jpg",
+    "/trainers/instagram/nastya.shilo-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/nastya.shilo/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

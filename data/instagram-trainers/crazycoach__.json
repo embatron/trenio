@@ -1,0 +1,124 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/crazycoach__/",
+  "handle": "crazycoach__",
+  "slug": "crazycoach__",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Андрей",
+  "lastName": "Ivanovich",
+  "fullName": "Андрей Ivanovich",
+  "gender": "male",
+  "nameQuotes": [
+    "Андрей",
+    "Ivanovich"
+  ],
+  "headline": "Тренер по кикбоксингу, тайскому боксу, боксу и рукопашному бою",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "кикбоксинг, тайский бокс, бокс, рукопашный бой, зовут Андрей его",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Андрей Ivanovich, crazycoach.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/crazycoach__/reel/DclItA1ojiL/",
+      "caption": "",
+      "textRole": "promotion",
+      "imageText": [
+        "Next fighters GLADIATOR"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/crazycoach__/reel/Dckt_bwodsE/",
+      "caption": "",
+      "textRole": "facts",
+      "imageText": [
+        "Формы тренировок: Групповые (детские группы от 6 лет) (юношеские группы от 12 лет) Взрослые группы(18 лет и старше) Минигруппы Индивидуальные тренировки"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/crazycoach__/reel/DckmfMyIRPl/",
+      "caption": "",
+      "textRole": "facts",
+      "imageText": [
+        "Формы тренировок: Групповые (детские группы от 6 лет) (юношеские группы от 12 лет) Взрослые группы(18 лет и старше) Минигруппы Индивидуальные тренировки"
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    },
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "Тайский бокс"
+    },
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    },
+    {
+      "slug": "rukopashnyj",
+      "parentSlug": "edinoborstva",
+      "label": "Рукопашный бой",
+      "evidence": "Рукопашный бой"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "kikboksing",
+    "parentSlug": "edinoborstva",
+    "label": "Кикбоксинг"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/crazycoach__.jpg",
+  "photos": [
+    "/trainers/instagram/crazycoach__.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/crazycoach__/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

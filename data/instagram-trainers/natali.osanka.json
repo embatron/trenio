@@ -1,0 +1,108 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/natali.osanka/",
+  "handle": "natali.osanka",
+  "slug": "natali.osanka",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Наталья",
+  "lastName": "Хлебус",
+  "fullName": "Наталья Хлебус",
+  "gender": "female",
+  "nameQuotes": [
+    "Наталья",
+    "Хлебус"
+  ],
+  "headline": "Тренер по осанке, фитнес-тренер и инструктор по растяжке",
+  "sourceBio": "Помогаю укрепить спину и улучшить осанку 🏠 Онлайн-тренировки дома 🏋️ Персональные тренировки в @scisport.by",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Наталья Минск Осанка",
+  "threadsUrl": "",
+  "bio": "Я Наталья Хлебус, фитнес-тренер в Минске. Помогаю укрепить спину и улучшить осанку.",
+  "about": [
+    "Веду онлайн-тренировки дома и персональные тренировки."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/natali.osanka/reel/C_IyaEYtqyU/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/natali.osanka/reel/C7wVpBANiOz/",
+      "caption": "ХОЧЕШЬ УБРАТЬ ВЫПИРАЮЩИЙ ЖИВОТ? ⤵️ Я ТЕБЕ ПОМОГУ! ⠀ Тебя ждут супер полезные упражнения, которые можно делать дома, без спортивного инвентар",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/natali.osanka/reel/C8rv3vNt6dg/",
+      "caption": "Каждому кто напишет ➕ в комментарии под этим рилс - пришлю доступ к телеграмм каналу с полезными и эффективными комплексами 💪🏻 ✅ Тебя жду",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "здоровая спина"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "osanka",
+    "parentSlug": "reabilitaciya",
+    "label": "Осанка"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/natali.osanka.jpg",
+  "photos": [
+    "/trainers/instagram/natali.osanka.jpg",
+    "/trainers/instagram/natali.osanka-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/natali.osanka/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/homefitnessschool",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email"
+  ]
+}

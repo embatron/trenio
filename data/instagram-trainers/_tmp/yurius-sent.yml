@@ -1,0 +1,519 @@
+- generic [ref=f3e4]:
+  - generic [ref=f3e18]:
+    - generic [ref=f3e21]:
+      - link [ref=f3e26] [cursor=pointer]:
+        - /url: /
+        - img "Instagram" [ref=f3e31]
+      - generic [ref=f3e34]:
+        - link [ref=f3e39] [cursor=pointer]:
+          - /url: /
+          - img "Home" [ref=f3e44]
+        - link [ref=f3e49] [cursor=pointer]:
+          - /url: /reels/
+          - img "Reels" [ref=f3e54]
+        - link [ref=f3e61] [cursor=pointer]:
+          - /url: /direct/t/118525316204612
+          - generic [ref=f3e64]:
+            - img "Messages" [ref=f3e66]
+            - generic "Direct messaging - 4 new notifications link" [ref=f3e69]: "4"
+        - link [ref=f3e75] [cursor=pointer]:
+          - /url: /explore/
+          - img "Search" [ref=f3e80]
+        - link [ref=f3e88] [cursor=pointer]:
+          - /url: "#"
+          - img "Notifications" [ref=f3e93]
+        - link [ref=f3e101] [cursor=pointer]:
+          - /url: "#"
+          - img "New post" [ref=f3e106]
+        - link [ref=f3e111] [cursor=pointer]:
+          - /url: "#"
+          - img "Professional dashboard" [ref=f3e116]
+        - link [ref=f3e123] [cursor=pointer]:
+          - /url: /trenioby/
+          - link [ref=f3e128]:
+            - img "trenioby's profile picture" [ref=f3e129]
+      - generic [ref=f3e130]:
+        - link [ref=f3e133] [cursor=pointer]:
+          - /url: "#"
+          - img "Settings" [ref=f3e138]
+        - link [ref=f3e141] [cursor=pointer]:
+          - /url: "#"
+          - img "Also from Meta" [ref=f3e146]
+    - generic [ref=f3e149]:
+      - main [ref=f3e150]:
+        - generic [ref=f3e152]:
+          - generic [ref=f3e153]:
+            - generic [ref=f3e154]:
+              - link [ref=f3e160] [cursor=pointer]:
+                - /url: /yurius_trainer/
+                - img "yurius_trainer's profile picture" [ref=f3e161]
+              - generic [ref=f3e162]:
+                - generic [ref=f3e163]:
+                  - generic [ref=f3e164]:
+                    - link [ref=f3e166] [cursor=pointer]:
+                      - /url: "#"
+                      - heading "yurius_trainer" [level=2] [ref=f3e167]
+                    - button [ref=f3e169] [cursor=pointer]:
+                      - img "Options" [ref=f3e171]
+                  - generic [ref=f3e175]: Усатов Юрий
+                  - generic [ref=f3e177]:
+                    - generic [ref=f3e179]:
+                      - generic [ref=f3e180]: "18"
+                      - text: posts
+                    - link "145 followers" [ref=f3e182] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f3e183]:
+                        - generic "145" [ref=f3e184]
+                        - text: followers
+                    - link "103 following" [ref=f3e186] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f3e187]:
+                        - generic [ref=f3e188]: "103"
+                        - text: following
+                - generic [ref=f3e190]:
+                  - generic [ref=f3e191]: Fitness Trainer
+                  - generic [ref=f3e193]:
+                    - button [ref=f3e194] [cursor=pointer]:
+                      - generic [ref=f3e195]: 🖐️ Помогу привести себя в форму🔥 Мотивирую на результат✌️ Заряжу позитивом💯 Забочусь о Вашем здоровье💪 Персональные
+                    - generic [ref=f3e196]:
+                      - text: ...
+                      - button "more" [ref=f3e197] [cursor=pointer]
+                  - heading [level=1]
+            - generic [ref=f3e203]:
+              - button "Follow" [ref=f3e205] [cursor=pointer]
+              - button "Message" [ref=f3e209] [cursor=pointer]
+              - button [ref=f3e211] [cursor=pointer]:
+                - img "Similar accounts" [ref=f3e213]
+            - menu [ref=f3e217]:
+              - generic [ref=f3e219]:
+                - list [ref=f3e221]:
+                  - listitem [ref=f3e222]
+                  - listitem [ref=f3e223]
+                  - listitem [ref=f3e224]:
+                    - link "View Курсы highlight" [ref=f3e227] [cursor=pointer]:
+                      - /url: /stories/highlights/17896800137742392/
+                      - button "yurius_trainer's highlight story picture Курсы" [ref=f3e228]:
+                        - button [ref=f3e229]:
+                          - img "yurius_trainer's highlight story picture" [ref=f3e232]
+                        - generic [ref=f3e233]: Курсы
+                  - listitem [ref=f3e236]:
+                    - link "View Видео-Зал highlight" [ref=f3e239] [cursor=pointer]:
+                      - /url: /stories/highlights/18110912392750745/
+                      - button "yurius_trainer's highlight story picture Видео-Зал" [ref=f3e240]:
+                        - button [ref=f3e241]:
+                          - img "yurius_trainer's highlight story picture" [ref=f3e244]
+                        - generic [ref=f3e245]: Видео-Зал
+                  - listitem [ref=f3e248]:
+                    - link "View Мои подопечные✌️ highlight" [ref=f3e251] [cursor=pointer]:
+                      - /url: /stories/highlights/18020525347217431/
+                      - button "yurius_trainer's highlight story picture Мои подопечные✌️" [ref=f3e252]:
+                        - button [ref=f3e253]:
+                          - img "yurius_trainer's highlight story picture" [ref=f3e256]
+                        - generic [ref=f3e257]: Мои подопечные✌️
+                  - listitem [ref=f3e260]:
+                    - link "View Класс! highlight" [ref=f3e263] [cursor=pointer]:
+                      - /url: /stories/highlights/18381641011178929/
+                      - button "yurius_trainer's highlight story picture Класс!" [ref=f3e264]:
+                        - button [ref=f3e265]:
+                          - img "yurius_trainer's highlight story picture" [ref=f3e268]
+                        - generic [ref=f3e269]: Класс!
+                  - listitem [ref=f3e272]:
+                    - link "View Актуальное highlight" [ref=f3e275] [cursor=pointer]:
+                      - /url: /stories/highlights/18187039195311392/
+                      - button "yurius_trainer's highlight story picture Актуальное" [ref=f3e276]:
+                        - button [ref=f3e277]:
+                          - img "yurius_trainer's highlight story picture" [ref=f3e280]
+                        - generic [ref=f3e281]: Актуальное
+                  - listitem [ref=f3e284]:
+                    - link "View Рабочие моменты highlight" [ref=f3e287] [cursor=pointer]:
+                      - /url: /stories/highlights/17858076721638759/
+                      - button "yurius_trainer's highlight story picture Рабочие моменты" [ref=f3e288]:
+                        - button [ref=f3e289]:
+                          - img "yurius_trainer's highlight story picture" [ref=f3e292]
+                        - generic [ref=f3e293]: Рабочие моменты
+                  - listitem [ref=f3e296]:
+                    - link "View Дед Мороз 💪 highlight" [ref=f3e299] [cursor=pointer]:
+                      - /url: /stories/highlights/17903263711619831/
+                      - button "yurius_trainer's highlight story picture Дед Мороз 💪" [ref=f3e300]:
+                        - button [ref=f3e301]:
+                          - img "yurius_trainer's highlight story picture" [ref=f3e304]
+                        - generic [ref=f3e305]: Дед Мороз 💪
+                  - listitem [ref=f3e308]:
+                    - link "View Юмор highlight" [ref=f3e311] [cursor=pointer]:
+                      - /url: /stories/highlights/18299892442109784/
+                      - button "yurius_trainer's highlight story picture Юмор" [ref=f3e312]:
+                        - button [ref=f3e313]:
+                          - img "yurius_trainer's highlight story picture" [ref=f3e316]
+                        - generic [ref=f3e317]: Юмор
+                  - listitem [ref=f3e320]:
+                    - link "View Челенджи highlight" [ref=f3e323] [cursor=pointer]:
+                      - /url: /stories/highlights/17927946620956039/
+                      - button "yurius_trainer's highlight story picture Челенджи" [ref=f3e324]:
+                        - button [ref=f3e325]:
+                          - img "yurius_trainer's highlight story picture" [ref=f3e328]
+                        - generic [ref=f3e329]: Челенджи
+                  - listitem [ref=f3e332]:
+                    - link "View ОЛИМПИК highlight" [ref=f3e335] [cursor=pointer]:
+                      - /url: /stories/highlights/17936205772803827/
+                      - button "yurius_trainer's highlight story picture ОЛИМПИК" [ref=f3e336]:
+                        - button [ref=f3e337]:
+                          - img "yurius_trainer's highlight story picture" [ref=f3e340]
+                        - generic [ref=f3e341]: ОЛИМПИК
+                  - listitem [ref=f3e344]:
+                    - link "View Результаты✌️ highlight" [ref=f3e347] [cursor=pointer]:
+                      - /url: /stories/highlights/17937436121697675/
+                      - button "yurius_trainer's highlight story picture Результаты✌️" [ref=f3e348]:
+                        - button [ref=f3e349]:
+                          - img "yurius_trainer's highlight story picture" [ref=f3e352]
+                        - generic [ref=f3e353]: Результаты✌️
+                  - listitem [ref=f3e356]:
+                    - link "View Тренажерный зал highlight" [ref=f3e359] [cursor=pointer]:
+                      - /url: /stories/highlights/17900296769788601/
+                      - button "yurius_trainer's highlight story picture Тренажерный зал" [ref=f3e360]:
+                        - button [ref=f3e361]:
+                          - img "yurius_trainer's highlight story picture" [ref=f3e364]
+                        - generic [ref=f3e365]: Тренажерный зал
+                  - listitem [ref=f3e368]:
+                    - link "View TRX highlight" [ref=f3e371] [cursor=pointer]:
+                      - /url: /stories/highlights/17999018065619558/
+                      - button "yurius_trainer's highlight story picture TRX" [ref=f3e372]:
+                        - button [ref=f3e373]:
+                          - img "yurius_trainer's highlight story picture" [ref=f3e376]
+                        - generic [ref=f3e377]: TRX
+                  - listitem [ref=f3e380]:
+                    - link "View Видео highlight" [ref=f3e383] [cursor=pointer]:
+                      - /url: /stories/highlights/18175112428017067/
+                      - button "yurius_trainer's highlight story picture Видео" [ref=f3e384]:
+                        - button [ref=f3e385]:
+                          - img "yurius_trainer's highlight story picture" [ref=f3e388]
+                        - generic [ref=f3e389]: Видео
+                - button "Next" [ref=f3e392] [cursor=pointer]
+          - generic [ref=f3e394]:
+            - tablist [ref=f3e395]:
+              - link [ref=f3e397] [cursor=pointer]:
+                - /url: /yurius_trainer/
+                - img "Posts" [ref=f3e399]
+              - link [ref=f3e410] [cursor=pointer]:
+                - /url: /yurius_trainer/reels/
+                - img "Reels" [ref=f3e412]
+              - link [ref=f3e415] [cursor=pointer]:
+                - /url: /yurius_trainer/tagged/
+                - img "Tagged" [ref=f3e417]
+            - tabpanel
+          - generic [ref=f3e424]:
+            - generic [ref=f3e425]:
+              - link [ref=f3e427] [cursor=pointer]:
+                - /url: /yurius_trainer/reel/DcS4MzAMcKK/
+                - 'img "#тренировкавзале #кардиотренировка" [ref=f3e430]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f3e433] [cursor=pointer]:
+                - /url: /yurius_trainer/reel/DcKxnH5sm_q/
+                - 'img "#тренировкавзале #кардиотренировка" [ref=f3e436]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f3e439] [cursor=pointer]:
+                - /url: /yurius_trainer/reel/Db5ORm2saZo/
+                - 'img "#тренировкавзале #кардиотренировка" [ref=f3e442]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f3e445] [cursor=pointer]:
+                - /url: /yurius_trainer/reel/Dbd3whjsLOI/
+                - 'img "#тренировкавзале #кардиотренировка" [ref=f3e448]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+            - generic [ref=f3e450]:
+              - link [ref=f3e452] [cursor=pointer]:
+                - /url: /yurius_trainer/reel/DbVE6WJst5G/
+                - 'img "#тренировкавзале #кардиотренировка" [ref=f3e455]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f3e458] [cursor=pointer]:
+                - /url: /yurius_trainer/reel/DbIQyS1MLBW/
+                - img "#тренировкавзале" [ref=f3e461]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f3e464] [cursor=pointer]:
+                - /url: /yurius_trainer/reel/DbAXP71M2A2/
+                - 'img "#кардиотренировка #эллипс #тренировкавзале" [ref=f3e467]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f3e470] [cursor=pointer]:
+                - /url: /yurius_trainer/reel/DazLjn9MacZ/
+                - img "#тренировкавзале" [ref=f3e473]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+            - generic [ref=f3e475]:
+              - link [ref=f3e477] [cursor=pointer]:
+                - /url: /yurius_trainer/reel/DYhIiOUsnZL/
+                - img "Оставлю этот кусочек интервью порталу Times. BEL на память😉 Всё таки, донорство - это значимая часть моей жизни ❣️" [ref=f3e480]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f3e483] [cursor=pointer]:
+                - /url: /yurius_trainer/p/DP55hE0jFQP/
+                - img "Подверждение диплома о высшем спортивном образовании получено! Продолжаю тренировать всех желающих🖐️" [ref=f3e486]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f3e489] [cursor=pointer]:
+                - /url: /yurius_trainer/p/DOtXAB1DGvW/
+                - img "Спортивное Высшее образование - это возможность делиться своими новыми навыками и знаниями с теми, кто уже тренировался со мной и с теми, кто будет встречаться на этом интересном Пути. Пройдём его Вместе!🤝 Научу, покажу, как правильно и безопасно тренироваться и развиваться, поддержу морально и физически, заряжу настроением! 🎉 До встречи в зале! 🖐️" [ref=f3e492]
+              - link [ref=f3e495] [cursor=pointer]:
+                - /url: /yurius_trainer/p/DKBnzvjo-Ld/
+                - img "Завершён курс переподготовки, как Инструктор тренажерного зала в \"ФитнесОбразовании\". К моим знаниям и навыкам добавились новые. Получил даже больше, чем ожидал. Внимательные и знающие наставники, красочные и насыщенные методические материалы, приятная атмосфера общения. Как ни грустно признать, но 6 лет назад в БГУФКе было иначе, просто не сравнить. Теперь я могу дать моим подопечным, клиентам, больше, научить правильнее, и всем будет лучше, здоровее и приятнее. Ещё один шаг в развитии, продолжение следует... Кому нужен персональный тренер в зал , обращайтесь! Или рекомендуйте! Научу, подскажу, помогу🖐️" [ref=f3e498]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+            - generic [ref=f3e731]:
+              - link [ref=f3e733] [cursor=pointer]:
+                - /url: /yurius_trainer/p/CqadZv-o7SV/
+                - img "Ну, вот, я - Почётный Донор♥️ Так, незаметно, дошагал до этого статуса. Почти 4 года и 80 донаций крови, плазмы и тромбоцитов. Больше 45 л моей крови и её компонентов кому-то приносят пользу, возможно, сохраняют Жизнь. Это приятно 😊 Донорами были мои Отец, родной и двоюродный Братья. Правда, по разным причинам они не получили статус Почётных. Это сделал за них я. Так что, это наше Общее звание✌️ Мне нравится это занятие. Я ощущаю пользу и для людей, и для себя. Поэтому, пока у меня будет возможность, я буду Донором." [ref=f3e736]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f3e739] [cursor=pointer]:
+                - /url: /yurius_trainer/p/CU5eyw1gBsB/
+                - img "Что то вспомнилось Лето, Море, Крым!😎⛵🌅 Между фотками 10 лет!✌️ Слева - 2011 год, справа 2021. Ну, мало ли, кто засомневается😁 Правда, именно То место не нашёл, поленился😁 В Крыму всегда много перемещаюсь, много плаваю🌊🌊🌊, а живу в палатке! И мне это нравится!👍" [ref=f3e742]
+              - link [ref=f3e745] [cursor=pointer]:
+                - /url: /yurius_trainer/p/CGosWqsgptI/
+                - img "Жду Вас на тренировки в @olympic_minsk!🖐️ Приходите сами или с Близкими людьми! Будем улучшать Самочувствие и Настроение вместе!✌️✌️✌️" [ref=f3e748]
+              - link [ref=f3e751] [cursor=pointer]:
+                - /url: /yurius_trainer/p/B7VL_oLFO8W/
+                - 'img "Умеренные физические нагрузки - полезны. Все это знают. Но всё равно ленятся начать тренировки. Хотя бы немного, хотя бы дома! Для большинства дома заниматься даже сложнее, чем в зале. Отвлекают дети, холодильник, диван, интернет😉 Чтобы ничего не отвлекало, существуют спортивные залы и тренеры-инструкторы, которые подскажут, что и как нужно делать, и не дадут лениться и жалеть себя любимых! С каждой тренировкой упражнения делать все легче, а чувство гордости, что \"сумел!\", \"смогла!\", \"умею!\" начинает появляться всё чаще! А изменения физической формы к Лучшему?🤸🏋️💃 Всё это делает Жизнь более Полной и Счастливой! Приходите в @olympic_minsk ! Помогу стать Счастливее!🖐️ @yurius_trainer #yuriusatletika" [ref=f3e754]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+            - generic [ref=f3e756]:
+              - link [ref=f3e758] [cursor=pointer]:
+                - /url: /yurius_trainer/p/B1ChnWDlMAM/
+                - 'img "Ещё совсем недавно, в июне, я был на Сицилии!🌊🕺🌴 И хотя там всё располагает к блаженному ничегонеделанию😋, по привычке и для удовольствия, мы с другом ходили заниматься на спортивную площадку. По утрам, а иногда по вечерам. А ещё мяч в кольцо покидать!⛹️ А по городку передвигались на велике!🚴 Ну, и конечно 2,3,4 раза в день обязательно поплавать в Моррре!🌅 Такой вот он Отдых!😉 Это не спорт, это - Образ Жизни! Обращайтесь! Приобщу!🖐️ +375-44-7699333 @yurius_trainer #yuriusatletika" [ref=f3e761]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f3e764] [cursor=pointer]:
+                - /url: /yurius_trainer/p/B03T76eFqlW/
+                - img [ref=f3e767]
+      - contentinfo [ref=f3e500]:
+        - generic [ref=f3e501]:
+          - generic [ref=f3e503]:
+            - link "Meta" [ref=f3e505] [cursor=pointer]:
+              - /url: https://about.meta.com/
+            - link "About" [ref=f3e508] [cursor=pointer]:
+              - /url: https://about.instagram.com/
+            - link "Blog" [ref=f3e511] [cursor=pointer]:
+              - /url: https://about.instagram.com/blog/
+            - link "Jobs" [ref=f3e514] [cursor=pointer]:
+              - /url: https://about.instagram.com/about-us/careers
+            - link "Help" [ref=f3e517] [cursor=pointer]:
+              - /url: https://help.instagram.com/
+            - link "API" [ref=f3e520] [cursor=pointer]:
+              - /url: https://developers.facebook.com/docs/instagram
+            - link "Privacy" [ref=f3e523] [cursor=pointer]:
+              - /url: /legal/privacy/
+            - link "Terms" [ref=f3e526] [cursor=pointer]:
+              - /url: /legal/terms/
+            - link "Locations" [ref=f3e529] [cursor=pointer]:
+              - /url: /explore/locations/
+            - link "Popular" [ref=f3e532] [cursor=pointer]:
+              - /url: /popular/
+            - link "Instagram Lite" [ref=f3e535] [cursor=pointer]:
+              - /url: /web/lite/
+            - link "Meta AI" [ref=f3e538] [cursor=pointer]:
+              - /url: https://www.meta.ai/?utm_source=foa_web_footer
+            - link "Muse" [ref=f3e541] [cursor=pointer]:
+              - /url: https://muse.ai/
+            - link "Threads" [ref=f3e544] [cursor=pointer]:
+              - /url: https://www.threads.com/
+            - link "Contact Uploading & Non-Users" [ref=f3e547] [cursor=pointer]:
+              - /url: https://www.facebook.com/help/instagram/261704639352628
+            - link "Meta Verified" [ref=f3e550] [cursor=pointer]:
+              - /url: /accounts/meta_verified/?entrypoint=web_footer
+          - generic [ref=f3e552]:
+            - generic [ref=f3e553] [cursor=pointer]:
+              - generic [ref=f3e554]:
+                - generic [ref=f3e555]: English
+                - img "Down chevron icon" [ref=f3e558]
+              - combobox "Switch Display Language" [ref=f3e560]:
+                - option "Afrikaans"
+                - option "العربية"
+                - option "Čeština"
+                - option "Dansk"
+                - option "Deutsch"
+                - option "Ελληνικά"
+                - option "English" [selected]
+                - option "English (UK)"
+                - option "Español (España)"
+                - option "Español"
+                - option "فارسی"
+                - option "Suomi"
+                - option "Français"
+                - option "עברית"
+                - option "Bahasa Indonesia"
+                - option "Italiano"
+                - option "日本語"
+                - option "한국어"
+                - option "Bahasa Melayu"
+                - option "Norsk"
+                - option "Nederlands"
+                - option "Polski"
+                - option "Português (Brasil)"
+                - option "Português (Portugal)"
+                - option "Русский"
+                - option "Svenska"
+                - option "ภาษาไทย"
+                - option "Filipino"
+                - option "Türkçe"
+                - option "中文(简体)"
+                - option "中文(台灣)"
+                - option "বাংলা"
+                - option "ગુજરાતી"
+                - option "हिन्दी"
+                - option "Hrvatski"
+                - option "Magyar"
+                - option "ಕನ್ನಡ"
+                - option "മലയാളം"
+                - option "मराठी"
+                - option "नेपाली"
+                - option "ਪੰਜਾਬੀ"
+                - option "සිංහල"
+                - option "Slovenčina"
+                - option "தமிழ்"
+                - option "తెలుగు"
+                - option "اردو"
+                - option "Tiếng Việt"
+                - option "中文(香港)"
+                - option "Български"
+                - option "Français (Canada)"
+                - option "Română"
+                - option "Српски"
+                - option "Українська"
+            - generic [ref=f3e561]: © 2026 Instagram from Meta
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - button [ref=f3e564] [cursor=pointer]:
+              - generic "Messages - 4 new notifications" [ref=f3e565]:
+                - generic [ref=f3e566]:
+                  - generic [ref=f3e568]:
+                    - img "Messages" [ref=f3e569]
+                    - generic "Direct messaging - 4 new notifications link" [ref=f3e572]: "4"
+                  - generic [ref=f3e575]: Messages
+                - generic [ref=f3e576]:
+                  - button [ref=f3e577]:
+                    - img "4 unread chats" [ref=f3e579]
+                  - button "User avatar Юрий Усатов" [ref=f3e584]:
+                    - img "User avatar" [ref=f3e587]
+                  - button "User avatar Makhankov Konstantin" [ref=f3e589]:
+                    - img "User avatar" [ref=f3e592]
+                  - button "User avatar Анна Зубковская Фитнес-Тренер | ГОМЕЛЬ" [ref=f3e594]:
+                    - img "User avatar" [ref=f3e597]
+            - generic [ref=f3e643]:
+              - generic [ref=f3e645]:
+                - generic [ref=f3e646]:
+                  - button [ref=f3e648] [cursor=pointer]:
+                    - img "Go back" [ref=f3e650]
+                  - link "Open the profile page of yurius_trainer" [ref=f3e653] [cursor=pointer]:
+                    - /url: /yurius_trainer/
+                    - generic [ref=f3e654]:
+                      - img "user-profile-picture" [ref=f3e657]
+                      - heading "Усатов Юрий" [level=2] [ref=f3e661]
+                  - generic [ref=f3e663]:
+                    - button [ref=f3e664] [cursor=pointer]:
+                      - img "Expand" [ref=f3e666]
+                    - button [ref=f3e668] [cursor=pointer]:
+                      - img "Close" [ref=f3e670]
+                - separator [ref=f3e673]
+              - generic "Усатов Юрий" [ref=f3e674]:
+                - generic [ref=f3e676]:
+                  - generic [ref=f3e680]:
+                    - generic [ref=f3e681]:
+                      - img "user-profile-picture" [ref=f3e685]
+                      - generic [ref=f3e686]:
+                        - heading "Усатов Юрий" [level=2] [ref=f3e689]
+                        - generic [ref=f3e691]: yurius_trainer · Instagram
+                        - link "View profile" [ref=f3e694] [cursor=pointer]:
+                          - /url: /yurius_trainer/
+                    - generic [ref=f3e778]:
+                      - generic [ref=f3e779]: 1:28 PM
+                      - group [ref=f3e782]:
+                        - generic [ref=f3e785]:
+                          - article [ref=f3e786]:
+                            - generic [ref=f3e788]:
+                              - generic [ref=f3e791]:
+                                - text: Юрий, добрый день! Мы развиваем
+                                - link "https://trenio.by" [ref=f3e793] [cursor=pointer]:
+                                  - /url: https://trenio.by/
+                                - text: – единую базу тренеров Беларуси, которая помогает людям находить подходящих специалистов в разных спортивных направлениях. Нам очень понравился ваш профиль, поэтому хотели бы пригласить вас присоединиться к нашему каталогу! Будем рады, если вы станете его частью. Подскажите, было бы вам интересно такое предложение? Участие в проекте и дополнительное продвижение вашей анкеты абсолютно бесплатны.
+                              - link "Найти тренера в Беларуси" [ref=f3e794] [cursor=pointer]:
+                                - /url: https://trenio.by/
+                          - generic [ref=f3e800]:
+                            - group "Message actions":
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - button "React to message from trenioby":
+                                      - generic:
+                                        - img "React to message from trenioby"
+                                - generic:
+                                  - generic:
+                                    - button "Reply to message from trenioby":
+                                      - generic:
+                                        - img "Reply to message from trenioby"
+                                - generic:
+                                  - generic:
+                                    - button "See more options for message from trenioby":
+                                      - generic:
+                                        - img "See more options for message from trenioby"
+                  - generic [ref=f3e704]:
+                    - button [ref=f3e707] [cursor=pointer]:
+                      - img "Choose an emoji" [ref=f3e709]
+                    - generic [ref=f3e711]:
+                      - textbox [active] [ref=f3e712]:
+                        - paragraph [ref=f3e801]
+                      - generic: Message...
+                    - generic [ref=f3e714]:
+                      - button [ref=f3e802] [cursor=pointer]:
+                        - img "Voice Clip" [ref=f3e804]
+                      - button [ref=f3e807] [cursor=pointer]:
+                        - img "Add Photo or Video" [ref=f3e809]
+                      - button [ref=f3e814] [cursor=pointer]:
+                        - img "Choose a GIF or sticker" [ref=f3e816]

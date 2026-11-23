@@ -1,0 +1,5 @@
+{
+  "headerText": "uliagrad\nЮля Градобаева\n3 posts\n258 followers\n207 following\nHealth/beauty\nтренер по плаванию\nинструктор по аквааэробике\nобучение плаванию\nул. Чкалова, 5, Molodechno\nuliagrad\nFollow\nMessage",
+  "mainText": "uliagrad\nЮля Градобаева\n3 posts\n258 followers\n207 following\nHealth/beauty\nтренер по плаванию\nинструктор по аквааэробике\nобучение плаванию\nул. Чкалова, 5, Molodechno\nuliagrad\nFollow\nMessage",
+  "highlights": []
+}

@@ -1,0 +1,97 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/nataliasiavets/",
+  "handle": "nataliasiavets",
+  "slug": "nataliasiavets",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Наталья",
+  "lastName": "Сявец",
+  "fullName": "Наталья Сявец",
+  "gender": "female",
+  "nameQuotes": [
+    "Наталья",
+    "Сявец"
+  ],
+  "headline": "Тренер по акробатике, гимнастике и акробатике, инструктор по растяжке и фитнес-тренер",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Наталья Сявец Минск Акробатика",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тренер по акробатике и гимнастике. МСМК по спортивной акробатике, призёр мира и Европы.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "akrobatika",
+      "parentSlug": "gimnastika",
+      "label": "Акробатика",
+      "evidence": "Акробатика"
+    },
+    {
+      "slug": "gimnastika",
+      "parentSlug": "gimnastika",
+      "label": "Гимнастика",
+      "evidence": "Гимнастика"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "Растяжка"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "akrobatika",
+    "parentSlug": "gimnastika",
+    "label": "Акробатика"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/nataliasiavets.jpg",
+  "photos": [
+    "/trainers/instagram/nataliasiavets.jpg",
+    "/trainers/instagram/nataliasiavets-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/nataliasiavets/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

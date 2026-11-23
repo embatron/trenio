@@ -1,0 +1,91 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/detskoe_plavanie_gomel/",
+  "handle": "detskoe_plavanie_gomel",
+  "slug": "detskoe_plavanie_gomel",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алексей",
+  "lastName": "Гарусов",
+  "fullName": "Алексей Гарусов",
+  "gender": "male",
+  "nameQuotes": [
+    "Алексей Гарусов"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "Алексей Гарусов|Профессиональный тренер\n🏊Превращаю страх в уверенное плавание\n•Результат 100%•Индивидуально и в группах\nПиши в Direct!📩",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Алексей Гарусов Гомель",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Превращаю страх в уверенное плавание. Индивидуально и в группах.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/detskoe_plavanie_gomel/p/Db3AVqYsVEY/",
+      "caption": "Собрать ребёнка в бассейн? Держите шпаргалку! 👇 Часто родители спрашивают: «А что именно нужно с собой?» Рассказываем по пунктам!😊 •Плавки или купальник (советуем слитный вариант, но главное — чтобы ребёнку было удобно!);🩱 • Шапочка (обязательна и для мальчиков, и для девочек); • Очки для плавания;🥽 • Полотенце; • Средства для душа (гель, шампунь);🧴 • Сланцы.🩴 Фен — по желанию. ☝️🚿 Важно: перед занятием обязательно принимаем душ. Весь тренировочный инвентарь выдаём на месте!🏊 Главное — берите хорошее настроение 😊 Ждём вас!#детскоеплавание #гомель #дети #чтовзятьссобой",
+      "textRole": "facts",
+      "imageText": [
+        "Что взять?"
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "Плавание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Гомель",
+  "address": "",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/detskoe_plavanie_gomel.jpg",
+  "photos": [
+    "/trainers/instagram/detskoe_plavanie_gomel.jpg",
+    "/trainers/instagram/detskoe_plavanie_gomel-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/detskoe_plavanie_gomel/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "http://baterfly.by/"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

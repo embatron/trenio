@@ -1,0 +1,77 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kris.eqt/",
+  "handle": "kris.eqt",
+  "slug": "kris.eqt",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Kristina",
+  "lastName": "Lisovskaya",
+  "fullName": "Kristina Lisovskaya",
+  "gender": "female",
+  "nameQuotes": [
+    "Kristina Lisovskaya"
+  ],
+  "headline": "Тренер по конному спорту",
+  "sourceBio": "Horses first: life in the saddle, beauty all around | Qualified equestrian sports trainer with ~10 years experience",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Kristina Lisovskaya Минск Конный спорт Федерация конного спорта Беларуси",
+  "threadsUrl": "",
+  "bio": "Я Kristina Lisovskaya, тренер по верховой езде в Минске.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "konnyj",
+      "parentSlug": "klub",
+      "label": "Конный спорт",
+      "evidence": "Конный спорт"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "konnyj",
+    "parentSlug": "klub",
+    "label": "Конный спорт"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kris.eqt.jpg",
+  "photos": [
+    "/trainers/instagram/kris.eqt.jpg",
+    "/trainers/instagram/kris.eqt-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kris.eqt/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

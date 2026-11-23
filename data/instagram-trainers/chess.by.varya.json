@@ -1,0 +1,102 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/chess.by.varya/",
+  "handle": "chess.by.varya",
+  "slug": "chess.by.varya",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Варвара",
+  "lastName": "",
+  "fullName": "Варвара",
+  "gender": "female",
+  "nameQuotes": [
+    "Варвара"
+  ],
+  "headline": "Тренер по шахматам",
+  "sourceBio": "14 лет играю | 5 лет преподаю",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Варвара Минск Шахматы",
+  "threadsUrl": "",
+  "bio": "Я Варвара, тренер по шахматам. Город Минск.",
+  "about": [
+    "Веду персональные и групповые занятия для детей и взрослых."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/chess.by.varya/p/DTQq1qkgtS7/",
+      "caption": "",
+      "imageText": [
+        "Ваша карьера в шахматах начинается здесь.",
+        "Шахматы — это не просто игра, а путь к развитию мышления, дисциплины и уверенности в себе.",
+        "Персональные и групповые занятия для детей и взрослых. Онлайн и офлайн.",
+        "Запишитесь на пробное занятие!"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/chess.by.varya/reel/DTkk9LdAi14/",
+      "caption": "",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "shahmaty",
+      "parentSlug": "intellekt",
+      "label": "Шахматы",
+      "evidence": "Шахматы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "shahmaty",
+    "parentSlug": "intellekt",
+    "label": "Шахматы"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [
+    "Русский",
+    "Английский"
+  ],
+  "avatarPath": "/trainers/instagram/chess.by.varya.jpg",
+  "photos": [
+    "/trainers/instagram/chess.by.varya.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/chess.by.varya/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/chessbyvarya",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email"
+  ]
+}

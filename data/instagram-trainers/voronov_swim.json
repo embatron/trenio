@@ -1,0 +1,80 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/voronov_swim/",
+  "handle": "voronov_swim",
+  "slug": "voronov_swim",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александр",
+  "lastName": "Воронов",
+  "fullName": "Александр Воронов",
+  "gender": "male",
+  "nameQuotes": [
+    "Александр",
+    "Воронов"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "Воронов Александр Олегович\n🏊‍♀️Обучение плаванию🏊‍♀️\n🤿Тренировки для детей и взрослых🤿\n📱Запись по номеру телефона или в сообщение Tg📨\n👇\nt.me/@aleksandrr_1980",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Александр Воронов Могилёв",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Обучение плаванию. Тренировки для детей и взрослых.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "обучение плаванию"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/voronov_swim.jpg",
+  "photos": [
+    "/trainers/instagram/voronov_swim.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/voronov_swim/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/aleksandrr_1980",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ri.oranskaya/",
+  "handle": "ri.oranskaya",
+  "slug": "ri.oranskaya",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Rita",
+  "lastName": "Оранская",
+  "fullName": "Rita Оранская",
+  "gender": "female",
+  "nameQuotes": [
+    "Rita",
+    "Оранская"
+  ],
+  "headline": "Инструктор по растяжке и тренер по high heels, современным танцам",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Rita Оранская Минск Современные танцы",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Учу танцевать и тяну. Тренировки на ютюбе каждую неделю.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/ri.oranskaya/reel/DbGKXeVOzQI/",
+      "caption": "Важно!!! Расписание немного изменилось. Ниже оставляю актуальные группы, в которые можно присоединиться ❤️ Расписание: Начинающие (high heels 👠) Пн/ср - 18:00 Пн/ср - 19:00 Вт/чт - 10:30 Средние (high heels 👠) Вт/чт - 19:00 Растяжка (любой уровень 🧘‍♀️) Вт/чт - 9:30 Вт/чт - 18:00 Вт/чт - 21:00 Место: @elgatodancecenter 📍Филиал «Долгобродская, 17/33»",
+      "textRole": "facts",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/ri.oranskaya/reel/DVO1vCbjtBq/",
+      "caption": "choreo by me place @elgatodancecenter",
+      "textRole": "none",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "stretching"
+    },
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "High Heels"
+    },
+    {
+      "slug": "sovremennye",
+      "parentSlug": "tancy",
+      "label": "Современные танцы",
+      "evidence": "Современные танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Минск",
+  "address": "Долгобродская улица",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ri.oranskaya.jpg",
+  "photos": [
+    "/trainers/instagram/ri.oranskaya.jpg",
+    "/trainers/instagram/ri.oranskaya-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ri.oranskaya/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://youtube.com/@rita_oranskaya"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

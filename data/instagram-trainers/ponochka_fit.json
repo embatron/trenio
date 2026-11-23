@@ -1,0 +1,112 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ponochka_fit/",
+  "handle": "ponochka_fit",
+  "slug": "ponochka_fit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Таня",
+  "lastName": "",
+  "fullName": "Таня",
+  "gender": "female",
+  "nameQuotes": [
+    "Таня"
+  ],
+  "headline": "Инструктор по пилатесу и фитнес-тренер",
+  "sourceBio": "",
+  "sourceAbout": [
+    "всем привет! Меня зовут Таня, мне 29 лет и я тренер по пилатесу! Да-да, теперь я буду не только шутки шутить, но и про мышцы рассказывать.",
+    "А ещё мне нравилось наблюдать как меняется моё тело, изучать технику упражнений, экспериментировать с программами тренировок. И я подумала: «А почему бы мне свое хобби не сделать работой?»"
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Таня Могилёв Пилатес",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Про фитнес, который нравится и работает: безопасно, регулярно, эффективно. Нравилось наблюдать, как меняется тело, изучать технику упражнений и экспериментировать с программами тренировок.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/ponochka_fit/reel/DPmRm7fjLar/",
+      "caption": "Твоя первая тренировка не обязательно должна быть идеальной 💫 . Инвестируйте в свое здоровье сегодня – чтобы наслаждаться им завтра!! Ты все ещё успеваешь присоединиться и войти в поток красоты, здоровья и силы 💪 . . динамичный PILATES С 14 октября @realfitmog_7 пр. Мира 32 Вт/Пт 18.00 С 20 октября @realfit_streletcz ул.Каштановая 4А Пн/Ср 11.00 и 19.00 Тренер @ponochka_fit",
+      "textRole": "facts",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/ponochka_fit/reel/DOaBypaDLkX/",
+      "caption": "ЖИВОТ это моя БОЛЬ ! 🚨 4 года я борюсь с ним каждый день : подбираю упражнения , пытаюсь наладить питание, ищу продукты которые мне подходят или не подходят 🚨 Все мои знакомые и близкие говорят мне : Танька ну ты генетически худая , у тебя все в порядке и так , а я заманалась его постоянно втягивать, я хочу раздеться и себе понравиться 🚨 Я знаю свое тело, каким оно должно быть в норме и знаю как оно выглядит без регулярных тренировок 🚨 Только не надо регулярностью называть периодические выхлопы активности и регулярность на постоянной основе 🗼И хотя мне несколько врачей диагностировали диастаз (расхождение мышц пресса), с рекомендациями об ушивании и постановкой сетки...как будто это последнее к чему нужно прибегнуть , потому что пускай мелкими шагами, но благодаря определенным комплексам упражнений я вижу как он становится меньше , значит не все потеряно, как будто не хочется пока сдаваться Всеми упражнениями я буду делиться здесь, они не сложные , не отнимают много времени (7-15 минут) главное выполнять их РЕГУЛЯРНО 😂✊",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/ponochka_fit/reel/DPNmV_bjJNN/",
+      "caption": "Твоя ДЕРЕВЯННОСТЬ - не препятствие, а ПОВОД прийти! Гибкость и сила это навык, который может развить КАЖДЫЙ, начиная с любого уровня . ПРИХОДИ как есть ! . Расписание занятий в @realfitmog_7 Вторник /Четверг 10:00 и 11:00 Тренер @ponochka_fit",
+      "textRole": "promotion",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "nutriciolog",
+      "label": "Питание",
+      "quote": "питание"
+    }
+  ],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Могилёв",
+  "address": "проспект Мира, 32 | Каштановая улица, 4А",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ponochka_fit.jpg",
+  "photos": [
+    "/trainers/instagram/ponochka_fit.jpg",
+    "/trainers/instagram/ponochka_fit-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ponochka_fit/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

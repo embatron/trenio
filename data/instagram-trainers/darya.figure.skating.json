@@ -1,0 +1,81 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/darya.figure.skating/",
+  "handle": "darya.figure.skating",
+  "slug": "darya.figure.skating",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дарья",
+  "lastName": "",
+  "fullName": "Дарья",
+  "gender": "female",
+  "nameQuotes": [
+    "Дарья",
+    "Дарья Александровна"
+  ],
+  "headline": "Тренер по фигурному катанию",
+  "sourceBio": "Дарья Александровна\n🔸10 лет в спорте\n🔸Ставлю на лед детей и взрослых\n🔸Помогу не бояться льда\n🔸 Шаг за шагом к скольжению ⛸\n🔸 ☎️",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Дарья Минск фигурное катание",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Ставлю на лед детей и взрослых. Помогу не бояться льда. Шаг за шагом к скольжению.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "figurnoe-katanie",
+      "parentSlug": "zima",
+      "label": "Фигурное катание",
+      "evidence": "Фигурное катание"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "figurnoe-katanie",
+    "parentSlug": "zima",
+    "label": "Фигурное катание"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/darya.figure.skating.jpg",
+  "photos": [
+    "/trainers/instagram/darya.figure.skating.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/darya.figure.skating/",
+    "phone": "+375 29 219-06-91",
+    "email": "",
+    "telegram": "",
+    "website": "https://uchim.biz/board/by/minsk/trener_khokkej_figurnoe_katanie/63-1-0-8151"
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

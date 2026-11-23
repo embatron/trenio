@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/d.berezkina_/",
+  "handle": "d.berezkina_",
+  "slug": "d.berezkina_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дарья",
+  "lastName": "Березкина",
+  "fullName": "Дарья Березкина",
+  "gender": "female",
+  "nameQuotes": [
+    "Дарья",
+    "Березкина"
+  ],
+  "headline": "Тренер по большому теннису и общефизической подготовке",
+  "sourceBio": "• теннис\n• ОФП тренировки",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Дарья Березкина Витебск теннис ОФП",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Теннис и ОФП тренировки.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "bolshoj-tennis",
+      "parentSlug": "raketki",
+      "label": "Большой теннис",
+      "evidence": "теннис"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bolshoj-tennis",
+    "parentSlug": "raketki",
+    "label": "Большой теннис"
+  },
+  "city": "Витебск",
+  "address": "",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/d.berezkina_.jpg",
+  "photos": [
+    "/trainers/instagram/d.berezkina_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/d.berezkina_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

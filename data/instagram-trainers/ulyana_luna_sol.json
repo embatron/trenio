@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ulyana_luna_sol/",
+  "handle": "ulyana_luna_sol",
+  "slug": "ulyana_luna_sol",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ульяна",
+  "lastName": "",
+  "fullName": "Ульяна",
+  "gender": "female",
+  "nameQuotes": [
+    "Ульяна"
+  ],
+  "headline": "Инструктор по йоге и тренер по цигун",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Ульяна Минск Йога",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Йога и цигун. Групповые / индивидуальные занятия.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    },
+    {
+      "slug": "cigun",
+      "parentSlug": "velnes",
+      "label": "Цигун",
+      "evidence": "Цигун"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ulyana_luna_sol.jpg",
+  "photos": [
+    "/trainers/instagram/ulyana_luna_sol.jpg",
+    "/trainers/instagram/ulyana_luna_sol-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ulyana_luna_sol/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/ulyana_luna_sol",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

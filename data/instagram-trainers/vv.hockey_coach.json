@@ -1,0 +1,103 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vv.hockey_coach/",
+  "handle": "vv.hockey_coach",
+  "slug": "vv.hockey_coach",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Вячеслав",
+  "lastName": "",
+  "fullName": "Вячеслав",
+  "gender": "male",
+  "nameQuotes": [
+    "Вячеслав"
+  ],
+  "headline": "Тренер по хоккею и конькам",
+  "sourceBio": "🏒 Персональные тренировки по хоккею\n⛸ Катание с нуля • дети от 3 лет и взрослые\n📍 Минск\n📩 Запись на тренировку — в Direct",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Вячеслав Минск хоккей коньки",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Персональные тренировки по хоккею. Катание с нуля — дети от 3 лет и взрослые.",
+  "about": [
+    "На тренировках работаем над техникой владения клюшкой, броском и завершением атак, техникой катания, игровым мышлением. Каждая тренировка строится под игрока: его возраст, уровень, цели и слабые стороны."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/vv.hockey_coach/reel/DcROD2zALXI/",
+      "caption": "⛸ ОБУЧЕНИЕ КАТАНИЮ НА КОНЬКАХ С НУЛЯ Хотите уверенно чувствовать себя на льду? Провожу индивидуальные занятия для детей и взрослых любого уровня подготовки. Научимся: ✅ правильно стоять и двигаться на коньках ✅ сохранять равновесие ✅ безопасно тормозить ✅ выполнять повороты ✅ уверенно и технично кататься ✅ подготовимся к дальнейшим занятиям хоккеем Если вы никогда раньше не стояли на коньках — это не проблема. Начнём с самых основ и будем двигаться в удобном для вас темпе. 📩 Для записи напишите в Direct #катаниенаконьках #обучениекатанию #тренернаконьках #ледовыетренировки #iceskating",
+      "textRole": "about",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/vv.hockey_coach/reel/DahWE9CgI1c/",
+      "caption": "Хочешь стать увереннее на льду? Индивидуальные хоккейные тренировки для любого возраста и уровня подготовки. На тренировках работаем над: 🏒 техникой владения клюшкой 🥅 броском и завершением атак ⛸ техникой катания 🧠 игровым мышлением и уверенностью на льду Каждая тренировка строится под игрока: его возраст, уровень, цели и слабые стороны. Хочешь прогрессировать быстрее? Пиши в Direct — подберём удобное время для тренировки. #хоккей #хоккейныетренировки #recomendaciones #hockey4kids #hockeytraining",
+      "textRole": "training",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "hokkej",
+      "parentSlug": "zima",
+      "label": "Хоккей",
+      "evidence": "Хоккей"
+    },
+    {
+      "slug": "konki",
+      "parentSlug": "zima",
+      "label": "Коньки",
+      "evidence": "Коньки"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "hokkej",
+    "parentSlug": "zima",
+    "label": "Хоккей"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [
+    "adult",
+    "kid",
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vv.hockey_coach.jpg",
+  "photos": [
+    "/trainers/instagram/vv.hockey_coach.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vv.hockey_coach/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/vvhockey55",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email"
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/denismirko_rehab/",
+  "handle": "denismirko_rehab",
+  "slug": "denismirko_rehab",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Денис",
+  "lastName": "Мирко",
+  "fullName": "Денис Мирко",
+  "gender": "male",
+  "nameQuotes": [
+    "Денис",
+    "Мирко"
+  ],
+  "headline": "Тренер по восстановлению после травмы, инструктор ЛФК и тренер по реабилитации и восстановлению",
+  "sourceBio": "Восстанавливаю после травм/операций",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Денис Мирко Минск После травмы",
+  "threadsUrl": "",
+  "bio": "Я Денис Мирко, реабилитолог в Минске. Восстанавливаю после травмы и операций.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/denismirko_rehab/p/C2UjF0xtjhS/",
+      "caption": "Хотим вас пригласить в качестве эксперта в программу «Здорово здоровым быть», освещать темы лфк/реабилитации.",
+      "imageText": [
+        "ЗДОРОВО ЗДОРОВЫМ БЫТЬ"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/denismirko_rehab/reel/C2UmQojtGQq/",
+      "caption": "Тема межпозвоночных грыж. Что можно делать из растягивающих/мобилизационных упражнений.",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "posttravma",
+      "parentSlug": "reabilitaciya",
+      "label": "После травмы",
+      "evidence": "После травмы"
+    },
+    {
+      "slug": "lfk",
+      "parentSlug": "reabilitaciya",
+      "label": "ЛФК",
+      "evidence": "ЛФК"
+    },
+    {
+      "slug": "reabilitaciya",
+      "parentSlug": "reabilitaciya",
+      "label": "Реабилитация",
+      "evidence": "Реабилитация"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "posttravma",
+    "parentSlug": "reabilitaciya",
+    "label": "После травмы"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/denismirko_rehab.jpg",
+  "photos": [
+    "/trainers/instagram/denismirko_rehab.jpg",
+    "/trainers/instagram/denismirko_rehab-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/denismirko_rehab/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/DenMirko",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email"
+  ]
+}

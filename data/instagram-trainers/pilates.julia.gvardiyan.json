@@ -1,0 +1,115 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/pilates.julia.gvardiyan/",
+  "handle": "pilates.julia.gvardiyan",
+  "slug": "pilates.julia.gvardiyan",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлия",
+  "lastName": "Гвардиян",
+  "fullName": "Юлия Гвардиян",
+  "gender": "female",
+  "nameQuotes": [
+    "Юлия",
+    "Гвардиян"
+  ],
+  "headline": "Инструктор по пилатесу, растяжке и тренер по осанке, реабилитации и восстановлению",
+  "sourceBio": "",
+  "sourceAbout": [
+    "Сперва хочу рассказать о себе. Меня зовут Юлия Гвардиян. Твой проводник в целительный мир движения через танец и пилатес."
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Юлия Гвардиян Минск Пилатес",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Пилатес на мате: группы, здоровая спина, осанка и движение без боли. Реформер персонально.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/pilates.julia.gvardiyan/p/DfjZwHekbNW/",
+      "caption": "Пилатес: секрет сильного тела, здоровой спины и хорошего самочувствия надолго ! Представьте: вы просыпаетесь без боли в спине, чувствуете лёгкость в каждом движении, а ваше тело становится сильным и гибким без изнурительных тренировок. Это возможно ! Что такое пилатес? Пилатес - это система физической активности, созданная Джозефом Пилатесом ещё в начале XX века, и с тех пор он помог миллионам людей укрепить тело, улучшить осанку и избавиться от болей. Чем полезен ? ✔ Укрепляет мышцы кора – ваш пресс и спина скажут «спасибо»! ✔ Улучшает осанку – прощай сутулость за компьютером. ✔ Защищает суставы – мягкие движения без ударной нагрузки. ✔ Снимает стресс – дыхание и движение успокаивает ум. ✔ Подходит всем – и новичкам, и спортсменам, и даже тем, кто восстанавливается после травм. Почему стоит попробовать? Пилатес – это не просто тренировка, а инвестиция в здоровье. Вы не качаете мышцы только ради красоты, а создаёте сильное, гармоничное тело, которое служит вам без боли и ограничений. 💬Уже через несколько занятий вы почувствуете разницу! Ваш проводник - Юлия Гвардиян, сертифицированный специалист по движению международной американской школы POLESTAR PILATES. 📍 С расписанием групп можно ознакомиться в ленте. Запись в группы по ссылке в шапке профиля либо смело пишите в ЛС ! ОТКРЫТА ЗАПИСЬ В ГРУППЫ: ✨ ВТОРНИК•ЧЕТВЕРГ 10.00-11.00, 18.00-19.00 ✨ ВСЕ ОСТАЛЬНЫЕ ГРУППЫ НЕТ МЕСТ, запись только в лист ожидания, или в ЛС #ПилатесМинск #ЗдоровьеСпины #Гибкость #СильноеТело #Polestarpilatesmat #pilatesmat #красивоетело #красота #здоровьепозвоночника #глубокийподход #движениебезэзотерики #искусствопилатеса #грация #активноедолголетие #savebodydopilates",
+      "textRole": "about",
+      "imageText": [
+        "Захарова, 59"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/pilates.julia.gvardiyan/p/DaAyznJigkf/",
+      "caption": "Листай карусель ) пишут реальные люди, не боты 😁 #пилатес #пилатесминск #движение #здоровьесуставов #здоровьепозвоночника #осанка #жизньбезтаблеток",
+      "textRole": "promotion",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "здоровая спина"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "reabilitaciya",
+      "parentSlug": "reabilitaciya",
+      "label": "Реабилитация",
+      "evidence": "восстановление"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Минск",
+  "address": "улица Захарова, 59",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/pilates.julia.gvardiyan.jpg",
+  "photos": [
+    "/trainers/instagram/pilates.julia.gvardiyan.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/pilates.julia.gvardiyan/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

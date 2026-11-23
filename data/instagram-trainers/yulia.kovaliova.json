@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yulia.kovaliova/",
+  "handle": "yulia.kovaliova",
+  "slug": "yulia.kovaliova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлия",
+  "lastName": "Ковалева",
+  "fullName": "Юлия Ковалева",
+  "gender": "female",
+  "nameQuotes": [
+    "Юлия",
+    "Ковалева"
+  ],
+  "headline": "Тренер по бегу, лёгкой атлетике и общефизической подготовке",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Юлия Ковалева Минск бег легкая атлетика ОФП",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Бег, легкая атлетика, ОФП. Минск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "beg",
+      "parentSlug": "beg",
+      "label": "Бег",
+      "evidence": "Бег"
+    },
+    {
+      "slug": "legkaya-atletika",
+      "parentSlug": "beg",
+      "label": "Лёгкая атлетика",
+      "evidence": "Лёгкая атлетика"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "beg",
+    "parentSlug": "beg",
+    "label": "Бег"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yulia.kovaliova.jpg",
+  "photos": [
+    "/trainers/instagram/yulia.kovaliova.jpg",
+    "/trainers/instagram/yulia.kovaliova-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yulia.kovaliova/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/ice_girl_blog",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

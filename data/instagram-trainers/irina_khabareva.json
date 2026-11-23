@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/irina_khabareva/",
+  "handle": "irina_khabareva",
+  "slug": "irina_khabareva",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ирина",
+  "lastName": "Хабарева",
+  "fullName": "Ирина Хабарева",
+  "gender": "female",
+  "nameQuotes": [
+    "Ирина Хабарева"
+  ],
+  "headline": "Инструктор по йоге, тренер по осанке и фитнес-тренер",
+  "sourceBio": "Создатель @domsolnca_senica - пространства для души и тела\nОрганизую фитнес-туры и вожу на перезагрузку\nУчу питаться так, чтобы стройнеть",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Ирина Хабарева",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тренер по йоге и здоровой осанке. Организую фитнес-туры.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/irina_khabareva.jpg",
+  "photos": [
+    "/trainers/instagram/irina_khabareva.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/irina_khabareva/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

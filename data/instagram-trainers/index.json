@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-16T15:14:43.969Z",
+  "updatedAt": "2026-11-23T09:12:16.106Z",
   "profiles": [
     {
       "handle": "embatron.eth",
@@ -3598,22 +3598,6 @@
       "file": "data/instagram-trainers/dariakozlova._.json"
     },
     {
-      "handle": "biodanzabelarus",
-      "slug": "biodanzabelarus",
-      "fullName": "Светлана Котовская",
-      "primarySport": "",
-      "city": "Брест",
-      "status": "draft",
-      "missing": [
-        "sport",
-        "price",
-        "email",
-        "telegram",
-        "pinnedPosts"
-      ],
-      "file": "data/instagram-trainers/biodanzabelarus.json"
-    },
-    {
       "handle": "kseniya_zelinskaya_",
       "slug": "kseniya_zelinskaya_",
       "fullName": "Ксения Зелинская",
@@ -4103,38 +4087,20 @@
       "file": "data/instagram-trainers/al.esia7144.json"
     },
     {
-      "handle": "mariia__dobrovolskaya",
-      "slug": "mariia__dobrovolskaya",
-      "fullName": "Мария",
-      "primarySport": "Питание",
-      "city": "Могилёв",
-      "status": "draft",
-      "missing": [
-        "lastName",
-        "price",
-        "phone",
-        "email",
-        "telegram",
-        "pinnedPosts"
-      ],
-      "file": "data/instagram-trainers/mariia__dobrovolskaya.json"
-    },
-    {
-      "handle": "newborn_swimming_kobrin",
-      "slug": "newborn_swimming_kobrin",
-      "fullName": "newborn_swimming_kobrin",
+      "handle": "hanna_lukyanionak",
+      "slug": "hanna_lukyanionak",
+      "fullName": "Анна Лукьяненок",
       "primarySport": "Плавание",
       "city": "Кобрин",
       "status": "draft",
       "missing": [
-        "lastName",
         "price",
         "phone",
         "email",
         "telegram",
         "pinnedPosts"
       ],
-      "file": "data/instagram-trainers/newborn_swimming_kobrin.json"
+      "file": "data/instagram-trainers/hanna_lukyanionak.json"
     },
     {
       "handle": "missis.leonovets",
@@ -5135,7 +5101,6 @@
       "status": "draft",
       "missing": [
         "price",
-        "avatar",
         "phone",
         "email",
         "telegram",
@@ -5459,7 +5424,6 @@
       "status": "draft",
       "missing": [
         "price",
-        "avatar",
         "phone",
         "email",
         "telegram",
@@ -5962,7 +5926,6 @@
       "missing": [
         "lastName",
         "price",
-        "avatar",
         "phone",
         "email",
         "telegram",
@@ -6079,6 +6042,2654 @@
         "telegram"
       ],
       "file": "data/instagram-trainers/kostya___cf.json"
+    },
+    {
+      "handle": "latysheu",
+      "slug": "latysheu",
+      "fullName": "Алексей Латышев",
+      "primarySport": "Борьба",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/latysheu.json"
+    },
+    {
+      "handle": "coach.dashaaa",
+      "slug": "coach.dashaaa",
+      "fullName": "Дарья",
+      "primarySport": "Фигурное катание",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/coach.dashaaa.json"
+    },
+    {
+      "handle": "instructortasai",
+      "slug": "instructortasai",
+      "fullName": "Руслан",
+      "primarySport": "Карате",
+      "city": "Борисов",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/instructortasai.json"
+    },
+    {
+      "handle": "igor_mirutenko",
+      "slug": "igor_mirutenko",
+      "fullName": "Игорь Мирутенко",
+      "primarySport": "Карате",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/igor_mirutenko.json"
+    },
+    {
+      "handle": "ksyu_kudryashova",
+      "slug": "ksyu_kudryashova",
+      "fullName": "Ксения Кудряшова",
+      "primarySport": "Фигурное катание",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/ksyu_kudryashova.json"
+    },
+    {
+      "handle": "poolsiblings",
+      "slug": "poolsiblings",
+      "fullName": "Егор Парубец",
+      "primarySport": "Бильярд",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/poolsiblings.json"
+    },
+    {
+      "handle": "kris.eqt",
+      "slug": "kris.eqt",
+      "fullName": "Kristina Lisovskaya",
+      "primarySport": "Конный спорт",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/kris.eqt.json"
+    },
+    {
+      "handle": "evgendementey",
+      "slug": "evgendementey",
+      "fullName": "Евгений Дементей",
+      "primarySport": "Бильярд",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/evgendementey.json"
+    },
+    {
+      "handle": "ekaterina_perepechaeva",
+      "slug": "ekaterina_perepechaeva",
+      "fullName": "Екатерина Перепечаева",
+      "primarySport": "Бильярд",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/ekaterina_perepechaeva.json"
+    },
+    {
+      "handle": "nastya_filippova",
+      "slug": "nastya_filippova",
+      "fullName": "Анастасия Филиппова",
+      "primarySport": "Бильярд",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/nastya_filippova.json"
+    },
+    {
+      "handle": "dimachuprov",
+      "slug": "dimachuprov",
+      "fullName": "Дмитрий Чупров",
+      "primarySport": "Бильярд",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/dimachuprov.json"
+    },
+    {
+      "handle": "anastasia_kinezio",
+      "slug": "anastasia_kinezio",
+      "fullName": "Анастасия",
+      "primarySport": "Массаж",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/anastasia_kinezio.json"
+    },
+    {
+      "handle": "your_masseur_andrei",
+      "slug": "your_masseur_andrei",
+      "fullName": "Андрей",
+      "primarySport": "Массаж",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/your_masseur_andrei.json"
+    },
+    {
+      "handle": "abazovik_massage",
+      "slug": "abazovik_massage",
+      "fullName": "Виктор Абазовик",
+      "primarySport": "Массаж",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/abazovik_massage.json"
+    },
+    {
+      "handle": "natali.osanka",
+      "slug": "natali.osanka",
+      "fullName": "Наталья Хлебус",
+      "primarySport": "Осанка",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/natali.osanka.json"
+    },
+    {
+      "handle": "julia_hlad",
+      "slug": "julia_hlad",
+      "fullName": "Юлия",
+      "primarySport": "Массаж",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/julia_hlad.json"
+    },
+    {
+      "handle": "doc.katerina.massage",
+      "slug": "doc.katerina.massage",
+      "fullName": "Екатерина Авхачева",
+      "primarySport": "Массаж",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/doc.katerina.massage.json"
+    },
+    {
+      "handle": "denismirko_rehab",
+      "slug": "denismirko_rehab",
+      "fullName": "Денис Мирко",
+      "primarySport": "После травмы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/denismirko_rehab.json"
+    },
+    {
+      "handle": "igpovod",
+      "slug": "igpovod",
+      "fullName": "Игорь Повод",
+      "primarySport": "Шахматы",
+      "city": "Гродно",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/igpovod.json"
+    },
+    {
+      "handle": "chess.by.varya",
+      "slug": "chess.by.varya",
+      "fullName": "Варвара",
+      "primarySport": "Шахматы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/chess.by.varya.json"
+    },
+    {
+      "handle": "tatiana_zhigalko",
+      "slug": "tatiana_zhigalko",
+      "fullName": "Татьяна Жигалко",
+      "primarySport": "Шахматы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/tatiana_zhigalko.json"
+    },
+    {
+      "handle": "alexandr_hodan",
+      "slug": "alexandr_hodan",
+      "fullName": "Александр Ходан",
+      "primarySport": "Бег",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/alexandr_hodan.json"
+    },
+    {
+      "handle": "kristina_za_massage",
+      "slug": "kristina_za_massage",
+      "fullName": "Кристина",
+      "primarySport": "Массаж",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/kristina_za_massage.json"
+    },
+    {
+      "handle": "ostap__gym",
+      "slug": "ostap__gym",
+      "fullName": "Сергей",
+      "primarySport": "Осанка",
+      "city": "Брест",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/ostap__gym.json"
+    },
+    {
+      "handle": "tatiana.rehabcoach",
+      "slug": "tatiana.rehabcoach",
+      "fullName": "Таня",
+      "primarySport": "Осанка",
+      "city": "Брест",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/tatiana.rehabcoach.json"
+    },
+    {
+      "handle": "tishurov_vit",
+      "slug": "tishurov_vit",
+      "fullName": "Виталий Тишуров",
+      "primarySport": "Тайский бокс",
+      "city": "",
+      "status": "draft",
+      "missing": [
+        "city",
+        "price",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/tishurov_vit.json"
+    },
+    {
+      "handle": "helenfit__",
+      "slug": "helenfit__",
+      "fullName": "Елена Козлова",
+      "primarySport": "Тренажёрный зал",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/helenfit__.json"
+    },
+    {
+      "handle": "coach_anastasiya_",
+      "slug": "coach_anastasiya_",
+      "fullName": "Анастасия Дашкевич",
+      "primarySport": "Бег",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/coach_anastasiya_.json"
+    },
+    {
+      "handle": "andrei_ostapjuk",
+      "slug": "andrei_ostapjuk",
+      "fullName": "Андрей Остапюк",
+      "primarySport": "Плавание",
+      "city": "Витебск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/andrei_ostapjuk.json"
+    },
+    {
+      "handle": "coach_pramuk",
+      "slug": "coach_pramuk",
+      "fullName": "Vitali Saskavets",
+      "primarySport": "Бег",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "gender"
+      ],
+      "file": "data/instagram-trainers/coach_pramuk.json"
+    },
+    {
+      "handle": "artur_davidovich",
+      "slug": "artur_davidovich",
+      "fullName": "Артур Давидович",
+      "primarySport": "Сноуборд",
+      "city": "Логойск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/artur_davidovich.json"
+    },
+    {
+      "handle": "detskoe_plavanie_gomel",
+      "slug": "detskoe_plavanie_gomel",
+      "fullName": "Алексей Гарусов",
+      "primarySport": "Плавание",
+      "city": "Гомель",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/detskoe_plavanie_gomel.json"
+    },
+    {
+      "handle": "grodno_swim",
+      "slug": "grodno_swim",
+      "fullName": "grodno_swim",
+      "primarySport": "Плавание",
+      "city": "Гродно",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/grodno_swim.json"
+    },
+    {
+      "handle": "swim_with_vlad",
+      "slug": "swim_with_vlad",
+      "fullName": "Владислав",
+      "primarySport": "Плавание",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/swim_with_vlad.json"
+    },
+    {
+      "handle": "panaas",
+      "slug": "panaas",
+      "fullName": "panaas",
+      "primarySport": "Плавание",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/panaas.json"
+    },
+    {
+      "handle": "sensei_swim_minsk",
+      "slug": "sensei_swim_minsk",
+      "fullName": "Данила",
+      "primarySport": "Плавание",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/sensei_swim_minsk.json"
+    },
+    {
+      "handle": "voronov_swim",
+      "slug": "voronov_swim",
+      "fullName": "Александр Воронов",
+      "primarySport": "Плавание",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/voronov_swim.json"
+    },
+    {
+      "handle": "artsiom_radzetski",
+      "slug": "artsiom_radzetski",
+      "fullName": "Артём Радецкий",
+      "primarySport": "Плавание",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "price",
+        "email"
+      ],
+      "file": "data/instagram-trainers/artsiom_radzetski.json"
+    },
+    {
+      "handle": "chernyankov_v",
+      "slug": "chernyankov_v",
+      "fullName": "Виталий Чернянков",
+      "primarySport": "Бокс",
+      "city": "Гомель",
+      "status": "draft",
+      "missing": [
+        "price",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/chernyankov_v.json"
+    },
+    {
+      "handle": "_belous.18_",
+      "slug": "_belous.18_",
+      "fullName": "Анастасия Белоус",
+      "primarySport": "Фигурное катание",
+      "city": "Брест",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/_belous.18_.json"
+    },
+    {
+      "handle": "lubneuski",
+      "slug": "lubneuski",
+      "fullName": "Валерий Лубневский",
+      "primarySport": "Горные лыжи",
+      "city": "Логойск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/lubneuski.json"
+    },
+    {
+      "handle": "smirnovatatiana2119",
+      "slug": "smirnovatatiana2119",
+      "fullName": "Татьяна Смирнова",
+      "primarySport": "Горные лыжи",
+      "city": "Логойск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/smirnovatatiana2119.json"
+    },
+    {
+      "handle": "alex_schourko21",
+      "slug": "alex_schourko21",
+      "fullName": "Александр",
+      "primarySport": "Хоккей",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/alex_schourko21.json"
+    },
+    {
+      "handle": "coach_nevid",
+      "slug": "coach_nevid",
+      "fullName": "Алексей Невидицин",
+      "primarySport": "Хоккей",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "email"
+      ],
+      "file": "data/instagram-trainers/coach_nevid.json"
+    },
+    {
+      "handle": "vv.hockey_coach",
+      "slug": "vv.hockey_coach",
+      "fullName": "Вячеслав",
+      "primarySport": "Хоккей",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/vv.hockey_coach.json"
+    },
+    {
+      "handle": "darya.figure.skating",
+      "slug": "darya.figure.skating",
+      "fullName": "Дарья",
+      "primarySport": "Фигурное катание",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/darya.figure.skating.json"
+    },
+    {
+      "handle": "aleksandr_baranov11",
+      "slug": "aleksandr_baranov11",
+      "fullName": "Александр Баранов",
+      "primarySport": "Хоккей",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/aleksandr_baranov11.json"
+    },
+    {
+      "handle": "rusachka_",
+      "slug": "rusachka_",
+      "fullName": "Алина",
+      "primarySport": "Ролики",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/rusachka_.json"
+    },
+    {
+      "handle": "pilatespolina",
+      "slug": "pilatespolina",
+      "fullName": "Полина Мельникова",
+      "primarySport": "Пилатес",
+      "city": "Смолевичи",
+      "status": "draft",
+      "missing": [
+        "price",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/pilatespolina.json"
+    },
+    {
+      "handle": "anastasia_yoga_shakti",
+      "slug": "anastasia_yoga_shakti",
+      "fullName": "Анастасия",
+      "primarySport": "Йога",
+      "city": "Солигорск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/anastasia_yoga_shakti.json"
+    },
+    {
+      "handle": "biodanzabelarus",
+      "slug": "biodanzabelarus",
+      "fullName": "Светлана Котовская",
+      "primarySport": "Танцы",
+      "city": "Брест",
+      "status": "draft",
+      "missing": [
+        "price",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/biodanzabelarus.json"
+    },
+    {
+      "handle": "d.berezkina_",
+      "slug": "d.berezkina_",
+      "fullName": "Дарья Березкина",
+      "primarySport": "Большой теннис",
+      "city": "Витебск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/d.berezkina_.json"
+    },
+    {
+      "handle": "n_lebed_tennis",
+      "slug": "n_lebed_tennis",
+      "fullName": "Анастасия Лебедь",
+      "primarySport": "Большой теннис",
+      "city": "Гомель",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/n_lebed_tennis.json"
+    },
+    {
+      "handle": "_kris_tennis_",
+      "slug": "_kris_tennis_",
+      "fullName": "Кристина",
+      "primarySport": "Сквош",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/_kris_tennis_.json"
+    },
+    {
+      "handle": "zhan.skindzer.tennis_padel",
+      "slug": "zhan.skindzer.tennis_padel",
+      "fullName": "Жан Скиндер",
+      "primarySport": "Большой теннис",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/zhan.skindzer.tennis_padel.json"
+    },
+    {
+      "handle": "an.shevtsovaa",
+      "slug": "an.shevtsovaa",
+      "fullName": "Anna Tolkacheva",
+      "primarySport": "Танцы",
+      "city": "Гомель",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/an.shevtsovaa.json"
+    },
+    {
+      "handle": "alina_chuvi",
+      "slug": "alina_chuvi",
+      "fullName": "Алина",
+      "primarySport": "Танцы",
+      "city": "Витебск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/alina_chuvi.json"
+    },
+    {
+      "handle": "amelllkaa",
+      "slug": "amelllkaa",
+      "fullName": "Anna",
+      "primarySport": "Растяжка",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/amelllkaa.json"
+    },
+    {
+      "handle": "stefaniyavai",
+      "slug": "stefaniyavai",
+      "fullName": "Стефания",
+      "primarySport": "Тренажёрный зал",
+      "city": "Барановичи",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/stefaniyavai.json"
+    },
+    {
+      "handle": "ovsiana_",
+      "slug": "ovsiana_",
+      "fullName": "Ксения",
+      "primarySport": "Пилатес",
+      "city": "Брест",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/ovsiana_.json"
+    },
+    {
+      "handle": "viktoriya_po1i",
+      "slug": "viktoriya_po1i",
+      "fullName": "Виктория Полякова",
+      "primarySport": "Йога",
+      "city": "Витебск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/viktoriya_po1i.json"
+    },
+    {
+      "handle": "serkov_coach",
+      "slug": "serkov_coach",
+      "fullName": "Сергей Серков",
+      "primarySport": "Бег",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/serkov_coach.json"
+    },
+    {
+      "handle": "napster_clash",
+      "slug": "napster_clash",
+      "fullName": "Александр Золотых",
+      "primarySport": "Велосипед",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/napster_clash.json"
+    },
+    {
+      "handle": "dasha.sinevich",
+      "slug": "dasha.sinevich",
+      "fullName": "Даша Синевич",
+      "primarySport": "Танцы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/dasha.sinevich.json"
+    },
+    {
+      "handle": "aleksey_perko",
+      "slug": "aleksey_perko",
+      "fullName": "Алексей Перко",
+      "primarySport": "Биатлон",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/aleksey_perko.json"
+    },
+    {
+      "handle": "tatsiana_efremenko",
+      "slug": "tatsiana_efremenko",
+      "fullName": "Татьяна Ефременко",
+      "primarySport": "Фигурное катание",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/tatsiana_efremenko.json"
+    },
+    {
+      "handle": "tennis.coach.minsk",
+      "slug": "tennis.coach.minsk",
+      "fullName": "Екатерина Деголевич",
+      "primarySport": "Большой теннис",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/tennis.coach.minsk.json"
+    },
+    {
+      "handle": "irina_khabareva",
+      "slug": "irina_khabareva",
+      "fullName": "Ирина Хабарева",
+      "primarySport": "Йога",
+      "city": "",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/irina_khabareva.json"
+    },
+    {
+      "handle": "kriss_krezz",
+      "slug": "kriss_krezz",
+      "fullName": "Кристина",
+      "primarySport": "Пилатес",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/kriss_krezz.json"
+    },
+    {
+      "handle": "stepatikunov",
+      "slug": "stepatikunov",
+      "fullName": "Степан",
+      "primarySport": "Питание",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/stepatikunov.json"
+    },
+    {
+      "handle": "kathrine_golenchiha",
+      "slug": "kathrine_golenchiha",
+      "fullName": "Екатерина",
+      "primarySport": "Фитнес",
+      "city": "",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "city",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/kathrine_golenchiha.json"
+    },
+    {
+      "handle": "coach_hockey_leonov",
+      "slug": "coach_hockey_leonov",
+      "fullName": "Евгений Леонов",
+      "primarySport": "Хоккей",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/coach_hockey_leonov.json"
+    },
+    {
+      "handle": "uliagrad",
+      "slug": "uliagrad",
+      "fullName": "Юля Градобаева",
+      "primarySport": "Плавание",
+      "city": "Молодечно",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/uliagrad.json"
+    },
+    {
+      "handle": "knikitin.09",
+      "slug": "knikitin.09",
+      "fullName": "Кирилл Никитин",
+      "primarySport": "Тайский бокс",
+      "city": "Марьина Горка",
+      "status": "draft",
+      "missing": [
+        "price",
+        "email"
+      ],
+      "file": "data/instagram-trainers/knikitin.09.json"
+    },
+    {
+      "handle": "crazycoach__",
+      "slug": "crazycoach__",
+      "fullName": "Андрей Ivanovich",
+      "primarySport": "Кикбоксинг",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/crazycoach__.json"
+    },
+    {
+      "handle": "tatta_litvin",
+      "slug": "tatta_litvin",
+      "fullName": "Татьяна Литвин",
+      "primarySport": "Пилатес",
+      "city": "Гродно",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "address",
+        "email"
+      ],
+      "file": "data/instagram-trainers/tatta_litvin.json"
+    },
+    {
+      "handle": "iakoshka2014",
+      "slug": "iakoshka2014",
+      "fullName": "Татьяна",
+      "primarySport": "Современные танцы",
+      "city": "Гомель",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/iakoshka2014.json"
+    },
+    {
+      "handle": "rubis.n",
+      "slug": "rubis.n",
+      "fullName": "Наталья",
+      "primarySport": "Пилатес",
+      "city": "Гродно",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/rubis.n.json"
+    },
+    {
+      "handle": "rakushka.jul",
+      "slug": "rakushka.jul",
+      "fullName": "Юлия",
+      "primarySport": "Йога",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/rakushka.jul.json"
+    },
+    {
+      "handle": "s.k.r.e.p.k.a",
+      "slug": "s.k.r.e.p.k.a",
+      "fullName": "Анастасия",
+      "primarySport": "High Heels",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/s.k.r.e.p.k.a.json"
+    },
+    {
+      "handle": "katti_fitness_",
+      "slug": "katti_fitness_",
+      "fullName": "Катерина",
+      "primarySport": "Осанка",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/katti_fitness_.json"
+    },
+    {
+      "handle": "victoria_orlova_profit",
+      "slug": "victoria_orlova_profit",
+      "fullName": "Виктория Орлова",
+      "primarySport": "Йога",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/victoria_orlova_profit.json"
+    },
+    {
+      "handle": "elena_levkovets",
+      "slug": "elena_levkovets",
+      "fullName": "Елена Левковец",
+      "primarySport": "Йога",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/elena_levkovets.json"
+    },
+    {
+      "handle": "alesya_jump_hall",
+      "slug": "alesya_jump_hall",
+      "fullName": "Алеся",
+      "primarySport": "Джампинг",
+      "city": "Витебск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/alesya_jump_hall.json"
+    },
+    {
+      "handle": "kris.filatova_",
+      "slug": "kris.filatova_",
+      "fullName": "Кристина Филатова",
+      "primarySport": "High Heels",
+      "city": "Гомель",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/kris.filatova_.json"
+    },
+    {
+      "handle": "kozlovskaya_tatsiana",
+      "slug": "kozlovskaya_tatsiana",
+      "fullName": "Татьяна Козловская",
+      "primarySport": "Йога",
+      "city": "Гродно",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/kozlovskaya_tatsiana.json"
+    },
+    {
+      "handle": "anaslenko",
+      "slug": "anaslenko",
+      "fullName": "Анастасия Чистякова",
+      "primarySport": "Спортивная гимнастика",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/anaslenko.json"
+    },
+    {
+      "handle": "alina__milya2",
+      "slug": "alina__milya2",
+      "fullName": "Алина Милевская",
+      "primarySport": "High Heels",
+      "city": "Барановичи",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/alina__milya2.json"
+    },
+    {
+      "handle": "ola_stretch",
+      "slug": "ola_stretch",
+      "fullName": "Ольга Железняк",
+      "primarySport": "Растяжка",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/ola_stretch.json"
+    },
+    {
+      "handle": "ri.oranskaya",
+      "slug": "ri.oranskaya",
+      "fullName": "Rita Оранская",
+      "primarySport": "Растяжка",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/ri.oranskaya.json"
+    },
+    {
+      "handle": "darya_bernst",
+      "slug": "darya_bernst",
+      "fullName": "Дарья Бернст",
+      "primarySport": "Современные танцы",
+      "city": "Борисов",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/darya_bernst.json"
+    },
+    {
+      "handle": "alexandra_starovoitova_",
+      "slug": "alexandra_starovoitova_",
+      "fullName": "Александра Старовойтова",
+      "primarySport": "Пилатес",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/alexandra_starovoitova_.json"
+    },
+    {
+      "handle": "streltzova.d",
+      "slug": "streltzova.d",
+      "fullName": "Дарья Стрельцова",
+      "primarySport": "Современные танцы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/streltzova.d.json"
+    },
+    {
+      "handle": "frosyan",
+      "slug": "frosyan",
+      "fullName": "Анастасия",
+      "primarySport": "High Heels",
+      "city": "Витебск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/frosyan.json"
+    },
+    {
+      "handle": "ponochka_fit",
+      "slug": "ponochka_fit",
+      "fullName": "Таня",
+      "primarySport": "Пилатес",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/ponochka_fit.json"
+    },
+    {
+      "handle": "gymnastic_trener_irinapetrovna",
+      "slug": "gymnastic_trener_irinapetrovna",
+      "fullName": "Ирина Петровна",
+      "primarySport": "Спортивная гимнастика",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/gymnastic_trener_irinapetrovna.json"
+    },
+    {
+      "handle": "margo.chistyakova",
+      "slug": "margo.chistyakova",
+      "fullName": "Маргарита Чистякова",
+      "primarySport": "Пилатес",
+      "city": "Гродно",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/margo.chistyakova.json"
+    },
+    {
+      "handle": "karina_kobrinets",
+      "slug": "karina_kobrinets",
+      "fullName": "Карина Кобринец",
+      "primarySport": "Пилатес",
+      "city": "Пинск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "address",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/karina_kobrinets.json"
+    },
+    {
+      "handle": "oksanaastapchik",
+      "slug": "oksanaastapchik",
+      "fullName": "Оксана Астапчик",
+      "primarySport": "ОФП",
+      "city": "Борисов",
+      "status": "draft",
+      "missing": [
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/oksanaastapchik.json"
+    },
+    {
+      "handle": "kristinka_kudelko",
+      "slug": "kristinka_kudelko",
+      "fullName": "Кристина Куделко",
+      "primarySport": "Горные лыжи",
+      "city": "Логойск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/kristinka_kudelko.json"
+    },
+    {
+      "handle": "pauliorn",
+      "slug": "pauliorn",
+      "fullName": "Полина Яковенко",
+      "primarySport": "Йога",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/pauliorn.json"
+    },
+    {
+      "handle": "m_maidaniuk",
+      "slug": "m_maidaniuk",
+      "fullName": "Михаил Майданюк",
+      "primarySport": "Бальные танцы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/m_maidaniuk.json"
+    },
+    {
+      "handle": "alesya.kaliuzhnaya",
+      "slug": "alesya.kaliuzhnaya",
+      "fullName": "Алеся Калюжная",
+      "primarySport": "Пилатес",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/alesya.kaliuzhnaya.json"
+    },
+    {
+      "handle": "liliya_pilates_life",
+      "slug": "liliya_pilates_life",
+      "fullName": "Лилия Пелевина",
+      "primarySport": "Пилатес",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/liliya_pilates_life.json"
+    },
+    {
+      "handle": "fly_yoga_grodno",
+      "slug": "fly_yoga_grodno",
+      "fullName": "Юлия Сидифарова",
+      "primarySport": "Йога",
+      "city": "Гродно",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/fly_yoga_grodno.json"
+    },
+    {
+      "handle": "jylia_rumyantseva",
+      "slug": "jylia_rumyantseva",
+      "fullName": "Юлия Румянцева",
+      "primarySport": "High Heels",
+      "city": "Гродно",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/jylia_rumyantseva.json"
+    },
+    {
+      "handle": "nadyakrasovska",
+      "slug": "nadyakrasovska",
+      "fullName": "Надежда Красовская",
+      "primarySport": "Танцы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/nadyakrasovska.json"
+    },
+    {
+      "handle": "alessia.uriupina",
+      "slug": "alessia.uriupina",
+      "fullName": "Алессия Юрюпина",
+      "primarySport": "Йога",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/alessia.uriupina.json"
+    },
+    {
+      "handle": "kristy_zhavrid",
+      "slug": "kristy_zhavrid",
+      "fullName": "Кристина Жаврид",
+      "primarySport": "Фитнес",
+      "city": "Слуцк",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/kristy_zhavrid.json"
+    },
+    {
+      "handle": "kudesnitsa_floresta_",
+      "slug": "kudesnitsa_floresta_",
+      "fullName": "Валентина",
+      "primarySport": "Танцы",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/kudesnitsa_floresta_.json"
+    },
+    {
+      "handle": "pilates.julia.gvardiyan",
+      "slug": "pilates.julia.gvardiyan",
+      "fullName": "Юлия Гвардиян",
+      "primarySport": "Пилатес",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/pilates.julia.gvardiyan.json"
+    },
+    {
+      "handle": "julie_khizynskaya",
+      "slug": "julie_khizynskaya",
+      "fullName": "Юлия Хижинская",
+      "primarySport": "Пилатес",
+      "city": "Гомель",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/julie_khizynskaya.json"
+    },
+    {
+      "handle": "mzarzhitskaia",
+      "slug": "mzarzhitskaia",
+      "fullName": "Марина Заржицкая",
+      "primarySport": "Спортивная гимнастика",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/mzarzhitskaia.json"
+    },
+    {
+      "handle": "andreyklych",
+      "slug": "andreyklych",
+      "fullName": "Андрей Ключевский",
+      "primarySport": "Йога",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/andreyklych.json"
+    },
+    {
+      "handle": "small_nastyusha",
+      "slug": "small_nastyusha",
+      "fullName": "Анастасия Смолл",
+      "primarySport": "Pole Dance",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/small_nastyusha.json"
+    },
+    {
+      "handle": "alina_ponizovich",
+      "slug": "alina_ponizovich",
+      "fullName": "Алина Понизович",
+      "primarySport": "Растяжка",
+      "city": "Орша",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/alina_ponizovich.json"
+    },
+    {
+      "handle": "mancucken",
+      "slug": "mancucken",
+      "fullName": "mancucken",
+      "primarySport": "Pole Dance",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/mancucken.json"
+    },
+    {
+      "handle": "kate_harley_",
+      "slug": "kate_harley_",
+      "fullName": "Kate Harley",
+      "primarySport": "Pole Dance",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "gender",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/kate_harley_.json"
+    },
+    {
+      "handle": "nika_takushevich",
+      "slug": "nika_takushevich",
+      "fullName": "Ника Такушевич",
+      "primarySport": "Танцы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/nika_takushevich.json"
+    },
+    {
+      "handle": "tayusail",
+      "slug": "tayusail",
+      "fullName": "Макарий Мелехавец",
+      "primarySport": "Бальные танцы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/tayusail.json"
+    },
+    {
+      "handle": "mariami.rabchuk",
+      "slug": "mariami.rabchuk",
+      "fullName": "Мария Рабчук",
+      "primarySport": "Пилатес",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/mariami.rabchuk.json"
+    },
+    {
+      "handle": "kristarkids",
+      "slug": "kristarkids",
+      "fullName": "Кристина Осинина",
+      "primarySport": "Гимнастика",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/kristarkids.json"
+    },
+    {
+      "handle": "nata_ukhnaleva",
+      "slug": "nata_ukhnaleva",
+      "fullName": "Наталья Ухналёва",
+      "primarySport": "Пилатес",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email"
+      ],
+      "file": "data/instagram-trainers/nata_ukhnaleva.json"
+    },
+    {
+      "handle": "pol1lovaa",
+      "slug": "pol1lovaa",
+      "fullName": "Виктория Полилова",
+      "primarySport": "Танцы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/pol1lovaa.json"
+    },
+    {
+      "handle": "yuliya_luchynovich",
+      "slug": "yuliya_luchynovich",
+      "fullName": "Юлия Лучинович",
+      "primarySport": "Фитнес",
+      "city": "Старые Дороги",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/yuliya_luchynovich.json"
+    },
+    {
+      "handle": "anna_rg_roman",
+      "slug": "anna_rg_roman",
+      "fullName": "Анна Яцевич",
+      "primarySport": "Художественная гимнастика",
+      "city": "Гродно",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/anna_rg_roman.json"
+    },
+    {
+      "handle": "svetik_porhun",
+      "slug": "svetik_porhun",
+      "fullName": "Светлана Порхун",
+      "primarySport": "Растяжка",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/svetik_porhun.json"
+    },
+    {
+      "handle": "alinabelskayaaa",
+      "slug": "alinabelskayaaa",
+      "fullName": "Алина Бельская",
+      "primarySport": "High Heels",
+      "city": "Брест",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/alinabelskayaaa.json"
+    },
+    {
+      "handle": "nataliasiavets",
+      "slug": "nataliasiavets",
+      "fullName": "Наталья Сявец",
+      "primarySport": "Акробатика",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/nataliasiavets.json"
+    },
+    {
+      "handle": "nastya.shilo",
+      "slug": "nastya.shilo",
+      "fullName": "Анастасия Шило",
+      "primarySport": "Танцы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/nastya.shilo.json"
+    },
+    {
+      "handle": "veronika_tivunchik",
+      "slug": "veronika_tivunchik",
+      "fullName": "Вероника Тивунчик",
+      "primarySport": "Йога",
+      "city": "Барановичи",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/veronika_tivunchik.json"
+    },
+    {
+      "handle": "vikki_manuk",
+      "slug": "vikki_manuk",
+      "fullName": "Виктория Манук",
+      "primarySport": "Танцы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/vikki_manuk.json"
+    },
+    {
+      "handle": "yelizaveta.22",
+      "slug": "yelizaveta.22",
+      "fullName": "Елизавета",
+      "primarySport": "Балет",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/yelizaveta.22.json"
+    },
+    {
+      "handle": "vichechka.uvarova",
+      "slug": "vichechka.uvarova",
+      "fullName": "Виктория Уварова",
+      "primarySport": "Растяжка",
+      "city": "Гродно",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/vichechka.uvarova.json"
+    },
+    {
+      "handle": "vvi4ka_",
+      "slug": "vvi4ka_",
+      "fullName": "Виктория Свянтицкая",
+      "primarySport": "Танцы",
+      "city": "Молодечно",
+      "status": "draft",
+      "missing": [
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/vvi4ka_.json"
+    },
+    {
+      "handle": "yelnitskaya",
+      "slug": "yelnitskaya",
+      "fullName": "Яна Ельницкая",
+      "primarySport": "Танцы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/yelnitskaya.json"
+    },
+    {
+      "handle": "yulia_exopole",
+      "slug": "yulia_exopole",
+      "fullName": "Юлия",
+      "primarySport": "Pole Dance",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/yulia_exopole.json"
+    },
+    {
+      "handle": "siarhei_ski",
+      "slug": "siarhei_ski",
+      "fullName": "Сергей",
+      "primarySport": "Горные лыжи",
+      "city": "Логойск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/siarhei_ski.json"
+    },
+    {
+      "handle": "_apolinaria.dm",
+      "slug": "_apolinaria.dm",
+      "fullName": "Аполлинария",
+      "primarySport": "High Heels",
+      "city": "Гродно",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/_apolinaria.dm.json"
+    },
+    {
+      "handle": "darya_andrianova_",
+      "slug": "darya_andrianova_",
+      "fullName": "Дарья Андрианова",
+      "primarySport": "Пилатес",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/darya_andrianova_.json"
+    },
+    {
+      "handle": "ulyana_luna_sol",
+      "slug": "ulyana_luna_sol",
+      "fullName": "Ульяна",
+      "primarySport": "Йога",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/ulyana_luna_sol.json"
+    },
+    {
+      "handle": "olya.gonakova",
+      "slug": "olya.gonakova",
+      "fullName": "Ольга Гонакова",
+      "primarySport": "Йога",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/olya.gonakova.json"
+    },
+    {
+      "handle": "sokol_tashaa",
+      "slug": "sokol_tashaa",
+      "fullName": "Наталья Соколова",
+      "primarySport": "Спортивная аэробика",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/sokol_tashaa.json"
+    },
+    {
+      "handle": "kasiafitlife",
+      "slug": "kasiafitlife",
+      "fullName": "Кася",
+      "primarySport": "Фитнес",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/kasiafitlife.json"
+    },
+    {
+      "handle": "olgakolokolcova",
+      "slug": "olgakolokolcova",
+      "fullName": "Ольга Колоколцова",
+      "primarySport": "Пилатес",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/olgakolokolcova.json"
+    },
+    {
+      "handle": "tosha_fitness",
+      "slug": "tosha_fitness",
+      "fullName": "Виктория Нагибова",
+      "primarySport": "Пилатес",
+      "city": "Витебск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/tosha_fitness.json"
+    },
+    {
+      "handle": "_k.olka_",
+      "slug": "_k.olka_",
+      "fullName": "Ольга",
+      "primarySport": "Фитнес",
+      "city": "Гомель",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/_k.olka_.json"
+    },
+    {
+      "handle": "iulia.a_kor",
+      "slug": "iulia.a_kor",
+      "fullName": "Юлия",
+      "primarySport": "Йога",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/iulia.a_kor.json"
+    },
+    {
+      "handle": "irina_rymkevich",
+      "slug": "irina_rymkevich",
+      "fullName": "Ирина Рымкевич",
+      "primarySport": "Йога",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/irina_rymkevich.json"
+    },
+    {
+      "handle": "misslinayog",
+      "slug": "misslinayog",
+      "fullName": "Лина",
+      "primarySport": "Йога",
+      "city": "Могилёв",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/misslinayog.json"
+    },
+    {
+      "handle": "shnitko8",
+      "slug": "shnitko8",
+      "fullName": "Ольга Шнитко",
+      "primarySport": "Пилатес",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/shnitko8.json"
+    },
+    {
+      "handle": "andreishshta",
+      "slug": "andreishshta",
+      "fullName": "Андрей Шш",
+      "primarySport": "Танцы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/andreishshta.json"
+    },
+    {
+      "handle": "pilates_minsk_alexa",
+      "slug": "pilates_minsk_alexa",
+      "fullName": "Александра Тимергалеева",
+      "primarySport": "Пилатес",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/pilates_minsk_alexa.json"
+    },
+    {
+      "handle": "o.vskvch",
+      "slug": "o.vskvch",
+      "fullName": "Ольга Васюкевич",
+      "primarySport": "Пилатес",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/o.vskvch.json"
+    },
+    {
+      "handle": "katsiaryyna_trener",
+      "slug": "katsiaryyna_trener",
+      "fullName": "Катерина",
+      "primarySport": "Гимнастика",
+      "city": "Витебск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/katsiaryyna_trener.json"
+    },
+    {
+      "handle": "_albo_violetta_",
+      "slug": "_albo_violetta_",
+      "fullName": "Виолетта",
+      "primarySport": "Фитнес",
+      "city": "Гродно",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/_albo_violetta_.json"
+    },
+    {
+      "handle": "graciaoksana",
+      "slug": "graciaoksana",
+      "fullName": "Оксана",
+      "primarySport": "Современные танцы",
+      "city": "Гомель",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/graciaoksana.json"
+    },
+    {
+      "handle": "pilatdi",
+      "slug": "pilatdi",
+      "fullName": "Диана Пилат",
+      "primarySport": "High Heels",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/pilatdi.json"
+    },
+    {
+      "handle": "radionov_dance",
+      "slug": "radionov_dance",
+      "fullName": "Радионов",
+      "primarySport": "Бальные танцы",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/radionov_dance.json"
+    },
+    {
+      "handle": "shalezniakova_sveta",
+      "slug": "shalezniakova_sveta",
+      "fullName": "Светлана Шалезнякова",
+      "primarySport": "Фитнес",
+      "city": "Гомель",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/shalezniakova_sveta.json"
+    },
+    {
+      "handle": "sheveleva__natasha",
+      "slug": "sheveleva__natasha",
+      "fullName": "Наташа Шевелева",
+      "primarySport": "Йога",
+      "city": "Новополоцк",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/sheveleva__natasha.json"
+    },
+    {
+      "handle": "viktoriya_domashevich",
+      "slug": "viktoriya_domashevich",
+      "fullName": "Виктория Домашевич",
+      "primarySport": "Растяжка",
+      "city": "Брест",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/viktoriya_domashevich.json"
+    },
+    {
+      "handle": "pllinkaa",
+      "slug": "pllinkaa",
+      "fullName": "Полина",
+      "primarySport": "High Heels",
+      "city": "Брест",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/pllinkaa.json"
+    },
+    {
+      "handle": "mikita_mironcyk",
+      "slug": "mikita_mironcyk",
+      "fullName": "Микита Мирончук",
+      "primarySport": "Тайский бокс",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/mikita_mironcyk.json"
+    },
+    {
+      "handle": "yulia.kovaliova",
+      "slug": "yulia.kovaliova",
+      "fullName": "Юлия Ковалева",
+      "primarySport": "Бег",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/yulia.kovaliova.json"
+    },
+    {
+      "handle": "fadeev_coach",
+      "slug": "fadeev_coach",
+      "fullName": "Алексей Фадеев",
+      "primarySport": "Бокс",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/fadeev_coach.json"
+    },
+    {
+      "handle": "novitskaya_team",
+      "slug": "novitskaya_team",
+      "fullName": "Аня Новицкая",
+      "primarySport": "Фитнес",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/novitskaya_team.json"
+    },
+    {
+      "handle": "trainer_artem",
+      "slug": "trainer_artem",
+      "fullName": "Артем",
+      "primarySport": "Фитнес",
+      "city": "Дзержинск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/trainer_artem.json"
+    },
+    {
+      "handle": "olegatg",
+      "slug": "olegatg",
+      "fullName": "Олег Мозгов",
+      "primarySport": "Тренажёрный зал",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/olegatg.json"
+    },
+    {
+      "handle": "akhmetovivan",
+      "slug": "akhmetovivan",
+      "fullName": "Иван Ахметов",
+      "primarySport": "Фитнес",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "price",
+        "phone",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/akhmetovivan.json"
     }
   ]
 }

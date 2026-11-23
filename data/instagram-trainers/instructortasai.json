@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/instructortasai/",
+  "handle": "instructortasai",
+  "slug": "instructortasai",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Руслан",
+  "lastName": "",
+  "fullName": "Руслан",
+  "gender": "male",
+  "nameQuotes": [
+    "Руслан"
+  ],
+  "headline": "Тренер по карате",
+  "sourceBio": "инструктор карате Кёкусинкай Ложинская,14, Борисов, 50 лет БССР, 10а. Тел.",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Руслан",
+  "threadsUrl": "",
+  "bio": "Я инструктор карате Кёкусинкай в Борисове.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "karate",
+      "parentSlug": "edinoborstva",
+      "label": "Карате",
+      "evidence": "Карате"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "karate",
+    "parentSlug": "edinoborstva",
+    "label": "Карате"
+  },
+  "city": "Борисов",
+  "address": "Ложинская,14 | 50 лет БССР, 10а",
+  "cityCandidates": [
+    "Борисов"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/instructortasai.jpg",
+  "photos": [
+    "/trainers/instagram/instructortasai.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/instructortasai/",
+    "phone": "+375 44 709-79-77",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

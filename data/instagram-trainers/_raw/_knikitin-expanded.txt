@@ -1,0 +1,76 @@
+{
+  "clicked": true,
+  "moreText": "More",
+  "headerText": "knikitin.09\nКирилл Никитин\n11 posts\n356 followers\n113 following\nAthlete\n@muay_thai.mg @bc__bronx_mangust\nt.me/theefins and 1 more\nknikitin.09\nFollowed by levsha_team, via_1705_, and ar.boxing.by\nFollow\nMessage\nmangust\nbronxgym",
+  "links": [
+    "https://www.threads.com/@knikitin.09?xmt=AQG0il9sFTB0KCtz073kiTa0N6oFPfXTSl90GzEVgWRS_z0"
+  ],
+  "posts": [
+    {
+      "href": "https://www.instagram.com/knikitin.09/p/Df7IhoygIoz/",
+      "pinned": true,
+      "kind": "photo",
+      "alt": "Photo by Кирилл Никитин on November 19, 2026. May be an image of poster, punching bag and text."
+    },
+    {
+      "href": "https://www.instagram.com/knikitin.09/p/DXGlM-5jNYH/",
+      "pinned": false,
+      "kind": "photo",
+      "alt": "Photo by Кирилл Никитин on April 13, 2026."
+    },
+    {
+      "href": "https://www.instagram.com/knikitin.09/p/DW1ufXsgFqc/",
+      "pinned": false,
+      "kind": "photo",
+      "alt": "Photo by Кирилл Никитин on April 07, 2026."
+    },
+    {
+      "href": "https://www.instagram.com/knikitin.09/p/DSW6dgkjNeW/",
+      "pinned": false,
+      "kind": "photo",
+      "alt": "Photo by Кирилл Никитин on December 17, 2025."
+    },
+    {
+      "href": "https://www.instagram.com/knikitin.09/p/DRuxwe1AOxG/",
+      "pinned": false,
+      "kind": "photo",
+      "alt": "Photo by Кирилл Никитин on December 01, 2025."
+    },
+    {
+      "href": "https://www.instagram.com/knikitin.09/p/DOq7D7CDPRk/",
+      "pinned": false,
+      "kind": "photo",
+      "alt": "Photo by Кирилл Никитин on September 16, 2025."
+    },
+    {
+      "href": "https://www.instagram.com/knikitin.09/reel/DKxaBfhNdXM/",
+      "pinned": false,
+      "kind": "reel",
+      "alt": "Точим ножи 🔪"
+    },
+    {
+      "href": "https://www.instagram.com/knikitin.09/p/DKobDGHNyYj/",
+      "pinned": false,
+      "kind": "photo",
+      "alt": "Photo shared by Кирилл Никитин on June 08, 2025 tagging @_oblastnou_."
+    },
+    {
+      "href": "https://www.instagram.com/knikitin.09/p/DGEJXHttuvm/",
+      "pinned": false,
+      "kind": "photo",
+      "alt": "Photo by Кирилл Никитин on February 14, 2025."
+    },
+    {
+      "href": "https://www.instagram.com/knikitin.09/p/DD7wPRkt1Nu/",
+      "pinned": false,
+      "kind": "photo",
+      "alt": "Photo by Кирилл Никитин on December 23, 2024."
+    },
+    {
+      "href": "https://www.instagram.com/knikitin.09/p/C-561EitpE9/",
+      "pinned": false,
+      "kind": "photo",
+      "alt": "Photo by Кирилл Никитин on August 20, 2024."
+    }
+  ]
+}

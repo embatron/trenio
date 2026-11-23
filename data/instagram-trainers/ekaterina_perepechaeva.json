@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ekaterina_perepechaeva/",
+  "handle": "ekaterina_perepechaeva",
+  "slug": "ekaterina_perepechaeva",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Екатерина",
+  "lastName": "Перепечаева",
+  "fullName": "Екатерина Перепечаева",
+  "gender": "female",
+  "nameQuotes": [
+    "Екатерина Перепечаева"
+  ],
+  "headline": "Тренер по бильярду",
+  "sourceBio": "Трёхкратная чемпионка мира по бильярду",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Екатерина Перепечаева Минск Бильярд Бильярдный клуб Star Ball",
+  "threadsUrl": "",
+  "bio": "Я Екатерина Перепечаева, тренер по бильярду в Минске. Трёхкратная чемпионка мира по бильярду.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/ekaterina_perepechaeva/p/DYUHG1ktqGe/",
+      "caption": "",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "bilyard",
+      "parentSlug": "klub",
+      "label": "Бильярд",
+      "evidence": "Бильярд"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bilyard",
+    "parentSlug": "klub",
+    "label": "Бильярд"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ekaterina_perepechaeva.jpg",
+  "photos": [
+    "/trainers/instagram/ekaterina_perepechaeva.jpg",
+    "/trainers/instagram/ekaterina_perepechaeva-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ekaterina_perepechaeva/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

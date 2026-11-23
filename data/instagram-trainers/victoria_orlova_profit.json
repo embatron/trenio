@@ -1,0 +1,116 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/victoria_orlova_profit/",
+  "handle": "victoria_orlova_profit",
+  "slug": "victoria_orlova_profit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктория",
+  "lastName": "Орлова",
+  "fullName": "Виктория Орлова",
+  "gender": "female",
+  "nameQuotes": [
+    "Виктория Орлова-тренер БГУФК"
+  ],
+  "headline": "Инструктор по йоге, пилатесу, растяжке и инструктор TRX",
+  "sourceBio": "Отправить сообщение\nЯ\nУчусь\nОтзывы\nПерсональные\nРастяжка\nКоврики\nПослеродовое\nСемья\nBona Fide\nОтветы",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Виктория Орлова Пилатес Растяжка Йога",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Функциональное тело — энергия здоровья.",
+  "about": [
+    "Настоящая мобильность начинается там, где ты останавливаешься ровно за сантиметр до предела — и возвращаешься обратно. Поэтому, когда я тренирую мобильность, я не спрашиваю «как глубоко»."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/victoria_orlova_profit/reel/Dcn_GMRMYHg/",
+      "caption": "Этап за этапом. Контроль всего тела. #trx #стойканаруках",
+      "textRole": "facts",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/victoria_orlova_profit/reel/DdvgLNnsM8E/",
+      "caption": "💜 #йога #yoga",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/victoria_orlova_profit/reel/Dbdqu4CsInn/",
+      "caption": "Мобильность — это физика. Это способность контролировать амплитуду, а не просто достигать её. Ты можешь идеально сесть на шпагат, но если в нижней точке у тебя нет силы удержать корпус, если ты «проваливаешься» в растяжку, а не управляешь ею — это не мобильность. Это просто гибкость. Пассивная. Бесполезная вне зала. Настоящая мобильность начинается там, где ты останавливаешься ровно за сантиметр до предела — и возвращаешься обратно. Это когда ты держишь гирю, и твоя задача — не растянуться ещё сильнее, а сохранить это положение. Удержать вес. Сохранить дыхание. Сохранить структуру. Поэтому, когда я тренирую мобильность, я не спрашиваю «как глубоко». Я спрашиваю: — Могу ли я выйти из этого положения так же плавно, как вошёл? — Сохраняю ли я контроль на всём пути? — Дышит ли моё тело или зажимается? #гибкость #мобильность",
+      "textRole": "training",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "стретчинг"
+    },
+    {
+      "slug": "trx",
+      "parentSlug": "fitnes",
+      "label": "TRX",
+      "evidence": "TRX"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/victoria_orlova_profit.jpg",
+  "photos": [
+    "/trainers/instagram/victoria_orlova_profit.jpg",
+    "/trainers/instagram/victoria_orlova_profit-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/victoria_orlova_profit/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://viktoriyaorlovayoga.github.io/YOGA"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

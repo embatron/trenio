@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/smirnovatatiana2119/",
+  "handle": "smirnovatatiana2119",
+  "slug": "smirnovatatiana2119",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Татьяна",
+  "lastName": "Смирнова",
+  "fullName": "Татьяна Смирнова",
+  "gender": "female",
+  "nameQuotes": [
+    "Татьяна",
+    "Смирнова",
+    "Смирнова Татьяна"
+  ],
+  "headline": "Тренер по горным лыжам",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Татьяна Смирнова Логойск горнолыжный спорт Инструктор по горным лыжам службы PROSNEG (ГСОК Логойск), категория B-basic, опыт более 20 лет",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Инструктор по горным лыжам.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "gornye-lyzhi",
+      "parentSlug": "zima",
+      "label": "Горные лыжи",
+      "evidence": "горнолыжный спорт"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "gornye-lyzhi",
+    "parentSlug": "zima",
+    "label": "Горные лыжи"
+  },
+  "city": "Логойск",
+  "address": "",
+  "cityCandidates": [
+    "Логойск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/smirnovatatiana2119.jpg",
+  "photos": [
+    "/trainers/instagram/smirnovatatiana2119.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/smirnovatatiana2119/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/dasha.sinevich/",
+  "handle": "dasha.sinevich",
+  "slug": "dasha.sinevich",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Даша",
+  "lastName": "Синевич",
+  "fullName": "Даша Синевич",
+  "gender": "female",
+  "nameQuotes": [
+    "Даша Синевич",
+    "ДАША СИНЕВИЧ"
+  ],
+  "headline": "Тренер по танцам и хореографии, роликам и конькам",
+  "sourceBio": "Dancer at ensemble in Belarus @statedance.by 🩰\nCoach | choreographer🪽\nInstructor | skating and skiing⛸️🛼⛷️\nFounder @darsi.club\n📍Minsk",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Даша Синевич",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Coach and choreographer. Instructor — skating and skiing. Dancer at ensemble.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/dasha.sinevich/reel/DUGvC95gHnz/",
+      "caption": "случилось что-то невероятное @ruch_ziamli 💔 музыка, которая звучит в самом сердце @sinkopa_ постановка, идея, вера, сила воли, реализация @vikabozhyk 🫶🏽 фото, среди которых не смогла выбрать несколько, потому что захотелось сохранить их все @rinamiha никогда не знаешь, к чему приведёт сказанное \"да\". я и не представляла, какую палитру эмоций и чувств позволит пережить этот спектакль. как много дадут репетиции. какие разные и чуткие люди встретятся на пути. каким душевным будет зритель. Рух, спасибо, что ты есть😭🥰🥹",
+      "textRole": "none",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "хореография"
+    },
+    {
+      "slug": "roliki",
+      "parentSlug": "velo",
+      "label": "Ролики",
+      "evidence": "Ролики"
+    },
+    {
+      "slug": "konki",
+      "parentSlug": "zima",
+      "label": "Коньки",
+      "evidence": "Коньки"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/dasha.sinevich.jpg",
+  "photos": [
+    "/trainers/instagram/dasha.sinevich.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/dasha.sinevich/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

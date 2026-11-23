@@ -1,0 +1,112 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/s.k.r.e.p.k.a/",
+  "handle": "s.k.r.e.p.k.a",
+  "slug": "s.k.r.e.p.k.a",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анастасия",
+  "lastName": "",
+  "fullName": "Анастасия",
+  "gender": "female",
+  "nameQuotes": [
+    "Анастасия"
+  ],
+  "headline": "Тренер по high heels, современным танцам и танцам и хореографии",
+  "sourceBio": "Танцор\nАнастасия | педагог по high heels👠\nВеду набор в группы с нуля, начинающие, продолжающие. Регистрация по ссылке в шапке...\nforms.gle/ixTiieK8MdcJjtp98 и ещё 3\nПодписан(-а) k",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Минск High Heels Современные танцы Анастасия",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Педагог по high heels. Веду набор в группы с нуля, начинающие и продолжающие.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/s.k.r.e.p.k.a/reel/DX2KGO_oRkr/",
+      "caption": "La femme fatale (роковая женщина) на сцене @glow.up_by Не скажу, что это «сильный» сольник. Наоборот! Мне хотелось, чтобы это выглядело легко, не перегружено хореографией, непринужденно. Чтобы создавалось ощущение, что я танцую только для своего мужчины, в домашней обстановке, где нет зрителей, только мы.",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/s.k.r.e.p.k.a/p/Da7_VXQiNFb/",
+      "caption": "НОВЫЙ НАБОР В МОИ ГРУППЫ ПО HIGH HEELS!! Листай карусель, чтобы узнать подробности РЕГИСТРАЦИЯ по ссылке в шапке профиля, в директ или просто поставь «+» под этой публикацией. Жду тебя в новом сезоне #highheelsminsk",
+      "textRole": "promotion",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/s.k.r.e.p.k.a/reel/DVrC5qAiAY0/",
+      "caption": "MOTOR CLUB by me Video: @yaroslav.sakovich #highheels #танцыминск",
+      "textRole": "promotion",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "High Heels"
+    },
+    {
+      "slug": "sovremennye",
+      "parentSlug": "tancy",
+      "label": "Современные танцы",
+      "evidence": "Современные танцы"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "хореография"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "high-heels",
+    "parentSlug": "tancy",
+    "label": "High Heels"
+  },
+  "city": "Минск",
+  "address": "проспект Машерова, 11",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/s.k.r.e.p.k.a.jpg",
+  "photos": [
+    "/trainers/instagram/s.k.r.e.p.k.a.jpg",
+    "/trainers/instagram/s.k.r.e.p.k.a-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/s.k.r.e.p.k.a/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

@@ -1,0 +1,405 @@
+- generic [ref=f3e4]:
+  - generic [ref=f3e18]:
+    - generic [ref=f3e21]:
+      - link [ref=f3e26] [cursor=pointer]:
+        - /url: /
+        - img "Instagram" [ref=f3e31]
+      - generic [ref=f3e34]:
+        - link [ref=f3e39] [cursor=pointer]:
+          - /url: /
+          - img "Home" [ref=f3e44]
+        - link [ref=f3e49] [cursor=pointer]:
+          - /url: /reels/
+          - img "Reels" [ref=f3e54]
+        - link [ref=f3e61] [cursor=pointer]:
+          - /url: /direct/inbox/
+          - img "Messages" [ref=f3e66]
+        - link [ref=f3e72] [cursor=pointer]:
+          - /url: /explore/
+          - img "Search" [ref=f3e77]
+        - link [ref=f3e84] [cursor=pointer]:
+          - /url: "#"
+          - img "Notifications" [ref=f3e89]
+        - link [ref=f3e95] [cursor=pointer]:
+          - /url: "#"
+          - img "New post" [ref=f3e100]
+        - link [ref=f3e105] [cursor=pointer]:
+          - /url: "#"
+          - img "Professional dashboard" [ref=f3e110]
+        - link [ref=f3e117] [cursor=pointer]:
+          - /url: /trenioby/
+          - link [ref=f3e122]:
+            - img "trenioby's profile picture" [ref=f3e123]
+      - generic [ref=f3e124]:
+        - link [ref=f3e127] [cursor=pointer]:
+          - /url: "#"
+          - img "Settings" [ref=f3e132]
+        - link [ref=f3e135] [cursor=pointer]:
+          - /url: "#"
+          - img "Also from Meta" [ref=f3e140]
+    - generic [ref=f3e143]:
+      - main [ref=f3e144]:
+        - generic [ref=f3e146]:
+          - generic [ref=f3e147]:
+            - generic [ref=f3e148]:
+              - link [ref=f3e154] [cursor=pointer]:
+                - /url: /vika_krez/
+                - img "vika_krez's profile picture" [ref=f3e155]
+              - generic [ref=f3e156]:
+                - generic [ref=f3e157]:
+                  - generic [ref=f3e158]:
+                    - link [ref=f3e160] [cursor=pointer]:
+                      - /url: "#"
+                      - heading "vika_krez" [level=2] [ref=f3e161]
+                    - button [ref=f3e163] [cursor=pointer]:
+                      - img "Options" [ref=f3e165]
+                  - generic [ref=f3e169]: Виктория
+                  - generic [ref=f3e171]:
+                    - generic [ref=f3e173]:
+                      - generic [ref=f3e174]: "120"
+                      - text: posts
+                    - link "6,324 followers" [ref=f3e176] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f3e177]:
+                        - generic "6,324" [ref=f3e178]
+                        - text: followers
+                    - link "565 following" [ref=f3e180] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f3e181]:
+                        - generic [ref=f3e182]: "565"
+                        - text: following
+                - generic [ref=f3e184]:
+                  - generic [ref=f3e185]: Fitness Trainer
+                  - generic [ref=f3e187]:
+                    - button [ref=f3e188] [cursor=pointer]:
+                      - generic [ref=f3e189]: "🔹location: Minsk,BLR🔹fitness trainer (individual and group training)🔹Coach of AGG🔹AGG World Cup / AGG World"
+                    - generic [ref=f3e190]:
+                      - text: ...
+                      - button "more" [ref=f3e191] [cursor=pointer]
+                  - heading [level=1]
+            - generic [ref=f3e197]:
+              - button "Follow" [ref=f3e199] [cursor=pointer]
+              - button "Message" [ref=f3e203] [cursor=pointer]
+              - button [ref=f3e205] [cursor=pointer]:
+                - img "Similar accounts" [ref=f3e207]
+            - menu [ref=f3e211]:
+              - generic [ref=f3e213]:
+                - list [ref=f3e215]:
+                  - listitem [ref=f3e216]
+                  - listitem [ref=f3e217]
+                  - listitem [ref=f3e218]:
+                    - link "View 🧑‍🍳 highlight" [ref=f3e221] [cursor=pointer]:
+                      - /url: /stories/highlights/17921509110193805/
+                      - button "vika_krez's highlight story picture 🧑‍🍳" [ref=f3e222]:
+                        - button [ref=f3e223]:
+                          - img "vika_krez's highlight story picture" [ref=f3e226]
+                        - generic [ref=f3e227]: 🧑‍🍳
+                  - listitem [ref=f3e230]:
+                    - link "View 🥰 highlight" [ref=f3e233] [cursor=pointer]:
+                      - /url: /stories/highlights/17848408454878250/
+                      - button "vika_krez's highlight story picture 🥰" [ref=f3e234]:
+                        - button [ref=f3e235]:
+                          - img "vika_krez's highlight story picture" [ref=f3e238]
+                        - generic [ref=f3e239]: 🥰
+                  - listitem [ref=f3e242]:
+                    - link "View Fitness highlight" [ref=f3e245] [cursor=pointer]:
+                      - /url: /stories/highlights/17963844076982600/
+                      - button "vika_krez's highlight story picture Fitness" [ref=f3e246]:
+                        - button [ref=f3e247]:
+                          - img "vika_krez's highlight story picture" [ref=f3e250]
+                        - generic [ref=f3e251]: Fitness
+                  - listitem [ref=f3e254]:
+                    - link "View 🇭🇺 highlight" [ref=f3e257] [cursor=pointer]:
+                      - /url: /stories/highlights/17969009693993424/
+                      - button "vika_krez's highlight story picture 🇭🇺" [ref=f3e258]:
+                        - button [ref=f3e259]:
+                          - img "vika_krez's highlight story picture" [ref=f3e262]
+                        - generic [ref=f3e263]: 🇭🇺
+                  - listitem [ref=f3e266]:
+                    - link "View 🧳 ✈️ highlight" [ref=f3e269] [cursor=pointer]:
+                      - /url: /stories/highlights/18142610176305000/
+                      - button "vika_krez's highlight story picture 🧳 ✈️" [ref=f3e270]:
+                        - button [ref=f3e271]:
+                          - img "vika_krez's highlight story picture" [ref=f3e274]
+                        - generic [ref=f3e275]: 🧳 ✈️
+                  - listitem [ref=f3e278]:
+                    - link "View team🏆 highlight" [ref=f3e281] [cursor=pointer]:
+                      - /url: /stories/highlights/18124045063628020/
+                      - button "vika_krez's highlight story picture team🏆" [ref=f3e282]:
+                        - button [ref=f3e283]:
+                          - img "vika_krez's highlight story picture" [ref=f3e286]
+                        - generic [ref=f3e287]: team🏆
+                  - listitem [ref=f3e290]:
+                    - link "View Education 🤓 highlight" [ref=f3e293] [cursor=pointer]:
+                      - /url: /stories/highlights/17967416746907154/
+                      - button "vika_krez's highlight story picture Education 🤓" [ref=f3e294]:
+                        - button [ref=f3e295]:
+                          - img "vika_krez's highlight story picture" [ref=f3e298]
+                        - generic [ref=f3e299]: Education 🤓
+                  - listitem [ref=f3e302]:
+                    - link "View 🤤 highlight" [ref=f3e305] [cursor=pointer]:
+                      - /url: /stories/highlights/17940140606362127/
+                      - button "vika_krez's highlight story picture 🤤" [ref=f3e306]:
+                        - button [ref=f3e307]:
+                          - img "vika_krez's highlight story picture" [ref=f3e310]
+                        - generic [ref=f3e311]: 🤤
+                  - listitem [ref=f3e314]:
+                    - link "View 💘 highlight" [ref=f3e317] [cursor=pointer]:
+                      - /url: /stories/highlights/18157974604273545/
+                      - button "vika_krez's highlight story picture 💘" [ref=f3e318]:
+                        - button [ref=f3e319]:
+                          - img "vika_krez's highlight story picture" [ref=f3e322]
+                        - generic [ref=f3e323]: 💘
+                  - listitem [ref=f3e326]:
+                    - link "View Stretching highlight" [ref=f3e329] [cursor=pointer]:
+                      - /url: /stories/highlights/18028980076690276/
+                      - button "vika_krez's highlight story picture Stretching" [ref=f3e330]:
+                        - button [ref=f3e331]:
+                          - img "vika_krez's highlight story picture" [ref=f3e334]
+                        - generic [ref=f3e335]: Stretching
+                  - listitem [ref=f3e338]:
+                    - link "View 🤘🏼 highlight" [ref=f3e341] [cursor=pointer]:
+                      - /url: /stories/highlights/18338125852044917/
+                      - button "vika_krez's highlight story picture 🤘🏼" [ref=f3e342]:
+                        - button [ref=f3e343]:
+                          - img "vika_krez's highlight story picture" [ref=f3e346]
+                        - generic [ref=f3e347]: 🤘🏼
+                  - listitem [ref=f3e350]:
+                    - link "View Функционал ✌🏻 highlight" [ref=f3e353] [cursor=pointer]:
+                      - /url: /stories/highlights/18072634673216225/
+                      - button "vika_krez's highlight story picture Функционал ✌🏻" [ref=f3e354]:
+                        - button [ref=f3e355]:
+                          - img "vika_krez's highlight story picture" [ref=f3e358]
+                        - generic [ref=f3e359]: Функционал ✌🏻
+                  - listitem [ref=f3e362]:
+                    - link "View 💆‍♀️ highlight" [ref=f3e365] [cursor=pointer]:
+                      - /url: /stories/highlights/18048303739703689/
+                      - button "vika_krez's highlight story picture 💆‍♀️" [ref=f3e366]:
+                        - button [ref=f3e367]:
+                          - img "vika_krez's highlight story picture" [ref=f3e370]
+                        - generic [ref=f3e371]: 💆‍♀️
+                  - listitem [ref=f3e374]:
+                    - link "View 🐾 highlight" [ref=f3e377] [cursor=pointer]:
+                      - /url: /stories/highlights/17952729695161750/
+                      - button "vika_krez's highlight story picture 🐾" [ref=f3e378]:
+                        - button [ref=f3e379]:
+                          - img "vika_krez's highlight story picture" [ref=f3e382]
+                        - generic [ref=f3e383]: 🐾
+                - button "Next" [ref=f3e386] [cursor=pointer]
+          - generic [ref=f3e388]:
+            - tablist [ref=f3e389]:
+              - link [ref=f3e391] [cursor=pointer]:
+                - /url: /vika_krez/
+                - img "Posts" [ref=f3e393]
+              - link [ref=f3e404] [cursor=pointer]:
+                - /url: /vika_krez/reels/
+                - img "Reels" [ref=f3e406]
+              - link [ref=f3e409] [cursor=pointer]:
+                - /url: /vika_krez/reposts/
+                - img "Reposts" [ref=f3e411]
+              - link [ref=f3e414] [cursor=pointer]:
+                - /url: /vika_krez/tagged/
+                - img "Tagged" [ref=f3e416]
+            - tabpanel
+          - generic [ref=f3e423]:
+            - generic [ref=f3e424]:
+              - link [ref=f3e426] [cursor=pointer]:
+                - /url: /vika_krez/p/Dera_6vjYrp/
+                - img "Оставим тут 👆🏼 Наша активное начало октября, массовый фитнес, заряд бодрости, улыбки и потрясающая погода 😁😎" [ref=f3e429]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f3e432] [cursor=pointer]:
+                - /url: /vika_krez/reel/DecVdFYszH1/
+                - 'img "По-моему здесь просто надо прочувствовать всю атмосферу 😁😎 Photographer: @sviat_street" [ref=f3e435]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f3e438] [cursor=pointer]:
+                - /url: /vika_krez/p/DecU4vbF_2N/
+                - img "На концерте у @gagara1987 Какая атмосфера, энергетика и какая красивая Полина 😍😁 Отжигали с @dasha_darimi_ Все вместе 🥹 Спектакль окончен 😁🤭 Этот момент просто растрогал 🥹 Какие талантливые детки и как круто, что дали такую возможность 🤗🥰 😁 🥹👉👈" [ref=f3e441]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link "Carousel" [ref=f3e444] [cursor=pointer]:
+                - /url: /vika_krez/p/DeHvFR2jc9h/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+            - generic [ref=f3e448]:
+              - link [ref=f3e450] [cursor=pointer]:
+                - /url: /vika_krez/p/DdrTbSJF1N2/
+                - img "Это нужно оставить здесь 🥹🥰🙏🏼 Budapest, Hungary 🇭🇺 Как здорово и волнительно сново выходить на ковер, показывать свое мастерство с командой, соревноваться и бороться за пьедестал. Один раз попробовав, уходить не хочется 😁🤗 Поэтому огромное спасибо моей команде , без всех нас, ничего бы этого не было🥹🤗 И нашему тренеру ! Спасибо Вам, @t.a.rzhevskaya , что верите в нас, поддерживаете, да и просто идею воплотили в жизнь 😁💘" [ref=f3e453]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f3e456] [cursor=pointer]:
+                - /url: /vika_krez/p/DdRMZ4YF7Fu/
+                - img "Summer 💘🐿️🐻" [ref=f3e459]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link "Carousel" [ref=f3e462] [cursor=pointer]:
+                - /url: /vika_krez/p/Dci8sqTFxxN/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link "Carousel" [ref=f3e467] [cursor=pointer]:
+                - /url: /vika_krez/p/DcdsnNhF6lZ/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+            - generic [ref=f3e471]:
+              - link "Carousel" [ref=f3e473] [cursor=pointer]:
+                - /url: /vika_krez/p/Db3r7Wpl5J8/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f3e478] [cursor=pointer]:
+                - /url: /vika_krez/p/Dbq9NMtjc04/
+                - img "Перебирая фотокарточки 😁😋😇" [ref=f3e481]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link "Carousel" [ref=f3e484] [cursor=pointer]:
+                - /url: /vika_krez/p/DaI2Z8pF0ha/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f3e490] [cursor=pointer]:
+                - /url: /vika_krez/p/DaIeHDOlyP2/
+                - img "Это я про морюшко вспомнила 🥹🩵🏝️" [ref=f3e493]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+      - contentinfo [ref=f3e495]:
+        - generic [ref=f3e496]:
+          - generic [ref=f3e498]:
+            - link "Meta" [ref=f3e500] [cursor=pointer]:
+              - /url: https://about.meta.com/
+            - link "About" [ref=f3e503] [cursor=pointer]:
+              - /url: https://about.instagram.com/
+            - link "Blog" [ref=f3e506] [cursor=pointer]:
+              - /url: https://about.instagram.com/blog/
+            - link "Jobs" [ref=f3e509] [cursor=pointer]:
+              - /url: https://about.instagram.com/about-us/careers
+            - link "Help" [ref=f3e512] [cursor=pointer]:
+              - /url: https://help.instagram.com/
+            - link "API" [ref=f3e515] [cursor=pointer]:
+              - /url: https://developers.facebook.com/docs/instagram
+            - link "Privacy" [ref=f3e518] [cursor=pointer]:
+              - /url: /legal/privacy/
+            - link "Terms" [ref=f3e521] [cursor=pointer]:
+              - /url: /legal/terms/
+            - link "Locations" [ref=f3e524] [cursor=pointer]:
+              - /url: /explore/locations/
+            - link "Popular" [ref=f3e527] [cursor=pointer]:
+              - /url: /popular/
+            - link "Instagram Lite" [ref=f3e530] [cursor=pointer]:
+              - /url: /web/lite/
+            - link "Meta AI" [ref=f3e533] [cursor=pointer]:
+              - /url: https://www.meta.ai/?utm_source=foa_web_footer
+            - link "Muse" [ref=f3e536] [cursor=pointer]:
+              - /url: https://muse.ai/
+            - link "Threads" [ref=f3e539] [cursor=pointer]:
+              - /url: https://www.threads.com/
+            - link "Contact Uploading & Non-Users" [ref=f3e542] [cursor=pointer]:
+              - /url: https://www.facebook.com/help/instagram/261704639352628
+            - link "Meta Verified" [ref=f3e545] [cursor=pointer]:
+              - /url: /accounts/meta_verified/?entrypoint=web_footer
+          - generic [ref=f3e547]:
+            - generic [ref=f3e548] [cursor=pointer]:
+              - generic [ref=f3e549]:
+                - generic [ref=f3e550]: English
+                - img "Down chevron icon" [ref=f3e553]
+              - combobox "Switch Display Language" [ref=f3e555]:
+                - option "Afrikaans"
+                - option "العربية"
+                - option "Čeština"
+                - option "Dansk"
+                - option "Deutsch"
+                - option "Ελληνικά"
+                - option "English" [selected]
+                - option "English (UK)"
+                - option "Español (España)"
+                - option "Español"
+                - option "فارسی"
+                - option "Suomi"
+                - option "Français"
+                - option "עברית"
+                - option "Bahasa Indonesia"
+                - option "Italiano"
+                - option "日本語"
+                - option "한국어"
+                - option "Bahasa Melayu"
+                - option "Norsk"
+                - option "Nederlands"
+                - option "Polski"
+                - option "Português (Brasil)"
+                - option "Português (Portugal)"
+                - option "Русский"
+                - option "Svenska"
+                - option "ภาษาไทย"
+                - option "Filipino"
+                - option "Türkçe"
+                - option "中文(简体)"
+                - option "中文(台灣)"
+                - option "বাংলা"
+                - option "ગુજરાતી"
+                - option "हिन्दी"
+                - option "Hrvatski"
+                - option "Magyar"
+                - option "ಕನ್ನಡ"
+                - option "മലയാളം"
+                - option "मराठी"
+                - option "नेपाली"
+                - option "ਪੰਜਾਬੀ"
+                - option "සිංහල"
+                - option "Slovenčina"
+                - option "தமிழ்"
+                - option "తెలుగు"
+                - option "اردو"
+                - option "Tiếng Việt"
+                - option "中文(香港)"
+                - option "Български"
+                - option "Français (Canada)"
+                - option "Română"
+                - option "Српски"
+                - option "Українська"
+            - generic [ref=f3e556]: © 2026 Instagram from Meta
+  - button [ref=f3e559] [cursor=pointer]:
+    - generic "Messages" [ref=f3e560]:
+      - generic [ref=f3e561]:
+        - img "Messages" [ref=f3e564]
+        - generic [ref=f3e567]: Messages
+      - generic [ref=f3e568]:
+        - button "User avatar ТРЕНЕР | КИКБОКСИНГ | БОКС" [ref=f3e570]:
+          - img "User avatar" [ref=f3e573]
+        - button "User avatar Юрий Усатов" [ref=f3e575]:
+          - img "User avatar" [ref=f3e578]
+        - button "User avatar Ирина Касач" [ref=f3e580]:
+          - img "User avatar" [ref=f3e583]

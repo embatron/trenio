@@ -1,0 +1,86 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/panaas/",
+  "handle": "panaas",
+  "slug": "panaas",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "panaas",
+  "lastName": "",
+  "fullName": "panaas",
+  "gender": "male",
+  "nameQuotes": [
+    "panaas"
+  ],
+  "headline": "Тренер по плаванию",
+  "sourceBio": "@oceanswim_minsk",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Минск",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Инструктор по плаванию.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "Плавание"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "bolshoj-tennis",
+      "label": "Большой теннис",
+      "quote": "Tennis"
+    }
+  ],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/panaas.jpg",
+  "photos": [
+    "/trainers/instagram/panaas.jpg",
+    "/trainers/instagram/panaas-g2.jpg",
+    "/trainers/instagram/panaas-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/panaas/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

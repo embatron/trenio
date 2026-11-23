@@ -1,0 +1,107 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/abazovik_massage/",
+  "handle": "abazovik_massage",
+  "slug": "abazovik_massage",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктор",
+  "lastName": "Абазовик",
+  "fullName": "Виктор Абазовик",
+  "gender": "male",
+  "nameQuotes": [
+    "Виктор",
+    "Абазовик"
+  ],
+  "headline": "Массажист",
+  "sourceBio": "Убираю боль и скованность",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Виктор Минск Массаж",
+  "threadsUrl": "",
+  "bio": "Я Виктор Абазовик, массажист в Минске с медицинским образованием. Делаю массаж и убираю боль и скованность. Принимаю на улице Герцена, 2.",
+  "about": [
+    "Перед началом сеанса я всегда рассказываю, в какой последовательности буду работать. Какие техники буду применять и почему."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/abazovik_massage/p/DRsUmXMjRvJ/",
+      "caption": "Знакомьтесь, я Абазовик Виктор - специалист по массажу с медицинским образованием.",
+      "imageText": [
+        "ОБО МНЕ"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/abazovik_massage/p/DRsSIB1DV-v/",
+      "caption": "Записывайтесь и приходите !",
+      "imageText": [
+        "ЧЕМ МОГУ ПОМОЧЬ ?",
+        "Хронические боли/травмы",
+        "Я, Абазовик Виктор, массажист с медицинским образованием"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/abazovik_massage/p/DRsPin0DXaO/",
+      "caption": "Записывайтесь и приходите!",
+      "imageText": [
+        "КАК ПРОХОДИТ РАБОТА СО МНОЙ",
+        "Запись и первичный опрос",
+        "Перед началом сеанса я всегда рассказываю",
+        "В какой последовательности буду работать",
+        "Какие техники буду применять и почему"
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "massazh",
+      "parentSlug": "reabilitaciya",
+      "label": "Массаж",
+      "evidence": "Массаж"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "massazh",
+    "parentSlug": "reabilitaciya",
+    "label": "Массаж"
+  },
+  "city": "Минск",
+  "address": "улица Герцена, 2",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/abazovik_massage.jpg",
+  "photos": [
+    "/trainers/instagram/abazovik_massage.jpg",
+    "/trainers/instagram/abazovik_massage-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/abazovik_massage/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

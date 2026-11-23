@@ -1,0 +1,104 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kozlovskaya_tatsiana/",
+  "handle": "kozlovskaya_tatsiana",
+  "slug": "kozlovskaya_tatsiana",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Татьяна",
+  "lastName": "Козловская",
+  "fullName": "Татьяна Козловская",
+  "gender": "female",
+  "nameQuotes": [
+    "Татьяна",
+    "Козловская"
+  ],
+  "headline": "Инструктор по йоге и тренер по медитации",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Татьяна Козловская Гродно Йога",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Практикующий инструктор по йоге. Онлайн-занятия — это путь к себе.",
+  "about": [
+    "Тазовое дно — это ваша опора. На выдохе собираем тазовое дно и втягиваем живот снизу вверх. Вдох — расслабление."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/kozlovskaya_tatsiana/reel/DIecMURo1ry/",
+      "caption": "Тазовое дно — это ваша опора. Оно поддерживает внутренние органы, влияет на осанку, дыхание и даже гормональный фон. На выдохе собираем тазовое дно, втягиваем живот снизу вверх. Вдох — расслабление.",
+      "textRole": "training",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/kozlovskaya_tatsiana/reel/DHBzd-ToY7a/",
+      "caption": "Наше тело всегда даёт нам сигналы — важно только научиться их замечать.",
+      "textRole": "facts",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/kozlovskaya_tatsiana/reel/DCj4iZ5oj0V/",
+      "caption": "Онлайн-занятия — это не просто тренировки, это путь к себе.",
+      "textRole": "about",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    },
+    {
+      "slug": "meditaciya",
+      "parentSlug": "velnes",
+      "label": "Медитация",
+      "evidence": "Медитация"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kozlovskaya_tatsiana.jpg",
+  "photos": [
+    "/trainers/instagram/kozlovskaya_tatsiana.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kozlovskaya_tatsiana/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://youtube.com/@bolsheyogi"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

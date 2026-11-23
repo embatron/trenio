@@ -1,0 +1,420 @@
+- generic [ref=f2e4]:
+  - generic [ref=f2e18]:
+    - generic [ref=f2e21]:
+      - link [ref=f2e26] [cursor=pointer]:
+        - /url: /
+        - img "Instagram" [ref=f2e31]
+      - generic [ref=f2e34]:
+        - link [ref=f2e39] [cursor=pointer]:
+          - /url: /
+          - img "Home" [ref=f2e44]
+        - link [ref=f2e49] [cursor=pointer]:
+          - /url: /reels/
+          - img "Reels" [ref=f2e54]
+        - link [ref=f2e61] [cursor=pointer]:
+          - /url: /direct/inbox/
+          - img "Messages" [ref=f2e66]
+        - link [ref=f2e72] [cursor=pointer]:
+          - /url: /explore/
+          - img "Search" [ref=f2e77]
+        - link [ref=f2e84] [cursor=pointer]:
+          - /url: "#"
+          - img "Notifications" [ref=f2e89]
+        - link [ref=f2e95] [cursor=pointer]:
+          - /url: "#"
+          - img "New post" [ref=f2e100]
+        - link [ref=f2e105] [cursor=pointer]:
+          - /url: "#"
+          - img "Professional dashboard" [ref=f2e110]
+        - link [ref=f2e117] [cursor=pointer]:
+          - /url: /trenioby/
+          - link [ref=f2e122]:
+            - img "trenioby's profile picture" [ref=f2e123]
+      - generic [ref=f2e124]:
+        - link [ref=f2e127] [cursor=pointer]:
+          - /url: "#"
+          - img "Settings" [ref=f2e132]
+        - link [ref=f2e135] [cursor=pointer]:
+          - /url: "#"
+          - img "Also from Meta" [ref=f2e140]
+    - generic [ref=f2e143]:
+      - main [ref=f2e144]:
+        - generic [ref=f2e146]:
+          - generic [ref=f2e147]:
+            - generic [ref=f2e148]:
+              - button [ref=f2e153] [cursor=pointer]:
+                - link [ref=f2e155]:
+                  - img "leonidovich_fit's profile picture" [ref=f2e156]
+              - generic [ref=f2e157]:
+                - generic [ref=f2e158]:
+                  - generic [ref=f2e159]:
+                    - link [ref=f2e161] [cursor=pointer]:
+                      - /url: "#"
+                      - heading "leonidovich_fit" [level=2] [ref=f2e162]
+                    - button [ref=f2e164] [cursor=pointer]:
+                      - img "Options" [ref=f2e166]
+                  - generic [ref=f2e170]: Антон | ПЕРСОНАЛЬНЫЙ ФИТНЕС ТРЕНЕР| МИНСК МИР
+                  - generic [ref=f2e172]:
+                    - generic [ref=f2e174]:
+                      - generic [ref=f2e175]: "93"
+                      - text: posts
+                    - link "3,012 followers" [ref=f2e177] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f2e178]:
+                        - generic "3,012" [ref=f2e179]
+                        - text: followers
+                    - link "784 following" [ref=f2e181] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f2e182]:
+                        - generic [ref=f2e183]: "784"
+                        - text: following
+                - generic [ref=f2e185]:
+                  - generic [ref=f2e186]: Personal Coach
+                  - generic [ref=f2e188]:
+                    - button [ref=f2e189] [cursor=pointer]:
+                      - generic [ref=f2e190]:
+                        - text: МИНСК-МИР 🌍📍Тренер
+                        - link "@body.factory.by" [ref=f2e191]:
+                          - /url: /body.factory.by/
+                        - text: Помогу тебе сделать красивое тело💪Высшее спортивное образование👨🏻‍🎓Мастер
+                    - generic [ref=f2e192]:
+                      - text: ...
+                      - button "more" [ref=f2e193] [cursor=pointer]
+                  - heading [level=1]
+                  - generic [ref=f2e195]:
+                    - generic [ref=f2e196]:
+                      - img "Link icon" [ref=f2e198]
+                      - link "www.tiktok.com/@ya_nechayanno?_t=8bWNxsdRAJh&_r=1" [ref=f2e202] [cursor=pointer]:
+                        - /url: https://l.instagram.com/?u=https%3A%2F%2Fwww.tiktok.com%2F%40ya_nechayanno%3F_t%3D8bWNxsdRAJh%26_r%3D1%26fbclid%3DPAZXh0bgNhZW0CMTEAcGRvZgJzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAadeC9ss-_yhIXMdOxoXgQmDQwixQ-t-BAUGEVWEV6YAB3ndgAPs0biapDyymg_aem_G0jBTY8CwCMNOSQ3iUUwmQ&e=AUCMVLwayAwm9vIgo_e1U-UqbgrjZICJSKUo8tw4oVihwIsfwwfx4-gOTWkySGarS7pZgMovakEEh6n2zD9zqDpk78ikr-wsZYSRdyG4wqu_IXuws1LVvvucNnwO-3HMYcgNEO8ymV_c
+                    - link "Threads leonidovich_fit" [ref=f2e205] [cursor=pointer]:
+                      - /url: https://www.threads.com/@leonidovich_fit?xmt=AQG0SFrPZChb7cVlFw9_h871cbvyTIDTm5bOOj6_5PKjRkk
+                      - img "Threads" [ref=f2e207]
+                      - generic [ref=f2e209]: leonidovich_fit
+            - generic [ref=f2e215]:
+              - button "Follow" [ref=f2e217] [cursor=pointer]
+              - button "Message" [ref=f2e221] [cursor=pointer]
+              - button [ref=f2e223] [cursor=pointer]:
+                - img "Similar accounts" [ref=f2e225]
+            - menu [ref=f2e229]:
+              - generic [ref=f2e231]:
+                - list [ref=f2e233]:
+                  - listitem [ref=f2e234]
+                  - listitem [ref=f2e235]
+                  - listitem [ref=f2e236]:
+                    - link "View Твенти сикс🦾😎 highlight" [ref=f2e239] [cursor=pointer]:
+                      - /url: /stories/highlights/17984494766943573/
+                      - button "leonidovich_fit's highlight story picture Твенти сикс🦾😎" [ref=f2e240]:
+                        - button [ref=f2e241]:
+                          - img "leonidovich_fit's highlight story picture" [ref=f2e244]
+                        - generic [ref=f2e245]: Твенти сикс🦾😎
+                  - listitem [ref=f2e248]:
+                    - link "View BF🦾🔥 highlight" [ref=f2e251] [cursor=pointer]:
+                      - /url: /stories/highlights/18083808794378428/
+                      - button "leonidovich_fit's highlight story picture BF🦾🔥" [ref=f2e252]:
+                        - button [ref=f2e253]:
+                          - img "leonidovich_fit's highlight story picture" [ref=f2e256]
+                        - generic [ref=f2e257]: BF🦾🔥
+                  - listitem [ref=f2e260]:
+                    - link "View My 🚀🚀🚀 highlight" [ref=f2e263] [cursor=pointer]:
+                      - /url: /stories/highlights/18101083799566575/
+                      - button "leonidovich_fit's highlight story picture My 🚀🚀🚀" [ref=f2e264]:
+                        - button [ref=f2e265]:
+                          - img "leonidovich_fit's highlight story picture" [ref=f2e268]
+                        - generic [ref=f2e269]: My 🚀🚀🚀
+                  - listitem [ref=f2e272]:
+                    - link "View Мои ракеты🚀🚀🚀 highlight" [ref=f2e275] [cursor=pointer]:
+                      - /url: /stories/highlights/17859076935695776/
+                      - button "leonidovich_fit's highlight story picture Мои ракеты🚀🚀🚀" [ref=f2e276]:
+                        - button [ref=f2e277]:
+                          - img "leonidovich_fit's highlight story picture" [ref=f2e280]
+                        - generic [ref=f2e281]: Мои ракеты🚀🚀🚀
+                  - listitem [ref=f2e284]:
+                    - link "View 📸📸📸 highlight" [ref=f2e287] [cursor=pointer]:
+                      - /url: /stories/highlights/18593787733027346/
+                      - button "leonidovich_fit's highlight story picture 📸📸📸" [ref=f2e288]:
+                        - button [ref=f2e289]:
+                          - img "leonidovich_fit's highlight story picture" [ref=f2e292]
+                        - generic [ref=f2e293]: 📸📸📸
+                  - listitem [ref=f2e296]:
+                    - link "View 🏆 highlight" [ref=f2e299] [cursor=pointer]:
+                      - /url: /stories/highlights/18247950598305644/
+                      - button "leonidovich_fit's highlight story picture 🏆" [ref=f2e300]:
+                        - button [ref=f2e301]:
+                          - img "leonidovich_fit's highlight story picture" [ref=f2e304]
+                        - generic [ref=f2e305]: 🏆
+                  - listitem [ref=f2e308]:
+                    - link "View Автопарк🏎️ highlight" [ref=f2e311] [cursor=pointer]:
+                      - /url: /stories/highlights/17883722274164871/
+                      - button "leonidovich_fit's highlight story picture Автопарк🏎️" [ref=f2e312]:
+                        - button [ref=f2e313]:
+                          - img "leonidovich_fit's highlight story picture" [ref=f2e316]
+                        - generic [ref=f2e317]: Автопарк🏎️
+                  - listitem [ref=f2e320]:
+                    - link "View 🥇🥇🥇 highlight" [ref=f2e323] [cursor=pointer]:
+                      - /url: /stories/highlights/17870821416251073/
+                      - button "leonidovich_fit's highlight story picture 🥇🥇🥇" [ref=f2e324]:
+                        - button [ref=f2e325]:
+                          - img "leonidovich_fit's highlight story picture" [ref=f2e328]
+                        - generic [ref=f2e329]: 🥇🥇🥇
+                  - listitem [ref=f2e332]:
+                    - link "View Твенти файв⚡️ highlight" [ref=f2e335] [cursor=pointer]:
+                      - /url: /stories/highlights/17968995188703723/
+                      - button "leonidovich_fit's highlight story picture Твенти файв⚡️" [ref=f2e336]:
+                        - button [ref=f2e337]:
+                          - img "leonidovich_fit's highlight story picture" [ref=f2e340]
+                        - generic [ref=f2e341]: Твенти файв⚡️
+                  - listitem [ref=f2e344]:
+                    - link "View ☝️😎 highlight" [ref=f2e347] [cursor=pointer]:
+                      - /url: /stories/highlights/18075651673999189/
+                      - button "leonidovich_fit's highlight story picture ☝️😎" [ref=f2e348]:
+                        - button [ref=f2e349]:
+                          - img "leonidovich_fit's highlight story picture" [ref=f2e352]
+                        - generic [ref=f2e353]: ☝️😎
+                  - listitem [ref=f2e356]:
+                    - link "View Online 🧑‍💻🖥️💻🛜 highlight" [ref=f2e359] [cursor=pointer]:
+                      - /url: /stories/highlights/18073342900698687/
+                      - button "leonidovich_fit's highlight story picture Online 🧑‍💻🖥️💻🛜" [ref=f2e360]:
+                        - button [ref=f2e361]:
+                          - img "leonidovich_fit's highlight story picture" [ref=f2e364]
+                        - generic [ref=f2e365]: Online 🧑‍💻🖥️💻🛜
+                  - listitem [ref=f2e368]:
+                    - link "View Бери скидку😎 highlight" [ref=f2e371] [cursor=pointer]:
+                      - /url: /stories/highlights/17989866791651092/
+                      - button "leonidovich_fit's highlight story picture Бери скидку😎" [ref=f2e372]:
+                        - button [ref=f2e373]:
+                          - img "leonidovich_fit's highlight story picture" [ref=f2e376]
+                        - generic [ref=f2e377]: Бери скидку😎
+                  - listitem [ref=f2e380]:
+                    - link "View Ворк🦾🏋🏽‍♀️ highlight" [ref=f2e383] [cursor=pointer]:
+                      - /url: /stories/highlights/18025985747021213/
+                      - button "leonidovich_fit's highlight story picture Ворк🦾🏋🏽‍♀️" [ref=f2e384]:
+                        - button [ref=f2e385]:
+                          - img "leonidovich_fit's highlight story picture" [ref=f2e388]
+                        - generic [ref=f2e389]: Ворк🦾🏋🏽‍♀️
+                  - listitem [ref=f2e392]:
+                    - link "View 10 days🏋🏽‍♀️ highlight" [ref=f2e395] [cursor=pointer]:
+                      - /url: /stories/highlights/18028683749215327/
+                      - button "leonidovich_fit's highlight story picture 10 days🏋🏽‍♀️" [ref=f2e396]:
+                        - button [ref=f2e397]:
+                          - img "leonidovich_fit's highlight story picture" [ref=f2e400]
+                        - generic [ref=f2e401]: 10 days🏋🏽‍♀️
+                - button "Next" [ref=f2e404] [cursor=pointer]
+          - generic [ref=f2e406]:
+            - tablist [ref=f2e407]:
+              - link [ref=f2e409] [cursor=pointer]:
+                - /url: /leonidovich_fit/
+                - img "Posts" [ref=f2e411]
+              - link [ref=f2e422] [cursor=pointer]:
+                - /url: /leonidovich_fit/reels/
+                - img "Reels" [ref=f2e424]
+              - link [ref=f2e427] [cursor=pointer]:
+                - /url: /leonidovich_fit/reposts/
+                - img "Reposts" [ref=f2e429]
+              - link [ref=f2e432] [cursor=pointer]:
+                - /url: /leonidovich_fit/tagged/
+                - img "Tagged" [ref=f2e434]
+            - tabpanel
+          - generic [ref=f2e441]:
+            - generic [ref=f2e442]:
+              - link [ref=f2e444] [cursor=pointer]:
+                - /url: /leonidovich_fit/p/DYZadKGAvsj/
+                - 'img "Привет!🤝 Меня зовут Антон, и я тренер @body.factory.by Если ты хочешь, похудеть, набрать мышечную массу, скорректировать фигуру, сделать своё тело подтянутым и мускулистым, то тогда тебе точно нужно ко мне!🦾 Я помогу тебе сделать тело твоей мечты!🏋 С мной ты сможешь достигнуть результата быстрее, без строгих диет и чрезмерной нагрузки. Я являюсь мастером спорта международного класса🥇 и имею высшее спортивное образование 👨‍🎓. Кроме того, в спорте и тренерской деятельности имею большой опыт, поэтому нам с тобой будет комфортно найти общий язык, если ты готов работать на результат!🔥🏆 А если тебе некомфортно или не позволяет время посещать зал и тренироваться со мной лично, то ты всегда можешь пойти ко мне на онлайн ведение 📶🛜🧑‍💻 #fitness #fit #sport #minsk #belarus" [ref=f2e447]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - img "Pinned post icon"
+              - link [ref=f2e450] [cursor=pointer]:
+                - /url: /leonidovich_fit/p/DZPESj0jpfp/
+                - img [ref=f2e453]
+                - generic:
+                  - generic:
+                    - generic:
+                      - img "Pinned post icon"
+              - link [ref=f2e456] [cursor=pointer]:
+                - /url: /leonidovich_fit/p/DQjriHVjKHG/
+                - 'img "🧘‍♂️ Восстановление — это не перерыв. Это часть роста. Многие думают, что прогресс происходит во время тренировки. Но на самом деле — мышцы растут, энергия восстанавливается, а сила приходит именно в период отдыха. 🔹 Спи 7–9 часов — без сна нет роста и восстановления. 🔹 Пей достаточно воды — обезвоживание = замедленное восстановление. 🔹 Делай лёгкую активность в «дни отдыха»: прогулки, растяжка, йога. 🔹 Не забывай про питание: белок + углеводы после тренировки = топливо для восстановления. 🔹 Иногда — просто ничего не делай. Отдых тоже требует дисциплины 😉 Если после каждой тренировки ты чувствуешь разбитость на 2–3 дня — возможно, ты перетренирован(а) или упускаешь ключевые элементы восстановления. ………………………… Photo📸: @verosha.ph #boys #photo #sport #gym #fitness #fitnessmodel #fit #minsk #belarus #insta #instafit #instagram #instabelarus #instaboys #minskworld" [ref=f2e459]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - img "Pinned post icon"
+              - link [ref=f2e462] [cursor=pointer]:
+                - /url: /leonidovich_fit/reel/DdLceJEgYbB/
+                - 'img "Пользуйтесь!🧴🫧 #юмор #рекомендации #minsk #boys #belarus" [ref=f2e465]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+            - generic [ref=f2e467]:
+              - link [ref=f2e469] [cursor=pointer]:
+                - /url: /leonidovich_fit/p/DQgTouLDE39/
+                - 'img "Всем привет!👋 Давненько не выходил на связь в формате «поста с фоткой» 📸 Информирую. Все хорошо) Развиваемся , работаем 🦾 Буду сейчас чаще писать посты о полезном, так что не переключайтесь📝 И все это с прекрасными фотокарточками, сделанными руками самого лучшего фотографа @verosha.ph ❤️‍🩹 Ну и не забывайте , на улице уже холодно, а лето не за горами , так что жду Вас у себя на тренировках в зале и онлайн 😉 #boys #photo #sport #gym #fit #fitnessmodel #fitness #minsk #belarus #insta #instaphoto #instalike #instafit #instaboy #instagram #instabelarus #minskworld" [ref=f2e472]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f2e475] [cursor=pointer]:
+                - /url: /leonidovich_fit/p/DZIYT5sguJ7/
+                - 'img "Летний сезон начался , и начнем мы его с этого лысого мужчины в брюках🥷🏻 Я не всегда в спортивках бегаю по залу, если что😉 Недавно мы с @veroshacam📸 сделали найкрутейший сет из фотографий ⚫️⚪️ , и сейчас Вашему вниманию их представляем❤️‍🔥. Готовьте пальчики, чтобы ставить лайки и репосты♥️ Предупреждаю🔥 Фоток будет много😎🔥 ………………………………….. Photo : @veroshacam ❤️‍🔥📸 Location : @chajka_studio 📍🔥 #photo #boys #minsk #belarus #instaphoto" [ref=f2e478]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f2e481] [cursor=pointer]:
+                - /url: /leonidovich_fit/p/DKpfLNjNO2O/
+                - 'img "☀️⛱️Лето - это не повод пропускать тренировки , лето - это результат того , как вы готовились к пляжному сезону весь год . Поэтому к следующему сезону нужно начинать готовиться уже сейчас. Начни, как раз с «понедельника»😉 🚀Прогресс начинается там, где заканчиваются отговорки! Запомни, есть три правила: Питание 🍓🥗🥕 Тренировки 🏋🏻‍♂️💪🏅 Восстановление 😴💤😌 И четвертый пункт - немножечко терпения, старания и упорства. И только тогда будет результат. Результат не терпит слабых. И когда слабый скажет хватит, ты должен сделать еще подход. И не в генетике тут дело совсем . Смейся, потей, ошибайся - но не останавливайся🦾 Ставь лайк❤️ и пиши в директ😉 Будем разбираться с тренировочным процессом и питанием🦾 #boys#gym#sport#fit#fitness#minsk#belarus#instagram# instafit#instalike#instabelarus#instaphoto#instaboys#inst asports" [ref=f2e484]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f2e487] [cursor=pointer]:
+                - /url: /leonidovich_fit/p/DQ9j-q0DL1L/
+                - 'img "Иногда, чтобы увидеть суть — нужно убрать цвет.⚫️⚪️ Без ярких фильтров, без отвлекающего шума. 💥 Остаётся только дисциплина. Работа. Дыхание. 🧘‍♂️ Ты и твой прогресс — в самом чистом виде. 🦾 Чёрно-белое не скрывает усталость, но подчёркивает силу. 💪 Потому что настоящие результаты не нуждаются в прикрасах. 🏆 У каждого свой путь к телу мечты! Если хочешь начать тренироваться — онлайн или в зале — пиши в директ! Подберём удобный формат и составим план под твои цели 💪 Photo📸: @verosha.ph ❤️‍🔥 #minsk #minskworld #belarus #boys #fitness #fit #model #fitnessmodel #sport #motivation #gym #insta #instafit #instaboys #instagram #instalike #instaart #минск #беларусь #blackandwhite" [ref=f2e490]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+            - generic [ref=f2e492]:
+              - link [ref=f2e494] [cursor=pointer]:
+                - /url: /leonidovich_fit/p/DQyifVnjOJN/
+                - 'img "Тренировка — это не наказание за еду. Это инвестиция в себя. 💪 Ты не «сжигаешь» десерт и не «отрабатываешь» ужин. Ты тренируешься, потому что ценишь своё тело — его силу, выносливость, способность становиться лучше.🏆 Каждое повторение — вклад в здоровье. Каждый сет — в уверенность. Каждая тренировка — в будущую версию себя, которой ты будешь гордиться.🏋🏻‍♂️ Еда — это энергия. ⚡️ Движение — это уважение к себе. А баланс — это свобода. У каждого свой путь к телу мечты! Если хочешь начать тренироваться — онлайн или в зале — пиши в директ! Подберём удобный формат и составим план под твои цели 💪 …………………………………… Photo📸: @verosha.ph ❤️‍🔥 #boys #fitlife #fitness #fit #gym #sport #fitnessmodel #minsk #minskworld #belarus #insta #instamood #instafit #instagram #instaboys #motivation #минск #беларусь #спорт #тренировки #мотивация" [ref=f2e497]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f2e500] [cursor=pointer]:
+                - /url: /leonidovich_fit/p/DZaVP6dAk_k/
+                - 'img "Пока ты думаешь, что летом можно «расслабиться», твое тело уже точит зубы, чтобы отложить всё съеденное в самое пузо. 🍔 Три месяца дивана = минус вся твоя форма. 🦾 Математика простая, как и последствия. Не будь тем самым туристом, который в сентябре судорожно ищет, как бы экстренно «слить» 5 кг воды и жира🧈. Пока ты планируешь «начать с сентября», твое тело решает, как бы покомфортнее запасти жирок. Не надо пахать до седьмого пота. Просто не давай себе окончательно заплесневеть на диване с бутылкой пивка🍺. Двигайся🏃‍♂️‍➡️, пей воду💧, ешь мясо 🥩 , а не только углеводы🥖. У каждого свой путь к телу мечты! Если хочешь начать тренироваться — онлайн или в зале — пиши в директ! Подберём удобный формат и составим план под твои цели 🦾 Photo📸: @veroshacam Location📍: @17.studio.minsk #boys #photo #fitness #minsk #чб" [ref=f2e503]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f2e506] [cursor=pointer]:
+                - /url: /leonidovich_fit/p/DZhTiDpDv6f/
+                - 'img "«Тебе просто повезло с генетикой»🦾🤔 Спасибо, конечно. Но давай честно. Генетика дает старт. Дисциплина дает результат. Это не везение. Это выбор. Твой выбор — лежать и завидовать. Или встать и сделать. Решай! 🎯🥇 У каждого свой путь к телу мечты! Если хочешь начать тренироваться — онлайн или в зале — пиши в директ! Подберём удобный формат и составим план под твои цели 🦾 ………………………………………………. Photo📸: @veroshacam ❤️‍🔥 Location📍: @17.studio.minsk 🔥 #boys #fit #fitness #minsk #instafit" [ref=f2e509]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+              - link [ref=f2e512] [cursor=pointer]:
+                - /url: /leonidovich_fit/p/DQpGQlsjK9w/
+                - img [ref=f2e515]
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Carousel"
+      - contentinfo [ref=f2e517]:
+        - generic [ref=f2e518]:
+          - generic [ref=f2e520]:
+            - link "Meta" [ref=f2e522] [cursor=pointer]:
+              - /url: https://about.meta.com/
+            - link "About" [ref=f2e525] [cursor=pointer]:
+              - /url: https://about.instagram.com/
+            - link "Blog" [ref=f2e528] [cursor=pointer]:
+              - /url: https://about.instagram.com/blog/
+            - link "Jobs" [ref=f2e531] [cursor=pointer]:
+              - /url: https://about.instagram.com/about-us/careers
+            - link "Help" [ref=f2e534] [cursor=pointer]:
+              - /url: https://help.instagram.com/
+            - link "API" [ref=f2e537] [cursor=pointer]:
+              - /url: https://developers.facebook.com/docs/instagram
+            - link "Privacy" [ref=f2e540] [cursor=pointer]:
+              - /url: /legal/privacy/
+            - link "Terms" [ref=f2e543] [cursor=pointer]:
+              - /url: /legal/terms/
+            - link "Locations" [ref=f2e546] [cursor=pointer]:
+              - /url: /explore/locations/
+            - link "Popular" [ref=f2e549] [cursor=pointer]:
+              - /url: /popular/
+            - link "Instagram Lite" [ref=f2e552] [cursor=pointer]:
+              - /url: /web/lite/
+            - link "Meta AI" [ref=f2e555] [cursor=pointer]:
+              - /url: https://www.meta.ai/?utm_source=foa_web_footer
+            - link "Muse" [ref=f2e558] [cursor=pointer]:
+              - /url: https://muse.ai/
+            - link "Threads" [ref=f2e561] [cursor=pointer]:
+              - /url: https://www.threads.com/
+            - link "Contact Uploading & Non-Users" [ref=f2e564] [cursor=pointer]:
+              - /url: https://www.facebook.com/help/instagram/261704639352628
+            - link "Meta Verified" [ref=f2e567] [cursor=pointer]:
+              - /url: /accounts/meta_verified/?entrypoint=web_footer
+          - generic [ref=f2e569]:
+            - generic [ref=f2e570] [cursor=pointer]:
+              - generic [ref=f2e571]:
+                - generic [ref=f2e572]: English
+                - img "Down chevron icon" [ref=f2e575]
+              - combobox "Switch Display Language" [ref=f2e577]:
+                - option "Afrikaans"
+                - option "العربية"
+                - option "Čeština"
+                - option "Dansk"
+                - option "Deutsch"
+                - option "Ελληνικά"
+                - option "English" [selected]
+                - option "English (UK)"
+                - option "Español (España)"
+                - option "Español"
+                - option "فارسی"
+                - option "Suomi"
+                - option "Français"
+                - option "עברית"
+                - option "Bahasa Indonesia"
+                - option "Italiano"
+                - option "日本語"
+                - option "한국어"
+                - option "Bahasa Melayu"
+                - option "Norsk"
+                - option "Nederlands"
+                - option "Polski"
+                - option "Português (Brasil)"
+                - option "Português (Portugal)"
+                - option "Русский"
+                - option "Svenska"
+                - option "ภาษาไทย"
+                - option "Filipino"
+                - option "Türkçe"
+                - option "中文(简体)"
+                - option "中文(台灣)"
+                - option "বাংলা"
+                - option "ગુજરાતી"
+                - option "हिन्दी"
+                - option "Hrvatski"
+                - option "Magyar"
+                - option "ಕನ್ನಡ"
+                - option "മലയാളം"
+                - option "मराठी"
+                - option "नेपाली"
+                - option "ਪੰਜਾਬੀ"
+                - option "සිංහල"
+                - option "Slovenčina"
+                - option "தமிழ்"
+                - option "తెలుగు"
+                - option "اردو"
+                - option "Tiếng Việt"
+                - option "中文(香港)"
+                - option "Български"
+                - option "Français (Canada)"
+                - option "Română"
+                - option "Српски"
+                - option "Українська"
+            - generic [ref=f2e578]: © 2026 Instagram from Meta
+  - button [ref=f2e581] [cursor=pointer]:
+    - generic "Messages" [ref=f2e582]:
+      - generic [ref=f2e583]:
+        - img "Messages" [ref=f2e586]
+        - generic [ref=f2e589]: Messages
+      - generic [ref=f2e590]:
+        - button "User avatar Kristina🪽" [ref=f2e592]:
+          - img "User avatar" [ref=f2e595]
+        - button "User avatar ИЛЬЯ┃ТРЕНЕР┃ОНЛАЙН┃ПОХУДЕНИЕ┃МИНСК" [ref=f2e597]:
+          - img "User avatar" [ref=f2e600]
+        - button "User avatar Vadim Panov" [ref=f2e602]:
+          - img "User avatar" [ref=f2e605]

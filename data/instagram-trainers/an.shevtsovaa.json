@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/an.shevtsovaa/",
+  "handle": "an.shevtsovaa",
+  "slug": "an.shevtsovaa",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Anna",
+  "lastName": "Tolkacheva",
+  "fullName": "Anna Tolkacheva",
+  "gender": "female",
+  "nameQuotes": [
+    "Anna",
+    "Tolkacheva"
+  ],
+  "headline": "Тренер по танцам и хореографии",
+  "sourceBio": "•Стилист в обучении ✨\n•Образы и эстетика в Гомеле 📷\n•Открыта к сотрудничеству с брендами💌\n•Work: @medvediza.dance 🤍",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Anna Tolkacheva Гомель",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Стилист в обучении. Образы и эстетика. Открыта к сотрудничеству с брендами.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "dancing"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Гомель",
+  "address": "",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/an.shevtsovaa.jpg",
+  "photos": [
+    "/trainers/instagram/an.shevtsovaa.jpg",
+    "/trainers/instagram/an.shevtsovaa-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/an.shevtsovaa/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://medvedizadance.by/anna-tolkachyova"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

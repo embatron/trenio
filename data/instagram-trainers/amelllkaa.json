@@ -1,0 +1,108 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/amelllkaa/",
+  "handle": "amelllkaa",
+  "slug": "amelllkaa",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Anna",
+  "lastName": "",
+  "fullName": "Anna",
+  "gender": "female",
+  "nameQuotes": [
+    "Anna"
+  ],
+  "headline": "Инструктор по растяжке, тренер по общефизической подготовке, инструктор по пилатесу и фитнес-тренер",
+  "sourceBio": "Коррекционный тренинг\nBarre, Stretching, Pilates\nДетский фитнес @fitness_deti_minsk",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Anna Могилёв stretching ОФП",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Коррекционный тренинг. Barre, Stretching, Pilates. Детский фитнес.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "stretching"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
+    },
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Pilates"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "plavanie",
+      "label": "Плавание",
+      "quote": "Swimming"
+    },
+    {
+      "slug": "boks",
+      "label": "Бокс",
+      "quote": "Boxing"
+    }
+  ],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/amelllkaa.jpg",
+  "photos": [
+    "/trainers/instagram/amelllkaa.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/amelllkaa/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/amelllkaaFit",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

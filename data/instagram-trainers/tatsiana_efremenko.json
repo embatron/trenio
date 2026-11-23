@@ -1,0 +1,91 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/tatsiana_efremenko/",
+  "handle": "tatsiana_efremenko",
+  "slug": "tatsiana_efremenko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Татьяна",
+  "lastName": "Ефременко",
+  "fullName": "Татьяна Ефременко",
+  "gender": "female",
+  "nameQuotes": [
+    "Татьяна",
+    "Ефременко"
+  ],
+  "headline": "Тренер по фигурному катанию и танцам и хореографии",
+  "sourceBio": "Татьяна Ефременко\n🇧🇾Беларусь, Минск\n⛸️Тренер-хореограф спортсменов сборной РБ по фигурному катанию",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Минск",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Когда меня спрашивают, что для меня танец, я могу дать однозначный ответ - это биение моего сердца, отражение моей души, способ выразить то, что словами передать невозможно. Мне кажется, что танец вошел в мою жизнь не случайно. С самого детства я чувствовала эту необъяснимую тягу к танцу, эту потребность выражать себя через тело. Когда я выросла я стала солисткой Государственного академического ансамбля танца. А продолжая танцевать, я начала обучать юных фигуристов этому прекрасному искусству. Ведь учитель продолжается в своем ученике.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/tatsiana_efremenko/reel/DXn4kR-me5c/",
+      "caption": "Когда меня спрашивают, что для меня танец, я могу дать однозначный ответ - это биение моего сердца, отражение моей души, способ выразить то, что словами передать невозможно… Мне кажется, что танец вошел в мою жизнь не случайно. С самого детства я чувствовала эту необъяснимую тягу к танцу, эту потребность выражать себя через тело. Когда я выросла я стала солисткой Государственного академического ансамбля танца Беларуси. А продолжая танцевать, я начала обучать юных фигуристов этому прекрасному искусству. Ведь учитель продолжается в своем ученике. Я @tatsiana_efremenko и танец для меня сама жизнь",
+      "textRole": "about",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "figurnoe-katanie",
+      "parentSlug": "zima",
+      "label": "Фигурное катание",
+      "evidence": "Фигурное катание"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "figurnoe-katanie",
+    "parentSlug": "zima",
+    "label": "Фигурное катание"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/tatsiana_efremenko.jpg",
+  "photos": [
+    "/trainers/instagram/tatsiana_efremenko.jpg",
+    "/trainers/instagram/tatsiana_efremenko-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 2,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 1
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/tatsiana_efremenko/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

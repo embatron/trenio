@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kate_harley_/",
+  "handle": "kate_harley_",
+  "slug": "kate_harley_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Kate",
+  "lastName": "Harley",
+  "fullName": "Kate Harley",
+  "gender": "",
+  "nameQuotes": [
+    "Kate",
+    "Harley"
+  ],
+  "headline": "Тренер по pole dance и танцам и хореографии",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Kate Harley Минск Pole Dance",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Инструктор exotic pole dance и видеограф экзотичных танцев. Танцую разный exotic pole dance.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pole-dance",
+      "parentSlug": "tancy",
+      "label": "Pole/Exotic Pole Dance",
+      "evidence": "exotic pole"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pole-dance",
+    "parentSlug": "tancy",
+    "label": "Pole/Exotic Pole Dance"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kate_harley_.jpg",
+  "photos": [
+    "/trainers/instagram/kate_harley_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kate_harley_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "gender",
+    "pinnedPosts"
+  ]
+}

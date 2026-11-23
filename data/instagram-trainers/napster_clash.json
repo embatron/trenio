@@ -1,0 +1,97 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/napster_clash/",
+  "handle": "napster_clash",
+  "slug": "napster_clash",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александр",
+  "lastName": "Золотых",
+  "fullName": "Александр Золотых",
+  "gender": "male",
+  "nameQuotes": [
+    "Александр",
+    "Золотых"
+  ],
+  "headline": "Тренер по велосипеду",
+  "sourceBio": "Александр Золотых\n⬇️ Запишись на тренировку сейчас⬇️\nt.me/napsterclash",
+  "sourceAbout": [
+    "Учусь учить и показывать безопасные способы преодоления съезжалок"
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Александр Золотых",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Учусь учить и показывать безопасные способы преодоления съезжалок.",
+  "about": [
+    "Как правильно, безопасно и быстро проходить плоские повороты на велосипеде."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/napster_clash/reel/DZ4-bJctuBU/",
+      "caption": "Ваша любимая тема - как правильно, безопасно и быстро проходить плоские повороты на велосипеде и почему на мотоцикле делают наоборот. На этот раз объясняет не какой-то там хрен с горы (я), а чемпионка Мира и Европы, гонщица команды Movistar @marlenreusser Если вам всё ещё кажется, что нужно свешиваться внутрь поворота, рекомендую переходить на мотоцикл, потому что на велосипеде вы рано или поздно ляжете в повороте с такой техникой",
+      "textRole": "training",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/napster_clash/reel/DQusYVojS1j/",
+      "caption": "ТОП-3 ошибки при обучении прыжкам на велосипеде👆 Если хочешь научиться прыгать столы и разрывники на горном велосипеде, пиши, я тебе помогу",
+      "textRole": "training",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/napster_clash/reel/DSOvDi9jd-a/",
+      "caption": "Норм или стрём выставлять колено внутрь на плоских поворотах? Разбираем по фактам",
+      "textRole": "facts",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "velosiped",
+      "parentSlug": "velo",
+      "label": "Велосипед",
+      "evidence": "горный велосипед"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "velosiped",
+    "parentSlug": "velo",
+    "label": "Велосипед"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/napster_clash.jpg",
+  "photos": [
+    "/trainers/instagram/napster_clash.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/napster_clash/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/napsterclash",
+    "website": "https://t.me/napsterclash"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email"
+  ]
+}

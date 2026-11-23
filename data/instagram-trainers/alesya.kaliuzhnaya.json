@@ -1,0 +1,102 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/alesya.kaliuzhnaya/",
+  "handle": "alesya.kaliuzhnaya",
+  "slug": "alesya.kaliuzhnaya",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алеся",
+  "lastName": "Калюжная",
+  "fullName": "Алеся Калюжная",
+  "gender": "female",
+  "nameQuotes": [
+    "Алеся",
+    "Калюжная"
+  ],
+  "headline": "Инструктор по пилатесу, фитнес-тренер и тренер по общефизической подготовке",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Алеся Калюжная Могилёв Пилатес",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Душевный тренер bellydance и пилатеса, хореограф-педагог. Влюбляю в танец и пилатес.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/alesya.kaliuzhnaya/reel/DOf5BOejF4t/",
+      "caption": "Как попасть на мои занятия по фитнесу⏬️ 👌занятия в @sk_olimpiets_mog ✅Пилатес+60 Понедельник, пятница 16.00, ср. 15.00 ✅пилатес взрослая группа с 16 лет Пн, ср, (пт 18.00 женская пластика/тематическое занятие (танц.занятие+пилатес) Пн,ср 20.00 ✅Идет набор в группу ОФП (общая физическая подготовка дети). с 10 лет и старше …) Предполагаемые дни пн.пт 16.00 ✅индивидуальные занятия по договоренности ! Кол-во мест ограничено 🙌друзья 🙌тут без лишней скромности! Хорошо у нас! Дружно ! Атмосферно! Позитивно! 🙌🫶 #рекомендации #пилатес #пилатескаждыйдень #пилатесмогилёв #пилатесфитнес #фитнесмогилев #могилев #сколимпиецмогилев",
+      "textRole": "facts",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "общая физическая подготовка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/alesya.kaliuzhnaya.jpg",
+  "photos": [
+    "/trainers/instagram/alesya.kaliuzhnaya.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/alesya.kaliuzhnaya/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

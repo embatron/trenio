@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vvi4ka_/",
+  "handle": "vvi4ka_",
+  "slug": "vvi4ka_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктория",
+  "lastName": "Свянтицкая",
+  "fullName": "Виктория Свянтицкая",
+  "gender": "female",
+  "nameQuotes": [
+    "Виктория",
+    "Свянтицкая"
+  ],
+  "headline": "Тренер по танцам и хореографии",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Виктория Свянтицкая Молодечно Танцы",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Dance and Deutsch Teacher. Домик для вашего досуга.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/vvi4ka_/p/Df1qK5qRVqA/",
+      "caption": "Раз в год и у меня мастер-класс бывает. На эту лабораторию собираю в зале танцоров любых возрастов и уровней. Стоимость-25 рублей",
+      "textRole": "promotion",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Молодечно",
+  "address": "",
+  "cityCandidates": [
+    "Молодечно"
+  ],
+  "priceFrom": 25,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vvi4ka_.jpg",
+  "photos": [
+    "/trainers/instagram/vvi4ka_.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vvi4ka_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/siarhei_ski/",
+  "handle": "siarhei_ski",
+  "slug": "siarhei_ski",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Сергей",
+  "lastName": "",
+  "fullName": "Сергей",
+  "gender": "male",
+  "nameQuotes": [
+    "Сергей"
+  ],
+  "headline": "Тренер по горным лыжам и сноуборду",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Сергей Логойск Горнолыжный спорт",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Инструктор по горным лыжам и сноуборду. Объясняю простыми и доступными словами.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "gornye-lyzhi",
+      "parentSlug": "zima",
+      "label": "Горные лыжи",
+      "evidence": "горнолыжный спорт"
+    },
+    {
+      "slug": "snoubord",
+      "parentSlug": "zima",
+      "label": "Сноуборд",
+      "evidence": "Сноуборд"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "gornye-lyzhi",
+    "parentSlug": "zima",
+    "label": "Горные лыжи"
+  },
+  "city": "Логойск",
+  "address": "",
+  "cityCandidates": [
+    "Логойск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/siarhei_ski.jpg",
+  "photos": [
+    "/trainers/instagram/siarhei_ski.jpg",
+    "/trainers/instagram/siarhei_ski-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/siarhei_ski/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

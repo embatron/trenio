@@ -1,0 +1,111 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/streltzova.d/",
+  "handle": "streltzova.d",
+  "slug": "streltzova.d",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Дарья",
+  "lastName": "Стрельцова",
+  "fullName": "Дарья Стрельцова",
+  "gender": "female",
+  "nameQuotes": [
+    "Дарья",
+    "Стрельцова"
+  ],
+  "headline": "Тренер по современным танцам, high heels и танцам и хореографии",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Дарья Стрельцова Минск Современные танцы",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Меняю тело и мысли. Индивидуальные тренировки и консультации по психосоматике.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/streltzova.d/reel/DYpC1CGI4Lz/",
+      "caption": "РАЗНОС! Prod&choreo @streltzova.d Трек @iamcardib Video @as23.video.prod #highheels #cardib",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/streltzova.d/p/DWmcSlBCAMm/",
+      "caption": "Слишком эмоционально все прошло и неожиданно идеально! Я люблю свою работу и людей, окружающих меня🙏🏼 Всем огромнейшее благодарю! Фотограф: @yuliana_vasilkova Ведущая: @lupenkova_event #шоу #танцы #окружение",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/streltzova.d/reel/DOO81DDiBp2/",
+      "caption": "Моя лучшая хорео С лучшим треком от лучшей @maryme.23 С лучшим видеографом @dariver.ner ❤️‍🔥 #highheels #танцыминск #танцы #superwomen",
+      "textRole": "none",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "sovremennye",
+      "parentSlug": "tancy",
+      "label": "Современные танцы",
+      "evidence": "Современные танцы"
+    },
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "High Heels"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "sovremennye",
+    "parentSlug": "tancy",
+    "label": "Современные танцы"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/streltzova.d.jpg",
+  "photos": [
+    "/trainers/instagram/streltzova.d.jpg",
+    "/trainers/instagram/streltzova.d-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/streltzova.d/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

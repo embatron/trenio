@@ -1,0 +1,108 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/svetik_porhun/",
+  "handle": "svetik_porhun",
+  "slug": "svetik_porhun",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Светлана",
+  "lastName": "Порхун",
+  "fullName": "Светлана Порхун",
+  "gender": "female",
+  "nameQuotes": [
+    "Светлана",
+    "Порхун"
+  ],
+  "headline": "Инструктор по растяжке, тренажёрного зала, фитнес-тренер и тренер по осанке",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Светлана Порхун Могилёв Растяжка",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Сделаю ТЕБЯ лучшей версией себя. Закончила вышку и кучу курсов, чтобы помочь именно тебе.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/svetik_porhun/p/C_IoFbko6P5/",
+      "caption": "Привет, давай знакомиться! Меня зовут Светлана, и я тот самый тренер, которого ты искала ! Я тренер с высшем профильным образованием. Моя специализация: инструктор тренажерного зала, тренер по стретчингу ( растяжка) , фитнесс инструктор групповых программ, хореограф. На самом деле я очень люблю спорт во всех его появлениях. Убежденна на опыте, что правильно подобранные физические нагрузки не только скорректируют фигуру, но и избавят от болей (в спине, суставах, головных болей) , улучшат осанку и, как следствие, добавят легкости и уверенности в себе. Я специалист с высшем образованием в сфере спорта и хореографии.",
+      "textRole": "promotion",
+      "imageText": [
+        "ПЕРВАЯ ТРЕНИРОВКА БЕСПЛАТНО"
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "стретчинг"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Могилёв",
+  "address": "улица Турова, 1",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/svetik_porhun.jpg",
+  "photos": [
+    "/trainers/instagram/svetik_porhun.jpg",
+    "/trainers/instagram/svetik_porhun-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/svetik_porhun/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

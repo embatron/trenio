@@ -1,0 +1,80 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ola_stretch/",
+  "handle": "ola_stretch",
+  "slug": "ola_stretch",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ольга",
+  "lastName": "Железняк",
+  "fullName": "Ольга Железняк",
+  "gender": "female",
+  "nameQuotes": [
+    "Ольга",
+    "Железняк"
+  ],
+  "headline": "Инструктор по растяжке",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Ольга Железняк Минск Растяжка",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Шпагат. Гибкость. Авторский метод работы со взрослыми.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "Растяжка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "adult"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ola_stretch.jpg",
+  "photos": [
+    "/trainers/instagram/ola_stretch.jpg",
+    "/trainers/instagram/ola_stretch-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ola_stretch/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/ola_stretch_forever",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

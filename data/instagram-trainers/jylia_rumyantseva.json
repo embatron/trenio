@@ -1,0 +1,103 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/jylia_rumyantseva/",
+  "handle": "jylia_rumyantseva",
+  "slug": "jylia_rumyantseva",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлия",
+  "lastName": "Румянцева",
+  "fullName": "Юлия Румянцева",
+  "gender": "female",
+  "nameQuotes": [
+    "Юлия",
+    "Румянцева"
+  ],
+  "headline": "Тренер по high heels, инструктор по растяжке и тренер по танцам и хореографии",
+  "sourceBio": "",
+  "sourceAbout": [
+    "Уже 5 лет я влюбляю девушек в стрип. На своих тренировках и в своём блоге показываю, какими мы можем быть разными и как по-разному проявить себя в танце. По образованию я хореограф. Окончила Гродненский колледж искусств. Есть высшее образование «Менеджмент»."
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Юлия Румянцева Гродно High Heels",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Обучаю с нуля: Frame Up Strip и High Heels. Влюбляю в танец.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/jylia_rumyantseva/p/DfPk7HfDdjI/",
+      "caption": "Новый месяц — новый танцевальный старт ✨ Открываю набор в группы для начинающих: 👠 High Heels — понедельник и среда в 20:30 💃 Frame Up Strip — вторник и четверг в 18:00 Можно без опыта — будем учиться, раскрываться и получать удовольствие от движения вместе 🤍 Выбирайте своё направление и присоединяйтесь! Запись — в личные сообщения 💌",
+      "textRole": "facts",
+      "imageText": [
+        "Влюбись в свой танец и пластику.",
+        "Начни танцевать с нуля в своём темпе.",
+        "Вторник и четверг 18:00"
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "High Heels"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "stretching"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "high-heels",
+    "parentSlug": "tancy",
+    "label": "High Heels"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/jylia_rumyantseva.jpg",
+  "photos": [
+    "/trainers/instagram/jylia_rumyantseva.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/jylia_rumyantseva/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/Julia_Rumyantsevaa",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email"
+  ]
+}

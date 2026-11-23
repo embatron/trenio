@@ -1,0 +1,88 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/vikki_manuk/",
+  "handle": "vikki_manuk",
+  "slug": "vikki_manuk",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктория",
+  "lastName": "Манук",
+  "fullName": "Виктория Манук",
+  "gender": "female",
+  "nameQuotes": [
+    "Виктория",
+    "Манук"
+  ],
+  "headline": "Тренер по танцам и хореографии",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Виктория Манук Минск Танцы",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "С любовью к себе через танцы. Групповые и индивидуальные занятия с нуля.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/vikki_manuk/reel/DVNcrQRjFxq/",
+      "caption": "Стартует новая утренняя группа. Расписание: Вт/Чт 11:15-12:15. Уровень: с нуля / начинающие. ул. Ратомская, 7",
+      "textRole": "facts",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tancy",
+    "parentSlug": "tancy",
+    "label": "Танцы"
+  },
+  "city": "Минск",
+  "address": "Ратомская улица, 7",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/vikki_manuk.jpg",
+  "photos": [
+    "/trainers/instagram/vikki_manuk.jpg",
+    "/trainers/instagram/vikki_manuk-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/vikki_manuk/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

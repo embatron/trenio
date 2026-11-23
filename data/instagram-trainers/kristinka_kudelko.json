@@ -1,0 +1,96 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kristinka_kudelko/",
+  "handle": "kristinka_kudelko",
+  "slug": "kristinka_kudelko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Кристина",
+  "lastName": "Куделко",
+  "fullName": "Кристина Куделко",
+  "gender": "female",
+  "nameQuotes": [
+    "Кристина",
+    "Куделко"
+  ],
+  "headline": "Тренер по горным лыжам, сноуборду, вейкборду и фитнес-тренер",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кристина Куделко Логойск",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Инструктор по горным лыжам. Научу ловить кайф от снега и воды и помогу прокачать тело.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "gornye-lyzhi",
+      "parentSlug": "zima",
+      "label": "Горные лыжи",
+      "evidence": "Горные лыжи"
+    },
+    {
+      "slug": "snoubord",
+      "parentSlug": "zima",
+      "label": "Сноуборд",
+      "evidence": "Сноуборд"
+    },
+    {
+      "slug": "vejkbord",
+      "parentSlug": "plavanie",
+      "label": "Вейкборд",
+      "evidence": "Вейкборд"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "gornye-lyzhi",
+    "parentSlug": "zima",
+    "label": "Горные лыжи"
+  },
+  "city": "Логойск",
+  "address": "",
+  "cityCandidates": [
+    "Логойск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kristinka_kudelko.jpg",
+  "photos": [
+    "/trainers/instagram/kristinka_kudelko.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kristinka_kudelko/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/tennis.coach.minsk/",
+  "handle": "tennis.coach.minsk",
+  "slug": "tennis.coach.minsk",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Екатерина",
+  "lastName": "Деголевич",
+  "fullName": "Екатерина Деголевич",
+  "gender": "female",
+  "nameQuotes": [
+    "Екатерина",
+    "Деголевич"
+  ],
+  "headline": "Тренер по большому теннису",
+  "sourceBio": "МСМК🎾\nАбсолютная чемпионка РБ по теннису🏆\nПобедительница WTA и ITF\n-Индивидуальные,👶 и сплит тренировки\n-Повышение мастерства\n📍Минск, Direct 💌",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Екатерина Деголевич",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "МСМК. Абсолютная чемпионка РБ по теннису. Победительница WTA и ITF.\n\nИндивидуальные и сплит-тренировки, повышение мастерства.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "bolshoj-tennis",
+      "parentSlug": "raketki",
+      "label": "Большой теннис",
+      "evidence": "теннис"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bolshoj-tennis",
+    "parentSlug": "raketki",
+    "label": "Большой теннис"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/tennis.coach.minsk.jpg",
+  "photos": [
+    "/trainers/instagram/tennis.coach.minsk.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/tennis.coach.minsk/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://www.instagram.com/ekaterina_dzehalevich?igsh=dnNqZTBpNDhoMGQ4"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

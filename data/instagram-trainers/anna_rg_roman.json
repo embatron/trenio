@@ -1,0 +1,80 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/anna_rg_roman/",
+  "handle": "anna_rg_roman",
+  "slug": "anna_rg_roman",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Анна",
+  "lastName": "Яцевич",
+  "fullName": "Анна Яцевич",
+  "gender": "female",
+  "nameQuotes": [
+    "Анна",
+    "Яцевич"
+  ],
+  "headline": "Тренер по художественной гимнастике",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Анна Яцевич Гродно Художественная гимнастика",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тренер по художественной гимнастике. С любовью к детям.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "hudozhestvennaya",
+      "parentSlug": "gimnastika",
+      "label": "Художественная гимнастика",
+      "evidence": "Художественная гимнастика"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "hudozhestvennaya",
+    "parentSlug": "gimnastika",
+    "label": "Художественная гимнастика"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/anna_rg_roman.jpg",
+  "photos": [
+    "/trainers/instagram/anna_rg_roman.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/anna_rg_roman/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/tishurov_vit/",
+  "handle": "tishurov_vit",
+  "slug": "tishurov_vit",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виталий",
+  "lastName": "Тишуров",
+  "fullName": "Виталий Тишуров",
+  "gender": "male",
+  "nameQuotes": [
+    "Виталий Тишуров"
+  ],
+  "headline": "Тренер по тайскому боксу, кикбоксингу и боксу",
+  "sourceBio": "🇧🇾Главный тренер Национальной Команды РБ 🏆Победитель Кубка Мира 🥇Чемпион Европы 🥇Чемпион РБ🇧🇾 @mt_factory_ ☎️29-143-70-98 запись на тренировки Direct",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Виталий Тишуров, тайский бокс, кикбоксинг",
+  "threadsUrl": "",
+  "bio": "Я главный тренер Национальной Команды. Веду тайский бокс и кикбоксинг.",
+  "about": [
+    "Запись на тренировки."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/tishurov_vit/p/CyDcyf7IufG/",
+      "caption": "🏆WORLD CUP IFMA U23 🥇🥉Результат вложенного труда и проделанной работы Приглашаем на тренировки в группы для НОВИЧКОВ и более опытных, пол и возраст значения не имеют ☎️+375(29)143-70-98 #муайтай #тайскийбокс #кикбоксинг #бокс #Минск #muaythai #kickboxing #boxing",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/tishurov_vit/reel/CVGa5bqoBkK/",
+      "caption": "Утренняя тренировка на берегу Адриатического моря BELARUS NATIONAL KICKBOXING TEAM 🏆ЧЕМПИОНАТ МИРА По вопросам тренировок: ☎️+375(29)143-70-98",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/tishurov_vit/reel/CPCuLCan0Qo/",
+      "caption": "Взрослая Команда «ФАБРИКА МУАЙТАЙ» показала лучший результат в стране 5 ЧЕМПИОНОВ Республики в одной команде 🥇Макей Евгений (РЦОП Стайки) зал на Автозаводской ☎️+375(29)143-70-98",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "tajskij-boks",
+      "parentSlug": "edinoborstva",
+      "label": "Тайский бокс",
+      "evidence": "Тайский бокс"
+    },
+    {
+      "slug": "kikboksing",
+      "parentSlug": "edinoborstva",
+      "label": "Кикбоксинг",
+      "evidence": "Кикбоксинг"
+    },
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "boxing"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "tajskij-boks",
+    "parentSlug": "edinoborstva",
+    "label": "Тайский бокс"
+  },
+  "city": "",
+  "address": "",
+  "cityCandidates": [
+    "Победитель",
+    "Минск",
+    "Стайки"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [
+    "adult"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/tishurov_vit.jpg",
+  "photos": [
+    "/trainers/instagram/tishurov_vit.jpg",
+    "/trainers/instagram/tishurov_vit-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/tishurov_vit/",
+    "phone": "+375 29 143-70-98",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "city",
+    "price",
+    "email",
+    "telegram"
+  ]
+}

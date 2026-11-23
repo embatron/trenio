@@ -1,0 +1,98 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/shnitko8/",
+  "handle": "shnitko8",
+  "slug": "shnitko8",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ольга",
+  "lastName": "Шнитко",
+  "fullName": "Ольга Шнитко",
+  "gender": "female",
+  "nameQuotes": [
+    "Ольга",
+    "Шнитко"
+  ],
+  "headline": "Инструктор по пилатесу, фитнес-тренер, инструктор по аквааэробике и тренер по плаванию",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Ольга Шнитко Минск Пилатес Аквааэробика",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Персональный фитнес тренер. Пилатес. Акваэробика. Обучение плаванию.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "akvaaerobika",
+      "parentSlug": "plavanie",
+      "label": "Аквааэробика",
+      "evidence": "Аквааэробика"
+    },
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "обучение плаванию"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/shnitko8.jpg",
+  "photos": [
+    "/trainers/instagram/shnitko8.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/shnitko8/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

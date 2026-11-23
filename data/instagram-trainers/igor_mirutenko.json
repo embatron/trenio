@@ -1,0 +1,89 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/igor_mirutenko/",
+  "handle": "igor_mirutenko",
+  "slug": "igor_mirutenko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Игорь",
+  "lastName": "Мирутенко",
+  "fullName": "Игорь Мирутенко",
+  "gender": "male",
+  "nameQuotes": [
+    "Игорь Мирутенко"
+  ],
+  "headline": "Тренер по карате",
+  "sourceBio": "🏆9-ти кратный чемпион мира ▪️7 дан. Традиционное каратэ ▪️6 дан. Окинавское кобудо 🏅Мастер Спорта РБ 🎓 Академик РАКШ 🎓 Магистр ЭН 📱",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "",
+  "threadsUrl": "",
+  "bio": "Я девятикратный чемпион мира. У меня 7 дан по традиционному каратэ и 6 дан по окинавскому кобудо. Я мастер спорта РБ, академик РАКШ и магистр ЭН.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/igor_mirutenko/reel/BbOPA1OgBh8/",
+      "caption": "World championship 2017. Fudokan karate. Kumite",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/igor_mirutenko/reel/DIbnCaVitcA/",
+      "caption": "2002 год. Фрагменты выступлений МС РБ по кумитэ Игоря Мирутенко. Каратэ WKF, Фудокан",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/igor_mirutenko/reel/CYnlEUnhLgk/",
+      "caption": "Okinawa 2019. Bo Kumite. Kata Sai by Igor Mirutenko",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "karate",
+      "parentSlug": "edinoborstva",
+      "label": "Карате",
+      "evidence": "каратэ"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "karate",
+    "parentSlug": "edinoborstva",
+    "label": "Карате"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/igor_mirutenko.jpg",
+  "photos": [
+    "/trainers/instagram/igor_mirutenko.jpg",
+    "/trainers/instagram/igor_mirutenko-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/igor_mirutenko/",
+    "phone": "+375 29 752-43-84",
+    "email": "",
+    "telegram": "",
+    "website": "http://karate-do.by/organiz/Igor_Mirutenko.htm"
+  },
+  "missing": [
+    "price",
+    "email",
+    "telegram"
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/rakushka.jul/",
+  "handle": "rakushka.jul",
+  "slug": "rakushka.jul",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлия",
+  "lastName": "",
+  "fullName": "Юлия",
+  "gender": "female",
+  "nameQuotes": [
+    "Юлия"
+  ],
+  "headline": "Инструктор по йоге и тренер по медитации",
+  "sourceBio": "Обучение/Консультации/Диагностика\nобучаю >13 лет,в практике >18 лет\n⚬Ashtanga yoga #KPJAYI\n⚬ Kundalini (level 2 ANS)\n⚬...\nyogaspot.by/julia и ещё 2",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Минск Йога Юлия",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Обучаю 13 лет, в практике 18 лет. Регулярная практика, которая входит в нашу жизнь, дисциплинирует ум.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/rakushka.jul/p/DfcXI7qsszU/",
+      "caption": "Регулярные классы Аштанга йоги в Yoga Place на Октябрьской 16: Запись в @yogaplace.by по ссылке в шапке профиля . . 🕊Регулярная практика, которая входит в нашу жизнь, дисциплинирует ум. Когда день за днем мы расстилаем коврик, наш ум обретает фокус. Мы приобретаем внутреннюю силу, глубже понимаем йогу и самого себя. И конечно, наоборот, имея нерегулярные и нестабильные занятия, мы всегда остаемся у подножия горы, так и не начав взбираться.",
+      "textRole": "about",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/rakushka.jul/p/DM7bFsfMJRg/",
+      "caption": "Ребефинг — это современный метод самопомощи. В традиции Кундалини йоги школы Йоги Бхаджана ребефинг отличается от классического: это очень глубокий исцеляющий процесс на подсознательном уровне, который достигается в процессе медитации (крийи). Практика которая через инструменты техник кундалини йоги дает возможность через сознание тела, ритмы и дыхание работать с подавленными негативными переживаниями",
+      "textRole": "about",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "yoga",
+      "parentSlug": "yoga",
+      "label": "Йога",
+      "evidence": "Йога"
+    },
+    {
+      "slug": "meditaciya",
+      "parentSlug": "velnes",
+      "label": "Медитация",
+      "evidence": "Медитация"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "yoga",
+    "parentSlug": "yoga",
+    "label": "Йога"
+  },
+  "city": "Минск",
+  "address": "Октябрьской 16",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/rakushka.jul.jpg",
+  "photos": [
+    "/trainers/instagram/rakushka.jul.jpg",
+    "/trainers/instagram/rakushka.jul-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/rakushka.jul/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://yogaspot.by/julia"
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

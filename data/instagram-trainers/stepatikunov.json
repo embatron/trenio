@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/stepatikunov/",
+  "handle": "stepatikunov",
+  "slug": "stepatikunov",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Степан",
+  "lastName": "",
+  "fullName": "Степан",
+  "gender": "male",
+  "nameQuotes": [
+    "Степан"
+  ],
+  "headline": "Тренер по питанию и фитнес-тренер",
+  "sourceBio": "Помогаю достичь результата удаленно\n🧘‍♀️Тренировки дома(с инвентарем/без)\n🏋🏻‍♀️Онлайн-контроль в зале\n🥑Составление рациона и КБЖУ",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Степан",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Помогаю достичь результата удаленно. Тренировки дома — с инвентарем и без. Онлайн-контроль в зале. Составление рациона и КБЖУ.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "nutriciolog",
+      "parentSlug": "fitnes",
+      "label": "Питание",
+      "evidence": "составление рациона"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "nutriciolog",
+    "parentSlug": "fitnes",
+    "label": "Питание"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/stepatikunov.jpg",
+  "photos": [
+    "/trainers/instagram/stepatikunov.jpg",
+    "/trainers/instagram/stepatikunov-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/stepatikunov/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

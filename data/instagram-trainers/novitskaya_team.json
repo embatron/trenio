@@ -1,0 +1,104 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/novitskaya_team/",
+  "handle": "novitskaya_team",
+  "slug": "novitskaya_team",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Аня",
+  "lastName": "Новицкая",
+  "fullName": "Аня Новицкая",
+  "gender": "female",
+  "nameQuotes": [
+    "Аня",
+    "Новицкая"
+  ],
+  "headline": "Фитнес-тренер",
+  "sourceBio": "Помогаю строить Фундамент здоровья женщины\nПервая в истории РБ чемпионка Wellness\nМСМК по велоспорту",
+  "sourceAbout": [
+    "Тренер, женщина, художник. Просто человек со своими ценностями. И с определенным отношением к делу, которым занимаюсь. Давайте познакомимся поближе.",
+    "И потом спорт стал искусством.",
+    "А еще в моей жизни случились танцы. И я даже несколько направлений неожиданно для себя успела попреподавать.",
+    "Это развитие осознанности. Участвовала в ретритах, таких как голодания, медитации и подобные практики. И уже второй год учусь на энерготерапевта.",
+    "Стала сначала спортсменом, а потом и тренером классной команды.",
+    "Наше тело - это прекрасный подарок. К телу - с любовью."
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Новицкая Аня",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Помогаю строить фундамент здоровья женщины. Первая в истории РБ чемпионка Wellness. МСМК по велоспорту.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "velnes",
+      "label": "Велнес",
+      "quote": "Wellness"
+    },
+    {
+      "slug": "velosiped",
+      "label": "Велосипед",
+      "quote": "велоспорту"
+    },
+    {
+      "slug": "tancy",
+      "label": "Танцы",
+      "quote": "танцы"
+    },
+    {
+      "slug": "meditaciya",
+      "label": "Медитация",
+      "quote": "медитации"
+    }
+  ],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/novitskaya_team.jpg",
+  "photos": [
+    "/trainers/instagram/novitskaya_team.jpg",
+    "/trainers/instagram/novitskaya_team-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/novitskaya_team/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/Novitskaya_Team",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

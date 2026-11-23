@@ -1,0 +1,108 @@
+{
+  ogTitle: 'Тренер Молодечно ┃Всеволод (@luschvs) • Instagram photos and videos',
+  headerText: 'luschvs\n' +
+    'Тренер Молодечно ┃Всеволод\n' +
+    '285 posts\n' +
+    '1,913 followers\n' +
+    '700 following\n' +
+    'MEN’S PHYSIQUE ATHLETE 🇧🇾 🥇 🥈\n' +
+    'Open cup of Mogilev 🥈\n' +
+    'Амбассадор @reckful.ru promo «Luch»\n' +
+    'Тренировки для парней и девушек\n' +
+    'DIRECT 📩\n' +
+    'Всеволод Лущик\n' +
+    'luschvs\n' +
+    'Follow\n' +
+    'Message\n' +
+    'Moscow\n' +
+    'Posing\n' +
+    'Georgia 🇬🇪\n' +
+    'Vietnam 🇻🇳\n' +
+    '🇨🇳 china\n' +
+    'Сезон 2026весна\n' +
+    'Food\n' +
+    'Reckful',
+  highlights: [
+    'Moscow',
+    'Posing',
+    'Georgia 🇬🇪',
+    'Vietnam 🇻🇳',
+    '🇨🇳 china',
+    'Сезон 2026весна',
+    'Food',
+    'Reckful'
+  ],
+  pinned: [
+    {
+      href: 'https://www.instagram.com/luschvs/p/DXpBy7pCPuB/',
+      pinned: true,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/luschvs/reel/DXRzMnkiNzL/',
+      pinned: true,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/luschvs/reel/DXnBTZXAHDl/',
+      pinned: true,
+      kind: 'reel'
+    }
+  ],
+  posts: [
+    {
+      href: 'https://www.instagram.com/luschvs/p/DXpBy7pCPuB/',
+      pinned: true,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/luschvs/reel/DXRzMnkiNzL/',
+      pinned: true,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/luschvs/reel/DXnBTZXAHDl/',
+      pinned: true,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/luschvs/p/De4zvt4A6BR/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/luschvs/p/De0CyaLOE3d/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/luschvs/p/De2qwIqABwI/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/luschvs/reel/DexekJ9gHPY/',
+      pinned: false,
+      kind: 'reel'
+    },
+    {
+      href: 'https://www.instagram.com/luschvs/p/DepB3MgABzz/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/luschvs/p/DdW-OeKAjmN/',
+      pinned: false,
+      kind: 'photo'
+    },
+    {
+      href: 'https://www.instagram.com/luschvs/p/DeR8K07Acnr/',
+      pinned: false,
+      kind: 'photo'
+    }
+  ],
+  face: {
+    w: 1080,
+    h: 1080
+  }
+}

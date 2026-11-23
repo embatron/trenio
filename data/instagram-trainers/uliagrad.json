@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/uliagrad/",
+  "handle": "uliagrad",
+  "slug": "uliagrad",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юля",
+  "lastName": "Градобаева",
+  "fullName": "Юля Градобаева",
+  "gender": "female",
+  "nameQuotes": [
+    "Юля Градобаева"
+  ],
+  "headline": "Тренер по плаванию и инструктор по аквааэробике",
+  "sourceBio": "тренер по плаванию\nинструктор по аквааэробике\nобучение плаванию",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Ее адрес в городе Молодечно",
+  "threadsUrl": "",
+  "presentationMode": "source",
+  "bio": "Тренер по плаванию. Инструктор по аквааэробике. Обучение плаванию.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "plavanie",
+      "parentSlug": "plavanie",
+      "label": "Плавание",
+      "evidence": "обучение плаванию"
+    },
+    {
+      "slug": "akvaaerobika",
+      "parentSlug": "plavanie",
+      "label": "Аквааэробика",
+      "evidence": "Аквааэробика"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "plavanie",
+    "parentSlug": "plavanie",
+    "label": "Плавание"
+  },
+  "city": "Молодечно",
+  "address": "улица Чкалова, 5",
+  "cityCandidates": [
+    "Молодечно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/uliagrad.jpg",
+  "photos": [
+    "/trainers/instagram/uliagrad.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/uliagrad/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

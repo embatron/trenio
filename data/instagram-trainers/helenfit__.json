@@ -1,0 +1,99 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/helenfit__/",
+  "handle": "helenfit__",
+  "slug": "helenfit__",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Елена",
+  "lastName": "Козлова",
+  "fullName": "Елена Козлова",
+  "gender": "female",
+  "nameQuotes": [
+    "Елена Козлова"
+  ],
+  "headline": "Инструктор тренажёрного зала и фитнес-тренер",
+  "sourceBio": "🇧🇾🇷🇺🇷🇴🇨🇾🇫🇮🇹🇷🇦🇩🇻🇳🇪🇬🇬🇪🇦🇿",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Елена Козлова, Минск, фитнес, тренажерный зал",
+  "threadsUrl": "",
+  "bio": "Я тренер по фитнесу и тренажерному залу в Минске.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/helenfit__/p/Cl1xXSbKImr/",
+      "caption": "Lines",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/helenfit__/p/ClzJ-kJK33x/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/helenfit__/p/Clb2CPvqIQC/",
+      "caption": "",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/helenfit__.jpg",
+  "photos": [
+    "/trainers/instagram/helenfit__.jpg",
+    "/trainers/instagram/helenfit__-g2.jpg",
+    "/trainers/instagram/helenfit__-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/helenfit__/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/coach_hockey_leonov/",
+  "handle": "coach_hockey_leonov",
+  "slug": "coach_hockey_leonov",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгений",
+  "lastName": "Леонов",
+  "fullName": "Евгений Леонов",
+  "gender": "male",
+  "nameQuotes": [
+    "Леонов Евгений Валерьевич"
+  ],
+  "headline": "Тренер по хоккею",
+  "sourceBio": "Леонов Евгений Валерьевич\nВедущая хоккейная школа Динамо🇧🇾@dinamojuniverse @dinamo.2017\n💪Докажу,что труд важнее таланта",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Евгений Леонов Минск хоккей",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Докажу, что труд важнее таланта.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/coach_hockey_leonov/p/DUvMkiGjaIg/",
+      "caption": "ПОД НАДЕЖНЫМ КРЫЛОМ",
+      "textRole": "promotion",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/coach_hockey_leonov/reel/DZDcIsTNbyk/",
+      "caption": "АРТИСТЫ ДИНАМО ДЖУНИВЕРС 2017",
+      "textRole": "promotion",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "hokkej",
+      "parentSlug": "zima",
+      "label": "Хоккей",
+      "evidence": "Хоккей"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "beg",
+      "label": "Бег",
+      "quote": "ПолуМарафон2026"
+    }
+  ],
+  "primarySport": {
+    "slug": "hokkej",
+    "parentSlug": "zima",
+    "label": "Хоккей"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/coach_hockey_leonov.jpg",
+  "photos": [
+    "/trainers/instagram/coach_hockey_leonov.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/coach_hockey_leonov/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://www.eliteprospects.com/player/70447/yevgeni-leonov"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

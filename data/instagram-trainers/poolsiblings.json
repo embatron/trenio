@@ -1,0 +1,93 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/poolsiblings/",
+  "handle": "poolsiblings",
+  "slug": "poolsiblings",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Егор",
+  "lastName": "Парубец",
+  "fullName": "Егор Парубец",
+  "gender": "male",
+  "nameQuotes": [
+    "Егор Парубец",
+    "ПАРУБЕЦ ЕГОР"
+  ],
+  "headline": "Тренер по бильярду",
+  "sourceBio": "Запись на тренировки — Direct 🎱 Пробное занятие - 15р 🎱 Индивидуальные и групповые занятия 🎱 Обучаю с нуля и улучшаю технику 🎱 8 лет опыта",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Егор Парубец Минск Бильярд billiardstarball",
+  "threadsUrl": "",
+  "bio": "Я Егор Парубец, тренер по бильярду в Минске. Обучаю с нуля и улучшаю технику.",
+  "about": [
+    "Веду индивидуальные и групповые занятия."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/poolsiblings/p/DTuW0ZkiEYq/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/poolsiblings/p/DTuWvjMCEpM/",
+      "caption": "",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "bilyard",
+      "parentSlug": "klub",
+      "label": "Бильярд",
+      "evidence": "Бильярд"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bilyard",
+    "parentSlug": "klub",
+    "label": "Бильярд"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/poolsiblings.jpg",
+  "photos": [
+    "/trainers/instagram/poolsiblings.jpg",
+    "/trainers/instagram/poolsiblings-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/poolsiblings/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

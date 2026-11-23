@@ -1,0 +1,99 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/alesya_jump_hall/",
+  "handle": "alesya_jump_hall",
+  "slug": "alesya_jump_hall",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алеся",
+  "lastName": "",
+  "fullName": "Алеся",
+  "gender": "female",
+  "nameQuotes": [
+    "Алеся"
+  ],
+  "headline": "Инструктор по джампингу, тренер по батуту и фитнес-тренер",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Алеся Витебск Батут Джампинг",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Фитнес на батутах. Набор в группу «Новичок». Международный инструктор jumping fitness.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/alesya_jump_hall/p/Dd-yHe9hf_r/",
+      "caption": "Безопасность на батуте — наш главный приоритет! 🛡️ Проверь себя перед тренировкой. Прыгать НЕЛЬЗЯ, если у тебя: • Беременность 🤰 • Проблемы с сердцем/сосудами 💔 • Грыжи в стадии обострения 🦴 • Недавние операции (менее 3-6 мес) 🏥 • ОРВИ и температура 🤒 Прыгать С ОСТОРОЖНОСТЬЮ (после консультации врача): • Варикоз (тяжелые стадии) 🩸 • Недавно перенесенные роды 👶 • Проблемы с суставами 👟",
+      "textRole": "facts",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "dzhamping",
+      "parentSlug": "fitnes",
+      "label": "Джампинг",
+      "evidence": "Джампинг"
+    },
+    {
+      "slug": "batut",
+      "parentSlug": "gimnastika",
+      "label": "Батут",
+      "evidence": "Батут"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "fitness"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "dzhamping",
+    "parentSlug": "fitnes",
+    "label": "Джампинг"
+  },
+  "city": "Витебск",
+  "address": "",
+  "cityCandidates": [
+    "Витебск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/alesya_jump_hall.jpg",
+  "photos": [
+    "/trainers/instagram/alesya_jump_hall.jpg",
+    "/trainers/instagram/alesya_jump_hall-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/alesya_jump_hall/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

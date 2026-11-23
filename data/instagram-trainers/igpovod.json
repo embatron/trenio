@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/igpovod/",
+  "handle": "igpovod",
+  "slug": "igpovod",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Игорь",
+  "lastName": "Повод",
+  "fullName": "Игорь Повод",
+  "gender": "male",
+  "nameQuotes": [
+    "Игорь",
+    "Повод"
+  ],
+  "headline": "Тренер по шахматам",
+  "sourceBio": "Тренер по шахматам Спортивный журналист Блогер",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Игорь Повод Гродно Шахматы",
+  "threadsUrl": "",
+  "bio": "Я Игорь Повод, тренер по шахматам в Гродно.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/igpovod/p/DdG9wx4CtLF/",
+      "caption": "",
+      "imageText": [
+        "ШАХМАТЫ Это игра, искусство, спорт, наука."
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "shahmaty",
+      "parentSlug": "intellekt",
+      "label": "Шахматы",
+      "evidence": "Шахматы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "shahmaty",
+    "parentSlug": "intellekt",
+    "label": "Шахматы"
+  },
+  "city": "Гродно",
+  "address": "",
+  "cityCandidates": [
+    "Гродно"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/igpovod.jpg",
+  "photos": [
+    "/trainers/instagram/igpovod.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 1,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/igpovod/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/in4Povod",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email"
+  ]
+}

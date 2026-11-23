@@ -1,0 +1,122 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/oksanaastapchik/",
+  "handle": "oksanaastapchik",
+  "slug": "oksanaastapchik",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Оксана",
+  "lastName": "Астапчик",
+  "fullName": "Оксана Астапчик",
+  "gender": "female",
+  "nameQuotes": [
+    "ОКСАНА",
+    "АСТАПЧИК"
+  ],
+  "headline": "Тренер по общефизической подготовке, фитнес-тренер и тренер по осанке, танцам и хореографии",
+  "sourceBio": "",
+  "sourceAbout": [
+    "С детьми я провожу занятия в трех направлениях: 1. Обучение движению и технике в тренажёрном зале 2. Занятия по ОФП (общая физическая подготовка) 3. Занятия с детьми, у которых есть особенности по здоровью со стороны ОДА (опорно-двигательного аппарата)",
+    "ФОРМАТЫ ЗАНЯТИЙ: индивидуальные. Парные (могу объединять детей в пару, если считаю нужным). Групповые.",
+    "Мой тренерский опыт 2,5 года непрерывных занятий. За это время я провела уже 3000+ тренировок для взрослых и детей (персональных и групповых)"
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Оксана Астапчик Борисов ОФП",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Танцую с гирями. Фитнес для тела и мозга. Помогаю мамам прийти в форму, а детям сохранить осанку.",
+  "about": [
+    "С детьми провожу занятия в трех направлениях: обучение движению и технике в тренажёрном зале и занятия по ОФП."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/oksanaastapchik/reel/DciaxX2tGJb/",
+      "caption": "🤷🏼‍♀️",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/oksanaastapchik/p/DcxbFqOjcca/",
+      "caption": "Расписание и стоимость услуг студии фитнеса @oksanaastapchik",
+      "textRole": "facts",
+      "imageText": [
+        "РАСПИСАНИЕ СТУДИИ ФИТНЕСА. ПН 18.00 ОФП 6-9 лет, 19.00 силовая тренировка. ВТ 9.30 ДЕТИ осанка+офп, 10.30 степ-аэробика, 17.00 мини-группа сила/мобильность, 18.00 тренировка с гирями (HIIT, танцы с гирями), 19.00 силовая тренировка. СР 9.30 силовая тренировка, 17.15 ОФП дети 4-6 лет, 18.00 ОФП 10-14 лет, 19.00 ОСАНКА для офисных работников. ЧТ 9.30 ДЕТИ осанка+офп, 10.30 степ-аэробика, 17.00 мини-группа сила/мобильность, 18.00 степ-аэробика, 19.00 круговая тренировка. ПТ 9.30 силовая тренировка, 17.45 ОФП 6-9 лет, 18.45 ОФП 10-14 лет.",
+        "Прейскурант. Разовое посещение 25 BYN. Индивидуальное занятие 40 BYN. Сплит (2 человека) 80 BYN. Мини-группа 4-6 человек (8 занятий) 550 BYN. Групповые абонементы. Взрослые: 4/8 занятий 100 / 120 BYN, 8/8 занятий 145 / 160 BYN, 12/12 занятий 170 / 185 BYN. Дети 6+ (55 мин): 8/8 занятий 130 / 145 BYN, 4/8 занятий 72 / 90 BYN. Дети 3-5 лет (40 мин): 8/8 занятий 120 / 135 BYN, 4/8 занятий 65 / 80 BYN. Детский абонемент любой возраст 160 BYN."
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "общая физическая подготовка"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "ofp",
+    "parentSlug": "fitnes",
+    "label": "ОФП"
+  },
+  "city": "Борисов",
+  "address": "",
+  "cityCandidates": [
+    "Борисов"
+  ],
+  "priceFrom": 25,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/oksanaastapchik.jpg",
+  "photos": [
+    "/trainers/instagram/oksanaastapchik.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/oksanaastapchik/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

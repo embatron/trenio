@@ -1,0 +1,97 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ostap__gym/",
+  "handle": "ostap__gym",
+  "slug": "ostap__gym",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Сергей",
+  "lastName": "",
+  "fullName": "Сергей",
+  "gender": "male",
+  "nameQuotes": [
+    "Сергей"
+  ],
+  "headline": "Тренер по осанке и коррекции фигуры",
+  "sourceBio": "Персональные тренировки по коррекции фигуры",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Сергей Брест Осанка",
+  "threadsUrl": "",
+  "bio": "Я Сергей, тренер. Осанка. Город Брест.",
+  "about": [
+    "Веду персональные тренировки по коррекции фигуры."
+  ],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/ostap__gym/reel/DUoVae7jmUs/",
+      "caption": "",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/ostap__gym/reel/DRQvk28iJks/",
+      "caption": "",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "figura",
+      "parentSlug": "fitnes",
+      "label": "Коррекция фигуры",
+      "evidence": "Коррекция фигуры"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "osanka",
+    "parentSlug": "reabilitaciya",
+    "label": "Осанка"
+  },
+  "city": "Брест",
+  "address": "",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ostap__gym.jpg",
+  "photos": [
+    "/trainers/instagram/ostap__gym.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ostap__gym/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

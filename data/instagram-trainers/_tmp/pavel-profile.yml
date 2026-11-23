@@ -1,0 +1,103 @@
+- generic [ref=f20e4]:
+  - generic [ref=f20e18]:
+    - generic [ref=f20e21]:
+      - link "Instagram" [ref=f20e26] [cursor=pointer]:
+        - /url: /
+        - img "Instagram" [ref=f20e31]
+      - generic [ref=f20e34]:
+        - link "Home" [ref=f20e39] [cursor=pointer]:
+          - /url: /
+          - img "Home" [ref=f20e44]
+        - link "Reels" [ref=f20e49] [cursor=pointer]:
+          - /url: /reels/
+          - img "Reels" [ref=f20e54]
+        - link "Messages" [ref=f20e61] [cursor=pointer]:
+          - /url: /direct/inbox/
+          - img "Messages" [ref=f20e66]
+        - link "Search" [ref=f20e72] [cursor=pointer]:
+          - /url: /explore/
+          - img "Search" [ref=f20e77]
+        - link "Notifications" [ref=f20e84] [cursor=pointer]:
+          - /url: "#"
+          - img "Notifications" [ref=f20e89]
+        - link "New post" [ref=f20e95] [cursor=pointer]:
+          - /url: "#"
+          - img "New post" [ref=f20e100]
+        - link "Professional dashboard" [ref=f20e105] [cursor=pointer]:
+          - /url: "#"
+          - img "Professional dashboard" [ref=f20e110]
+        - link "trenioby's profile picture" [ref=f20e117] [cursor=pointer]:
+          - /url: /trenioby/
+          - link "trenioby's profile picture" [ref=f20e122]:
+            - img "trenioby's profile picture" [ref=f20e123]
+      - generic [ref=f20e124]:
+        - link "Settings" [ref=f20e127] [cursor=pointer]:
+          - /url: "#"
+          - img "Settings" [ref=f20e132]
+        - link "Also from Meta" [ref=f20e135] [cursor=pointer]:
+          - /url: "#"
+          - img "Also from Meta" [ref=f20e140]
+    - generic [ref=f20e143]:
+      - main [ref=f20e144]:
+        - generic [ref=f20e146]:
+          - generic [ref=f20e147]:
+            - generic [ref=f20e148]
+            - generic [ref=f20e210]
+            - menu [ref=f20e224]
+          - generic [ref=f20e401]:
+            - tablist [ref=f20e402]
+            - tabpanel
+          - generic [ref=f20e436]:
+            - generic [ref=f20e437]
+            - generic [ref=f20e462]
+            - generic [ref=f20e487]
+      - contentinfo [ref=f20e512]:
+        - generic [ref=f20e513]:
+          - generic [ref=f20e515]:
+            - link "Meta" [ref=f20e517] [cursor=pointer]:
+              - /url: https://about.meta.com/
+            - link "About" [ref=f20e520] [cursor=pointer]:
+              - /url: https://about.instagram.com/
+            - link "Blog" [ref=f20e523] [cursor=pointer]:
+              - /url: https://about.instagram.com/blog/
+            - link "Jobs" [ref=f20e526] [cursor=pointer]:
+              - /url: https://about.instagram.com/about-us/careers
+            - link "Help" [ref=f20e529] [cursor=pointer]:
+              - /url: https://help.instagram.com/
+            - link "API" [ref=f20e532] [cursor=pointer]:
+              - /url: https://developers.facebook.com/docs/instagram
+            - link "Privacy" [ref=f20e535] [cursor=pointer]:
+              - /url: /legal/privacy/
+            - link "Terms" [ref=f20e538] [cursor=pointer]:
+              - /url: /legal/terms/
+            - link "Locations" [ref=f20e541] [cursor=pointer]:
+              - /url: /explore/locations/
+            - link "Popular" [ref=f20e544] [cursor=pointer]:
+              - /url: /popular/
+            - link "Instagram Lite" [ref=f20e547] [cursor=pointer]:
+              - /url: /web/lite/
+            - link "Meta AI" [ref=f20e550] [cursor=pointer]:
+              - /url: https://www.meta.ai/?utm_source=foa_web_footer
+            - link "Muse" [ref=f20e553] [cursor=pointer]:
+              - /url: https://muse.ai/
+            - link "Threads" [ref=f20e556] [cursor=pointer]:
+              - /url: https://www.threads.com/
+            - link "Contact Uploading & Non-Users" [ref=f20e559] [cursor=pointer]:
+              - /url: https://www.facebook.com/help/instagram/261704639352628
+            - link "Meta Verified" [ref=f20e562] [cursor=pointer]:
+              - /url: /accounts/meta_verified/?entrypoint=web_footer
+          - generic [ref=f20e564]:
+            - generic [ref=f20e565] [cursor=pointer]
+            - generic [ref=f20e573]: © 2026 Instagram from Meta
+  - button "Messages" [ref=f20e576] [cursor=pointer]:
+    - generic "Messages" [ref=f20e577]:
+      - generic [ref=f20e578]:
+        - img "Messages" [ref=f20e581]
+        - generic [ref=f20e584]: Messages
+      - generic [ref=f20e585]:
+        - button "User avatar Kristina🪽" [ref=f20e587]:
+          - img "User avatar" [ref=f20e590]
+        - button "User avatar ИЛЬЯ┃ТРЕНЕР┃ОНЛАЙН┃ПОХУДЕНИЕ┃МИНСК" [ref=f20e592]:
+          - img "User avatar" [ref=f20e595]
+        - button "User avatar Vadim Panov" [ref=f20e597]:
+          - img "User avatar" [ref=f20e600]

@@ -1,0 +1,86 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/viktoriya_domashevich/",
+  "handle": "viktoriya_domashevich",
+  "slug": "viktoriya_domashevich",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Виктория",
+  "lastName": "Домашевич",
+  "fullName": "Виктория Домашевич",
+  "gender": "female",
+  "nameQuotes": [
+    "Виктория",
+    "Домашевич"
+  ],
+  "headline": "Инструктор по растяжке и тренер по акробатике",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Виктория Домашевич Брест",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Профессиональная спортивная гимнастка. Стретчинг. Акробатика для детей. Брест.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "стретчинг"
+    },
+    {
+      "slug": "akrobatika",
+      "parentSlug": "gimnastika",
+      "label": "Акробатика",
+      "evidence": "Акробатика"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Брест",
+  "address": "",
+  "cityCandidates": [
+    "Брест"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/viktoriya_domashevich.jpg",
+  "photos": [
+    "/trainers/instagram/viktoriya_domashevich.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/viktoriya_domashevich/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

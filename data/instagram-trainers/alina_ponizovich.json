@@ -1,0 +1,97 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/alina_ponizovich/",
+  "handle": "alina_ponizovich",
+  "slug": "alina_ponizovich",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алина",
+  "lastName": "Понизович",
+  "fullName": "Алина Понизович",
+  "gender": "female",
+  "nameQuotes": [
+    "Алина",
+    "Понизович"
+  ],
+  "headline": "Инструктор по растяжке и тренер по pole dance, танцам и хореографии, силовому тренингу",
+  "sourceBio": "",
+  "sourceAbout": [
+    "Приходи на Stretching. Стретчинг - это формула твоей подвижности и гибкости."
+  ],
+  "sourceThreads": "",
+  "operatorNotes": "Алина Понизович Орша Stretching Pole Dance Танцы Силовые",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Приходи на stretching. Стретчинг - это формула твоей подвижности и гибкости. Exotic pole dance и танцы.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "stretching"
+    },
+    {
+      "slug": "pole-dance",
+      "parentSlug": "tancy",
+      "label": "Pole/Exotic Pole Dance",
+      "evidence": "exotic pole"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "dance"
+    },
+    {
+      "slug": "silovoj-trening",
+      "parentSlug": "fitnes",
+      "label": "Силовой тренинг",
+      "evidence": "силовые"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "stretching",
+    "parentSlug": "yoga",
+    "label": "Растяжка"
+  },
+  "city": "Орша",
+  "address": "",
+  "cityCandidates": [
+    "Орша"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/alina_ponizovich.jpg",
+  "photos": [
+    "/trainers/instagram/alina_ponizovich.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/alina_ponizovich/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/izapishus_bot",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

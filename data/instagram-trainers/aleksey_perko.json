@@ -1,0 +1,84 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/aleksey_perko/",
+  "handle": "aleksey_perko",
+  "slug": "aleksey_perko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алексей",
+  "lastName": "Перко",
+  "fullName": "Алексей Перко",
+  "gender": "male",
+  "nameQuotes": [
+    "Алексей",
+    "Перко"
+  ],
+  "headline": "Тренер по биатлону и фитнес-тренер",
+  "sourceBio": "Athlete\n🏋️‍♂️ 🏃 ⛷️ 👨‍🔧\n👨‍👧‍👦Папа маленькой Алиски и Лешки\nvk.com/id31657402",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Алексей Перко",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тренер по биатлону и фитнесу.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "biatlon",
+      "parentSlug": "zima",
+      "label": "Биатлон",
+      "evidence": "Биатлон"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "biatlon",
+    "parentSlug": "zima",
+    "label": "Биатлон"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/aleksey_perko.jpg",
+  "photos": [
+    "/trainers/instagram/aleksey_perko.jpg",
+    "/trainers/instagram/aleksey_perko-g2.jpg",
+    "/trainers/instagram/aleksey_perko-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 3,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 1
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/aleksey_perko/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

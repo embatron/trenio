@@ -1,0 +1,82 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/alexandra_starovoitova_/",
+  "handle": "alexandra_starovoitova_",
+  "slug": "alexandra_starovoitova_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александра",
+  "lastName": "Старовойтова",
+  "fullName": "Александра Старовойтова",
+  "gender": "female",
+  "nameQuotes": [
+    "Александра",
+    "Старовойтова"
+  ],
+  "headline": "Инструктор по пилатесу",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Александра Старовойтова Могилёв Пилатес",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Групповые и индивидуальные занятия пилатесом. Знаю, как полюбить тренировки.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Могилёв",
+  "address": "",
+  "cityCandidates": [
+    "Могилёв"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/alexandra_starovoitova_.jpg",
+  "photos": [
+    "/trainers/instagram/alexandra_starovoitova_.jpg",
+    "/trainers/instagram/alexandra_starovoitova_-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/alexandra_starovoitova_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

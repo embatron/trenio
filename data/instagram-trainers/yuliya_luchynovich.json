@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yuliya_luchynovich/",
+  "handle": "yuliya_luchynovich",
+  "slug": "yuliya_luchynovich",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлия",
+  "lastName": "Лучинович",
+  "fullName": "Юлия Лучинович",
+  "gender": "female",
+  "nameQuotes": [
+    "Юлия",
+    "Лучинович"
+  ],
+  "headline": "Фитнес-тренер и тренер по танцам и хореографии",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Юлия Лучинович Старые Дороги Танцы",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Фитнес в г. Старые Дороги. Свадебный вальс и онлайн-тренировки. Хореограф и танцор.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "fitnes",
+    "parentSlug": "fitnes",
+    "label": "Фитнес"
+  },
+  "city": "Старые Дороги",
+  "address": "",
+  "cityCandidates": [
+    "Старые Дороги"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yuliya_luchynovich.jpg",
+  "photos": [
+    "/trainers/instagram/yuliya_luchynovich.jpg",
+    "/trainers/instagram/yuliya_luchynovich-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yuliya_luchynovich/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

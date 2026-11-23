@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/fadeev_coach/",
+  "handle": "fadeev_coach",
+  "slug": "fadeev_coach",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Алексей",
+  "lastName": "Фадеев",
+  "fullName": "Алексей Фадеев",
+  "gender": "male",
+  "nameQuotes": [
+    "Алексей",
+    "Фадеев"
+  ],
+  "headline": "Тренер по боксу",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Алексей Фадеев Минск бокс",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Personal Coach. Зал бокса. Минск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "boks",
+      "parentSlug": "edinoborstva",
+      "label": "Бокс",
+      "evidence": "Бокс"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "boks",
+    "parentSlug": "edinoborstva",
+    "label": "Бокс"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/fadeev_coach.jpg",
+  "photos": [
+    "/trainers/instagram/fadeev_coach.jpg",
+    "/trainers/instagram/fadeev_coach-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/fadeev_coach/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://fight-day.by"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

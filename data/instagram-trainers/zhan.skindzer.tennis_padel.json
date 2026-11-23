@@ -1,0 +1,109 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/zhan.skindzer.tennis_padel/",
+  "handle": "zhan.skindzer.tennis_padel",
+  "slug": "zhan.skindzer.tennis_padel",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Жан",
+  "lastName": "Скиндер",
+  "fullName": "Жан Скиндер",
+  "gender": "male",
+  "nameQuotes": [
+    "Жан",
+    "Скиндер"
+  ],
+  "headline": "Тренер по большому теннису и паделу",
+  "sourceBio": "🎾 Тренировки для любителей разного уровня\n🎾 Спаринг для профессионалов\n🎾 Индивидуальные и групповые\n🎾 Для записи на тренировки пишите в direct\n🎾work\nt.me/@Zhan_1805 and 1 more",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Жан Скиндер Минск",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Теннис стал неотъемлемой частью моей жизни с 6 лет. Когда я впервые взял ракетку в руки, знал, что свяжу жизнь с этим видом спорта. В теннисном мире я уже 18 лет. Развиваю тренерскую деятельность уже более 2-х лет. Закончил Республиканское училище олимпийского резерва.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/zhan.skindzer.tennis_padel/p/CaCy8oDAlCm/",
+      "caption": "🎾 Расскажу немного о себе : Теннис стал неотъемлемой частью моей жизни с 6 лет. Когда я впервые взял ракетку в руки, будучи ещё ребёнком, знал, что свяжу жизнь с этим видом спорта. В теннисном мире я уже 18 лет и за свою карьеру я достиг немалых высот : • Победитель и призёр множественных европейских турниров TE , ITF • Являлся сборной Беларуси среди юниоров до 16 лет и юноше й до 18 • Четвертьфиналист чемпионата Европы среди юниоров до 16 лет На данный момент я развиваю тренерскую деятельность уже более 2-х лет. Закончил Республиканское Училище Олимпийского Резерва , являюсь квалифицированным специалистом.🎾 #tennis #tennisplayer",
+      "textRole": "about",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/zhan.skindzer.tennis_padel/p/Cv64xOGggDu/",
+      "caption": "С Любимсиком( с моей супругой )❤️",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/zhan.skindzer.tennis_padel/p/CuMS1GlAZsH/",
+      "caption": "Безумно рад что у меня есть такая жена как ты ❤️❤️❤️ Ты моя радость , мой путь , мой ангел Я благодарен тебе за то что ты делаешь для семьи , буду радовать тебя всегда и во всем Люблю тебя ❤️❤️❤️",
+      "textRole": "none",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "bolshoj-tennis",
+      "parentSlug": "raketki",
+      "label": "Большой теннис",
+      "evidence": "теннис"
+    },
+    {
+      "slug": "padel",
+      "parentSlug": "raketki",
+      "label": "Падел",
+      "evidence": "Падел"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bolshoj-tennis",
+    "parentSlug": "raketki",
+    "label": "Большой теннис"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [
+    "kid",
+    "teen"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/zhan.skindzer.tennis_padel.jpg",
+  "photos": [
+    "/trainers/instagram/zhan.skindzer.tennis_padel.jpg",
+    "/trainers/instagram/zhan.skindzer.tennis_padel-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/zhan.skindzer.tennis_padel/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

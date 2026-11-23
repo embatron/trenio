@@ -1,0 +1,76 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/evgendementey/",
+  "handle": "evgendementey",
+  "slug": "evgendementey",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Евгений",
+  "lastName": "Дементей",
+  "fullName": "Евгений Дементей",
+  "gender": "male",
+  "nameQuotes": [
+    "Евгений Дементей"
+  ],
+  "headline": "Тренер по бильярду",
+  "sourceBio": "Мастер спорта 💪 Тренер, обучаю оффлайн и онлайн по личной методике",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Евгений Дементей Минск Бильярд Бильярдный клуб Star Ball",
+  "threadsUrl": "",
+  "bio": "Я Евгений Дементей, тренер по бильярду в Минске. Обучаю оффлайн и онлайн по личной методике.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "bilyard",
+      "parentSlug": "klub",
+      "label": "Бильярд",
+      "evidence": "Бильярд"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "bilyard",
+    "parentSlug": "klub",
+    "label": "Бильярд"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/evgendementey.jpg",
+  "photos": [
+    "/trainers/instagram/evgendementey.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/evgendementey/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

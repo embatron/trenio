@@ -1,0 +1,19 @@
+{
+  "links": [
+    "/trenioby/",
+    "https://accountscenter.instagram.com/?entry_point=app_settings",
+    "/accounts/edit/",
+    "/accounts/notifications/",
+    "/accounts/professional_account_settings/",
+    "/accounts/professional_account_tools/",
+    "/accounts/ad_payments/",
+    "/accounts/settings/v2/account_privacy/",
+    "/accounts/close_friends/",
+    "/accounts/blocked_accounts/",
+    "/accounts/hide_story_and_live/",
+    "/accounts/messages_and_story_replies/"
+  ],
+  "nodes": [
+    "SPAN"
+  ]
+}

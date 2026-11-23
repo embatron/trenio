@@ -1,0 +1,83 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/serkov_coach/",
+  "handle": "serkov_coach",
+  "slug": "serkov_coach",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Сергей",
+  "lastName": "Серков",
+  "fullName": "Сергей Серков",
+  "gender": "male",
+  "nameQuotes": [
+    "Сергей",
+    "Серков",
+    "СЕРГЕЙ",
+    "СЕРКОВ"
+  ],
+  "headline": "Тренер по бегу и общефизической подготовке",
+  "sourceBio": "Основатель бегового клуба @fartlek_club\n8-кратный чемпион Беларуси\nТренер по бегу и ОФП",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Сергей Серков",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тренер по бегу и ОФП.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "beg",
+      "parentSlug": "beg",
+      "label": "Бег",
+      "evidence": "Бег"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "ОФП"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "beg",
+    "parentSlug": "beg",
+    "label": "Бег"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/serkov_coach.jpg",
+  "photos": [
+    "/trainers/instagram/serkov_coach.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/serkov_coach/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/fartlek_club",
+    "website": "https://t.me/fartlek_club"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

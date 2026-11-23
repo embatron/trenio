@@ -1,0 +1,291 @@
+- generic [ref=f21e4]:
+  - generic [ref=f21e18]:
+    - generic [ref=f21e21]:
+      - link [ref=f21e26] [cursor=pointer]:
+        - /url: /
+        - img "Instagram" [ref=f21e31]
+      - generic [ref=f21e34]:
+        - link [ref=f21e39] [cursor=pointer]:
+          - /url: /
+          - img "Home" [ref=f21e44]
+        - link [ref=f21e49] [cursor=pointer]:
+          - /url: /reels/
+          - img "Reels" [ref=f21e54]
+        - link [ref=f21e61] [cursor=pointer]:
+          - /url: /direct/inbox/
+          - img "Messages" [ref=f21e66]
+        - link [ref=f21e72] [cursor=pointer]:
+          - /url: /explore/
+          - img "Search" [ref=f21e77]
+        - link [ref=f21e84] [cursor=pointer]:
+          - /url: "#"
+          - img "Notifications" [ref=f21e89]
+        - link [ref=f21e95] [cursor=pointer]:
+          - /url: "#"
+          - img "New post" [ref=f21e100]
+        - link [ref=f21e105] [cursor=pointer]:
+          - /url: "#"
+          - img "Professional dashboard" [ref=f21e110]
+        - link [ref=f21e117] [cursor=pointer]:
+          - /url: /trenioby/
+          - link [ref=f21e122]:
+            - img "trenioby's profile picture" [ref=f21e123]
+      - generic [ref=f21e124]:
+        - link [ref=f21e127] [cursor=pointer]:
+          - /url: "#"
+          - img "Settings" [ref=f21e132]
+        - link [ref=f21e135] [cursor=pointer]:
+          - /url: "#"
+          - img "Also from Meta" [ref=f21e140]
+    - generic [ref=f21e143]:
+      - main [ref=f21e144]:
+        - generic [ref=f21e146]:
+          - generic [ref=f21e147]:
+            - generic [ref=f21e148]:
+              - link [ref=f21e154] [cursor=pointer]:
+                - /url: /wadionex_t/
+                - img "wadionex_t's profile picture" [ref=f21e155]
+              - generic [ref=f21e156]:
+                - generic [ref=f21e157]:
+                  - generic [ref=f21e158]:
+                    - link [ref=f21e160] [cursor=pointer]:
+                      - /url: "#"
+                      - heading "wadionex_t" [level=2] [ref=f21e161]
+                    - button [ref=f21e163] [cursor=pointer]:
+                      - img "Options" [ref=f21e165]
+                  - generic [ref=f21e169]: Vadim Panov
+                  - generic [ref=f21e171]:
+                    - generic [ref=f21e173]:
+                      - generic [ref=f21e174]: "47"
+                      - text: posts
+                    - link "91 followers" [ref=f21e176] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f21e177]:
+                        - generic "91" [ref=f21e178]
+                        - text: followers
+                    - link "134 following" [ref=f21e180] [cursor=pointer]:
+                      - /url: "#"
+                      - generic [ref=f21e181]:
+                        - generic [ref=f21e182]: "134"
+                        - text: following
+                - button [ref=f21e186] [cursor=pointer]:
+                  - generic [ref=f21e187]: Спорт 🥊💪Мотивация 💫Юмор 👻
+            - generic [ref=f21e192]:
+              - button "Follow" [ref=f21e194] [cursor=pointer]
+              - button "Message" [ref=f21e198] [cursor=pointer]
+              - button [ref=f21e200] [cursor=pointer]:
+                - img "Similar accounts" [ref=f21e202]
+            - generic:
+              - menu
+          - generic [ref=f21e205]:
+            - tablist [ref=f21e206]:
+              - link [ref=f21e208] [cursor=pointer]:
+                - /url: /wadionex_t/
+                - img "Posts" [ref=f21e210]
+              - link [ref=f21e221] [cursor=pointer]:
+                - /url: /wadionex_t/reels/
+                - img "Reels" [ref=f21e223]
+              - link [ref=f21e226] [cursor=pointer]:
+                - /url: /wadionex_t/tagged/
+                - img "Tagged" [ref=f21e228]
+            - tabpanel
+          - generic [ref=f21e235]:
+            - generic [ref=f21e236]:
+              - link "Clip" [ref=f21e238] [cursor=pointer]:
+                - /url: /timbur.fightclub/reel/DfXSTshyK1c/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link "Clip" [ref=f21e243] [cursor=pointer]:
+                - /url: /wadionex_t/reel/DeSRVImxgDk/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link "Clip" [ref=f21e248] [cursor=pointer]:
+                - /url: /timbur.fightclub/reel/Dd32kLcyDxP/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f21e253] [cursor=pointer]:
+                - /url: /wadionex_t/reel/Dd3hxdVxob-/
+                - 'img "❗❗❗☝️☝️☝️ Подход с умом только такой.По другому можно потерять много времени на пустые действия #спорт #бокс #sport #boxing #sportmotivation" [ref=f21e256]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+            - generic [ref=f21e258]:
+              - link "Clip" [ref=f21e260] [cursor=pointer]:
+                - /url: /wadionex_t/reel/Dd3Zwm3RZj9/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link "Clip" [ref=f21e265] [cursor=pointer]:
+                - /url: /timbur.fightclub/reel/DdTtqvUsczK/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f21e270] [cursor=pointer]:
+                - /url: /timbur.fightclub/reel/DcqlMfdsSsd/
+                - 'img "Как баланс из бокса помогает в жизни 1️⃣Защита от падений: Крепкий вестибулярный аппарат и развитые мышцы-стабилизаторы помогают удержать равновесие на скользком льду или мокрой траве. 2️⃣Правильная осанка: Умение чувствовать центр тяжести выпрямляет спину и уменьшает боль в пояснице при сидячей работе. 3️⃣Быстрая реакция: Если вы случайно споткнетесь, тело среагирует мгновенно и найдет опору, чтобы избежать травмы. Вот вам одна из многих причин, почему стоит заняться боксом 😉 Ставьте + чтобы получить подробности о тренировках" [ref=f21e273]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link "Clip" [ref=f21e276] [cursor=pointer]:
+                - /url: /timbur.fightclub/reel/DcgoZPfM9Cy/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+            - generic [ref=f21e280]:
+              - link [ref=f21e282] [cursor=pointer]:
+                - /url: /wadionex_t/reel/DcgKzEPtwXM/
+                - 'img "Спорт!Моя медитация,мой антидот против уныния,неудач и разочарований...моё развитие ментального через физику,моё сомопознание,моё творчество,моё проявление.... Смотрите на жизнь шире и она со временем развернёт перед вами все свои положительные стороны!Главное не останавливаться пока мы живы 🙏💫🚀 #спорт #sport #boxing #бокс #sportmotivation" [ref=f21e285]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link "Clip" [ref=f21e288] [cursor=pointer]:
+                - /url: /wadionex_t/reel/DcVvjzvttiR/
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f21e293] [cursor=pointer]:
+                - /url: /wadionex_t/reel/Db2w5vOtGru/
+                - 'img "#спорт #sport #бокс #boxing #fun" [ref=f21e296]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+              - link [ref=f21e299] [cursor=pointer]:
+                - /url: /wadionex_t/reel/DbtD6gMNbZZ/
+                - 'img "Несколько способов наработки силового удара... #спорт #sport #boxing #бокс #удар" [ref=f21e302]'
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img "Clip"
+      - contentinfo [ref=f21e304]:
+        - generic [ref=f21e305]:
+          - generic [ref=f21e307]:
+            - link "Meta" [ref=f21e309] [cursor=pointer]:
+              - /url: https://about.meta.com/
+            - link "About" [ref=f21e312] [cursor=pointer]:
+              - /url: https://about.instagram.com/
+            - link "Blog" [ref=f21e315] [cursor=pointer]:
+              - /url: https://about.instagram.com/blog/
+            - link "Jobs" [ref=f21e318] [cursor=pointer]:
+              - /url: https://about.instagram.com/about-us/careers
+            - link "Help" [ref=f21e321] [cursor=pointer]:
+              - /url: https://help.instagram.com/
+            - link "API" [ref=f21e324] [cursor=pointer]:
+              - /url: https://developers.facebook.com/docs/instagram
+            - link "Privacy" [ref=f21e327] [cursor=pointer]:
+              - /url: /legal/privacy/
+            - link "Terms" [ref=f21e330] [cursor=pointer]:
+              - /url: /legal/terms/
+            - link "Locations" [ref=f21e333] [cursor=pointer]:
+              - /url: /explore/locations/
+            - link "Popular" [ref=f21e336] [cursor=pointer]:
+              - /url: /popular/
+            - link "Instagram Lite" [ref=f21e339] [cursor=pointer]:
+              - /url: /web/lite/
+            - link "Meta AI" [ref=f21e342] [cursor=pointer]:
+              - /url: https://www.meta.ai/?utm_source=foa_web_footer
+            - link "Muse" [ref=f21e345] [cursor=pointer]:
+              - /url: https://muse.ai/
+            - link "Threads" [ref=f21e348] [cursor=pointer]:
+              - /url: https://www.threads.com/
+            - link "Contact Uploading & Non-Users" [ref=f21e351] [cursor=pointer]:
+              - /url: https://www.facebook.com/help/instagram/261704639352628
+            - link "Meta Verified" [ref=f21e354] [cursor=pointer]:
+              - /url: /accounts/meta_verified/?entrypoint=web_footer
+          - generic [ref=f21e356]:
+            - generic [ref=f21e357] [cursor=pointer]:
+              - generic [ref=f21e358]:
+                - generic [ref=f21e359]: English
+                - img "Down chevron icon" [ref=f21e362]
+              - combobox "Switch Display Language" [ref=f21e364]:
+                - option "Afrikaans"
+                - option "العربية"
+                - option "Čeština"
+                - option "Dansk"
+                - option "Deutsch"
+                - option "Ελληνικά"
+                - option "English" [selected]
+                - option "English (UK)"
+                - option "Español (España)"
+                - option "Español"
+                - option "فارسی"
+                - option "Suomi"
+                - option "Français"
+                - option "עברית"
+                - option "Bahasa Indonesia"
+                - option "Italiano"
+                - option "日本語"
+                - option "한국어"
+                - option "Bahasa Melayu"
+                - option "Norsk"
+                - option "Nederlands"
+                - option "Polski"
+                - option "Português (Brasil)"
+                - option "Português (Portugal)"
+                - option "Русский"
+                - option "Svenska"
+                - option "ภาษาไทย"
+                - option "Filipino"
+                - option "Türkçe"
+                - option "中文(简体)"
+                - option "中文(台灣)"
+                - option "বাংলা"
+                - option "ગુજરાતી"
+                - option "हिन्दी"
+                - option "Hrvatski"
+                - option "Magyar"
+                - option "ಕನ್ನಡ"
+                - option "മലയാളം"
+                - option "मराठी"
+                - option "नेपाली"
+                - option "ਪੰਜਾਬੀ"
+                - option "සිංහල"
+                - option "Slovenčina"
+                - option "தமிழ்"
+                - option "తెలుగు"
+                - option "اردو"
+                - option "Tiếng Việt"
+                - option "中文(香港)"
+                - option "Български"
+                - option "Français (Canada)"
+                - option "Română"
+                - option "Српски"
+                - option "Українська"
+            - generic [ref=f21e365]: © 2026 Instagram from Meta
+  - button [ref=f21e368] [cursor=pointer]:
+    - generic "Messages" [ref=f21e369]:
+      - generic [ref=f21e370]:
+        - img "Messages" [ref=f21e373]
+        - generic [ref=f21e376]: Messages
+      - generic [ref=f21e377]:
+        - button "User avatar Игорь Вашкевич" [ref=f21e379]:
+          - img "User avatar" [ref=f21e382]
+        - button "User avatar Kristina🪽" [ref=f21e384]:
+          - img "User avatar" [ref=f21e387]
+        - button "User avatar ИЛЬЯ┃ТРЕНЕР┃ОНЛАЙН┃ПОХУДЕНИЕ┃МИНСК" [ref=f21e389]:
+          - img "User avatar" [ref=f21e392]

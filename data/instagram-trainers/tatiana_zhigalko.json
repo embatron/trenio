@@ -1,0 +1,79 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/tatiana_zhigalko/",
+  "handle": "tatiana_zhigalko",
+  "slug": "tatiana_zhigalko",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Татьяна",
+  "lastName": "Жигалко",
+  "fullName": "Татьяна Жигалко",
+  "gender": "female",
+  "nameQuotes": [
+    "Татьяна",
+    "Жигалко"
+  ],
+  "headline": "Тренер по шахматам",
+  "sourceBio": "Легко и просто учу играть в шахматы",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Татьяна Жигалко Минск Шахматы",
+  "threadsUrl": "",
+  "bio": "Я Татьяна Жигалко, тренер по шахматам. Город Минск.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "shahmaty",
+      "parentSlug": "intellekt",
+      "label": "Шахматы",
+      "evidence": "Шахматы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "shahmaty",
+    "parentSlug": "intellekt",
+    "label": "Шахматы"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [
+    "adult",
+    "kid"
+  ],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/tatiana_zhigalko.jpg",
+  "photos": [
+    "/trainers/instagram/tatiana_zhigalko.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/tatiana_zhigalko/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/Chess_Blondinka",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "pinnedPosts"
+  ]
+}

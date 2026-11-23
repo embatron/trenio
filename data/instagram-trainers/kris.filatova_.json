@@ -1,0 +1,109 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kris.filatova_/",
+  "handle": "kris.filatova_",
+  "slug": "kris.filatova_",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Кристина",
+  "lastName": "Филатова",
+  "fullName": "Кристина Филатова",
+  "gender": "female",
+  "nameQuotes": [
+    "КРИСТИНА",
+    "Филатова"
+  ],
+  "headline": "Тренер по high heels, современным танцам и танцам и хореографии",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кристина Филатова Гомель High Heels Современные танцы",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тут про танцы и здоровое тело. Frame up Strip, Twerk и High Heels.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/kris.filatova_/reel/DR97loBCOHr/",
+      "caption": "Я не просто раздел тебя Я просто любил тебя…🖤",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/kris.filatova_/p/Df4_59mCH1y/",
+      "caption": "🖤",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/kris.filatova_/reel/DRxUSi0CCXM/",
+      "caption": "Ты спродюсирована мной и только… 🖤 music: @iceicegergert videographer: @gomel_photographer",
+      "textRole": "none",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "high-heels",
+      "parentSlug": "tancy",
+      "label": "High Heels",
+      "evidence": "High Heels"
+    },
+    {
+      "slug": "sovremennye",
+      "parentSlug": "tancy",
+      "label": "Современные танцы",
+      "evidence": "Современные танцы"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "Танцы"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "high-heels",
+    "parentSlug": "tancy",
+    "label": "High Heels"
+  },
+  "city": "Гомель",
+  "address": "",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kris.filatova_.jpg",
+  "photos": [
+    "/trainers/instagram/kris.filatova_.jpg",
+    "/trainers/instagram/kris.filatova_-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kris.filatova_/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

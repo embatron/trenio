@@ -1,0 +1,90 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/doc.katerina.massage/",
+  "handle": "doc.katerina.massage",
+  "slug": "doc.katerina.massage",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Екатерина",
+  "lastName": "Авхачева",
+  "fullName": "Екатерина Авхачева",
+  "gender": "female",
+  "nameQuotes": [
+    "Екатерина",
+    "Авхачева"
+  ],
+  "headline": "Массажист",
+  "sourceBio": "Пропагандирую доказательную медицину, разоблачаю мракобесие, облегчаю боль мануальными техниками",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Екатерина Авхачева Минск Массаж",
+  "threadsUrl": "",
+  "bio": "Я Екатерина Авхачева, врач-невролог и массажист в Минске. Делаю массаж и облегчаю боль мануальными техниками. Принимаю на улице Максима Богдановича, д. 60.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/doc.katerina.massage/p/DGtJ7IctDu8/",
+      "caption": "Свое становление как массажиста начала еще тогда, когда в Минске было всего несколько массажных салонов, так что знаю все про массаж, его виды, показания и противопоказания",
+      "imageText": [
+        "ФАКТЫ ОБО МНЕ"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/doc.katerina.massage/p/DbBLO9CjFPf/",
+      "caption": "Комплекс “Базовый” – 60 минут Стоимость: 80 BYN Комплекс “Общий” – 60 минут Стоимость: 90 BYN Комплекс “Спортивный” – 60 минут Стоимость: 100 BYN Комплекс “Лимфодренажный” – 60 минут Стоимость: 80 BYN Подробнее о комплексах смотри в карусели ⤴️ Шаг 3. Место проведения Я работаю в уютной студии массажа по адресу: г. Минск, ул. Максима Богдановича, 60",
+      "imageText": [
+        "как записаться на массаж?"
+      ]
+    }
+  ],
+  "sports": [
+    {
+      "slug": "massazh",
+      "parentSlug": "reabilitaciya",
+      "label": "Массаж",
+      "evidence": "Массаж"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "massazh",
+    "parentSlug": "reabilitaciya",
+    "label": "Массаж"
+  },
+  "city": "Минск",
+  "address": "улица Максима Богдановича, 60",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": 80,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/doc.katerina.massage.jpg",
+  "photos": [
+    "/trainers/instagram/doc.katerina.massage.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 2,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/doc.katerina.massage/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "phone",
+    "email",
+    "telegram"
+  ]
+}

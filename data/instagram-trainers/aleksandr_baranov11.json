@@ -1,0 +1,78 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/aleksandr_baranov11/",
+  "handle": "aleksandr_baranov11",
+  "slug": "aleksandr_baranov11",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Александр",
+  "lastName": "Баранов",
+  "fullName": "Александр Баранов",
+  "gender": "male",
+  "nameQuotes": [
+    "Александр Баранов"
+  ],
+  "headline": "Тренер по хоккею",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Александр Баранов Минск хоккей Первый тренер хоккейной команды Piranhas СК Раубичи",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Первый тренер хоккейной команды Piranhas.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "hokkej",
+      "parentSlug": "zima",
+      "label": "Хоккей",
+      "evidence": "Хоккей"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "hokkej",
+    "parentSlug": "zima",
+    "label": "Хоккей"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/aleksandr_baranov11.jpg",
+  "photos": [
+    "/trainers/instagram/aleksandr_baranov11.jpg",
+    "/trainers/instagram/aleksandr_baranov11-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/aleksandr_baranov11/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": "https://vk.com/id24885655"
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

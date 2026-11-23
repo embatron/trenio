@@ -1,0 +1,99 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/ksyu_kudryashova/",
+  "handle": "ksyu_kudryashova",
+  "slug": "ksyu_kudryashova",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Ксения",
+  "lastName": "Кудряшова",
+  "fullName": "Ксения Кудряшова",
+  "gender": "female",
+  "nameQuotes": [
+    "Ксения Кудряшова"
+  ],
+  "headline": "Тренер по фигурному катанию и общефизической подготовке",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Фигурное катание: Ксения Кудряшова Я тренирую как фигуристов-любителей, так и спортсменов, помогаю встать на коньки с нуля даже тем, кто никогда не стоял на льду. Имела уникальный опыт работы артистом ледовых шоу, что дало мне навыки сценического мастерства, артистизма и умения работать с публикой. Кроме того, я год работала в Китае, где перенимала опыт международных коллег • Постановка скольжения и прыжков с нуля. • Проведение занятий по ОФП (общей физической подготовке) для развития силы, выносливости и координации. • Индивидуальный подход к каждому ученику, независимо от возраста и целей.",
+  "threadsUrl": "",
+  "bio": "Я тренирую как фигуристов-любителей, так и спортсменов, помогаю встать на коньки с нуля даже тем, кто никогда не стоял на льду. Имела уникальный опыт работы артистом ледовых шоу, что дало мне навыки сценического мастерства, артистизма и умения работать с публикой. Кроме того, я год работала в Китае, где перенимала опыт международных коллег",
+  "about": [
+    "Постановка скольжения и прыжков с нуля.",
+    "Проведение занятий по ОФП (общей физической подготовке) для развития силы, выносливости и координации.",
+    "Индивидуальный подход к каждому ученику, независимо от возраста и целей."
+  ],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "figurnoe-katanie",
+      "parentSlug": "zima",
+      "label": "Фигурное катание",
+      "evidence": "Фигурное катание"
+    },
+    {
+      "slug": "ofp",
+      "parentSlug": "fitnes",
+      "label": "ОФП",
+      "evidence": "общая физическая подготовка"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "konki",
+      "label": "Коньки",
+      "quote": "встать на коньки"
+    },
+    {
+      "slug": "legkaya-atletika",
+      "label": "Лёгкая атлетика",
+      "quote": "Постановка скольжения и прыжков с нуля."
+    }
+  ],
+  "primarySport": {
+    "slug": "figurnoe-katanie",
+    "parentSlug": "zima",
+    "label": "Фигурное катание"
+  },
+  "city": "Минск",
+  "address": "",
+  "cityCandidates": [],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/ksyu_kudryashova.jpg",
+  "photos": [
+    "/trainers/instagram/ksyu_kudryashova.jpg",
+    "/trainers/instagram/ksyu_kudryashova-g2.jpg",
+    "/trainers/instagram/ksyu_kudryashova-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/ksyu_kudryashova/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

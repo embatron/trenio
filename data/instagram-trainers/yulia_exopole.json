@@ -1,0 +1,85 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/yulia_exopole/",
+  "handle": "yulia_exopole",
+  "slug": "yulia_exopole",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Юлия",
+  "lastName": "",
+  "fullName": "Юлия",
+  "gender": "female",
+  "nameQuotes": [
+    "Юлия"
+  ],
+  "headline": "Тренер по pole dance и инструктор по растяжке",
+  "sourceBio": "",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Юлия Минск Растяжка Pole dance",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тренер, 10 лет опыта. Exotic, strip и растяжка.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "pole-dance",
+      "parentSlug": "tancy",
+      "label": "Pole/Exotic Pole Dance",
+      "evidence": "Pole Dance"
+    },
+    {
+      "slug": "stretching",
+      "parentSlug": "yoga",
+      "label": "Растяжка",
+      "evidence": "Растяжка"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pole-dance",
+    "parentSlug": "tancy",
+    "label": "Pole/Exotic Pole Dance"
+  },
+  "city": "Минск",
+  "address": "Кальварийская улица, 25",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/yulia_exopole.jpg",
+  "photos": [
+    "/trainers/instagram/yulia_exopole.jpg",
+    "/trainers/instagram/yulia_exopole-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/yulia_exopole/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

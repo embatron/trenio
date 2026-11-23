@@ -1,0 +1,86 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/stefaniyavai/",
+  "handle": "stefaniyavai",
+  "slug": "stefaniyavai",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Стефания",
+  "lastName": "",
+  "fullName": "Стефания",
+  "gender": "female",
+  "nameQuotes": [
+    "Стефания"
+  ],
+  "headline": "Инструктор тренажёрного зала и фитнес-тренер",
+  "sourceBio": "• тренировки в тренажерном зале\n• научу упражнениям,составлю тренировочную программу😉\n@grafit_uruchye",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Стефания Барановичи тренажёрный зал",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Тренировки в тренажерном зале. Научу упражнениям, составлю тренировочную программу.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "персональный тренер"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "trenazherka",
+    "parentSlug": "fitnes",
+    "label": "Тренажёрный зал"
+  },
+  "city": "Барановичи",
+  "address": "",
+  "cityCandidates": [
+    "Барановичи"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/stefaniyavai.jpg",
+  "photos": [
+    "/trainers/instagram/stefaniyavai.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/stefaniyavai/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

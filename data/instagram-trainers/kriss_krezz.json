@@ -1,0 +1,118 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/kriss_krezz/",
+  "handle": "kriss_krezz",
+  "slug": "kriss_krezz",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Кристина",
+  "lastName": "",
+  "fullName": "Кристина",
+  "gender": "female",
+  "nameQuotes": [
+    "Кристина"
+  ],
+  "headline": "Инструктор по пилатесу, тренер по осанке, фитнес-тренер и инструктор тренажёрного зала",
+  "sourceBio": "Тренер | шпагаты и мобильность • осанка и пилатес\nНовости и тренды фитнеса\nГруппы и индивидуально • Минск / онлайн\n↓ Telegram и полезные материалы\nt.me/kriss_krezz_fit",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Кристина, Минск, фитнес, тренажерный зал",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Шпагаты и мобильность, осанка и пилатес. Новости и тренды фитнеса. Группы и индивидуально, онлайн.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/kriss_krezz/p/DercwRaCrRZ/",
+      "caption": "ПРИГЛАШАЮ НА ЗАНЯТИЯ онлайн и офлайн в Минске. ➡️Понедельник / среда / пятница — 10:00 Йога гибкости для всех @olympia.gs.minsk 📍 Ратомская, 2 ➡️Суббота — 10:00 Растяжка • релакс • пилатес • осанка Для любого уровня подготовки 📍 Мельникайте, 4 Запись — в личные сообщения. Онлайн-тренировки — также по записи в личку.",
+      "textRole": "promotion",
+      "imageText": [
+        "ПРИГЛАШАЮ НА ЗАНЯТИЯ"
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/kriss_krezz/reel/DZZ2ftmCEQR/",
+      "caption": "Отеки лица, холка и вечная головная боль — это не возраст. Это «узкий коридор» твоей шеи Когда трапеция зажата, а плечи подняты, сосуды и лимфатические протоки буквально перекрываются. Отсюда — утренние отеки, онемение пальцев и тяжесть в висках. Чтобы освободить шею, нам нужно не просто растянуть мышцы, а вернуть им правильный тонус. Главный секрет упражнения на видео: Мы используем метод ПИР (постизометрическая релаксация) — работу через мягкое сопротивление: 1️⃣ Сопротивление: 8 счетов мягко давим головой на ладонь, включая мышцы. 2️⃣ Растяжка: расслабляем и по большой дуге уводим ухо к плечу. Мягко покачивай подбородком в разные стороны — так ты найдешь и точечно расслабишь самые глубокие зажатости. ⚠️ Не забывай про базу: отстройка осанки. Солнечное сплетение направляем ВПЕРЕД И ВВЕРХ, а локти — К ТАЗУ. Так грудь раскроется, живот подтянется, а трапеция мгновенно размягчится. 🎁 Бесплатный гайд по умной отстройке тела уже ждет тебя в закрепе моего Telegram-канала kriss_body_fit ссылка в шапке профиля). Или просто пиши ОСАНКА в комментариях! 🤖 Тренировки онлайн по всему миру и офлайн в Минске — пиши в директ! #умныйфитнес #отекилица #убратьхолку #головнаяболь #болившее растяжкашеи ос",
+      "textRole": "training",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/kriss_krezz/reel/DcBKkLViHFY/",
+      "caption": "Хотите выровнять ШЕЮ? Начните НЕ С ГОЛОВЫ. Смотри полное видео про отстройку осанки в моём Telegram — ссылка в шапке профиля. Не пытайтесь отдельно «задвинуть» голову назад. Сначала верните на место грудную клетку — и шее уже станет легче занять более естественное положение. #осанка #шея #сутулость #здороваяспина #умныйфитнес тренерминск",
+      "textRole": "training",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "pilates",
+      "parentSlug": "yoga",
+      "label": "Пилатес",
+      "evidence": "Пилатес"
+    },
+    {
+      "slug": "osanka",
+      "parentSlug": "reabilitaciya",
+      "label": "Осанка",
+      "evidence": "Осанка"
+    },
+    {
+      "slug": "fitnes",
+      "parentSlug": "fitnes",
+      "label": "Фитнес",
+      "evidence": "Фитнес"
+    },
+    {
+      "slug": "trenazherka",
+      "parentSlug": "fitnes",
+      "label": "Тренажёрный зал",
+      "evidence": "Тренажёрный зал"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "pilates",
+    "parentSlug": "yoga",
+    "label": "Пилатес"
+  },
+  "city": "Минск",
+  "address": "Ратомская улица, 2 | улица Мельникайте, 4",
+  "cityCandidates": [
+    "Минск"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [
+    "individual",
+    "group"
+  ],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/kriss_krezz.jpg",
+  "photos": [
+    "/trainers/instagram/kriss_krezz.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 0,
+    "gallery": 0,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/kriss_krezz/",
+    "phone": "",
+    "email": "",
+    "telegram": "https://t.me/kriss_krezz_fit",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email"
+  ]
+}

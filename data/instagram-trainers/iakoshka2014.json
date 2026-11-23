@@ -1,0 +1,103 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/iakoshka2014/",
+  "handle": "iakoshka2014",
+  "slug": "iakoshka2014",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Татьяна",
+  "lastName": "",
+  "fullName": "Татьяна",
+  "gender": "female",
+  "nameQuotes": [
+    "Татьяна"
+  ],
+  "headline": "Тренер по современным танцам и танцам и хореографии",
+  "sourceBio": "Танцор\n🤍Научу тебя танцевать красиво с 0🤍\nвторой дом @iakoshkadancestudio\nорганизатор @must_dance_fest и @toomuch_dc\nКупить...\nwww.instagram.com/reel/DfUaqEbh7dH/?cnvx=MXFvcjh0OXZpY2k2dg%3D%3D",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Гомель Современные танцы Татьяна",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Научу тебя танцевать красиво с 0. Второй дом.",
+  "about": [],
+  "pinned": [
+    {
+      "url": "https://www.instagram.com/iakoshka2014/reel/DdrOp3KMo_V/",
+      "caption": "Эта хореография однозначно в копилочку самых любимых💔🎷 Делилась в сентябре с про группой таким моим откровением… Очень красиво увидел @de.rusakovich Танцую дома в @iakoshkadancestudio",
+      "textRole": "none",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/iakoshka2014/reel/DezukufxhU8/",
+      "caption": "Жду тебя на занятиях в @iakoshkadancestudio 🐾 Гомель/ Танцы/ Центр города",
+      "textRole": "promotion",
+      "imageText": []
+    },
+    {
+      "url": "https://www.instagram.com/iakoshka2014/reel/DKXTQ5uqlmT/",
+      "caption": "Давала эту хореографию на классе в апреле🖤 Сняла только сейчас☺️ Очень мне нравится ❤️‍🔥 Как всегда красиво меня видит @m.fish_photo 🎥 Музыка: @elkasinger В пространстве: @d.u.n.a_art #танцы#stripchoreo#iakoshkadancestudio#танцыгомель#стрип#стрипгомель#frameupstrip#stripchoreo",
+      "textRole": "about",
+      "imageText": []
+    }
+  ],
+  "sports": [
+    {
+      "slug": "sovremennye",
+      "parentSlug": "tancy",
+      "label": "Современные танцы",
+      "evidence": "Современные танцы"
+    },
+    {
+      "slug": "tancy",
+      "parentSlug": "tancy",
+      "label": "Танцы",
+      "evidence": "хореография"
+    }
+  ],
+  "practicedSports": [],
+  "primarySport": {
+    "slug": "sovremennye",
+    "parentSlug": "tancy",
+    "label": "Современные танцы"
+  },
+  "city": "Гомель",
+  "address": "",
+  "cityCandidates": [
+    "Гомель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/iakoshka2014.jpg",
+  "photos": [
+    "/trainers/instagram/iakoshka2014.jpg",
+    "/trainers/instagram/iakoshka2014-g2.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 3,
+    "candidates": 1,
+    "gallery": 1,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/iakoshka2014/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "lastName",
+    "price",
+    "phone",
+    "email",
+    "telegram"
+  ]
+}
