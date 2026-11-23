@@ -1,0 +1,46 @@
+---
+description: Catalog filter chip size and the «для ребёнка» audience, which matches children and teenagers together
+alwaysApply: true
+---
+
+# Catalog filters
+
+Category and city pages share one filter. The chip size and the child audience are the standard on every viewport: the sidebar, the collapsed bar, and the open panel.
+
+## Chip size
+
+An option chip (`.cat-pill`) is `padding: 4px 12px`, `font-size: 13px`, `line-height: 1.25`. It has no `min-height`. A phone does not grow it to 44px.
+
+A chosen chip in the collapsed bar (`.cat-filter-bar__applied li`) is `padding: 2px 2px 2px 12px`. Its dismiss control is 28×28. The label stays 13px with `line-height: 1.25`.
+
+The same numbers apply when the panel is hidden and when it is open. Do not keep a second, taller size for mobile.
+
+```css
+/* wrong: the touch-target minimum makes the chip tall */
+.cat-pill { min-height: 44px; padding: 8px 14px; }
+
+/* right: the text sets the height */
+.cat-pill { padding: 4px 12px; font-size: 13px; line-height: 1.25; }
+```
+
+## Direction and filter
+
+On a category page the directions sit in one rail under the title (`.cat-child-nav`): «Все направления» and that section's sports. One chip is the current page, and each chip is a link. The filter panel does not repeat those chips. Its sport field searches the whole taxonomy and opens the chosen page. An empty field shows no list.
+
+On a city page, on search, and on the map, several sports can be selected together. Those chips stay in the filter.
+
+## Audience
+
+«Для себя» is adults. An empty audience list counts as adults. Children and teenagers are not filled in for the trainer.
+
+«Для ребёнка» is one chip. It matches a trainer who works with children (`kid`) or teenagers (`teen`), or both. The homepage search and the catalog filters use that same match. There is no separate public chip for teenagers.
+
+`CHILD_FILTER_AUDIENCES` in `src/lib/catalog/published-trainers.ts` is the list. `matchesCatalogAudience` and the map search SQL both read it.
+
+```ts
+// wrong: the child chip skips teenagers
+if (filter === "child") return list.includes("kid");
+
+// right: one chip, both ages
+if (filter === "child") return CHILD_FILTER_AUDIENCES.some((audience) => list.includes(audience));
+```

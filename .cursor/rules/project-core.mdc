@@ -37,6 +37,7 @@ Every implementation must consider:
 7. **Direct messages** — user to one published profile only. See `.cursor/rules/messages.mdc` and `.cursor/skills/trenio-messages/`
 8. **Journal** — write actions and failures to `app_logs` with `writeLog`. See `.cursor/rules/logging.mdc`
 9. **Trainer publish** — only the trainer publishes the profile, from the cabinet. Import and the magic link leave it a draft. See `.cursor/rules/trainer-publish.mdc`
+10. **Catalog filters** — option chips stay compact (`4px 12px`, 13px, no 44px minimum) in the sidebar, the collapsed bar, and the open panel. «Для ребёнка» matches children and teenagers together, from the homepage and from the filters. See `.cursor/rules/catalog-filters.mdc`
 
 ## Auth
 

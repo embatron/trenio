@@ -4,7 +4,7 @@ import { getDb } from "@/db";
 import { catalogCategorySports, catalogSportById } from "@/lib/catalog/catalog-sports";
 import type { MapAreaInput } from "@/lib/catalog/map-area-input";
 import { trainerProfiles, trainerReviews } from "@/db/schema";
-import type { TrainerAudience, TrainerFormat } from "@/lib/catalog/published-trainers";
+import { CHILD_FILTER_AUDIENCES, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { trainerNameParts } from "@/lib/catalog/trainer-name";
 import { mapFrameCities } from "@/lib/catalog/map-city";
 import { isSpecificAddress, placesFromProfile, SPECIFIC_ADDRESS_SQL } from "@/lib/geo/schemas";
@@ -183,7 +183,7 @@ function profileWhere(filters: AreaFilters, applyPrice: boolean): SQL {
       SELECT 1 FROM jsonb_array_elements_text(
         CASE WHEN jsonb_typeof(tp.audiences) = 'array' THEN tp.audiences ELSE '[]'::jsonb END
       ) AS item(value)
-      WHERE item.value IN ('kid', 'teen')
+      WHERE item.value IN (${inList([...CHILD_FILTER_AUDIENCES])})
     )`);
   } else if (filters.audience === "self") {
     parts.push(sql`(

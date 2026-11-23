@@ -738,7 +738,7 @@ const PAGE_CSS = `
 .cat-city-suggest button:hover { background: rgba(var(--primary-rgb), 0.08); color: var(--primary-dark); }
 .cat-city-quick { display: flex; flex-wrap: wrap; gap: calc(6px * 0.9); margin-top: 10px; }
 .cat-filter__opts { display: flex; flex-wrap: wrap; gap: calc(6px * 0.9); }
-.cat-pill { min-height: calc(44px * 0.9); padding: calc(7px * 0.9) calc(12px * 0.9); border-radius: 999px; background: var(--light-bg); border: 1px solid transparent; color: var(--dark); font: inherit; font-size: calc(var(--fs-caption) * 0.9); font-weight: var(--fw-ui); cursor: pointer; transition: all 0.16s ease; display: inline-flex; align-items: center; }
+.cat-pill { padding: 4px 12px; border-radius: 999px; background: var(--light-bg); border: 1px solid transparent; color: var(--dark); font: inherit; font-size: 13px; font-weight: var(--fw-ui); line-height: 1.25; cursor: pointer; transition: background 0.16s ease, color 0.16s ease; display: inline-flex; align-items: center; }
 a.cat-pill { text-decoration: none; }
 .cat-sport-hint { display: block; margin-top: 2px; font-size: 11px; font-weight: var(--fw-ui); color: var(--muted); }
 .cat-pill:hover { background: rgba(var(--primary-rgb), 0.08); }
@@ -833,10 +833,10 @@ a.cat-pill { text-decoration: none; }
 .cat-filter-bar { display: none; }
 .cat-filter-bar__row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
 .cat-filter-bar__applied { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; min-width: 0; }
-.cat-filter-bar__applied li { display: inline-flex; align-items: center; min-height: 44px; padding-left: 12px; border-radius: 999px; background: rgba(var(--primary-rgb), 0.1); color: var(--primary); }
+.cat-filter-bar__applied li { display: inline-flex; align-items: center; padding: 2px 2px 2px 12px; border-radius: 999px; background: rgba(var(--primary-rgb), 0.1); color: var(--primary); }
 .cat-filter-bar__applied li.is-fixed { padding-right: 12px; }
-.cat-filter-bar__applied li span { font-size: 13px; font-weight: var(--fw-title); line-height: 1.2; }
-.cat-filter-bar__applied button { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: inherit; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.cat-filter-bar__applied li span { font-size: 13px; font-weight: var(--fw-title); line-height: 1.25; }
+.cat-filter-bar__applied button { width: 28px; height: 28px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: inherit; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
 .cat-filter-bar__applied button svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; }
 .cat-filter-bar__applied button:hover { color: var(--primary-dark); }
 .cat-filter-bar__toggle { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-size: 14px; font-weight: var(--fw-ui); cursor: pointer; }
@@ -855,7 +855,6 @@ a.cat-pill { text-decoration: none; }
 @media (max-width: 767px) {
   .cat-child-nav__inner { gap: 6px; }
   .cat-child-nav__tile { min-height: 32px; padding: 3px 10px; font-size: 13px; line-height: 1.2; }
-  .cat-pill { min-height: 44px; padding: 6px 10px; font-size: 13px; line-height: 1.25; }
 }
 @media (max-width: 640px) {
   .cat-hero .layout-container:has(.cat-hero__photo) { grid-template-columns: 1fr; }
@@ -950,9 +949,10 @@ export function CategoryCatalogPage({
   );
   const sportSuggestions = useMemo(() => {
     if (sportQuery.trim()) return filterCatalogSports(sportQuery, 8);
+    if (!cityCatalog) return [];
     if (localSports.length > 0) return localSports;
     return filterCatalogSports("", 5);
-  }, [sportQuery, localSports]);
+  }, [cityCatalog, sportQuery, localSports]);
   const [selectedCities, setSelectedCities] = useState<string[]>(() =>
     cityCatalog ? [cityCatalog.name] : catalogFilterCities(place),
   );
@@ -1629,45 +1629,11 @@ export function CategoryCatalogPage({
                   ))}
                 </ul>
               ) : null}
+              {cityCatalog ? (
               <div className="cat-city-quick" role="group" aria-label="Виды спорта">
                 {sportPills.map((sport) => {
                   const active = selectedSports.some((item) => item.id === sport.id);
                   const className = `cat-pill${active ? " is-active" : ""}`;
-                  if (!cityCatalog) {
-                    const current = categorySport?.id === sport.id ? "page" as const : undefined;
-                    const onCategoryClick = (event: MouseEvent<HTMLAnchorElement>) => {
-                      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-                      if (current) event.preventDefault();
-                    };
-                    if (sport.level === 2) {
-                      return (
-                        <Link
-                          key={sport.id}
-                          to="/categories/$parentSlug/$childSlug"
-                          params={{ parentSlug: sport.parentSlug, childSlug: sport.slug }}
-                          className={className}
-                          aria-pressed={active}
-                          aria-current={current}
-                          onClick={onCategoryClick}
-                        >
-                          {sport.label}
-                        </Link>
-                      );
-                    }
-                    return (
-                      <Link
-                        key={sport.id}
-                        to="/categories/$slug"
-                        params={{ slug: sport.slug }}
-                        className={className}
-                        aria-pressed={active}
-                        aria-current={current}
-                        onClick={onCategoryClick}
-                      >
-                        {sport.label}
-                      </Link>
-                    );
-                  }
                   const location = catalogSportLocation(cityCatalog.slug, sport);
                   const onClick = (event: MouseEvent<HTMLAnchorElement>) => {
                     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -1707,6 +1673,7 @@ export function CategoryCatalogPage({
                   );
                 })}
               </div>
+              ) : null}
             </div>
             ) : null}
             <div className="cat-filter">

@@ -12,6 +12,9 @@ export const TRAINER_AUDIENCE_OPTIONS: Array<{ id: TrainerAudience; label: strin
   { id: "teen", label: "Подростки" },
 ];
 
+/** «Для ребёнка» on the homepage and in the catalog filters. Both ages, one chip. */
+export const CHILD_FILTER_AUDIENCES = ["kid", "teen"] as const satisfies readonly TrainerAudience[];
+
 export type PublishedSport = {
   slug: string;
   parentSlug: string;
@@ -128,7 +131,7 @@ export function matchesCatalogAudience(
   filter: "self" | "child" | "adult",
 ): boolean {
   const list = effectiveAudiences(audiences);
-  if (filter === "child") return list.includes("kid") || list.includes("teen");
+  if (filter === "child") return CHILD_FILTER_AUDIENCES.some((audience) => list.includes(audience));
   return list.includes("adult");
 }
 

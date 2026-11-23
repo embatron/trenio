@@ -16,7 +16,7 @@ Design and implement for **320–767px first**, then enhance at `md:` (768px+).
 ## Checklist (every UI change)
 
 - [ ] Layout OK at 320px width
-- [ ] Touch targets ≥44×44px (buttons, links, toggles)
+- [ ] Touch targets ≥44×44px (buttons, links, toggles). Catalog filter option chips are the exception: `.cursor/rules/catalog-filters.mdc`
 - [ ] No accidental horizontal page scroll
 - [ ] Forms usable with on-screen keyboard
 - [ ] Header/nav usable on touch (burger, mega menu)

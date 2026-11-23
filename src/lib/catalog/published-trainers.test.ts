@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { similarTrainers, trainerBreadcrumbSport, type PublishedTrainer } from "./published-trainers";
+import { matchesCatalogAudience, similarTrainers, trainerBreadcrumbSport, type PublishedTrainer } from "./published-trainers";
 
 function trainer(slug: string, sports: Array<[string, string]>): PublishedTrainer {
   const listed = sports.map(([sport, parent]) => ({ slug: sport, parentSlug: parent, label: sport }));
@@ -88,4 +88,15 @@ test("similar trainers stay at three", () => {
   const kick = trainer("kick", [["kikboksing", "edinoborstva"]]);
   const catalog = ["a", "b", "c", "d"].map((slug) => trainer(slug, [["kikboksing", "edinoborstva"]]));
   assert.equal(similarTrainers([kick, ...catalog], kick).length, 3);
+});
+
+test("для ребёнка matches children and teenagers, and для себя stays adults", () => {
+  assert.equal(matchesCatalogAudience(["kid"], "child"), true);
+  assert.equal(matchesCatalogAudience(["teen"], "child"), true);
+  assert.equal(matchesCatalogAudience(["adult", "teen"], "child"), true);
+  assert.equal(matchesCatalogAudience(["adult"], "child"), false);
+  assert.equal(matchesCatalogAudience([], "child"), false);
+  assert.equal(matchesCatalogAudience(["teen"], "self"), false);
+  assert.equal(matchesCatalogAudience([], "self"), true);
+  assert.equal(matchesCatalogAudience(["adult"], "adult"), true);
 });
