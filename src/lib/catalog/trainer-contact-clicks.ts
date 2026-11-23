@@ -2,6 +2,8 @@ import { and, count, desc, eq, gte, sql } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { trainerContactClicks } from "@/db/schema";
+import { isStaff } from "@/lib/auth/roles";
+import type { UserRole } from "@/lib/auth/types";
 import { logCaught } from "@/lib/log/logger";
 
 export const CONTACT_CLICK_KINDS = ["phone", "instagram", "telegram", "message"] as const;
@@ -12,6 +14,16 @@ export const CONTACT_CLICK_REPEAT_MS = 3000;
 
 export function contactClickIsRepeat(previousAt: number | null, now: number, windowMs = CONTACT_CLICK_REPEAT_MS) {
   return previousAt != null && now - previousAt >= 0 && now - previousAt < windowMs;
+}
+
+/** The card owner and a staff account do not add a contact click. */
+export function contactClickIgnored(
+  actor: { id: string; roles: readonly UserRole[] } | null,
+  ownerUserId: string | null,
+): boolean {
+  if (!actor) return false;
+  if (ownerUserId && actor.id === ownerUserId) return true;
+  return isStaff(actor.roles);
 }
 
 let tableReady = false;

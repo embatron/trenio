@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 
-import { and, eq, inArray, isNull } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { trainerProfiles } from "@/db/schema";
@@ -168,7 +168,7 @@ export async function resolveOutreachScope(rawHandles: string[]): Promise<Outrea
   });
 }
 
-/** Drafts that still need the first Instagram message. */
+/** Drafts that still need the first Instagram message, oldest account first. */
 export async function listUnsentOutreach(): Promise<OutreachCandidate[]> {
   await ensureTrainerDoorSchema();
   const rows = await getDb()
@@ -180,7 +180,8 @@ export async function listUnsentOutreach(): Promise<OutreachCandidate[]> {
       outreachSentAt: trainerProfiles.outreachSentAt,
     })
     .from(trainerProfiles)
-    .where(eq(trainerProfiles.status, "draft"));
+    .where(eq(trainerProfiles.status, "draft"))
+    .orderBy(asc(trainerProfiles.createdAt), asc(trainerProfiles.id));
   return rows
     .filter((row) => row.handle.trim() && !row.outreachSentAt)
     .map((row) => ({

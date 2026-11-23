@@ -10,7 +10,7 @@ import {
 } from "@/lib/catalog/catalog-sports";
 import { cityCatalogBySlug } from "@/lib/catalog/city-pages";
 import { categoryChildRoute, categorySlugRoute } from "@/lib/catalog/sport-taxonomy";
-import { contactClickIsRepeat } from "@/lib/catalog/trainer-contact-clicks";
+import { contactClickIgnored, contactClickIsRepeat } from "@/lib/catalog/trainer-contact-clicks";
 
 test("a city and sport page opens only when a published trainer matches", () => {
   const minsk = cityCatalogBySlug("minsk");
@@ -96,4 +96,11 @@ test("two taps a moment apart count as one click", () => {
   assert.equal(contactClickIsRepeat(1_000, 2_000), true);
   assert.equal(contactClickIsRepeat(1_000, 4_000), false);
   assert.equal(contactClickIsRepeat(null, 4_000), false);
+});
+
+test("the card owner and staff do not add a contact click", () => {
+  assert.equal(contactClickIgnored(null, "owner"), false);
+  assert.equal(contactClickIgnored({ id: "owner", roles: ["trainer"] }, "owner"), true);
+  assert.equal(contactClickIgnored({ id: "admin", roles: ["admin"] }, "owner"), true);
+  assert.equal(contactClickIgnored({ id: "guest", roles: ["user"] }, "owner"), false);
 });

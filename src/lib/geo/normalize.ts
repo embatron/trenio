@@ -551,11 +551,45 @@ function plansFor(parsed: ParsedAddress, typePosition: "before" | "after" | "non
 }
 
 /**
+ * School lines written in a class description. The school number and
+ * «г. Минска» are not the street. Each line is the street and the house.
+ */
+function addressExceptions(raw: string, cityHint: string): AddressSearch[] {
+  const folded = foldAddress(`${cityHint} ${collapse(raw)}`);
+  if (!folded.includes("минск")) return [];
+  const rows: Array<{ parts: string[]; house: string; plan: AddressSearch }> = [
+    { parts: ["газеты звязда"], house: "65", plan: exceptionPlan("проспект", "Газеты Звязда", "65", null) },
+    { parts: ["сердича"], house: "26", plan: exceptionPlan("улица", "Данилы Сердича", "26", null) },
+    { parts: ["кунцевщина"], house: "10", plan: exceptionPlan("улица", "Кунцевщина", "10", null) },
+    { parts: ["жукова"], house: "27", plan: exceptionPlan("проспект", "Жукова", "27", null) },
+    { parts: ["космонавтов"], house: "15", plan: exceptionPlan("улица", "Космонавтов", "15", "2") },
+    { parts: ["колесникова"], house: "14", plan: exceptionPlan("улица", "Колесникова", "14", null) },
+  ];
+  return rows.filter((row) => {
+    if (!row.parts.every((part) => folded.includes(part))) return false;
+    return new RegExp(`(?<![\\d])${row.house}(?![\\d])`).test(folded);
+  }).map((row) => row.plan);
+}
+
+function exceptionPlan(type: StreetType, name: string, house: string, corpus: string | null): AddressSearch {
+  return plansFor({
+    type,
+    name,
+    alternateName: null,
+    house: { text: house, corpus },
+    city: "Минск",
+  }, "before", name);
+}
+
+/**
  * Lookup attempts, most specific first.
  * At most five. A repeated city and the word «Беларусь» are not part of them.
  * The second and third lines are one а/о slip, used only when the exact line misses.
+ * A known school line is the exception: one clean street, and the school number stays out.
  */
 export function addressSearches(raw: string, cityHint = ""): AddressSearch[] {
+  const exceptions = addressExceptions(raw, cityHint);
+  if (exceptions.length > 0) return exceptions;
   const expanded = expandStreetQuery(raw);
   if (!expanded) return [];
   const chunks = splitChunks(expanded).flatMap(splitHouses).slice(0, 2);

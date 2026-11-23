@@ -55,9 +55,12 @@ async function jpegPair(source: Buffer) {
 }
 
 async function pdfPage(bytes: Buffer) {
+  // A static import makes the client build open the native canvas addon and fail.
+  const canvasPkg = "@napi-rs/canvas";
+  const pdfPkg = "pdfjs-dist/legacy/build/pdf.mjs";
   const [{ getDocument, GlobalWorkerOptions }, { createCanvas }] = await Promise.all([
-    import("pdfjs-dist/legacy/build/pdf.mjs"),
-    import("@napi-rs/canvas"),
+    import(pdfPkg),
+    import(canvasPkg),
   ]);
   // The production bundle sits in dist/ and looks for pdf.worker.mjs beside itself.
   GlobalWorkerOptions.workerSrc = pathToFileURL(

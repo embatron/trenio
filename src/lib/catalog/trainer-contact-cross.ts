@@ -58,29 +58,27 @@ export function decideTelegramPhone(
 
 export type TelegramCardDecision =
   | { kind: "missing" }
-  | { kind: "mismatch" }
   | { kind: "verify"; handle: string }
   | { kind: "write"; handle: string };
 
-/** The card handle is written only when it is empty. A different public name is refused. */
+/** The card handle is written only when the field is empty. A different public name still confirms the saved contact. */
 export function decideTelegramCard(savedRaw: string, incomingRaw: string | null): TelegramCardDecision {
   const incoming = incomingRaw ? parseTelegramHandle(incomingRaw) : null;
   if (!incoming) return { kind: "missing" };
   const saved = parseTelegramHandle(savedRaw);
   if (!saved) return { kind: "write", handle: incoming };
-  if (saved.toLowerCase() !== incoming.toLowerCase()) return { kind: "mismatch" };
   return { kind: "verify", handle: saved };
 }
 
 export type TelegramConfirmPlan = {
-  error: "missing" | "mismatch" | null;
+  error: "missing" | null;
   decision: TelegramCardDecision;
   phone: TelegramPhoneAction;
 };
 
 /**
  * Telegram confirm and the phone that came with it.
- * A refused handle does not adopt the phone. An unsigned or foreign number does not change the phone.
+ * A missing username does not adopt the phone. An unsigned or foreign number does not change the phone.
  */
 export function planTrainerTelegramConfirm(input: {
   savedTelegram: string;
@@ -91,7 +89,7 @@ export function planTrainerTelegramConfirm(input: {
   acceptPhone: boolean;
 }): TelegramConfirmPlan {
   const decision = decideTelegramCard(input.savedTelegram, input.incomingUsername);
-  const error = decision.kind === "missing" || decision.kind === "mismatch" ? decision.kind : null;
+  const error = decision.kind === "missing" ? decision.kind : null;
   const phone = error || !input.acceptPhone
     ? { kind: "ignore" as const }
     : decideTelegramPhone(input.currentPhone, input.phoneVerified, input.incomingPhone);

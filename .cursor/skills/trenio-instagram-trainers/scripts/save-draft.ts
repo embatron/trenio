@@ -11,6 +11,7 @@ import { coverPosition } from "../../../../src/lib/images/variants.ts";
 import { formatBelarusPhone } from "../../../../src/lib/auth/phone.ts";
 import { inferTrainerGender } from "../../../../src/lib/catalog/trainer-gender.ts";
 import { foldYo, prepareSportText, sportAliasRegex } from "../../../../src/lib/catalog/sport-alias.ts";
+import { listCityCatalogPages } from "../../../../src/lib/catalog/city-pages.ts";
 import { TOP_LEVEL_SPORT_CATEGORIES, trainerIntroPhrase, trainerSportRoles } from "../../../../src/lib/catalog/sport-taxonomy.ts";
 import { trainerPersonKey } from "../../../../src/lib/catalog/trainer-slugs.ts";
 import { AuthError } from "../../../../src/lib/auth/errors.ts";
@@ -236,7 +237,11 @@ function noteNamePairs(note: string, settlements: string[]): Array<{ first: stri
     if (!/^[\p{Script=Cyrillic}]+(?:-[\p{Script=Cyrillic}]+)?$/u.test(first) || !/^[\p{Script=Cyrillic}]+(?:-[\p{Script=Cyrillic}]+)?$/u.test(last)) continue;
     const sportWord = (word: string) => catalogPhrases().some((phrase) => phrase.label.toLowerCase() === word.toLowerCase() || phrase.alias.toLowerCase() === word.toLowerCase());
     if (sportWord(first) || sportWord(last)) continue;
-    if (cities.has(first.toLowerCase()) || cities.has(last.toLowerCase())) continue;
+    const pairText = `${first} ${last}`;
+    const sportPhrase = catalogPhrases().some((phrase) => phrase.alias.toLowerCase() === pairText.toLowerCase() || phrase.label.toLowerCase() === pairText.toLowerCase());
+    if (sportPhrase) continue;
+    if (cities.has(first.toLowerCase()) || cities.has(last.toLowerCase()) || cities.has(pairText.toLowerCase())) continue;
+    if (listCityCatalogPages().some((city) => foldCity(city.locative) === foldCity(pairText) || foldCity(city.name) === foldCity(pairText))) continue;
     const before = noteForNames.slice(Math.max(0, (match.index ?? 0) - 16), match.index ?? 0);
     if (/(?:ул\.?|улиц\p{L}*|проспект|пр-т|пер\.|переул\p{L}*|бульвар)\s*$/iu.test(before)) continue;
     if (pairs.some((pair) => pair.first === first && pair.last === last)) continue;
@@ -382,11 +387,44 @@ function loadSettlements(): string[] {
   return (payload.settlements || []).filter((name) => name.trim().length >= 4);
 }
 
+function foldCity(value: string): string {
+  return value.toLowerCase().replaceAll("ё", "е");
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/** A catalog phrase such as «Марьина Горка» or «Марьиной Горке» is one city. «Горка» inside it is not the village Горка. */
 function matchCities(text: string, settlements: string[]): string[] {
-  const words = text.match(/(?<![\p{L}\d])[\p{L}]{4,}(?![\p{L}\d])/giu) || [];
   const found = new Set<string>();
+  const taken: Array<{ start: number; end: number }> = [];
+  const foldedText = foldCity(text);
+  const byFold = new Map(settlements.map((name) => [foldCity(name), name]));
+  const occupy = (phrase: string, city: string) => {
+    if (!phrase || !foldedText.includes(foldCity(phrase))) return;
+    const pattern = new RegExp(`(?<![\\p{L}\\d])${escapeRegExp(phrase)}(?![\\p{L}\\d])`, "giu");
+    for (const match of text.matchAll(pattern)) {
+      const start = match.index ?? 0;
+      const end = start + match[0].length;
+      if (taken.some((span) => start < span.end && end > span.start)) continue;
+      taken.push({ start, end });
+      found.add(city);
+    }
+  };
+  const phrases = settlements.filter((name) => /[\s-]/u.test(name)).sort((a, b) => b.length - a.length);
+  for (const name of phrases) occupy(name, name);
+  for (const city of listCityCatalogPages()) {
+    const canonical = byFold.get(foldCity(city.name));
+    if (!canonical || foldCity(city.locative) === foldCity(city.name)) continue;
+    occupy(city.locative, canonical);
+  }
   const byLength = [...settlements].sort((a, b) => b.length - a.length);
-  for (const word of words) {
+  for (const match of text.matchAll(/(?<![\p{L}\d])[\p{L}]{4,}(?![\p{L}\d])/giu)) {
+    const word = match[0];
+    const start = match.index ?? 0;
+    const end = start + word.length;
+    if (taken.some((span) => start < span.end && end > span.start)) continue;
     const city = byLength.find((name) => {
       const cityName = name.toLowerCase();
       const token = word.toLowerCase();

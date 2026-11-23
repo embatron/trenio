@@ -129,6 +129,25 @@ test("every street word is recognized before the name, after it, and with the ci
   assert.equal(addressLookupQueries("В. Хоружей 25/2", "Минск")[0], "Хоружей, 25/2, Минск");
 });
 
+test("Minsk school lines from a class description use the street and the house", () => {
+  const lines: Array<[string, string, string | null]> = [
+    ["ГУО «Средняя школа №181 г. Минска», проспект Газеты Звязда, 65", "Проспект Газеты Звязда, 65, Минск", null],
+    ["ГУО «Гимназия №32 г. Минска», ул. Данилы Сердича, 26", "Улица Данилы Сердича, 26, Минск", null],
+    ["ГУО «Гимназия №39 г. Минска», ул. Кунцевщина, 10", "Улица Кунцевщина, 10, Минск", null],
+    ["ГУО «Средняя школа №101 г. Минска», пр-т. Жукова, 27", "Проспект Жукова, 27, Минск", null],
+    ["ГУО «Гимназия №174 г. Минска», ул. Космонавтов, 15, корп. 2", "Улица Космонавтов, 15, Минск", "2"],
+    ["ГУО «Средняя школа №49 г. Минска», ул. Колесникова, 14", "Улица Колесникова, 14, Минск", null],
+  ];
+  for (const [raw, query, corpus] of lines) {
+    const plan = addressSearches(raw, "Минск");
+    assert.deepEqual(plan.map((item) => item.q), [query]);
+    assert.equal(plan[0]?.corpus ?? null, corpus);
+    assert.equal(plan[0]?.house, query.match(/, (\d+),/)?.[1]);
+  }
+  const together = lines.map(([raw]) => raw).join("\n");
+  assert.deepEqual(addressLookupQueries(together, "Минск"), lines.map(([, query]) => query));
+});
+
 test("addressHitScore accepts the same street and rejects the city alone", () => {
   assert.ok(addressHitScore("проспект Независимости, 32А", {
     street: "проспект Независимости, 32А",

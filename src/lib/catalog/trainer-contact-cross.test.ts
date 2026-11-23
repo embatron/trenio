@@ -130,14 +130,14 @@ test("Telegram handle is written only into an empty card field", () => {
   assert.deepEqual(decideTelegramCard("", "coach_name"), { kind: "write", handle: "coach_name" });
   assert.deepEqual(decideTelegramCard("not a name", "@coach_name"), { kind: "write", handle: "coach_name" });
   assert.deepEqual(decideTelegramCard("@Coach_Name", "coach_name"), { kind: "verify", handle: "Coach_Name" });
-  assert.equal(decideTelegramCard("@other_name", "https://t.me/coach_name").kind, "mismatch");
+  assert.deepEqual(decideTelegramCard("@other_name", "https://t.me/coach_name"), { kind: "verify", handle: "other_name" });
   assert.equal(decideTelegramCard("", null).kind, "missing");
   assert.equal(decideTelegramCard("", "ab").kind, "missing");
   assert.equal(decideTelegramCard("", "12345").kind, "missing");
 });
 
-test("a refused Telegram name does not adopt the phone that came with it", () => {
-  const mismatch = planTrainerTelegramConfirm({
+test("a different Telegram name still confirms the saved contact", () => {
+  const different = planTrainerTelegramConfirm({
     savedTelegram: "@other_name",
     incomingUsername: "coach_name",
     currentPhone: "",
@@ -145,8 +145,9 @@ test("a refused Telegram name does not adopt the phone that came with it", () =>
     incomingPhone: "+375 29 123-45-67",
     acceptPhone: true,
   });
-  assert.equal(mismatch.error, "mismatch");
-  assert.equal(mismatch.phone.kind, "ignore");
+  assert.equal(different.error, null);
+  assert.deepEqual(different.decision, { kind: "verify", handle: "other_name" });
+  assert.equal(different.phone.kind, "store");
 
   const missing = planTrainerTelegramConfirm({
     savedTelegram: "",
@@ -174,7 +175,7 @@ test("Telegram without a phone leaves the phone decision empty", () => {
   assert.equal(plan.phone.kind, "ignore");
 });
 
-test("an unsigned or mismatched contact does not change the phone", () => {
+test("an unsigned Telegram contact does not change the phone", () => {
   const plan = planTrainerTelegramConfirm({
     savedTelegram: "",
     incomingUsername: "coach_name",

@@ -146,12 +146,9 @@ A Belarus mobile in the biography, the about highlight, a pinned caption, a `tel
 
 ### Face photo
 
-Use only this browser and this account:
+Use the one shared Chrome from `.cursor/rules/browser.mdc` (`user-playwright`). Do not launch another Chrome and do not close that window. The Instagram account signed in there is `trenioby`. The password is in the gitignored `LOGIN.md` next to this skill.
 
-- Chrome user data dir: `/home/embatron/.cache/trenio-instagram-login`
-- Instagram account signed in there: `trenioby`. The password is in the gitignored `LOGIN.md` next to this skill.
-
-Do not use the everyday Chrome profile and do not copy its cookies. On a login wall, sign in with that note. Do not print the password and do not commit `LOGIN.md`.
+Do not use the everyday Chrome profile and do not copy its cookies. On a login wall, sign in with that note in the shared window. Do not print the password and do not commit `LOGIN.md`.
 
 The face photo is the profile-picture image whose alt is `{handle}'s profile picture`. Click that picture, then let the page load. `extract-profile.fn.js` reads the image id from the `src` filename and downloads every URL the page itself already loaded for that id. It keeps the file with the greatest width and height. The URL is not rewritten: do not delete `stp`, and do not replace `s150` with `s1080`. The CDN answers `URL signature mismatch` or returns the thumbnail.
 
@@ -278,7 +275,7 @@ The row stays `draft`. Do not set `published`. A guest does not see `/trainers/{
 
 ### 7. Report
 
-One line per link: handle, full name, primary sport, practiced sports, city, the stored street or that the place did not resolve, phone, email, telegram, `source` or `adapted` presentation mode, pinned count, whether pinned image text was read, face side in pixels, gallery count, certificate count, whether the training text was written, whether an operator note was applied, whether Threads was read, and fields still empty. Drafts stay unpublished. Say that the draft is in the local database and on the server. Call `browser_close` when the batch ends.
+One line per link: handle, full name, primary sport, practiced sports, city, the stored street or that the place did not resolve, phone, email, telegram, `source` or `adapted` presentation mode, pinned count, whether pinned image text was read, face side in pixels, gallery count, certificate count, whether the training text was written, whether an operator note was applied, whether Threads was read, and fields still empty. Drafts stay unpublished. Say that the draft is in the local database and on the server. Leave the shared browser open.
 
 ## CSV list
 

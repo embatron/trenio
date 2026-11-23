@@ -8,6 +8,7 @@ import { getDb } from "@/db";
 import { trainerProfiles } from "@/db/schema";
 import {
   CONTACT_CLICK_KINDS,
+  contactClickIgnored,
   contactClickIsRepeat,
   ensureTrainerContactClickTable,
   insertContactClick,
@@ -18,7 +19,7 @@ import { visitorId } from "@/lib/catalog/trainer-visitor";
 import { logCaught } from "@/lib/log/logger";
 import { publishCabinet } from "@/lib/messages/live-hub";
 
-/** One click on the public phone, Instagram, or Telegram. The owner is not stored. */
+/** One click on the public phone, Instagram, Telegram, or message. The owner and staff are not stored. */
 export const recordTrainerContactClickFn = createServerFn({ method: "POST" })
   .validator(z.object({
     slug: z.string().trim().min(1).max(40),
@@ -40,7 +41,7 @@ export const recordTrainerContactClickFn = createServerFn({ method: "POST" })
       if (!profile || profile.status !== "published") return { ok: true as const };
 
       const session = await getSessionUserFromToken(readSessionToken());
-      if (session && profile.ownerUserId && session.id === profile.ownerUserId) return { ok: true as const };
+      if (contactClickIgnored(session, profile.ownerUserId)) return { ok: true as const };
 
       const visitor = visitorId();
       const previous = await latestContactClickAt(profile.id, visitor, data.kind);

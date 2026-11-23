@@ -22,4 +22,5 @@ export const TRAINER_LEGACY_SLUGS: Record<string, string> = {
   "artem-romanovich": "ar.boxing.by",
   akhmejanau: "farkhad_akhmejanau",
   shumilova: "shum_ann",
+  newborn_swimming_kobrin: "hanna_lukyanionak",
 };
