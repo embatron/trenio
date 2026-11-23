@@ -9,7 +9,11 @@ import {
   TELEGRAM_SUPPORT_URL,
   telegramMainKeyboard,
   telegramPublicOrigin,
+  telegramHomeText,
+  telegramGroupText,
+  telegramPrivateCommands,
   telegramSupportInlineKeyboard,
+  telegramUnknownText,
 } from "./nav";
 
 test("bot keyboard lists every section as a Mini App button", () => {
@@ -43,6 +47,19 @@ test("commands and button labels open the same section", () => {
   assert.equal(resolveTelegramAction("Кабинет тренера"), "me");
   assert.equal(resolveTelegramAction(TELEGRAM_SUPPORT_LABEL), "support");
   assert.equal(resolveTelegramAction("привет"), null);
+});
+
+test("the greeting says what the bot does", () => {
+  const plain = telegramHomeText(null);
+  assert.match(plain, /каталог тренеров и клубов/);
+  assert.match(plain, /Написать менеджеру/);
+  assert.doesNotMatch(plain, /@embatron/);
+  assert.doesNotMatch(plain, /Войти через Telegram/);
+  assert.equal(resolveTelegramAction("Написать @embatron"), "support");
+  assert.match(telegramHomeText({ firstName: "Игорь" }), /аккаунту Игорь/);
+  assert.equal(telegramUnknownText(), "Напишите /start, и я покажу разделы.");
+  assert.match(telegramGroupText(), /10:00/);
+  assert.equal(telegramPrivateCommands()[0]?.description, "Открыть меню");
 });
 
 test("the open tab is the longest matching path", () => {

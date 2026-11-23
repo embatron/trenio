@@ -4,12 +4,16 @@ export type TelegramNavItem = {
   label: string;
   path: string;
   command: string;
+  /** Shown in Telegram’s command menu. A short action, not the button label alone. */
+  commandDescription: string;
   text: string;
 };
 
 /** Opens a private chat. The reply keyboard cannot hold a link, so the bot answers with an inline button. */
 export const TELEGRAM_SUPPORT_URL = "https://t.me/embatron";
-export const TELEGRAM_SUPPORT_LABEL = "Написать @embatron";
+export const TELEGRAM_SUPPORT_LABEL = "Написать менеджеру";
+/** The previous button text. An old keyboard still sends it. */
+const TELEGRAM_SUPPORT_LABEL_PREVIOUS = "Написать @embatron";
 
 /** Same sections as the site footer and the two cabinets. Order is the bot keyboard, then the Mini App bar. */
 export const TELEGRAM_NAV: readonly TelegramNavItem[] = [
@@ -17,48 +21,56 @@ export const TELEGRAM_NAV: readonly TelegramNavItem[] = [
     label: "Тренеры",
     path: "/",
     command: "trainers",
-    text: "Каталог тренеров: город, вид спорта и карточки.",
+    commandDescription: "Каталог тренеров",
+    text: "Город, вид спорта и карточки тренеров.",
   },
   {
     label: "Категории",
     path: "/categories/",
     command: "categories",
-    text: "Виды спорта. Откройте раздел и выберите занятие.",
+    commandDescription: "Виды спорта",
+    text: "Разделы спорта. Откройте нужное занятие.",
   },
   {
     label: "На карте",
     path: "/map",
     command: "map",
-    text: "Тренеры на карте. Можно сузить город и вид спорта.",
+    commandDescription: "Тренеры на карте",
+    text: "Тренеры на карте города.",
   },
   {
     label: "Сообщения",
     path: "/account/messages",
     command: "messages",
-    text: "Написать тренеру или клубу. Нужен вход.",
+    commandDescription: "Написать тренеру",
+    text: "Переписка с тренером или клубом. Нужен вход.",
   },
   {
     label: "Мой кабинет",
     path: "/account",
     command: "account",
-    text: "Кабинет клиента: сообщения, отзывы, избранное и настройки.",
+    commandDescription: "Кабинет клиента",
+    text: "Сообщения, отзывы, избранное и настройки.",
   },
   {
     label: "Кабинет тренера",
     path: "/me",
     command: "me",
-    text: "Кабинет тренера: карточка, отзывы и сообщения.",
+    commandDescription: "Кабинет тренера",
+    text: "Карточка, отзывы и сообщения.",
   },
   {
     label: "Стать тренером",
     path: "/join/trainer",
     command: "join",
-    text: "Заявка тренера. Можно оставить Instagram, Telegram или телефон.",
+    commandDescription: "Оставить заявку",
+    text: "Заявка. Можно указать Instagram, Telegram или телефон.",
   },
   {
     label: "Контакты",
     path: "/contacts",
     command: "contacts",
+    commandDescription: "Почта и вопросы",
     text: `Почта ${SITE_EMAIL}.`,
   },
 ];
@@ -66,6 +78,17 @@ export const TELEGRAM_NAV: readonly TelegramNavItem[] = [
 export type TelegramKeyboardButton =
   | { text: string }
   | { text: string; web_app: { url: string } };
+
+export function telegramPrivateCommands(): Array<{ command: string; description: string }> {
+  return [
+    { command: "start", description: "Открыть меню" },
+    ...TELEGRAM_NAV.map((item) => ({ command: item.command, description: item.commandDescription })),
+  ];
+}
+
+export function telegramGroupCommands(): Array<{ command: string; description: string }> {
+  return [{ command: "start", description: "Сводка в этом чате" }];
+}
 
 const COMMANDS = new Map<string, string>([
   ["/start", "home"],
@@ -104,7 +127,7 @@ export function telegramMainKeyboard(origin: string): TelegramKeyboardButton[][]
 }
 
 export function telegramSupportText(): string {
-  return `По всем вопросам пишите <a href="${TELEGRAM_SUPPORT_URL}">@embatron</a>.`;
+  return `По всем вопросам напишите <a href="${TELEGRAM_SUPPORT_URL}">менеджеру</a>.`;
 }
 
 export function telegramSupportInlineKeyboard(): { inline_keyboard: Array<Array<{ text: string; url: string }>> } {
@@ -118,7 +141,7 @@ export function resolveTelegramAction(text: string): string | null {
   if (!trimmed) return null;
   const [head, ...rest] = trimmed.split(/\s+/);
   const command = (head ?? "").split("@")[0]?.toLowerCase() ?? "";
-  if (trimmed === TELEGRAM_SUPPORT_LABEL) return "support";
+  if (trimmed === TELEGRAM_SUPPORT_LABEL || trimmed === TELEGRAM_SUPPORT_LABEL_PREVIOUS) return "support";
   if (command.startsWith("/")) {
     if (command === "/start" && rest[0]) {
       const payload = rest[0].toLowerCase();
@@ -152,28 +175,25 @@ function escapeHtml(value: string): string {
 }
 
 export function telegramHomeText(account: { firstName: string } | null): string {
-  const link = account
-    ? `Этот Telegram привязан к аккаунту ${escapeHtml(account.firstName)}. Кнопка «Войти через Telegram» на сайте откроет его.`
-    : "Этот Telegram ещё не привязан. Новый аккаунт создаётся на регистрации. Если почта уже есть, войдите и привяжите Telegram в настройках: второй аккаунт с ним не создаётся.";
-  return [
-    "<b>Я ищу тренера на trenio.by</b>",
-    "",
-    "Поиск тренеров и спортивных занятий в Беларуси.",
-    "",
-    link,
+  const lines = [
+    "<b>Trenio</b> — каталог тренеров и клубов в Беларуси.",
     "",
     "Кнопки внизу открывают каталог, карту, сообщения и кабинеты.",
-    "По всем вопросам — кнопка «Написать @embatron».",
-  ].join("\n");
+    "Кнопка «Написать менеджеру» внизу.",
+  ];
+  if (account?.firstName.trim()) {
+    lines.push("", `Этот Telegram привязан к аккаунту ${escapeHtml(account.firstName)}.`);
+  }
+  return lines.join("\n");
 }
 
 export function telegramUnknownText(): string {
-  return [
-    "Я открываю разделы сайта «Я ищу тренера на trenio.by».",
-    "",
-    "Напишите /start или нажмите кнопку внизу.",
-    "Привязать вход можно в настройках аккаунта на сайте.",
-  ].join("\n");
+  return "Напишите /start, и я покажу разделы.";
+}
+
+/** One line for the staff group. No site keyboard. */
+export function telegramGroupText(): string {
+  return "Каждый день в 10:00 напишу, сколько тренеров опубликовано за сутки.";
 }
 
 /** Extra line for cabinets. The name is already escaped. */

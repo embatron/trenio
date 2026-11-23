@@ -4,10 +4,12 @@ import { loginBotToken } from "@/auth/telegram";
 import { getDb } from "@/db";
 import { users } from "@/db/schema";
 import { logCaught, writeLog } from "@/lib/log/logger";
+import { rememberDigestChat } from "@/lib/telegram/digest-chat";
 import { markTelegramBotSeen } from "@/lib/telegram/bot-seen";
 
 import {
   resolveTelegramAction,
+  telegramGroupText,
   telegramHomeText,
   telegramMainKeyboard,
   telegramNavItem,
@@ -35,18 +37,40 @@ function verifyWebhookSecret(request: Request): boolean {
   return request.headers.get("x-telegram-bot-api-secret-token") === expected;
 }
 
+type TelegramUser = { id?: number; username?: string; is_bot?: boolean };
+type TelegramChat = { id?: number; type?: string; title?: string };
+type TelegramMessage = {
+  chat?: TelegramChat;
+  text?: string;
+  new_chat_members?: TelegramUser[];
+};
 type TelegramUpdate = {
-  message?: {
-    chat?: { id?: number; type?: string };
-    text?: string;
+  message?: TelegramMessage;
+  my_chat_member?: {
+    chat?: TelegramChat;
+    new_chat_member?: { status?: string; user?: TelegramUser };
   };
 };
+
+function botUsername(): string {
+  return (process.env.TELEGRAM_LOGIN_BOT_USERNAME || "TrenioByBot").replace(/^@/, "").trim().toLowerCase();
+}
+
+function isGroupChat(type?: string): boolean {
+  return type === "group" || type === "supergroup";
+}
+
+function mentionsThisBot(users: TelegramUser[] | undefined): boolean {
+  const name = botUsername();
+  if (!name) return false;
+  return (users || []).some((user) => user.is_bot && (user.username || "").toLowerCase() === name);
+}
 
 async function sendBotMessage(
   token: string,
   chatId: number,
   text: string,
-  replyMarkup: Record<string, unknown>,
+  replyMarkup?: Record<string, unknown> | null,
 ): Promise<void> {
   const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: "POST",
@@ -56,7 +80,7 @@ async function sendBotMessage(
       text,
       parse_mode: "HTML",
       disable_web_page_preview: true,
-      reply_markup: replyMarkup,
+      ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
     }),
   });
   if (!response.ok) {
@@ -72,6 +96,32 @@ async function sendMenu(token: string, chatId: number, text: string, origin: str
     resize_keyboard: true,
     is_persistent: true,
   });
+}
+
+async function sendGroupNote(token: string, chatId: number, announce: boolean): Promise<void> {
+  const kept = rememberDigestChat(chatId);
+  if (kept === "other") {
+    await writeLog({
+      domain: "admin",
+      level: "warn",
+      action: "telegram.digest",
+      outcome: "skipped",
+      message: "Бот добавлен ещё в один чат. Сводка остаётся в первом.",
+      target: String(chatId),
+    });
+    return;
+  }
+  if (kept === "saved") {
+    await writeLog({
+      domain: "admin",
+      level: "info",
+      action: "telegram.digest",
+      outcome: "success",
+      message: "Сводка будет приходить в этот чат.",
+      target: String(chatId),
+    });
+  }
+  if (kept === "saved" || announce) await sendBotMessage(token, chatId, telegramGroupText());
 }
 
 async function sendSupport(token: string, chatId: number): Promise<void> {
@@ -116,9 +166,29 @@ export async function handleTelegramMenuWebhook(request: Request): Promise<Respo
     return new Response("ok");
   }
 
+  const membership = update.my_chat_member;
+  const joined = membership?.new_chat_member?.status === "member" || membership?.new_chat_member?.status === "administrator";
+  if (joined && isGroupChat(membership?.chat?.type) && membership.chat?.id && mentionsThisBot([membership.new_chat_member?.user || {}])) {
+    try {
+      await sendGroupNote(token, membership.chat.id, true);
+    } catch (error) {
+      logCaught("api", "telegram.menu", error, { target: String(membership.chat.id) });
+    }
+    return new Response("ok");
+  }
+
   const message = update.message;
   const chatId = message?.chat?.id;
-  const text = message?.text;
+  const text = message?.text ?? "";
+  if (chatId && isGroupChat(message?.chat?.type) && (mentionsThisBot(message?.new_chat_members) || text.trim().startsWith("/"))) {
+    const announce = mentionsThisBot(message?.new_chat_members) || resolveTelegramAction(text) === "home";
+    try {
+      await sendGroupNote(token, chatId, announce);
+    } catch (error) {
+      logCaught("api", "telegram.menu", error, { target: String(chatId) });
+    }
+    return new Response("ok");
+  }
   if (!chatId || message?.chat?.type !== "private" || !text) return new Response("ok");
 
   try {

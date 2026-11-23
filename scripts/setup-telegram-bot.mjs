@@ -45,23 +45,29 @@ console.log(`bot: @${me.result?.username ?? "?"}`);
 
 await api("setMyCommands", {
   commands: [
-    { command: "start", description: "Меню" },
-    { command: "trainers", description: "Тренеры" },
-    { command: "categories", description: "Категории" },
-    { command: "map", description: "На карте" },
-    { command: "messages", description: "Сообщения" },
-    { command: "account", description: "Мой кабинет" },
+    { command: "start", description: "Открыть меню" },
+    { command: "trainers", description: "Каталог тренеров" },
+    { command: "categories", description: "Виды спорта" },
+    { command: "map", description: "Тренеры на карте" },
+    { command: "messages", description: "Написать тренеру" },
+    { command: "account", description: "Кабинет клиента" },
     { command: "me", description: "Кабинет тренера" },
-    { command: "join", description: "Стать тренером" },
-    { command: "contacts", description: "Контакты" },
+    { command: "join", description: "Оставить заявку" },
+    { command: "contacts", description: "Почта и вопросы" },
   ],
 });
 console.log("setMyCommands: ok");
 
+await api("setMyCommands", {
+  scope: { type: "all_group_chats" },
+  commands: [{ command: "start", description: "Сводка в этом чате" }],
+});
+console.log("setMyCommands groups: ok");
+
 await api("setChatMenuButton", {
   menu_button: {
     type: "web_app",
-    text: "Открыть",
+    text: "Каталог",
     web_app: { url: `${origin}/` },
   },
 });
@@ -72,7 +78,7 @@ if (probe && probe.status !== 404 && probe.status !== 502 && probe.status !== 50
   await api("setWebhook", {
     url: `${origin}/api/telegram/webhook`,
     secret_token: webhookSecret,
-    allowed_updates: ["message"],
+    allowed_updates: ["message", "my_chat_member"],
     drop_pending_updates: false,
   });
   console.log(`setWebhook: ${origin}/api/telegram/webhook`);
