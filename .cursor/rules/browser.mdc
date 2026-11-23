@@ -1,0 +1,32 @@
+---
+description: One shared Chrome for every Cursor chat in this project
+alwaysApply: true
+---
+
+# One browser
+
+Every chat uses the same Google Chrome. It is the `user-playwright` MCP. The launcher opens that Chrome once; the next chat attaches to it.
+
+Profile: `/Users/embatron/Projects/adminvps-billing-clean/.cursor/playwright-profile`.
+Launcher: `scripts/mcp-playwright-start.sh` in that project. It listens on `127.0.0.1:9333`.
+
+The everyday Chrome window is a different profile. Leave it alone.
+
+## Do
+
+- Call tools on `user-playwright`.
+- List tabs first. Open the page in a tab that is already there.
+- Leave the window open when the task ends.
+
+## Do not
+
+```ts
+// wrong: a second browser, or closing the shared window
+// cursor-ide-browser, plugin-playwright, Chrome for Testing, --isolated
+browser_close();
+
+// right
+browser_tabs({ action: "list" });
+```
+
+`npm` Playwright tests keep the bundled headless Chromium. They do not use this window.

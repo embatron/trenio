@@ -59,6 +59,25 @@ export const authLoginTickets = pgTable("auth_login_tickets", {
  * expires_at stays filled because the column is required; opening ignores it.
  * used_at means a later letter named another mailbox. The same mailbox stays open until the card has an owner.
  */
+/**
+ * One-time cabinet entry for a trainer whose mailbox is already confirmed.
+ * The raw token is never stored. Opening signs in that owner only.
+ */
+export const authCabinetEntries = pgTable("auth_cabinet_entries", {
+  tokenHash: varchar("token_hash", { length: 64 }).primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  profileId: uuid("profile_id")
+    .notNull()
+    .references(() => trainerProfiles.id, { onDelete: "cascade" }),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  /** Set when the third open spends the link. */
+  usedAt: timestamp("used_at", { withTimezone: true }),
+  useCount: integer("use_count").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const authDoorClaims = pgTable("auth_door_claims", {
   id: uuid("id").primaryKey().defaultRandom(),
   profileId: uuid("profile_id")

@@ -59,6 +59,17 @@ const STATEMENTS = [
     consumed_at timestamptz,
     created_at timestamptz NOT NULL DEFAULT now()
   )`,
+  `CREATE TABLE IF NOT EXISTS auth_cabinet_entries (
+    token_hash varchar(64) PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    profile_id uuid NOT NULL REFERENCES trainer_profiles(id) ON DELETE CASCADE,
+    expires_at timestamptz NOT NULL,
+    used_at timestamptz,
+    use_count integer NOT NULL DEFAULT 0,
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  "ALTER TABLE auth_cabinet_entries ADD COLUMN IF NOT EXISTS use_count integer NOT NULL DEFAULT 0",
+  "UPDATE auth_cabinet_entries SET use_count = 3 WHERE used_at IS NOT NULL AND use_count = 0",
   `CREATE TABLE IF NOT EXISTS auth_door_claims (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     profile_id uuid NOT NULL REFERENCES trainer_profiles(id) ON DELETE CASCADE,

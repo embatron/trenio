@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { ExpiredLink } from "@/components/expired-link";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { peekCabinetEntryFn } from "@/lib/catalog/cabinet-entry";
 import { enterTrainerDoorFn, peekTrainerMailFn, peekTrainerPhoneFn } from "@/lib/catalog/trainer-magic";
 
 export const Route = createFileRoute("/hi/$code")({
@@ -16,27 +17,33 @@ export const Route = createFileRoute("/hi/$code")({
     const phone = paramsQuery.get("phone") ?? "";
     if (phone) {
       const peek = await peekTrainerPhoneFn({ data: { code: params.code, token: phone } });
-      if (!peek) return { ready: false };
+      if (!peek) return { ready: false, desk: null };
       const door = await enterTrainerDoorFn({ data: { code: params.code } });
-      if (!door) return { ready: false };
+      if (!door) return { ready: false, desk: null };
       const query = new URLSearchParams({ phone, door: params.code });
       throw redirect({ href: `/trainers/${door.slug}?${query.toString()}` });
+    }
+    const desk = paramsQuery.get("desk") ?? "";
+    if (desk) {
+      const peek = await peekCabinetEntryFn({ data: { code: params.code, token: desk } });
+      if (!peek) return { ready: false, desk: null };
+      throw redirect({ href: `/hi/${params.code}${location.searchStr}`, reloadDocument: true, statusCode: 302 });
     }
     const mail = paramsQuery.get("mail") ?? "";
     if (mail) {
       const peek = await peekTrainerMailFn({ data: { code: params.code, token: mail } });
-      if (!peek) return { ready: false };
+      if (!peek) return { ready: false, desk: null };
       const door = await enterTrainerDoorFn({ data: { code: params.code } });
-      if (!door) return { ready: false };
+      if (!door) return { ready: false, desk: null };
       if (peek.renew) {
-        if (door.published) return { ready: false };
+        if (door.published) return { ready: false, desk: null };
         throw redirect({ to: "/trainers/$slug", params: { slug: door.slug } });
       }
       const query = new URLSearchParams({ mail, door: params.code });
       throw redirect({ href: `/trainers/${door.slug}?${query.toString()}` });
     }
     const door = await enterTrainerDoorFn({ data: { code: params.code } });
-    if (!door) return { ready: false };
+    if (!door) return { ready: false, desk: null };
     throw redirect({ to: "/trainers/$slug", params: { slug: door.slug } });
   },
   component: DoorPage,
@@ -50,7 +57,7 @@ function DoorError({ error }: { error: unknown }) {
 }
 
 function DoorPage() {
-  const { ready } = Route.useLoaderData();
-  if (!ready) return <ExpiredLink text="Такой ссылки нет. Попросите новую в сообщении из Instagram." />;
+  const data = Route.useLoaderData();
+  if (!data.ready) return <ExpiredLink text="Такой ссылки нет. Попросите новую в сообщении из Instagram." />;
   return <ExpiredLink text="Ссылка уже не действует." />;
 }

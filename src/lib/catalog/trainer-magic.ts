@@ -11,8 +11,7 @@ import { GENERIC_OTP_ERROR, issueOtp, verifyOtp } from "@/auth/otp";
 import { consumeRateLimit, RATE_LIMITED_MESSAGE, RATE_LIMITS } from "@/auth/rate-limit";
 import { isSmsByEnabled } from "@/auth/sms";
 import { hashPassword, normalizeEmail, validatePasswordStrength } from "@/auth/password";
-import { setSessionCookie, setTotpTicketCookie } from "@/auth/session";
-import { beginLogin, findUserByEmail } from "@/auth/service";
+import { findUserByEmail } from "@/auth/service";
 import { generateSecureToken, hashToken } from "@/auth/tokens";
 import { getDb } from "@/db";
 import { authDoorClaims, trainerProfiles, userRoles, users, type TrainerProfile } from "@/db/schema";
@@ -20,6 +19,7 @@ import { renderLetter } from "@/lib/mail/letter";
 import { mailTransportReady, sendMail } from "@/lib/mail/send.server";
 import { assertStaff } from "@/lib/admin/access";
 import { copyCardFaceToAccount } from "@/lib/catalog/account-face";
+import { attachDoorProfile } from "@/lib/catalog/door-attach";
 import { AuthError } from "@/lib/auth/errors";
 import { formatBelarusPhone, normalizeBelarusMobile, storedBelarusPhone, validateBelarusMobile } from "@/lib/auth/phone";
 import { belarusPhoneEquals } from "@/lib/auth/phone-match";
@@ -619,42 +619,6 @@ const doorEmailSchema = z.object({
   email: z.string().trim().email("Введите корректный e-mail").max(320),
 });
 
-async function attachDoorProfile(profileId: string, userId: string, email: string) {
-  const now = new Date();
-  const updated = await getDb()
-    .update(trainerProfiles)
-    .set({
-      ownerUserId: userId,
-      claimStatus: "claimed",
-      claimedAt: now,
-      email,
-      emailVerifiedAt: now,
-      updatedAt: now,
-    })
-    .where(and(eq(trainerProfiles.id, profileId), isNull(trainerProfiles.ownerUserId)))
-    .returning({
-      id: trainerProfiles.id,
-      avatarPath: trainerProfiles.avatarPath,
-      photos: trainerProfiles.photos,
-    });
-  if (updated.length === 0) throw new AuthError("Ссылка уже не действует.", "VALIDATION");
-  await getDb().insert(userRoles).values({ userId, role: "trainer" }).onConflictDoNothing();
-  const card = updated[0];
-  await copyCardFaceToAccount(userId, card.avatarPath, card.photos);
-}
-
-async function openDoorSession(userId: string) {
-  const [user] = await getDb().select().from(users).where(eq(users.id, userId)).limit(1);
-  if (!user) throw new AuthError("Ссылка уже не действует.", "VALIDATION");
-  const opened = await beginLogin(user, { remember: true });
-  if ("totpTicket" in opened) {
-    setTotpTicketCookie(opened.totpTicket);
-    return "/auth/totp";
-  }
-  setSessionCookie(opened.token, true);
-  return "/me";
-}
-
 export const requestDoorEmailFn = createServerFn({ method: "POST" })
   .validator(doorEmailSchema)
   .handler(async ({ data }) => {
@@ -955,6 +919,7 @@ export const openTrainerPhoneFn = createServerFn({ method: "POST" })
     const found = await liveDoorPhone(data.code, data.token);
     if (!found) throw new AuthError("Ссылка уже не действует.", "INVALID_TOKEN");
     const user = await claimDoorWithPhone(found.row, found.phone);
+    const { openDoorSession } = await import("@/lib/catalog/trainer-door-session");
     await openDoorSession(user.id);
     void writeLog({
       level: "info",
@@ -1058,6 +1023,7 @@ export const confirmDoorPhoneFn = createServerFn({ method: "POST" })
     await db.insert(userRoles).values({ userId: user.id, role: "trainer" }).onConflictDoNothing();
     await copyCardFaceToAccount(user.id, updated[0].avatarPath, updated[0].photos);
     await publishConfirmedDraft(row);
+    const { openDoorSession } = await import("@/lib/catalog/trainer-door-session");
     const next = await openDoorSession(user.id);
     void writeLog({
       level: "info",
@@ -1241,6 +1207,7 @@ export const openTrainerMailFn = createServerFn({ method: "POST" })
       if (again?.ownerUserId !== user.id) throw error;
     }
     await publishConfirmedDraft(row);
+    const { openDoorSession } = await import("@/lib/catalog/trainer-door-session");
     await openDoorSession(user.id);
     void writeLog({
       level: "info",

@@ -5,6 +5,10 @@ globs:
   - src/lib/auth/**
   - src/db/**
   - src/routes/auth.*
+  - src/routes/hi.*
+  - src/lib/catalog/cabinet-entry*
+  - src/lib/catalog/cabinet-bind.ts
+  - src/start.ts
   - docs/AUTH.md
 alwaysApply: false
 ---
@@ -34,6 +38,7 @@ Mutations only via `createServerFn` + middleware. `beforeLoad` is UX, not the se
 5. Staff (`admin`, `superadmin`) need TOTP before cabinet data. Contact changes need the current password or a code to an already verified channel, then other sessions are revoked. The trainer door mail link has no clock. It creates the user on POST while the card has no owner. A later letter to the same mailbox leaves older letters alive. A later letter to another mailbox retires them. A missing, owned, or closed link stays dead. A replaced mailbox opens the resend window and does not create a session. The preview cookie on `/hi/{code}` stays 30 minutes and does not publish the card.
 6. One account, roles in `user_roles`. Do not add a second portal. Trainer and club roles come later (claim, staff), not from the public signup form.
 7. `/join/account` creates a trainer without Instagram. Besides the name, mailbox, and password it requires the cabinet basics: how to introduce yourself, at least one sport, a Belarus city, a training format, and who they train. The JSON waits on `users.trainer_signup_draft` until the confirmation letter, then the draft card is written with those fields and stays unpublished. A signed-in user without the trainer role fills the same fields and opens the cabinet at once. Experience, price, photos, documents, and addresses stay on `/me/profile`.
+8. `?desk=` is the only short link a hidden client must not open. A hidden client is a prefetch, a link preview, a non-document fetch, or a known preview browser. It gets no session and no redirect. The mail link, the phone link, and `/hi/{code}` alone are not part of that gate. A person, including the Instagram app, is redirected into the cabinet with the session on that same response. Opening does not spend the link. `elsakov_ivan` stays closed: the cabinet was already opened, so `deskStayClosed` keeps the row used. Do not reset that row and do not issue a replacement unless the operator asks.
 
 ## Non-negotiables
 

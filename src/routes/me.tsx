@@ -48,13 +48,24 @@ export const Route = createFileRoute("/me")({
   head: () => ({ meta: [{ title: "Личный кабинет тренера — Я ищу тренера на trenio.by" }, NOINDEX_FOLLOW] }),
   loader: async ({ context }) => {
     const isTrainer = Boolean(context.user && hasAnyRole(context.user.roles, ["trainer", "club"]));
+    const waitingForPassword = Boolean(context.user?.needsDoorPassword);
     const [cabinet, ratings, prices, trainer, reviews, views] = await Promise.all([
-      getUserCabinetFn(),
+      waitingForPassword
+        ? Promise.resolve({
+            phone: null,
+            phoneVerified: false,
+            emailVerified: true,
+            createdAt: new Date(0).toISOString(),
+            favoriteCount: 0,
+            conversationCount: 0,
+            reviews: [],
+          })
+        : getUserCabinetFn(),
       listTrainerRatingSummariesFn(),
       listTrainerPricesFn(),
-      isTrainer ? getOwnTrainerProfileFn() : Promise.resolve(null),
-      isTrainer ? listOwnTrainerReviewsFn() : Promise.resolve([]),
-      isTrainer ? getOwnTrainerViewStatsFn() : Promise.resolve(null),
+      isTrainer && !waitingForPassword ? getOwnTrainerProfileFn() : Promise.resolve(null),
+      isTrainer && !waitingForPassword ? listOwnTrainerReviewsFn() : Promise.resolve([]),
+      isTrainer && !waitingForPassword ? getOwnTrainerViewStatsFn() : Promise.resolve(null),
     ]);
     return { cabinet, ratings, prices, trainer, reviews, views };
   },

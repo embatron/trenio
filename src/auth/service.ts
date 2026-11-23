@@ -1311,9 +1311,6 @@ async function confirmTrainerTelegramIdentity(
     acceptPhone: identity.acceptPhone,
   });
   if (plan.error === "missing") throw new AuthError("В Telegram нет имени пользователя.", "VALIDATION");
-  if (plan.error === "mismatch") {
-    throw new AuthError("Имя в Telegram не совпадает с тем, что указано в профиле.", "VALIDATION");
-  }
   if (plan.decision.kind !== "write" && plan.decision.kind !== "verify") {
     throw new AuthError("Не удалось подтвердить Telegram.", "VALIDATION");
   }

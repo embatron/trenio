@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 
 import { AuthStyles } from "@/components/auth-styles";
 import { PasswordStrength } from "@/components/auth/password-strength";
@@ -16,31 +15,16 @@ export function DoorPasswordDialog() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
-  const [ready, setReady] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const mismatch = repeat.length > 0 && repeat !== password;
 
   useEffect(() => {
-    setReady(true);
-  }, []);
-
-  useEffect(() => {
-    if (!ready) return;
     const overlay = overlayRef.current;
     if (!overlay) return;
-    const locked: HTMLElement[] = [];
-    for (const child of document.body.children) {
-      if (!(child instanceof HTMLElement) || child === overlay) continue;
-      if (child.inert) continue;
-      child.inert = true;
-      child.setAttribute("data-door-password-inert", "1");
-      locked.push(child);
-    }
     passwordRef.current?.focus();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    document.documentElement.classList.add("is-credentials-locked");
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -51,19 +35,10 @@ export function DoorPasswordDialog() {
     return () => {
       window.removeEventListener("keydown", onKey, true);
       document.body.style.overflow = previousOverflow;
-      document.documentElement.classList.remove("is-credentials-locked");
-      for (const node of locked) {
-        if (node.getAttribute("data-door-password-inert") === "1") {
-          node.inert = false;
-          node.removeAttribute("data-door-password-inert");
-        }
-      }
     };
-  }, [ready]);
+  }, []);
 
-  if (!ready) return null;
-
-  return createPortal(
+  return (
     <div ref={overlayRef} className="cabinet-modal cabinet-modal--lock">
       <AuthStyles />
       <div
@@ -163,7 +138,6 @@ export function DoorPasswordDialog() {
           stroke-linecap: round; stroke-linejoin: round;
         }
       `}</style>
-    </div>,
-    document.body,
+    </div>
   );
 }
