@@ -5,13 +5,13 @@ alwaysApply: true
 
 # Trainer publish
 
-An imported profile stays `draft` until the trainer confirms a mailbox or a Belarus mobile. Mailbox confirmation is the letter sent to the address they typed, or Google or Yandex on the same short link. A mobile confirmation is the SMS code on that same short link. Opening `/hi/{code}` alone does not publish the card. The trainer can hide the page from the cabinet. A later confirmation does not publish a hidden or archived card.
+An imported profile stays `draft` until the trainer confirms a mailbox or a Belarus mobile. Mailbox confirmation is the letter sent to the address they typed, or Google or Yandex on the same short link. A mobile confirmation is the SMS code on that same short link. Opening `/hi/{code}` alone does not publish the card. The trainer can hide the page from the cabinet. A later confirmation does not publish a hidden, archived, or declined card. Declined is set only by staff in the admin editor.
 
 ## Either channel is enough
 
 The two confirmation channels are a mailbox and a Belarus mobile. They work as either-or. One confirmed channel activates the account. Both may be confirmed later; that does not replace the first.
 
-The admin trainer lists (`/admin/trainers`, drafts, active, unclear) column «Аккаунт» shows only the value that first confirmed the account: the mailbox or the Belarus mobile, with no «Почта» or «Телефон» label. When both are confirmed later, the earlier one stays. No account yet is «Аккаунт не создан». An account with neither channel confirmed is «не подтверждён».
+The admin trainer lists (`/admin/trainers`, drafts, active, unclear, declined) column «Аккаунт» shows only the value that first confirmed the account: the mailbox or the Belarus mobile, with no «Почта» or «Телефон» label. When both are confirmed later, the earlier one stays. No account yet is «Аккаунт не создан». An account with neither channel confirmed is «не подтверждён».
 
 Import, a server copy, the short-link visit, and the password step do not publish it. The confirmed mailbox or the confirmed mobile does.
 

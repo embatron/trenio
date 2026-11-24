@@ -41,7 +41,7 @@ export type AdminAccountTrainer = {
   firstName: string;
   lastName: string;
   fullName: string;
-  status: "draft" | "published" | "hidden" | "archived";
+  status: "draft" | "published" | "hidden" | "archived" | "declined";
 };
 
 export type AdminAccountDetail = AdminAccount & {

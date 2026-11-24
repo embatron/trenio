@@ -47,7 +47,7 @@ import { getSportTaxonomyChild, getTopLevelSportCategory, listSecondLevelSports,
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
 import { placesFromProfile, placesShape, savedWithMapNotice, type TrainerPlace } from "@/lib/geo/schemas";
 
-export const TRAINER_PUBLISH_STATUSES = ["draft", "published", "hidden", "archived"] as const;
+export const TRAINER_PUBLISH_STATUSES = ["draft", "published", "hidden", "archived", "declined"] as const;
 export type TrainerPublishStatus = (typeof TRAINER_PUBLISH_STATUSES)[number];
 
 export const TRAINER_PUBLISH_LABEL: Record<TrainerPublishStatus, string> = {
@@ -55,6 +55,7 @@ export const TRAINER_PUBLISH_LABEL: Record<TrainerPublishStatus, string> = {
   published: "Опубликован",
   hidden: "Скрыт",
   archived: "В архиве",
+  declined: "Отказались",
 };
 
 function trainerCardPhone(raw: string): string {

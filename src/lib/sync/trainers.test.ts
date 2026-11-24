@@ -104,4 +104,5 @@ test("a catalog status replaces draft, and two catalog statuses follow the newer
   assert.equal(hidden.pushStatus, true);
   assert.equal(mergedStatus("draft", "published", head().updatedAt, head().updatedAt, "existing"), "published");
   assert.equal(mergedStatus("published", "draft", head().updatedAt, head().updatedAt, "incoming"), "published");
+  assert.equal(mergedStatus("declined", "draft", head().updatedAt, head().updatedAt, "incoming"), "declined");
 });

@@ -87,10 +87,11 @@ export type OwnTrainerProfile = {
 export const OWN_PROFILE_STATUSES = ["published", "hidden", "archived"] as const;
 export type OwnProfileStatus = (typeof OWN_PROFILE_STATUSES)[number];
 export const PAGE_STATUSES = ["draft", "published", "hidden", "archived"] as const;
-export type PageStatus = (typeof PAGE_STATUSES)[number];
+export type PageStatus = (typeof PAGE_STATUSES)[number] | "declined";
 
-/** The status stored on the card. Anything outside the four values reads as unpublished. */
+/** The status stored on the card. A refusal stays a refusal. Anything else outside the four values reads as unpublished. */
 export function pageStatusOf(status: string | null | undefined): PageStatus {
+  if (status === "declined") return "declined";
   if (status === "published" || status === "hidden" || status === "archived" || status === "draft") return status;
   return "draft";
 }
@@ -112,6 +113,9 @@ export const setOwnTrainerPageStatusFn = createServerFn({ method: "POST" })
       .where(eq(trainerProfiles.ownerUserId, context.user.id))
       .limit(1);
     if (!row) throw new AuthError("Карточка ещё не создана.", "VALIDATION");
+    if (row.status === "declined") {
+      throw new AuthError("Статус «Отказались» меняет администратор.", "FORBIDDEN");
+    }
     if (row.status !== data.status) {
       await getDb().update(trainerProfiles).set({
         status: data.status,
@@ -209,8 +213,13 @@ export const saveOwnTrainerHeadlineFn = createServerFn({ method: "POST" })
     }
   });
 
+function keepStaffDecline(current: string | null | undefined, next: OwnProfileStatus): OwnProfileStatus | "declined" {
+  return current === "declined" ? "declined" : next;
+}
+
 /** Draft has no trainer-facing box. The first save can publish it. */
 export function ownFacingStatus(status: string | null | undefined): OwnProfileStatus {
+  if (status === "declined") return "archived";
   if (status === "hidden" || status === "archived" || status === "published") return status;
   return "published";
 }
@@ -490,7 +499,7 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       experienceYears: data.experienceYears,
       formats: [...new Set(data.formats)],
       audiences: effectiveAudiences(data.audiences),
-      status: data.status,
+      status: keepStaffDecline(existing?.status, data.status),
       avatarPath: storedAvatar,
       ...(photos ? { photos } : {}),
       updatedAt: new Date(),

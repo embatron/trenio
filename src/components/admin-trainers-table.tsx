@@ -11,20 +11,17 @@ import { confirmedAccountValue } from "@/lib/admin/account-channel";
 import { adminSearchTokens } from "@/lib/instagram/account-query";
 import { TRAINER_PUBLISH_LABEL, type AdminTrainer } from "@/lib/admin/trainers";
 import { TrainerEditDialog } from "@/components/admin-trainer-page";
-import { issueTrainerInviteFn, markTrainerInviteSentFn } from "@/lib/catalog/trainer-magic";
-import { authErrorMessage } from "@/lib/auth/errors";
 import { displayAccountLogin } from "@/lib/auth/login-name";
-import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { formatBelarusPhone } from "@/lib/auth/phone";
 import { BELARUS_CITIES } from "@/lib/catalog/city-taxonomy";
 import { TRAINER_AUDIENCE_OPTIONS, TRAINER_FORMAT_OPTIONS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { getSportTaxonomyChild, getTopLevelSportCategory, listPublishedSportCategories, listSecondLevelSports, trainerSectionBySlug } from "@/lib/catalog/sport-taxonomy";
 import { placeLine } from "@/lib/geo/schemas";
-import { outreachHello, outreachWithSiteLink } from "@/lib/site-texts/defaults";
 
 const TRAINER_PAGE_SIZE = 20;
 type TrainerPublishTab = "unpublished" | "published";
-type TrainerSort = "date-desc" | "date-asc" | "reviews" | "rating" | "popularity" | "sent" | "link" | "visit" | "seen";
+type TrainerSort = "date-desc" | "date-asc" | "reviews" | "rating" | "popularity" | "visit" | "seen";
+type TrainerList = "all" | "unvisited" | "published" | "unclear" | "declined";
 
 const dateFormat = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short", year: "numeric" });
 const addedFormat = new Intl.DateTimeFormat("en-GB", {
@@ -45,11 +42,6 @@ const visitedFormat = new Intl.DateTimeFormat("en-GB", {
 const CHECK_ICON = "M5 12l5 5L20 7";
 const CROSS_ICON = "M6 6l12 12M18 6L6 18";
 const EDIT_ICON = "M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z";
-const LINK_LEFT = "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71";
-const LINK_RIGHT = "M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71";
-const TEXT_PAGE = "M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z";
-const TEXT_FOLD = "M14 3v5h5";
-const TEXT_LINES = "M8 13h8M8 17h5";
 const EYE_ICON = "M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12z";
 const EYE_OFF_ICON = "M3 4l18 16M9.9 6.2A11 11 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a18 18 0 0 1-3.1 4M6.2 7.1C4 8.6 2.5 11 2.5 12S6 18.5 12 18.5c1.4 0 2.7-.3 3.8-.8M9.5 9.6a3 3 0 0 0 4.2 4.1";
 const CLOCK_ICON = "M12 7.5V12l3 2";
@@ -80,7 +72,9 @@ function PublishMark({ status }: { status: AdminTrainer["status"] }) {
       ? <><circle cx="12" cy="12" r="8" /><path d={CLOCK_ICON} /></>
       : status === "hidden"
         ? <path d={EYE_OFF_ICON} />
-        : <path d={ARCHIVE_ICON} />;
+        : status === "declined"
+          ? <path d={CROSS_ICON} />
+          : <path d={ARCHIVE_ICON} />;
   return (
     <span className={`cabinet-mark is-publish is-${status}`} title={label} aria-label={label}>
       <svg viewBox="0 0 24 24" aria-hidden="true">{icon}</svg>
@@ -88,7 +82,7 @@ function PublishMark({ status }: { status: AdminTrainer["status"] }) {
   );
 }
 
-function listedOn(trainer: AdminTrainer, list: "all" | "unvisited" | "published" | "unclear") {
+function listedOn(trainer: AdminTrainer, list: TrainerList) {
   const iso = list === "published" ? (trainer.publishedAt || trainer.createdAt) : trainer.createdAt;
   return iso ? addedOn(iso) : "—";
 }
@@ -218,117 +212,6 @@ function TrainerSocial({ instagram, telegram, phone }: { instagram: string; tele
   );
 }
 
-async function copyText(value: string) {
-  try {
-    await navigator.clipboard.writeText(value);
-    return true;
-  } catch {
-    const area = document.createElement("textarea");
-    area.value = value;
-    area.setAttribute("readonly", "");
-    area.style.position = "fixed";
-    area.style.left = "-9999px";
-    document.body.append(area);
-    area.select();
-    const ok = document.execCommand("copy");
-    area.remove();
-    return ok;
-  }
-}
-
-function InviteCopy({
-  slug,
-  ready,
-  published,
-  onSent,
-}: {
-  slug: string;
-  ready: boolean;
-  published: boolean;
-  onSent: (at: string) => void;
-}) {
-  const issue = useAuthServerFn(issueTrainerInviteFn);
-  const markSent = useAuthServerFn(markTrainerInviteSentFn);
-  const [copied, setCopied] = useState(false);
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const locked = !ready || published;
-  const label = published
-    ? "Профиль опубликован, ссылка не копируется"
-    : !ready
-      ? "Нет карточки в базе"
-      : copied
-        ? "Ссылка скопирована и отмечена отправленной"
-        : error
-          ? error
-          : "Скопировать короткую ссылку и отметить её отправленной";
-  return (
-    <button
-      type="button"
-      className={locked ? "cabinet-icon-btn is-inactive" : "cabinet-icon-btn"}
-      disabled={locked || pending}
-      aria-label={label}
-      title={label}
-      onClick={() => {
-        setPending(true);
-        setError(null);
-        void issue({ data: { slug } })
-          .then(async (result) => {
-            const ok = await copyText((result as { url: string }).url);
-            if (!ok) {
-              setCopied(false);
-              setError("Не удалось скопировать");
-              return;
-            }
-            const marked = await markSent({ data: { slug } });
-            setCopied(true);
-            onSent(marked.inviteSentAt);
-            window.setTimeout(() => setCopied(false), 2000);
-          })
-          .catch((err: unknown) => setError(authErrorMessage(err)))
-          .finally(() => setPending(false));
-      }}
-    >
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        {copied ? <path d={CHECK_ICON} /> : <><path d={LINK_LEFT} /><path d={LINK_RIGHT} /></>}
-      </svg>
-    </button>
-  );
-}
-
-function fillHello(template: string, firstName: string) {
-  return outreachWithSiteLink(template.replaceAll("{hello}", outreachHello(firstName)));
-}
-
-function TextCopy({ template, firstName, sent }: { template: string; firstName: string; sent: boolean }) {
-  const [copied, setCopied] = useState(false);
-  const label = sent
-    ? "Приветствие уже отправлено"
-    : copied
-      ? "Текст скопирован"
-      : "Скопировать текст первого сообщения";
-  return (
-    <button
-      type="button"
-      className={sent ? "cabinet-icon-btn is-inactive" : "cabinet-icon-btn"}
-      disabled={sent}
-      aria-label={label}
-      title={label}
-      onClick={() => {
-        void copyText(fillHello(template, firstName)).then((ok) => {
-          if (!ok) return;
-          setCopied(true);
-          window.setTimeout(() => setCopied(false), 2000);
-        });
-      }}
-    >
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        {copied ? <path d={CHECK_ICON} /> : <><path d={TEXT_PAGE} /><path d={TEXT_FOLD} /><path d={TEXT_LINES} /></>}
-      </svg>
-    </button>
-  );
-}
-
 function searchHaystack(trainer: AdminTrainer) {
   const formats = TRAINER_FORMAT_OPTIONS.filter((option) => trainer.formats.includes(option.id)).map((option) => option.label);
   const sports = trainer.sportSlugs.map((slug) => getSportTaxonomyChild(slug)?.label ?? slug);
@@ -388,16 +271,6 @@ function sortTrainers(rows: AdminTrainer[], sort: TrainerSort, when: "added" | "
     if (sort === "reviews") return b.reviews - a.reviews || byName(a, b);
     if (sort === "rating") return Number(b.rating) - Number(a.rating) || b.reviews - a.reviews || byName(a, b);
     if (sort === "popularity") return b.popularity - a.popularity || byName(a, b);
-    if (sort === "sent") {
-      const left = a.outreachSentAt ? Date.parse(a.outreachSentAt) : 0;
-      const right = b.outreachSentAt ? Date.parse(b.outreachSentAt) : 0;
-      return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
-    }
-    if (sort === "link") {
-      const left = a.inviteSentAt ? Date.parse(a.inviteSentAt) : 0;
-      const right = b.inviteSentAt ? Date.parse(b.inviteSentAt) : 0;
-      return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
-    }
     if (sort === "visit") {
       const left = a.doorEnteredAt ? Date.parse(a.doorEnteredAt) : 0;
       const right = b.doorEnteredAt ? Date.parse(b.doorEnteredAt) : 0;
@@ -419,11 +292,11 @@ function sortTrainers(rows: AdminTrainer[], sort: TrainerSort, when: "added" | "
 }
 
 function isUnclearTrainer(trainer: AdminTrainer) {
-  return Boolean(trainer.outreachSentAt)
-    && Boolean(trainer.doorEnteredAt)
-    && trainer.status === "draft"
-    && !trainer.account
-    && !trainer.offerAccepted;
+  return trainer.status === "draft" && Boolean(trainer.doorEnteredAt);
+}
+
+function isDraftTrainer(trainer: AdminTrainer) {
+  return trainer.status === "draft" && !trainer.doorEnteredAt;
 }
 
 const SORT_OPTIONS: Array<{ id: TrainerSort; label: string }> = [
@@ -432,46 +305,32 @@ const SORT_OPTIONS: Array<{ id: TrainerSort; label: string }> = [
   { id: "reviews", label: "По комментариям" },
   { id: "rating", label: "По оценке" },
   { id: "popularity", label: "По рейтингу" },
-  { id: "sent", label: "Сначала с сообщением" },
-  { id: "link", label: "Сначала со ссылкой" },
   { id: "visit", label: "Сначала зашедшие" },
   { id: "seen", label: "Сначала недавно на сайте" },
 ];
 
 export function AdminTrainersTable({
   trainers,
-  outreachText,
   list = "all",
 }: {
   trainers: AdminTrainer[];
-  outreachText: string;
-  list?: "all" | "unvisited" | "published" | "unclear";
+  list?: TrainerList;
 }) {
   const [query, setQuery] = useState("");
   const [publishTab, setPublishTab] = useState<TrainerPublishTab>("unpublished");
   const [editSlug, setEditSlug] = useState<string | null>(null);
-  const [linkPatch, setLinkPatch] = useState<Record<string, string>>({});
-  const patched = useMemo(
-    () => trainers.map((trainer) => {
-      const link = linkPatch[trainer.slug];
-      if (!link) return trainer;
-      return { ...trainer, inviteSentAt: link };
-    }),
-    [trainers, linkPatch],
-  );
   const listed = useMemo(() => {
-    if (list === "unvisited") return patched.filter((trainer) => !trainer.doorEnteredAt);
-    if (list === "published") return patched.filter((trainer) => trainer.status === "published");
-    if (list === "unclear") return patched.filter(isUnclearTrainer);
-    return patched;
-  }, [patched, list]);
+    if (list === "unvisited") return trainers.filter(isDraftTrainer);
+    if (list === "published") return trainers.filter((trainer) => trainer.status === "published");
+    if (list === "unclear") return trainers.filter(isUnclearTrainer);
+    if (list === "declined") return trainers.filter((trainer) => trainer.status === "declined");
+    return trainers;
+  }, [trainers, list]);
   const [category, setCategory] = useState("");
   const [sport, setSport] = useState("");
   const [city, setCity] = useState("");
   const [format, setFormat] = useState<"" | TrainerFormat>("");
   const [audience, setAudience] = useState<"" | TrainerAudience>("");
-  const [message, setMessage] = useState<"" | "sent" | "unsent">("");
-  const [link, setLink] = useState<"" | "sent" | "unsent">("");
   const [visit, setVisit] = useState<"" | "yes" | "no">("");
   const [sort, setSort] = useState<TrainerSort>("date-desc");
   const sportOptions = useMemo(
@@ -489,10 +348,6 @@ export function AdminTrainersTable({
       if (city && trainer.city !== city) return false;
       if (format && !trainer.formats.includes(format)) return false;
       if (audience && !trainer.audiences.includes(audience)) return false;
-      if (message === "sent" && !trainer.outreachSentAt) return false;
-      if (message === "unsent" && trainer.outreachSentAt) return false;
-      if (link === "sent" && !trainer.inviteSentAt) return false;
-      if (link === "unsent" && trainer.inviteSentAt) return false;
       if (visit === "yes" && !trainer.doorEnteredAt) return false;
       if (visit === "no" && trainer.doorEnteredAt) return false;
       if (tokens.length) {
@@ -502,10 +357,11 @@ export function AdminTrainersTable({
       return true;
     };
     const pageRows = listed.filter(match);
-    const rows = tokens.length ? patched.filter(match) : pageRows;
+    const rows = tokens.length ? trainers.filter(match) : pageRows;
+    const single = list === "unvisited" || list === "unclear" || list === "declined";
     const narrowed = list === "published"
       ? pageRows.filter((trainer) => trainer.status === "published")
-      : list === "unvisited" || list === "unclear"
+      : single
         ? pageRows
         : publishTab === "published"
           ? pageRows.filter((trainer) => trainer.status === "published")
@@ -518,13 +374,14 @@ export function AdminTrainersTable({
       published,
       widened: tokens.length > 0 && rows.length > narrowed.length,
     };
-  }, [patched, listed, list, publishTab, query, category, sport, city, format, audience, message, link, visit, sort]);
+  }, [trainers, listed, list, publishTab, query, category, sport, city, format, audience, visit, sort]);
   const searching = query.trim().length > 0;
+  const single = list === "unvisited" || list === "unclear" || list === "declined";
   const visible = searching
     ? sortTrainers(visibleBuckets.unpublished.concat(visibleBuckets.published), sort, list === "published" ? "activated" : "added")
     : list === "published"
       ? visibleBuckets.published
-      : list === "unvisited" || list === "unclear"
+      : single
         ? sortTrainers(
             visibleBuckets.unpublished.concat(visibleBuckets.published),
             sort,
@@ -534,21 +391,23 @@ export function AdminTrainersTable({
           : visibleBuckets.unpublished;
   const pager = useTablePage(
     visible,
-    `${query}|${category}|${sport}|${city}|${format}|${audience}|${message}|${link}|${visit}|${sort}|${publishTab}`,
+    `${query}|${category}|${sport}|${city}|${format}|${audience}|${visit}|${sort}|${publishTab}`,
     TRAINER_PAGE_SIZE,
   );
 
-  if (patched.length === 0) {
+  if (trainers.length === 0) {
     return <p className="cabinet-empty">Тренеров пока нет.</p>;
   }
   if (!searching && listed.length === 0) {
     const empty = list === "unvisited"
-      ? "Драфтов нет: по всем карточкам уже был заход."
+      ? "Драфтов нет."
       : list === "unclear"
         ? "Таких карточек нет."
-        : list === "published"
-          ? "Опубликованных карточек нет."
-          : "Тренеров пока нет.";
+        : list === "declined"
+          ? "Отказавшихся нет."
+          : list === "published"
+            ? "Опубликованных карточек нет."
+            : "Тренеров пока нет.";
     return <p className="cabinet-empty">{empty}</p>;
   }
 
@@ -576,7 +435,7 @@ export function AdminTrainersTable({
             />
           </label>
         )}
-        active={[category, sport, city, format, audience, message, link, visit].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}
+        active={[category, sport, city, format, audience, visit].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}
       >
         <label>
           <span>Категория</span>
@@ -631,26 +490,6 @@ export function AdminTrainersTable({
             ))}
           </select>
         </label>
-        {list === "unclear" ? null : (
-          <label>
-            <span>Сообщение</span>
-            <select value={message} onChange={(event) => setMessage(event.target.value as "" | "sent" | "unsent")}>
-              <option value="">Все</option>
-              <option value="sent">Отправлено</option>
-              <option value="unsent">Не отправлено</option>
-            </select>
-          </label>
-        )}
-        {list === "published" ? null : (
-          <label>
-            <span>Ссылка</span>
-            <select value={link} onChange={(event) => setLink(event.target.value as "" | "sent" | "unsent")}>
-              <option value="">Все</option>
-              <option value="sent">Отправлена</option>
-              <option value="unsent">Не отправлена</option>
-            </select>
-          </label>
-        )}
         {list === "unvisited" || list === "unclear" ? null : (
           <label>
             <span>Заход</span>
@@ -666,8 +505,6 @@ export function AdminTrainersTable({
           <select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}>
             {SORT_OPTIONS.filter((option) => {
               if ((list === "unvisited" || list === "unclear") && option.id === "visit") return false;
-              if (list === "unclear" && option.id === "sent") return false;
-              if (list === "published" && option.id === "link") return false;
               return true;
             }).map((option) => (
               <option key={option.id} value={option.id}>{option.label}</option>
@@ -687,8 +524,6 @@ export function AdminTrainersTable({
                 <th className="is-index" aria-label="Номер">№</th>
                 <th className="is-person">Тренер</th>
                 <th>Действия</th>
-                <th>Сообщение</th>
-                <th>Ссылка</th>
                 <th>Заход</th>
                 <th>Публикация</th>
                 <th className="is-contacts">Контакты</th>
@@ -719,20 +554,11 @@ export function AdminTrainersTable({
                   </td>
                   <td className="is-actions">
                     <div className="cabinet-row-actions">
-                      <TextCopy template={outreachText} firstName={trainer.firstName} sent={Boolean(trainer.outreachSentAt)} />
-                      <InviteCopy
-                        slug={trainer.slug}
-                        ready={Boolean(trainer.id)}
-                        published={trainer.status === "published"}
-                        onSent={(at) => setLinkPatch((current) => ({ ...current, [trainer.slug]: at }))}
-                      />
                       <button type="button" className="cabinet-icon-btn" aria-label="Редактировать" title="Редактировать" onClick={() => setEditSlug(trainer.slug)}>
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
                       </button>
                     </div>
                   </td>
-                  <td><FlagMark at={trainer.outreachSentAt} sent="Сообщение отправлено" waiting="Сообщение не отправлено" /></td>
-                  <td><FlagMark at={trainer.inviteSentAt} sent="Ссылка отправлена" waiting="Ссылка не отправлена" /></td>
                   <td><FlagMark at={trainer.doorEnteredAt} sent="Был по ссылке" waiting="Ещё не заходил" /></td>
                   <td className="is-publish"><PublishMark status={trainer.status} /></td>
                   <td className="is-contacts"><TrainerSocial instagram={trainer.instagram} telegram={trainer.telegram} phone={confirmedCabinetPhone(trainer)} /></td>

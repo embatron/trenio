@@ -109,6 +109,7 @@ export type AdminSectionPath =
   | "/admin/trainers/drafts"
   | "/admin/trainers/active"
   | "/admin/trainers/unclear"
+  | "/admin/trainers/declined"
   | "/admin/welcomes"
   | "/admin/reviews"
   | "/admin/messages"
@@ -706,7 +707,7 @@ a.cabinet-stat:hover { border-color: var(--primary); }
 .cabinet-row .cabinet-status { display: inline-flex; align-items: center; justify-content: center; }
 .cabinet-status--pending, .cabinet-status--draft { background: #f59e0b; color: #fff; }
 .cabinet-status--published { background: #16a34a; color: #fff; }
-.cabinet-status--rejected, .cabinet-status--hidden, .cabinet-status--archived { background: #9ca3af; color: #fff; }
+.cabinet-status--rejected, .cabinet-status--hidden, .cabinet-status--archived, .cabinet-status--declined { background: #9ca3af; color: #fff; }
 .cabinet-status-stack { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; flex: 0 0 auto; align-self: center; width: 10.5rem; }
 .cabinet-status-line { position: relative; display: flex; align-items: center; justify-content: center; }
 .cabinet-status-stack time { color: var(--muted); font-size: 12px; font-weight: var(--fw-title); line-height: 1.2; text-align: center; white-space: nowrap; }
@@ -784,6 +785,7 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-table--trainers .is-publish.is-draft { color: #f59e0b; }
 .cabinet-table--trainers .is-publish.is-hidden,
 .cabinet-table--trainers .is-publish.is-archived { color: #9ca3af; }
+.cabinet-table--trainers .is-publish.is-declined { color: #b4534d; }
 .cabinet-modal--trainer { z-index: 360; overflow: hidden; }
 .trainer-edit-dialog { position: relative; width: min(960px, 100%); height: 100%; max-height: 100%; display: flex; flex-direction: column; overflow: hidden; border-radius: var(--card-radius); background: var(--white); color: var(--text); }
 .trainer-edit-dialog__close { position: absolute; top: 8px; right: 8px; z-index: 3; }

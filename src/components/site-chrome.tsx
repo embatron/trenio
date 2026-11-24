@@ -583,6 +583,7 @@ type AdminMenuTo =
   | "/admin/trainers/drafts"
   | "/admin/trainers/active"
   | "/admin/trainers/unclear"
+  | "/admin/trainers/declined"
   | "/admin/welcomes"
   | "/admin/reviews"
   | "/admin/messages"
@@ -625,6 +626,7 @@ const ADMIN_MENU: HeaderMenuItem[] = [
   { id: "drafts", label: "Драфты", icon: "trainers", kind: "admin", to: "/admin/trainers/drafts" },
   { id: "active", label: "Активные", icon: "trainers", kind: "admin", to: "/admin/trainers/active" },
   { id: "unclear", label: "Непонятные", icon: "trainers", kind: "admin", to: "/admin/trainers/unclear" },
+  { id: "declined", label: "Отказались", icon: "trainers", kind: "admin", to: "/admin/trainers/declined" },
   { id: "welcomes", label: "Заявки", icon: "contacts", kind: "admin", to: "/admin/welcomes" },
   { id: "reviews", label: "Отзывы", icon: "reviews", kind: "admin", to: "/admin/reviews" },
   { id: "messages", label: "Сообщения", icon: "messages", kind: "admin", to: "/admin/messages" },
@@ -657,12 +659,12 @@ function menuCounts(
   own: number,
   inbox: number,
   favorites: number | undefined,
-  staff: { welcomesOpen?: number; draftsOpen?: number; publishedCount?: number; unclearCount?: number; reviewsPending?: number },
+  staff: { welcomesOpen?: number; draftsOpen?: number; publishedCount?: number; unclearCount?: number; declinedCount?: number; reviewsPending?: number },
   trainer: { reviews?: number; likes?: number },
   account: { reviews?: number },
 ): Record<string, number | undefined> {
   const messages = own + inbox;
-  if (isStaff(roles)) return { messages, welcomes: staff.welcomesOpen, drafts: staff.draftsOpen, active: staff.publishedCount, unclear: staff.unclearCount, reviews: staff.reviewsPending };
+  if (isStaff(roles)) return { messages, welcomes: staff.welcomesOpen, drafts: staff.draftsOpen, active: staff.publishedCount, unclear: staff.unclearCount, declined: staff.declinedCount, reviews: staff.reviewsPending };
   if (hasAnyRole(roles, ["trainer", "club"])) return { messages, reviews: trainer.reviews, likes: trainer.likes, favorites };
   return { messages, reviews: account.reviews, bookings: 0, favorites };
 }
@@ -670,7 +672,7 @@ function menuCounts(
 function HeaderMenuLink({ item, count, onNavigate }: { item: HeaderMenuItem; count?: number; onNavigate: () => void }) {
   const props = { className: "account-menu__item", onClick: onNavigate };
   const hot = item.id === "messages";
-  const body = <><CabinetMark icon={item.icon} /><span className="account-menu__label">{item.label}</span><MenuCount count={count} hot={hot} full={item.id === "drafts" || item.id === "active"} /></>;
+  const body = <><CabinetMark icon={item.icon} /><span className="account-menu__label">{item.label}</span><MenuCount count={count} hot={hot} full={item.id === "drafts" || item.id === "active" || item.id === "declined"} /></>;
   if (item.kind === "me") {
     return <Link to={item.to} activeOptions={item.to === "/me" ? { exact: true } : undefined} {...props}>{body}</Link>;
   }
@@ -684,7 +686,7 @@ function useStaffMenuCounts(enabled: boolean) {
   const shell = useServerFn(getAdminShellFn);
   const shellRef = useRef(shell);
   shellRef.current = shell;
-  const [counts, setCounts] = useState<{ welcomesOpen?: number; draftsOpen?: number; publishedCount?: number; unclearCount?: number; reviewsPending?: number }>({});
+  const [counts, setCounts] = useState<{ welcomesOpen?: number; draftsOpen?: number; publishedCount?: number; unclearCount?: number; declinedCount?: number; reviewsPending?: number }>({});
 
   useEffect(() => {
     if (!enabled) return;
@@ -693,7 +695,7 @@ function useStaffMenuCounts(enabled: boolean) {
       if (document.visibilityState === "hidden") return;
       try {
         const next = await shellRef.current();
-        if (!stop) setCounts({ welcomesOpen: next.welcomesOpen, draftsOpen: next.draftsOpen, publishedCount: next.publishedCount, unclearCount: next.unclearCount, reviewsPending: next.reviewsPending });
+        if (!stop) setCounts({ welcomesOpen: next.welcomesOpen, draftsOpen: next.draftsOpen, publishedCount: next.publishedCount, unclearCount: next.unclearCount, declinedCount: next.declinedCount, reviewsPending: next.reviewsPending });
       } catch {
         /* the live pull keeps the last counters */
       }

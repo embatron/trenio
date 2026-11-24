@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-export const TRAINER_STATUSES = ["draft", "published", "hidden", "archived"] as const;
+export const TRAINER_STATUSES = ["draft", "published", "hidden", "archived", "declined"] as const;
 export type TrainerStatus = (typeof TRAINER_STATUSES)[number];
 
 export type TrainerSyncHead = {
@@ -62,7 +62,7 @@ export type SyncMove = {
   pullMarks: boolean;
 };
 
-const OPEN = new Set<TrainerStatus>(["published", "hidden", "archived"]);
+const OPEN = new Set<TrainerStatus>(["published", "hidden", "archived", "declined"]);
 const CLAIM = new Set(["unclaimed", "claimed", "disputed"]);
 const SOURCE = new Set(["self", "branch_created", "admin_created", "import"]);
 

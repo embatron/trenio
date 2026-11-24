@@ -1313,7 +1313,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
   } catch {
     previous = {};
   }
-  const status = previous.status === "published" || previous.status === "hidden" || previous.status === "archived" ? previous.status : "draft";
+  const status = previous.status === "published" || previous.status === "hidden" || previous.status === "archived" || previous.status === "declined" ? previous.status : "draft";
   const claimStatus = previous.claimStatus === "claimed" || previous.claimStatus === "disputed" ? previous.claimStatus : "unclaimed";
 
   const missing = [

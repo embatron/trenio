@@ -131,6 +131,7 @@ const PAGE_STATUS_LABEL: Record<PageStatus, string> = {
   published: "Опубликована",
   hidden: "Скрыта",
   archived: "Снята с публикации",
+  declined: "Отказались",
 };
 
 const PAGE_MODE_LABEL: Record<OwnProfileStatus, string> = {
@@ -176,6 +177,9 @@ export function PageStatusCard({ status }: { status: PageStatus }) {
         <h2>Страница</h2>
         <span className={`cabinet-status cabinet-status--${status}`}>{PAGE_STATUS_LABEL[status]}</span>
       </div>
+      {status === "declined" ? (
+        <p className="cabinet-note">Этот статус ставит администратор.</p>
+      ) : (
       <fieldset className="publish-pick" disabled={pending}>
         <legend>Режим страницы</legend>
         <div className="publish-pick__row" role="group" aria-label="Режим страницы">
@@ -191,6 +195,7 @@ export function PageStatusCard({ status }: { status: PageStatus }) {
           })}
         </div>
       </fieldset>
+      )}
       {asked ? (
         <CabinetModal onClick={() => { if (!pending) setAsked(null); }}>
           <div className="cabinet-modal__card" role="dialog" aria-modal="true" aria-labelledby="page-status-title" onClick={(event) => event.stopPropagation()}>

@@ -24,8 +24,8 @@ export async function claimConfirmedMailbox(slugOrHandle: string, rawEmail: stri
     .where(or(eq(trainerProfiles.slug, key), eq(trainerProfiles.instagramHandle, key)))
     .limit(1);
   if (!row) throw new AuthError("Профиль не найден.", "VALIDATION");
-  if (row.status === "hidden" || row.status === "archived") {
-    throw new AuthError("Карточка скрыта. Ссылку не выдаю.", "VALIDATION");
+  if (row.status === "hidden" || row.status === "archived" || row.status === "declined") {
+    throw new AuthError(row.status === "declined" ? "Тренер отказался. Ссылку не выдаю." : "Карточка скрыта. Ссылку не выдаю.", "VALIDATION");
   }
 
   let user = await findUserByEmail(email);

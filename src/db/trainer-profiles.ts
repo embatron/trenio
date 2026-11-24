@@ -17,7 +17,7 @@ export type ImportedTrainerDraft = {
   handle: string;
   slug: string;
   sourceUrl: string;
-  status?: "draft" | "published" | "hidden" | "archived";
+  status?: "draft" | "published" | "hidden" | "archived" | "declined";
   claimStatus?: "unclaimed" | "claimed" | "disputed";
   createdSource?: "self" | "branch_created" | "admin_created" | "import";
   firstName: string;

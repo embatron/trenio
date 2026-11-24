@@ -8,7 +8,7 @@ export const Route = createFileRoute("/admin/trainers/unclear")({
   head: () => ({
     meta: [
       { title: "Непонятные · кабинет администратора · Я ищу тренера на trenio.by" },
-      { name: "description", content: "Первое сообщение отправлено и заход был, а карточку не забрали и не опубликовали." },
+      { name: "description", content: "Заход уже был, карточку не опубликовали." },
       { name: "robots", content: "noindex,follow" },
     ],
   }),
@@ -16,15 +16,15 @@ export const Route = createFileRoute("/admin/trainers/unclear")({
 });
 
 function AdminUnclearTrainersPage() {
-  const { trainers, outreachText } = Route.useLoaderData();
+  const { trainers } = Route.useLoaderData();
 
   return (
     <article className="cabinet-card">
       <h2>Непонятные</h2>
       <p className="cabinet-note cabinet-note--lede">
-        Первое сообщение уже отправлено и заход был, а карточку не забрали и не опубликовали.
+        Заход уже был, карточку не опубликовали.
       </p>
-      <AdminTrainersTable trainers={trainers} outreachText={outreachText} list="unclear" />
+      <AdminTrainersTable trainers={trainers} list="unclear" />
     </article>
   );
 }

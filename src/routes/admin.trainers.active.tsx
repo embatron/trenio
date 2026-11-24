@@ -16,13 +16,13 @@ export const Route = createFileRoute("/admin/trainers/active")({
 });
 
 function AdminActiveTrainersPage() {
-  const { trainers, outreachText } = Route.useLoaderData();
+  const { trainers } = Route.useLoaderData();
 
   return (
     <article className="cabinet-card">
       <h2>Активные</h2>
       <p className="cabinet-note cabinet-note--lede">Опубликованные карточки.</p>
-      <AdminTrainersTable trainers={trainers} outreachText={outreachText} list="published" />
+      <AdminTrainersTable trainers={trainers} list="published" />
     </article>
   );
 }

@@ -210,7 +210,7 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
                 <option key={status} value={status}>{TRAINER_PUBLISH_LABEL[status]}</option>
               ))}
             </select>
-            <p className="cabinet-note">Тренер сам выбирает статус в настройках профиля: опубликован, скрыт или снят с публикации. Здесь можно поставить и другие статусы.</p>
+            <p className="cabinet-note">Тренер сам выбирает опубликован, скрыт или снят с публикации. «Отказались» ставит только администратор.</p>
           </label>
         )}
       />

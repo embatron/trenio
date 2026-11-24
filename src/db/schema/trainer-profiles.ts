@@ -20,6 +20,7 @@ export const trainerProfileStatusEnum = pgEnum("trainer_profile_status", [
   "published",
   "hidden",
   "archived",
+  "declined",
 ]);
 
 export const trainerClaimStatusEnum = pgEnum("trainer_claim_status", [

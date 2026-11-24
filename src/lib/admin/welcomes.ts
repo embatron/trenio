@@ -12,7 +12,7 @@ import { writeLog } from "@/lib/log/logger";
 
 export type WelcomeStaffStatus = "new" | "done" | "rejected";
 
-export type WelcomeTrainerStatus = "draft" | "published" | "hidden" | "archived";
+export type WelcomeTrainerStatus = "draft" | "published" | "hidden" | "archived" | "declined";
 
 export type AdminWelcome = {
   id: string;
@@ -75,7 +75,7 @@ type ProfileHit = {
 };
 
 function asTrainerStatus(value: string): WelcomeTrainerStatus {
-  if (value === "published" || value === "hidden" || value === "archived") return value;
+  if (value === "published" || value === "hidden" || value === "archived" || value === "declined") return value;
   return "draft";
 }
 

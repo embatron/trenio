@@ -120,6 +120,7 @@ function welcomeChip(row: AdminWelcome): WelcomeChip {
   if (row.staffStatus === "rejected") return { label: "Отклонена", tone: "rejected" };
   if (row.trainer?.status === "published") return { label: "Опубликован", tone: "published" };
   if (row.staffStatus === "done") return { label: "Разобрана", tone: "published" };
+  if (row.trainer?.status === "declined") return { label: "Отказались", tone: "rejected" };
   if (row.trainer?.status === "hidden" || row.trainer?.status === "archived") {
     return { label: row.trainer.status === "hidden" ? "Скрыт" : "Архив", tone: "rejected" };
   }

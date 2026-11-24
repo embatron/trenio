@@ -49,7 +49,7 @@ export const PERMANENT_USER_IDS = new Set([
   "7461164d-c06e-424a-88e2-37d9d70e3748",
 ]);
 
-const PROFILE_STATUSES = ["draft", "published", "hidden", "archived"] as const;
+const PROFILE_STATUSES = ["draft", "published", "hidden", "archived", "declined"] as const;
 type ProfileStatus = (typeof PROFILE_STATUSES)[number];
 
 export function accountHoldUntil(from: Date): Date {
