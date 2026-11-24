@@ -28,6 +28,7 @@
     "telegram:digest": "tsx --env-file=.env scripts/telegram-published-digest.ts",
     "messages:install": "tsx --env-file=.env scripts/apply-message-attachments.ts",
     "trainers:declined": "tsx --env-file=.env scripts/apply-trainer-declined.ts",
+    "likes:plain": "tsx --env-file=.env scripts/place-plain-user-likes.ts",
     "site:install": "tsx --env-file=.env scripts/apply-site-texts.ts",
     "mail:install": "tsx --env-file=.env scripts/apply-mail-preferences.ts",
     "contacts:install": "tsx --env-file=.env scripts/apply-contact-visibility.ts",

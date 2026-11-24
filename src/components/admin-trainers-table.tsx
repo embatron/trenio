@@ -527,8 +527,7 @@ export function AdminTrainersTable({
                 <th>Заход</th>
                 <th>Публикация</th>
                 <th className="is-contacts">Контакты</th>
-                <th>Категория</th>
-                <th>С кем</th>
+                <th className="is-category">Категория</th>
                 <th>Город</th>
                 <th>{list === "published" ? "Активирован" : "Добавлен"}</th>
                 <th>Оценка</th>
@@ -562,8 +561,7 @@ export function AdminTrainersTable({
                   <td><FlagMark at={trainer.doorEnteredAt} sent="Был по ссылке" waiting="Ещё не заходил" /></td>
                   <td className="is-publish"><PublishMark status={trainer.status} /></td>
                   <td className="is-contacts"><TrainerSocial instagram={trainer.instagram} telegram={trainer.telegram} phone={confirmedCabinetPhone(trainer)} /></td>
-                  <td>{categoryLabels(trainer.sportSlugs) || "—"}</td>
-                  <td className="is-audience">{audienceLabels(trainer.audiences) || "—"}</td>
+                  <td className="is-category">{categoryLabels(trainer.sportSlugs) || "—"}</td>
                   <td>{trainer.city || "—"}</td>
                   <td>{listedOn(trainer, list)}</td>
                   <td><TrainerStars rating={trainer.rating} reviews={trainer.reviews} /></td>

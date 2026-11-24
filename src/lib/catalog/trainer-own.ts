@@ -520,7 +520,7 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       if (clash) slug = `${slugBase.slice(0, 14)}-${context.user.id.slice(0, 3)}`.slice(0, 18);
       profileSlug = slug;
       const claimToken = randomBytes(32).toString("base64url");
-      await db.insert(trainerProfiles).values({
+      const [created] = await db.insert(trainerProfiles).values({
         ...values,
         slug,
         sourceUrl: data.instagram || `https://trenio.by/trainers/${slug}`,
@@ -530,7 +530,9 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
         claimToken,
         claimPath: `/trainers/claim/${claimToken}`,
         claimedAt: new Date(),
-      });
+      }).returning({ id: trainerProfiles.id });
+      const { grantPlainUserLike } = await import("@/lib/catalog/plain-user-like.server");
+      await grantPlainUserLike(created.id);
     }
 
     await stampTrainerPublished(profileSlug);

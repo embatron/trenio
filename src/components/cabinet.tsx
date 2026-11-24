@@ -780,7 +780,9 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-table--trainers td.is-actions,
 .cabinet-table--trainers td.is-publish { text-align: center; }
 .cabinet-table--trainers th.is-contacts,
-.cabinet-table--trainers td.is-contacts { text-align: left; }
+.cabinet-table--trainers td.is-contacts,
+.cabinet-table--trainers th.is-category,
+.cabinet-table--trainers td.is-category { text-align: left; }
 .cabinet-table--trainers .is-publish.is-published { color: #16a34a; }
 .cabinet-table--trainers .is-publish.is-draft { color: #f59e0b; }
 .cabinet-table--trainers .is-publish.is-hidden,

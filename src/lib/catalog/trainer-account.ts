@@ -146,7 +146,7 @@ export async function openManualTrainerAccount(
     }
     const claimToken = randomBytes(32).toString("base64url");
     const now = new Date();
-    await db.insert(trainerProfiles).values({
+    const [created] = await db.insert(trainerProfiles).values({
       slug,
       instagramHandle: handle,
       sourceUrl: "https://trenio.by/join/account",
@@ -165,7 +165,9 @@ export async function openManualTrainerAccount(
       emailVerifiedAt: now,
       ...card,
       ...media,
-    });
+    }).returning({ id: trainerProfiles.id });
+    const { grantPlainUserLike } = await import("@/lib/catalog/plain-user-like.server");
+    await grantPlainUserLike(created.id);
     logTrainerPresence({
       created: true,
       previous: null,

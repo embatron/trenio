@@ -663,7 +663,7 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
         }
       } else {
         const claimToken = randomBytes(32).toString("base64url");
-        await db.insert(trainerProfiles).values({
+        const [created] = await db.insert(trainerProfiles).values({
           ...values,
           slug: data.slug,
           instagramHandle: handleFrom(data.instagram, data.slug),
@@ -675,7 +675,9 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
           avatarPath: published?.photo ?? "",
           claimToken,
           claimPath: `/trainers/claim/${claimToken}`,
-        });
+        }).returning({ id: trainerProfiles.id });
+        const { grantPlainUserLike } = await import("@/lib/catalog/plain-user-like.server");
+        await grantPlainUserLike(created.id);
       }
     } catch (error) {
       if (error instanceof AuthError) {

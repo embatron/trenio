@@ -263,6 +263,8 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
     .insert(trainerProfiles)
     .values(values)
     .returning({ id: trainerProfiles.id, claimPath: trainerProfiles.claimPath });
+  const { grantPlainUserLike } = await import("@/lib/catalog/plain-user-like.server");
+  await grantPlainUserLike(created.id);
   logTrainerPresence({
     created: true,
     previous: null,

@@ -245,7 +245,7 @@ export async function applyTrainerPatch(patch: TrainerPatch, files: IncomingFile
       .limit(1);
     const slug = taken ? handle : patch.card.slug;
     const claimToken = randomBytes(32).toString("base64url");
-    await db.insert(trainerProfiles).values({
+    const [created] = await db.insert(trainerProfiles).values({
       ...contentValues({ ...patch.card, slug }),
       instagramHandle: handle,
       status: patch.status,
@@ -255,7 +255,9 @@ export async function applyTrainerPatch(patch: TrainerPatch, files: IncomingFile
       inviteSentAt: iso(patch.inviteSentAt) ? new Date(patch.inviteSentAt as string) : null,
       doorEnteredAt: acceptSyncedDoor() && iso(patch.doorEnteredAt) ? new Date(patch.doorEnteredAt as string) : null,
       updatedAt: new Date(patch.updatedAt),
-    });
+    }).returning({ id: trainerProfiles.id });
+    const { grantPlainUserLike } = await import("@/lib/catalog/plain-user-like.server");
+    await grantPlainUserLike(created.id);
     await stampTrainerPublished(slug);
     logTrainerPresence({
       created: true,
