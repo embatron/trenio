@@ -35,16 +35,12 @@ const BELARUS_VIEW: CatalogMapUser = { lat: 53.7, lng: 28, zoom: 6 };
 function MapListedCard({
   trainer,
   marked,
-  settled,
-  delay,
   city,
   onHover,
   fromSport,
 }: {
   trainer: MapTrainer;
   marked: boolean;
-  settled: boolean;
-  delay: string;
   city: string;
   onHover: (slug: string | null | ((current: string | null) => string | null)) => void;
   fromSport?: string;
@@ -53,11 +49,14 @@ function MapListedCard({
     onHover((current) => (current === trainer.slug ? null : current));
   }, [onHover, trainer.slug]);
   return (
-    <div className={settled ? "map-person is-settled" : "map-person"} style={settled ? undefined : { animationDelay: delay }}>
+    <div className="map-person">
       <CatalogTrainerCard
         marked={marked}
         onHover={onHover}
         fromSport={fromSport}
+        photoWidth={320}
+        photoHeight={320}
+        photoSizes="(max-width: 359px) 92vw, (max-width: 719px) 46vw, 280px"
         trainer={{
           slug: trainer.slug,
           name: trainer.name,
@@ -245,7 +244,6 @@ export function CatalogMapScreen({
   const [price, setPrice] = useState<{ min: number; max: number } | null>(null);
   const moreRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const seenPeopleRef = useRef(new Set<string>());
   const queryRef = useRef<Parameters<typeof listMapAreaFn>[0]["data"] | null>(null);
   const metaKeyRef = useRef("");
   const generationRef = useRef(0);
@@ -1023,11 +1021,8 @@ export function CatalogMapScreen({
                 ) : (
                   <>
                     {rows.length > 0 ? (
-                      <MapPeopleWindow count={rows.length} pending={loading}>
-                        {(start, end) => rows.slice(start, end).map((trainer, offset) => {
-                          const index = start + offset;
-                          const settled = seenPeopleRef.current.has(trainer.slug);
-                          if (!settled) seenPeopleRef.current.add(trainer.slug);
+                      <MapPeopleWindow count={rows.length}>
+                        {(start, end) => rows.slice(start, end).map((trainer) => {
                           const fromSport = selectedSports.length === 1 && selectedSports[0].level === 2
                             ? selectedSports[0].slug
                             : undefined;
@@ -1036,8 +1031,6 @@ export function CatalogMapScreen({
                               key={trainer.slug}
                               trainer={trainer}
                               marked={pinSlugs.includes(trainer.slug)}
-                              settled={settled}
-                              delay={`${Math.min(index, 11) * 40}ms`}
                               city={cardCity(trainer)}
                               onHover={setCardSlug}
                               fromSport={fromSport}
@@ -1051,11 +1044,8 @@ export function CatalogMapScreen({
                         <h2 id="map-unlocated" className="map-unlocated">
                           У <b>{unlocatedTotal}</b> {pluralRu(unlocatedTotal, "адреса", "адресов", "адресов")} не указан точный адрес
                         </h2>
-                        <MapPeopleWindow count={unlocated.length} pending={loadingMore}>
-                          {(start, end) => unlocated.slice(start, end).map((trainer, offset) => {
-                            const index = start + offset;
-                            const settled = seenPeopleRef.current.has(trainer.slug);
-                            if (!settled) seenPeopleRef.current.add(trainer.slug);
+                        <MapPeopleWindow count={unlocated.length}>
+                          {(start, end) => unlocated.slice(start, end).map((trainer) => {
                             const fromSport = selectedSports.length === 1 && selectedSports[0].level === 2
                               ? selectedSports[0].slug
                               : undefined;
@@ -1064,8 +1054,6 @@ export function CatalogMapScreen({
                                 key={trainer.slug}
                                 trainer={trainer}
                                 marked={false}
-                                settled={settled}
-                                delay={`${Math.min(index, 11) * 40}ms`}
                                 city={cardCity(trainer)}
                                 onHover={setCardSlug}
                                 fromSport={fromSport}
@@ -1166,20 +1154,24 @@ const PAGE_CSS = `
 .map-people { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--layout-gap); }
 .map-people-frame { position: relative; }
 .map-people-frame > .map-people { position: absolute; top: 0; left: 0; right: 0; }
-.map-person.is-settled { animation: none; }
-.map-people.is-pending { opacity: 0.72; }
-.map-person { min-width: 0; animation: map-card-in 0.34s ease both; }
-@keyframes map-card-in { from { opacity: 0; } to { opacity: 1; } }
+.map-person { min-width: 0; contain: layout; }
 .map-skeleton { height: 248px; border-radius: var(--card-radius); background: linear-gradient(90deg, var(--light-bg) 25%, #fff 50%, var(--light-bg) 75%); background-size: 200% 100%; animation: map-shimmer 1.1s ease infinite; }
 @keyframes map-shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
 .map-sentinel { height: 1px; }
 .map-loading { margin: 12px 0 0; color: var(--muted); font-size: 14px; }
 .map-people .trainer-card { transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease; }
 .map-people .trainer-card__media { aspect-ratio: 1 / 1; }
+.map-people .trainer-card__photo { position: absolute; inset: 0; width: 100%; height: 100%; }
 .map-people .trainer-card__body { gap: 4px; padding: 9px 10px 11px; }
 .map-people .trainer-card__name { font-size: 13px; line-height: 1.15; letter-spacing: 0; }
-.map-people .trainer-name { flex-direction: column; align-items: flex-start; gap: 0; }
-.map-people .trainer-card__sport { font-size: var(--fs-caption); line-height: 1.3; font-weight: var(--fw-body); }
+.map-people .trainer-name { flex-direction: column; align-items: flex-start; gap: 0; min-height: calc(2 * 1.15em); }
+.map-people .trainer-card__sport {
+  font-size: var(--fs-caption); line-height: 1.3; font-weight: var(--fw-body);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; min-height: calc(2 * 1.3em);
+}
+.map-people .trainer-card__location { min-width: 0; }
+.map-people .trainer-card__location span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .map-people .trainer-card__price { font-size: 13px; }
 .map-people .trainer-card__footer { margin-top: 0; padding-top: 7px; }
 .map-people .trainer-card__actions { top: 2px; right: 2px; gap: 0; }

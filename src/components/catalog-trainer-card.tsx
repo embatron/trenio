@@ -52,6 +52,9 @@ export function CatalogTrainerCard({
   fromSport,
   className,
   style,
+  photoWidth = 480,
+  photoHeight = 600,
+  photoSizes,
 }: {
   trainer: CatalogTrainerCardData;
   marked?: boolean;
@@ -61,6 +64,10 @@ export function CatalogTrainerCard({
   fromSport?: string;
   className?: string;
   style?: CSSProperties;
+  /** Intrinsic photo box. The map list uses a square so the image cannot stretch the row. */
+  photoWidth?: number;
+  photoHeight?: number;
+  photoSizes?: string;
 }) {
   const cardRef = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -88,7 +95,7 @@ export function CatalogTrainerCard({
         aria-label={trainer.name}
       />
       <div className="trainer-card__media">
-        <PhotoImage className="trainer-card__photo" src={trainer.photo} alt={trainer.name} preset="card" width={480} height={600} loading="lazy" />
+        <PhotoImage className="trainer-card__photo" src={trainer.photo} alt={trainer.name} preset="card" width={photoWidth} height={photoHeight} sizes={photoSizes} loading="lazy" />
         {trainer.badge ? <span className="trainer-card__badge">{trainer.badge}</span> : null}
         <div className="trainer-card__actions">
           <AccountLikeButton slug={trainer.slug} className="trainer-card__like" />

@@ -27,6 +27,7 @@ export function PhotoImage({
   width,
   height,
   loading,
+  sizes,
   onClick,
   onFinalError,
 }: {
@@ -37,6 +38,8 @@ export function PhotoImage({
   width?: number;
   height?: number;
   loading?: "eager" | "lazy";
+  /** Overrides the preset when the photo sits in a narrower slot, such as a map card. */
+  sizes?: string;
   onClick?: (event: MouseEvent<HTMLImageElement>) => void;
   /** The variant and the original file both failed to load. */
   onFinalError?: () => void;
@@ -48,7 +51,7 @@ export function PhotoImage({
   const raster = /\.(jpe?g|png|webp)(\?|$)/i.test(src);
   const giveUp = () => onFinalError?.();
   if (!raster || src.startsWith("blob:") || src.startsWith("data:") || useMaster) {
-    return <img className={className} src={src} alt={alt} width={width} height={height} loading={loading} onClick={onClick} onError={giveUp} />;
+    return <img className={className} src={src} alt={alt} width={width} height={height} loading={loading} decoding="async" onClick={onClick} onError={giveUp} />;
   }
   const presetInfo = PRESET[preset];
   const srcSet = presetInfo.srcSet
@@ -64,11 +67,12 @@ export function PhotoImage({
       className={className}
       src={variantImagePath(src, presetInfo.src)}
       srcSet={srcSet || undefined}
-      sizes={srcSet ? presetInfo.sizes : undefined}
+      sizes={srcSet ? (sizes || presetInfo.sizes) : undefined}
       alt={alt}
       width={width}
       height={height}
       loading={loading}
+      decoding="async"
       onClick={onClick}
       onError={() => setUseMaster(true)}
     />

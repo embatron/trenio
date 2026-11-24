@@ -3,6 +3,7 @@ import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import {
   MAP_PEOPLE_ROW_ESTIMATE,
   mapPeopleColumns,
+  mapPeopleGap,
   mapPeopleWindow,
 } from "@/lib/catalog/map-window";
 
@@ -14,34 +15,42 @@ type WindowBox = {
   rowHeight: number;
 };
 
-function readBox(frame: HTMLElement | null, rowHeight: number): WindowBox {
-  if (typeof window === "undefined") {
-    return { scrollTop: 0, listTop: 0, viewHeight: 800, width: 1024, rowHeight };
+function readFrame(frame: HTMLElement | null, rowHeight: number): WindowBox {
+  if (typeof window === "undefined" || !frame) {
+    return {
+      scrollTop: 0,
+      listTop: 0,
+      viewHeight: 800,
+      width: 1024,
+      rowHeight,
+    };
   }
-  const grid = frame?.querySelector<HTMLElement>(".map-people");
-  const cards = grid ? [...grid.querySelectorAll<HTMLElement>(".map-person")] : [];
-  const measured = cards.reduce((max, card) => Math.max(max, card.offsetHeight), 0);
   return {
     scrollTop: Math.round(window.scrollY),
-    listTop: frame ? Math.round(frame.getBoundingClientRect().top + window.scrollY) : 0,
+    listTop: Math.round(frame.getBoundingClientRect().top + window.scrollY),
     viewHeight: window.innerHeight,
     width: window.innerWidth,
-    rowHeight: Math.max(rowHeight, measured),
+    rowHeight,
   };
+}
+
+function firstRowHeight(frame: HTMLElement, width: number) {
+  const columns = mapPeopleColumns(width);
+  const cards = [...frame.querySelectorAll<HTMLElement>(".map-person")].slice(0, columns);
+  return cards.reduce((max, card) => Math.max(max, card.offsetHeight), 0);
 }
 
 /** Mounts only the card rows that sit in the viewport. The page still loads 12 at a time. */
 export function MapPeopleWindow({
   count,
-  pending = false,
   children,
 }: {
   count: number;
-  pending?: boolean;
   children: (start: number, end: number) => ReactNode;
 }) {
   const frameRef = useRef<HTMLDivElement>(null);
-  const [box, setBox] = useState<WindowBox>(() => readBox(null, MAP_PEOPLE_ROW_ESTIMATE));
+  const [box, setBox] = useState<WindowBox>(() => readFrame(null, MAP_PEOPLE_ROW_ESTIMATE));
+  const gap = mapPeopleGap(box.width);
   const slice = mapPeopleWindow({
     count,
     columns: mapPeopleColumns(box.width),
@@ -49,65 +58,67 @@ export function MapPeopleWindow({
     listTop: box.listTop,
     viewHeight: box.viewHeight,
     rowHeight: box.rowHeight,
+    gap,
   });
 
   useLayoutEffect(() => {
     const frame = frameRef.current;
     if (!frame) return;
-    let frameId = 0;
-    const read = () => {
+    let alive = true;
+    const place = (measureRow: boolean) => {
+      if (!alive) return;
       setBox((current) => {
-        const next = readBox(frame, current.rowHeight);
-        const before = mapPeopleWindow({
-          count,
-          columns: mapPeopleColumns(current.width),
-          scrollTop: current.scrollTop,
-          listTop: current.listTop,
-          viewHeight: current.viewHeight,
-          rowHeight: current.rowHeight,
-        });
-        const after = mapPeopleWindow({
-          count,
-          columns: mapPeopleColumns(next.width),
-          scrollTop: next.scrollTop,
-          listTop: next.listTop,
-          viewHeight: next.viewHeight,
-          rowHeight: next.rowHeight,
-        });
+        const width = window.innerWidth;
+        const measured = measureRow || width !== current.width ? firstRowHeight(frame, width) : 0;
+        const next = readFrame(frame, measured > 0 ? measured : current.rowHeight);
         if (
-          before.start === after.start
-          && before.end === after.end
-          && before.offset === after.offset
-          && before.height === after.height
+          current.scrollTop === next.scrollTop
+          && current.listTop === next.listTop
+          && current.viewHeight === next.viewHeight
           && current.width === next.width
           && current.rowHeight === next.rowHeight
         ) return current;
         return next;
       });
     };
-    const schedule = () => {
-      cancelAnimationFrame(frameId);
-      frameId = requestAnimationFrame(read);
+    place(true);
+    void document.fonts?.ready.then(() => place(true));
+    const onScroll = () => {
+      const scrollTop = Math.round(window.scrollY);
+      setBox((current) => {
+        if (current.scrollTop === scrollTop) return current;
+        const columns = mapPeopleColumns(current.width);
+        const shared = {
+          count,
+          columns,
+          listTop: current.listTop,
+          viewHeight: current.viewHeight,
+          rowHeight: current.rowHeight,
+          gap: mapPeopleGap(current.width),
+        };
+        const before = mapPeopleWindow({ ...shared, scrollTop: current.scrollTop });
+        const after = mapPeopleWindow({ ...shared, scrollTop });
+        if (before.start === after.start && before.end === after.end) return current;
+        return { ...current, scrollTop };
+      });
     };
-    read();
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    const observer = new ResizeObserver(schedule);
-    observer.observe(frame);
-    const grid = frame.querySelector(".map-people");
-    if (grid) observer.observe(grid);
-    if (frame.parentElement) observer.observe(frame.parentElement);
+    const onResize = () => place(true);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    const parent = frame.parentElement;
+    const observer = parent ? new ResizeObserver(() => place(false)) : null;
+    if (parent && observer) observer.observe(parent);
     return () => {
-      cancelAnimationFrame(frameId);
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-      observer.disconnect();
+      alive = false;
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      observer?.disconnect();
     };
   }, [count]);
 
   return (
     <div ref={frameRef} className="map-people-frame" style={{ height: slice.height }}>
-      <div className={`map-people${pending ? " is-pending" : ""}`} style={{ transform: `translateY(${slice.offset}px)` }}>
+      <div className="map-people" style={{ transform: `translateY(${slice.offset}px)` }}>
         {children(slice.start, slice.end)}
       </div>
     </div>

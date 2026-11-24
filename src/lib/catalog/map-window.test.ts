@@ -2,7 +2,16 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { MAP_CLUSTER_CAP, MAP_PAGE_SIZE, MAP_PIN_CAP, MAP_TOOLTIP_CAP, mapClusterCellCount, mapClusterStep } from "./map-limits";
-import { capMapFeatures, mapPeopleColumns, mapPeopleWindow } from "./map-window";
+import { capMapFeatures, mapPeopleColumns, mapPeopleGap, mapPeopleWindow } from "./map-window";
+
+test("the phone list uses the same gap as the card grid", () => {
+  assert.equal(mapPeopleGap(320), 14);
+  assert.equal(mapPeopleGap(390), 14);
+  assert.equal(mapPeopleGap(400), 14);
+  assert.equal(mapPeopleGap(430), 18.4);
+  assert.equal(mapPeopleGap(767), 18.4);
+  assert.equal(mapPeopleGap(768), 24);
+});
 
 test("map columns follow the shared card grid", () => {
   assert.equal(mapPeopleColumns(320), 1);

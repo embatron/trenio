@@ -1,7 +1,14 @@
 import { MAP_CLUSTER_CAP } from "@/lib/catalog/map-limits";
 
-/** Same gap as `--layout-gap` on `.map-people`. */
+/** Wide-screen gap. Phones use the same reduced gaps as the other card grids. */
 export const MAP_PEOPLE_GAP = 24;
+
+/** Matches `.map-people`: 24px, 92% of 20px below 768px, and 14px below 400px. */
+export function mapPeopleGap(viewportWidth: number) {
+  if (viewportWidth <= 400) return 14;
+  if (viewportWidth < 768) return 18.4;
+  return MAP_PEOPLE_GAP;
+}
 
 /** Square photo plus the name block, until a real card is measured. */
 export const MAP_PEOPLE_ROW_ESTIMATE = 320;
