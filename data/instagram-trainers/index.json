@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-23T09:12:16.106Z",
+  "updatedAt": "2026-11-24T08:08:11.783Z",
   "profiles": [
     {
       "handle": "embatron.eth",
@@ -8690,6 +8690,23 @@
         "telegram"
       ],
       "file": "data/instagram-trainers/akhmetovivan.json"
+    },
+    {
+      "handle": "tatiaero",
+      "slug": "tatiaero",
+      "fullName": "Татьяна",
+      "primarySport": "Растяжка",
+      "city": "Минск",
+      "status": "draft",
+      "missing": [
+        "lastName",
+        "price",
+        "phone",
+        "address",
+        "email",
+        "telegram"
+      ],
+      "file": "data/instagram-trainers/tatiaero.json"
     }
   ]
 }
