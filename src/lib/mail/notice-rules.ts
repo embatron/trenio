@@ -108,11 +108,6 @@ const PROFILE_STATUS_LETTERS: Record<string, { subject: string; title: string; l
     title: "Карточка в архиве",
     lead: "В каталоге её больше нет.",
   },
-  draft: {
-    subject: "Карточка на модерации trenio.by",
-    title: "Карточка на модерации",
-    lead: "Пока её нет в каталоге.",
-  },
 };
 
 /** Null when the status did not change or the next status has no letter. */

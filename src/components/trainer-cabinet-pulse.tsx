@@ -131,7 +131,7 @@ const PAGE_STATUS_LABEL: Record<PageStatus, string> = {
   published: "Опубликована",
   hidden: "Скрыта",
   archived: "Снята с публикации",
-  declined: "Отказались",
+  declined: "Не опубликована",
 };
 
 const PAGE_MODE_LABEL: Record<OwnProfileStatus, string> = {
@@ -178,7 +178,7 @@ export function PageStatusCard({ status }: { status: PageStatus }) {
         <span className={`cabinet-status cabinet-status--${status}`}>{PAGE_STATUS_LABEL[status]}</span>
       </div>
       {status === "declined" ? (
-        <p className="cabinet-note">Этот статус ставит администратор.</p>
+        <p className="cabinet-note">Страница не в каталоге.</p>
       ) : (
       <fieldset className="publish-pick" disabled={pending}>
         <legend>Режим страницы</legend>

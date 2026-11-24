@@ -71,7 +71,7 @@ Intent при регистрации (`last_signup_intent`) и platform role с�
 
 - `id`, `slug`, `first_name`, `last_name` (фамилия необязательна), `full_name` (склейка имени и фамилии, без пустой фамилии), `city`, `bio`, `sports`, `contacts`
 - `training_places` — до трёх мест в Беларуси: город, район, точный адрес, координаты, статус `ok` | `not_found` | `pending`. Первое место зеркалится в `address`, `address_lat`, `address_lng`, `geocode_status`. Адрес другой страны не сохраняется. Подробности — [TECH_SPEC.md §4.7](./TECH_SPEC.md#47-адрес-и-геокодирование)
-- `status`: `draft` | `published` | `hidden` | `archived` | `declined`. `declined` («Отказались») ставит только администратор в карточке тренера. Тренер этот статус не выбирает и не снимает. Подтверждение почты или телефона такую карточку не публикует.
+- `status`: `draft` | `published` | `hidden` | `archived` | `declined`. `declined` («Отказались») ставит только администратор в карточке тренера. Тренер этот статус не выбирает и не снимает. В кабинете черновик и отказ подписаны «Не опубликована»: слова «черновик», «на модерации», «непонятный» и «отказались» там не пишутся. Опубликована, скрыта и снята с публикации остаются у тренера. Подтверждение почты или телефона такую карточку не публикует.
 - `claim_status`: `unclaimed` | `claimed` | `disputed`
 - `created_source`: `self` | `branch_created` | `admin_created` | `import`
 - `owner_account_id` (nullable)

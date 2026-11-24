@@ -114,7 +114,7 @@ export const setOwnTrainerPageStatusFn = createServerFn({ method: "POST" })
       .limit(1);
     if (!row) throw new AuthError("Карточка ещё не создана.", "VALIDATION");
     if (row.status === "declined") {
-      throw new AuthError("Статус «Отказались» меняет администратор.", "FORBIDDEN");
+      throw new AuthError("Сейчас страницу нельзя вернуть в каталог.", "FORBIDDEN");
     }
     if (row.status !== data.status) {
       await getDb().update(trainerProfiles).set({

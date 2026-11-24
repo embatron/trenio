@@ -107,7 +107,7 @@ test("profile status and review replies name the person who should hear", () => 
   });
   assert.equal(profileStatusNotice("published", "hidden")?.title, "Карточка скрыта");
   assert.equal(profileStatusNotice("published", "archived")?.lead, "В каталоге её больше нет.");
-  assert.equal(profileStatusNotice("hidden", "draft")?.title, "Карточка на модерации");
+  assert.equal(profileStatusNotice("hidden", "draft"), null);
   assert.equal(profileStatusNotice("published", "mystery"), null);
   assert.equal(reviewReplyAudience("trainer"), "author");
   assert.equal(reviewReplyAudience("author"), "owner");
