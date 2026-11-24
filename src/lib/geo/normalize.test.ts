@@ -122,6 +122,18 @@ test("every street word is recognized before the name, after it, and with the ci
   }
   assert.deepEqual(misses, []);
   assert.equal(addressLookupQueries("Пр. Держинского , д.16")[0], "Проспект Дзержинского, 16");
+  assert.equal(
+    addressLookupQueries("пр-т Советский, д. 35", "Барановичи")[0],
+    "Проспект Советский, 35, Барановичи",
+  );
+  assert.equal(
+    addressLookupQueries("проспект Партизанский, 10", "Минск")[0],
+    "Проспект Партизанский, 10, Минск",
+  );
+  assert.equal(
+    addressLookupQueries("Советский район, ул. Ленина, 5", "Минск")[0],
+    "Улица Ленина, 5, Минск",
+  );
   assert.equal(addressLookupQueries("А. Гаруна, 5 СШ №41 Якубовского, 52б", "Минск")[0], "Гаруна, 5, Минск");
   assert.ok(addressLookupQueries("А. Гаруна, 5 СШ №41 Якубовского, 52б", "Минск").includes("Якубовского, 52\u0411, Минск"));
   assert.equal(addressLookupQueries("дворца тенниса на Победителей", "Минск")[0], "дворец тенниса, Минск");

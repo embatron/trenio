@@ -437,6 +437,7 @@ function parseChunk(chunk: string, cityHint: string): ParsedAddress | null {
   const tokens = collapse(housed.text).split(/[^\p{L}]+/u).filter(Boolean).map(foldMixedToken);
   let city = matchCity(cityHint.trim());
   const nameTokens: string[] = [];
+  const districtTokens: string[] = [];
   let type: StreetType | null = null;
   for (const token of tokens) {
     if (isCountry(token)) continue;
@@ -450,10 +451,17 @@ function parseChunk(chunk: string, cityHint: string): ParsedAddress | null {
       type = foundType;
       continue;
     }
-    if (NOISE_WORDS.has(foldAddress(token))) continue;
+    if (NOISE_WORDS.has(foldAddress(token))) {
+      districtTokens.push(token);
+      continue;
+    }
     if (/^\p{L}$/u.test(token)) continue;
     if (/^\d{1,4}\p{L}?$/u.test(token)) continue;
     nameTokens.push(token);
+  }
+  // «Советский район» is not a street. «проспект Советский» is.
+  if (nameTokens.length === 0 && type) {
+    nameTokens.push(...districtTokens.filter((token) => foldAddress(token) !== "район"));
   }
   if (nameTokens.length === 0) return null;
   const typed = nameTokens.join(" ");
