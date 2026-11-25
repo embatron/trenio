@@ -19,3 +19,15 @@ test("the trainer welcome is concise and gives the trainer clear next steps", ()
   assert.doesNotMatch(plain, /популярност|YClients|верификац/);
   assert.ok(reviewTextLength(html) <= 1000);
 });
+
+test("a mailbox confirmation of a published page congratulates and keeps the welcome", () => {
+  const html = trainerWelcomeHtml("Анна", undefined, true);
+  const plain = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+  assert.match(plain, /Анна, привет!/);
+  const hello = plain.indexOf("Анна, привет!");
+  const news = plain.indexOf("Поздравляем, ваш аккаунт подтверждён.");
+  const rest = plain.indexOf("Добро пожаловать в Trenio.by");
+  assert.ok(hello >= 0 && hello < news && news < rest);
+  assert.match(plain, /Размещение профиля бесплатное/);
+  assert.ok(reviewTextLength(html) <= 1000);
+});

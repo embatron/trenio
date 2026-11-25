@@ -10,14 +10,14 @@ import { logCaught, writeLog } from "@/lib/log/logger";
 import { reviewTextLength } from "@/lib/catalog/review-html";
 import { scheduleMessageNotification } from "@/lib/messages/notify";
 import { planTrainerWelcome, shouldSendPublishWelcome, type WelcomePairThread } from "@/lib/messages/welcome-publish";
-import { renderTrainerWelcome } from "@/lib/site-texts/defaults";
+import { renderTrainerWelcome, trainerWelcomeSource } from "@/lib/site-texts/defaults";
 import { loadSiteText } from "@/lib/site-texts/store";
 
 export { PORTAL_TELEGRAM_URL } from "@/lib/site-texts/defaults";
 
 /** Warm first letter from the portal admin. Stored as the same HTML the composer keeps. */
-export function trainerWelcomeHtml(firstName: string, template?: string) {
-  return renderTrainerWelcome(firstName, template);
+export function trainerWelcomeHtml(firstName: string, template?: string, confirmedAccount = false) {
+  return renderTrainerWelcome(firstName, trainerWelcomeSource(template, confirmedAccount));
 }
 
 async function portalAdmin() {
@@ -29,7 +29,7 @@ async function portalAdmin() {
   return admin ?? null;
 }
 
-async function deliverTrainerWelcome(user: { id: string; firstName: string }) {
+async function deliverTrainerWelcome(user: { id: string; firstName: string; confirmedAccount?: boolean }) {
   const admin = await portalAdmin();
   if (!admin) {
     void writeLog({
@@ -109,7 +109,7 @@ async function deliverTrainerWelcome(user: { id: string; firstName: string }) {
   }
   if (!plan.create && !plan.conversationId) return;
 
-  const body = trainerWelcomeHtml(user.firstName, await loadSiteText("trainer_welcome"));
+  const body = trainerWelcomeHtml(user.firstName, await loadSiteText("trainer_welcome"), user.confirmedAccount === true);
   if (reviewTextLength(body) > 4000) {
     void writeLog({
       level: "error",
@@ -162,7 +162,7 @@ async function deliverTrainerWelcome(user: { id: string; firstName: string }) {
 }
 
 /** One welcome thread from the admin account Trenioby. A later call does not send a second letter. Failures stay out of publish. */
-export async function sendTrainerWelcome(user: { id: string; firstName: string }) {
+export async function sendTrainerWelcome(user: { id: string; firstName: string; confirmedAccount?: boolean }) {
   try {
     await deliverTrainerWelcome(user);
   } catch (error) {
@@ -178,6 +178,7 @@ export async function sendWelcomeOnPublish(input: {
   firstName: string;
   confirmed: boolean;
   ownerAttached?: boolean;
+  confirmedAccount?: boolean;
 }) {
   if (!shouldSendPublishWelcome({
     previous: input.previous,
@@ -189,5 +190,6 @@ export async function sendWelcomeOnPublish(input: {
   await sendTrainerWelcome({
     id: input.ownerUserId,
     firstName: input.firstName.trim() || "Тренер",
+    confirmedAccount: input.confirmedAccount,
   });
 }

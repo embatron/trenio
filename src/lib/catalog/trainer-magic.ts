@@ -1277,6 +1277,7 @@ export const openTrainerMailFn = createServerFn({ method: "POST" })
       firstName: row.firstName,
       confirmed: true,
       ownerAttached: true,
+      confirmedAccount: row.status === "published",
     });
     return { ok: true as const, slug: row.slug, needsPassword: user.needsPassword };
   });

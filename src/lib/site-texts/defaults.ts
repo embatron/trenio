@@ -143,6 +143,17 @@ export function outreachHello(firstName: string) {
   return name ? `${name}, добрый день!` : "Добрый день!";
 }
 
+/** Opening line when a mailbox confirms an account on a page that is already published. */
+export const CONFIRMED_ACCOUNT_LINE = "Поздравляем, ваш аккаунт подтверждён.";
+
+/** The saved welcome, with the confirmation line after the greeting when the mailbox confirmed a published page. */
+export function trainerWelcomeSource(template: string | undefined, confirmedAccount: boolean) {
+  const body = template?.trim() || DEFAULT_TRAINER_WELCOME;
+  if (!confirmedAccount) return body;
+  if (body.startsWith("{hello}")) return body.replace("{hello}", `{hello}\n\n${CONFIRMED_ACCOUNT_LINE}`);
+  return `${CONFIRMED_ACCOUNT_LINE}\n\n${body}`;
+}
+
 /** The in-app letter a new trainer receives. `{hello}` and `{telegram}` come from the saved text. */
 export function renderTrainerWelcome(firstName: string, template = DEFAULT_TRAINER_WELCOME) {
   const source = template.trim() || DEFAULT_TRAINER_WELCOME;

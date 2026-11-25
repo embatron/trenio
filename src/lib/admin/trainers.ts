@@ -872,7 +872,8 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
         context: { via: "staff-card", staff: true },
       });
     }
-    if (existing && ownerNotice) {
+    const unverifiedPublish = data.status === "published" && existing?.status !== "published" && !accountReady;
+    if (existing && ownerNotice && !unverifiedPublish) {
       void sendProfileStatusNotice({
         email: ownerNotice.email,
         emailVerifiedAt: ownerNotice.emailVerifiedAt,
