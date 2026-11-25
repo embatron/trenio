@@ -773,9 +773,6 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-unverified input { width: 18px; height: 18px; margin: 0; flex: 0 0 auto; }
 .cabinet-publish { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
 .cabinet-publish-switch { width: 44px; height: 32px; }
-.cabinet-publish-switch .mail-switch__thumb { width: 36px; height: 22px; }
-.cabinet-publish-switch .mail-switch__thumb::after { width: 16px; height: 16px; }
-.cabinet-publish-switch.is-on .mail-switch__thumb::after { transform: translateX(14px); }
 .cabinet-cats { display: flex; flex-wrap: nowrap; gap: 8px; white-space: nowrap; }
 .cabinet-table--trainers td.is-category { white-space: nowrap; }
 .cabinet-table--trainers th.is-index, .cabinet-table--trainers td.is-index { width: 1%; padding-right: 2px; text-align: right; color: color-mix(in srgb, var(--muted) 48%, transparent); font-size: 11px; font-weight: 400; font-variant-numeric: tabular-nums; }
@@ -943,10 +940,13 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .mail-pref > div { min-width: 0; flex: 1; }
 .mail-pref__label { margin: 0; color: var(--dark); font-size: 15px; font-weight: var(--fw-title); }
 .mail-switch { flex: 0 0 auto; width: 52px; height: 44px; padding: 0; border: 0; background: transparent; display: inline-flex; align-items: center; justify-content: flex-start; cursor: pointer; }
-.mail-switch__thumb { width: 44px; height: 26px; border-radius: 999px; background: #d1d5db; position: relative; }
+.mail-switch__thumb { width: 44px; height: 26px; border-radius: 999px; background: #d1d5db; position: relative; overflow: hidden; }
 .mail-switch__thumb::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform 0.15s ease; }
 .mail-switch.is-on .mail-switch__thumb { background: var(--primary); }
 .mail-switch.is-on .mail-switch__thumb::after { transform: translateX(18px); }
+.mail-switch.cabinet-publish-switch .mail-switch__thumb { width: 36px; height: 22px; }
+.mail-switch.cabinet-publish-switch .mail-switch__thumb::after { width: 16px; height: 16px; }
+.mail-switch.cabinet-publish-switch.is-on .mail-switch__thumb::after { transform: translateX(14px); }
 .mail-switch:disabled { opacity: 0.6; cursor: default; }
 .mail-switch.is-locked:disabled { opacity: 1; cursor: default; }
 .mail-switch.is-locked .mail-switch__thumb { background: #c9a8aa; }
