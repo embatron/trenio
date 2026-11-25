@@ -1,0 +1,87 @@
+{
+  "source": "instagram",
+  "sourceUrl": "https://www.instagram.com/fedkov_oleg/",
+  "handle": "fedkov_oleg",
+  "slug": "fedkov_oleg",
+  "status": "draft",
+  "claimStatus": "unclaimed",
+  "createdSource": "import",
+  "firstName": "Олег",
+  "lastName": "Федков",
+  "fullName": "Олег Федков",
+  "gender": "male",
+  "nameQuotes": [
+    "Федков Олег"
+  ],
+  "headline": "Тренер по MMA",
+  "sourceBio": "Дисциплина,форма,результат🤝\n🏆Чемпион РБ по ушу-санда\n🏆Чемпион РБ по ММА\n🏆Победитель международных турниров по ММА\n🏆Серебряный призер ADCC 2023",
+  "sourceAbout": [],
+  "sourceThreads": "",
+  "operatorNotes": "Федков Олег, тренер по ММА",
+  "threadsUrl": "",
+  "presentationMode": "adapted",
+  "bio": "Дисциплина, форма, результат. Чемпион РБ по ушу-санда, чемпион РБ по ММА и победитель международных турниров по ММА. Серебряный призер ADCC 2023.",
+  "about": [],
+  "pinned": [],
+  "sports": [
+    {
+      "slug": "mma",
+      "parentSlug": "edinoborstva",
+      "label": "MMA",
+      "evidence": "мма"
+    }
+  ],
+  "practicedSports": [
+    {
+      "slug": "ushu",
+      "label": "Ушу",
+      "quote": "Чемпион РБ по ушу-санда"
+    }
+  ],
+  "primarySport": {
+    "slug": "mma",
+    "parentSlug": "edinoborstva",
+    "label": "MMA"
+  },
+  "city": "",
+  "address": "",
+  "cityCandidates": [
+    "Боец",
+    "Победитель"
+  ],
+  "priceFrom": null,
+  "experienceYears": null,
+  "formats": [],
+  "audiences": [],
+  "languages": [],
+  "avatarPath": "/trainers/instagram/fedkov_oleg.jpg",
+  "photos": [
+    "/trainers/instagram/fedkov_oleg.jpg",
+    "/trainers/instagram/fedkov_oleg-g2.jpg",
+    "/trainers/instagram/fedkov_oleg-g3.jpg"
+  ],
+  "certificates": [],
+  "photoSearch": {
+    "face": true,
+    "pinned": 0,
+    "candidates": 2,
+    "gallery": 2,
+    "certificates": 0,
+    "skipped": 0
+  },
+  "contacts": {
+    "instagram": "https://www.instagram.com/fedkov_oleg/",
+    "phone": "",
+    "email": "",
+    "telegram": "",
+    "website": ""
+  },
+  "missing": [
+    "city",
+    "price",
+    "phone",
+    "email",
+    "telegram",
+    "pinnedPosts"
+  ]
+}

@@ -9,7 +9,7 @@ export const Route = createFileRoute("/categories/")({
 });
 
 const CSS = `
-.categories-page { min-height: 100vh; background: var(--light-bg); }
+.categories-page { min-height: 100vh; background: var(--white); }
 .categories-hero {
   padding: var(--layout-section-y) var(--layout-gutter) 32px;
   max-width: var(--layout-max);
@@ -48,22 +48,65 @@ const CSS = `
   margin: 0 auto;
   padding: 8px var(--layout-gutter) clamp(40px, 6vw, 72px);
 }
-.categories-grid { align-items: stretch; }
+.categories-grid { align-items: start; }
+.category-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 210px) minmax(0, 1fr);
+  gap: 12px 14px;
+  align-items: start;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(var(--dark-rgb), 0.08);
+  border-radius: var(--card-radius);
+  background: var(--light-bg);
+}
+.category-row__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: calc(8px * 0.9);
+  min-width: 0;
+}
+.cat-child-nav__tile {
+  min-width: 0;
+  width: auto;
+  min-height: 32px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  color: var(--dark);
+  font-size: calc(13px * 0.9);
+  font-weight: var(--fw-ui);
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.25;
+  white-space: nowrap;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+.cat-child-nav__tile:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.cat-child-nav__tile:focus-visible {
+  outline: 3px solid rgba(var(--primary-rgb), 0.35);
+  outline-offset: 2px;
+}
 .category-card {
   position: relative;
   overflow: hidden;
-  border-radius: var(--card-radius);
-  border: 1px solid rgba(var(--dark-rgb), 0.08);
-  background: var(--white);
+  border-radius: calc(var(--card-radius) - 4px);
+  border: 0;
+  background: transparent;
   text-decoration: none;
   color: inherit;
   display: flex;
   flex-direction: column;
-  transition: transform 0.24s ease, border-color 0.24s ease;
-}
-.category-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(var(--primary-rgb), 0.22);
 }
 .category-card__media {
   position: relative;
@@ -123,6 +166,24 @@ const CSS = `
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+@media (max-width: 960px) {
+  .category-row { grid-template-columns: minmax(118px, 140px) minmax(0, 1fr); gap: 10px 8px; }
+  .category-card h2 { font-size: 15px; letter-spacing: -0.03em; }
+  .category-card__body { padding: 8px 8px 10px; }
+}
+@media (max-width: 767px) {
+  .category-row__tags { gap: 6px; }
+  .cat-child-nav__tile { min-height: 32px; padding: 3px 10px; font-size: 13px; line-height: 1.2; }
+}
+@media (max-width: 640px) {
+  .category-row { grid-template-columns: minmax(132px, 168px) minmax(0, 1fr); gap: 10px; }
+  .category-card h2 { font-size: 15px; }
+}
+@media (max-width: 400px) {
+  .category-row { grid-template-columns: minmax(124px, 136px) minmax(0, 1fr); gap: 8px; }
+  .category-card h2 { font-size: 14px; }
+  .cat-child-nav__tile { white-space: normal; }
+}
 `;
 
 function CategoriesIndexPage() {
@@ -148,34 +209,49 @@ function CategoriesIndexPage() {
         <div className="categories-grid-wrap">
           <div className="categories-grid">
             {listPublishedSportCategories().map((category) => (
-              <Link
-                key={category.slug}
-                className="category-card"
-                to="/categories/$slug"
-                params={{ slug: category.slug }}
-              >
-                <div className="category-card__media">
-                  <span
-                    className="category-card__bg"
-                    aria-hidden="true"
-                    style={
-                      category.featuredImage ?? category.image
-                        ? { backgroundImage: `url(${category.featuredImage ?? category.image})` }
-                        : { background: category.bg }
-                    }
-                  />
-                </div>
-                <div className="category-card__body">
-                  <h2>{category.label}</h2>
-                  <p>{category.description}</p>
-                  <span className="category-card__meta">
-                    {category.count ? category.count : null}
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M5 12h14M13 6l6 6-6 6" />
-                    </svg>
-                  </span>
-                </div>
-              </Link>
+              <div className="category-row" key={category.slug}>
+                <Link
+                  className="category-card"
+                  to="/categories/$slug"
+                  params={{ slug: category.slug }}
+                >
+                  <div className="category-card__media">
+                    <span
+                      className="category-card__bg"
+                      aria-hidden="true"
+                      style={
+                        category.featuredImage ?? category.image
+                          ? { backgroundImage: `url(${category.featuredImage ?? category.image})` }
+                          : { background: category.bg }
+                      }
+                    />
+                  </div>
+                  <div className="category-card__body">
+                    <h2>{category.label}</h2>
+                    <p>{category.description}</p>
+                    <span className="category-card__meta">
+                      {category.count ? category.count : null}
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                      </svg>
+                    </span>
+                  </div>
+                </Link>
+                {category.children.length > 0 ? (
+                  <nav className="category-row__tags" aria-label={`Направления: ${category.label}`}>
+                    {category.children.map((child) => (
+                      <Link
+                        key={child.slug}
+                        className="cat-child-nav__tile"
+                        to="/categories/$parentSlug/$childSlug"
+                        params={{ parentSlug: category.slug, childSlug: child.slug }}
+                      >
+                        {child.label}
+                      </Link>
+                    ))}
+                  </nav>
+                ) : null}
+              </div>
             ))}
           </div>
         </div>

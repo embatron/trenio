@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T14:06:44.088Z",
+  "updatedAt": "2026-11-25T11:36:17.303Z",
   "profiles": [
     {
       "handle": "embatron.eth",
@@ -8691,6 +8691,23 @@
         "telegram"
       ],
       "file": "data/instagram-trainers/tatiaero.json"
+    },
+    {
+      "handle": "fedkov_oleg",
+      "slug": "fedkov_oleg",
+      "fullName": "Олег Федков",
+      "primarySport": "MMA",
+      "city": "",
+      "status": "draft",
+      "missing": [
+        "city",
+        "price",
+        "phone",
+        "email",
+        "telegram",
+        "pinnedPosts"
+      ],
+      "file": "data/instagram-trainers/fedkov_oleg.json"
     }
   ]
 }

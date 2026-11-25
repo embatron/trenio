@@ -285,7 +285,6 @@ html.is-staff-layout {
 
 .card-grid,
 .clubs-grid,
-.categories-grid,
 .trainer-grid,
 .cat-grid,
 .favorites-grid,
@@ -296,6 +295,12 @@ html.is-staff-layout {
 .sr-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--layout-gap);
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--layout-gap);
 }
 
@@ -619,7 +624,6 @@ html.is-staff-layout {
   .cat-grid,
   .city-grid,
   .clubs-grid,
-  .categories-grid,
   .favorites-grid,
   .sr-grid,
   .card-grid--4,
