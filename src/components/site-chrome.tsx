@@ -1253,11 +1253,7 @@ export function SiteHeader({ middleSlot }: { middleSlot?: ReactNode }) {
       frame = 0;
       const sentinel = document.getElementById("search-dock-sentinel");
       const y = window.scrollY;
-      // A trainer page has no search of its own. Docking one here grows the
-      // header mid-scroll and is the jump on a magic-link visit.
-      if (document.querySelector(".trainer-page")) {
-        docked = false;
-      } else if (sentinel) {
+      if (sentinel) {
         const top = sentinel.getBoundingClientRect().top;
         docked = docked ? top < 128 : top < 72;
       } else {
