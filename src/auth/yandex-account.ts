@@ -13,6 +13,7 @@ import { isReservedAccountEmail } from "@/lib/auth/pending-email";
 import type { UserRole } from "@/lib/auth/types";
 import type { YandexIdentity } from "@/lib/auth/yandex-identity";
 import { destinationAfterAuth } from "@/lib/auth/return-path";
+import { grantTrainerVerification } from "@/lib/catalog/trainer-verified.server";
 
 export type YandexLoginResult =
   | { kind: "session"; token: string; redirectTo: string; created: boolean; email: string; userId: string }
@@ -146,6 +147,7 @@ async function stampYandexMailbox(userId: string, email: string) {
       eq(trainerProfiles.ownerUserId, userId),
       or(isNull(trainerProfiles.emailVerifiedAt), ne(trainerProfiles.email, email)),
     ));
+  await grantTrainerVerification(userId);
 }
 
 /** A Belarus mobile from Yandex fills an empty account phone. A number owned by someone else stays there. */
@@ -155,10 +157,12 @@ async function attachYandexPhone(userId: string, phone: string | null) {
   const [owner] = await db.select({ id: users.id }).from(users).where(eq(users.phone, phone)).limit(1);
   if (owner && owner.id !== userId) return;
   try {
-    await db
+    const stored = await db
       .update(users)
       .set({ phone, phoneVerifiedAt: new Date(), updatedAt: new Date() })
-      .where(and(eq(users.id, userId), isNull(users.phone)));
+      .where(and(eq(users.id, userId), isNull(users.phone)))
+      .returning({ id: users.id });
+    if (stored.length > 0) await grantTrainerVerification(userId);
   } catch (error) {
     if (!isUniqueViolation(error)) throw error;
   }
@@ -179,4 +183,5 @@ async function takeoverUnverified(user: User, sub: string) {
       updatedAt: new Date(),
     })
     .where(eq(users.id, user.id));
+  await grantTrainerVerification(user.id);
 }

@@ -188,6 +188,8 @@ export async function openManualTrainerAccount(
     }).where(eq(trainerProfiles.id, owned.id));
   }
   await db.insert(userRoles).values({ userId: user.id, role: "trainer" }).onConflictDoNothing();
+  const { grantTrainerVerification } = await import("@/lib/catalog/trainer-verified.server");
+  await grantTrainerVerification(user.id);
   if (draft) {
     await db.update(users).set({
       trainerSignupDraft: null,

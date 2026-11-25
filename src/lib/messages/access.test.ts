@@ -89,6 +89,8 @@ test("canMessage rejects self, unpublished and blocked profiles", () => {
   assert.equal(canMessage({ actorId: userId, ownerUserId: ownerId, published: false, blocked: false }).ok, false);
   assert.equal(canMessage({ actorId: userId, ownerUserId: ownerId, published: true, blocked: true }).ok, false);
   assert.equal(canMessage({ actorId: userId, ownerUserId: null, published: true, blocked: false }).ok, true);
+  assert.equal(canMessage({ actorId: userId, ownerUserId: ownerId, published: true, blocked: false, accountReady: false }).ok, false);
+  assert.equal(canMessage({ actorId: userId, ownerUserId: ownerId, published: true, blocked: false, accountReady: true }).ok, true);
 });
 
 test("getCounterparty shows the trainer to the initiator and the user to everyone else", () => {

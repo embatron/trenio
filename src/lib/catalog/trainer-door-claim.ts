@@ -7,6 +7,7 @@ import { isStandInAccountName } from "@/lib/auth/phone-label";
 import { writeLog } from "@/lib/log/logger";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
 import { stampTrainerPublished } from "@/lib/catalog/trainer-published";
+import { grantTrainerVerificationForProfile } from "@/lib/catalog/trainer-verified.server";
 
 const DOOR_PROFILE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DOOR_SLUG = /^[a-z0-9._]{1,30}$/;
@@ -15,6 +16,7 @@ export type DoorGoogleClaim = "claimed" | "own" | "missing" | "taken" | "busy";
 
 /** The mailbox is confirmed by the letter or by Google. A draft then enters the catalog. A hidden card stays hidden. */
 export async function publishConfirmedDraft(row: { id: string; slug: string; status: string }) {
+  await grantTrainerVerificationForProfile(row.id);
   if (row.status !== "draft") return;
   const updated = await getDb()
     .update(trainerProfiles)

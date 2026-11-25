@@ -36,6 +36,7 @@ import { authMac, authMacEqual } from "@/auth/otp";
 import { consumeStepUpGrant } from "@/auth/step-up";
 import { isSmsByEnabled, sendQuickSms } from "@/auth/sms";
 import { openManualTrainerAccountSafely } from "@/lib/catalog/trainer-account";
+import { grantTrainerVerification } from "@/lib/catalog/trainer-verified.server";
 import {
   planTrainerPhoneOnly,
   planTrainerTelegramConfirm,
@@ -667,6 +668,7 @@ export async function verifyEmailToken(rawToken: string) {
     })
     .where(eq(users.id, tokenRow.userId));
 
+  await grantTrainerVerification(tokenRow.userId);
   return tokenRow.userId;
 }
 
@@ -722,6 +724,7 @@ export async function setPasswordFromEmailLink(
     })
     .where(eq(users.id, tokenRow.userId));
 
+  await grantTrainerVerification(tokenRow.userId);
   await revokeAllUserSessions(tokenRow.userId);
   return createSession(tokenRow.userId, meta);
 }
@@ -959,6 +962,7 @@ export async function confirmAccountEmailCode(
     .update(trainerProfiles)
     .set({ email, emailVerifiedAt: now, updatedAt: now })
     .where(eq(trainerProfiles.ownerUserId, userId));
+  await grantTrainerVerification(userId);
   await revokeOtherUserSessions(userId, currentToken);
   if (previous) {
     void notifyFactorChange(previous, "Почта аккаунта изменена. Если это не вы, напишите в поддержку.", PHONE_SMS.email);
@@ -1063,6 +1067,7 @@ export async function confirmAccountPhoneCode(
     .update(trainerProfiles)
     .set({ phone: stored, updatedAt: now })
     .where(eq(trainerProfiles.ownerUserId, userId));
+  await grantTrainerVerification(userId);
   await revokeOtherUserSessions(userId, currentToken);
   if (previous) {
     void notifyFactorChange(previous, "Телефон аккаунта изменён. Если это не вы, напишите в поддержку.", PHONE_SMS.phone);
@@ -1244,6 +1249,7 @@ async function storeVerifiedTrainerPhone(
     .update(trainerProfiles)
     .set({ phone: stored, updatedAt: now })
     .where(eq(trainerProfiles.ownerUserId, userId));
+  await grantTrainerVerification(userId);
   const changed = !previous?.phoneVerifiedAt || normalizeBelarusMobile(previous.phone ?? "") !== digits;
   if (changed) {
     await revokeOtherUserSessions(userId, currentToken);

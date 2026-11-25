@@ -50,6 +50,8 @@ export type PublishedTrainer = {
   /** ISO timestamps. Present on a row loaded from the database. */
   createdAt?: string;
   updatedAt?: string;
+  /** The owner confirmed a mailbox or a mobile, and staff verification is on. */
+  trusted?: boolean;
 };
 
 export const PUBLISHED_TRAINERS: PublishedTrainer[] = [];

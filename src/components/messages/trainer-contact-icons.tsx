@@ -72,12 +72,15 @@ export function TrainerContactIcons({
   telegram,
   phone,
   heading,
+  locked = false,
 }: {
   slug: string;
   instagram?: string;
   telegram?: string;
   phone?: string;
   heading?: string;
+  /** Gray, inert phone, Instagram, Telegram, and the direct message. */
+  locked?: boolean;
 }) {
   const { user, messaging } = useRouteContext({ from: "__root__" });
   const [pendingContact, setPendingContact] = useState<PendingContact | null>(null);
@@ -97,84 +100,130 @@ export function TrainerContactIcons({
     setPendingContact(contact);
   };
 
+  const quietTitle = "Аккаунт не подтверждён";
   const icons = (
     <div className="trainer-contacts" onClick={stopCardNavigation}>
       {phoneLink ? (
-        <a
-          className="trainer-contacts__link trainer-contacts__link--line trainer-contacts__link--phone"
-          href={phoneLink.href}
-          aria-label={`Позвонить ${phoneLink.label}`}
-          aria-haspopup="dialog"
-          title={phoneLink.label}
-          onClick={(event) =>
-            askBeforeLeaving(event, {
-              kind: "phone",
-              href: phoneLink.href,
-              label: "телефон",
-              newTab: false,
-            })
-          }
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d={PHONE_PATH} />
-          </svg>
-          {heading ? <span className="trainer-contacts__phone">{phoneLink.label}</span> : null}
-        </a>
+        locked ? (
+          <span
+            className="trainer-contacts__link trainer-contacts__link--line trainer-contacts__link--phone is-quiet"
+            aria-disabled="true"
+            aria-label={`Телефон. ${quietTitle}`}
+            title={quietTitle}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d={PHONE_PATH} />
+            </svg>
+          </span>
+        ) : (
+          <a
+            className="trainer-contacts__link trainer-contacts__link--line trainer-contacts__link--phone"
+            href={phoneLink.href}
+            aria-label="Телефон"
+            aria-haspopup="dialog"
+            title="Телефон"
+            onClick={(event) =>
+              askBeforeLeaving(event, {
+                kind: "phone",
+                href: phoneLink.href,
+                label: "телефон",
+                newTab: false,
+              })
+            }
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d={PHONE_PATH} />
+            </svg>
+          </a>
+        )
       ) : null}
       {instagramUrl ? (
-        <a
-          className="trainer-contacts__link"
-          href={instagramUrl}
-          target="_blank"
-          rel="ugc noopener noreferrer"
-          aria-label="Instagram"
-          aria-haspopup="dialog"
-          title="Instagram"
-          onClick={(event) =>
-            askBeforeLeaving(event, {
-              kind: "instagram",
-              href: instagramUrl,
-              label: "Instagram",
-              newTab: true,
-            })
-          }
-        >
-          <InstagramIcon />
-        </a>
+        locked ? (
+          <span
+            className="trainer-contacts__link is-quiet"
+            aria-disabled="true"
+            aria-label={`Instagram. ${quietTitle}`}
+            title={quietTitle}
+          >
+            <InstagramIcon />
+          </span>
+        ) : (
+          <a
+            className="trainer-contacts__link"
+            href={instagramUrl}
+            target="_blank"
+            rel="ugc noopener noreferrer"
+            aria-label="Instagram"
+            aria-haspopup="dialog"
+            title="Instagram"
+            onClick={(event) =>
+              askBeforeLeaving(event, {
+                kind: "instagram",
+                href: instagramUrl,
+                label: "Instagram",
+                newTab: true,
+              })
+            }
+          >
+            <InstagramIcon />
+          </a>
+        )
       ) : null}
       {telegramUrl ? (
-        <a
-          className="trainer-contacts__link"
-          href={telegramUrl}
-          target="_blank"
-          rel="ugc noopener noreferrer"
-          aria-label="Telegram"
-          aria-haspopup="dialog"
-          title="Telegram"
-          onClick={(event) =>
-            askBeforeLeaving(event, {
-              kind: "telegram",
-              href: telegramUrl,
-              label: "Telegram",
-              newTab: true,
-            })
-          }
-        >
-          <TelegramIcon />
-        </a>
+        locked ? (
+          <span
+            className="trainer-contacts__link is-quiet"
+            aria-disabled="true"
+            aria-label={`Telegram. ${quietTitle}`}
+            title={quietTitle}
+          >
+            <TelegramIcon />
+          </span>
+        ) : (
+          <a
+            className="trainer-contacts__link"
+            href={telegramUrl}
+            target="_blank"
+            rel="ugc noopener noreferrer"
+            aria-label="Telegram"
+            aria-haspopup="dialog"
+            title="Telegram"
+            onClick={(event) =>
+              askBeforeLeaving(event, {
+                kind: "telegram",
+                href: telegramUrl,
+                label: "Telegram",
+                newTab: true,
+              })
+            }
+          >
+            <TelegramIcon />
+          </a>
+        )
       ) : null}
       {showDirect ? (
-        <a
-          className="trainer-contacts__link trainer-contacts__link--line trainer-contacts__link--send"
-          href={directHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Написать"
-          title="Написать"
-          onClick={() => recordTrainerContactClick(slug, "message")}
-        >
-          <DirectMark disc />
-        </a>
+        locked ? (
+          <span
+            className="trainer-contacts__link trainer-contacts__link--line trainer-contacts__link--send is-quiet"
+            aria-disabled="true"
+            aria-label={`Написать. ${quietTitle}`}
+            title={quietTitle}
+          >
+            <DirectMark disc />
+          </span>
+        ) : (
+          <a
+            className="trainer-contacts__link trainer-contacts__link--line trainer-contacts__link--send"
+            href={directHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Написать"
+            title="Написать"
+            onClick={() => recordTrainerContactClick(slug, "message")}
+          >
+            <DirectMark disc />
+          </a>
+        )
       ) : null}
     </div>
   );

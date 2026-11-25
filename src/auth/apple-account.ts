@@ -11,6 +11,7 @@ import { decideAppleLink } from "@/lib/auth/auth-decisions";
 import { storedGivenName } from "@/lib/auth/login-name";
 import { isPendingSignupEmail, isReservedAccountEmail, pendingSignupEmail } from "@/lib/auth/pending-email";
 import { destinationAfterAuth } from "@/lib/auth/return-path";
+import { grantTrainerVerification } from "@/lib/catalog/trainer-verified.server";
 import type { UserRole } from "@/lib/auth/types";
 import type { AppleIdentity } from "@/lib/mobile/apple-token";
 
@@ -150,6 +151,7 @@ async function takeoverUnverified(user: User, sub: string, email: string | null)
       updatedAt: new Date(),
     })
     .where(eq(users.id, user.id));
+  await grantTrainerVerification(user.id);
 }
 
 async function stampAppleMailbox(userId: string, email: string) {
@@ -171,4 +173,5 @@ async function stampAppleMailbox(userId: string, email: string) {
       eq(trainerProfiles.ownerUserId, userId),
       or(isNull(trainerProfiles.emailVerifiedAt), ne(trainerProfiles.email, email)),
     ));
+  await grantTrainerVerification(userId);
 }

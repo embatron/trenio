@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   POPULARITY_LIMITS,
+  POPULARITY_MAX,
   compareByPopularity,
   contactPoints,
   imputeWindow,
@@ -30,11 +31,16 @@ test("all part limits add up to exactly 100", () => {
   const limits = POPULARITY_LIMITS;
   const sum = limits.card + limits.contacts + limits.rating + limits.reviews + limits.recentReviews
     + limits.views + limits.saves + limits.likes + limits.likePace;
+  assert.equal(sum, POPULARITY_MAX);
   assert.equal(sum, 100);
   assert.equal(limits.self, limits.card + limits.contacts);
-  assert.equal(limits.card, 18);
-  assert.equal(limits.rating, 20);
-  assert.equal(limits.reviews + limits.recentReviews, 26);
+  assert.equal(limits.cardFill, 18);
+  assert.equal(limits.card, limits.cardFill + limits.verified);
+  assert.equal(limits.card, 23);
+  assert.equal(limits.verified, 5);
+  assert.equal(limits.rating, 18);
+  assert.equal(limits.reviews, 20);
+  assert.equal(limits.reviews + limits.recentReviews, 23);
   assert.equal(limits.recentReviews, 3);
   assert.equal(limits.views, 11);
   assert.equal(limits.likes + limits.likePace, 16);
@@ -57,8 +63,10 @@ test("a profile that reaches every cap scores exactly 100", () => {
     likePace: 100,
     cardFilled: 10,
     contactsFilled: 4,
+    verified: true,
   });
   assert.equal(full.total, 100);
+  assert.equal(full.verified, limits.verified);
   assert.equal(full.card, limits.card);
   assert.equal(full.contacts, 5);
   assert.equal(full.rating, limits.rating);
@@ -71,6 +79,32 @@ test("a profile that reaches every cap scores exactly 100", () => {
   assert.equal(contactPoints(1), 2);
   assert.equal(contactPoints(2), 3);
   assert.equal(contactPoints(3), 4);
+});
+
+test("a confirmed account adds 5 inside the card and the full score stays 100", () => {
+  const base = {
+    rating: "5",
+    reviews: 200,
+    positiveReviews: 200,
+    recentPositiveReviews: 200,
+    views: 80,
+    engaged: 40,
+    saves: 100,
+    likes: 100,
+    likePace: 100,
+    cardFilled: 10,
+    contactsFilled: 4,
+  };
+  const open = popularityParts(base);
+  const ready = popularityParts({ ...base, verified: true });
+  assert.equal(open.verified, 0);
+  assert.equal(open.card, POPULARITY_LIMITS.cardFill);
+  assert.equal(open.total, POPULARITY_MAX - POPULARITY_LIMITS.verified);
+  assert.equal(ready.verified, POPULARITY_LIMITS.verified);
+  assert.equal(ready.card, POPULARITY_LIMITS.card);
+  assert.equal(ready.total, open.total + POPULARITY_LIMITS.verified);
+  assert.equal(ready.total, POPULARITY_MAX);
+  assert.equal(popularityParts({ rating: "0", reviews: 0, verified: false }).verified, 0);
 });
 
 test("one five-star review does not take the star ceiling, and a long sample does", () => {
@@ -169,10 +203,14 @@ test("card, contacts, saves, likes, and response grow monotonically and stop at 
   for (let filled = 0; filled <= 20; filled += 1) {
     const part = popularityParts({ rating: "0", reviews: 0, cardFilled: filled }).card;
     assert.ok(part >= previousCard);
-    assert.ok(part <= POPULARITY_LIMITS.card);
+    assert.ok(part <= POPULARITY_LIMITS.cardFill);
     previousCard = part;
   }
-  assert.equal(previousCard, POPULARITY_LIMITS.card);
+  assert.equal(previousCard, POPULARITY_LIMITS.cardFill);
+  assert.equal(
+    popularityParts({ rating: "0", reviews: 0, cardFilled: 10, verified: true }).card,
+    POPULARITY_LIMITS.card,
+  );
 
   let previousLike = -1;
   for (let likes = 0; likes <= 100; likes += 1) {
@@ -258,7 +296,7 @@ test("negative, non-finite, fractional, and contradictory input stays finite and
       assert.ok(Number.isFinite(value), JSON.stringify(parts));
       assert.ok(value >= 0, JSON.stringify(parts));
     }
-    assert.ok(parts.total <= 100, JSON.stringify(parts));
+    assert.ok(parts.total <= POPULARITY_MAX, JSON.stringify(parts));
   }
 });
 

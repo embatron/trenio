@@ -6,6 +6,7 @@ import { formatBelarusPhone } from "@/lib/auth/phone";
 import { logCaught, writeLog } from "@/lib/log/logger";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
 import { cityCatalogSlug } from "@/lib/catalog/city-pages";
+import { isSilentInstagram } from "@/lib/catalog/instagram-silence";
 import { inferTrainerGender, type TrainerGender } from "@/lib/catalog/trainer-gender";
 import { instagramProfileSlug, trainerPersonKey } from "@/lib/catalog/trainer-slugs";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
@@ -153,6 +154,9 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
   const db = getDb();
   const slug = instagramProfileSlug(draft.handle);
   if (!slug) throw new Error("Instagram nick is empty.");
+  if (isSilentInstagram(draft.handle) || isSilentInstagram(slug)) {
+    throw new Error("This Instagram account is closed.");
+  }
   const [existing] = await db
     .select()
     .from(trainerProfiles)

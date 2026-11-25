@@ -28,20 +28,24 @@ export type TrainerRatingSnapshot = {
 
 /**
  * Caps a trainer can read. The parts add up to 100.
- * The trainer fills the card (18) and the contacts (5).
- * Quality is the star score (20), positive-review count (23), and recent positive reviews (3).
+ * The card is 23: 18 for the ten fields, and 5 more when the account is confirmed.
+ * Those 5 come from the star score (now 18) and the review count (now 20).
+ * Contacts stay at 5. Quality also includes recent positive reviews (3).
  * Activity is the response rate (11), saves (4), like weight (7), and likes over 20 days (9).
  * The first reviews, saves, and likes still weigh more than the later ones.
  */
 export const POPULARITY_LIMITS = {
   cardFields: 10,
   cardEach: 1.8,
-  card: 18,
+  /** Points for the ten filled fields, before the confirmation bonus. */
+  cardFill: 18,
+  card: 23,
   contactFields: 4,
   contacts: 5,
-  self: 23,
-  rating: 20,
-  reviews: 23,
+  self: 28,
+  verified: 5,
+  rating: 18,
+  reviews: 20,
   recentReviews: 3,
   views: 11,
   saves: 4,
@@ -69,6 +73,18 @@ export const POPULARITY_LIMITS = {
   coldStartDays: 60,
 } as const;
 
+/** Every part at its cap. The confirmation bonus is already inside `card`. */
+export const POPULARITY_MAX =
+  POPULARITY_LIMITS.card
+  + POPULARITY_LIMITS.contacts
+  + POPULARITY_LIMITS.rating
+  + POPULARITY_LIMITS.reviews
+  + POPULARITY_LIMITS.recentReviews
+  + POPULARITY_LIMITS.views
+  + POPULARITY_LIMITS.saves
+  + POPULARITY_LIMITS.likes
+  + POPULARITY_LIMITS.likePace;
+
 /** Four contacts share 5 points: 2, then 3, 4, and 5. The first contact is worth the most. */
 const CONTACT_POINTS = [0, 2, 3, 4, 5] as const;
 
@@ -80,6 +96,7 @@ export function contactPoints(filled: number) {
 export type PopularityParts = {
   card: number;
   contacts: number;
+  verified: number;
   rating: number;
   reviews: number;
   recentReviews: number;
@@ -324,11 +341,14 @@ export type PopularityInput = {
   likePace?: number;
   cardFilled?: number;
   contactsFilled?: number;
+  /** Green seal: `verified` is on and a mailbox or a Belarus mobile is confirmed. */
+  verified?: boolean;
 };
 
 /**
  * Catalog rank from 0 to 100.
- * A filled card is 20. Contacts are at most 5.
+ * A filled card is 18, and a confirmed account adds 5, so the card caps at 23.
+ * Contacts are at most 5.
  * Stars use the shrunk average. Review count, saves, like weight, and the 20-day likes use a logarithm.
  * The response part is the share of opens that became a contact or a review, not the open count.
  */
@@ -346,8 +366,10 @@ export function popularityParts(item: PopularityInput): PopularityParts {
   const rawContactsFilled = Number.isFinite(item.contactsFilled) ? item.contactsFilled ?? 0 : 0;
   const cardFilled = Math.min(POPULARITY_LIMITS.cardFields, Math.max(0, Math.floor(rawCardFilled)));
   const contactsFilled = Math.min(POPULARITY_LIMITS.contactFields, Math.max(0, Math.floor(rawContactsFilled)));
-  const card = Math.round(cardFilled * POPULARITY_LIMITS.cardEach);
+  const cardFill = Math.round((cardFilled * POPULARITY_LIMITS.cardFill) / POPULARITY_LIMITS.cardFields);
   const contacts = contactPoints(contactsFilled);
+  const verified = item.verified === true ? POPULARITY_LIMITS.verified : 0;
+  const card = cardFill + verified;
   const rating = ratingPoints(ratingValue(item.rating), reviewCount);
   const reviews = logPoints(positiveReviewCount, POPULARITY_LIMITS.reviewCap, POPULARITY_LIMITS.reviews);
   const recentReviews = logPoints(
@@ -362,6 +384,7 @@ export function popularityParts(item: PopularityInput): PopularityParts {
   return {
     card,
     contacts,
+    verified,
     rating,
     reviews,
     recentReviews,

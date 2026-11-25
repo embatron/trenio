@@ -3,7 +3,8 @@ import { and, avg, count, eq, inArray, sql, type SQL } from "drizzle-orm";
 import { getDb } from "@/db";
 import { catalogCategorySports, catalogSportById } from "@/lib/catalog/catalog-sports";
 import type { MapAreaInput } from "@/lib/catalog/map-area-input";
-import { trainerProfiles, trainerReviews } from "@/db/schema";
+import { trainerProfiles, trainerReviews, users } from "@/db/schema";
+import { trainerAccountReady } from "@/lib/catalog/trainer-verified";
 import { CHILD_FILTER_AUDIENCES, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { trainerNameParts } from "@/lib/catalog/trainer-name";
 import { mapFrameCities } from "@/lib/catalog/map-city";
@@ -36,6 +37,7 @@ export type MapTrainer = {
   rating: string;
   reviews: number;
   places: MapTrainerPlace[];
+  trusted: boolean;
 };
 
 export type MapAreaTrainer = {
@@ -344,6 +346,9 @@ function toMapTrainer(row: {
   addressLat: number | null;
   addressLng: number | null;
   geocodeStatus: string | null;
+  verified?: boolean;
+  emailVerifiedAt?: Date | null;
+  phoneVerifiedAt?: Date | null;
 }, places?: MapTrainerPlace[]): MapTrainer | null {
   const stored = placesFromProfile(row);
   const specific = stored.flatMap((place) => {
@@ -377,6 +382,11 @@ function toMapTrainer(row: {
     formats: (row.formats ?? []).filter(isFormat),
     sportSlugs: sports.map((sport) => sport.slug),
     sportParents: sports.map((sport) => sport.parentSlug),
+    trusted: trainerAccountReady({
+      verified: row.verified === true,
+      emailVerifiedAt: row.emailVerifiedAt,
+      phoneVerifiedAt: row.phoneVerifiedAt,
+    }),
     tags: sports.map((sport) => sport.label),
     rating: "0",
     reviews: 0,
@@ -413,8 +423,12 @@ async function loadTrainers(slugs: string[], bounds: AreaBounds | null, cityName
       addressLat: trainerProfiles.addressLat,
       addressLng: trainerProfiles.addressLng,
       geocodeStatus: trainerProfiles.geocodeStatus,
+      verified: trainerProfiles.verified,
+      emailVerifiedAt: users.emailVerifiedAt,
+      phoneVerifiedAt: users.phoneVerifiedAt,
     })
     .from(trainerProfiles)
+    .leftJoin(users, eq(users.id, trainerProfiles.ownerUserId))
     .where(and(eq(trainerProfiles.status, "published"), inArray(trainerProfiles.slug, slugs)));
   const city = foldCity(cityName);
   const bySlug = new Map<string, MapTrainer>();

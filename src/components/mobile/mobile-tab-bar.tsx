@@ -40,7 +40,7 @@ function tabsFor(roles: readonly UserRole[] | undefined, signedIn: boolean): Tab
       { id: "search", label: "Поиск", href: "/", icon: "search" },
       { id: "page", label: "Страница", href: "/me/profile", icon: "page" },
       { id: "messages", label: "Сообщения", href: "/me/messages", icon: "messages" },
-      { id: "stats", label: "Статистика", href: "/me/stats", icon: "stats" },
+      { id: "stats", label: "Статистика", href: "/me#cabinet-stats", icon: "stats" },
       { id: "profile", label: "Профиль", href: "/me", icon: "profile" },
     ];
   }
@@ -53,14 +53,15 @@ function tabsFor(roles: readonly UserRole[] | undefined, signedIn: boolean): Tab
   ];
 }
 
-function tabIsOn(pathname: string, tab: Tab): boolean {
+function tabIsOn(pathname: string, hash: string, tab: Tab): boolean {
   const path = pathname.split("?")[0].replace(/\/+$/, "") || "/";
+  const mark = hash.replace(/^#/, "");
   if (tab.id === "search") return path === "/";
   if (tab.id === "favorites") return path === "/account/favorites" || path === "/me/favorites";
   if (tab.id === "messages") return path === "/account/messages" || path === "/me/messages" || path === "/admin/messages";
   if (tab.id === "page") return path === "/me/profile";
-  if (tab.id === "stats") return path === "/me/stats";
-  if (tab.id === "profile") return path === "/account" || path === "/me" || path === "/admin";
+  if (tab.id === "stats") return path === "/me" && mark === "cabinet-stats";
+  if (tab.id === "profile") return path === "/account" || path === "/admin" || (path === "/me" && mark !== "cabinet-stats");
   return path === tab.href;
 }
 
@@ -83,6 +84,7 @@ function openExternal(href: string): void {
 export function NativeAppChrome() {
   const kind = currentShellKind();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const hash = useRouterState({ select: (state) => state.location.hash });
   const { user } = useRouteContext({ from: "__root__" });
   const messaging = useMessaging();
   const router = useRouter();
@@ -157,7 +159,7 @@ export function NativeAppChrome() {
       ) : null}
       <nav className="shell-tabs" aria-label="Разделы">
         {tabs.map((tab) => {
-          const on = tabIsOn(pathname, tab);
+          const on = tabIsOn(pathname, hash, tab);
           const unread = tab.id === "messages" ? messaging.total : 0;
           return (
             <a

@@ -70,6 +70,8 @@ export type OwnTrainerProfile = {
   certificates: TrainerCertificate[];
   phoneVerified: boolean;
   emailVerified: boolean;
+  /** Staff or confirmation flag. The green seal also needs a confirmed mailbox or mobile. */
+  verified: boolean;
   telegramVerified: boolean;
   createdSource: string;
   /** «Не показывать на странице» is on. The contact stays in the cabinet. */
@@ -213,11 +215,13 @@ export const saveOwnTrainerHeadlineFn = createServerFn({ method: "POST" })
     }
   });
 
-function keepStaffDecline(current: string | null | undefined, next: OwnProfileStatus): OwnProfileStatus | "declined" {
-  return current === "declined" ? "declined" : next;
+/** A profile save keeps a draft and a refusal. Only the page control moves those. */
+export function keptPageStatus(current: string | null | undefined, next: OwnProfileStatus): OwnProfileStatus | "draft" | "declined" {
+  if (current === "declined" || current === "draft") return current;
+  return next;
 }
 
-/** Draft has no trainer-facing box. The first save can publish it. */
+/** A draft has no selected page mode. The facing value is published, and only the page control stores it. */
 export function ownFacingStatus(status: string | null | undefined): OwnProfileStatus {
   if (status === "declined") return "archived";
   if (status === "hidden" || status === "archived" || status === "published") return status;
@@ -254,6 +258,7 @@ const emptyProfile: OwnTrainerProfile = {
   certificates: [],
   phoneVerified: false,
   emailVerified: false,
+  verified: false,
   telegramVerified: false,
   createdSource: "",
   hidePhone: false,
@@ -352,6 +357,7 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
       certificates: readCertificates(row.certificates).map((item) => ({ ...item, path: `${item.path}?v=${version}` })),
       phoneVerified,
       emailVerified,
+      verified: row.verified,
       telegramVerified: row.telegramVerifiedAt != null,
       createdSource: row.createdSource,
       hidePhone: row.hidePhone,
@@ -499,7 +505,7 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       experienceYears: data.experienceYears,
       formats: [...new Set(data.formats)],
       audiences: effectiveAudiences(data.audiences),
-      status: keepStaffDecline(existing?.status, data.status),
+      status: keptPageStatus(existing?.status, data.status),
       avatarPath: storedAvatar,
       ...(photos ? { photos } : {}),
       updatedAt: new Date(),
@@ -537,10 +543,14 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
 
     await stampTrainerPublished(profileSlug);
     await copyCardFaceToAccount(context.user.id, storedAvatar, photos ?? existing?.photos);
+    const savedStatus = keptPageStatus(existing?.status, data.status);
+    const savedNotice = savedStatus === "draft" || savedStatus === "declined"
+      ? "Профиль сохранён."
+      : ownStatusMessage(savedStatus);
     logTrainerPresence({
       created: !existing,
       previous: existing?.status ?? null,
-      next: data.status,
+      next: savedStatus,
       slug: profileSlug,
       actorUserId: context.user.id,
       subject: context.user.email,
@@ -550,7 +560,7 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
     const { sendWelcomeOnPublish } = await import("@/lib/messages/welcome");
     await sendWelcomeOnPublish({
       previous: existing?.status ?? null,
-      next: data.status,
+      next: savedStatus,
       ownerUserId: context.user.id,
       firstName,
     });
@@ -559,14 +569,14 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       domain: "form",
       action: "form.trainer_profile",
       outcome: "success",
-      message: ownStatusMessage(data.status),
+      message: savedNotice,
       actorUserId: context.user.id,
       subject: context.user.email,
       target: profileSlug,
     });
     return {
       ok: true as const,
-      message: savedWithMapNotice(ownStatusMessage(data.status), places),
+      message: savedWithMapNotice(savedNotice, places),
       avatarPath,
     };
     } catch (error) {

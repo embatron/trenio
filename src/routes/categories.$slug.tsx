@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound, redirect, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { CategoryLink } from "@/lib/catalog/category-routes";
 import {
   categorySlugRoute,
@@ -497,6 +497,7 @@ type TrainerCard = {
   name: string;
   firstName: string;
   lastName: string;
+  trusted: boolean;
   photo: string;
   sub: string;
   desc: string;
@@ -550,6 +551,7 @@ function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, Train
     name: trainer.name,
     firstName: trainer.firstName,
     lastName: trainer.lastName,
+    trusted: trainer.trusted === true,
     photo: trainer.photo,
     sub: trainer.primarySport.label,
     desc: trainer.bio,
@@ -567,6 +569,7 @@ function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, Train
     likePace: rating.likePace,
     cardFilled: trainer.cardFilled ?? fill.card,
     contactsFilled: trainer.contactsFilled ?? fill.contacts,
+    verified: trainer.trusted === true,
     catalogScore: popularityScore({
       rating: rating.rating,
       reviews: rating.reviews,
@@ -579,6 +582,7 @@ function toCategoryCard(trainer: PublishedTrainer, ratings: Record<string, Train
       likePace: rating.likePace,
       cardFilled: trainer.cardFilled ?? fill.card,
       contactsFilled: trainer.contactsFilled ?? fill.contacts,
+      verified: trainer.trusted === true,
     }),
     price: priceForCard(trainer.slug, trainer.priceFrom, prices),
     city: trainer.city.label,
@@ -863,6 +867,35 @@ a.cat-pill { text-decoration: none; }
 }
 `;
 
+function CityDirectionLink({
+  citySlug,
+  sport,
+  className,
+  current = false,
+  children,
+}: {
+  citySlug: string;
+  sport: CatalogSport;
+  className: string;
+  current?: boolean;
+  children: ReactNode;
+}) {
+  const location = catalogSportLocation(citySlug, sport);
+  const currentPage = current ? "page" as const : undefined;
+  if (location.to === "/city/$slug/$sport/$child") {
+    return (
+      <Link to={location.to} params={location.params} className={className} aria-current={currentPage}>
+        {children}
+      </Link>
+    );
+  }
+  return (
+    <Link to={location.to} params={location.params} className={className} aria-current={currentPage}>
+      {children}
+    </Link>
+  );
+}
+
 function CategoryPage() {
   const { slug } = Route.useParams();
   const { ratings, prices, place, trainers } = Route.useLoaderData();
@@ -917,6 +950,11 @@ export function CategoryCatalogPage({
       ? undefined
       : getParentCategoryFeaturedImage(parentSlug);
   const navChildren = topLevelCategory?.children ?? [];
+  const citySection = cityCatalog && pageSport
+    ? catalogSportById(pageSport.level === 2 ? pageSport.parentSlug : pageSport.slug)
+    : null;
+  const cityChildren = citySection ? catalogCategorySports(citySection.slug) : [];
+  const cityRail = Boolean(cityCatalog && citySection && cityChildren.length > 0);
   const activeChildSlug = parentCategory && category ? category.slug : null;
   const categorySport = !cityCatalog && category
     ? parentCategory
@@ -949,10 +987,10 @@ export function CategoryCatalogPage({
   );
   const sportSuggestions = useMemo(() => {
     if (sportQuery.trim()) return filterCatalogSports(sportQuery, 8);
-    if (!cityCatalog) return [];
+    if (!cityCatalog || cityRail) return [];
     if (localSports.length > 0) return localSports;
     return filterCatalogSports("", 5);
-  }, [cityCatalog, sportQuery, localSports]);
+  }, [cityCatalog, cityRail, sportQuery, localSports]);
   const [selectedCities, setSelectedCities] = useState<string[]>(() =>
     cityCatalog ? [cityCatalog.name] : catalogFilterCities(place),
   );
@@ -1256,7 +1294,10 @@ export function CategoryCatalogPage({
   const countryWide = selectedCities.length === 0 && typedCity.length === 0;
   const appliedFilters = [
     ...selectedSports
-      .filter((sport) => cityCatalog || sport.id !== categorySport?.id)
+      .filter((sport) => {
+        if (!cityCatalog) return sport.id !== categorySport?.id;
+        return !(cityRail && pageSport && sport.id === pageSport.id);
+      })
       .map((sport) => ({ key: `sport:${sport.id}`, label: sport.label })),
     ...(countryWide ? [{ key: "city:all", label: "Вся Беларусь" }] : []),
     ...selectedCities.map((city) => ({ key: `city:${city}`, label: city })),
@@ -1472,6 +1513,31 @@ export function CategoryCatalogPage({
                 </span>
               </div>
               ) : null}
+              {cityRail && cityCatalog && citySection ? (
+                <nav className="cat-child-nav" aria-label="Направления категории">
+                  <div className="cat-child-nav__inner">
+                    <CityDirectionLink
+                      citySlug={cityCatalog.slug}
+                      sport={citySection}
+                      className={`cat-child-nav__tile${pageSport?.id === citySection.id ? " is-active" : ""}`}
+                      current={pageSport?.id === citySection.id}
+                    >
+                      Все направления
+                    </CityDirectionLink>
+                    {cityChildren.map((child) => (
+                      <CityDirectionLink
+                        key={child.id}
+                        citySlug={cityCatalog.slug}
+                        sport={child}
+                        className={`cat-child-nav__tile${pageSport?.id === child.id ? " is-active" : ""}`}
+                        current={pageSport?.id === child.id}
+                      >
+                        {child.label}
+                      </CityDirectionLink>
+                    ))}
+                  </div>
+                </nav>
+              ) : null}
               {!cityCatalog && navChildren.length > 0 ? (
                 <nav className="cat-child-nav" aria-label="Направления категории">
                   <div className="cat-child-nav__inner">
@@ -1586,6 +1652,10 @@ export function CategoryCatalogPage({
                       return;
                     }
                     const exact = catalogSportByName(sportQuery);
+                    if (exact && cityCatalog && cityRail) {
+                      void navigate(catalogSportLocation(cityCatalog.slug, exact));
+                      return;
+                    }
                     if (exact && !selectedSports.some((sport) => sport.id === exact.id)) toggleSport(exact);
                     else setSportQuery((current) => current.trim());
                   }}
@@ -1619,6 +1689,10 @@ export function CategoryCatalogPage({
                             openCategory(sport);
                             return;
                           }
+                          if (cityRail) {
+                            void navigate(catalogSportLocation(cityCatalog.slug, sport));
+                            return;
+                          }
                           if (!selectedSports.some((item) => item.id === sport.id)) toggleSport(sport);
                         }}
                       >
@@ -1629,7 +1703,7 @@ export function CategoryCatalogPage({
                   ))}
                 </ul>
               ) : null}
-              {cityCatalog ? (
+              {cityCatalog && !cityRail ? (
               <div className="cat-city-quick" role="group" aria-label="Виды спорта">
                 {sportPills.map((sport) => {
                   const active = selectedSports.some((item) => item.id === sport.id);

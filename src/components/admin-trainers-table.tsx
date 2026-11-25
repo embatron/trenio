@@ -20,6 +20,7 @@ import { BELARUS_CITIES } from "@/lib/catalog/city-taxonomy";
 import { TRAINER_AUDIENCE_OPTIONS, TRAINER_FORMAT_OPTIONS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { getSportTaxonomyChild, getTopLevelSportCategory, listPublishedSportCategories, listSecondLevelSports, trainerSectionBySlug } from "@/lib/catalog/sport-taxonomy";
 import { placeLine } from "@/lib/geo/schemas";
+import { POPULARITY_MAX } from "@/lib/catalog/trainer-popularity";
 
 const TRAINER_PAGE_SIZE = 20;
 type TrainerPublishTab = "unpublished" | "published";
@@ -685,7 +686,7 @@ export function AdminTrainersTable({
                   <td>{trainer.city || "—"}</td>
                   <td>{listedOn(trainer, list)}</td>
                   <td><TrainerStars rating={trainer.rating} reviews={trainer.reviews} /></td>
-                  <td title={`Рейтинг ${trainer.popularity} из 100`}>{Number.isInteger(trainer.popularity) ? trainer.popularity : trainer.popularity.toFixed(1)}</td>
+                  <td title={`Рейтинг ${trainer.popularity} из ${POPULARITY_MAX}`}>{Number.isInteger(trainer.popularity) ? trainer.popularity : trainer.popularity.toFixed(1)}</td>
                   <td title={accountTitle(trainer)}>
                     <AccountCell trainer={trainer} />
                   </td>

@@ -158,20 +158,10 @@ const CSS = `
 .club-contact__text { margin: 0; font-size: 14px; line-height: 1.55; font-weight: var(--fw-body); color: var(--dark); }
 .club-contact__link { display: inline-block; margin-top: 6px; color: var(--primary-dark); font-size: 13px; font-weight: var(--fw-ui); text-decoration: none; }
 .club-contact__link:hover { text-decoration: underline; }
-.contact-actions { display: grid; gap: 8px; margin-top: 18px; }
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 20px; border: 0; border-radius: 999px; font-size: 15px; font-weight: var(--fw-title); cursor: pointer; text-decoration: none; transition: transform 0.16s, background 0.16s; width: 100%; }
-.btn:hover { transform: translateY(-1px); }
-.btn--primary { background: var(--primary); color: #fff; }
-.btn--primary:hover { background: var(--primary-dark); }
-.btn--secondary { background: var(--neutral-bg); color: var(--dark); border: 1px solid var(--line); }
-.btn svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
-.contact-reveal { display: none; margin-top: 12px; padding: 12px; border-radius: var(--radius-control); background: var(--light-bg); text-align: center; }
-.contact-reveal.is-visible { display: block; }
-.contact-reveal__phone { display: block; margin-bottom: 4px; font-size: 18px; font-weight: var(--fw-heading); color: var(--dark); text-decoration: none; }
-.contact-reveal__hint { margin: 0; font-size: 12px; color: var(--muted); }
+.contact-actions { display: flex; margin-top: 18px; }
 
 .mobile-contact-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 200; padding: 10px 14px; background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); border-top: 1px solid var(--line); display: none; }
-.mobile-contact-bar__inner { max-width: 600px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mobile-contact-bar__inner { max-width: 600px; margin: 0 auto; display: flex; justify-content: center; }
 
 @media (max-width: 1100px) {
   .club-layout { grid-template-columns: 1fr; }
@@ -187,7 +177,7 @@ const CSS = `
   .club-trainer-grid { grid-template-columns: 1fr; }
   .club-price-groups { grid-template-columns: 1fr; }
   .mobile-contact-bar { display: block; }
-  .club-sidebar .contact-actions, .club-sidebar .contact-reveal { display: none; }
+  .club-sidebar .contact-actions { display: none; }
 }
 @media (max-width: 767px) {
   .club-trainer-grid { gap: calc(14px * 0.95); }
@@ -207,7 +197,6 @@ function ClubPage() {
   const { club: c } = Route.useLoaderData() as { club: Club };
   const [tab, setTab] = useState<TabKey>("about");
   const [photoIdx, setPhotoIdx] = useState(0);
-  const [phoneVisible, setPhoneVisible] = useState(false);
   const [reviewsShown, setReviewsShown] = useState(5);
 
   const photos = c.photos.length > 0
@@ -458,15 +447,7 @@ function ClubPage() {
                   <p className="club-contact__text">{c.hours}</p>
                 </div>
                 <div className="contact-actions">
-                  <button className="btn btn--primary" type="button" onClick={() => setPhoneVisible(true)}>
-                    <svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.5 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.5c.9.2 1.8.4 2.7.5A2 2 0 0 1 22 16.9z" /></svg>
-                    {phoneVisible ? c.phone : "Показать телефон"}
-                  </button>
-                  <TrainerContactIcons slug={c.slug} telegram={c.telegram} instagram="" />
-                </div>
-                <div className={`contact-reveal${phoneVisible ? " is-visible" : ""}`}>
-                  <a className="contact-reveal__phone" href={`tel:${c.phone.replace(/\s|\(|\)|-/g, "")}`}>{c.phone}</a>
-                  <p className="contact-reveal__hint">Нажмите, чтобы позвонить</p>
+                  <TrainerContactIcons slug={c.slug} phone={c.phone} telegram={c.telegram} instagram="" />
                 </div>
               </div>
             </aside>
@@ -476,10 +457,7 @@ function ClubPage() {
 
       <div className="mobile-contact-bar" aria-label="Быстрая связь">
         <div className="mobile-contact-bar__inner">
-          <TrainerContactIcons slug={c.slug} telegram={c.telegram} instagram="" />
-          <button className="btn btn--primary" type="button" onClick={() => setPhoneVisible(true)}>
-            {phoneVisible ? c.phone : "Показать телефон"}
-          </button>
+          <TrainerContactIcons slug={c.slug} phone={c.phone} telegram={c.telegram} instagram="" />
         </div>
       </div>
 

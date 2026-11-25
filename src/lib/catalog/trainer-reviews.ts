@@ -12,6 +12,7 @@ import { writeLog } from "@/lib/log/logger";
 import { publishCabinet } from "@/lib/messages/live-hub";
 import { isStaff } from "@/lib/auth/roles";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
+import { trainerAccountReady } from "@/lib/catalog/trainer-verified";
 import { emptyTrainerInterest, loadTrainerInterest } from "@/lib/catalog/trainer-interest";
 import { notifyAuthorAboutReview, notifyReviewReply, notifyStaffAboutReview, notifyTrainerAboutPublishedReview } from "@/lib/catalog/review-mail.server";
 import { reviewPlainText, sanitizeReviewHtml } from "@/lib/catalog/review-html";
@@ -284,8 +285,16 @@ export const createTrainerReviewFn = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const [card] = await getDb()
-      .select({ id: trainerProfiles.id, ownerUserId: trainerProfiles.ownerUserId, status: trainerProfiles.status })
+      .select({
+        id: trainerProfiles.id,
+        ownerUserId: trainerProfiles.ownerUserId,
+        status: trainerProfiles.status,
+        verified: trainerProfiles.verified,
+        emailVerifiedAt: users.emailVerifiedAt,
+        phoneVerifiedAt: users.phoneVerifiedAt,
+      })
       .from(trainerProfiles)
+      .leftJoin(users, eq(users.id, trainerProfiles.ownerUserId))
       .where(eq(trainerProfiles.slug, data.slug))
       .limit(1);
     if (!getPublishedTrainer(data.slug) && card?.status !== "published") {
@@ -293,6 +302,25 @@ export const createTrainerReviewFn = createServerFn({ method: "POST" })
     }
     if (card?.ownerUserId === context.user.id) {
       throw new AuthError("Нельзя оставить отзыв о своём профиле.", "VALIDATION");
+    }
+    if (
+      !trainerAccountReady({
+        verified: card?.verified === true,
+        emailVerifiedAt: card?.emailVerifiedAt ?? null,
+        phoneVerifiedAt: card?.phoneVerifiedAt ?? null,
+      })
+    ) {
+      const error = new AuthError("Отзыв можно оставить, когда аккаунт тренера подтверждён.", "FORBIDDEN");
+      void writeLog({
+        level: "warn",
+        domain: "form",
+        action: "form.review",
+        outcome: "denied",
+        message: error.message,
+        actorUserId: context.user.id,
+        target: data.slug,
+      });
+      throw error;
     }
 
     const inserted = await getDb()

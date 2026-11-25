@@ -27,7 +27,9 @@ The same numbers apply when the panel is hidden and when it is open. Do not keep
 
 On a category page the directions sit in one rail under the title (`.cat-child-nav`): «Все направления» and that section's sports. One chip is the current page, and each chip is a link. The filter panel does not repeat those chips. Its sport field searches the whole taxonomy and opens the chosen page. An empty field shows no list.
 
-On a city page, on search, and on the map, several sports can be selected together. Those chips stay in the filter.
+A city page that already has a sport uses that same rail. «Все направления» opens the section in that city, and each sport opens its own city page. The filter does not repeat those chips. Its sport field still searches the whole taxonomy and opens the chosen page in that city. An empty field shows no list.
+
+On a city page with no sport, on search, and on the map, several sports can be selected together. Those chips stay in the filter.
 
 ## Audience
 

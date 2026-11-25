@@ -27,6 +27,7 @@ type FavoriteCard = {
   rating: string;
   reviews: number;
   missing: boolean;
+  trusted?: boolean;
 };
 
 function toCard(
@@ -66,6 +67,7 @@ function toCard(
         name: face.name,
         firstName: face.firstName,
         lastName: face.lastName,
+        trusted: face.trusted,
         photo: face.photo,
         line: face.line,
         desc: face.desc,
@@ -90,6 +92,7 @@ function toCard(
       name: trainer.name,
       firstName: trainer.firstName,
       lastName: trainer.lastName,
+      trusted: trainer.trusted === true,
       photo: trainer.photo,
       line: trainer.sports.map((sport) => sport.label).join(", "),
       desc: trainer.bio,
@@ -180,6 +183,7 @@ export function FavoriteCards({
                 name: card.name,
                 firstName: card.firstName,
                 lastName: card.lastName,
+                trusted: card.trusted === true,
                 photo: card.photo,
                 tags: card.tags ?? [],
                 sports: card.sports,

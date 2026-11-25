@@ -18,6 +18,7 @@ import {
 import { AuthError, isAuthError } from "@/lib/auth/errors";
 import { storedGivenName } from "@/lib/auth/login-name";
 import { reviewPlainText, reviewTextLength, sanitizeReviewHtml } from "@/lib/catalog/review-html";
+import { trainerAccountReady } from "@/lib/catalog/trainer-verified";
 import { instagramAccountNeedle } from "@/lib/instagram/account-query";
 import { collapseMessageHtml } from "@/lib/messages/breaks";
 import { isGodUser } from "@/lib/auth/god";
@@ -117,12 +118,15 @@ export function canMessage(input: {
   ownerUserId: string | null;
   published: boolean;
   blocked: boolean;
+  /** Omitted means the caller did not check. False refuses a new thread. */
+  accountReady?: boolean;
 }): { ok: true } | { ok: false; message: string } {
   if (isGodUser(input.actorId)) return { ok: true };
   if (input.ownerUserId && input.actorId === input.ownerUserId) {
     return { ok: false, message: "Нельзя написать своему профилю." };
   }
   if (!input.published) return { ok: false, message: "Этот профиль пока не принимает сообщения." };
+  if (input.accountReady === false) return { ok: false, message: "Написать можно, когда аккаунт тренера подтверждён." };
   if (input.blocked) return { ok: false, message: "Переписка с этим профилем недоступна." };
   return { ok: true };
 }
@@ -581,6 +585,24 @@ async function findOpen(userId: string, trainerProfileId: string) {
   return row ?? null;
 }
 
+async function profileAccountReady(profileId: string) {
+  const [row] = await getDb()
+    .select({
+      verified: trainerProfiles.verified,
+      emailVerifiedAt: users.emailVerifiedAt,
+      phoneVerifiedAt: users.phoneVerifiedAt,
+    })
+    .from(trainerProfiles)
+    .leftJoin(users, eq(users.id, trainerProfiles.ownerUserId))
+    .where(eq(trainerProfiles.id, profileId))
+    .limit(1);
+  return trainerAccountReady({
+    verified: row?.verified === true,
+    emailVerifiedAt: row?.emailVerifiedAt ?? null,
+    phoneVerifiedAt: row?.phoneVerifiedAt ?? null,
+  });
+}
+
 async function openOrCreate(actorId: string, profile: ProfileRow) {
   const blocked = await isBlocked(actorId, profile.id);
   const gate = canMessage({
@@ -588,6 +610,7 @@ async function openOrCreate(actorId: string, profile: ProfileRow) {
     ownerUserId: profile.ownerUserId,
     published: profile.status === "published",
     blocked,
+    accountReady: await profileAccountReady(profile.id),
   });
   if (!gate.ok) throw new AuthError(gate.message, "FORBIDDEN");
 

@@ -882,6 +882,7 @@ function Index() {
       name: trainer.name,
       firstName: trainer.firstName,
       lastName: trainer.lastName,
+      trusted: trainer.trusted === true,
       photo: trainer.photo,
       desc: trainer.bio,
       tags: trainer.sports.map((sport) => sport.label),
@@ -898,6 +899,7 @@ function Index() {
       likePace: rating.likePace,
       cardFilled: trainer.cardFilled ?? fill.card,
       contactsFilled: trainer.contactsFilled ?? fill.contacts,
+      verified: trainer.trusted === true,
       catalogScore: popularityScore({
         rating: rating.rating,
         reviews: rating.reviews,
@@ -910,6 +912,7 @@ function Index() {
         likePace: rating.likePace,
         cardFilled: trainer.cardFilled ?? fill.card,
         contactsFilled: trainer.contactsFilled ?? fill.contacts,
+        verified: trainer.trusted === true,
       }),
       price: priceForCard(trainer.slug, trainer.priceFrom, prices),
       city: trainer.city.label,

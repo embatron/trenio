@@ -13,6 +13,7 @@ import { storedGivenName } from "@/lib/auth/login-name";
 import { isReservedAccountEmail } from "@/lib/auth/pending-email";
 import type { UserRole } from "@/lib/auth/types";
 import { destinationAfterAuth } from "@/lib/auth/return-path";
+import { grantTrainerVerification } from "@/lib/catalog/trainer-verified.server";
 
 export type GoogleLoginResult =
   | { kind: "session"; token: string; redirectTo: string; created: boolean; email: string; userId: string }
@@ -145,6 +146,7 @@ async function stampGoogleMailbox(userId: string, email: string) {
       eq(trainerProfiles.ownerUserId, userId),
       or(isNull(trainerProfiles.emailVerifiedAt), ne(trainerProfiles.email, email)),
     ));
+  await grantTrainerVerification(userId);
 }
 
 async function takeoverUnverified(user: User, sub: string) {
@@ -162,4 +164,5 @@ async function takeoverUnverified(user: User, sub: string) {
       updatedAt: new Date(),
     })
     .where(eq(users.id, user.id));
+  await grantTrainerVerification(user.id);
 }

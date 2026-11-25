@@ -7,6 +7,7 @@ import { formatBelarusPhone } from "@/lib/auth/phone";
 import { cityCatalogByName, cityCatalogBySlug } from "@/lib/catalog/city-pages";
 import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
+import { trainerAccountReady } from "@/lib/catalog/trainer-verified";
 import { effectiveAudiences, type PublishedTrainer } from "@/lib/catalog/published-trainers";
 import { MAX_TRAINER_SPORTS } from "@/lib/catalog/sport-taxonomy";
 import { popularityChecklist } from "@/lib/catalog/trainer-popularity";
@@ -48,6 +49,7 @@ export type CatalogTrainerSource = {
   telegram: string;
   telegramVerifiedAt: Date | null;
   ownerUserId: string | null;
+  verified: boolean;
 };
 
 export type CatalogTrainerAccount = {
@@ -116,6 +118,11 @@ export function catalogTrainerFromSources(
     experience: row.experienceYears,
     priceFrom: row.priceFrom ?? 0,
     district: row.district,
+    trusted: trainerAccountReady({
+      verified: row.verified,
+      emailVerifiedAt: account.emailVerifiedAt,
+      phoneVerifiedAt: account.phoneVerifiedAt,
+    }),
     ...catalogRank(row, account, label),
   };
 }
@@ -204,6 +211,7 @@ const catalogRowSelect = {
   telegram: trainerProfiles.telegram,
   telegramVerifiedAt: trainerProfiles.telegramVerifiedAt,
   ownerUserId: trainerProfiles.ownerUserId,
+  verified: trainerProfiles.verified,
   accountEmail: users.email,
   accountEmailVerifiedAt: users.emailVerifiedAt,
   accountPhone: users.phone,

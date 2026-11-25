@@ -9,6 +9,7 @@ import { authErrorMessage } from "@/lib/auth/errors";
 import { isStaff } from "@/lib/auth/roles";
 import { trainerIntroPhrase, trainerSportDatives, trainerSportRoles } from "@/lib/catalog/sport-taxonomy";
 import { listCatalogTrainersFn } from "@/lib/catalog/catalog-trainers";
+import { localDemoSummary } from "@/lib/catalog/local-demo";
 import {
   audienceLabels,
   getPublishedTrainer,
@@ -41,6 +42,7 @@ import { ReviewEditor } from "@/components/review-editor";
 import { ReviewExcerpt, ReviewHtml } from "@/components/review-html";
 import { compactReviewHtml, reviewPlainText } from "@/lib/catalog/review-html";
 import { CatalogTrainerCard, TrainerSportLink, type CatalogTrainerCardData } from "@/components/catalog-trainer-card";
+import { AccountSeal } from "@/components/account-seal";
 import { TrainerName } from "@/components/trainer-name";
 import { TrainerDocuments } from "@/components/trainer-documents";
 import type { TrainerDocument } from "@/lib/catalog/certificate-preview";
@@ -92,6 +94,7 @@ type Trainer = {
   ownStatus: "pending" | "published" | "rejected" | null;
   ownComment: string | null;
   similar: CatalogTrainerCardData[];
+  trusted: boolean;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -138,13 +141,16 @@ function toTrainer(
       likePace: rating.likePace,
       cardFilled: item.cardFilled ?? fill.card,
       contactsFilled: item.contactsFilled ?? fill.contacts,
+      verified: item.trusted === true,
     };
   };
+  const demo = localDemoSummary(trainer.slug);
   return {
     slug: trainer.slug,
     name: trainer.name,
     firstName: trainer.firstName,
     lastName: trainer.lastName,
+    trusted: trainer.trusted === true || demo != null,
     sports: trainer.sports.map((sport) => sport.label),
     sportLabel: sportLine(trainer),
     sportDatives: trainerSportDatives(trainer.sports),
@@ -174,13 +180,13 @@ function toTrainer(
     },
     note: "",
     club: { slug: "", name: "", logo: "", meta: "" },
-    rating: summary,
+    rating: reviews.length > 0 || !demo ? summary : demo.summary,
     prices: { single: [], packs: [] },
     phone: trainer.phone,
     instagram: trainer.instagram,
     places: [],
     photo: trainer.photo,
-    reviews,
+    reviews: reviews.length > 0 || !demo ? reviews : demo.reviewsList,
     certificates,
     ownStatus,
     ownComment,
@@ -193,6 +199,7 @@ function toTrainer(
         name: item.name,
         firstName: item.firstName,
         lastName: item.lastName,
+        trusted: item.trusted === true,
         photo: item.photo,
         desc: item.bio,
         tags: item.sports.map((sport) => sport.label),
@@ -204,6 +211,7 @@ function toTrainer(
           ...rating,
           cardFilled: item.cardFilled ?? 0,
           contactsFilled: item.contactsFilled ?? 0,
+          verified: item.trusted === true,
         }),
         city: item.city.label,
         district: item.district,
@@ -363,6 +371,11 @@ body:has(.tg-tabbar.is-telegram) .door-publish { bottom: calc(env(safe-area-inse
   transition: background 0.18s ease, transform 0.18s ease;
 }
 .profile-message-cta:hover, .profile-message-cta:focus-visible { background: var(--primary-dark); transform: translateY(-1px); }
+.profile-message-cta.is-quiet,
+.profile-message-cta.is-quiet:hover,
+.profile-message-cta.is-quiet:focus-visible {
+  background: #e6e8ee; color: var(--muted); cursor: default; transform: none;
+}
 .profile-message-cta svg {
   width: 21px; height: 21px; flex: 0 0 auto; fill: none; stroke: currentColor;
   stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round;
@@ -403,25 +416,35 @@ body:has(.tg-tabbar.is-telegram) .door-publish { bottom: calc(env(safe-area-inse
 .profile-identity__name { min-width: 0; flex: 1 1 auto; margin: 0; font-size: var(--fs-page); font-weight: var(--fw-heading); letter-spacing: -0.035em; color: var(--dark); line-height: 1.05; }
 .profile-identity__name .trainer-name { flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 0.28em; max-width: 100%; }
 .profile-identity__name .trainer-name__line { width: min(100%, max-content); max-width: 100%; white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
+.profile-verified { display: inline-flex; align-items: center; gap: 6px; color: #18a34a; font-size: 13px; font-weight: var(--fw-body); line-height: 1; }
+.profile-verified.is-quiet { color: var(--muted); }
+.profile-identity__meta .account-seal { width: 14px; height: 14px; border-radius: 50%; flex: 0 0 auto; }
+.profile-identity__meta .account-seal svg { width: 64%; height: 64%; display: block; }
 .profile-edit { width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0; background: transparent; border-radius: 50%; color: rgba(17, 24, 39, 0.72); font: inherit; text-decoration: none; cursor: pointer; transition: color 0.18s ease, background 0.18s ease; }
 .profile-edit:hover { background: rgba(var(--primary-rgb), 0.08); color: var(--primary); }
 .profile-edit svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .review-reply__open { align-self: start; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--primary-dark); font: inherit; font-size: 14px; font-weight: var(--fw-title); cursor: pointer; }
-.profile-identity__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
-.profile-location { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 14px; font-weight: var(--fw-title); }
-.profile-location a { color: inherit; text-decoration: none; }
+.profile-identity__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; font-size: 14px; line-height: 1; }
+.profile-location { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 14px; font-weight: var(--fw-title); line-height: 1; }
+.profile-location a { color: inherit; text-decoration: none; line-height: 1; }
 .profile-location a:hover { text-decoration: underline; }
-.profile-location svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.profile-rating { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; font-size: 15px; font-weight: var(--fw-title); color: var(--dark); }
-.profile-rating__stars { position: relative; display: inline-flex; }
-.profile-rating__stars-empty, .profile-rating__stars-fill { display: inline-flex; gap: 2px; }
-.profile-rating__stars-empty svg, .profile-rating__stars-fill svg { width: 16px; height: 16px; }
+.profile-location svg { width: 14px; height: 14px; display: block; flex: 0 0 auto; stroke: currentColor; stroke-width: var(--icon-stroke); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.profile-rating { display: inline-flex; align-items: center; flex-wrap: nowrap; gap: 6px; font-size: 14px; font-weight: var(--fw-title); line-height: 1; color: var(--dark); }
+.profile-rating__stars { position: relative; display: inline-flex; align-items: center; line-height: 0; }
+.profile-rating__stars-empty, .profile-rating__stars-fill { display: inline-flex; align-items: center; gap: 2px; }
+.profile-rating__stars-empty svg, .profile-rating__stars-fill svg { width: 14px; height: 14px; display: block; }
 .profile-rating__stars-empty svg { fill: var(--line); }
-.profile-rating__stars-filled { position: absolute; inset: 0 auto 0 0; overflow: hidden; }
+.profile-rating__stars-filled { position: absolute; inset: 0 auto 0 0; overflow: hidden; display: flex; align-items: center; }
 .profile-rating__stars-fill svg { fill: #ffb400; }
+.profile-rating__score, .profile-rating__counts { display: inline-flex; align-items: center; line-height: 1; }
 .profile-rating__counts { color: var(--muted); font-size: 14px; font-weight: var(--fw-title); }
-.profile-rating__reviews-link { color: var(--primary-dark); font-weight: var(--fw-ui); text-decoration: none; }
+.profile-rating__reviews-link { color: var(--primary-dark); font-weight: var(--fw-ui); line-height: 1; text-decoration: none; }
 .profile-rating__reviews-link:hover { text-decoration: underline; }
+.profile-rating.is-empty { color: var(--muted); font-weight: var(--fw-body); }
+.profile-rating.is-empty .profile-rating__stars-empty svg { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); }
+.profile-rating.is-empty.is-trusted .profile-rating__stars-empty svg { stroke: #ffb400; }
+.profile-rating.is-empty .profile-rating__counts,
+.profile-rating.is-empty .profile-rating__reviews-link { color: var(--muted); font-weight: var(--fw-body); }
 
 .profile-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; min-width: 0; }
 .profile-block { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; min-width: 0; }
@@ -446,13 +469,10 @@ a.taxonomy-tag--brand:focus-visible { background: var(--primary-dark); color: va
 .profile-reach .trainer-contacts__link--line:not(.trainer-contacts__link--send):focus-visible { background: rgba(var(--primary-rgb), 0.08); }
 .profile-reach .trainer-contacts__link svg { width: 34px; height: 34px; }
 .profile-reach .trainer-contacts__link--send svg { overflow: hidden; }
-.profile-reach .trainer-contacts__link--phone { width: auto; max-width: 100%; min-height: 44px; padding: 0 12px 0 8px; gap: 8px; border-radius: 999px; display: inline-flex; }
-.profile-reach .trainer-contacts__phone { font-size: 16px; font-weight: var(--fw-body); letter-spacing: 0; line-height: 1.2; white-space: nowrap; }
 @media (max-width: 767px) {
   .profile-reach .trainer-contacts { gap: 2px; }
   .profile-reach .trainer-contacts__link { width: 52px; height: 52px; }
   .profile-reach .trainer-contacts__link svg { width: 34px; height: 34px; }
-  .profile-reach .trainer-contacts__link--phone { flex: 1 0 100%; width: auto; height: 48px; padding: 0 4px 0 0; justify-content: flex-start; }
 }
 
 .profile-spotlight { display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 16px; align-items: center; padding: 18px 20px; border-radius: var(--card-radius); background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); box-shadow: 0 10px 32px rgba(var(--dark-rgb),0.05); }
@@ -494,6 +514,7 @@ a.review-item__author:focus-visible { color: var(--primary); }
 .reviews-more:hover { background: var(--light-bg); border-color: rgba(var(--primary-rgb), 0.3); color: var(--primary-dark); }
 .review-add { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(var(--primary-rgb), 0.35); background: var(--white); color: var(--primary-dark); font-size: 14px; font-weight: var(--fw-title); cursor: pointer; text-decoration: none; }
 .review-add:hover { background: var(--light-bg); }
+.review-add:disabled { border-color: var(--line); color: var(--muted); background: var(--white); cursor: default; }
 .review-form { display: grid; gap: 12px; padding: 16px; border-radius: var(--card-radius); background: var(--white); border: 1px solid rgba(var(--dark-rgb), 0.06); box-shadow: 0 10px 32px rgba(var(--dark-rgb), 0.05); scroll-margin: 88px 0 96px; }
 .review-form__label { margin: 0; font-size: 14px; font-weight: var(--fw-title); color: var(--muted); }
 .review-stars { display: flex; gap: 2px; }
@@ -1139,7 +1160,7 @@ function TrainerPage() {
                   <div className="profile-actions">
                     <AccountLikeButton slug={t.slug} className="trainer-card__like profile-like" />
                     <FavoriteButton target={{ type: "trainer", slug: t.slug }} className="trainer-card__save profile-save" />
-                    <CardDirectLink slug={t.slug} className="trainer-card__write profile-write" />
+                    <CardDirectLink slug={t.slug} className="trainer-card__write profile-write" locked={!t.trusted} />
                     <ShareProfileButton slug={t.slug} className="trainer-card__share profile-share" />
                   </div>
                   {photos.length > 1 ? (
@@ -1165,7 +1186,7 @@ function TrainerPage() {
                   </ul>
                 ) : null}
               </div>
-              {access === "public" ? <ProfileDirectButton slug={t.slug} /> : null}
+              {access === "public" ? <ProfileDirectButton slug={t.slug} locked={!t.trusted} /> : null}
             </div>
           </aside>
 
@@ -1206,13 +1227,17 @@ function TrainerPage() {
                       <Link to="/map" search={{ city: t.city.slug }}>{t.city.label}</Link>
                     ) : t.city.label}
                   </span>
-                  {hasRating ? <div className="profile-rating" aria-label={`Рейтинг ${t.rating.value} из 5, ${t.rating.reviewCount} ${pluralRu(t.rating.reviewCount, "отзыв", "отзыва", "отзывов")}`}>
-                    <Stars rating={parseFloat(t.rating.value)} />
-                    <span className="profile-rating__score">{t.rating.value}</span>
+                  <div className={`profile-rating${hasRating ? "" : " is-empty"}${t.trusted ? " is-trusted" : ""}`} aria-label={hasRating ? `Рейтинг ${t.rating.value} из 5, ${t.rating.reviewCount} ${pluralRu(t.rating.reviewCount, "отзыв", "отзыва", "отзывов")}` : "Пока нет отзывов"}>
+                    <Stars rating={hasRating ? parseFloat(t.rating.value) : 0} />
+                    {hasRating ? <span className="profile-rating__score">{t.rating.value}</span> : null}
                     <span className="profile-rating__counts">
                       (<a className="profile-rating__reviews-link" href="#reviews">{t.rating.reviewCount} {pluralRu(t.rating.reviewCount, "отзыв", "отзыва", "отзывов")}</a>)
                     </span>
-                  </div> : null}
+                  </div>
+                  <span className={`profile-verified${t.trusted ? "" : " is-quiet"}`}>
+                    <AccountSeal trusted={t.trusted} />
+                    {t.trusted ? "Профиль подтверждён" : "Профиль не подтверждён"}
+                  </span>
                 </div>
               </div>
             </header>
@@ -1294,7 +1319,13 @@ function TrainerPage() {
                     <p className="review-note">
                       {ownNote}{t.ownComment ? `. ${t.ownComment}` : null}
                     </p>
-                  ) : isOwner ? null : magicDoor ? (
+                  ) : isOwner ? null : !t.trusted ? (
+                    <span title="Аккаунт не подтверждён">
+                      <button type="button" className="review-add" disabled>
+                        {reviewLabel}
+                      </button>
+                    </span>
+                  ) : magicDoor ? (
                     <button type="button" className="review-add" onClick={openDoorMail}>
                       {reviewLabel}
                     </button>
@@ -1311,7 +1342,7 @@ function TrainerPage() {
                   )}
                 </div>
                 {hasRating ? <p className="profile-block__head-meta">{t.rating.value} из 5 · {t.rating.reviewCount} {pluralRu(t.rating.reviewCount, "отзыв", "отзыва", "отзывов")}</p> : null}
-                {reviewFormOpen && user ? (
+                {reviewFormOpen && user && t.trusted ? (
                   <ReviewForm slug={t.slug} onClose={() => setReviewFormOpen(false)} onSent={() => setReviewSent(true)} />
                 ) : null}
                 {t.reviews.length === 0 ? <p className="profile-text">Отзывов пока нет.</p> : <ul className="review-list">
@@ -1375,6 +1406,7 @@ function TrainerPage() {
                 telegram={contacts.telegram}
                 instagram={contacts.instagram}
                 heading="Как со мной связаться"
+                locked={!t.trusted}
               />
             </div>
 

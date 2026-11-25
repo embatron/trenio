@@ -18,6 +18,7 @@ import { acceptTelegramWebApp, acceptTelegramWidget } from "@/auth/telegram-acce
 import { isTelegramLoginConfigured } from "@/auth/telegram";
 import { addMinutes } from "@/auth/tokens";
 import { getDb } from "@/db";
+import { grantTrainerVerification } from "@/lib/catalog/trainer-verified.server";
 import { emailVerificationTokens, userRoles, users, type User } from "@/db/schema";
 import { decideEmailSignup, decideSmsSignup } from "@/lib/auth/auth-decisions";
 import { AuthError } from "@/lib/auth/errors";
@@ -542,6 +543,7 @@ export async function confirmSignupCredentials(userId: string, emailRaw: string,
     .update(users)
     .set({ email, emailVerifiedAt: now, status: "active", updatedAt: now })
     .where(eq(users.id, userId));
+  await grantTrainerVerification(userId);
   return { ok: true as const };
 }
 

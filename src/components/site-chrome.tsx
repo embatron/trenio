@@ -591,7 +591,7 @@ type AdminMenuTo =
   | "/admin/finance"
   | "/admin/settings"
   | "/admin/site";
-type MeMenuTo = "/me" | "/me/stats" | "/me/messages" | "/me/reviews" | "/me/likes" | "/me/favorites" | "/me/profile" | "/me/settings";
+type MeMenuTo = "/me" | "/me/messages" | "/me/reviews" | "/me/likes" | "/me/favorites" | "/me/profile" | "/me/settings";
 
 type HeaderMenuItem =
   | { id: string; label: string; icon: CabinetIcon; kind: "account"; to: AccountMenuTo }
@@ -609,8 +609,7 @@ const ACCOUNT_MENU: HeaderMenuItem[] = [
 ];
 
 const TRAINER_MENU: HeaderMenuItem[] = [
-  { id: "overview", label: "Общая панель", icon: "overview", kind: "me", to: "/me" },
-  { id: "stats", label: "Моя статистика", icon: "stats", kind: "me", to: "/me/stats" },
+  { id: "overview", label: "Панель и статистика", icon: "overview", kind: "me", to: "/me" },
   { id: "profile", label: "Моя страница", icon: "trainers", kind: "me", to: "/me/profile" },
   { id: "messages", label: "Мои сообщения", icon: "messages", kind: "me", to: "/me/messages" },
   { id: "reviews", label: "Мои отзывы", icon: "reviews", kind: "me", to: "/me/reviews" },

@@ -34,6 +34,7 @@ function source(overrides: Partial<CatalogTrainerSource> = {}): CatalogTrainerSo
     telegram: "@coach",
     telegramVerifiedAt: null,
     ownerUserId: "user-1",
+    verified: false,
     ...overrides,
   };
 }
@@ -82,6 +83,19 @@ test("verified phone, telegram, and login email stay on the catalog card", () =>
   assert.match(trainer.phone, /29/);
   assert.equal(trainer.email, "owner@example.com");
   assert.equal(trainer.telegram, "@coach");
+  assert.equal(trainer.trusted, false);
+});
+
+test("the green seal needs both a confirmed account and a verified card", () => {
+  const account = {
+    email: "owner@example.com",
+    emailVerifiedAt: new Date("2026-11-03T00:00:00Z"),
+    phone: "",
+    phoneVerifiedAt: null,
+  };
+  assert.equal(catalogTrainerFromSources(source({ verified: true }), account).trusted, true);
+  assert.equal(catalogTrainerFromSources(source({ verified: false }), account).trusted, false);
+  assert.equal(catalogTrainerFromSources(source({ verified: true }), { ...account, emailVerifiedAt: null }).trusted, false);
 });
 
 test("catalog rank keeps the whole card, including a contact the public page still hides", () => {

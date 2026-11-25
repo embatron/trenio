@@ -19,8 +19,9 @@ import {
   requestAdminTrainerPhoneCodeFn,
   getAdminTrainerDetailFn,
   saveAdminTrainerFn,
+  TRAINER_PAGE_STATUSES,
   TRAINER_PUBLISH_LABEL,
-  TRAINER_PUBLISH_STATUSES,
+  TRAINER_STAFF_STATUSES,
   type AdminTrainer,
   type AdminTrainerDetail,
   type TrainerPublishStatus,
@@ -203,15 +204,42 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
           onChange: (phone) => setField("phone", phone),
         }}
         leading={(
-          <label>
-            <span>Статус публикации</span>
-            <select value={draft.status} onChange={(event) => setField("status", event.target.value as TrainerPublishStatus)}>
-              {TRAINER_PUBLISH_STATUSES.map((status) => (
-                <option key={status} value={status}>{TRAINER_PUBLISH_LABEL[status]}</option>
-              ))}
-            </select>
-            <p className="cabinet-note">Тренер сам выбирает опубликован, скрыт или снят с публикации. «Отказались» ставит только администратор.</p>
-          </label>
+          <>
+            <label>
+              <span>Статус</span>
+              <select value={draft.status} onChange={(event) => setField("status", event.target.value as TrainerPublishStatus)}>
+                <optgroup label="Страница">
+                  {TRAINER_PAGE_STATUSES.map((status) => (
+                    <option key={status} value={status}>{TRAINER_PUBLISH_LABEL[status]}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Для сотрудников">
+                  {TRAINER_STAFF_STATUSES.map((status) => (
+                    <option key={status} value={status}>{TRAINER_PUBLISH_LABEL[status]}</option>
+                  ))}
+                </optgroup>
+              </select>
+              <p className="cabinet-note">
+                Тренер меняет только страницу: опубликована, скрыта или снята с публикации.
+                «На модерации» и «Отказались» ставит сотрудник. «Активные» — это опубликованные карточки.
+                «Непонятные» — заход уже был, а страница всё ещё на модерации.
+              </p>
+              {draft.status === "draft" && detail.trainer.doorEnteredAt ? (
+                <p className="cabinet-note">Сейчас карточка в списке «Непонятные».</p>
+              ) : null}
+            </label>
+            <label>
+              <span>Верификация</span>
+              <select
+                value={draft.verified ? "yes" : "no"}
+                onChange={(event) => setField("verified", event.target.value === "yes")}
+              >
+                <option value="yes">Пройдена</option>
+                <option value="no">Не пройдена</option>
+              </select>
+              <p className="cabinet-note">Включается сама, когда тренер подтверждает почту или телефон. Сотрудник может поставить её вручную.</p>
+            </label>
+          </>
         )}
       />
       <p className="cabinet-note">
@@ -269,6 +297,7 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
                 id: draft.id,
                 slug: draft.slug,
                 status: draft.status,
+                verified: draft.verified,
                 firstName: draft.firstName,
                 lastName: draft.lastName,
                 headline: draft.headline,

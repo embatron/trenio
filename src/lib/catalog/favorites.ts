@@ -4,7 +4,8 @@ import { z } from "zod";
 
 import { requireAuthMiddleware } from "@/auth/middleware";
 import { getDb } from "@/db";
-import { trainerProfiles, userFavorites } from "@/db/schema";
+import { trainerProfiles, userFavorites, users } from "@/db/schema";
+import { trainerAccountReady } from "@/lib/catalog/trainer-verified";
 import { AuthError } from "@/lib/auth/errors";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
 import { favoriteKeysFor } from "@/lib/catalog/favorite-keys.server";
@@ -88,6 +89,7 @@ export type FavoriteTrainerFace = {
   citySlug: string;
   experience: number;
   price: number | null;
+  trusted: boolean;
 };
 
 /** Published cards other people can keep. The static seed list is empty, so the bookmark reads the database. */
@@ -112,8 +114,12 @@ export const favoriteTrainerFacesFn = createServerFn({ method: "POST" })
         experienceYears: trainerProfiles.experienceYears,
         priceFrom: trainerProfiles.priceFrom,
         sports: trainerProfiles.sports,
+        verified: trainerProfiles.verified,
+        emailVerifiedAt: users.emailVerifiedAt,
+        phoneVerifiedAt: users.phoneVerifiedAt,
       })
       .from(trainerProfiles)
+      .leftJoin(users, eq(users.id, trainerProfiles.ownerUserId))
       .where(and(eq(trainerProfiles.status, "published"), inArray(trainerProfiles.slug, slugs)));
     return rows.map((row) => {
       const tags = (row.sports ?? []).map((sport) => sport.label?.trim() || sport.slug).filter(Boolean);
@@ -138,6 +144,11 @@ export const favoriteTrainerFacesFn = createServerFn({ method: "POST" })
         }),
         experience: row.experienceYears,
         price: row.priceFrom,
+        trusted: trainerAccountReady({
+          verified: row.verified,
+          emailVerifiedAt: row.emailVerifiedAt,
+          phoneVerifiedAt: row.phoneVerifiedAt,
+        }),
       };
     });
   });

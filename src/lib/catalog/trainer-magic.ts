@@ -30,6 +30,7 @@ import { cityCatalogSlug } from "@/lib/catalog/city-pages";
 import { readCertificates } from "@/lib/catalog/certificate-file";
 import { sanitizeReviewHtml, reviewPlainText } from "@/lib/catalog/review-html";
 import { publicTrainerCityLabel } from "@/lib/catalog/trainer-city";
+import { trainerAccountReady } from "@/lib/catalog/trainer-verified";
 import { isLinkPreviewVisit } from "@/lib/catalog/door-visit";
 import { relayDoorMark } from "@/lib/sync/relay";
 import { ensurePublicDoorLink } from "@/lib/catalog/trainer-outreach";
@@ -91,7 +92,10 @@ function cookieOptions() {
   };
 }
 
-function profileToPublished(row: TrainerProfile): PublishedTrainer {
+function profileToPublished(
+  row: TrainerProfile,
+  account: { emailVerifiedAt: Date | null; phoneVerifiedAt: Date | null } | null,
+): PublishedTrainer {
   const sports = (row.sports ?? []).flatMap((sport) => {
     const slug = sport?.slug?.trim() ?? "";
     if (!slug) return [];
@@ -131,6 +135,11 @@ function profileToPublished(row: TrainerProfile): PublishedTrainer {
     district: row.district,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
+    trusted: trainerAccountReady({
+      verified: row.verified,
+      emailVerifiedAt: account?.emailVerifiedAt,
+      phoneVerifiedAt: account?.phoneVerifiedAt,
+    }),
   };
 }
 
@@ -138,15 +147,24 @@ export const loadVisibleTrainerFn = createServerFn({ method: "GET" })
   .middleware([optionalAuthMiddleware])
   .validator(z.object({ slug: z.string().trim().min(1).max(40) }))
   .handler(async ({ data, context }) => {
-    const [row] = await getDb().select().from(trainerProfiles).where(eq(trainerProfiles.slug, data.slug)).limit(1);
+    const db = getDb();
+    const [row] = await db.select().from(trainerProfiles).where(eq(trainerProfiles.slug, data.slug)).limit(1);
     if (!row) return null;
+    const [account] = row.ownerUserId
+      ? await db
+        .select({ emailVerifiedAt: users.emailVerifiedAt, phoneVerifiedAt: users.phoneVerifiedAt })
+        .from(users)
+        .where(eq(users.id, row.ownerUserId))
+        .limit(1)
+      : [];
     const staff = isStaff(context.user?.roles ?? []);
     const preview = getCookie(PREVIEW_COOKIE) === data.slug;
     const owner = Boolean(context.user && row.ownerUserId === context.user.id);
-    if (row.status === "published") return { trainer: profileToPublished(row), access: "public" as const };
-    if (owner) return { trainer: profileToPublished(row), access: "owner" as const };
-    if (preview) return { trainer: profileToPublished(row), access: "preview" as const };
-    if (staff) return { trainer: profileToPublished(row), access: "staff" as const };
+    const trainer = profileToPublished(row, account ?? null);
+    if (row.status === "published") return { trainer, access: "public" as const };
+    if (owner) return { trainer, access: "owner" as const };
+    if (preview) return { trainer, access: "preview" as const };
+    if (staff) return { trainer, access: "staff" as const };
     return null;
   });
 

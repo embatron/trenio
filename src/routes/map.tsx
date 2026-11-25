@@ -62,6 +62,7 @@ function MapListedCard({
           name: trainer.name,
           firstName: trainer.firstName,
           lastName: trainer.lastName,
+          trusted: trainer.trusted,
           photo: trainer.photo,
           tags: trainer.tags,
           sports: trainer.sportSlugs.map((slug, index) => ({

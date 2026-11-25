@@ -41,6 +41,7 @@ import { outreachTemplate } from "@/lib/site-texts/defaults";
 import { loadSiteText } from "@/lib/site-texts/store";
 import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
 import { popularityChecklist, popularityScore, recentReviewStart } from "@/lib/catalog/trainer-popularity";
+import { trainerAccountReady } from "@/lib/catalog/trainer-verified";
 import { emptyTrainerInterest, loadTrainerInterest, type TrainerInterest } from "@/lib/catalog/trainer-interest";
 import { ensureTrainerPublishedAt, stampTrainerPublished } from "@/lib/catalog/trainer-published";
 import { getSportTaxonomyChild, getTopLevelSportCategory, listSecondLevelSports, MAX_TRAINER_SPORTS, trainerSectionBySlug, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
@@ -50,11 +51,14 @@ import { placesFromProfile, placesShape, savedWithMapNotice, type TrainerPlace }
 export const TRAINER_PUBLISH_STATUSES = ["draft", "published", "hidden", "archived", "declined"] as const;
 export type TrainerPublishStatus = (typeof TRAINER_PUBLISH_STATUSES)[number];
 
+export const TRAINER_PAGE_STATUSES = ["published", "hidden", "archived"] as const;
+export const TRAINER_STAFF_STATUSES = ["draft", "declined"] as const;
+
 export const TRAINER_PUBLISH_LABEL: Record<TrainerPublishStatus, string> = {
   draft: "На модерации",
-  published: "Опубликован",
-  hidden: "Скрыт",
-  archived: "В архиве",
+  published: "Опубликована",
+  hidden: "Скрыта",
+  archived: "Снята с публикации",
   declined: "Отказались",
 };
 
@@ -85,6 +89,7 @@ export type AdminTrainer = {
   id: string | null;
   slug: string;
   status: TrainerPublishStatus;
+  verified: boolean;
   firstName: string;
   lastName: string;
   fullName: string;
@@ -271,6 +276,7 @@ const saveSchema = z.object({
   id: z.string().uuid().nullable(),
   slug: z.string().trim().min(1).max(30),
   status: z.enum(TRAINER_PUBLISH_STATUSES),
+  verified: z.boolean(),
   firstName: z.string().trim().min(1, "Укажите имя").max(100),
   lastName: z.string().trim().max(100),
   headline: z.string().trim().max(200),
@@ -295,6 +301,7 @@ function trainerStats(
   ratings: Map<string, { reviews: number; positiveReviews: number; recentPositiveReviews: number; average: number }>,
   interest: Record<string, TrainerInterest>,
   fill: { card: number; contacts: number },
+  accountReady = false,
 ) {
   const row = ratings.get(slug);
   const reviews = row?.reviews ?? 0;
@@ -314,6 +321,7 @@ function trainerStats(
       ...signal,
       cardFilled: fill.card,
       contactsFilled: fill.contacts,
+      verified: accountReady,
     }),
   };
 }
@@ -356,6 +364,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         id: trainerProfiles.id,
         slug: trainerProfiles.slug,
         status: trainerProfiles.status,
+        verified: trainerProfiles.verified,
         firstName: trainerProfiles.firstName,
         lastName: trainerProfiles.lastName,
         fullName: trainerProfiles.fullName,
@@ -439,6 +448,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       id: row.id,
       slug: row.slug,
       status: row.status,
+      verified: row.verified,
       ...trainerNameParts(row.firstName, row.lastName, row.fullName),
       headline: row.headline,
       bio: row.bio,
@@ -483,6 +493,10 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         }),
         telegram: row.telegram,
         email: row.ownerId && !hidden.has(row.ownerId) ? (row.email ?? "") : row.ownerId ? "" : row.contactEmail,
+      }), trainerAccountReady({
+        verified: row.verified,
+        emailVerifiedAt: row.accountEmailVerifiedAt,
+        phoneVerifiedAt: row.accountPhoneVerifiedAt,
       })),
       catalog: isCatalog(row.slug),
       offerAccepted: row.offerAcceptedAt != null,
@@ -513,6 +527,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       id: null,
       slug: trainer.slug,
       status: "published",
+      verified: false,
       firstName: trainer.firstName,
       lastName: trainer.lastName,
       fullName: trainer.name,
@@ -644,6 +659,7 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       formats: [...new Set(data.formats)],
       audiences: effectiveAudiences(data.audiences),
       status: data.status,
+      verified: data.verified,
       updatedAt: new Date(),
     };
 
@@ -751,6 +767,18 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       actorUserId: context.user.id,
       target: data.slug,
     });
+    if (!existing || existing.verified !== data.verified) {
+      void writeLog({
+        level: "info",
+        domain: "admin",
+        action: "admin.trainer_verify",
+        outcome: "success",
+        message: data.verified ? "Верификация пройдена." : "Верификация не пройдена.",
+        actorUserId: context.user.id,
+        subject: context.user.email,
+        target: data.slug,
+      });
+    }
     if (existing && ownerNotice) {
       void sendProfileStatusNotice({
         email: ownerNotice.email,
@@ -1005,6 +1033,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         id: row.id,
         slug: row.slug,
         status: row.status,
+        verified: row.verified,
         ...trainerNameParts(row.firstName, row.lastName, row.fullName),
         headline: row.headline,
         bio: row.bio,
@@ -1035,6 +1064,11 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
           ...(interest[row.slug] ?? emptyTrainerInterest),
           cardFilled: fill.card,
           contactsFilled: fill.contacts,
+          verified: trainerAccountReady({
+            verified: row.verified,
+            emailVerifiedAt: owner?.emailVerifiedAt ?? null,
+            phoneVerifiedAt: owner?.phoneVerifiedAt ?? null,
+          }),
         }),
         catalog: isCatalog(row.slug),
         offerAccepted: row.offerAcceptedAt != null,

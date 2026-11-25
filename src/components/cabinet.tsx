@@ -610,6 +610,7 @@ a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
   .profile-card-enter { animation: none; }
 }
 .cabinet-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--layout-gap); }
+#cabinet-stats { scroll-margin-top: 120px; }
 .cabinet-card > .cabinet-online { padding: 16px 18px; }
 .cabinet-stat, .cabinet-card { border: 1px solid var(--line); border-radius: var(--card-radius); background: var(--white); }
 .cabinet-stat { position: relative; padding: 16px 18px; }

@@ -6,10 +6,12 @@ import { FavoriteButton } from "@/components/favorite-button";
 import { CardDirectLink } from "@/components/messages/card-direct-link";
 import { ShareProfileButton } from "@/components/share-profile";
 import { PhotoImage } from "@/components/photo-image";
+import { AccountSeal } from "@/components/account-seal";
 import { TrainerName } from "@/components/trainer-name";
 import { TrainerRating } from "@/components/trainer-rating";
 import { trainerSportCityLocation } from "@/lib/catalog/catalog-sports";
 import { noteTrainerCardImpression } from "@/lib/catalog/trainer-impression-client";
+import { localDemoSummary } from "@/lib/catalog/local-demo";
 import { NEGOTIABLE_PRICE_LABEL, statedTrainerPrice } from "@/lib/catalog/trainer-price";
 
 export type TrainerSportTag = {
@@ -42,6 +44,8 @@ export type CatalogTrainerCardData = {
   instagram?: string;
   telegram?: string;
   email?: string;
+  /** Green seal: confirmed account and a verified card. Missing means the gray seal. */
+  trusted?: boolean;
 };
 
 export function CatalogTrainerCard({
@@ -78,6 +82,10 @@ export function CatalogTrainerCard({
   }, [countImpression, trainer.slug]);
 
   const price = statedTrainerPrice(trainer.price);
+  const demo = trainer.reviews > 0 ? null : localDemoSummary(trainer.slug);
+  const shownTrusted = trainer.trusted === true || demo != null;
+  const shownRating = demo?.rating ?? trainer.rating;
+  const shownReviews = demo?.reviews ?? trainer.reviews;
   return (
     <article
       ref={cardRef}
@@ -100,7 +108,7 @@ export function CatalogTrainerCard({
         <div className="trainer-card__actions">
           <AccountLikeButton slug={trainer.slug} className="trainer-card__like" />
           <FavoriteButton target={{ type: "trainer", slug: trainer.slug }} className="trainer-card__save" />
-          <CardDirectLink slug={trainer.slug} className="trainer-card__write" />
+          <CardDirectLink slug={trainer.slug} className="trainer-card__write" locked={!shownTrusted} />
           <ShareProfileButton slug={trainer.slug} className="trainer-card__share" />
         </div>
       </div>
@@ -109,7 +117,6 @@ export function CatalogTrainerCard({
           <h3 className="trainer-card__name">
             <TrainerName firstName={trainer.firstName} lastName={trainer.lastName} />
           </h3>
-          <TrainerRating rating={trainer.rating} reviews={trainer.reviews} />
         </div>
         <p className="trainer-card__sport">
           <TrainerSportTags sports={trainer.sports} tags={trainer.tags} />
@@ -129,6 +136,10 @@ export function CatalogTrainerCard({
               <circle cx="12" cy="9" r="2.4" />
             </svg>
             <span>{trainer.city}</span>
+          </span>
+          <span className="trainer-card__marks">
+            <TrainerRating rating={shownRating} reviews={shownReviews} trusted={shownTrusted} />
+            <AccountSeal trusted={shownTrusted} className="trainer-card__seal" />
           </span>
         </div>
       </div>

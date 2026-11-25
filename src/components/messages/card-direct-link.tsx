@@ -10,14 +10,30 @@ function DirectMessageLink({
   className,
   children,
   label,
+  locked = false,
 }: {
   slug: string;
   className: string;
   children: ReactNode;
   label: string;
+  /** Gray and inert while the trainer account is not confirmed. */
+  locked?: boolean;
 }) {
   const { user, messaging } = useRouteContext({ from: "__root__" });
   if (messaging.ownedSlugs.includes(slug)) return null;
+  if (locked) {
+    return (
+      <span
+        className={`${className} is-quiet`}
+        aria-disabled="true"
+        aria-label={`${label}. Аккаунт не подтверждён`}
+        title="Аккаунт не подтверждён"
+        onClick={(event) => event.stopPropagation()}
+      >
+        {children}
+      </span>
+    );
+  }
   const thread = `/account/messages?trainer=${encodeURIComponent(slug)}`;
   const href = user
     ? directMessageHref(user.roles, slug)
@@ -41,18 +57,18 @@ function DirectMessageLink({
 }
 
 /** Outline plane on a trainer card. Same thread as «Написать» on the profile. */
-export function CardDirectLink({ slug, className }: { slug: string; className: string }) {
+export function CardDirectLink({ slug, className, locked = false }: { slug: string; className: string; locked?: boolean }) {
   return (
-    <DirectMessageLink slug={slug} className={className} label="Написать">
+    <DirectMessageLink slug={slug} className={className} label="Написать" locked={locked}>
       <DirectMark />
     </DirectMessageLink>
   );
 }
 
 /** Primary profile CTA directly below the trainer photos. */
-export function ProfileDirectButton({ slug }: { slug: string }) {
+export function ProfileDirectButton({ slug, locked = false }: { slug: string; locked?: boolean }) {
   return (
-    <DirectMessageLink slug={slug} className="profile-message-cta" label="Написать тренеру">
+    <DirectMessageLink slug={slug} className="profile-message-cta" label="Написать тренеру" locked={locked}>
       <DirectMark />
       <span>Написать тренеру</span>
     </DirectMessageLink>

@@ -30,6 +30,7 @@ export function RecentTrainers({
                 name: trainer.name,
                 firstName: trainer.firstName,
                 lastName: trainer.lastName,
+                trusted: trainer.trusted === true,
                 photo: trainer.photo,
                 tags: trainer.sports.map((sport) => sport.label),
                 sports: trainer.sports,

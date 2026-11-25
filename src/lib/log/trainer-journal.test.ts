@@ -10,6 +10,7 @@ test("trainer addition and appearance stay in the permanent journal", () => {
   assert.equal(trainerJournalKind("trainer.withdraw"), "always");
   assert.equal(trainerJournalKind("form.trainer_profile"), "always");
   assert.equal(trainerJournalKind("admin.trainer_remove"), "always");
+  assert.equal(trainerJournalKind("admin.trainer_verify"), "always");
   assert.equal(trainerJournalKind("account.claim"), "always");
   assert.equal(trainerJournalKind("account.password"), "always");
 });
@@ -18,6 +19,7 @@ test("trainer account actions are kept only when the actor is a trainer", () => 
   assert.equal(trainerJournalKind("auth.login"), "account");
   assert.equal(trainerJournalKind("account.password.change"), "account");
   assert.equal(trainerJournalKind("account.delete"), "account");
+  assert.equal(trainerJournalKind("account.verify"), "account");
   assert.equal(trainerJournalKind("email.notice"), "account");
 });
 

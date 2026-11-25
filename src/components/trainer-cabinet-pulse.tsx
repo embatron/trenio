@@ -6,8 +6,10 @@ import { SiteFaq } from "@/components/site-faq";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { OWN_PROFILE_STATUSES, setOwnTrainerPageStatusFn, type OwnProfileStatus, type OwnTrainerProfile, type PageStatus } from "@/lib/catalog/trainer-own";
+import { trainerAccountReady } from "@/lib/catalog/trainer-verified";
 import {
   POPULARITY_LIMITS,
+  POPULARITY_MAX,
   popularityChecklist,
   popularityParts,
   type PopularityChecklist,
@@ -264,8 +266,10 @@ function RatingDialog({
       points: parts.card,
       max: limits.card,
       detail: checklist.card === limits.cardFields
-        ? `Заполнены все 10 основных пунктов — это ${limits.card} баллов`
-        : `Заполнено ${checklist.card} из ${limits.cardFields} основных пунктов. За полную карточку — ${limits.card} баллов`,
+        ? parts.verified > 0
+          ? `Все 10 пунктов — ${limits.cardFill} баллов. Аккаунт подтверждён — ещё ${limits.verified}. Вместе ${limits.card}`
+          : `Все 10 пунктов — ${limits.cardFill} баллов. Ещё ${limits.verified} появятся, когда аккаунт подтверждён. Вместе это ${limits.card}`
+        : `Заполнено ${checklist.card} из ${limits.cardFields}. Поля дают до ${limits.cardFill} баллов, подтверждённый аккаунт добавляет ${limits.verified}. Полная карточка — ${limits.card}`,
     },
     {
       title: "Контакты",
@@ -344,7 +348,7 @@ function RatingDialog({
         <h2 id="rating-parts-title">Как работает рейтинг</h2>
         <p className="cabinet-rating-total">
           <strong>{parts.total}</strong>
-          <span>из <b>100</b></span>
+          <span>из <b>{POPULARITY_MAX}</b></span>
         </p>
         <p id="rating-parts-description">Это не только средняя оценка. Рейтинг показывает текущее состояние карточки и помогает определить её место при сортировке «По рейтингу».</p>
         <table className="cabinet-rating-parts">
@@ -399,11 +403,19 @@ function usePulseScore(trainer: OwnTrainerProfile | null, _views: TrainerCabinet
   const hasProfile = Boolean(trainer?.slug);
   const rating = hasProfile && trainer ? ratingFor(trainer.slug, ratings) : null;
   const checklist = checklistFor(trainer);
+  const ready = trainer
+    ? trainerAccountReady({
+      verified: trainer.verified,
+      emailVerifiedAt: trainer.emailVerified ? new Date(0) : null,
+      phoneVerifiedAt: trainer.phoneVerified ? new Date(0) : null,
+    })
+    : false;
   const parts = rating
     ? popularityParts({
       ...rating,
       cardFilled: checklist?.card ?? 0,
       contactsFilled: checklist?.contacts ?? 0,
+      verified: ready,
     })
     : null;
   return { hasProfile, rating, checklist, parts };
@@ -418,6 +430,7 @@ type OverviewTile = {
   icon: CabinetIcon;
   tone: OverviewTone;
   to: MeSectionPath;
+  hash?: string;
 };
 
 function ratingLevel(score: number) {
@@ -446,15 +459,15 @@ function ratingLevel(score: number) {
     text: current.text,
     next: next
       ? `До следующего уровня — ${countRu(next.at - score, "балл", "балла", "баллов")}`
-      : score < 100
-        ? `До максимума — ${countRu(100 - score, "балл", "балла", "баллов")}`
-        : "Максимальный рейтинг — 100",
+      : score < POPULARITY_MAX
+        ? `До максимума — ${countRu(POPULARITY_MAX - score, "балл", "балла", "баллов")}`
+        : `Максимальный рейтинг — ${POPULARITY_MAX}`,
   };
 }
 
 function OverviewTileLink({ tile }: { tile: OverviewTile }) {
   return (
-    <Link className={`cabinet-overview-tile is-${tile.tone}`} to={tile.to} reloadDocument>
+    <Link className={`cabinet-overview-tile is-${tile.tone}`} to={tile.to} hash={tile.hash} reloadDocument>
       <span className="cabinet-overview-tile__top">
         <span>{tile.title}</span>
         <CabinetMark icon={tile.icon} />
@@ -494,7 +507,8 @@ export function TrainerOverviewRating({ trainer, views, ratings }: PulseProps) {
       detail: `${pluralRu(previousVisits, "открытие", "открытия", "открытий")} страницы за прошлую неделю`,
       icon: "stats",
       tone: "aqua",
-      to: "/me/stats",
+      to: "/me",
+      hash: "cabinet-stats",
     },
     {
       title: "Сохранения",
@@ -537,9 +551,9 @@ export function TrainerOverviewRating({ trainer, views, ratings }: PulseProps) {
             <CabinetMark icon="stats" />
           </span>
           <span className="cabinet-overview-rating__eyebrow">Рейтинг вашего профиля</span>
-          <Link className="cabinet-overview-rating__score" to="/me/stats" reloadDocument aria-label={`Рейтинг ${score} из 100. Открыть статистику`}>
+          <Link className="cabinet-overview-rating__score" to="/me" hash="cabinet-stats" reloadDocument aria-label={`Рейтинг ${score} из ${POPULARITY_MAX}. Открыть статистику`}>
             <strong>{score}</strong>
-            <span>из 100</span>
+            <span>из {POPULARITY_MAX}</span>
           </Link>
           <div className="cabinet-overview-rating__level">
             <span className="cabinet-overview-rating__step">Уровень {level.index} из 10</span>
@@ -552,13 +566,13 @@ export function TrainerOverviewRating({ trainer, views, ratings }: PulseProps) {
             role="progressbar"
             aria-label="Рейтинг вашего профиля"
             aria-valuemin={0}
-            aria-valuemax={100}
+            aria-valuemax={POPULARITY_MAX}
             aria-valuenow={score}
           >
-            <span style={{ width: `${score}%` }} />
+            <span style={{ width: `${Math.min(100, (score / POPULARITY_MAX) * 100)}%` }} />
           </div>
           <div className="cabinet-overview-rating__actions">
-            <Link to="/me/stats" reloadDocument>Вся статистика</Link>
+            <Link to="/me" hash="cabinet-stats" reloadDocument>Вся статистика</Link>
             <button type="button" onClick={() => setRatingOpen(true)} aria-haspopup="dialog">
               Как работает рейтинг?
             </button>
@@ -568,21 +582,22 @@ export function TrainerOverviewRating({ trainer, views, ratings }: PulseProps) {
           {tiles.map((tile) => <OverviewTileLink key={tile.title} tile={tile} />)}
         </div>
       </section>
+      <TrainerOwnStats trainer={trainer} views={views} ratings={ratings} />
       <section className="cabinet-faq" aria-labelledby="overview-faq">
         <h2 id="overview-faq">Частые вопросы о рейтинге</h2>
         <SiteFaq
           items={[
             {
               q: "Рейтинг и средняя оценка — это одно и то же?",
-              a: "Нет. Средняя оценка — это звёзды из отзывов. Рейтинг — общий результат от 0 до 100: он учитывает отзывы, заполненность карточки, отклики, сохранения и лайкосы.",
+              a: `Нет. Средняя оценка — это звёзды из отзывов. Рейтинг — общий результат от 0 до ${POPULARITY_MAX}: он учитывает отзывы, заполненность карточки, подтверждение аккаунта, отклики, сохранения и лайкосы.`,
             },
             {
               q: "Где используется рейтинг и кто его видит?",
               a: "Рейтинг помогает определить порядок карточек при сортировке «По рейтингу». На карточке клиенты видят звезду и число отзывов. Слово «рейтинг» и число баллов на карточке не пишутся. Подробную таблицу с баллами видите только вы в кабинете.",
             },
             {
-              q: "Из чего складываются 100 баллов?",
-              a: "До 23 баллов дают заполненная карточка и контакты. До 46 — оценки и положительные отзывы. Ещё до 31 — отклики, сохранения и лайкосы. Поэтому одно действие не может само поднять карточку на вершину.",
+              q: `Из чего складываются ${POPULARITY_MAX} баллов?`,
+              a: `До ${POPULARITY_LIMITS.card} — карточка: ${POPULARITY_LIMITS.cardFill} за поля и ${POPULARITY_LIMITS.verified}, если аккаунт подтверждён. До ${POPULARITY_LIMITS.contacts} — контакты. До ${POPULARITY_LIMITS.rating + POPULARITY_LIMITS.reviews + POPULARITY_LIMITS.recentReviews} — оценки и положительные отзывы. Ещё до ${POPULARITY_LIMITS.views + POPULARITY_LIMITS.saves + POPULARITY_LIMITS.likes + POPULARITY_LIMITS.likePace} — отклики, сохранения и лайкосы. Поэтому одно действие не может само поднять карточку на вершину.`,
             },
             {
               q: "Какие отзывы участвуют в расчёте?",
@@ -626,7 +641,7 @@ export function TrainerOverviewRating({ trainer, views, ratings }: PulseProps) {
             },
             {
               q: "Как честно поднять рейтинг?",
-              a: "Заполните карточку, добавьте удобные способы связи и просите реальных клиентов оставлять честные отзывы. Регулярный интерес клиентов полезнее разового всплеска: отвечайте на сообщения и поддерживайте страницу актуальной.",
+              a: "Заполните карточку, подтвердите аккаунт почтой или телефоном, добавьте удобные способы связи и просите реальных клиентов оставлять честные отзывы. Регулярный интерес клиентов полезнее разового всплеска: отвечайте на сообщения и поддерживайте страницу актуальной.",
             },
           ]}
         />
@@ -653,7 +668,7 @@ export function TrainerOwnStats({ trainer, views, ratings }: PulseProps) {
   return (
     <>
       {hasProfile && views ? (
-        <div className="cabinet-stats cabinet-stats--pulse">
+        <div id="cabinet-stats" className="cabinet-stats cabinet-stats--pulse">
           <div className="cabinet-stat cabinet-stat--visits">
             <StatMark>
               <circle cx="12" cy="12" r="3.2" />

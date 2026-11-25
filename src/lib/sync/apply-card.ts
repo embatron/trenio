@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { claimPathFor } from "@/db/trainer-profiles";
 import { trainerProfiles } from "@/db/schema";
+import { isSilentInstagram } from "@/lib/catalog/instagram-silence";
 import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
 import { stampTrainerPublished } from "@/lib/catalog/trainer-published";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
@@ -220,6 +221,13 @@ export async function applyTrainerPatch(patch: TrainerPatch, files: IncomingFile
     || (patch.card ? isLocalOnlyTrainer(patch.card.slug) : false)
   ) {
     return { ok: false as const, reason: "local" as const };
+  }
+  if (
+    isSilentInstagram(patch.handle)
+    || isSilentInstagram(handle)
+    || (patch.card ? isSilentInstagram(patch.card.slug) : false)
+  ) {
+    return { ok: false as const, reason: "silent" as const };
   }
   if (!handle || !isTrainerStatus(patch.status) || !iso(patch.updatedAt)) {
     return { ok: false as const, reason: "card" as const };

@@ -56,6 +56,8 @@ export const trainerProfiles = pgTable(
     instagramHandle: varchar("instagram_handle", { length: 30 }).notNull(),
     sourceUrl: varchar("source_url", { length: 300 }).notNull(),
     status: trainerProfileStatusEnum("status").notNull().default("draft"),
+    /** Staff mark. Turns on when the owner confirms a mailbox or a Belarus mobile. */
+    verified: boolean("verified").notNull().default(false),
     /** Status to put back when a deleted owner restores the account. */
     heldStatus: varchar("held_status", { length: 16 }),
     claimStatus: trainerClaimStatusEnum("claim_status").notNull().default("unclaimed"),
