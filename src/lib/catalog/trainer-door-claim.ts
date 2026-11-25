@@ -9,6 +9,7 @@ import { logTrainerPresence } from "@/lib/log/trainer-journal";
 import { stampTrainerPublished } from "@/lib/catalog/trainer-published";
 import { grantTrainerVerificationForProfile } from "@/lib/catalog/trainer-verified.server";
 import { publishMessage, staffProof, type TrainerProof } from "@/lib/catalog/trainer-verify-log";
+import { trainerDoorClaimable } from "@/lib/catalog/trainer-door-policy";
 
 const DOOR_PROFILE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DOOR_SLUG = /^[a-z0-9._]{1,30}$/;
@@ -94,8 +95,7 @@ export async function claimDoorAfterGoogle(input: DoorClaimInput): Promise<DoorG
   const [row] = await db.select().from(trainerProfiles).where(eq(trainerProfiles.id, profileId)).limit(1);
   const open = Boolean(row?.previewToken)
     && row?.slug === previewSlug
-    && !row?.ownerUserId
-    && row?.status !== "published";
+    && trainerDoorClaimable(row);
   if (!row || !open) {
     void writeLog({
       level: "warn",
@@ -198,6 +198,7 @@ export async function claimDoorAfterGoogle(input: DoorClaimInput): Promise<DoorG
     next: row.status === "draft" ? "published" : row.status,
     ownerUserId: input.userId,
     firstName: row.firstName,
+    confirmed: true,
     ownerAttached: true,
   });
   return "claimed";

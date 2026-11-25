@@ -3,29 +3,48 @@ import test from "node:test";
 
 import { planTrainerWelcome, shouldSendPublishWelcome } from "./welcome-publish";
 
-test("a draft with an owner gets one welcome when it is published", () => {
+test("a confirmed draft with an owner gets one welcome when it is published", () => {
   assert.equal(shouldSendPublishWelcome({
     previous: "draft",
     next: "published",
     hasOwner: true,
+    confirmed: true,
   }), true);
 });
 
-test("a new card created straight into the catalog gets the welcome", () => {
+test("a new confirmed card created straight into the catalog gets the welcome", () => {
   assert.equal(shouldSendPublishWelcome({
     previous: null,
     next: "published",
     hasOwner: true,
+    confirmed: true,
   }), true);
 });
 
-test("attaching the owner to a card that is already published sends the welcome", () => {
+test("confirming the owner of a card that is already published sends the welcome", () => {
   assert.equal(shouldSendPublishWelcome({
     previous: "published",
     next: "published",
     hasOwner: true,
+    confirmed: true,
     ownerAttached: true,
   }), true);
+});
+
+test("publishing an unconfirmed card does not send the welcome", () => {
+  assert.equal(shouldSendPublishWelcome({
+    previous: "draft",
+    next: "published",
+    hasOwner: true,
+    confirmed: false,
+  }), false);
+  assert.equal(shouldSendPublishWelcome({
+    previous: "published",
+    next: "published",
+    hasOwner: true,
+    confirmed: false,
+    ownerAttached: true,
+  }), false);
 });
 
 test("a published card that is saved again does not send another welcome", () => {
@@ -33,6 +52,7 @@ test("a published card that is saved again does not send another welcome", () =>
     previous: "published",
     next: "published",
     hasOwner: true,
+    confirmed: true,
   }), false);
 });
 
@@ -41,6 +61,7 @@ test("showing a hidden card again does not send the welcome", () => {
     previous: "hidden",
     next: "published",
     hasOwner: true,
+    confirmed: true,
   }), false);
 });
 
@@ -73,10 +94,12 @@ test("a draft with no owner and a card that stays hidden do not send the welcome
     previous: "draft",
     next: "published",
     hasOwner: false,
+    confirmed: true,
   }), false);
   assert.equal(shouldSendPublishWelcome({
     previous: "draft",
     next: "hidden",
     hasOwner: true,
+    confirmed: true,
   }), false);
 });

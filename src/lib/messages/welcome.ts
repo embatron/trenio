@@ -170,18 +170,20 @@ export async function sendTrainerWelcome(user: { id: string; firstName: string }
   }
 }
 
-/** The first time this owner's card is in the catalog. A hide and a later publish do not send again. */
+/** The first time a confirmed owner is in the catalog. A hide and a later publish do not send again. */
 export async function sendWelcomeOnPublish(input: {
   previous: string | null;
   next: string;
   ownerUserId: string | null;
   firstName: string;
+  confirmed: boolean;
   ownerAttached?: boolean;
 }) {
   if (!shouldSendPublishWelcome({
     previous: input.previous,
     next: input.next,
     hasOwner: Boolean(input.ownerUserId),
+    confirmed: input.confirmed,
     ownerAttached: input.ownerAttached,
   }) || !input.ownerUserId) return;
   await sendTrainerWelcome({

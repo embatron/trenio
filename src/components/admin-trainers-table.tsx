@@ -13,6 +13,7 @@ import { confirmedAccountValue } from "@/lib/admin/account-channel";
 import { adminSearchTokens } from "@/lib/instagram/account-query";
 import { isActiveTrainer, isDraftQueue, TRAINER_PUBLISH_LABEL, staysUnclear, type AdminTrainer } from "@/lib/admin/trainers";
 import { TrainerEditDialog } from "@/components/admin-trainer-page";
+import { trainerDoorClaimable } from "@/lib/catalog/trainer-door-policy";
 import { issueTrainerInviteFn, markTrainerInviteSentFn } from "@/lib/catalog/trainer-magic";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { displayAccountLogin } from "@/lib/auth/login-name";
@@ -251,12 +252,14 @@ async function copyText(value: string) {
 function InviteCopy({
   slug,
   ready,
-  published,
+  claimable,
+  owned,
   onSent,
 }: {
   slug: string;
   ready: boolean;
-  published: boolean;
+  claimable: boolean;
+  owned: boolean;
   onSent: (at: string) => void;
 }) {
   const issue = useAuthServerFn(issueTrainerInviteFn);
@@ -264,11 +267,13 @@ function InviteCopy({
   const [copied, setCopied] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const locked = !ready || published;
-  const label = published
-    ? "Профиль опубликован, ссылка не копируется"
+  const locked = !ready || !claimable;
+  const label = owned
+    ? "Профиль уже привязан, ссылка не копируется"
     : !ready
       ? "Нет карточки в базе"
+      : !claimable
+        ? "Ссылка доступна для черновика или опубликованного неподтверждённого профиля"
       : copied
         ? "Ссылка скопирована и отмечена отправленной"
         : error
@@ -669,7 +674,7 @@ export function AdminTrainersTable({
                 <th>Действия</th>
                 <th>Заход</th>
                 <th title="Публикация">Публик.</th>
-                <th title="Верификация">Вериф.</th>
+                <th className="is-verify" title="Верификация">Вериф.</th>
                 <th className="is-contacts">Контакты</th>
                 <th className="is-category">Категория</th>
                 <th>Город</th>
@@ -700,7 +705,11 @@ export function AdminTrainersTable({
                       <InviteCopy
                         slug={trainer.slug}
                         ready={Boolean(trainer.id)}
-                        published={trainer.status === "published"}
+                        claimable={trainerDoorClaimable({
+                          ownerUserId: trainer.account?.id ?? null,
+                          status: trainer.status,
+                        })}
+                        owned={Boolean(trainer.account)}
                         onSent={(at) => setLinkPatch((current) => ({ ...current, [trainer.slug]: at }))}
                       />
                       <button type="button" className="cabinet-icon-btn" aria-label="Редактировать" title="Редактировать" onClick={() => setEditSlug(trainer.slug)}>

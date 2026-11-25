@@ -3,6 +3,7 @@ import test from "node:test";
 
 import { isActiveTrainer, isDraftQueue, keptUnclearHold, staysUnclear } from "@/lib/admin/trainers";
 import { isStaff } from "@/lib/auth/roles";
+import { trainerDoorClaimable } from "@/lib/catalog/trainer-door-policy";
 import { OWN_PROFILE_STATUSES, holdsUnverifiedPublish, keptPageStatus } from "@/lib/catalog/trainer-own";
 
 test("only staff can publish an unconfirmed card", () => {
@@ -69,4 +70,13 @@ test("an unconfirmed yes waits for staff instead of entering the catalog", () =>
   assert.equal(holdsUnverifiedPublish("published", false), true);
   assert.equal(holdsUnverifiedPublish("published", true), false);
   assert.equal(holdsUnverifiedPublish("hidden", false), false);
+});
+
+test("the short link confirms an unowned draft or published profile", () => {
+  assert.equal(trainerDoorClaimable({ ownerUserId: null, status: "draft" }), true);
+  assert.equal(trainerDoorClaimable({ ownerUserId: null, status: "published" }), true);
+  assert.equal(trainerDoorClaimable({ ownerUserId: "owner", status: "published" }), false);
+  assert.equal(trainerDoorClaimable({ ownerUserId: null, status: "hidden" }), false);
+  assert.equal(trainerDoorClaimable({ ownerUserId: null, status: "archived" }), false);
+  assert.equal(trainerDoorClaimable({ ownerUserId: null, status: "declined" }), false);
 });

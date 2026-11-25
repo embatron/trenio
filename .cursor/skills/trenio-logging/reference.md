@@ -51,14 +51,14 @@
 | `admin.sync_trainer` | The laptop synced one imported draft and its photos. The row stores the handle |
 | `admin.sync_trainers` | The laptop synced trainer cards, catalog status, and message marks. The row stores counts or one handle, not the card text or the short link |
 | `admin.sync_welcomes` | The laptop copied trainer applications from the live site. The row stores how many were added or updated, not the phone, Telegram, or Instagram |
-| `admin.trainer_invite` | Staff copied the trainer's short link. The row stores the slug, not the link. A published profile is `denied` |
+| `admin.trainer_invite` | Staff copied the trainer's short link. The row stores the slug, not the link. A draft or an unowned profile that staff published without verification stays allowed. An owned, hidden, archived, or declined profile is `denied` |
 | `admin.trainer_invite_sent` | The copied short link was marked sent. The row stores the slug, not the link |
 | `admin.trainer_remove` | A trainer profile was removed from the portal. The row stores the slug |
 | `admin.trainer_verify` | Staff turned verification on or off in the card, or accepted the SMS code there. The message says сотрудник and the channel. A trainer confirmation stays `account.verify` |
 | `admin.trainer_publish` | Staff published or unpublished the card from the editor, the unverified switch, or the mailbox bind. The message says сотрудник, the channel, and whether verification is on. The switch leaves verification off |
 | `trainer.add` / `trainer.sync` | A trainer card was inserted, or an import updated an existing card. The row stores the slug, status, and source. Card text stays out |
 | `trainer.appear` / `trainer.withdraw` | The card entered or left the public catalog. Timestamp is `created_at` |
-| `catalog.trainer_preview` / `catalog.trainer_edit` / `catalog.trainer_save` / `catalog.trainer_publish` | Profile preview and edit links. They stay valid until the profile is published, then open the public trainer URL. A missing link is `denied`. Tokens and URLs stay out of the row |
+| `catalog.trainer_preview` / `catalog.trainer_edit` / `catalog.trainer_save` / `catalog.trainer_publish` | Profile preview and edit links. An unowned draft or published-unverified profile keeps the confirmation door. After the card has an owner, a published link opens the public trainer URL without claim controls. A missing link is `denied`. Tokens and URLs stay out of the row |
 | `catalog.list` | Published catalog list failed. Success is not stored |
 | `catalog.sitemap` | The sitemap could not read published trainer profiles. The rest of the file is still served. Success is not stored |
 | `catalog.contact` | A phone, Instagram, or Telegram click could not be stored. Success is not stored. The row has the slug, not the phone number |

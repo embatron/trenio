@@ -36,7 +36,6 @@ export const Route = createFileRoute("/hi/$code")({
       const door = await enterTrainerDoorFn({ data: { code: params.code } });
       if (!door) return { ready: false, desk: null };
       if (peek.renew) {
-        if (door.published) return { ready: false, desk: null };
         throw redirect({ to: "/trainers/$slug", params: { slug: door.slug } });
       }
       const query = new URLSearchParams({ mail, door: params.code });

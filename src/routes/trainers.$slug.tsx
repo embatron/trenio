@@ -880,6 +880,7 @@ function TrainerPage() {
   const searchStr = useRouterState({ select: (state) => state.location.searchStr });
   const openingMail = new URLSearchParams(searchStr).get("mail");
   const magicDoor = Boolean(editor?.magicDoor) && !isOwner && !openingMail;
+  const publishedMagicDoor = magicDoor && editor?.status === "published";
   const [mailOpen, setMailOpen] = useState(false);
   const [doorMailHeld, setDoorMailHeld] = useState(false);
   const doorMailKey = `trenio-door-mail-to:${t.slug}`;
@@ -1089,7 +1090,7 @@ function TrainerPage() {
       <main>
         <div className="layout-container trainer-page__inner">
         {mailError ? <p className="profile-access" role="alert">{mailError}</p> : null}
-        {access === "public" ? null : (
+        {access === "public" && !publishedMagicDoor ? null : (
           <p className="profile-access" role="status">
             <span className="profile-access__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">
@@ -1099,7 +1100,15 @@ function TrainerPage() {
               </svg>
             </span>
             <span className="profile-access__text">
-              {access === "preview" || access === "owner" ? (
+              {publishedMagicDoor ? (
+                <>
+                  Ваша страница уже в каталоге. Подтвердите профиль, чтобы получить доступ к кабинету,
+                  включить контакты и сообщения и управлять страницей самостоятельно.{" "}
+                  <button type="button" className="profile-access__open" onClick={openDoorMail}>
+                    Подтвердить профиль
+                  </button>
+                </>
+              ) : access === "preview" || access === "owner" ? (
                 <>
                   Профиль пока не опубликован и в каталоге его нет.{" "}
                   {access === "owner"
@@ -1204,7 +1213,14 @@ function TrainerPage() {
                   </Link>
                 ) : null}
                 {magicDoor ? (
-                  <button type="button" className="profile-edit" aria-haspopup="dialog" aria-label="Создать аккаунт" title="Создать аккаунт" onClick={openDoorMail}>
+                  <button
+                    type="button"
+                    className="profile-edit"
+                    aria-haspopup="dialog"
+                    aria-label={publishedMagicDoor ? "Подтвердить профиль" : "Создать аккаунт"}
+                    title={publishedMagicDoor ? "Подтвердить профиль" : "Создать аккаунт"}
+                    onClick={openDoorMail}
+                  >
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d={EDIT_ICON} /></svg>
                   </button>
                 ) : null}
@@ -1429,7 +1445,9 @@ function TrainerPage() {
 
       {magicDoor ? (
         <div className="door-publish">
-          <button type="button" onClick={openDoorMail}>Опубликовать страницу</button>
+          <button type="button" onClick={openDoorMail}>
+            {publishedMagicDoor ? "Подтвердить профиль" : "Опубликовать страницу"}
+          </button>
         </div>
       ) : null}
       <SiteFooter />
@@ -1439,6 +1457,7 @@ function TrainerPage() {
         <TrainerDoorMailDialog
           sentTo={mailSentTo}
           expired={mailExpired}
+          published={publishedMagicDoor}
           onRemember={rememberMail}
           onClose={closeDoorMail}
         />

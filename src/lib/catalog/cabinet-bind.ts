@@ -105,6 +105,7 @@ export async function claimConfirmedMailbox(slugOrHandle: string, rawEmail: stri
       next: row.status === "draft" ? "published" : row.status,
       ownerUserId: user.id,
       firstName: row.firstName,
+      confirmed: true,
       ownerAttached: true,
     });
     void writeLog({

@@ -31,6 +31,7 @@ import { readCertificates } from "@/lib/catalog/certificate-file";
 import { sanitizeReviewHtml, reviewPlainText } from "@/lib/catalog/review-html";
 import { publicTrainerCityLabel } from "@/lib/catalog/trainer-city";
 import { trainerAccountReady } from "@/lib/catalog/trainer-verified";
+import { trainerDoorClaimable } from "@/lib/catalog/trainer-door-policy";
 import { isLinkPreviewVisit } from "@/lib/catalog/door-visit";
 import { relayDoorMark } from "@/lib/sync/relay";
 import { ensurePublicDoorLink } from "@/lib/catalog/trainer-outreach";
@@ -178,6 +179,7 @@ export const issueTrainerInviteFn = createServerFn({ method: "POST" })
       id: trainerProfiles.id,
       slug: trainerProfiles.slug,
       status: trainerProfiles.status,
+      ownerUserId: trainerProfiles.ownerUserId,
     }).from(trainerProfiles).where(eq(trainerProfiles.slug, data.slug)).limit(1);
     if (!row) {
       void writeLog({
@@ -191,17 +193,20 @@ export const issueTrainerInviteFn = createServerFn({ method: "POST" })
       });
       throw new AuthError("Профиль тренера не найден.", "VALIDATION");
     }
-    if (row.status === "published") {
+    if (!trainerDoorClaimable(row)) {
+      const message = row.ownerUserId
+        ? "Профиль уже привязан. Ссылка не копируется."
+        : "Страница недоступна для подтверждения. Ссылка не копируется.";
       void writeLog({
         level: "warn",
         domain: "admin",
         action: "admin.trainer_invite",
         outcome: "denied",
-        message: "Профиль уже опубликован. Ссылка не копируется.",
+        message,
         actorUserId: context.user.id,
         target: data.slug,
       });
-      throw new AuthError("Профиль уже опубликован. Ссылка больше не копируется.", "VALIDATION");
+      throw new AuthError(message, "VALIDATION");
     }
     let url = "";
     try {
@@ -232,6 +237,7 @@ export const markTrainerInviteSentFn = createServerFn({ method: "POST" })
       .select({
         id: trainerProfiles.id,
         status: trainerProfiles.status,
+        ownerUserId: trainerProfiles.ownerUserId,
         handle: trainerProfiles.instagramHandle,
         previewToken: trainerProfiles.previewToken,
       })
@@ -239,8 +245,20 @@ export const markTrainerInviteSentFn = createServerFn({ method: "POST" })
       .where(eq(trainerProfiles.slug, data.slug))
       .limit(1);
     if (!row) throw new AuthError("Профиль тренера не найден.", "VALIDATION");
-    if (row.status === "published") {
-      throw new AuthError("Профиль уже опубликован. Ссылка больше не копируется.", "VALIDATION");
+    if (!trainerDoorClaimable(row)) {
+      const message = row.ownerUserId
+        ? "Профиль уже привязан. Ссылка не отмечается отправленной."
+        : "Страница недоступна для подтверждения. Ссылка не отмечается отправленной.";
+      void writeLog({
+        level: "warn",
+        domain: "admin",
+        action: "admin.trainer_invite_sent",
+        outcome: "denied",
+        message,
+        actorUserId: context.user.id,
+        target: data.slug,
+      });
+      throw new AuthError(message, "VALIDATION");
     }
     const sentAt = new Date();
     await db.update(trainerProfiles).set({ inviteSentAt: sentAt }).where(eq(trainerProfiles.id, row.id));
@@ -382,17 +400,24 @@ export const openTrainerDoorFn = createServerFn({ method: "POST" })
     if (!row) return null;
     await markDoorEntered(row);
     const published = row.status === "published";
-    if (!published && data.kind === "view") setCookie(PREVIEW_COOKIE, row.slug, cookieOptions());
-    if (!published && data.kind === "edit") setCookie(EDIT_COOKIE, row.id, cookieOptions());
+    const claimable = trainerDoorClaimable(row);
+    if (claimable && data.kind === "view") setCookie(PREVIEW_COOKIE, row.slug, cookieOptions());
+    if (claimable && data.kind === "edit") setCookie(EDIT_COOKIE, row.id, cookieOptions());
     void writeLog({
       level: "info",
       domain: "catalog",
       action: data.kind === "edit" ? "catalog.trainer_edit" : "catalog.trainer_preview",
       outcome: "success",
-      message: published ? "Короткая ссылка ведёт в каталог." : data.kind === "edit" ? "Короткая ссылка открыла правку." : "Короткая ссылка открыла профиль.",
+      message: published && claimable
+        ? "Короткая ссылка открыла подтверждение опубликованного профиля."
+        : published
+          ? "Короткая ссылка ведёт в каталог."
+          : data.kind === "edit"
+            ? "Короткая ссылка открыла правку."
+            : "Короткая ссылка открыла профиль.",
       target: row.slug,
     });
-    return { slug: row.slug, published };
+    return { slug: row.slug, published, claimable };
   });
 
 async function profileFromEditCookie() {
@@ -404,12 +429,11 @@ async function profileFromEditCookie() {
 
 async function openDoorProfile() {
   const row = await profileFromEditCookie();
-  if (!row || row.status === "published") {
-    throw new AuthError("Ссылка на редактирование уже не действует.", "VALIDATION");
+  if (!row || !trainerDoorClaimable(row)) {
+    throw new AuthError("Ссылка на подтверждение уже не действует.", "VALIDATION");
   }
-  if (row.ownerUserId) throw new AuthError("Этот профиль уже привязан. Войдите в аккаунт.", "VALIDATION");
   if (!row.previewToken || getCookie(PREVIEW_COOKIE) !== row.slug) {
-    throw new AuthError("Ссылка на редактирование уже не действует.", "VALIDATION");
+    throw new AuthError("Ссылка на подтверждение уже не действует.", "VALIDATION");
   }
   return row;
 }
@@ -503,7 +527,7 @@ export const getMagicTrainerFn = createServerFn({ method: "GET" })
       audiences: row.audiences,
       phone: row.phone,
       phoneLocked: Boolean(row.ownerUserId),
-      magicDoor: getCookie(PREVIEW_COOKIE) === row.slug && Boolean(row.previewToken) && !row.ownerUserId && row.status !== "published",
+      magicDoor: getCookie(PREVIEW_COOKIE) === row.slug && Boolean(row.previewToken) && trainerDoorClaimable(row),
       mailSentTo: latestMail,
       renewMail: null,
       photos: (row.photos?.length ? row.photos : row.avatarPath ? [row.avatarPath] : []).slice(0, 9),
@@ -566,6 +590,7 @@ async function saveFromCookie(data: z.infer<typeof cardSchema>, publish: boolean
     next: publish ? "published" : data.status,
     ownerUserId: row.ownerUserId,
     firstName: data.firstName,
+    confirmed: false,
   });
   void writeLog({
     level: "info",
@@ -618,7 +643,8 @@ export const enterTrainerDoorFn = createServerFn({ method: "GET" })
     if (!row) return null;
     await markDoorEntered(row);
     const published = row.status === "published";
-    if (!published) {
+    const claimable = trainerDoorClaimable(row);
+    if (claimable) {
       setCookie(PREVIEW_COOKIE, row.slug, cookieOptions());
       setCookie(EDIT_COOKIE, row.id, cookieOptions());
     }
@@ -627,10 +653,14 @@ export const enterTrainerDoorFn = createServerFn({ method: "GET" })
       domain: "catalog",
       action: "catalog.trainer_preview",
       outcome: "success",
-      message: published ? "Короткая ссылка ведёт в каталог." : "Короткая ссылка открыла профиль.",
+      message: published && claimable
+        ? "Короткая ссылка открыла подтверждение опубликованного профиля."
+        : published
+          ? "Короткая ссылка ведёт в каталог."
+          : "Короткая ссылка открыла профиль.",
       target: row.slug,
     });
-    return { slug: row.slug, published };
+    return { slug: row.slug, published, claimable };
   });
 
 const doorEmailSchema = z.object({
@@ -955,6 +985,7 @@ export const openTrainerPhoneFn = createServerFn({ method: "POST" })
       next: found.row.status === "draft" ? "published" : found.row.status,
       ownerUserId: user.id,
       firstName: found.row.firstName,
+      confirmed: true,
       ownerAttached: true,
     });
     return { ok: true as const, slug: found.row.slug, needsPassword: user.needsPassword };
@@ -1059,6 +1090,7 @@ export const confirmDoorPhoneFn = createServerFn({ method: "POST" })
       next: row.status === "draft" ? "published" : row.status,
       ownerUserId: user.id,
       firstName: row.firstName,
+      confirmed: true,
       ownerAttached: true,
     });
     if (next === "/auth/totp") return { ok: true as const, slug: row.slug, needsPassword: false, redirectTo: next };
@@ -1104,7 +1136,7 @@ async function freshDoorClaim(code: string, token: string) {
 }
 
 function doorMailCanRenew(row: { ownerUserId: string | null; status: string }) {
-  return !row.ownerUserId && row.status !== "published";
+  return trainerDoorClaimable(row);
 }
 
 async function latestDoorMailbox(profileId: string): Promise<string | null> {
@@ -1243,6 +1275,7 @@ export const openTrainerMailFn = createServerFn({ method: "POST" })
       next: row.status === "draft" ? "published" : row.status,
       ownerUserId: user.id,
       firstName: row.firstName,
+      confirmed: true,
       ownerAttached: true,
     });
     return { ok: true as const, slug: row.slug, needsPassword: user.needsPassword };

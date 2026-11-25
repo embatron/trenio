@@ -817,11 +817,25 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       mode: "save",
     });
     const { sendWelcomeOnPublish } = await import("@/lib/messages/welcome");
+    const accountReady = trainerAccountReady({
+      verified: data.verified,
+      emailVerifiedAt: ownerEmailVerifiedAt ?? null,
+      phoneVerifiedAt: ownerPhoneVerifiedAt ?? null,
+    });
+    const wasReady = existing
+      ? trainerAccountReady({
+        verified: existing.verified,
+        emailVerifiedAt: ownerEmailVerifiedAt ?? null,
+        phoneVerifiedAt: ownerPhoneVerifiedAt ?? null,
+      })
+      : false;
     await sendWelcomeOnPublish({
       previous: existing?.status ?? null,
       next: data.status,
       ownerUserId: existing?.ownerUserId ?? null,
       firstName,
+      confirmed: accountReady,
+      ownerAttached: Boolean(existing?.status === "published" && accountReady && !wasReady),
     });
     void writeLog({
       level: "info",
@@ -931,15 +945,6 @@ export const publishUnverifiedTrainerFn = createServerFn({ method: "POST" })
         subject: context.user.email,
         mode: "save",
       });
-      if (next === "published") {
-        const { sendWelcomeOnPublish } = await import("@/lib/messages/welcome");
-        await sendWelcomeOnPublish({
-          previous: row.status,
-          next: "published",
-          ownerUserId: row.ownerUserId,
-          firstName: row.firstName,
-        });
-      }
     }
     void writeLog({
       level: "info",

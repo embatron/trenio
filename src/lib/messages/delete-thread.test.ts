@@ -45,17 +45,17 @@ async function fixture(sql: Sql) {
   `;
   const [profile] = await sql<{ id: string }[]>`
     insert into trainer_profiles (
-      slug, instagram_handle, source_url, status, owner_user_id, first_name, last_name, full_name, claim_token, claim_path
+      slug, instagram_handle, source_url, status, verified, owner_user_id, first_name, last_name, full_name, claim_token, claim_path
     ) values (
-      ${`c${tag}`}, ${`c${tag}`}, ${`https://instagram.com/c${tag}`}, 'published', ${trainerId},
+      ${`c${tag}`}, ${`c${tag}`}, ${`https://instagram.com/c${tag}`}, 'published', true, ${trainerId},
       'Мария', 'Соколова', 'Мария Соколова', ${`c${tag}`}, ${`/hi/c${tag}`}
     ) returning id
   `;
   const [clientProfile] = await sql<{ id: string }[]>`
     insert into trainer_profiles (
-      slug, instagram_handle, source_url, status, owner_user_id, first_name, last_name, full_name, claim_token, claim_path
+      slug, instagram_handle, source_url, status, verified, owner_user_id, first_name, last_name, full_name, claim_token, claim_path
     ) values (
-      ${`k${tag}`}, ${`k${tag}`}, ${`https://instagram.com/k${tag}`}, 'published', ${clientId},
+      ${`k${tag}`}, ${`k${tag}`}, ${`https://instagram.com/k${tag}`}, 'published', true, ${clientId},
       'Иван', ${`Zz${tag}`}, ${`Иван Zz${tag}`}, ${`k${tag}`}, ${`/hi/k${tag}`}
     ) returning id
   `;

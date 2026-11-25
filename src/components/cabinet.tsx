@@ -761,8 +761,7 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-table { width: 100%; min-width: 760px; border-collapse: collapse; }
 .cabinet-table th, .cabinet-table td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
 .cabinet-table--trainers th, .cabinet-table--trainers td { text-align: center; vertical-align: middle; }
-.cabinet-table--trainers th.is-person, .cabinet-table--trainers td.is-person,
-.cabinet-table--trainers td.is-verify { text-align: left; }
+.cabinet-table--trainers th.is-person, .cabinet-table--trainers td.is-person { text-align: left; }
 .cabinet-verify { display: inline-flex; align-items: center; justify-content: center; }
 .cabinet-verify-label { display: inline-flex; align-items: center; gap: 8px; }
 .cabinet-verify__seal { width: 18px; height: 18px; border-radius: 50%; }
@@ -796,7 +795,9 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-table--trainers th.is-person, .cabinet-table--trainers td.is-person { padding-left: 8px; }
 .cabinet-table--trainers td.is-audience { white-space: normal; }
 .cabinet-table--trainers td.is-actions,
-.cabinet-table--trainers td.is-publish { text-align: center; }
+.cabinet-table--trainers td.is-publish,
+.cabinet-table--trainers th.is-verify,
+.cabinet-table--trainers td.is-verify { text-align: center; }
 .cabinet-table--trainers th.is-contacts,
 .cabinet-table--trainers td.is-contacts,
 .cabinet-table--trainers th.is-category,

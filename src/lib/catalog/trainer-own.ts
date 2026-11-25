@@ -180,6 +180,7 @@ export const setOwnTrainerPageStatusFn = createServerFn({ method: "POST" })
       next: data.status,
       ownerUserId: context.user.id,
       firstName: row.firstName,
+      confirmed: ready,
     });
     void writeLog({
       level: "info",
@@ -472,6 +473,7 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
         lastName: users.lastName,
         email: users.email,
         emailVerifiedAt: users.emailVerifiedAt,
+        phoneVerifiedAt: users.phoneVerifiedAt,
       })
       .from(users)
       .where(eq(users.id, context.user.id))
@@ -608,6 +610,11 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       next: savedStatus,
       ownerUserId: context.user.id,
       firstName,
+      confirmed: trainerAccountReady({
+        verified: existing?.verified === true,
+        emailVerifiedAt: account?.emailVerifiedAt ?? null,
+        phoneVerifiedAt: account?.phoneVerifiedAt ?? null,
+      }),
     });
     void writeLog({
       level: "info",

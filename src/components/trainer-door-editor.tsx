@@ -291,11 +291,13 @@ export function TrainerDoorMailDialog({
   onClose,
   sentTo,
   expired = false,
+  published = false,
   onRemember,
 }: {
   onClose: () => void;
   sentTo: string | null;
   expired?: boolean;
+  published?: boolean;
   onRemember?: (email: string) => void;
 }) {
   const router = useRouter();
@@ -334,8 +336,12 @@ export function TrainerDoorMailDialog({
           <DoorMailSent email={sent} expired={expired} onOther={() => setSent(null)} />
         ) : (
           <>
-            <h2 id="door-mail-title">Остался один шаг</h2>
-            <p>Подтвердите свою страницу любым способом ниже. Черновик сразу появится в каталоге и станет опубликованным и его увидят. А сам профиль станет вашим: его можно править и вести самому.</p>
+            <h2 id="door-mail-title">{published ? "Подтвердите профиль" : "Остался один шаг"}</h2>
+            <p>
+              {published
+                ? "Ваша страница уже в каталоге. Подтвердите почту или белорусский мобильный, чтобы получить доступ к кабинету, включить контакты и сообщения и управлять страницей самостоятельно."
+                : "Подтвердите свою страницу любым способом ниже. После подтверждения она появится в каталоге, а вы получите доступ к кабинету и сможете управлять профилем самостоятельно."}
+            </p>
             <TrainerDoorMail
               autoFocus
               onSent={(email) => {
