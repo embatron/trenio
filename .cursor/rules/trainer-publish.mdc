@@ -5,7 +5,9 @@ alwaysApply: true
 
 # Trainer publish
 
-An imported profile stays `draft` until the trainer confirms a mailbox or a Belarus mobile. Mailbox confirmation is the letter sent to the address they typed, or Google or Yandex on the same short link. A mobile confirmation is the SMS code on that same short link. Opening `/hi/{code}` alone does not publish the card. The trainer can hide the page from the cabinet: published, hidden, or archived. A later confirmation does not publish a hidden, archived, or declined card. Draft, the unclear list, moderation, and declined stay with staff. The cabinet does not name them. Declined is set only by staff in the admin editor.
+An imported profile stays `draft` until the trainer confirms a mailbox or a Belarus mobile. Mailbox confirmation is the letter sent to the address they typed, or Google or Yandex on the same short link. A mobile confirmation is the SMS code on that same short link. Opening `/hi/{code}` alone does not publish the card. The trainer can hide the page from the cabinet: published, hidden, or archived. A later confirmation does not publish a hidden, archived, or declined card. Draft, the unclear list, moderation, and declined stay with staff. The cabinet does not name them. Declined is set only by staff in the admin editor. A trainer cannot choose it and cannot leave it: the cabinet offers published, hidden, and archived, and the server refuses anything else.
+
+The admin tabs follow the visit and the account, not the page status alone. Drafts have no short-link visit. Unclear had a visit and the account is still unconfirmed, including after staff publish that card. Active is published and the account is confirmed.
 
 ## Either channel is enough
 

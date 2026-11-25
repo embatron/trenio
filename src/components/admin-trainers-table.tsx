@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 
 import { AccountSeal } from "@/components/account-seal";
@@ -11,7 +11,7 @@ import { TrainerName } from "@/components/trainer-name";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { confirmedAccountValue } from "@/lib/admin/account-channel";
 import { adminSearchTokens } from "@/lib/instagram/account-query";
-import { TRAINER_PUBLISH_LABEL, staysUnclear, type AdminTrainer } from "@/lib/admin/trainers";
+import { isActiveTrainer, isDraftQueue, TRAINER_PUBLISH_LABEL, staysUnclear, type AdminTrainer } from "@/lib/admin/trainers";
 import { TrainerEditDialog } from "@/components/admin-trainer-page";
 import { issueTrainerInviteFn, markTrainerInviteSentFn } from "@/lib/catalog/trainer-magic";
 import { authErrorMessage } from "@/lib/auth/errors";
@@ -392,19 +392,11 @@ function sortTrainers(rows: AdminTrainer[], sort: TrainerSort, when: "added" | "
   return rows;
 }
 
-function isUnclearTrainer(trainer: AdminTrainer) {
-  return staysUnclear(trainer);
-}
-
 function matchesStatus(trainer: AdminTrainer, status: TrainerStatusFilter) {
   if (!status) return true;
-  if (status === "moderation") return isDraftTrainer(trainer);
-  if (status === "unclear") return isUnclearTrainer(trainer);
+  if (status === "moderation") return isDraftQueue(trainer);
+  if (status === "unclear") return staysUnclear(trainer);
   return trainer.status === status;
-}
-
-function isDraftTrainer(trainer: AdminTrainer) {
-  return trainer.status === "draft" && !trainer.doorEnteredAt;
 }
 
 const SORT_OPTIONS: Array<{ id: TrainerSort; label: string }> = [
@@ -426,6 +418,7 @@ export function AdminTrainersTable({
   list?: TrainerList;
 }) {
   const [query, setQuery] = useState("");
+  const searchField = useRef<HTMLInputElement>(null);
   const [publishTab, setPublishTab] = useState<TrainerPublishTab>("unpublished");
   const [editSlug, setEditSlug] = useState<string | null>(null);
   const [linkPatch, setLinkPatch] = useState<Record<string, string>>({});
@@ -438,9 +431,9 @@ export function AdminTrainersTable({
     [trainers, linkPatch],
   );
   const listed = useMemo(() => {
-    if (list === "unvisited") return patched.filter(isDraftTrainer);
-    if (list === "published") return patched.filter((trainer) => trainer.status === "published");
-    if (list === "unclear") return patched.filter(isUnclearTrainer);
+    if (list === "unvisited") return patched.filter(isDraftQueue);
+    if (list === "published") return patched.filter(isActiveTrainer);
+    if (list === "unclear") return patched.filter(staysUnclear);
     if (list === "declined") return patched.filter((trainer) => trainer.status === "declined");
     return patched;
   }, [patched, list]);
@@ -530,7 +523,7 @@ export function AdminTrainersTable({
         : list === "declined"
           ? "Отказавшихся нет."
           : list === "published"
-            ? "Опубликованных карточек нет."
+            ? "Активных карточек нет."
             : "Тренеров пока нет.";
     return <p className="cabinet-empty">{empty}</p>;
   }
@@ -549,15 +542,22 @@ export function AdminTrainersTable({
       ) : null}
       <CabinetFilterBar
         search={(
-          <label className="cabinet-filters__search">
-            <span>Поиск</span>
+          <div className="cabinet-filters__search cabinet-filters__search--icon">
             <input
+              ref={searchField}
               type="search"
               value={query}
               placeholder="Имя, телефон, город, спорт, аккаунт, Instagram"
+              aria-label="Поиск тренера"
               onChange={(event) => setQuery(event.target.value)}
             />
-          </label>
+            <button type="button" aria-label="Искать" onClick={() => searchField.current?.focus()}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="6.5" />
+                <path d="M16 16l4 4" />
+              </svg>
+            </button>
+          </div>
         )}
         active={[category, sport, city, format, audience, statusFilter, link, visit].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}
       >

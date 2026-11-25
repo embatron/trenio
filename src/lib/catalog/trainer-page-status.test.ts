@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { keptUnclearHold, staysUnclear } from "@/lib/admin/trainers";
+import { isActiveTrainer, isDraftQueue, keptUnclearHold, staysUnclear } from "@/lib/admin/trainers";
 import { isStaff } from "@/lib/auth/roles";
-import { holdsUnverifiedPublish, keptPageStatus } from "@/lib/catalog/trainer-own";
+import { OWN_PROFILE_STATUSES, holdsUnverifiedPublish, keptPageStatus } from "@/lib/catalog/trainer-own";
 
 test("only staff can publish an unconfirmed card", () => {
   assert.equal(isStaff(["admin"]), true);
@@ -25,6 +25,7 @@ test("a profile save leaves moderation and a refusal where staff put them", () =
 
 test("a staff publish keeps an unclear card on that list until the account is confirmed", () => {
   const door = new Date("2026-11-01T00:00:00.000Z");
+  const visited = door.toISOString();
   assert.equal(keptUnclearHold({
     previousStatus: "draft",
     previousDoor: door,
@@ -46,9 +47,22 @@ test("a staff publish keeps an unclear card on that list until the account is co
     nextStatus: "published",
     ready: true,
   }), false);
-  assert.equal(staysUnclear({ status: "published", doorEnteredAt: door.toISOString(), unclearHold: true, trusted: false }), true);
-  assert.equal(staysUnclear({ status: "published", doorEnteredAt: door.toISOString(), unclearHold: true, trusted: true }), false);
-  assert.equal(staysUnclear({ status: "draft", doorEnteredAt: door.toISOString(), unclearHold: false, trusted: false }), true);
+  assert.equal(staysUnclear({ status: "published", doorEnteredAt: visited, trusted: false }), true);
+  assert.equal(staysUnclear({ status: "draft", doorEnteredAt: visited, trusted: false }), true);
+  assert.equal(staysUnclear({ status: "hidden", doorEnteredAt: visited, trusted: false }), true);
+  assert.equal(staysUnclear({ status: "published", doorEnteredAt: visited, trusted: true }), false);
+  assert.equal(staysUnclear({ status: "published", doorEnteredAt: "", trusted: false }), false);
+  assert.equal(staysUnclear({ status: "declined", doorEnteredAt: visited, trusted: false }), false);
+  assert.equal(isActiveTrainer({ status: "published", trusted: true }), true);
+  assert.equal(isActiveTrainer({ status: "published", trusted: false }), false);
+  assert.equal(isActiveTrainer({ status: "hidden", trusted: true }), false);
+  assert.equal(isDraftQueue({ status: "draft", doorEnteredAt: "" }), true);
+  assert.equal(isDraftQueue({ status: "draft", doorEnteredAt: visited }), false);
+  assert.equal(isDraftQueue({ status: "published", doorEnteredAt: "" }), false);
+});
+
+test("a trainer cannot choose moderation or a refusal", () => {
+  assert.deepEqual([...OWN_PROFILE_STATUSES], ["published", "hidden", "archived"]);
 });
 
 test("an unconfirmed yes waits for staff instead of entering the catalog", () => {

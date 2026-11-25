@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 
 import { AdminTrainersTable } from "@/components/admin-trainers-table";
-import { staysUnclear, getAdminTrainersFn } from "@/lib/admin/trainers";
+import { isActiveTrainer, isDraftQueue, staysUnclear, getAdminTrainersFn } from "@/lib/admin/trainers";
 
 const LISTS = ["all", "unvisited", "published", "unclear", "declined"] as const;
 type TrainerListTab = (typeof LISTS)[number];
@@ -17,9 +17,9 @@ const TABS: Array<{ id: TrainerListTab; label: string }> = [
 
 const NOTES: Record<TrainerListTab, string> = {
   all: "",
-  unvisited: "Черновики без захода. После захода карточка уходит в «Непонятные».",
-  published: "Опубликованные карточки.",
-  unclear: "Заход уже был. Ручная публикация оставляет карточку здесь со статусом «Опубликована».",
+  unvisited: "Захода ещё не было. Карточка всё ещё черновик.",
+  published: "Страница опубликована, и тренер подтвердил аккаунт.",
+  unclear: "Заход был, аккаунт не подтверждён. Сотрудник может опубликовать карточку, и она остаётся здесь.",
   declined: "Статус ставится в карточке тренера. Тренер сам его не выбирает.",
 };
 
@@ -46,9 +46,9 @@ function AdminTrainersPage() {
   const navigate = useNavigate();
   const counts = useMemo(() => ({
     all: trainers.length,
-    unvisited: trainers.filter((trainer) => trainer.status === "draft" && !trainer.doorEnteredAt).length,
-    published: trainers.filter((trainer) => trainer.status === "published").length,
-    unclear: trainers.filter((trainer) => staysUnclear(trainer)).length,
+    unvisited: trainers.filter(isDraftQueue).length,
+    published: trainers.filter(isActiveTrainer).length,
+    unclear: trainers.filter(staysUnclear).length,
     declined: trainers.filter((trainer) => trainer.status === "declined").length,
   }), [trainers]);
   const note = NOTES[list];

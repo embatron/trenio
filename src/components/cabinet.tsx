@@ -857,6 +857,12 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-filter-bar > .cabinet-filters__search { flex: 1 1 100%; display: grid; gap: 6px; }
 .cabinet-filter-bar > .cabinet-filters__search span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
 .cabinet-filter-bar > .cabinet-filters__search input { width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--text); font: inherit; font-size: 15px; }
+.cabinet-filter-bar > .cabinet-filters__search--icon { position: relative; }
+.cabinet-filter-bar > .cabinet-filters__search--icon input { padding-left: 44px; }
+.cabinet-filter-bar > .cabinet-filters__search--icon button { position: absolute; left: 0; top: 0; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+.cabinet-filter-bar > .cabinet-filters__search--icon button:hover,
+.cabinet-filter-bar > .cabinet-filters__search--icon button:focus-visible { color: var(--primary); }
+.cabinet-filter-bar > .cabinet-filters__search--icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .cabinet-filter-bar > button { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--dark); font: inherit; font-size: 14px; font-weight: var(--fw-ui); cursor: pointer; }
 .cabinet-filter-bar > button:hover, .cabinet-filter-bar > button.is-open { border-color: var(--primary); color: var(--primary); }
 .cabinet-filter-bar > button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; transition: transform 0.16s ease; }

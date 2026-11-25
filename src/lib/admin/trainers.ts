@@ -67,16 +67,24 @@ export function keptUnclearHold(input: {
   return wasUnclear || input.previousHold;
 }
 
-/** Draft after a short-link visit, or a staff-published card that is still unconfirmed. */
+/** No short-link visit yet. The card is still a draft. */
+export function isDraftQueue(trainer: { status: string; doorEnteredAt: string }) {
+  return trainer.status === "draft" && !trainer.doorEnteredAt;
+}
+
+/** Published, and the owner has confirmed the account. */
+export function isActiveTrainer(trainer: { status: string; trusted: boolean }) {
+  return trainer.status === "published" && trainer.trusted;
+}
+
+/** A visit happened and the account is still unconfirmed. Staff may already have published it. A refusal is its own list. */
 export function staysUnclear(trainer: {
   status: string;
   doorEnteredAt: string;
-  unclearHold: boolean;
   trusted: boolean;
 }) {
   if (trainer.status === "declined") return false;
-  if (trainer.unclearHold && trainer.status === "published" && !trainer.trusted) return true;
-  return trainer.status === "draft" && Boolean(trainer.doorEnteredAt);
+  return !trainer.trusted && Boolean(trainer.doorEnteredAt);
 }
 
 export const TRAINER_PUBLISH_LABEL: Record<TrainerPublishStatus, string> = {

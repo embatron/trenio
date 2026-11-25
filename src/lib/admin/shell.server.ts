@@ -1,10 +1,9 @@
-import { eq, inArray, sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { trainerProfiles, trainerReviews } from "@/db/schema";
 import { hiddenStaffIds } from "@/lib/admin/access";
 import { countOpenWelcomes } from "@/lib/admin/welcomes";
-import { PUBLISHED_TRAINERS } from "@/lib/catalog/published-trainers";
 import type { UserRole } from "@/lib/auth/types";
 
 export type AdminShellCounts = {
@@ -21,38 +20,36 @@ async function countTrainerSlices(): Promise<{ draftsOpen: number; publishedCoun
   const [row] = await db
     .select({
       draftsOpen: sql<number>`count(*) filter (where ${trainerProfiles.status} = 'draft' and ${trainerProfiles.doorEnteredAt} is null)`,
-      publishedCount: sql<number>`count(*) filter (where ${trainerProfiles.status} = 'published')`,
+      publishedCount: sql<number>`count(*) filter (where
+        ${trainerProfiles.status} = 'published'
+        and ${trainerProfiles.verified} = true
+        and exists (
+          select 1 from users as account
+          where account.id = ${trainerProfiles.ownerUserId}
+            and (account.email_verified_at is not null or account.phone_verified_at is not null)
+        )
+      )`,
       unclearCount: sql<number>`count(*) filter (where
-        (${trainerProfiles.status} = 'draft' and ${trainerProfiles.doorEnteredAt} is not null)
-        or (
-          ${trainerProfiles.unclearHold} = true
-          and ${trainerProfiles.status} = 'published'
-          and not (
-            ${trainerProfiles.verified} = true
-            and exists (
-              select 1 from users as account
-              where account.id = ${trainerProfiles.ownerUserId}
-                and (account.email_verified_at is not null or account.phone_verified_at is not null)
-            )
+        ${trainerProfiles.status} <> 'declined'
+        and ${trainerProfiles.doorEnteredAt} is not null
+        and not (
+          ${trainerProfiles.verified} = true
+          and exists (
+            select 1 from users as account
+            where account.id = ${trainerProfiles.ownerUserId}
+              and (account.email_verified_at is not null or account.phone_verified_at is not null)
           )
         )
       )`,
       declinedCount: sql<number>`count(*) filter (where ${trainerProfiles.status} = 'declined')`,
     })
     .from(trainerProfiles);
-  const draftsOpen = Number(row?.draftsOpen ?? 0);
-  const publishedCount = Number(row?.publishedCount ?? 0);
-  const unclearCount = Number(row?.unclearCount ?? 0);
-  const declinedCount = Number(row?.declinedCount ?? 0);
-  const catalogSlugs = PUBLISHED_TRAINERS.map((trainer) => trainer.slug);
-  if (catalogSlugs.length === 0) return { draftsOpen, publishedCount, unclearCount, declinedCount };
-  const present = await db
-    .select({ slug: trainerProfiles.slug })
-    .from(trainerProfiles)
-    .where(inArray(trainerProfiles.slug, catalogSlugs));
-  const known = new Set(present.map((item) => item.slug));
-  const extra = catalogSlugs.filter((slug) => !known.has(slug)).length;
-  return { draftsOpen, publishedCount: publishedCount + extra, unclearCount, declinedCount };
+  return {
+    draftsOpen: Number(row?.draftsOpen ?? 0),
+    publishedCount: Number(row?.publishedCount ?? 0),
+    unclearCount: Number(row?.unclearCount ?? 0),
+    declinedCount: Number(row?.declinedCount ?? 0),
+  };
 }
 
 /** Queue sizes shown beside the admin cabinet links. */
