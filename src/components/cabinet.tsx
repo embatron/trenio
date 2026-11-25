@@ -171,7 +171,7 @@ export function CabinetStyles() {
   return <style dangerouslySetInnerHTML={{ __html: CABINET_CSS }} />;
 }
 
-/** Admin table filters start closed, the same way the map and a category do. The name search stays above that button. */
+/** Admin table filters start closed, the same way the map and a category do. From 768px the search and the button share one row. */
 export function CabinetFilterBar({ children, active = 0, search }: { children?: ReactNode; active?: number; search?: ReactNode }) {
   const [open, setOpen] = useState(false);
   const hasFilters = Children.count(children) > 0;
@@ -852,7 +852,11 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-table--trainers .cabinet-social__link svg { width: 22px; height: 22px; overflow: visible; }
 .cabinet-table--trainers .cabinet-social__link--line svg { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .cabinet-filter-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px 18px; border-bottom: 1px solid var(--line); }
-.cabinet-filter-bar > .cabinet-filters__search { flex: 1 1 100%; display: grid; gap: 6px; }
+.cabinet-filter-bar > .cabinet-filters__search { flex: 1 1 100%; display: grid; gap: 6px; min-width: 0; }
+@media (min-width: 768px) {
+  .cabinet-filter-bar { align-items: flex-end; }
+  .cabinet-filter-bar > .cabinet-filters__search { flex: 1 1 0; }
+}
 .cabinet-filter-bar > .cabinet-filters__search span { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }
 .cabinet-filter-bar > .cabinet-filters__search input { width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); color: var(--text); font: inherit; font-size: 15px; }
 .cabinet-filter-bar > .cabinet-filters__search--icon { position: relative; }

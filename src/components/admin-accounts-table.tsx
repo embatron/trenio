@@ -87,16 +87,20 @@ export function AdminAccountsTable({ accounts }: { accounts: AdminAccount[] }) {
         Аккаунты с подтверждённой почтой, телефоном или Telegram. Карточки тренеров без аккаунта смотрите в разделе{" "}
         <Link to="/admin/trainers">Тренеры</Link>.
       </p>
-      <CabinetFilterBar active={[query.trim(), role, status].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}>
-        <label className="cabinet-filters__search">
-          <span>Поиск</span>
-          <input
-            type="search"
-            value={query}
-            placeholder="Имя, почта, телефон, роль, Instagram"
-            onChange={(event) => setQuery(event.target.value)}
-          />
-        </label>
+      <CabinetFilterBar
+        search={(
+          <label className="cabinet-filters__search">
+            <span>Поиск</span>
+            <input
+              type="search"
+              value={query}
+              placeholder="Имя, почта, телефон, роль, Instagram"
+              onChange={(event) => setQuery(event.target.value)}
+            />
+          </label>
+        )}
+        active={[query.trim(), role, status].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}
+      >
         <label>
           <span>Роль</span>
           <select value={role} onChange={(event) => setRole(event.target.value as "" | UserRole)}>
