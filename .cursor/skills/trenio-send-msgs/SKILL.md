@@ -52,8 +52,13 @@ Each row has `send`. Send only where `send` is true. `sent`, `not-draft`, and `m
 - Every other person in the run gets two bubbles. Odd places stay one bubble. Even places start with the greeting alone, then the rest of the letter. The two bubbles are a few seconds apart. The 5–10 minute pause starts after the second bubble.
 - Change a few words from one trainer to the next. Keep the offer: the catalog, the invitation, the question, and that it is free.
 
+## Closed accounts
+
+`latysheu` is closed. Do not open that Instagram profile and do not send any letter there: this outreach, the application welcome, or the prepared-page letter. The list returns `send: false` and `reason: "silent"`. Report it and leave the mark empty. This does not expire.
+
 ## Do not
 
+- Open or message `latysheu`. The account is closed.
 - Put the `/hi/{code}` link, `{doorUrl}`, or `{gaps}` in the direct message.
 - Click Follow, Like, or Comment.
 - Mark the link as sent. The link column changes only when an admin copies the link in the trainer table.
@@ -112,7 +117,7 @@ A thread already contains this outreach when it has `trenio.by` and a greeting (
 ```
 Send progress:
 - [ ] accounts/edit username is trenioby
-- [ ] Read the arguments and keep only that scope
+- [ ] Read the arguments and keep only that scope. `latysheu` is closed: report `silent` and do not open it
 - [ ] List that scope, oldest added account first when no handles were named
 - [ ] For each handle in scope: the open profile is that handle and the mark is still empty
 - [ ] If our outreach is already in the thread, mark sent and skip

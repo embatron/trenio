@@ -9,6 +9,10 @@ Send the first direct message from the `trenioby` Instagram account to imported 
 - The magic link stays on the trainer row. An admin copies it afterwards and sends it by hand.
 - A sent message sets «Сообщение». Copying the link sets «Ссылка». Opening `/hi/{code}` sets «Заход».
 
+## Closed accounts
+
+`latysheu` is closed. Do not open that profile and do not send any Instagram letter. The list marks it `silent`. Report it and leave it unmarked. This does not expire.
+
 ## Arguments
 
 The rest of this message is the scope. Follow it. Do not message every unmarked draft when the user named someone, set a count, or said to skip.

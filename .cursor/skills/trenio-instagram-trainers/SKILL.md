@@ -38,8 +38,13 @@ Do not force first person. Do not start with «Я [имя], тренер по �
 - Save a phone, email, or Telegram link when the profile, Threads, or the note shows it. Do not send a code and do not mark it confirmed.
 - Copy a Belarus mobile from the biography, the about highlight, a pinned caption, a `tel:` button, Threads, or the operator note into the phone field. Store that number as `+375 29 123-45-67`. Do not send SMS and do not mark it confirmed. Remove it from the biography, the highlight, and the card text. When the note states a mobile, that number is the one that is stored.
 
+## Closed accounts
+
+`latysheu` is closed. Do not open that Instagram profile, do not import it, do not update the draft, and do not copy it to the server. `isSilentInstagram` refuses the handle in `save-draft.ts`. Report the handle and leave it out of the batch. This does not expire.
+
 ## Do not
 
+- Open, import, or message `latysheu`. The account is closed.
 - Call the Instagram Graph API, Business Discovery, `web_profile_info`, or a private API. The source is the public profile page.
 - Ask the user for an Instagram password, or commit one. The import login is the gitignored `.cursor/skills/trenio-instagram-trainers/LOGIN.md`. Read it and sign in when the page is a login wall. Do not print the password.
 - Save an `s100`, `s150`, or `s206` thumbnail as a photo, or edit a thumbnail URL (delete `stp`, or replace `s150` with `s1080`).

@@ -5,6 +5,7 @@ import { and, asc, eq, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db";
 import { trainerProfiles } from "@/db/schema";
 import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
+import { isSilentInstagram } from "@/lib/catalog/instagram-silence";
 import { instagramProfileSlug } from "@/lib/catalog/trainer-slugs";
 import { SITE_ORIGIN } from "@/lib/seo/site";
 import { writeLog } from "@/lib/log/logger";
@@ -128,7 +129,7 @@ export type OutreachCandidate = {
 
 export type OutreachScopeRow = OutreachCandidate & {
   send: boolean;
-  reason: "unsent" | "sent" | "not-draft" | "missing";
+  reason: "unsent" | "sent" | "not-draft" | "missing" | "silent";
 };
 
 function outreachHandle(value: string) {
@@ -155,6 +156,9 @@ export async function resolveOutreachScope(rawHandles: string[]): Promise<Outrea
     .where(inArray(trainerProfiles.instagramHandle, [...new Set(handles)]));
   const byHandle = new Map(rows.map((row) => [row.handle, row]));
   return handles.map((handle) => {
+    if (isSilentInstagram(handle)) {
+      return { slug: "", handle, name: handle, send: false, reason: "silent" as const };
+    }
     const row = byHandle.get(handle);
     if (!row) return { slug: "", handle, name: handle, send: false, reason: "missing" as const };
     const name = row.fullName.trim() || row.firstName.trim() || row.slug;
@@ -183,7 +187,7 @@ export async function listUnsentOutreach(): Promise<OutreachCandidate[]> {
     .where(eq(trainerProfiles.status, "draft"))
     .orderBy(asc(trainerProfiles.createdAt), asc(trainerProfiles.id));
   return rows
-    .filter((row) => row.handle.trim() && !row.outreachSentAt)
+    .filter((row) => row.handle.trim() && !row.outreachSentAt && !isSilentInstagram(row.handle))
     .map((row) => ({
       slug: row.slug,
       handle: row.handle,
@@ -200,6 +204,7 @@ function claimBlock(status: string, outreachSentAt: Date | null) {
 
 /** A prepared-page letter: the given name and the short link stored on this draft. */
 async function preparedPageLetter(handle: string, render: (firstName: string, url: string) => string) {
+  if (isSilentInstagram(handle)) return { ok: false as const, reason: "silent" as const };
   await ensureTrainerDoorSchema();
   const db = getDb();
   const needle = handle.trim().replace(/^@/, "");
@@ -250,6 +255,7 @@ export function readyOutreachText(handle: string) {
  * The cold outreach leaves that column to the copy button.
  */
 export async function markOutreachSent(handle: string, options?: { link?: boolean }) {
+  if (isSilentInstagram(handle)) return { ok: false as const, reason: "silent" as const };
   await ensureTrainerDoorSchema();
   const db = getDb();
   const needle = handle.trim().replace(/^@/, "");

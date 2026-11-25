@@ -19,6 +19,7 @@ import { isSpecificAddress } from "../../../../src/lib/geo/schemas.ts";
 import { resolveTrainingPlaces } from "../../../../src/lib/geo/resolve.ts";
 import { logCaught } from "../../../../src/lib/log/logger.ts";
 import { closeDb } from "../../../../src/db/index.ts";
+import { isSilentInstagram } from "../../../../src/lib/catalog/instagram-silence.ts";
 import { duplicateTrainerSlug } from "../../../../src/db/trainer-profiles.ts";
 
 type RawPhoto = {
@@ -852,6 +853,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
 
   const sourceUrl = raw.sourceUrl || "";
   const handle = handleFromUrl(sourceUrl);
+  if (isSilentInstagram(handle)) fail(rawPath, "This Instagram account is closed. Do not import it or write to it.");
   assertThreads(raw, rawPath);
   const note = noteBlob(raw);
   const threadsText = threadsBlob(raw);

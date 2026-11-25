@@ -27,7 +27,7 @@ The text after `/send-claim` chooses who receives the letter.
 IG_ACCOUNT=trenioby ./node_modules/.bin/tsx --env-file=.env scripts/outreach-trainers.ts list handle-one
 ```
 
-Send only rows with `send: true`. `published`, `sent`, `not-draft`, and `missing` are reported and skipped. A published card is never messaged. A card that already has «Сообщение» is never messaged again.
+Send only rows with `send: true`. `published`, `sent`, `not-draft`, `missing`, and `silent` are reported and skipped. `latysheu` is `silent`: do not open that profile and do not write. A published card is never messaged. A card that already has «Сообщение» is never messaged again.
 
 ## Do
 

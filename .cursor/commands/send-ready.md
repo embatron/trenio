@@ -8,6 +8,10 @@ Send the combined letter from the `trenioby` Instagram account. The letter says 
 - The letter is `DEFAULT_READY_INSTAGRAM_MESSAGE`. Do not send the cold outreach from `/send-msgs` or the application letter from `/send-claim`. Do not add sports or other profile facts. Do not mention an application.
 - A sent letter sets «Сообщение» and «Ссылка». The short link is inside the letter. `mark {handle} ready` writes both.
 
+## Closed accounts
+
+`latysheu` is closed. Do not open that profile and do not send this letter. The list marks it `silent`.
+
 ## Arguments
 
 The rest of this message is the scope. Do not message every unmarked draft when the user named someone, set a count, or said to skip.

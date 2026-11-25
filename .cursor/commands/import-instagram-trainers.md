@@ -12,6 +12,10 @@ Read public Instagram profiles into Trenio draft trainer records. One link or a 
 - Drafts land in `data/instagram-trainers/`. They stay unpublished. The trainer publishes the profile in the cabinet after the magic link.
 - After a draft is saved, carry that one account to the production server. That transfer is the default. It does not publish the profile.
 
+## Closed accounts
+
+`latysheu` is closed. Do not open that profile, do not import it, and do not write to it on Instagram. Report the handle and continue with the others. This does not expire.
+
 ## Input
 
 The rest of the user message is the source list, plus anything the user knows about that account. Accept Instagram profile URLs and bare handles. A bare handle becomes `https://www.instagram.com/{handle}/`. Accept a Threads profile URL (`threads.net` or `threads.com`) as a source for the Instagram account it belongs to. Accept prose facts: name, surname, city, sport, phone, and the rest. Copy those facts onto the account. They fill what the profile does not say. For the name, city, phone, email, Telegram, price, and coaching years, a fact the user states replaces a different value on the page. Sentences and list lines the user writes are the card text. Copy them. Do not retell them and do not add a sentence they did not write.

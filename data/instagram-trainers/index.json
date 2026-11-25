@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T08:08:11.783Z",
+  "updatedAt": "2026-11-24T14:06:44.088Z",
   "profiles": [
     {
       "handle": "embatron.eth",
@@ -6042,22 +6042,6 @@
         "telegram"
       ],
       "file": "data/instagram-trainers/kostya___cf.json"
-    },
-    {
-      "handle": "latysheu",
-      "slug": "latysheu",
-      "fullName": "Алексей Латышев",
-      "primarySport": "Борьба",
-      "city": "Минск",
-      "status": "draft",
-      "missing": [
-        "price",
-        "phone",
-        "email",
-        "telegram",
-        "pinnedPosts"
-      ],
-      "file": "data/instagram-trainers/latysheu.json"
     },
     {
       "handle": "coach.dashaaa",

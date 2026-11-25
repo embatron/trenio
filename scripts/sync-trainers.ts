@@ -7,6 +7,7 @@ import { trainerProfiles } from "../src/db/schema";
 import { writeLog } from "../src/lib/log/logger";
 import { applyTrainerPatch, listTrainerSyncHeads, readTrainerSync } from "../src/lib/sync/apply-card";
 import { applySyncWelcomes } from "../src/lib/sync/apply-welcomes";
+import { isSilentInstagram } from "../src/lib/catalog/instagram-silence";
 import { cleanHandle, isLocalOnlyRow, isLocalOnlyTrainer, localOnlyHandles } from "../src/lib/sync/policy";
 import { fetchTrainerCard, fetchTrainerHeads, fetchWelcomes, pushMarks, pushTrainerPatch } from "../src/lib/sync/remote";
 import { isTrainerStatus, syncMove, type TrainerSyncHead } from "../src/lib/sync/trainers";
@@ -57,7 +58,7 @@ async function main() {
   const live = new Map(remote.trainers.map((row) => asHead(row)).filter((row): row is TrainerSyncHead => Boolean(row)).map((row) => [row.handle, row]));
   const pause = () => new Promise((resolve) => setTimeout(resolve, 2100));
   const handles = [...new Set([...local.keys(), ...live.keys()])]
-    .filter((handle) => !isLocalOnlyTrainer(handle) && !reserved.has(handle))
+    .filter((handle) => !isLocalOnlyTrainer(handle) && !isSilentInstagram(handle) && !reserved.has(handle))
     .sort();
   const counts = { pushed: 0, pulled: 0, status: 0, marks: 0, unchanged: 0 };
   const failed: Array<{ handle: string; reason: string }> = [];

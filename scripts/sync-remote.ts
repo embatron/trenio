@@ -8,6 +8,7 @@ import { and, eq, isNull } from "drizzle-orm";
 import { closeDb, getDb } from "../src/db";
 import type { DraftFile } from "../src/db/import-draft-map";
 import { trainerProfiles } from "../src/db/schema";
+import { isSilentInstagram } from "../src/lib/catalog/instagram-silence";
 import { trainerFileName } from "../src/lib/sync/policy";
 import { pushMarks, pushTrainer } from "../src/lib/sync/remote";
 
@@ -59,6 +60,7 @@ async function pushAllMarks() {
 
 async function pushOneTrainer() {
   if (!handleArg) throw new Error("Pass the Instagram handle.");
+  if (isSilentInstagram(handleArg)) throw new Error("This Instagram account is closed.");
   const file = path.resolve("data/instagram-trainers", `${handleArg}.json`);
   const draft = JSON.parse(readFileSync(file, "utf8")) as DraftFile;
   const files = trainerFiles(draft.handle || handleArg);

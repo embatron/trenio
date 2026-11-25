@@ -1,6 +1,7 @@
 import { closeDb, getDb } from "../src/db/index.ts";
 import { trainerProfiles } from "../src/db/schema/trainer-profiles.ts";
 import { and, asc, eq, isNull } from "drizzle-orm";
+import { isSilentInstagram } from "../src/lib/catalog/instagram-silence.ts";
 import { isLocalOnlyTrainer } from "../src/lib/sync/policy.ts";
 
 async function main() {
@@ -15,7 +16,7 @@ async function main() {
     .orderBy(asc(trainerProfiles.createdAt), asc(trainerProfiles.id));
 
   const list = rows
-    .filter((row) => row.handle.trim() && !isLocalOnlyTrainer(row.handle))
+    .filter((row) => row.handle.trim() && !isLocalOnlyTrainer(row.handle) && !isSilentInstagram(row.handle))
     .map((row) => ({ handle: row.handle, firstName: row.firstName.trim() }));
 
   console.log(JSON.stringify(list));
