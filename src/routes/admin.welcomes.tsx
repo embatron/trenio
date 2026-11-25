@@ -211,11 +211,11 @@ function AdminWelcomesPage() {
           <CabinetFilterBar
             search={(
               <label className="cabinet-filters__search">
-                <span>Поиск</span>
                 <input
                   type="search"
                   value={query}
                   placeholder="Instagram, Telegram, телефон"
+                  aria-label="Поиск"
                   onChange={(event) => setQuery(event.target.value)}
                 />
               </label>
