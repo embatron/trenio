@@ -368,12 +368,12 @@ body.is-search-docked .site-header__search {
 .mega-footer__row {
   display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap;
   padding-block: 8px 12px;
-  font-size: 15px; color: var(--muted); font-weight: var(--fw-ui);
+  font-size: 15px; color: var(--muted); font-weight: var(--fw-body);
 }
 .mega-footer__links { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
 .mega-footer a {
   display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px;
-  border-radius: 999px; color: var(--dark); text-decoration: none; font-weight: var(--fw-title);
+  border-radius: 999px; color: var(--dark); text-decoration: none; font-weight: var(--fw-body);
 }
 .mega-footer a:hover { background: var(--white); color: var(--primary); }
 .mega-footer a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
