@@ -72,4 +72,4 @@
 
 ## Hooks
 
-Automatic hooks are **off**. At the end of a task, run the **`/hooks`** slash command (`.cursor/commands/hooks.md`) — layout grid, icons, PWA audit, mobile audit, docs sync. For a full phone and tablet pass over the latest UI, run **`/mobile-adapt`** (`.cursor/commands/mobile-adapt.md`).
+Automatic hooks are **off**. At the end of a task, run the **`/hooks`** slash command (`.cursor/commands/hooks.md`) — layout grid, icons, PWA audit, mobile audit, docs sync. For a full phone and tablet pass over the latest UI, run **`/mobile-adapt`** (`.cursor/commands/mobile-adapt.md`). To clear the local Vite cache, restart the dev server, and confirm the stylesheet and the white header on scroll, run **`/cache-upd`** (`.cursor/commands/cache-upd.md`).
