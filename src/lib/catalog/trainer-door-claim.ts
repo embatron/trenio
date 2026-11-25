@@ -7,6 +7,7 @@ import { isStandInAccountName } from "@/lib/auth/phone-label";
 import { writeLog } from "@/lib/log/logger";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
 import { stampTrainerPublished } from "@/lib/catalog/trainer-published";
+import { stampTrainerRevision } from "@/lib/catalog/trainer-revision";
 import { grantTrainerVerificationForProfile } from "@/lib/catalog/trainer-verified.server";
 import { publishMessage, staffProof, type TrainerProof } from "@/lib/catalog/trainer-verify-log";
 import { trainerDoorClaimable } from "@/lib/catalog/trainer-door-policy";
@@ -23,14 +24,16 @@ export async function publishConfirmedDraft(
 ) {
   await grantTrainerVerificationForProfile(row.id, proof.via, proof);
   if (row.status !== "draft") return;
-  const updated = await getDb()
-    .update(trainerProfiles)
-    .set({ status: "published", updatedAt: new Date() })
-    .where(and(eq(trainerProfiles.id, row.id), eq(trainerProfiles.status, "draft")))
-    .returning({ id: trainerProfiles.id });
+  const staff = staffProof(proof.via);
+  const updated = await getDb().transaction(async (tx) => {
+    await stampTrainerRevision(tx, staff ? "admin" : "door", proof.actorUserId);
+    return tx.update(trainerProfiles)
+      .set({ status: "published", updatedAt: new Date() })
+      .where(and(eq(trainerProfiles.id, row.id), eq(trainerProfiles.status, "draft")))
+      .returning({ id: trainerProfiles.id });
+  });
   if (updated.length === 0) return;
   await stampTrainerPublished(row.slug);
-  const staff = staffProof(proof.via);
   logTrainerPresence({
     created: false,
     previous: "draft",
@@ -146,18 +149,20 @@ export async function claimDoorAfterGoogle(input: DoorClaimInput): Promise<DoorG
   const now = new Date();
   const email = normalizeEmail(input.email);
   const accountName = doorAccountName(input.created, row);
-  const updated = await db
-    .update(trainerProfiles)
-    .set({
-      ownerUserId: input.userId,
-      claimStatus: "claimed",
-      claimedAt: now,
-      email,
-      emailVerifiedAt: now,
-      updatedAt: now,
-    })
-    .where(and(eq(trainerProfiles.id, row.id), isNull(trainerProfiles.ownerUserId)))
-    .returning({ id: trainerProfiles.id });
+  const updated = await db.transaction(async (tx) => {
+    await stampTrainerRevision(tx, "door", input.userId);
+    return tx.update(trainerProfiles)
+      .set({
+        ownerUserId: input.userId,
+        claimStatus: "claimed",
+        claimedAt: now,
+        email,
+        emailVerifiedAt: now,
+        updatedAt: now,
+      })
+      .where(and(eq(trainerProfiles.id, row.id), isNull(trainerProfiles.ownerUserId)))
+      .returning({ id: trainerProfiles.id });
+  });
   if (updated.length === 0) {
     const [again] = await db
       .select({ ownerUserId: trainerProfiles.ownerUserId })

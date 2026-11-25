@@ -130,6 +130,7 @@ IP берётся из `CF-Connecting-IP` или `X-Real-IP`. Если в зап
 | `geocode_cache`             | Кеш ответов Nominatim: координаты, город, район, улица и код страны. Ключ — нормализованный запрос. См. §4.7 |
 | `app_logs`                  | Операционный журнал: входы, почта, SMS, аккаунт, формы, карта, гео, сообщения, AJAX и необработанные ошибки. Без срока хранения. См. §4.8 |
 | `trainer_journal`           | Постоянный журнал тренера: добавление, обновление импорта, появление в каталоге и снятие, действия с карточкой и с аккаунтом тренера или клуба. Строка не удаляется. Ставит `npm run logs:install`, не `db:push`. См. §4.8 |
+| `trainer_revisions`         | Снимок текста и полей карточки после записи. Не больше 12 строк на карточку. Ставит `npm run trainers:revisions`, не `db:push`. См. §4.8 |
 | `site_texts`                | Тексты страницы «Сайт» (`/admin/site`, пункт внутри «Настройки»): приветствие тренеру и письмо пользователю. Ставит `npm run site:install`, не `db:push`. Пустая или отсутствующая строка — текст из кода |
 
 ### 4.3 Server functions
@@ -264,7 +265,9 @@ IP берётся из `CF-Connecting-IP` или `X-Real-IP`. Если в зап
 
 Верификация (`account.verify` или `admin.trainer_verify`) и публикация (`account.publish` или `admin.trainer_publish`) пишут, кто это сделал и каким каналом: письмо, код, SMS, Telegram, Google, Яндекс, Apple, кабинет или сотрудник. В тексте есть «Сотрудник» или «Не сотрудник». Час и минута — это время строки. Код, ссылка и номер в это сообщение не входят. Повторное подтверждение уже верифицированной карточки новую строку не пишет.
 
-Пишется домен и действие (`auth.login`, `email.send`, `form.review`, `map.area`, `message.send`, `ajax.http`, `system.unhandled` и остальные из навыка), итог (`success`, `failure`, `denied`, `skipped`), короткое сообщение, почта или маска телефона, id аккаунта, цель (slug или id переписки), маршрут, код ошибки и обрезанный stack. IP берётся только из `X-Real-IP`.
+Отдельно от журнала каждая запись `trainer_profiles` оставляет снимок текста и полей карточки в `trainer_revisions`. На карточку хранятся 12 последних снимков, лишние удаляются в той же записи. В снимок не входят токен и путь короткой ссылки. Строка `trainer.revision` в журнале называет источник и ключи полей, без текста «О себе» и без телефона. Разницу между снимками читает только сотрудник, на вкладке «История» страницы `/admin/trainers/$slug`. Таблицу ставит `npm run trainers:revisions`. Первый запуск один раз запоминает текущую карточку, повторный второй снимок не добавляет. `db:push` для этой таблицы не использовать.
+
+Пишется домен и действие (`auth.login`, `email.send`, `form.review`, `map.area`, `message.send`, `ajax.http`, `system.unhandled`, `trainer.revision` и остальные из навыка), итог (`success`, `failure`, `denied`, `skipped`), короткое сообщение, почта или маска телефона, id аккаунта, цель (slug или id переписки), маршрут, код ошибки и обрезанный stack. IP берётся только из `X-Real-IP`.
 
 В журнал не попадают пароль, токен сессии, ссылка сброса, код из SMS или письма, `initData`, cookie и HTML переписки. Текст письма в консоль разработки по-прежнему пишет `AUTH_DEV_LOG_EMAILS`, в базу уходит только факт и тема. Опрос списка и непрочитанного пишется только при сбое. Браузер сообщает свои ошибки и ответы 500 через `reportClientLogsFn`, не больше 20 событий за 5 минут с одного IP.
 
@@ -491,6 +494,7 @@ npm run test:e2e     # Playwright. Сервер можно не гасить: к
 npm run apple:install # apple_sub, apple_email и user_devices, без db:push
 npm run cabinet-link -- <slug> <email> # подтвердить почту и выдать одноразовую ссылку в кабинет
 npm run logs:install # app_logs и trainer_journal, без срока и без db:push
+npm run trainers:revisions # trainer_revisions, 12 снимков карточки, без db:push
 npm run mail:install # mail_messages, mail_reviews, mail_site, mail_marketing в users, без db:push
 npm run logs:check   # дыры console.error и пробная запись
 npm run logs:diagnose -- --level error --hours 24
@@ -559,6 +563,7 @@ npm run format
 | `.cursor/rules/breadcrumbs.mdc` | Последний пункт хлебных крошек — `var(--primary)`; класс `is-current` и `aria-current="page"` |
 | `.cursor/rules/`            | Persistent rules (layout grid, icons, PWA, mobile, stack)             |
 | `.cursor/rules/logging.mdc` | Журналы `app_logs` и `trainer_journal` без срока хранения (`alwaysApply`) |
+| `.cursor/rules/trainer-revisions.mdc` | 12 снимков текста и полей карточки, разница на странице сотрудника (`alwaysApply`) |
 | `.cursor/skills/`           | Workflows: feature dev, PWA audit, mobile audit, docs sync, импорт тренеров из Instagram, журнал, диагностика, тесты, SEO |
 | `.cursor/skills/trenio-logging/` | Запись в `app_logs` и проверка `npm run logs:check` |
 | `.cursor/skills/trenio-sequential-thinking/` | Цепочка sequential-thinking перед большим многошаговым действием, разбором и диагностикой |

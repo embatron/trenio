@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 
 import { ensureAuthSchema } from "@/auth/auth-schema";
 import { getDb } from "@/db";
+import { stampTrainerRevision } from "@/lib/catalog/trainer-revision";
 import { trainerProfiles, userRoles, users } from "@/db/schema";
 import { claimPathFor } from "@/db/trainer-profiles";
 import { prepareCertificateUpload, storeCertificatePreviews } from "@/lib/catalog/certificate-preview.server";
@@ -146,7 +147,9 @@ export async function openManualTrainerAccount(
     }
     const claimToken = randomBytes(32).toString("base64url");
     const now = new Date();
-    const [created] = await db.insert(trainerProfiles).values({
+    const [created] = await db.transaction(async (tx) => {
+      await stampTrainerRevision(tx, "cabinet", user.id);
+      return tx.insert(trainerProfiles).values({
       slug,
       instagramHandle: handle,
       sourceUrl: "https://trenio.by/join/account",
@@ -166,6 +169,7 @@ export async function openManualTrainerAccount(
       ...card,
       ...media,
     }).returning({ id: trainerProfiles.id });
+    });
     const { grantPlainUserLike } = await import("@/lib/catalog/plain-user-like.server");
     await grantPlainUserLike(created.id);
     logTrainerPresence({
@@ -181,11 +185,14 @@ export async function openManualTrainerAccount(
     const { sendTrainerWelcome } = await import("@/lib/messages/welcome");
     await sendTrainerWelcome({ id: user.id, firstName });
   } else if (draft && owned.createdSource === "self") {
-    await db.update(trainerProfiles).set({
-      ...card,
-      ...media,
-      updatedAt: new Date(),
-    }).where(eq(trainerProfiles.id, owned.id));
+    await db.transaction(async (tx) => {
+      await stampTrainerRevision(tx, "cabinet", user.id);
+      await tx.update(trainerProfiles).set({
+        ...card,
+        ...media,
+        updatedAt: new Date(),
+      }).where(eq(trainerProfiles.id, owned.id));
+    });
   }
   await db.insert(userRoles).values({ userId: user.id, role: "trainer" }).onConflictDoNothing();
   const { grantTrainerVerification } = await import("@/lib/catalog/trainer-verified.server");

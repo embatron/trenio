@@ -14,6 +14,7 @@ import { hashPassword, normalizeEmail, validatePasswordStrength } from "@/auth/p
 import { findUserByEmail } from "@/auth/service";
 import { generateSecureToken, hashToken } from "@/auth/tokens";
 import { getDb } from "@/db";
+import { stampTrainerRevision } from "@/lib/catalog/trainer-revision";
 import { authDoorClaims, trainerProfiles, userRoles, users, type TrainerProfile } from "@/db/schema";
 import { renderLetter } from "@/lib/mail/letter";
 import { mailTransportReady, sendMail } from "@/lib/mail/send.server";
@@ -583,7 +584,10 @@ async function saveFromCookie(data: z.infer<typeof cardSchema>, publish: boolean
     status: publish ? "published" as const : data.status,
     updatedAt: new Date(),
   };
-  await getDb().update(trainerProfiles).set(values).where(eq(trainerProfiles.id, row.id));
+  await getDb().transaction(async (tx) => {
+    await stampTrainerRevision(tx, "door", row.ownerUserId);
+    await tx.update(trainerProfiles).set(values).where(eq(trainerProfiles.id, row.id));
+  });
   const { sendWelcomeOnPublish } = await import("@/lib/messages/welcome");
   await sendWelcomeOnPublish({
     previous: row.status,
@@ -917,17 +921,19 @@ async function claimDoorWithPhone(row: {
     avatarPath: trainerProfiles.avatarPath,
     photos: trainerProfiles.photos,
   }).from(trainerProfiles).where(eq(trainerProfiles.id, row.id)).limit(1);
-  const updated = await db
-    .update(trainerProfiles)
-    .set({
-      ownerUserId: created.id,
-      claimStatus: "claimed",
-      claimedAt: now,
-      phone: stored,
-      updatedAt: now,
-    })
-    .where(and(eq(trainerProfiles.id, row.id), isNull(trainerProfiles.ownerUserId)))
-    .returning({ id: trainerProfiles.id });
+  const updated = await db.transaction(async (tx) => {
+    await stampTrainerRevision(tx, "door", created.id);
+    return tx.update(trainerProfiles)
+      .set({
+        ownerUserId: created.id,
+        claimStatus: "claimed",
+        claimedAt: now,
+        phone: stored,
+        updatedAt: now,
+      })
+      .where(and(eq(trainerProfiles.id, row.id), isNull(trainerProfiles.ownerUserId)))
+      .returning({ id: trainerProfiles.id });
+  });
   if (updated.length === 0) {
     await db.delete(users).where(eq(users.id, created.id));
     noteDoorPhoneFault("owned", row.slug, phone);
@@ -1053,8 +1059,9 @@ export const confirmDoorPhoneFn = createServerFn({ method: "POST" })
       user = { ...user, needsPassword, phoneVerifiedAt: user.phoneVerifiedAt ?? now };
     }
 
-    const updated = await db
-      .update(trainerProfiles)
+    const updated = await db.transaction(async (tx) => {
+      await stampTrainerRevision(tx, "door", user.id);
+      return tx.update(trainerProfiles)
       .set({
         ownerUserId: user.id,
         claimStatus: "claimed",
@@ -1068,6 +1075,7 @@ export const confirmDoorPhoneFn = createServerFn({ method: "POST" })
         avatarPath: trainerProfiles.avatarPath,
         photos: trainerProfiles.photos,
       });
+    });
     if (updated.length === 0) throw new AuthError("Ссылка уже не действует.", "VALIDATION");
     await db.insert(userRoles).values({ userId: user.id, role: "trainer" }).onConflictDoNothing();
     await copyCardFaceToAccount(user.id, updated[0].avatarPath, updated[0].photos);

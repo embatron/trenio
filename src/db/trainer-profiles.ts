@@ -11,6 +11,7 @@ import { inferTrainerGender, type TrainerGender } from "@/lib/catalog/trainer-ge
 import { instagramProfileSlug, trainerPersonKey } from "@/lib/catalog/trainer-slugs";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
 import { isSpecificAddress, MAX_TRAINING_PLACES, placesFromProfile } from "@/lib/geo/schemas";
+import { stampTrainerRevision } from "@/lib/catalog/trainer-revision";
 import { getDb } from "./index";
 import { trainerProfiles, users, type TrainerPinnedPost, type TrainerSportRecord } from "./schema";
 
@@ -251,7 +252,10 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
   } as const;
 
   if (existing) {
-    await db.update(trainerProfiles).set(values).where(eq(trainerProfiles.id, existing.id));
+    await db.transaction(async (tx) => {
+      await stampTrainerRevision(tx, "import", null);
+      await tx.update(trainerProfiles).set(values).where(eq(trainerProfiles.id, existing.id));
+    });
     logTrainerPresence({
       created: false,
       previous: existing.status,
@@ -263,10 +267,10 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
     return { id: existing.id, claimPath, created: false };
   }
 
-  const [created] = await db
-    .insert(trainerProfiles)
-    .values(values)
-    .returning({ id: trainerProfiles.id, claimPath: trainerProfiles.claimPath });
+  const [created] = await db.transaction(async (tx) => {
+    await stampTrainerRevision(tx, "import", null);
+    return tx.insert(trainerProfiles).values(values).returning({ id: trainerProfiles.id, claimPath: trainerProfiles.claimPath });
+  });
   const { grantPlainUserLike } = await import("@/lib/catalog/plain-user-like.server");
   await grantPlainUserLike(created.id);
   logTrainerPresence({

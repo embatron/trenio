@@ -35,4 +35,6 @@ Neither journal expires. Do not delete rows by age. `npm run logs:purge` does no
 
 `writeLog` also copies a trainer row into `trainer_journal`: addition (`trainer.add`), an import update (`trainer.sync`), catalog appearance (`trainer.appear`), leaving the catalog (`trainer.withdraw`), profile and claim actions, and auth or account actions when the actor is a trainer or a club. The same redaction rules apply. The staff «Логи» tab reads both tables.
 
+A card's own text and fields are a separate record, `trainer_revisions`, at most 12 snapshots. The journal row for that write is `trainer.revision` and stores field keys, not the bio. See `.cursor/rules/trainer-revisions.mdc`.
+
 Skill: `.cursor/skills/trenio-logging/SKILL.md`. Product contract: `docs/TECH_SPEC.md` §4.8.

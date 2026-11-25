@@ -16,6 +16,7 @@ import { copyCardFaceToAccount } from "@/lib/catalog/account-face";
 import { markLogged, writeLog } from "@/lib/log/logger";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
 import { stampTrainerPublished } from "@/lib/catalog/trainer-published";
+import { stampTrainerRevision } from "@/lib/catalog/trainer-revision";
 import { publishMessage } from "@/lib/catalog/trainer-verify-log";
 import { renderLetter } from "@/lib/mail/letter";
 import { sendMail } from "@/lib/mail/send.server";
@@ -139,10 +140,13 @@ export const setOwnTrainerPageStatusFn = createServerFn({ method: "POST" })
     });
     if (holdsUnverifiedPublish(data.status, ready)) {
       if (!row.publishRequestedAt) {
-        await getDb().update(trainerProfiles).set({
-          publishRequestedAt: new Date(),
-          updatedAt: new Date(),
-        }).where(eq(trainerProfiles.id, row.id));
+        await getDb().transaction(async (tx) => {
+          await stampTrainerRevision(tx, "cabinet", context.user.id);
+          await tx.update(trainerProfiles).set({
+            publishRequestedAt: new Date(),
+            updatedAt: new Date(),
+          }).where(eq(trainerProfiles.id, row.id));
+        });
         void writeLog({
           level: "info",
           domain: "form",
@@ -158,11 +162,14 @@ export const setOwnTrainerPageStatusFn = createServerFn({ method: "POST" })
       return { ok: true as const, status: pageStatusOf(row.status), requested: true as const };
     }
     if (row.status !== data.status) {
-      await getDb().update(trainerProfiles).set({
-        status: data.status,
-        publishRequestedAt: null,
-        updatedAt: new Date(),
-      }).where(eq(trainerProfiles.id, row.id));
+      await getDb().transaction(async (tx) => {
+        await stampTrainerRevision(tx, "cabinet", context.user.id);
+        await tx.update(trainerProfiles).set({
+          status: data.status,
+          publishRequestedAt: null,
+          updatedAt: new Date(),
+        }).where(eq(trainerProfiles.id, row.id));
+      });
       await stampTrainerPublished(row.slug);
     }
     logTrainerPresence({
@@ -224,10 +231,13 @@ export const saveOwnTrainerHeadlineFn = createServerFn({ method: "POST" })
       throw error;
     }
     try {
-      await getDb().update(trainerProfiles).set({
-        headline,
-        updatedAt: new Date(),
-      }).where(eq(trainerProfiles.id, row.id));
+      await getDb().transaction(async (tx) => {
+        await stampTrainerRevision(tx, "cabinet", context.user.id);
+        await tx.update(trainerProfiles).set({
+          headline,
+          updatedAt: new Date(),
+        }).where(eq(trainerProfiles.id, row.id));
+      });
       void writeLog({
         level: "info",
         domain: "form",
@@ -437,10 +447,10 @@ export const setOwnContactHiddenFn = createServerFn({ method: "POST" })
       telegram: { hideTelegram: data.hidden },
       email: { hideEmail: data.hidden },
     }[data.channel];
-    await getDb()
-      .update(trainerProfiles)
-      .set({ ...hidden, updatedAt: new Date() })
-      .where(eq(trainerProfiles.id, row.id));
+    await getDb().transaction(async (tx) => {
+      await stampTrainerRevision(tx, "cabinet", context.user.id);
+      await tx.update(trainerProfiles).set({ ...hidden, updatedAt: new Date() }).where(eq(trainerProfiles.id, row.id));
+    });
     void writeLog({
       level: "info",
       domain: "form",
@@ -563,7 +573,10 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
         values.instagramHandle = existing.instagramHandle;
         values.instagramUrl = existing.instagramUrl;
       }
-      await db.update(trainerProfiles).set(values).where(eq(trainerProfiles.id, existing.id));
+      await db.transaction(async (tx) => {
+        await stampTrainerRevision(tx, "cabinet", context.user.id);
+        await tx.update(trainerProfiles).set(values).where(eq(trainerProfiles.id, existing.id));
+      });
     } else {
       const slugBase = slugify(joinTrainerName(firstName, lastName) || context.user.firstName);
       let slug = slugBase;
@@ -571,17 +584,20 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       if (clash) slug = `${slugBase.slice(0, 14)}-${context.user.id.slice(0, 3)}`.slice(0, 18);
       profileSlug = slug;
       const claimToken = randomBytes(32).toString("base64url");
-      const [created] = await db.insert(trainerProfiles).values({
-        ...values,
-        slug,
-        sourceUrl: data.instagram || `https://trenio.by/trainers/${slug}`,
-        claimStatus: "claimed",
-        createdSource: "self",
-        ownerUserId: context.user.id,
-        claimToken,
-        claimPath: `/trainers/claim/${claimToken}`,
-        claimedAt: new Date(),
-      }).returning({ id: trainerProfiles.id });
+      const [created] = await db.transaction(async (tx) => {
+        await stampTrainerRevision(tx, "cabinet", context.user.id);
+        return tx.insert(trainerProfiles).values({
+          ...values,
+          slug,
+          sourceUrl: data.instagram || `https://trenio.by/trainers/${slug}`,
+          claimStatus: "claimed",
+          createdSource: "self",
+          ownerUserId: context.user.id,
+          claimToken,
+          claimPath: `/trainers/claim/${claimToken}`,
+          claimedAt: new Date(),
+        }).returning({ id: trainerProfiles.id });
+      });
       const { grantPlainUserLike } = await import("@/lib/catalog/plain-user-like.server");
       await grantPlainUserLike(created.id);
     }
@@ -818,11 +834,14 @@ export const saveOwnTrainerContactsFn = createServerFn({ method: "POST" })
     const previous = parseTelegramHandle(existing.telegram);
     const next = parseTelegramHandle(data.telegram);
     const sameTelegram = Boolean(previous && next && previous.toLowerCase() === next.toLowerCase());
-    await getDb().update(trainerProfiles).set({
-      telegram: data.telegram,
-      telegramVerifiedAt: sameTelegram ? existing.telegramVerifiedAt : null,
-      updatedAt: new Date(),
-    }).where(eq(trainerProfiles.id, existing.id));
+    await getDb().transaction(async (tx) => {
+      await stampTrainerRevision(tx, "cabinet", context.user.id);
+      await tx.update(trainerProfiles).set({
+        telegram: data.telegram,
+        telegramVerifiedAt: sameTelegram ? existing.telegramVerifiedAt : null,
+        updatedAt: new Date(),
+      }).where(eq(trainerProfiles.id, existing.id));
+    });
     void writeLog({
       level: "info",
       domain: "form",

@@ -40,6 +40,7 @@
 14. **Phone account** — a confirmed Belarus mobile is a real login. A plain user with no chosen name is signed `+37529.....51`. Screens show `+375298516745` instead of the pending mailbox. The mailbox stays in the database. A real mailbox with no chosen name is signed with the part before `@` (`dasafilon`). See `.cursor/rules/phone-account.mdc`.
 15. **One browser** — every Cursor chat uses the same Google Chrome through `user-playwright`. Do not open a second browser and do not close that window. See `.cursor/rules/browser.mdc`.
 16. **Catalog filters** — option chips stay compact (`4px 12px`, 13px, no 44px minimum) in the sidebar, the collapsed bar, and the open panel, on every viewport. «Для ребёнка» matches children and teenagers together, from the homepage search and from the catalog filters. See `.cursor/rules/catalog-filters.mdc`.
+17. **Trainer revisions** — each card keeps the last 12 snapshots of its text and fields. Staff see the diff on `/admin/trainers/$slug`. See `.cursor/rules/trainer-revisions.mdc`.
 
 ## Stack quick reference
 
@@ -64,6 +65,7 @@
 | `.cursor/skills/trenio-sync-trainers/` | Copy trainer cards, catalog status, and message marks between the laptop and the live site, and copy every trainer application from the live site onto the laptop. The local `test-trener` card stays on the laptop. Command: `/sync-trainers` |
 | `.cursor/skills/trenio-messages/` | Direct messages: who can write, composer, receipts, polling. Rule: `.cursor/rules/messages.mdc` |
 | `.cursor/skills/trenio-logging/` | Operational journal in `app_logs` and `trainer_journal`. Rows are kept. Command: `/logging`. Rule: `.cursor/rules/logging.mdc` |
+| `.cursor/skills/trenio-trainer-revisions/` | Twelve post-images per trainer card and the staff diff. Rule: `.cursor/rules/trainer-revisions.mdc` |
 | `.cursor/skills/trenio-sequential-thinking/` | Ordered pass on the sequential-thinking MCP before a large multi-step action, an analysis, or a diagnosis |
 | `.cursor/skills/trenio-diagnosis/` | Diagnose a failure from `app_logs`. Command: `/diagnosis` |
 | `.cursor/skills/trenio-tests/` | Unit tests plus Playwright, then recommendations. Command: `/tests` |

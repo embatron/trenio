@@ -38,6 +38,7 @@ Every implementation must consider:
 8. **Journal** — write actions and failures to `app_logs` with `writeLog`. See `.cursor/rules/logging.mdc`
 9. **Trainer publish** — only the trainer publishes the profile, from the cabinet. Import and the magic link leave it a draft. See `.cursor/rules/trainer-publish.mdc`
 10. **Catalog filters** — option chips stay compact (`4px 12px`, 13px, no 44px minimum) in the sidebar, the collapsed bar, and the open panel. «Для ребёнка» matches children and teenagers together, from the homepage and from the filters. See `.cursor/rules/catalog-filters.mdc`
+11. **Trainer revisions** — each card keeps 12 post-images of its text and fields. Staff read the diff on the trainer page. See `.cursor/rules/trainer-revisions.mdc`
 
 ## Auth
 

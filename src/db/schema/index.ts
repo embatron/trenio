@@ -2,6 +2,7 @@ export * from "./users";
 export * from "./auth-otp";
 export * from "./auth-security";
 export * from "./trainer-profiles";
+export * from "./trainer-revisions";
 export * from "./trainer-staff-notes";
 export * from "./trainer-profile-views";
 export * from "./trainer-card-impressions";

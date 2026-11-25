@@ -45,6 +45,7 @@ import { popularityChecklist, popularityScore, recentReviewStart } from "@/lib/c
 import { trainerAccountReady } from "@/lib/catalog/trainer-verified";
 import { emptyTrainerInterest, loadTrainerInterest, type TrainerInterest } from "@/lib/catalog/trainer-interest";
 import { ensureTrainerPublishedAt, stampTrainerPublished } from "@/lib/catalog/trainer-published";
+import { listTrainerRevisionViews, stampTrainerRevision, type TrainerRevisionView } from "@/lib/catalog/trainer-revision";
 import { getSportTaxonomyChild, getTopLevelSportCategory, listSecondLevelSports, MAX_TRAINER_SPORTS, trainerSectionBySlug, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
 import { mirrorTrainingPlace, resolveTrainingPlaces } from "@/lib/geo/resolve";
 import { placesFromProfile, placesShape, savedWithMapNotice, type TrainerPlace } from "@/lib/geo/schemas";
@@ -731,10 +732,13 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
     try {
       if (existing) {
         const handle = handleFrom(data.instagram, existing.instagramHandle);
-        await db.update(trainerProfiles).set({
-          ...values,
-          instagramHandle: handle || existing.instagramHandle,
-        }).where(eq(trainerProfiles.id, existing.id));
+        await db.transaction(async (tx) => {
+          await stampTrainerRevision(tx, "admin", context.user.id);
+          await tx.update(trainerProfiles).set({
+            ...values,
+            instagramHandle: handle || existing.instagramHandle,
+          }).where(eq(trainerProfiles.id, existing.id));
+        });
         if (existing.ownerUserId) {
           await db.update(users).set({
             firstName,
@@ -744,19 +748,22 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
         }
       } else {
         const claimToken = randomBytes(32).toString("base64url");
-        const [created] = await db.insert(trainerProfiles).values({
-          ...values,
-          slug: data.slug,
-          instagramHandle: handleFrom(data.instagram, data.slug),
-          sourceUrl: data.instagram || `https://trenio.by/trainers/${data.slug}`,
-          claimStatus: "unclaimed",
-          createdSource: "admin_created",
-          audiences: effectiveAudiences(data.audiences),
-          formats: [...new Set(data.formats)],
-          avatarPath: published?.photo ?? "",
-          claimToken,
-          claimPath: `/trainers/claim/${claimToken}`,
-        }).returning({ id: trainerProfiles.id });
+        const [created] = await db.transaction(async (tx) => {
+          await stampTrainerRevision(tx, "admin", context.user.id);
+          return tx.insert(trainerProfiles).values({
+            ...values,
+            slug: data.slug,
+            instagramHandle: handleFrom(data.instagram, data.slug),
+            sourceUrl: data.instagram || `https://trenio.by/trainers/${data.slug}`,
+            claimStatus: "unclaimed",
+            createdSource: "admin_created",
+            audiences: effectiveAudiences(data.audiences),
+            formats: [...new Set(data.formats)],
+            avatarPath: published?.photo ?? "",
+            claimToken,
+            claimPath: `/trainers/claim/${claimToken}`,
+          }).returning({ id: trainerProfiles.id });
+        });
         const { grantPlainUserLike } = await import("@/lib/catalog/plain-user-like.server");
         await grantPlainUserLike(created.id);
       }
@@ -931,11 +938,14 @@ export const publishUnverifiedTrainerFn = createServerFn({ method: "POST" })
     const wasUnclear = row.status === "draft" && row.doorEnteredAt != null;
     const unclearHold = next === "published" && (wasUnclear || row.unclearHold);
     if (row.status !== next || row.unclearHold !== unclearHold) {
-      await db.update(trainerProfiles).set({
-        status: next,
-        unclearHold,
-        updatedAt: new Date(),
-      }).where(eq(trainerProfiles.id, row.id));
+      await db.transaction(async (tx) => {
+        await stampTrainerRevision(tx, "admin", context.user.id);
+        await tx.update(trainerProfiles).set({
+          status: next,
+          unclearHold,
+          updatedAt: new Date(),
+        }).where(eq(trainerProfiles.id, row.id));
+      });
       if (next === "published") await stampTrainerPublished(row.slug);
       logTrainerPresence({
         created: false,
@@ -1027,6 +1037,7 @@ export type AdminTrainerDetail = {
   certificates: TrainerCertificate[];
   logins: AdminTrainerLogin[];
   logs: AdminTrainerLog[];
+  history: TrainerRevisionView[];
   facts: AdminTrainerFacts;
 };
 
@@ -1277,6 +1288,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         active: login.expiresAt.getTime() > now,
       })),
       logs: mergedLogs,
+      history: await listTrainerRevisionViews(row.id),
       facts: {
         claimStatus: CLAIM_LABEL[row.claimStatus],
         createdSource: SOURCE_LABEL[row.createdSource],
@@ -1321,6 +1333,7 @@ export const addAdminTrainerPhotoFn = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const row = await editableTrainer(data.slug, context.user);
     const saved = await getDb().transaction(async (tx) => {
+      await stampTrainerRevision(tx, "admin", context.user.id);
       const [fresh] = await tx.select().from(trainerProfiles).where(eq(trainerProfiles.id, row.id)).for("update").limit(1);
       if (!fresh) throw new AuthError("Профиль тренера не найден.", "VALIDATION");
       const base = fresh.photos.length > 0 ? fresh.photos : fresh.avatarPath ? [fresh.avatarPath.split("?")[0]] : [];
@@ -1352,11 +1365,14 @@ export const removeAdminTrainerPhotoFn = createServerFn({ method: "POST" })
     }
     await removeTrainerFile(data.slug, target);
     const next = photos.length > 0 ? photos : row.avatarPath === target ? [] : row.photos;
-    await getDb().update(trainerProfiles).set({
-      photos: next,
-      avatarPath: next[0] ?? "",
-      updatedAt: new Date(),
-    }).where(eq(trainerProfiles.id, row.id));
+    await getDb().transaction(async (tx) => {
+      await stampTrainerRevision(tx, "admin", context.user.id);
+      await tx.update(trainerProfiles).set({
+        photos: next,
+        avatarPath: next[0] ?? "",
+        updatedAt: new Date(),
+      }).where(eq(trainerProfiles.id, row.id));
+    });
     await syncOwnerAvatar(row.ownerUserId, next[0] ?? "");
     return { ok: true as const, photos: versioned(next) };
   });
@@ -1375,11 +1391,14 @@ export const reorderAdminTrainerPhotosFn = createServerFn({ method: "POST" })
     const next = data.paths.map((item) => item.split("?")[0]);
     const same = next.length === current.length && [...next].sort().every((item, index) => item === current[index]);
     if (!same) throw new AuthError("Порядок фото не совпадает с сохранёнными файлами.", "VALIDATION");
-    await getDb().update(trainerProfiles).set({
-      photos: next,
-      avatarPath: next[0] ?? "",
-      updatedAt: new Date(),
-    }).where(eq(trainerProfiles.id, row.id));
+    await getDb().transaction(async (tx) => {
+      await stampTrainerRevision(tx, "admin", context.user.id);
+      await tx.update(trainerProfiles).set({
+        photos: next,
+        avatarPath: next[0] ?? "",
+        updatedAt: new Date(),
+      }).where(eq(trainerProfiles.id, row.id));
+    });
     await syncOwnerAvatar(row.ownerUserId, next[0] ?? "");
     return { ok: true as const, photos: versioned(next) };
   });
@@ -1408,7 +1427,10 @@ export const addAdminTrainerCertificateFn = createServerFn({ method: "POST" })
     }
     const stored = await writeTrainerFile(data.slug, "certificates", data.fileName, data.dataUrl);
     const certificates = [...current, { path: stored, caption: data.caption.trim() }];
-    await getDb().update(trainerProfiles).set({ certificates, updatedAt: new Date() }).where(eq(trainerProfiles.id, row.id));
+    await getDb().transaction(async (tx) => {
+      await stampTrainerRevision(tx, "admin", context.user.id);
+      await tx.update(trainerProfiles).set({ certificates, updatedAt: new Date() }).where(eq(trainerProfiles.id, row.id));
+    });
     const shown = versionedCertificates(certificates);
     return { ok: true as const, certificate: shown[shown.length - 1], certificates: shown };
   });
@@ -1424,7 +1446,10 @@ export const updateAdminTrainerCertificateFn = createServerFn({ method: "POST" }
       throw new AuthError("Этот документ уже удалён.", "VALIDATION");
     }
     const certificates = current.map((item) => item.path === target ? { ...item, caption: data.caption.trim() } : item);
-    await getDb().update(trainerProfiles).set({ certificates, updatedAt: new Date() }).where(eq(trainerProfiles.id, row.id));
+    await getDb().transaction(async (tx) => {
+      await stampTrainerRevision(tx, "admin", context.user.id);
+      await tx.update(trainerProfiles).set({ certificates, updatedAt: new Date() }).where(eq(trainerProfiles.id, row.id));
+    });
     return { ok: true as const, certificates: versionedCertificates(certificates) };
   });
 
@@ -1440,7 +1465,10 @@ export const removeAdminTrainerCertificateFn = createServerFn({ method: "POST" }
       throw new AuthError("Этот документ уже удалён.", "VALIDATION");
     }
     await removeTrainerFile(data.slug, target);
-    await getDb().update(trainerProfiles).set({ certificates, updatedAt: new Date() }).where(eq(trainerProfiles.id, row.id));
+    await getDb().transaction(async (tx) => {
+      await stampTrainerRevision(tx, "admin", context.user.id);
+      await tx.update(trainerProfiles).set({ certificates, updatedAt: new Date() }).where(eq(trainerProfiles.id, row.id));
+    });
     return { ok: true as const, certificates: versionedCertificates(certificates) };
   });
 

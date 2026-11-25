@@ -41,6 +41,7 @@ npm run preview
 npm run lint
 npm run test
 npm run logs:install
+npm run trainers:revisions # 12 снимков карточки тренера, без db:push
 npm run mail:install # колонки писем в users, без db:push
 npm run site:install # тексты писем и Instagram в site_texts, без db:push
 ```

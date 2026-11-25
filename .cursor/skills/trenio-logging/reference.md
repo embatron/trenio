@@ -67,6 +67,7 @@
 | `catalog.share` | The messenger card could not be drawn. A missing trainer photo or category picture is a 404 and is not stored |
 | `catalog.claim` | Welcome-link side effect failed |
 | `system.ready` / `system.unhandled` / `system.ssr` / `system.purge` / `system.probe` | Process and unhandled errors |
+| `trainer.revision` | A trainer card's watched text or fields changed. The message names the source. Context stores field keys, not the bio, a phone, or a token. The snapshot is `trainer_revisions`, capped at 12 per card |
 | `system.image` | TinyPNG failed while storing an upload. The original sharp file is kept. The API key is not stored |
 | `ajax.http` / `ajax.network` | Browser fetch failure |
 | `client.error` / `client.rejection` / `client.boundary` | Browser exception |
@@ -84,6 +85,7 @@
 | Blank 500 page | `src/start.ts`, `src/server.ts` |
 | Browser error with no server row | `src/lib/log/client-reporter.ts` |
 | Staff «Логи» tab | `src/lib/log/journal.ts` |
+| Staff «История» tab | `src/lib/catalog/trainer-revision.ts`. Snapshots, not this journal |
 
 ## Redaction
 

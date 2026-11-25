@@ -5,6 +5,7 @@ import { and, eq, ne, or } from "drizzle-orm";
 import { hashPassword, normalizeEmail } from "@/auth/password";
 import { findUserByEmail } from "@/auth/service";
 import { getDb } from "@/db";
+import { stampTrainerRevision } from "@/lib/catalog/trainer-revision";
 import { trainerProfiles, userRoles, users } from "@/db/schema";
 import { AuthError } from "@/lib/auth/errors";
 import type { ConfirmedMailbox } from "@/lib/catalog/cabinet-entry-state";
@@ -88,13 +89,16 @@ export async function claimConfirmedMailbox(slugOrHandle: string, rawEmail: stri
     await attachDoorProfile(row.id, user.id, email);
     attached = true;
   } else {
-    await db.update(trainerProfiles).set({
-      email,
-      emailVerifiedAt: row.emailVerifiedAt ?? now,
-      claimStatus: "claimed",
-      claimedAt: row.claimedAt ?? now,
-      updatedAt: now,
-    }).where(eq(trainerProfiles.id, row.id));
+    await db.transaction(async (tx) => {
+      await stampTrainerRevision(tx, "door", user.id);
+      await tx.update(trainerProfiles).set({
+        email,
+        emailVerifiedAt: row.emailVerifiedAt ?? now,
+        claimStatus: "claimed",
+        claimedAt: row.claimedAt ?? now,
+        updatedAt: now,
+      }).where(eq(trainerProfiles.id, row.id));
+    });
     await db.insert(userRoles).values({ userId: user.id, role: "trainer" }).onConflictDoNothing();
   }
 

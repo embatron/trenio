@@ -1,6 +1,7 @@
 import { and, eq } from "drizzle-orm";
 
 import { getDb } from "@/db";
+import { stampTrainerRevision } from "@/lib/catalog/trainer-revision";
 import { trainerProfiles } from "@/db/schema";
 import { writeLog } from "@/lib/log/logger";
 import { staffProof, verificationMessage, type TrainerProof } from "@/lib/catalog/trainer-verify-log";
@@ -14,11 +15,13 @@ export async function grantTrainerVerification(
   const id = ownerUserId.trim();
   if (!id) return;
   const staff = staffProof(via);
-  const updated = await getDb()
-    .update(trainerProfiles)
-    .set({ verified: true, unclearHold: false })
-    .where(and(eq(trainerProfiles.ownerUserId, id), eq(trainerProfiles.verified, false)))
-    .returning({ slug: trainerProfiles.slug });
+  const updated = await getDb().transaction(async (tx) => {
+    await stampTrainerRevision(tx, staff ? "admin" : "door", proof?.actorUserId ?? id);
+    return tx.update(trainerProfiles)
+      .set({ verified: true, unclearHold: false })
+      .where(and(eq(trainerProfiles.ownerUserId, id), eq(trainerProfiles.verified, false)))
+      .returning({ slug: trainerProfiles.slug });
+  });
   for (const row of updated) {
     void writeLog({
       level: "info",
@@ -40,11 +43,14 @@ export async function grantTrainerVerificationForProfile(
   via: TrainerProof,
   proof?: { actorUserId?: string | null; subject?: string | null },
 ) {
-  const updated = await getDb()
-    .update(trainerProfiles)
-    .set({ verified: true, unclearHold: false })
-    .where(and(eq(trainerProfiles.id, profileId), eq(trainerProfiles.verified, false)))
-    .returning({ slug: trainerProfiles.slug, ownerUserId: trainerProfiles.ownerUserId });
+  const staff = staffProof(via);
+  const updated = await getDb().transaction(async (tx) => {
+    await stampTrainerRevision(tx, staff ? "admin" : "door", proof?.actorUserId ?? null);
+    return tx.update(trainerProfiles)
+      .set({ verified: true, unclearHold: false })
+      .where(and(eq(trainerProfiles.id, profileId), eq(trainerProfiles.verified, false)))
+      .returning({ slug: trainerProfiles.slug, ownerUserId: trainerProfiles.ownerUserId });
+  });
   for (const row of updated) {
     const staff = staffProof(via);
     void writeLog({

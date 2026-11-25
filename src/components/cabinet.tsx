@@ -889,6 +889,23 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-tabs { display: flex; gap: 4px; overflow-x: auto; padding: 8px 12px; border-bottom: 1px solid var(--line); }
 .cabinet-tabs button { flex: 0 0 auto; min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: var(--text); font: inherit; font-size: 14px; font-weight: var(--fw-title); cursor: pointer; }
 .cabinet-tabs button[aria-selected="true"] { background: rgba(var(--primary-rgb), 0.12); color: var(--primary); }
+.trainer-history { display: grid; gap: 10px; }
+.trainer-history__item { border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); }
+.trainer-history__item summary { min-height: 44px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 8px 14px; cursor: pointer; font-size: 14px; line-height: 1.3; }
+.trainer-history__item summary::-webkit-details-marker { display: none; }
+.trainer-history__when { font-weight: var(--fw-title); }
+.trainer-history__meta { color: var(--muted); }
+.trainer-history__body { display: grid; gap: 12px; padding: 0 14px 14px; }
+.trainer-history__note { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.4; }
+.trainer-history__change { display: grid; gap: 4px; }
+.trainer-history__label { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.3; }
+.trainer-history__before,
+.trainer-history__after { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; line-height: 1.4; }
+.trainer-history__before span,
+.trainer-history__after span { display: block; color: var(--muted); font-size: 12px; line-height: 1.3; }
+.trainer-history__before { color: var(--muted); }
+.trainer-history__before.is-long,
+.trainer-history__after.is-long { max-height: 240px; overflow: auto; }
 .cabinet-facts { display: grid; gap: 14px; margin: 0; padding: 16px 18px; }
 .cabinet-facts div { display: grid; gap: 2px; }
 .cabinet-facts dt { color: var(--muted); font-size: 13px; font-weight: var(--fw-title); }

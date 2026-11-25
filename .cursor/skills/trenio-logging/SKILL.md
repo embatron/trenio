@@ -39,6 +39,10 @@ A new `console.error` or `console.warn` in `src/` must sit in a file that import
 
 `/admin/accounts/$id` and `/admin/trainers/$slug` merge these rows and `trainer_journal` into the «Логи» tab (`listActorJournal`). The tab does not show `stack` or `context`. `/diagnosis` reads `app_logs`.
 
+## Trainer card text
+
+A change to the card itself is a row in `trainer_revisions`, not a substitute for this journal. The journal line is `trainer.revision`: source and field keys, no bio and no phone. The diff is the staff «История» tab. Skill: `.cursor/skills/trenio-trainer-revisions/`.
+
 ## After a schema or domain change
 
 Update `docs/TECH_SPEC.md` §4.8 and this skill's [reference.md](reference.md). Do not add a foreign key from `actor_user_id` to `users`.

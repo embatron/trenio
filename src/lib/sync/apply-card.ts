@@ -10,6 +10,7 @@ import { trainerProfiles } from "@/db/schema";
 import { isSilentInstagram } from "@/lib/catalog/instagram-silence";
 import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
 import { stampTrainerPublished } from "@/lib/catalog/trainer-published";
+import { stampTrainerRevision } from "@/lib/catalog/trainer-revision";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
 import { writeLog } from "@/lib/log/logger";
 
@@ -253,17 +254,20 @@ export async function applyTrainerPatch(patch: TrainerPatch, files: IncomingFile
       .limit(1);
     const slug = taken ? handle : patch.card.slug;
     const claimToken = randomBytes(32).toString("base64url");
-    const [created] = await db.insert(trainerProfiles).values({
-      ...contentValues({ ...patch.card, slug }),
-      instagramHandle: handle,
-      status: patch.status,
-      claimToken,
-      claimPath: claimPathFor(claimToken),
-      outreachSentAt: iso(patch.outreachSentAt) ? new Date(patch.outreachSentAt as string) : null,
-      inviteSentAt: iso(patch.inviteSentAt) ? new Date(patch.inviteSentAt as string) : null,
-      doorEnteredAt: acceptSyncedDoor() && iso(patch.doorEnteredAt) ? new Date(patch.doorEnteredAt as string) : null,
-      updatedAt: new Date(patch.updatedAt),
-    }).returning({ id: trainerProfiles.id });
+    const [created] = await db.transaction(async (tx) => {
+      await stampTrainerRevision(tx, "sync", null);
+      return tx.insert(trainerProfiles).values({
+        ...contentValues({ ...patch.card, slug }),
+        instagramHandle: handle,
+        status: patch.status,
+        claimToken,
+        claimPath: claimPathFor(claimToken),
+        outreachSentAt: iso(patch.outreachSentAt) ? new Date(patch.outreachSentAt as string) : null,
+        inviteSentAt: iso(patch.inviteSentAt) ? new Date(patch.inviteSentAt as string) : null,
+        doorEnteredAt: acceptSyncedDoor() && iso(patch.doorEnteredAt) ? new Date(patch.doorEnteredAt as string) : null,
+        updatedAt: new Date(patch.updatedAt),
+      }).returning({ id: trainerProfiles.id });
+    });
     const { grantPlainUserLike } = await import("@/lib/catalog/plain-user-like.server");
     await grantPlainUserLike(created.id);
     await stampTrainerPublished(slug);
@@ -320,7 +324,10 @@ export async function applyTrainerPatch(patch: TrainerPatch, files: IncomingFile
   if (door) values.doorEnteredAt = door;
 
   if (Object.keys(values).length > 0) {
-    await db.update(trainerProfiles).set(values).where(eq(trainerProfiles.id, existing.id));
+    await db.transaction(async (tx) => {
+      await stampTrainerRevision(tx, "sync", null);
+      await tx.update(trainerProfiles).set(values).where(eq(trainerProfiles.id, existing.id));
+    });
     await stampTrainerPublished(existing.slug);
     if (values.status && values.status !== existing.status) {
       logTrainerPresence({

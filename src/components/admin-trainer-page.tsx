@@ -40,6 +40,7 @@ const TABS = [
   { id: "profile", label: "Профиль" },
   { id: "logins", label: "Входы" },
   { id: "logs", label: "Логи" },
+  { id: "history", label: "История" },
   { id: "facts", label: "Данные" },
 ] as const;
 
@@ -406,6 +407,41 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
           </div>
           <TablePager page={logs.page} pages={logs.pages} total={logs.total} from={logs.from} to={logs.to} onPage={logs.setPage} />
           </>
+        )
+      ) : null}
+      {tab === "history" ? scrollTab(
+        detail.history.length === 0 ? (
+          <p className="cabinet-empty">Изменений пока нет.</p>
+        ) : (
+          <div className="trainer-history">
+            {detail.history.map((item, index) => (
+              <details key={item.id} className="trainer-history__item" open={index === 0}>
+                <summary>
+                  <span className="trainer-history__when">{formatWhen(item.at)}</span>
+                  <span>{item.actor}</span>
+                  <span className="trainer-history__meta">{item.sourceLabel}</span>
+                </summary>
+                <div className="trainer-history__body">
+                  {item.note ? <p className="trainer-history__note">{item.note}</p> : null}
+                  {item.changes.map((change) => (
+                    <div key={change.key} className="trainer-history__change">
+                      <p className="trainer-history__label">{change.label}</p>
+                      {change.before ? (
+                        <p className={change.long ? "trainer-history__before is-long" : "trainer-history__before"}>
+                          <span>Было</span>
+                          {change.before}
+                        </p>
+                      ) : null}
+                      <p className={change.long ? "trainer-history__after is-long" : "trainer-history__after"}>
+                        <span>Стало</span>
+                        {change.after || "—"}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </details>
+            ))}
+          </div>
         )
       ) : null}
       {tab === "facts" ? scrollTab(
