@@ -142,7 +142,27 @@ const PAGE_MODE_LABEL: Record<OwnProfileStatus, string> = {
   archived: "Снята с публикации",
 };
 
-export function PageStatusCard({ status }: { status: PageStatus }) {
+export function PageStatusCard({
+  status,
+  verified,
+  emailVerified,
+  phoneVerified,
+  publishAsked,
+}: {
+  status: PageStatus;
+  verified: boolean;
+  emailVerified: boolean;
+  phoneVerified: boolean;
+  publishAsked: boolean;
+}) {
+  const trusted = trainerAccountReady({
+    verified,
+    emailVerifiedAt: emailVerified ? "yes" : null,
+    phoneVerifiedAt: phoneVerified ? "yes" : null,
+  });
+  const chosen: OwnProfileStatus | PageStatus = publishAsked && status !== "published" && status !== "hidden" && status !== "archived" && status !== "declined"
+    ? "published"
+    : status;
   const router = useRouter();
   const saveStatus = useAuthServerFn(setOwnTrainerPageStatusFn);
   const [pending, setPending] = useState(false);
@@ -157,7 +177,7 @@ export function PageStatusCard({ status }: { status: PageStatus }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [asked, pending]);
   function ask(next: OwnProfileStatus) {
-    if (pending || next === status) return;
+    if (pending || next === chosen) return;
     setAsked(next);
   }
   function apply() {
@@ -186,7 +206,7 @@ export function PageStatusCard({ status }: { status: PageStatus }) {
         <legend>Режим страницы</legend>
         <div className="publish-pick__row" role="group" aria-label="Режим страницы">
           {OWN_PROFILE_STATUSES.map((mode) => {
-            const on = status === mode;
+            const on = chosen === mode;
             return (
               <label key={mode} className={`publish-pick__option is-${mode}${on ? " is-on" : ""}`}>
                 <input type="checkbox" checked={on} onChange={() => ask(mode)} />
@@ -198,14 +218,25 @@ export function PageStatusCard({ status }: { status: PageStatus }) {
         </div>
       </fieldset>
       )}
+      {publishAsked ? (
+        <p className="cabinet-note">Вы согласились на публикацию. В каталог страницу поставит сотрудник: аккаунт ещё не подтверждён.</p>
+      ) : null}
       {asked ? (
         <CabinetModal onClick={() => { if (!pending) setAsked(null); }}>
           <div className="cabinet-modal__card" role="dialog" aria-modal="true" aria-labelledby="page-status-title" onClick={(event) => event.stopPropagation()}>
-            <h2 id="page-status-title">Сохранить статус?</h2>
-            <p>Страница станет «{PAGE_MODE_LABEL[asked]}». В каталоге она {asked === "published" ? "будет видна" : "не будет видна"}.</p>
+            <h2 id="page-status-title">{asked === "published" && !trusted ? "Опубликовать аккаунт?" : "Сохранить статус?"}</h2>
+            <p>
+              {asked === "published" && !trusted
+                ? "Аккаунт не подтверждён. В каталог его может поставить только сотрудник. Согласны?"
+                : `Страница станет «${PAGE_MODE_LABEL[asked]}». В каталоге она ${asked === "published" ? "будет видна" : "не будет видна"}.`}
+            </p>
             <div className="cabinet-modal__actions">
-              <button type="button" onClick={apply} disabled={pending}>{pending ? "Сохранение…" : "Сохранить"}</button>
-              <button type="button" className="cabinet-form__ghost" onClick={() => setAsked(null)} disabled={pending}>Отмена</button>
+              <button type="button" onClick={apply} disabled={pending}>
+                {pending ? "Сохранение…" : asked === "published" && !trusted ? "Да" : "Сохранить"}
+              </button>
+              <button type="button" className="cabinet-form__ghost" onClick={() => setAsked(null)} disabled={pending}>
+                {asked === "published" && !trusted ? "Нет" : "Отмена"}
+              </button>
             </div>
           </div>
         </CabinetModal>

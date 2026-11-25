@@ -1,6 +1,8 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 
+import { AccountSeal } from "@/components/account-seal";
+import { UnverifiedPublish } from "@/components/admin-unverified-publish";
 import { CabinetModal } from "@/components/cabinet";
 
 import { TablePager, useTablePage } from "@/components/table-pager";
@@ -22,6 +24,7 @@ import {
   TRAINER_PAGE_STATUSES,
   TRAINER_PUBLISH_LABEL,
   TRAINER_STAFF_STATUSES,
+  staysUnclear,
   type AdminTrainer,
   type AdminTrainerDetail,
   type TrainerPublishStatus,
@@ -224,12 +227,15 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
                 «На модерации» и «Отказались» ставит сотрудник. «Активные» — это опубликованные карточки.
                 «Непонятные» — заход уже был, а страница всё ещё на модерации.
               </p>
-              {draft.status === "draft" && detail.trainer.doorEnteredAt ? (
+              {staysUnclear(draft) ? (
                 <p className="cabinet-note">Сейчас карточка в списке «Непонятные».</p>
               ) : null}
             </label>
             <label>
-              <span>Верификация</span>
+              <span className="cabinet-verify-label">
+                Верификация
+                <AccountSeal trusted={draft.trusted} className="cabinet-verify__seal" />
+              </span>
               <select
                 value={draft.verified ? "yes" : "no"}
                 onChange={(event) => setField("verified", event.target.value === "yes")}
@@ -239,6 +245,11 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
               </select>
               <p className="cabinet-note">Включается сама, когда тренер подтверждает почту или телефон. Сотрудник может поставить её вручную.</p>
             </label>
+            <UnverifiedPublish
+              slug={draft.slug}
+              published={draft.status === "published" && !draft.trusted}
+              enabled={!draft.trusted && draft.status !== "declined"}
+            />
           </>
         )}
       />

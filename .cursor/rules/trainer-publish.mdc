@@ -11,7 +11,7 @@ An imported profile stays `draft` until the trainer confirms a mailbox or a Bela
 
 The two confirmation channels are a mailbox and a Belarus mobile. They work as either-or. One confirmed channel activates the account. Both may be confirmed later; that does not replace the first.
 
-The admin trainer lists (`/admin/trainers`, drafts, active, unclear, declined) column «Аккаунт» shows only the value that first confirmed the account: the mailbox or the Belarus mobile, with no «Почта» or «Телефон» label. When both are confirmed later, the earlier one stays. No account yet is «Аккаунт не создан». An account with neither channel confirmed is «не подтверждён».
+The admin trainer lists are tabs on `/admin/trainers` (the whole list, drafts, active, unclear, declined). Old paths redirect there. The column «Аккаунт» shows only the value that first confirmed the account: the mailbox or the Belarus mobile, with no «Почта» or «Телефон» label. When both are confirmed later, the earlier one stays. No account yet is «Аккаунт не создан». An account with neither channel confirmed is «не подтверждён».
 
 Import, a server copy, the short-link visit, and the password step do not publish it. The confirmed mailbox or the confirmed mobile does.
 
@@ -22,6 +22,7 @@ Import, a server copy, the short-link visit, and the password step do not publis
 - Keep the mailbox letter alive for 24 hours. A newer letter retires the previous unused one. A dead open is a warn row on `account.claim` (`missing`, `used`, `expired`, `owned`, or `closed`) and stores no link.
 - Leave the account window on the short link until the card has an owner.
 - Let the trainer set the page to hidden in the cabinet.
+- When the account is not confirmed, «Опубликована» plus «Да» only stores the request. Only staff (`admin` or `superadmin`) publish that card, from the switch beside «Публик.» on `/admin/trainers`. The server function refuses every other role. The popup asks first. The page becomes published and the seal stays gray. If the card was on «Непонятные», it stays on that tab. Turning the switch off returns it to unpublished. Confirmation clears that hold. A trainer, a club, and a plain user cannot set the status or the hold.
 
 ## Do not
 

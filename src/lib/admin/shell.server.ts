@@ -22,7 +22,21 @@ async function countTrainerSlices(): Promise<{ draftsOpen: number; publishedCoun
     .select({
       draftsOpen: sql<number>`count(*) filter (where ${trainerProfiles.status} = 'draft' and ${trainerProfiles.doorEnteredAt} is null)`,
       publishedCount: sql<number>`count(*) filter (where ${trainerProfiles.status} = 'published')`,
-      unclearCount: sql<number>`count(*) filter (where ${trainerProfiles.status} = 'draft' and ${trainerProfiles.doorEnteredAt} is not null)`,
+      unclearCount: sql<number>`count(*) filter (where
+        (${trainerProfiles.status} = 'draft' and ${trainerProfiles.doorEnteredAt} is not null)
+        or (
+          ${trainerProfiles.unclearHold} = true
+          and ${trainerProfiles.status} = 'published'
+          and not (
+            ${trainerProfiles.verified} = true
+            and exists (
+              select 1 from users as account
+              where account.id = ${trainerProfiles.ownerUserId}
+                and (account.email_verified_at is not null or account.phone_verified_at is not null)
+            )
+          )
+        )
+      )`,
       declinedCount: sql<number>`count(*) filter (where ${trainerProfiles.status} = 'declined')`,
     })
     .from(trainerProfiles);

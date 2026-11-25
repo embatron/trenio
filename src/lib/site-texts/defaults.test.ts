@@ -59,19 +59,27 @@ test("a changed instagram text is what gets copied, with the door link", () => {
   assert.match(text, /https:\/\/trenio\.by\/hi\/k4n8pq2w/);
 });
 
-test("the first outreach message does not carry the short link", () => {
-  assert.match(DEFAULT_INSTAGRAM_MESSAGE, /^\{hello\}/);
+test("the first outreach message asks to publish the prepared page", () => {
+  assert.match(DEFAULT_INSTAGRAM_MESSAGE, /^\{hello\} 👋/);
   assert.equal(outreachHello("Анна"), "Анна, добрый день!");
   assert.equal(outreachHello("  "), "Добрый день!");
   assert.match(DEFAULT_INSTAGRAM_MESSAGE, /trenio by/);
   assert.equal(DEFAULT_INSTAGRAM_MESSAGE.includes(OUTREACH_SITE_LINK), false);
+  assert.equal(DEFAULT_INSTAGRAM_MESSAGE.includes("—"), false);
+  assert.equal(DEFAULT_INSTAGRAM_MESSAGE.includes("–"), false);
   const linked = outreachWithSiteLink(DEFAULT_INSTAGRAM_MESSAGE.replaceAll("{hello}", outreachHello("Анна")));
-  assert.match(linked, /^Анна, добрый день!/);
-  assert.match(linked, /https:\/\/trenio\.by/);
+  assert.match(linked, /^Анна, добрый день! 👋/);
+  assert.match(linked, /проект https:\/\/trenio\.by, чтобы людям в Беларуси было проще находить тренеров/);
+  assert.match(linked, /уже подготовили для вас страницу по информации из Instagram, но пока не публиковали её/);
+  assert.match(linked, /Если вы не против, то мы бесплатно разместим страницу в каталоге/);
+  assert.match(linked, /Можно разместить\?/);
   assert.equal(linked.includes("trenio by"), false);
   assert.equal(linked.includes("/hi/"), false);
   assert.equal(DEFAULT_INSTAGRAM_MESSAGE.includes("{doorUrl}"), false);
   assert.equal(outreachTemplate("{hello}\n{doorUrl}"), DEFAULT_INSTAGRAM_MESSAGE);
+  assert.equal(outreachTemplate("{hello}\nПодскажите, было бы вам интересно такое предложение?"), DEFAULT_INSTAGRAM_MESSAGE);
+  assert.equal(resolvedSiteText("instagram_message", "{hello}\nМы развиваем trenio by и единую базу."), DEFAULT_INSTAGRAM_MESSAGE);
+  assert.equal(outreachTemplate("{hello}\nМожно разместить вашу страницу?"), "{hello}\nМожно разместить вашу страницу?");
 });
 
 test("the application letter substitutes the given name and that trainer's short link", () => {

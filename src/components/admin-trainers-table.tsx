@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 
+import { AccountSeal } from "@/components/account-seal";
+import { UnverifiedPublish } from "@/components/admin-unverified-publish";
 import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
 import { CabinetFilterBar } from "@/components/cabinet";
 import { STAR_PATH } from "@/components/review-stars";
@@ -9,7 +11,7 @@ import { TrainerName } from "@/components/trainer-name";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { confirmedAccountValue } from "@/lib/admin/account-channel";
 import { adminSearchTokens } from "@/lib/instagram/account-query";
-import { TRAINER_PUBLISH_LABEL, type AdminTrainer } from "@/lib/admin/trainers";
+import { TRAINER_PUBLISH_LABEL, staysUnclear, type AdminTrainer } from "@/lib/admin/trainers";
 import { TrainerEditDialog } from "@/components/admin-trainer-page";
 import { issueTrainerInviteFn, markTrainerInviteSentFn } from "@/lib/catalog/trainer-magic";
 import { authErrorMessage } from "@/lib/auth/errors";
@@ -26,6 +28,17 @@ const TRAINER_PAGE_SIZE = 20;
 type TrainerPublishTab = "unpublished" | "published";
 type TrainerSort = "date-desc" | "date-asc" | "reviews" | "rating" | "popularity" | "link" | "visit" | "seen";
 type TrainerList = "all" | "unvisited" | "published" | "unclear" | "declined";
+type TrainerStatusFilter = "" | "published" | "hidden" | "archived" | "moderation" | "unclear" | "declined";
+
+const STATUS_FILTERS: Array<{ id: TrainerStatusFilter; label: string }> = [
+  { id: "", label: "Все статусы" },
+  { id: "published", label: "Опубликована" },
+  { id: "hidden", label: "Скрыта" },
+  { id: "archived", label: "Снята с публикации" },
+  { id: "moderation", label: "На модерации" },
+  { id: "unclear", label: "Непонятные" },
+  { id: "declined", label: "Отказались" },
+];
 
 const dateFormat = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short", year: "numeric" });
 const addedFormat = new Intl.DateTimeFormat("en-GB", {
@@ -139,8 +152,7 @@ function categoryParents(slugs: string[]) {
 function categoryLabels(slugs: string[]) {
   return categoryParents(slugs)
     .map((parent) => getTopLevelSportCategory(parent)?.label ?? "")
-    .filter(Boolean)
-    .join(", ");
+    .filter(Boolean);
 }
 
 function audienceLabels(audiences: TrainerAudience[]) {
@@ -310,7 +322,7 @@ function searchHaystack(trainer: AdminTrainer) {
     trainer.about,
     trainer.sports,
     sports.join(" "),
-    categoryLabels(trainer.sportSlugs),
+    categoryLabels(trainer.sportSlugs).join(" "),
     trainer.city,
     trainer.district,
     trainer.places.map((place) => placeLine(place)).join(" "),
@@ -381,7 +393,14 @@ function sortTrainers(rows: AdminTrainer[], sort: TrainerSort, when: "added" | "
 }
 
 function isUnclearTrainer(trainer: AdminTrainer) {
-  return trainer.status === "draft" && Boolean(trainer.doorEnteredAt);
+  return staysUnclear(trainer);
+}
+
+function matchesStatus(trainer: AdminTrainer, status: TrainerStatusFilter) {
+  if (!status) return true;
+  if (status === "moderation") return isDraftTrainer(trainer);
+  if (status === "unclear") return isUnclearTrainer(trainer);
+  return trainer.status === status;
 }
 
 function isDraftTrainer(trainer: AdminTrainer) {
@@ -430,6 +449,7 @@ export function AdminTrainersTable({
   const [city, setCity] = useState("");
   const [format, setFormat] = useState<"" | TrainerFormat>("");
   const [audience, setAudience] = useState<"" | TrainerAudience>("");
+  const [statusFilter, setStatusFilter] = useState<TrainerStatusFilter>("");
   const [link, setLink] = useState<"" | "sent" | "unsent">("");
   const [visit, setVisit] = useState<"" | "yes" | "no">("");
   const [sort, setSort] = useState<TrainerSort>("date-desc");
@@ -448,6 +468,7 @@ export function AdminTrainersTable({
       if (city && trainer.city !== city) return false;
       if (format && !trainer.formats.includes(format)) return false;
       if (audience && !trainer.audiences.includes(audience)) return false;
+      if (!matchesStatus(trainer, statusFilter)) return false;
       if (link === "sent" && !trainer.inviteSentAt) return false;
       if (link === "unsent" && trainer.inviteSentAt) return false;
       if (visit === "yes" && !trainer.doorEnteredAt) return false;
@@ -476,10 +497,11 @@ export function AdminTrainersTable({
       published,
       widened: tokens.length > 0 && rows.length > narrowed.length,
     };
-  }, [patched, listed, list, publishTab, query, category, sport, city, format, audience, link, visit, sort]);
+  }, [patched, listed, list, publishTab, query, category, sport, city, format, audience, statusFilter, link, visit, sort]);
   const searching = query.trim().length > 0;
+  const statusLocked = statusFilter !== "";
   const single = list === "unvisited" || list === "unclear" || list === "declined";
-  const visible = searching
+  const visible = searching || statusLocked
     ? sortTrainers(visibleBuckets.unpublished.concat(visibleBuckets.published), sort, list === "published" ? "activated" : "added")
     : list === "published"
       ? visibleBuckets.published
@@ -493,7 +515,7 @@ export function AdminTrainersTable({
           : visibleBuckets.unpublished;
   const pager = useTablePage(
     visible,
-    `${query}|${category}|${sport}|${city}|${format}|${audience}|${link}|${visit}|${sort}|${publishTab}`,
+    `${query}|${category}|${sport}|${city}|${format}|${audience}|${statusFilter}|${link}|${visit}|${sort}|${publishTab}`,
     TRAINER_PAGE_SIZE,
   );
 
@@ -537,7 +559,7 @@ export function AdminTrainersTable({
             />
           </label>
         )}
-        active={[category, sport, city, format, audience, link, visit].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}
+        active={[category, sport, city, format, audience, statusFilter, link, visit].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}
       >
         <label>
           <span>Категория</span>
@@ -580,6 +602,14 @@ export function AdminTrainersTable({
             <option value="">Все типы</option>
             {TRAINER_FORMAT_OPTIONS.map((item) => (
               <option key={item.id} value={item.id}>{item.label}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <span>Статус</span>
+          <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as TrainerStatusFilter)}>
+            {STATUS_FILTERS.map((item) => (
+              <option key={item.id || "all"} value={item.id}>{item.label}</option>
             ))}
           </select>
         </label>
@@ -637,9 +667,9 @@ export function AdminTrainersTable({
                 <th className="is-index" aria-label="Номер">№</th>
                 <th className="is-person">Тренер</th>
                 <th>Действия</th>
-                <th>Ссылка</th>
                 <th>Заход</th>
-                <th>Публикация</th>
+                <th title="Публикация">Публик.</th>
+                <th title="Верификация">Вериф.</th>
                 <th className="is-contacts">Контакты</th>
                 <th className="is-category">Категория</th>
                 <th>Город</th>
@@ -678,11 +708,30 @@ export function AdminTrainersTable({
                       </button>
                     </div>
                   </td>
-                  <td><FlagMark at={trainer.inviteSentAt} sent="Ссылка отправлена" waiting="Ссылка не отправлена" /></td>
                   <td><FlagMark at={trainer.doorEnteredAt} sent="Был по ссылке" waiting="Ещё не заходил" /></td>
-                  <td className="is-publish"><PublishMark status={trainer.status} /></td>
+                  <td className="is-publish">
+                    <span className="cabinet-publish">
+                      <PublishMark status={trainer.status} />
+                      <UnverifiedPublish
+                        slug={trainer.slug}
+                        published={trainer.status === "published" && !trainer.trusted}
+                        enabled={Boolean(trainer.id) && !trainer.trusted && trainer.status !== "declined"}
+                      />
+                    </span>
+                  </td>
+                  <td className="is-verify">
+                    <span className="cabinet-verify">
+                      <AccountSeal trusted={trainer.trusted} className="cabinet-verify__seal" />
+                    </span>
+                  </td>
                   <td className="is-contacts"><TrainerSocial instagram={trainer.instagram} telegram={trainer.telegram} phone={confirmedCabinetPhone(trainer)} /></td>
-                  <td className="is-category">{categoryLabels(trainer.sportSlugs) || "—"}</td>
+                  <td className="is-category">
+                    {categoryLabels(trainer.sportSlugs).length === 0 ? "—" : (
+                      <span className="cabinet-cats">
+                        {categoryLabels(trainer.sportSlugs).map((label) => <span key={label}>{label}</span>)}
+                      </span>
+                    )}
+                  </td>
                   <td>{trainer.city || "—"}</td>
                   <td>{listedOn(trainer, list)}</td>
                   <td><TrainerStars rating={trainer.rating} reviews={trainer.reviews} /></td>

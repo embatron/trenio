@@ -580,10 +580,6 @@ type AccountMenuTo = "/account" | "/account/messages" | "/account/reviews" | "/a
 type AdminMenuTo =
   | "/admin"
   | "/admin/trainers"
-  | "/admin/trainers/drafts"
-  | "/admin/trainers/active"
-  | "/admin/trainers/unclear"
-  | "/admin/trainers/declined"
   | "/admin/welcomes"
   | "/admin/reviews"
   | "/admin/messages"
@@ -621,11 +617,6 @@ const TRAINER_MENU: HeaderMenuItem[] = [
 const ADMIN_MENU: HeaderMenuItem[] = [
   { id: "overview", label: "Обзор", icon: "overview", kind: "admin", to: "/admin" },
   { id: "trainers", label: "Тренеры", icon: "trainers", kind: "admin", to: "/admin/trainers" },
-  { id: "all", label: "Весь список", icon: "trainers", kind: "admin", to: "/admin/trainers" },
-  { id: "drafts", label: "Драфты", icon: "trainers", kind: "admin", to: "/admin/trainers/drafts" },
-  { id: "active", label: "Активные", icon: "trainers", kind: "admin", to: "/admin/trainers/active" },
-  { id: "unclear", label: "Непонятные", icon: "trainers", kind: "admin", to: "/admin/trainers/unclear" },
-  { id: "declined", label: "Отказались", icon: "trainers", kind: "admin", to: "/admin/trainers/declined" },
   { id: "welcomes", label: "Заявки", icon: "contacts", kind: "admin", to: "/admin/welcomes" },
   { id: "reviews", label: "Отзывы", icon: "reviews", kind: "admin", to: "/admin/reviews" },
   { id: "messages", label: "Сообщения", icon: "messages", kind: "admin", to: "/admin/messages" },

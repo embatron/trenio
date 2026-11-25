@@ -10,7 +10,7 @@ export async function grantTrainerVerification(ownerUserId: string) {
   if (!id) return;
   const updated = await getDb()
     .update(trainerProfiles)
-    .set({ verified: true })
+    .set({ verified: true, unclearHold: false })
     .where(and(eq(trainerProfiles.ownerUserId, id), eq(trainerProfiles.verified, false)))
     .returning({ slug: trainerProfiles.slug });
   for (const row of updated) {
@@ -30,7 +30,7 @@ export async function grantTrainerVerification(ownerUserId: string) {
 export async function grantTrainerVerificationForProfile(profileId: string) {
   const updated = await getDb()
     .update(trainerProfiles)
-    .set({ verified: true })
+    .set({ verified: true, unclearHold: false })
     .where(and(eq(trainerProfiles.id, profileId), eq(trainerProfiles.verified, false)))
     .returning({ slug: trainerProfiles.slug, ownerUserId: trainerProfiles.ownerUserId });
   for (const row of updated) {

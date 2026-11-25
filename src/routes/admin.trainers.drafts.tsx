@@ -1,30 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-
-import { AdminTrainersTable } from "@/components/admin-trainers-table";
-import { getAdminTrainersFn } from "@/lib/admin/trainers";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/admin/trainers/drafts")({
-  loader: () => getAdminTrainersFn(),
-  head: () => ({
-    meta: [
-      { title: "Драфты · кабинет администратора · Я ищу тренера на trenio.by" },
-      { name: "description", content: "Черновики, по которым ещё не было захода." },
-      { name: "robots", content: "noindex,follow" },
-    ],
-  }),
-  component: AdminDraftsPage,
+  beforeLoad: () => {
+    throw redirect({ to: "/admin/trainers", search: { list: "unvisited" } });
+  },
 });
-
-function AdminDraftsPage() {
-  const { trainers } = Route.useLoaderData();
-
-  return (
-    <article className="cabinet-card">
-      <h2>Драфты</h2>
-      <p className="cabinet-note cabinet-note--lede">
-        Черновики без захода. После захода карточка уходит в «Непонятные».
-      </p>
-      <AdminTrainersTable trainers={trainers} list="unvisited" />
-    </article>
-  );
-}

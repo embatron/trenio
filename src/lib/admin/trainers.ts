@@ -54,6 +54,31 @@ export type TrainerPublishStatus = (typeof TRAINER_PUBLISH_STATUSES)[number];
 export const TRAINER_PAGE_STATUSES = ["published", "hidden", "archived"] as const;
 export const TRAINER_STAFF_STATUSES = ["draft", "declined"] as const;
 
+/** A staff publish of an unclear card keeps that queue. Confirmation or another page status clears it. */
+export function keptUnclearHold(input: {
+  previousStatus: string;
+  previousDoor: Date | null;
+  previousHold: boolean;
+  nextStatus: string;
+  ready: boolean;
+}) {
+  if (input.ready || input.nextStatus !== "published") return false;
+  const wasUnclear = input.previousStatus === "draft" && input.previousDoor != null;
+  return wasUnclear || input.previousHold;
+}
+
+/** Draft after a short-link visit, or a staff-published card that is still unconfirmed. */
+export function staysUnclear(trainer: {
+  status: string;
+  doorEnteredAt: string;
+  unclearHold: boolean;
+  trusted: boolean;
+}) {
+  if (trainer.status === "declined") return false;
+  if (trainer.unclearHold && trainer.status === "published" && !trainer.trusted) return true;
+  return trainer.status === "draft" && Boolean(trainer.doorEnteredAt);
+}
+
 export const TRAINER_PUBLISH_LABEL: Record<TrainerPublishStatus, string> = {
   draft: "На модерации",
   published: "Опубликована",
@@ -90,6 +115,12 @@ export type AdminTrainer = {
   slug: string;
   status: TrainerPublishStatus;
   verified: boolean;
+  /** Green seal: verified and a confirmed mailbox or Belarus mobile. */
+  trusted: boolean;
+  /** The owner agreed to publish while the account was still unconfirmed. */
+  publishAsked: boolean;
+  /** Staff published this unclear card. It stays on that list. */
+  unclearHold: boolean;
   firstName: string;
   lastName: string;
   fullName: string;
@@ -365,6 +396,8 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         slug: trainerProfiles.slug,
         status: trainerProfiles.status,
         verified: trainerProfiles.verified,
+        publishRequestedAt: trainerProfiles.publishRequestedAt,
+        unclearHold: trainerProfiles.unclearHold,
         firstName: trainerProfiles.firstName,
         lastName: trainerProfiles.lastName,
         fullName: trainerProfiles.fullName,
@@ -449,6 +482,13 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       slug: row.slug,
       status: row.status,
       verified: row.verified,
+      trusted: trainerAccountReady({
+        verified: row.verified,
+        emailVerifiedAt: row.accountEmailVerifiedAt,
+        phoneVerifiedAt: row.accountPhoneVerifiedAt,
+      }),
+      publishAsked: row.publishRequestedAt != null && row.status !== "published" && row.status !== "declined",
+      unclearHold: row.unclearHold,
       ...trainerNameParts(row.firstName, row.lastName, row.fullName),
       headline: row.headline,
       bio: row.bio,
@@ -528,6 +568,9 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       slug: trainer.slug,
       status: "published",
       verified: false,
+      trusted: false,
+      publishAsked: false,
+      unclearHold: false,
       firstName: trainer.firstName,
       lastName: trainer.lastName,
       fullName: trainer.name,
@@ -616,16 +659,18 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
     let phone = trainerCardPhone(data.phone);
     let email = data.email.trim();
     let ownerEmailVerifiedAt: Date | null | undefined;
+    let ownerPhoneVerifiedAt: Date | null | undefined;
     let ownerNotice: { email: string; emailVerifiedAt: Date | null } | null = null;
     if (existing?.ownerUserId) {
       const [owner] = await db
-        .select({ phone: users.phone, email: users.email, emailVerifiedAt: users.emailVerifiedAt })
+        .select({ phone: users.phone, email: users.email, emailVerifiedAt: users.emailVerifiedAt, phoneVerifiedAt: users.phoneVerifiedAt })
         .from(users)
         .where(eq(users.id, existing.ownerUserId))
         .limit(1);
       if (owner?.phone) phone = formatBelarusPhone(owner.phone);
       email = owner?.email ?? "";
       ownerEmailVerifiedAt = owner?.emailVerifiedAt ?? null;
+      ownerPhoneVerifiedAt = owner?.phoneVerifiedAt ?? null;
       if (owner) ownerNotice = { email: owner.email, emailVerifiedAt: owner.emailVerifiedAt };
     }
     const values = {
@@ -660,6 +705,17 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       audiences: effectiveAudiences(data.audiences),
       status: data.status,
       verified: data.verified,
+      unclearHold: keptUnclearHold({
+        previousStatus: existing?.status ?? "draft",
+        previousDoor: existing?.doorEnteredAt ?? null,
+        previousHold: existing?.unclearHold ?? false,
+        nextStatus: data.status,
+        ready: trainerAccountReady({
+          verified: data.verified,
+          emailVerifiedAt: ownerEmailVerifiedAt ?? null,
+          phoneVerifiedAt: ownerPhoneVerifiedAt ?? null,
+        }),
+      }),
       updatedAt: new Date(),
     };
 
@@ -797,6 +853,84 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
 
 const slugSchema = z.string().trim().min(1).max(30).regex(/^[a-z0-9._-]+$/);
 
+/** Staff publish an unconfirmed card, or return that card to unpublished. Verification stays off. */
+export const publishUnverifiedTrainerFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(z.object({ slug: slugSchema, published: z.boolean() }))
+  .handler(async ({ data, context }) => {
+    assertStaff(context.user.roles);
+    const db = getDb();
+    const [row] = await db
+      .select({
+        id: trainerProfiles.id,
+        slug: trainerProfiles.slug,
+        status: trainerProfiles.status,
+        verified: trainerProfiles.verified,
+        ownerUserId: trainerProfiles.ownerUserId,
+        firstName: trainerProfiles.firstName,
+        doorEnteredAt: trainerProfiles.doorEnteredAt,
+        unclearHold: trainerProfiles.unclearHold,
+        emailVerifiedAt: users.emailVerifiedAt,
+        phoneVerifiedAt: users.phoneVerifiedAt,
+      })
+      .from(trainerProfiles)
+      .leftJoin(users, eq(users.id, trainerProfiles.ownerUserId))
+      .where(eq(trainerProfiles.slug, data.slug))
+      .limit(1);
+    if (!row) throw new AuthError("Карточка не найдена.", "VALIDATION");
+    if (row.status === "declined") {
+      throw new AuthError("Отказанную карточку так не публикуют.", "FORBIDDEN");
+    }
+    const ready = trainerAccountReady({
+      verified: row.verified,
+      emailVerifiedAt: row.emailVerifiedAt,
+      phoneVerifiedAt: row.phoneVerifiedAt,
+    });
+    if (ready) {
+      throw new AuthError("Аккаунт уже подтверждён. Публикуйте его обычным статусом.", "VALIDATION");
+    }
+    const next = data.published ? "published" : "draft";
+    const wasUnclear = row.status === "draft" && row.doorEnteredAt != null;
+    const unclearHold = next === "published" && (wasUnclear || row.unclearHold);
+    if (row.status !== next || row.unclearHold !== unclearHold) {
+      await db.update(trainerProfiles).set({
+        status: next,
+        unclearHold,
+        updatedAt: new Date(),
+      }).where(eq(trainerProfiles.id, row.id));
+      if (next === "published") await stampTrainerPublished(row.slug);
+      logTrainerPresence({
+        created: false,
+        previous: row.status,
+        next,
+        slug: row.slug,
+        actorUserId: context.user.id,
+        subject: context.user.email,
+        mode: "save",
+      });
+      if (next === "published") {
+        const { sendWelcomeOnPublish } = await import("@/lib/messages/welcome");
+        await sendWelcomeOnPublish({
+          previous: row.status,
+          next: "published",
+          ownerUserId: row.ownerUserId,
+          firstName: row.firstName,
+        });
+      }
+    }
+    void writeLog({
+      level: "info",
+      domain: "admin",
+      action: "admin.trainer_publish",
+      outcome: "success",
+      message: next === "published" ? "Опубликован неподтверждённый аккаунт." : "Неподтверждённая публикация снята.",
+      actorUserId: context.user.id,
+      subject: context.user.email,
+      target: row.slug,
+    });
+    return { ok: true as const };
+  });
+
 const CLAIM_LABEL = { unclaimed: "Не забран", claimed: "Привязан к аккаунту", disputed: "Спор" } as const;
 const SOURCE_LABEL = { self: "Сам тренер", branch_created: "Филиал", admin_created: "Администратор", import: "Импорт" } as const;
 const AUDIENCE_LABEL = { adult: "Взрослые", teen: "Подростки", kid: "Дети" } as const;
@@ -875,6 +1009,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
     const [row] = await db.select().from(trainerProfiles).where(eq(trainerProfiles.slug, data.slug)).limit(1);
     if (!row) return null;
     const recentSince = recentReviewStart();
+    const publishedAtBySlug = await loadPublishedAt();
 
     const hidden = await hiddenStaffIds(context.user.roles);
     const ownerVisible = Boolean(row.ownerUserId) && !hidden.has(row.ownerUserId ?? "");
@@ -1034,6 +1169,14 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         slug: row.slug,
         status: row.status,
         verified: row.verified,
+        trusted: trainerAccountReady({
+          verified: row.verified,
+          emailVerifiedAt: owner?.emailVerifiedAt ?? null,
+          phoneVerifiedAt: owner?.phoneVerifiedAt ?? null,
+        }),
+        publishAsked: row.publishRequestedAt != null && row.status !== "published" && row.status !== "declined",
+        unclearHold: row.unclearHold,
+        publishedAt: publishedAtBySlug.get(row.slug) ?? "",
         ...trainerNameParts(row.firstName, row.lastName, row.fullName),
         headline: row.headline,
         bio: row.bio,

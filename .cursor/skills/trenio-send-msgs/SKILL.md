@@ -14,7 +14,7 @@ description: >-
 
 # Send the first Instagram message
 
-The first message asks whether the trainer wants to join. It does not contain the short link. An admin copies that link afterwards from `/admin/trainers` and sends it by hand.
+The first message says the page is already prepared and asks whether it may be published. Until the trainer confirms the profile, the letter says the contacts stay hidden. It does not contain the short link. An admin copies that link afterwards from `/admin/trainers` and sends it by hand.
 
 The application letter, for a page that is already prepared, is `/send-claim`. The combined letter, the project plus the page already assembled, is `/send-ready`. Do not send either letter from this command.
 
@@ -63,7 +63,7 @@ Each row has `send`. Send only where `send` is true. `sent`, `not-draft`, and `m
 - Click Follow, Like, or Comment.
 - Mark the link as sent. The link column changes only when an admin copies the link in the trainer table.
 - Message a published, hidden, or archived card. The list is drafts only.
-- Send the older site text when it still contains `{doorUrl}`. Use the default outreach instead.
+- Send the older site text when it still contains `{doorUrl}`, «единую базу», «было бы вам интересно», or «дополнительное продвижение». Use the default outreach instead.
 - Start the batch from memory of the last login. The accounts/edit check is required every run.
 - Ignore the handles, count, or limits written with the command and message every unmarked draft instead.
 - Send into a dialog that already has messages.
@@ -73,13 +73,13 @@ Each row has `send`. Send only where `send` is true. `sent`, `not-draft`, and `m
 
 ## Text
 
-Load the saved site text. If it is empty or contains `{doorUrl}`, send `DEFAULT_INSTAGRAM_MESSAGE` from `src/lib/site-texts/defaults.ts`.
+Load the saved site text. If it is empty, contains `{doorUrl}`, or is the previous catalog invitation, send `DEFAULT_INSTAGRAM_MESSAGE` from `src/lib/site-texts/defaults.ts`. `outreachTemplate` makes that choice.
 
 ```bash
 ./node_modules/.bin/tsx --env-file=.env -e 'import { loadSiteText } from "./src/lib/site-texts/store.ts"; import { outreachHello, outreachTemplate, outreachWithSiteLink } from "./src/lib/site-texts/defaults.ts"; const run = async () => { console.log(outreachWithSiteLink(outreachTemplate(await loadSiteText("instagram_message")).replaceAll("{hello}", outreachHello("Анна")))); }; run();'
 ```
 
-The default text starts with `{hello}`. Replace that with the trainer's given name and a greeting. A one-bubble letter uses «Анна, добрый день!». A two-bubble letter uses «Анна, здравствуйте!» as the first bubble only. When the given name is empty, the line is «Добрый день!» or «Здравствуйте!». The letter does not include a personal short link.
+The default text starts with `{hello} 👋`. Replace `{hello}` with the trainer's given name and a greeting. A one-bubble letter uses «Анна, добрый день! 👋». A two-bubble letter uses «Анна, здравствуйте! 👋» as the first bubble only. When the given name is empty, the line is «Добрый день! 👋» or «Здравствуйте! 👋». The letter does not include a personal short link.
 
 The words `trenio by` are the site link. Before typing, turn them into `https://trenio.by` with `outreachWithSiteLink` from `src/lib/site-texts/defaults.ts`. Instagram makes that address the link. Do not type the bare words `trenio by` or `trenio.by`. Do not send a bubble until that bubble is complete. The bubble that carries the offer is not sent until the composer contains `https://trenio.by`.
 
@@ -91,7 +91,7 @@ After the letter is in the thread, wait a random interval from 5 minutes to 10 m
 
 Count places in the run order, including a profile that is skipped. Place 1, 3, 5, and the other odd places are one bubble. Place 2, 4, 6, and the other even places are two bubbles.
 
-The first bubble is only the greeting: «Анна, здравствуйте!». The second bubble is the rest of the letter, with no second greeting. Send it only after the greeting is visible. Mark the handle once, after the second bubble is in the thread.
+The first bubble is only the greeting: «Анна, здравствуйте! 👋». The second bubble is the rest of the letter, from «Мы только что запустили…», with no second greeting and no second wave. Send it only after the greeting is visible. Mark the handle once, after the second bubble is in the thread.
 
 ### Wording
 
@@ -99,16 +99,19 @@ Neighboring letters are not identical. Change a few words. Keep the meaning.
 
 Must stay:
 
-- a greeting with the given name, or «Добрый день!» / «Здравствуйте!» when the name is empty
+- a greeting with the given name and 👋, or «Добрый день! 👋» / «Здравствуйте! 👋» when the name is empty
 - the address `https://trenio.by`
-- a catalog of trainers in Belarus that helps people find a specialist
-- the profile was liked, and the trainer is invited to join
-- a question whether they are interested
-- participation and the extra promotion are free
+- the project has just launched so people in Belarus can find a trainer by sport and city
+- the profile was seen, and the page is already prepared from the Instagram information, but it is not published yet
+- if the trainer agrees, the page is placed in the catalog for free
+- contacts stay hidden until the profile is confirmed
+- later, when it is convenient, the trainer can confirm the profile and edit the page
+- the question asking whether the page may be published
+- commas and full clauses. A condition uses «если…, то…». There is no em dash and no en dash
 
-May change: «добрый день» and «здравствуйте»; «развиваем», «собираем», and «делаем»; «единую базу» and «общий каталог»; «Нам очень понравился ваш профиль» and «Ваш профиль нам очень понравился»; «Подскажите» and «Скажите»; «абсолютно бесплатны» and «бесплатные».
+May change: «добрый день» and «здравствуйте»; «только что запустили» and «недавно открыли»; «было проще находить» and «проще было находить»; «увидели ваш профиль» and «заметили ваш профиль»; «уже подготовили» and «уже собрали»; «Если вы не против, то» and «Если вы согласны, то»; «Можно разместить?» and «Мы можем её разместить?».
 
-Do not add a sport, a city, a price, or a short link. Do not drop the question or the fact that it is free.
+Do not add a sport, a city, a price, or a short link. Do not write «я из команды». Do not drop the prepared page, the hidden contacts, the later confirmation, the fact that it is free, or the question.
 
 A thread already contains this outreach when it has `trenio.by` and a greeting («добрый день», «здравствуйте», or the older «Добрый день!)»).
 
@@ -149,7 +152,7 @@ With no arguments, each row is a draft from the site database with an Instagram 
 
 ### 4. Send
 
-Click the composer, insert the outreach text, and send. The words `trenio by` are already replaced by `https://trenio.by`. On an even place, send «Имя, здравствуйте!» first, wait until that greeting is visible, then send the rest. Wait until `https://trenio.by` is visible in the thread. Do not attach the short link. Then wait a random 5–10 minutes before the next profile, and choose a different length from the previous wait, at least 30 seconds away. A skipped profile waits 45–90 seconds.
+Click the composer, insert the outreach text, and send. The words `trenio by` are already replaced by `https://trenio.by`. On an even place, send «Имя, здравствуйте! 👋» first, wait until that greeting is visible, then send the rest. Wait until `https://trenio.by` is visible in the thread. Do not attach the short link. Then wait a random 5–10 minutes before the next profile, and choose a different length from the previous wait, at least 30 seconds away. A skipped profile waits 45–90 seconds.
 
 ### 5. Mark
 

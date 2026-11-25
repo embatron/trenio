@@ -761,7 +761,24 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-table { width: 100%; min-width: 760px; border-collapse: collapse; }
 .cabinet-table th, .cabinet-table td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
 .cabinet-table--trainers th, .cabinet-table--trainers td { text-align: center; vertical-align: middle; }
-.cabinet-table--trainers th.is-person, .cabinet-table--trainers td.is-person { text-align: left; }
+.cabinet-table--trainers th.is-person, .cabinet-table--trainers td.is-person,
+.cabinet-table--trainers td.is-verify { text-align: left; }
+.cabinet-verify { display: inline-flex; align-items: center; justify-content: center; }
+.cabinet-verify-label { display: inline-flex; align-items: center; gap: 8px; }
+.cabinet-verify__seal { width: 18px; height: 18px; border-radius: 50%; }
+.cabinet-verify__seal svg { width: 12px; height: 12px; }
+.cabinet-unverified {
+  display: flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 8px;
+  font-size: 13px; font-weight: var(--fw-body); line-height: 1.3; text-align: left; cursor: pointer;
+}
+.cabinet-unverified input { width: 18px; height: 18px; margin: 0; flex: 0 0 auto; }
+.cabinet-publish { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+.cabinet-publish-switch { width: 44px; height: 32px; }
+.cabinet-publish-switch .mail-switch__thumb { width: 36px; height: 22px; }
+.cabinet-publish-switch .mail-switch__thumb::after { width: 16px; height: 16px; }
+.cabinet-publish-switch.is-on .mail-switch__thumb::after { transform: translateX(14px); }
+.cabinet-cats { display: flex; flex-wrap: nowrap; gap: 8px; white-space: nowrap; }
+.cabinet-table--trainers td.is-category { white-space: nowrap; }
 .cabinet-table--trainers th.is-index, .cabinet-table--trainers td.is-index { width: 1%; padding-right: 2px; text-align: right; color: color-mix(in srgb, var(--muted) 48%, transparent); font-size: 11px; font-weight: 400; font-variant-numeric: tabular-nums; }
 .cabinet-table--trainers .cabinet-person { width: 100%; }
 .cabinet-row-actions { display: flex; align-items: center; flex: 0 0 auto; }

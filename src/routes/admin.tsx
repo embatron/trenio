@@ -12,11 +12,6 @@ import { deniedCabinetTarget, ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 
 const TRAINER_PAGES: CabinetNavPage[] = [
-  { id: "all", label: "Весь список", to: "/admin/trainers" },
-  { id: "drafts", label: "Драфты", to: "/admin/trainers/drafts" },
-  { id: "active", label: "Активные", to: "/admin/trainers/active" },
-  { id: "unclear", label: "Непонятные", to: "/admin/trainers/unclear" },
-  { id: "declined", label: "Отказались", to: "/admin/trainers/declined" },
   { id: "welcomes", label: "Заявки", to: "/admin/welcomes" },
   { id: "reviews", label: "Отзывы", to: "/admin/reviews" },
 ];
@@ -86,10 +81,6 @@ function AdminLayout() {
     return {
       ...item,
       pages: item.pages.map((page) => {
-        if (page.id === "drafts") return { ...page, badge: counts.draftsOpen };
-        if (page.id === "active") return { ...page, badge: counts.publishedCount };
-        if (page.id === "unclear") return { ...page, badge: counts.unclearCount };
-        if (page.id === "declined") return { ...page, badge: counts.declinedCount };
         if (page.id === "welcomes") return { ...page, badge: counts.welcomesOpen };
         if (page.id === "reviews") return { ...page, badge: counts.reviewsPending };
         return page;

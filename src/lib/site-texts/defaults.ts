@@ -32,15 +32,17 @@ export function outreachWithSiteLink(text: string) {
   return text.replaceAll("trenio by", OUTREACH_SITE_LINK);
 }
 
-/** First Instagram direct message. The short link is copied separately and sent later. */
+/** First Instagram direct message. The page is already prepared. The short link is copied separately and sent later. */
 export const DEFAULT_INSTAGRAM_MESSAGE = [
-  "{hello}",
+  "{hello} 👋",
   "",
-  "Мы развиваем trenio by – единую базу тренеров Беларуси, которая помогает людям находить подходящих специалистов в разных спортивных направлениях.",
-  "Нам очень понравился ваш профиль, поэтому хотели бы пригласить вас присоединиться к нашему каталогу! Будем рады, если вы станете его частью.",
+  "Мы только что запустили проект trenio by, чтобы людям в Беларуси было проще находить тренеров по направлению и городу.",
   "",
-  "Подскажите, было бы вам интересно такое предложение?",
-  "Участие в проекте и дополнительное продвижение вашей анкеты абсолютно бесплатны.",
+  "Мы увидели ваш профиль и уже подготовили для вас страницу по информации из Instagram, но пока не публиковали её.",
+  "",
+  "Если вы не против, то мы бесплатно разместим страницу в каталоге. Пока профиль не подтверждён, контакты будут скрыты, а позже, когда вам будет удобно, вы сможете подтвердить его и управлять страницей самостоятельно.",
+  "",
+  "Можно разместить?",
 ].join("\n");
 
 /**
@@ -90,10 +92,18 @@ export function renderReadyInstagramMessage(firstName: string, doorUrl: string) 
     .replaceAll("{doorUrl}", doorUrl);
 }
 
-/** The saved row still holds an older letter that includes the short link. Do not send that as the first message. */
+/** The previous invitation and any letter that still carries the short link. */
+function retiredInstagramMessage(body: string) {
+  return body.includes("{doorUrl}")
+    || body.includes("единую базу")
+    || body.includes("было бы вам интересно")
+    || body.includes("дополнительное продвижение");
+}
+
+/** The saved row still holds an older letter. Do not send that as the first message. */
 export function outreachTemplate(saved: string) {
   const body = saved.trim();
-  if (!body || body.includes("{doorUrl}")) return DEFAULT_INSTAGRAM_MESSAGE;
+  if (!body || retiredInstagramMessage(body)) return DEFAULT_INSTAGRAM_MESSAGE;
   return body;
 }
 
@@ -114,6 +124,7 @@ export function resolvedSiteText(key: SiteTextKey, saved?: string | null) {
   ) {
     return DEFAULT_TRAINER_WELCOME;
   }
+  if (key === "instagram_message" && retiredInstagramMessage(body)) return DEFAULT_INSTAGRAM_MESSAGE;
   return body;
 }
 

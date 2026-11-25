@@ -29,6 +29,7 @@ import { assertBelarusCity } from "@/lib/catalog/belarus-city.server";
 import { readCertificates, type TrainerCertificate } from "@/lib/catalog/certificate-file";
 import { effectiveAudiences, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { joinTrainerName, trainerNameParts } from "@/lib/catalog/trainer-name";
+import { trainerAccountReady } from "@/lib/catalog/trainer-verified";
 import { editorHtml, reviewPlainText, reviewTextLength, sanitizeReviewHtml } from "@/lib/catalog/review-html";
 import { writeImageSet } from "@/lib/images/store";
 import { MAX_TRAINER_SPORTS, trainerSportSlugs, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
@@ -84,6 +85,8 @@ export type OwnTrainerProfile = {
   status: OwnProfileStatus;
   /** Stored page status, including a draft that is not in the catalog yet. */
   pageStatus: PageStatus;
+  /** The owner agreed to publish while the account was still unconfirmed. */
+  publishAsked: boolean;
 };
 
 export const OWN_PROFILE_STATUSES = ["published", "hidden", "archived"] as const;
@@ -92,6 +95,11 @@ export const PAGE_STATUSES = ["draft", "published", "hidden", "archived"] as con
 export type PageStatus = (typeof PAGE_STATUSES)[number] | "declined";
 
 /** The status stored on the card. A refusal stays a refusal. Anything else outside the four values reads as unpublished. */
+/** An unconfirmed account does not enter the catalog from the cabinet. The yes is a request for staff. */
+export function holdsUnverifiedPublish(next: OwnProfileStatus, ready: boolean) {
+  return next === "published" && !ready;
+}
+
 export function pageStatusOf(status: string | null | undefined): PageStatus {
   if (status === "declined") return "declined";
   if (status === "published" || status === "hidden" || status === "archived" || status === "draft") return status;
@@ -110,17 +118,47 @@ export const setOwnTrainerPageStatusFn = createServerFn({ method: "POST" })
         slug: trainerProfiles.slug,
         status: trainerProfiles.status,
         firstName: trainerProfiles.firstName,
+        verified: trainerProfiles.verified,
+        publishRequestedAt: trainerProfiles.publishRequestedAt,
+        emailVerifiedAt: users.emailVerifiedAt,
+        phoneVerifiedAt: users.phoneVerifiedAt,
       })
       .from(trainerProfiles)
+      .leftJoin(users, eq(users.id, trainerProfiles.ownerUserId))
       .where(eq(trainerProfiles.ownerUserId, context.user.id))
       .limit(1);
     if (!row) throw new AuthError("Карточка ещё не создана.", "VALIDATION");
     if (row.status === "declined") {
       throw new AuthError("Сейчас страницу нельзя вернуть в каталог.", "FORBIDDEN");
     }
+    const ready = trainerAccountReady({
+      verified: row.verified,
+      emailVerifiedAt: row.emailVerifiedAt,
+      phoneVerifiedAt: row.phoneVerifiedAt,
+    });
+    if (holdsUnverifiedPublish(data.status, ready)) {
+      if (!row.publishRequestedAt) {
+        await getDb().update(trainerProfiles).set({
+          publishRequestedAt: new Date(),
+          updatedAt: new Date(),
+        }).where(eq(trainerProfiles.id, row.id));
+        void writeLog({
+          level: "info",
+          domain: "form",
+          action: "form.trainer_profile",
+          outcome: "success",
+          message: "Тренер согласился на публикацию неподтверждённого аккаунта.",
+          actorUserId: context.user.id,
+          subject: context.user.email,
+          target: row.slug,
+        });
+      }
+      return { ok: true as const, status: pageStatusOf(row.status), requested: true as const };
+    }
     if (row.status !== data.status) {
       await getDb().update(trainerProfiles).set({
         status: data.status,
+        publishRequestedAt: null,
         updatedAt: new Date(),
       }).where(eq(trainerProfiles.id, row.id));
       await stampTrainerPublished(row.slug);
@@ -151,7 +189,7 @@ export const setOwnTrainerPageStatusFn = createServerFn({ method: "POST" })
       subject: context.user.email,
       target: row.slug,
     });
-    return { ok: true as const, status: data.status };
+    return { ok: true as const, status: data.status, requested: false as const };
   });
 
 export const saveOwnTrainerHeadlineFn = createServerFn({ method: "POST" })
@@ -269,6 +307,7 @@ const emptyProfile: OwnTrainerProfile = {
   privacyAccepted: false,
   status: "published",
   pageStatus: "draft",
+  publishAsked: false,
 };
 
 const saveSchema = z.object({
@@ -368,6 +407,7 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
       privacyAccepted: row.privacyAcceptedAt != null,
       status: ownFacingStatus(row.status),
       pageStatus: pageStatusOf(row.status),
+      publishAsked: row.publishRequestedAt != null && row.status !== "published" && row.status !== "declined",
     };
   });
 

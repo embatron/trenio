@@ -81,7 +81,13 @@ function MeProfilePage() {
         <h2>Имя и заголовок</h2>
         <TrainerIdentityFields profile={trainer} />
       </article>
-      <PageStatusCard status={trainer.pageStatus} />
+      <PageStatusCard
+        status={trainer.pageStatus}
+        verified={trainer.verified}
+        emailVerified={trainer.emailVerified}
+        phoneVerified={trainer.phoneVerified}
+        publishAsked={trainer.publishAsked}
+      />
       <article className="cabinet-card" id="trainer-contact-block">
         <h2>Контакты</h2>
         <TrainerContactStatus profile={trainer} />

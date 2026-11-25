@@ -2,6 +2,8 @@ import postgres from "postgres";
 
 const STATEMENTS = [
   "ALTER TABLE trainer_profiles ADD COLUMN IF NOT EXISTS verified boolean NOT NULL DEFAULT false",
+  "ALTER TABLE trainer_profiles ADD COLUMN IF NOT EXISTS publish_requested_at timestamptz",
+  "ALTER TABLE trainer_profiles ADD COLUMN IF NOT EXISTS unclear_hold boolean NOT NULL DEFAULT false",
   `UPDATE trainer_profiles AS card
    SET verified = true
    FROM users AS account
