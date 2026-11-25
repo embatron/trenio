@@ -1083,6 +1083,7 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             <h5>Клиентам</h5>
             <ul>
               <li><Link className="mega-link mega-link--text" to="/" onClick={onClose}>Найти тренера</Link></li>
+              <li><Link className="mega-link mega-link--text" to="/categories" onClick={onClose}>Категории спорта</Link></li>
               <li><Link className="mega-link mega-link--text" to="/map" search={{ sports: undefined, city: undefined }} onClick={onClose}>Тренеры на карте</Link></li>
               {user ? null : (
                 <>
@@ -1097,7 +1098,7 @@ function MegaMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             <ul>
               <li><Link className="mega-link mega-link--text" to="/me" activeOptions={{ exact: true }} onClick={onClose}>Кабинет тренера</Link></li>
               <li><Link className="mega-link mega-link--text" to="/join/trainer" onClick={onClose}>Оставить Instagram</Link></li>
-              <li><Link className="mega-link mega-link--text" to="/join/account" onClick={onClose}>Создать профиль вручную</Link></li>
+              <li><Link className="mega-link mega-link--text" to="/join/account" onClick={onClose}>Создать профиль тренера</Link></li>
             </ul>
           </div>
         </div>
