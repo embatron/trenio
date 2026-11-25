@@ -32,6 +32,8 @@
 | `account.purge` | The six-month hold ended. Written with the old email before the account is anonymized. No message text |
 | `email.preference` | A message or review letter was not sent because that kind is off |
 | `email.notice` | A service notice was skipped or failed: unverified mailbox, new browser, password, closed account, card status. No letter body |
+| `account.verify` | Verification turned on. The message names the channel (letter, email code, SMS, Telegram, Google, Yandex, Apple, signup, or the short link) and says the actor is not staff. A row is written only when `verified` flips. No code, link, or phone |
+| `account.publish` | A confirmed trainer published the card: short-link letter or SMS, Google or Yandex on that link, or the cabinet. The message names the channel, says the actor is not staff, and says verification came with it. The catalog line `trainer.appear` stays the short «Тренер появился на сайте.» |
 | `account.claim` | Trainer claim. A short-link SMS code uses the same action, with a masked phone and no code. A profile letter that does not open is `denied`: `missing`, `used` (a later letter named another mailbox), `owned`, or `closed`. The letter has no clock. The row has the slug and the mailbox, not the link. A still-valid letter is one info row, «Ссылка из письма ещё действует», before the POST that publishes the card. A phone link on the same short URL is the same action: the subject is the masked mobile, the token and the full number stay out. «Ссылка на телефон ещё действует» is the peek. «Ссылка открыла профиль. Телефон подтверждён.» is the POST that publishes the draft |
 | `account.password` | Password chosen after the short Instagram link. The row has no password |
 | `email.send` / `email.dev` / `email.review` | Postfix or Resend, dev console, review mail. The letter is HTML. Do not store the body, a code, or a link. A profile letter has no clock. When that send retires letters for another mailbox, a second row stores `retired` |
@@ -52,6 +54,8 @@
 | `admin.trainer_invite` | Staff copied the trainer's short link. The row stores the slug, not the link. A published profile is `denied` |
 | `admin.trainer_invite_sent` | The copied short link was marked sent. The row stores the slug, not the link |
 | `admin.trainer_remove` | A trainer profile was removed from the portal. The row stores the slug |
+| `admin.trainer_verify` | Staff turned verification on or off in the card, or accepted the SMS code there. The message says сотрудник and the channel. A trainer confirmation stays `account.verify` |
+| `admin.trainer_publish` | Staff published or unpublished the card from the editor, the unverified switch, or the mailbox bind. The message says сотрудник, the channel, and whether verification is on. The switch leaves verification off |
 | `trainer.add` / `trainer.sync` | A trainer card was inserted, or an import updated an existing card. The row stores the slug, status, and source. Card text stays out |
 | `trainer.appear` / `trainer.withdraw` | The card entered or left the public catalog. Timestamp is `created_at` |
 | `catalog.trainer_preview` / `catalog.trainer_edit` / `catalog.trainer_save` / `catalog.trainer_publish` | Profile preview and edit links. They stay valid until the profile is published, then open the public trainer URL. A missing link is `denied`. Tokens and URLs stay out of the row |

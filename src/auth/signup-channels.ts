@@ -543,7 +543,7 @@ export async function confirmSignupCredentials(userId: string, emailRaw: string,
     .update(users)
     .set({ email, emailVerifiedAt: now, status: "active", updatedAt: now })
     .where(eq(users.id, userId));
-  await grantTrainerVerification(userId);
+  await grantTrainerVerification(userId, "signup", { subject: email });
   return { ok: true as const };
 }
 

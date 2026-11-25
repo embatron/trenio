@@ -146,7 +146,7 @@ async function stampGoogleMailbox(userId: string, email: string) {
       eq(trainerProfiles.ownerUserId, userId),
       or(isNull(trainerProfiles.emailVerifiedAt), ne(trainerProfiles.email, email)),
     ));
-  await grantTrainerVerification(userId);
+  await grantTrainerVerification(userId, "google", { subject: email });
 }
 
 async function takeoverUnverified(user: User, sub: string) {
@@ -164,5 +164,5 @@ async function takeoverUnverified(user: User, sub: string) {
       updatedAt: new Date(),
     })
     .where(eq(users.id, user.id));
-  await grantTrainerVerification(user.id);
+  await grantTrainerVerification(user.id, "google", { subject: user.email });
 }

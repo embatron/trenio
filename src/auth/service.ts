@@ -37,6 +37,7 @@ import { consumeStepUpGrant } from "@/auth/step-up";
 import { isSmsByEnabled, sendQuickSms } from "@/auth/sms";
 import { openManualTrainerAccountSafely } from "@/lib/catalog/trainer-account";
 import { grantTrainerVerification } from "@/lib/catalog/trainer-verified.server";
+import type { TrainerProof } from "@/lib/catalog/trainer-verify-log";
 import {
   planTrainerPhoneOnly,
   planTrainerTelegramConfirm,
@@ -668,7 +669,7 @@ export async function verifyEmailToken(rawToken: string) {
     })
     .where(eq(users.id, tokenRow.userId));
 
-  await grantTrainerVerification(tokenRow.userId);
+  await grantTrainerVerification(tokenRow.userId, "letter");
   return tokenRow.userId;
 }
 
@@ -724,7 +725,7 @@ export async function setPasswordFromEmailLink(
     })
     .where(eq(users.id, tokenRow.userId));
 
-  await grantTrainerVerification(tokenRow.userId);
+  await grantTrainerVerification(tokenRow.userId, "password-letter");
   await revokeAllUserSessions(tokenRow.userId);
   return createSession(tokenRow.userId, meta);
 }
@@ -962,7 +963,7 @@ export async function confirmAccountEmailCode(
     .update(trainerProfiles)
     .set({ email, emailVerifiedAt: now, updatedAt: now })
     .where(eq(trainerProfiles.ownerUserId, userId));
-  await grantTrainerVerification(userId);
+  await grantTrainerVerification(userId, "email-code", { subject: email });
   await revokeOtherUserSessions(userId, currentToken);
   if (previous) {
     void notifyFactorChange(previous, "Почта аккаунта изменена. Если это не вы, напишите в поддержку.", PHONE_SMS.email);
@@ -1032,6 +1033,7 @@ export async function confirmAccountPhoneCode(
   phoneRaw: string,
   codeRaw: string,
   currentToken: string | null,
+  proof?: { via?: TrainerProof; actorUserId?: string | null; subject?: string | null },
 ) {
   const phone = normalizeBelarusMobile(phoneRaw);
   if (!phone) throw new AuthError("Неверный или устаревший код.", "INVALID_TOKEN");
@@ -1067,7 +1069,10 @@ export async function confirmAccountPhoneCode(
     .update(trainerProfiles)
     .set({ phone: stored, updatedAt: now })
     .where(eq(trainerProfiles.ownerUserId, userId));
-  await grantTrainerVerification(userId);
+  await grantTrainerVerification(userId, proof?.via ?? "sms", {
+    actorUserId: proof?.actorUserId,
+    subject: proof?.subject,
+  });
   await revokeOtherUserSessions(userId, currentToken);
   if (previous) {
     void notifyFactorChange(previous, "Телефон аккаунта изменён. Если это не вы, напишите в поддержку.", PHONE_SMS.phone);
@@ -1249,7 +1254,7 @@ async function storeVerifiedTrainerPhone(
     .update(trainerProfiles)
     .set({ phone: stored, updatedAt: now })
     .where(eq(trainerProfiles.ownerUserId, userId));
-  await grantTrainerVerification(userId);
+  await grantTrainerVerification(userId, "telegram");
   const changed = !previous?.phoneVerifiedAt || normalizeBelarusMobile(previous.phone ?? "") !== digits;
   if (changed) {
     await revokeOtherUserSessions(userId, currentToken);

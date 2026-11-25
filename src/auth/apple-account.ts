@@ -151,7 +151,7 @@ async function takeoverUnverified(user: User, sub: string, email: string | null)
       updatedAt: new Date(),
     })
     .where(eq(users.id, user.id));
-  await grantTrainerVerification(user.id);
+  await grantTrainerVerification(user.id, "apple", { subject: email });
 }
 
 async function stampAppleMailbox(userId: string, email: string) {
@@ -173,5 +173,5 @@ async function stampAppleMailbox(userId: string, email: string) {
       eq(trainerProfiles.ownerUserId, userId),
       or(isNull(trainerProfiles.emailVerifiedAt), ne(trainerProfiles.email, email)),
     ));
-  await grantTrainerVerification(userId);
+  await grantTrainerVerification(userId, "apple", { subject: email });
 }

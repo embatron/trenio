@@ -189,7 +189,9 @@ export async function openManualTrainerAccount(
   }
   await db.insert(userRoles).values({ userId: user.id, role: "trainer" }).onConflictDoNothing();
   const { grantTrainerVerification } = await import("@/lib/catalog/trainer-verified.server");
-  await grantTrainerVerification(user.id);
+  await grantTrainerVerification(user.id, "signup", {
+    subject: user.email.includes("trenio.invalid") ? null : user.email,
+  });
   if (draft) {
     await db.update(users).set({
       trainerSignupDraft: null,

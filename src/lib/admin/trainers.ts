@@ -37,6 +37,7 @@ import { removeImageSet, writeImageSet } from "@/lib/images/store";
 import { effectiveAudiences, getPublishedTrainer, PUBLISHED_TRAINERS, type TrainerAudience, type TrainerFormat } from "@/lib/catalog/published-trainers";
 import { joinTrainerName, trainerNameParts } from "@/lib/catalog/trainer-name";
 import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
+import { publishMessage, verificationClearedMessage, verificationMessage } from "@/lib/catalog/trainer-verify-log";
 import { outreachTemplate } from "@/lib/site-texts/defaults";
 import { loadSiteText } from "@/lib/site-texts/store";
 import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
@@ -837,10 +838,24 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
         domain: "admin",
         action: "admin.trainer_verify",
         outcome: "success",
-        message: data.verified ? "Верификация пройдена." : "Верификация не пройдена.",
+        message: data.verified ? verificationMessage("staff-card") : verificationClearedMessage(),
         actorUserId: context.user.id,
         subject: context.user.email,
         target: data.slug,
+        context: { via: "staff-card", staff: true },
+      });
+    }
+    if (existing && existing.status !== data.status && (data.status === "published" || existing.status === "published")) {
+      void writeLog({
+        level: "info",
+        domain: "admin",
+        action: "admin.trainer_publish",
+        outcome: "success",
+        message: publishMessage("staff-card", data.status === "published", data.verified),
+        actorUserId: context.user.id,
+        subject: context.user.email,
+        target: data.slug,
+        context: { via: "staff-card", staff: true },
       });
     }
     if (existing && ownerNotice) {
@@ -931,10 +946,11 @@ export const publishUnverifiedTrainerFn = createServerFn({ method: "POST" })
       domain: "admin",
       action: "admin.trainer_publish",
       outcome: "success",
-      message: next === "published" ? "Опубликован неподтверждённый аккаунт." : "Неподтверждённая публикация снята.",
+      message: publishMessage("staff-switch", next === "published", false),
       actorUserId: context.user.id,
       subject: context.user.email,
       target: row.slug,
+      context: { via: "staff-switch", staff: true },
     });
     return { ok: true as const };
   });
@@ -1449,5 +1465,9 @@ export const confirmAdminTrainerPhoneCodeFn = createServerFn({ method: "POST" })
   .validator(trainerPhoneSchema.extend({ code: z.string().trim().min(4).max(8) }))
   .handler(async ({ data, context }) => {
     const ownerId = await linkedOwnerId(data.slug, context.user.roles);
-    return confirmAccountPhoneCode(ownerId, data.phone, data.code, null);
+    return confirmAccountPhoneCode(ownerId, data.phone, data.code, null, {
+      via: "staff-sms",
+      actorUserId: context.user.id,
+      subject: context.user.email,
+    });
   });

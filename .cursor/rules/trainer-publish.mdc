@@ -17,6 +17,8 @@ The admin trainer lists are tabs on `/admin/trainers` (the whole list, drafts, a
 
 Import, a server copy, the short-link visit, and the password step do not publish it. The confirmed mailbox or the confirmed mobile does.
 
+Every verification and every real publish writes one journal row. The message names the channel and whether the actor is staff. The row time is when. A code, a link, and a phone number stay out of that message.
+
 ## Do
 
 - Save and sync an imported profile as `draft`.

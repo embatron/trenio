@@ -16,6 +16,7 @@ import { copyCardFaceToAccount } from "@/lib/catalog/account-face";
 import { markLogged, writeLog } from "@/lib/log/logger";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
 import { stampTrainerPublished } from "@/lib/catalog/trainer-published";
+import { publishMessage } from "@/lib/catalog/trainer-verify-log";
 import { renderLetter } from "@/lib/mail/letter";
 import { sendMail } from "@/lib/mail/send.server";
 import { SITE_EMAIL } from "@/lib/seo/site";
@@ -147,10 +148,11 @@ export const setOwnTrainerPageStatusFn = createServerFn({ method: "POST" })
           domain: "form",
           action: "form.trainer_profile",
           outcome: "success",
-          message: "Тренер согласился на публикацию неподтверждённого аккаунта.",
+          message: "Тренер попросил опубликовать карточку. Публикации не было. Не сотрудник.",
           actorUserId: context.user.id,
           subject: context.user.email,
           target: row.slug,
+          context: { via: "cabinet", staff: false, published: false },
         });
       }
       return { ok: true as const, status: pageStatusOf(row.status), requested: true as const };
@@ -184,10 +186,11 @@ export const setOwnTrainerPageStatusFn = createServerFn({ method: "POST" })
       domain: "form",
       action: "form.trainer_profile",
       outcome: "success",
-      message: ownStatusMessage(data.status),
+      message: data.status === "published" ? publishMessage("cabinet", true, true) : ownStatusMessage(data.status),
       actorUserId: context.user.id,
       subject: context.user.email,
       target: row.slug,
+      context: data.status === "published" ? { via: "cabinet", staff: false } : undefined,
     });
     return { ok: true as const, status: data.status, requested: false as const };
   });
@@ -584,6 +587,8 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
     await stampTrainerPublished(profileSlug);
     await copyCardFaceToAccount(context.user.id, storedAvatar, photos ?? existing?.photos);
     const savedStatus = keptPageStatus(existing?.status, data.status);
+    const publishedNow = existing?.status !== "published" && savedStatus === "published";
+    const withdrawnNow = existing?.status === "published" && savedStatus !== "published";
     const savedNotice = savedStatus === "draft" || savedStatus === "declined"
       ? "Профиль сохранён."
       : ownStatusMessage(savedStatus);
@@ -609,10 +614,15 @@ export const saveOwnTrainerProfileFn = createServerFn({ method: "POST" })
       domain: "form",
       action: "form.trainer_profile",
       outcome: "success",
-      message: savedNotice,
+      message: publishedNow
+        ? publishMessage("cabinet", true, true)
+        : withdrawnNow
+          ? publishMessage("cabinet", false, true)
+          : savedNotice,
       actorUserId: context.user.id,
       subject: context.user.email,
       target: profileSlug,
+      context: publishedNow || withdrawnNow ? { via: "cabinet", staff: false } : undefined,
     });
     return {
       ok: true as const,

@@ -147,7 +147,7 @@ async function stampYandexMailbox(userId: string, email: string) {
       eq(trainerProfiles.ownerUserId, userId),
       or(isNull(trainerProfiles.emailVerifiedAt), ne(trainerProfiles.email, email)),
     ));
-  await grantTrainerVerification(userId);
+  await grantTrainerVerification(userId, "yandex", { subject: email });
 }
 
 /** A Belarus mobile from Yandex fills an empty account phone. A number owned by someone else stays there. */
@@ -162,7 +162,7 @@ async function attachYandexPhone(userId: string, phone: string | null) {
       .set({ phone, phoneVerifiedAt: new Date(), updatedAt: new Date() })
       .where(and(eq(users.id, userId), isNull(users.phone)))
       .returning({ id: users.id });
-    if (stored.length > 0) await grantTrainerVerification(userId);
+    if (stored.length > 0) await grantTrainerVerification(userId, "yandex");
   } catch (error) {
     if (!isUniqueViolation(error)) throw error;
   }
@@ -183,5 +183,5 @@ async function takeoverUnverified(user: User, sub: string) {
       updatedAt: new Date(),
     })
     .where(eq(users.id, user.id));
-  await grantTrainerVerification(user.id);
+  await grantTrainerVerification(user.id, "yandex", { subject: user.email });
 }

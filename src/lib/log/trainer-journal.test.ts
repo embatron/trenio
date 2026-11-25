@@ -20,6 +20,7 @@ test("trainer account actions are kept only when the actor is a trainer", () => 
   assert.equal(trainerJournalKind("account.password.change"), "account");
   assert.equal(trainerJournalKind("account.delete"), "account");
   assert.equal(trainerJournalKind("account.verify"), "account");
+  assert.equal(trainerJournalKind("account.publish"), "account");
   assert.equal(trainerJournalKind("email.notice"), "account");
 });
 

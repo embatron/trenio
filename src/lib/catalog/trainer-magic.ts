@@ -905,7 +905,7 @@ async function claimDoorWithPhone(row: {
   }
   await db.insert(userRoles).values({ userId: created.id, role: "trainer" }).onConflictDoNothing();
   await copyCardFaceToAccount(created.id, face?.avatarPath ?? row.avatarPath, face?.photos ?? []);
-  await publishConfirmedDraft(row);
+  await publishConfirmedDraft(row, { via: "door-sms", actorUserId: created.id });
   return created;
 }
 
@@ -1040,7 +1040,7 @@ export const confirmDoorPhoneFn = createServerFn({ method: "POST" })
     if (updated.length === 0) throw new AuthError("Ссылка уже не действует.", "VALIDATION");
     await db.insert(userRoles).values({ userId: user.id, role: "trainer" }).onConflictDoNothing();
     await copyCardFaceToAccount(user.id, updated[0].avatarPath, updated[0].photos);
-    await publishConfirmedDraft(row);
+    await publishConfirmedDraft(row, { via: "door-sms", actorUserId: user.id });
     const { openDoorSession } = await import("@/lib/catalog/trainer-door-session");
     const next = await openDoorSession(user.id);
     void writeLog({
@@ -1224,7 +1224,7 @@ export const openTrainerMailFn = createServerFn({ method: "POST" })
         .limit(1);
       if (again?.ownerUserId !== user.id) throw error;
     }
-    await publishConfirmedDraft(row);
+    await publishConfirmedDraft(row, { via: "door-letter", actorUserId: user.id, subject: email });
     const { openDoorSession } = await import("@/lib/catalog/trainer-door-session");
     await openDoorSession(user.id);
     void writeLog({

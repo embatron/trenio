@@ -98,7 +98,7 @@ export async function claimConfirmedMailbox(slugOrHandle: string, rawEmail: stri
     await db.insert(userRoles).values({ userId: user.id, role: "trainer" }).onConflictDoNothing();
   }
 
-  await publishConfirmedDraft(row);
+  await publishConfirmedDraft(row, { via: "staff-bind", actorUserId: user.id, subject: email });
   if (attached) {
     await sendWelcomeOnPublish({
       previous: row.status,

@@ -8,15 +8,19 @@ import { writeLog } from "@/lib/log/logger";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
 import { stampTrainerPublished } from "@/lib/catalog/trainer-published";
 import { grantTrainerVerificationForProfile } from "@/lib/catalog/trainer-verified.server";
+import { publishMessage, staffProof, type TrainerProof } from "@/lib/catalog/trainer-verify-log";
 
 const DOOR_PROFILE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DOOR_SLUG = /^[a-z0-9._]{1,30}$/;
 
 export type DoorGoogleClaim = "claimed" | "own" | "missing" | "taken" | "busy";
 
-/** The mailbox is confirmed by the letter or by Google. A draft then enters the catalog. A hidden card stays hidden. */
-export async function publishConfirmedDraft(row: { id: string; slug: string; status: string }) {
-  await grantTrainerVerificationForProfile(row.id);
+/** The mailbox or the mobile is confirmed. A draft then enters the catalog. A hidden card stays hidden. */
+export async function publishConfirmedDraft(
+  row: { id: string; slug: string; status: string },
+  proof: { via: TrainerProof; actorUserId?: string | null; subject?: string | null },
+) {
+  await grantTrainerVerificationForProfile(row.id, proof.via, proof);
   if (row.status !== "draft") return;
   const updated = await getDb()
     .update(trainerProfiles)
@@ -25,12 +29,26 @@ export async function publishConfirmedDraft(row: { id: string; slug: string; sta
     .returning({ id: trainerProfiles.id });
   if (updated.length === 0) return;
   await stampTrainerPublished(row.slug);
+  const staff = staffProof(proof.via);
   logTrainerPresence({
     created: false,
     previous: "draft",
     next: "published",
     slug: row.slug,
+    actorUserId: proof.actorUserId,
+    subject: proof.subject,
     mode: "save",
+  });
+  void writeLog({
+    level: "info",
+    domain: staff ? "admin" : "account",
+    action: staff ? "admin.trainer_publish" : "account.publish",
+    outcome: "success",
+    message: publishMessage(proof.via, true, true),
+    actorUserId: proof.actorUserId ?? null,
+    subject: proof.subject ?? null,
+    target: row.slug,
+    context: { via: proof.via, staff },
   });
 }
 
@@ -149,7 +167,11 @@ export async function claimDoorAfterGoogle(input: DoorClaimInput): Promise<DoorG
     return again?.ownerUserId === input.userId ? "own" : "taken";
   }
 
-  await publishConfirmedDraft(row);
+  await publishConfirmedDraft(row, {
+    via: input.via === "yandex" ? "door-yandex" : "door-google",
+    actorUserId: input.userId,
+    subject: email,
+  });
   await db.insert(userRoles).values({ userId: input.userId, role: "trainer" }).onConflictDoNothing();
   await db.update(users).set({
     ...accountName,
