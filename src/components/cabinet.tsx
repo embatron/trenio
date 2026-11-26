@@ -686,6 +686,30 @@ a.cabinet-stat:hover { border-color: var(--primary); }
 .cabinet-faq { display: grid; gap: 12px; }
 .cabinet-faq > h2 { margin: 0; font-size: 16px; font-weight: var(--fw-heading); color: var(--dark); }
 .cabinet-card h2 { margin: 0; padding: 16px 18px; border-bottom: 1px solid var(--line); font-size: 16px; color: var(--dark); }
+.admin-pulse__body { display: grid; gap: 22px; padding: 16px 18px 18px; }
+.admin-pulse__block { display: grid; gap: 8px; min-width: 0; }
+.admin-pulse__block h3 { margin: 0; font-size: 14px; font-weight: var(--fw-title); color: var(--dark); }
+.admin-pulse__block p, .admin-pulse__empty { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
+.admin-pulse__shares { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.admin-pulse__shares li { display: grid; grid-template-columns: minmax(108px, 180px) minmax(0, 1fr) auto auto; gap: 8px; align-items: center; font-size: 13px; color: var(--dark); }
+.admin-pulse__label { min-width: 0; overflow-wrap: anywhere; }
+.admin-pulse__bar { height: 8px; border-radius: 99px; background: var(--light-bg); overflow: hidden; }
+.admin-pulse__bar > span { display: block; height: 100%; min-width: 0; border-radius: inherit; background: var(--primary); }
+.admin-pulse__shares strong { font-variant-numeric: tabular-nums; }
+.admin-pulse__percent { width: 3.2em; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
+.admin-pulse__rail { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+.admin-pulse__rail::-webkit-scrollbar { display: none; }
+.admin-day { flex: 0 0 52px; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 6px 4px 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--white); color: var(--muted); font-size: 11px; line-height: 1.2; }
+.admin-day__month { height: 14px; font-size: 10px; letter-spacing: 0.02em; }
+.admin-day__num { color: var(--dark); font-size: 13px; }
+.admin-day strong { color: var(--dark); font-size: 16px; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.admin-day__added { font-variant-numeric: tabular-nums; }
+.admin-day.is-hot { background: color-mix(in srgb, var(--primary) 12%, var(--white)); }
+.admin-day.is-today { border-color: var(--primary); }
+@media (max-width: 640px) {
+  .admin-pulse__shares li { grid-template-columns: minmax(0, 1fr) auto auto; }
+  .admin-pulse__bar { grid-column: 1 / -1; order: 3; }
+}
 .cabinet-page-status { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 12px 18px; }
 .cabinet-card .cabinet-page-status h2 { margin: 0; padding: 0; border: 0; }
 .cabinet-row { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none; }

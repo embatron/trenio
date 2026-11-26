@@ -4,6 +4,7 @@ import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
 import { useCabinetTick } from "@/components/cabinet-live";
 
 import { MESSAGE_ENVELOPE } from "@/components/messages/direct-mark";
+import { AdminCatalogPulse } from "@/components/admin-catalog-pulse";
 import { getAdminOverviewFn } from "@/lib/admin/overview";
 import type { TrainerViewPeriod } from "@/lib/catalog/trainer-periods";
 import { pluralRu } from "@/lib/ru-plural";
@@ -192,6 +193,7 @@ function AdminOverviewPage() {
           <span>{pluralRu(data.accountsTotal, "аккаунт", "аккаунта", "аккаунтов")}</span>
         </div>
       </div>
+      <AdminCatalogPulse pulse={data.pulse} />
     </>
   );
 }

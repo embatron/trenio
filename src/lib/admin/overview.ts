@@ -14,6 +14,7 @@ import {
   users,
 } from "@/db/schema";
 import { assertStaff, hiddenStaffIds } from "@/lib/admin/access";
+import { loadCatalogPulse } from "@/lib/admin/catalog-pulse.server";
 import {
   countPulse,
   distinctPulse,
@@ -93,7 +94,7 @@ export const getAdminOverviewFn = createServerFn({ method: "GET" })
     const staff = new Set(staffIds);
     const messageWhere = and(gte(messages.createdAt, since), outsideStaff(staffIds));
 
-    const [accountCount, reviewCount, pendingRows, profileSlugs, viewRows, messageRows, reviewRows, appearRows] = await Promise.all([
+    const [accountCount, reviewCount, pendingRows, profileSlugs, viewRows, messageRows, reviewRows, appearRows, pulse] = await Promise.all([
       db.select({ n: count() }).from(users),
       db.select({ n: count() }).from(trainerReviews),
       db.select({ userId: trainerReviews.userId }).from(trainerReviews).where(eq(trainerReviews.status, "pending")),
@@ -125,6 +126,7 @@ export const getAdminOverviewFn = createServerFn({ method: "GET" })
         })
         .from(trainerJournal)
         .where(and(eq(trainerJournal.action, "trainer.appear"), gte(trainerJournal.createdAt, since))),
+      loadCatalogPulse(today),
     ]);
 
     const leaders = visitLeaderPulse(
@@ -182,6 +184,7 @@ export const getAdminOverviewFn = createServerFn({ method: "GET" })
         today,
       ),
       online,
+      pulse,
     };
   });
 
