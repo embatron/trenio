@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildCatalogPulse, CATALOG_PULSE_DAYS, type CatalogPulseInput } from "./catalog-pulse.ts";
+import { buildCatalogPulse, CATALOG_PULSE_START, type CatalogPulseInput } from "./catalog-pulse.ts";
 
 const today = "2026-11-26";
 
@@ -20,7 +20,9 @@ function card(patch: Partial<CatalogPulseInput> & Pick<CatalogPulseInput, "slug"
     hasPhoto: true,
     hasPrice: true,
     hasPhone: true,
-    sport: "",
+    hasAddress: true,
+    hasStreet: true,
+    section: "",
     ...patch,
   };
 }
@@ -49,9 +51,9 @@ test("each calendar day counts cards added and first publications inside the win
     card({ slug: "live", status: "published", createdAt: "2026-11-25T22:00:00+03:00", publishedAt: "2026-11-26T09:00:00+03:00" }),
     card({ slug: "unstamped", status: "published", createdAt: "2026-11-24T15:00:00+03:00", publishedAt: null }),
   ], today);
-  assert.equal(pulse.days.length, CATALOG_PULSE_DAYS);
-  assert.equal(pulse.days[0]?.day, "2026-08-29");
+  assert.equal(pulse.days[0]?.day, CATALOG_PULSE_START);
   assert.equal(pulse.days.at(-1)?.day, today);
+  assert.equal(pulse.days.length, 27);
   const byDay = new Map(pulse.days.map((day) => [day.day, day]));
   assert.equal(byDay.get("2026-01-02"), undefined);
   assert.equal(byDay.get("2026-11-26")?.published, 1);
@@ -62,6 +64,7 @@ test("each calendar day counts cards added and first publications inside the win
   assert.equal(pulse.publishedInWindow, 2);
   assert.equal(byDay.get("2026-11-01")?.month, "ноя");
   assert.equal(byDay.get("2026-11-26")?.month, "ноя");
+  assert.match(byDay.get("2026-11-26")?.label ?? "", /опубликовано/);
 });
 
 test("status, gaps, and sports describe the cards staff can act on", () => {
@@ -70,7 +73,7 @@ test("status, gaps, and sports describe the cards staff can act on", () => {
       slug: "ready",
       status: "published",
       city: "Минск",
-      sport: "ММА",
+      section: "Единоборства",
       outreach: true,
       invite: true,
       door: true,
@@ -82,10 +85,12 @@ test("status, gaps, and sports describe the cards staff can act on", () => {
       slug: "thin",
       status: "published",
       city: "",
-      sport: "",
+      section: "",
       hasPhoto: false,
       hasPrice: false,
       hasPhone: false,
+      hasAddress: false,
+      hasStreet: false,
       publishedAt: "2026-11-21T10:00:00+03:00",
     }),
     card({ slug: "draft", status: "draft", outreach: true }),
@@ -102,12 +107,13 @@ test("status, gaps, and sports describe the cards staff can act on", () => {
     "Без цены",
     "Без телефона",
     "Без города",
+    "Без адреса",
+    "Без улицы",
     "Аккаунт не подтверждён",
-    "Без владельца",
   ]);
   assert.equal(pulse.gaps[0]?.count, 1);
-  assert.deepEqual(pulse.sports.map((row) => [row.label, row.count]), [
-    ["ММА", 1],
-    ["Вид не указан", 1],
+  assert.deepEqual(pulse.sections.map((row) => [row.label, row.count]), [
+    ["Единоборства", 1],
+    ["Раздел не указан", 1],
   ]);
 });

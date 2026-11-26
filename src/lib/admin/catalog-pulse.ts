@@ -1,8 +1,8 @@
 import { addDays } from "@/lib/catalog/trainer-periods";
 import { isLocalOnlyRow } from "@/lib/sync/policy";
 
-/** Calendar length on the admin overview. Today is the last block. */
-export const CATALOG_PULSE_DAYS = 90;
+/** First day on the admin calendar. The catalog opened on this date. Today is the last block. */
+export const CATALOG_PULSE_START = "2026-10-31";
 
 export type CatalogPulseInput = {
   slug: string;
@@ -19,7 +19,9 @@ export type CatalogPulseInput = {
   hasPhoto: boolean;
   hasPrice: boolean;
   hasPhone: boolean;
-  sport: string;
+  hasAddress: boolean;
+  hasStreet: boolean;
+  section: string;
 };
 
 export type CatalogShare = {
@@ -47,7 +49,7 @@ export type CatalogPulse = {
   publishedInWindow: number;
   statuses: CatalogShare[];
   gaps: CatalogShare[];
-  sports: CatalogShare[];
+  sections: CatalogShare[];
 };
 
 const STATUS_ORDER = ["published", "draft", "hidden", "archived", "declined"] as const;
@@ -120,7 +122,7 @@ export function buildCatalogPulse(rows: CatalogPulseInput[], today: string): Cat
     publishedTotal,
   );
 
-  const start = addDays(today, -(CATALOG_PULSE_DAYS - 1));
+  const start = today < CATALOG_PULSE_START ? today : CATALOG_PULSE_START;
   const added = new Map<string, number>();
   const appeared = new Map<string, number>();
   for (const row of cards) {
@@ -148,7 +150,7 @@ export function buildCatalogPulse(rows: CatalogPulseInput[], today: string): Cat
       month: parts.month,
       added: addedCount,
       published: publishedCount,
-      label: `${parts.date} ${parts.monthFull}: ${publishedCount} в каталог, ${addedCount} новых`,
+      label: `${parts.date} ${parts.monthFull}: ${publishedCount} опубликовано, ${addedCount} новых`,
     });
   }
 
@@ -165,31 +167,31 @@ export function buildCatalogPulse(rows: CatalogPulseInput[], today: string): Cat
       { label: "Без цены", count: published.filter((row) => !row.hasPrice).length },
       { label: "Без телефона", count: published.filter((row) => !row.hasPhone).length },
       { label: "Без города", count: published.filter((row) => !row.city.trim()).length },
+      { label: "Без адреса", count: published.filter((row) => !row.hasAddress).length },
+      { label: "Без улицы", count: published.filter((row) => !row.hasStreet).length },
       { label: "Аккаунт не подтверждён", count: published.filter((row) => !row.verified).length },
-      { label: "Без владельца", count: published.filter((row) => !row.owned).length },
     ].filter((row) => row.count > 0),
     publishedTotal,
   );
 
-  const sportCounts = new Map<string, number>();
-  let sportless = 0;
+  const sectionCounts = new Map<string, number>();
+  let sectionless = 0;
   for (const row of published) {
-    const sport = row.sport.trim();
-    if (!sport) {
-      sportless += 1;
+    const section = row.section.trim();
+    if (!section) {
+      sectionless += 1;
       continue;
     }
-    sportCounts.set(sport, (sportCounts.get(sport) ?? 0) + 1);
+    sectionCounts.set(section, (sectionCounts.get(section) ?? 0) + 1);
   }
-  const sports = shares(
-    [...sportCounts.entries()]
+  const sections = shares(
+    [...sectionCounts.entries()]
       .map(([label, count]) => ({ label, count }))
-      .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "ru"))
-      .slice(0, 8),
+      .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "ru")),
     publishedTotal,
   );
-  if (sportless > 0) {
-    sports.push({ label: "Вид не указан", count: sportless, percent: percent(sportless, publishedTotal) });
+  if (sectionless > 0) {
+    sections.push({ label: "Раздел не указан", count: sectionless, percent: percent(sectionless, publishedTotal) });
   }
 
   return {
@@ -201,7 +203,7 @@ export function buildCatalogPulse(rows: CatalogPulseInput[], today: string): Cat
     publishedInWindow: [...appeared.values()].reduce((sum, count) => sum + count, 0),
     statuses,
     gaps,
-    sports,
+    sections,
   };
 }
 

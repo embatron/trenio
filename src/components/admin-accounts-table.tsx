@@ -83,10 +83,6 @@ export function AdminAccountsTable({ accounts }: { accounts: AdminAccount[] }) {
 
   return (
     <>
-      <p className="cabinet-note cabinet-note--lede">
-        Аккаунты с подтверждённой почтой, телефоном или Telegram. Карточки тренеров без аккаунта смотрите в разделе{" "}
-        <Link to="/admin/trainers">Тренеры</Link>.
-      </p>
       <CabinetFilterBar
         search={(
           <label className="cabinet-filters__search">

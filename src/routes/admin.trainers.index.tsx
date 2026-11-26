@@ -15,14 +15,6 @@ const TABS: Array<{ id: TrainerListTab; label: string }> = [
   { id: "declined", label: "Отказались" },
 ];
 
-const NOTES: Record<TrainerListTab, string> = {
-  all: "",
-  unvisited: "Захода ещё не было. Карточка всё ещё черновик.",
-  published: "Страница опубликована, и тренер подтвердил аккаунт.",
-  unclear: "Заход был, аккаунт не подтверждён. Сотрудник может опубликовать карточку, и она остаётся здесь.",
-  declined: "Статус ставится в карточке тренера. Тренер сам его не выбирает.",
-};
-
 export const Route = createFileRoute("/admin/trainers/")({
   validateSearch: (search: Record<string, unknown>): { list?: Exclude<TrainerListTab, "all"> } => {
     const raw = typeof search.list === "string" ? search.list : "";
@@ -51,7 +43,6 @@ function AdminTrainersPage() {
     unclear: trainers.filter(staysUnclear).length,
     declined: trainers.filter((trainer) => trainer.status === "declined").length,
   }), [trainers]);
-  const note = NOTES[list];
 
   return (
     <article className="cabinet-card">
@@ -74,7 +65,6 @@ function AdminTrainersPage() {
           </button>
         ))}
       </div>
-      {note ? <p className="cabinet-note cabinet-note--lede">{note}</p> : null}
       <AdminTrainersTable key={list} trainers={trainers} list={list === "all" ? "all" : list} />
     </article>
   );
