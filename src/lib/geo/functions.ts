@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { requireAuthMiddleware } from "@/auth/middleware";
+import { optionalAuthMiddleware, requireAuthMiddleware } from "@/auth/middleware";
 import { consumeRateLimit, RATE_LIMITED_MESSAGE, RATE_LIMITS } from "@/auth/rate-limit";
 import { getDb } from "@/db";
 import { trainerProfiles } from "@/db/schema";
@@ -12,6 +13,7 @@ import { editorHtml } from "@/lib/catalog/review-html";
 import { logCaught, writeLog } from "@/lib/log/logger";
 import { addressQueryReady } from "@/lib/geo/normalize";
 import { mirrorTrainingPlace, resolveTrainingPlaces, suggestCachedOrRemote } from "@/lib/geo/resolve";
+import { suggestActorKey } from "@/lib/geo/suggest-actor";
 import {
   MAP_TEMPORARILY_UNAVAILABLE,
   isSpecificAddress,
@@ -28,25 +30,26 @@ function toSuggestions(hits: AddressSuggestion[]): AddressSuggestion[] {
 
 const suggestSlots = new Map<string, string>();
 
-function watchSuggest(userId: string, ticket: string | undefined, query: string) {
+function watchSuggest(actor: string, ticket: string | undefined, query: string) {
   if (!ticket) return undefined;
-  const slot = `${userId}:${ticket}`;
+  const slot = `${actor}:${ticket}`;
   suggestSlots.set(slot, query);
   return () => suggestSlots.get(slot) === query;
 }
 
 export const suggestAddress = createServerFn({ method: "POST" })
-  .middleware([requireAuthMiddleware])
+  .middleware([optionalAuthMiddleware])
   .validator(suggestAddressSchema)
   .handler(async ({ data, context }): Promise<{ suggestions: AddressSuggestion[]; unavailable: boolean }> => {
     if (!addressQueryReady(data.query)) return { suggestions: [], unavailable: false };
-    const stillCurrent = watchSuggest(context.user.id, data.ticket, data.query);
+    const actor = suggestActorKey(context.user?.id, getRequest().headers.get("x-real-ip"));
+    const stillCurrent = watchSuggest(actor, data.ticket, data.query);
     let gate: Promise<boolean> | null = null;
     const found = await suggestCachedOrRemote(
       data.query,
       () => {
         gate ??= consumeRateLimit(
-          `geo:suggest:${context.user.id}`,
+          `geo:suggest:${actor}`,
           RATE_LIMITS.geocodeSuggest.windowMs,
           RATE_LIMITS.geocodeSuggest.max,
         ).then((limit) => limit.ok);
@@ -62,7 +65,7 @@ export const suggestAddress = createServerFn({ method: "POST" })
         action: "geo.suggest",
         outcome: "failure",
         message: MAP_TEMPORARILY_UNAVAILABLE,
-        actorUserId: context.user.id,
+        actorUserId: context.user?.id,
       });
       return { suggestions: [], unavailable: true };
     }

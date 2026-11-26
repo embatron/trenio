@@ -2,7 +2,7 @@ import { useEffect, useId, useRef, useState } from "react";
 
 import { CabinetModal } from "@/components/cabinet";
 import { CityEntityInput } from "@/components/city-entity-input";
-import { authErrorMessage } from "@/lib/auth/errors";
+import { authErrorText, isAuthorizationRequired } from "@/lib/auth/errors";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { suggestAddress } from "@/lib/geo/functions";
 import { addressQueryReady } from "@/lib/geo/normalize";
@@ -16,6 +16,12 @@ import {
   type GeocodeStatus,
   type TrainerPlace,
 } from "@/lib/geo/schemas";
+
+function fieldTicket() {
+  const bytes = globalThis.crypto?.getRandomValues?.(new Uint8Array(8));
+  if (bytes) return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+  return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
+}
 
 const SUGGEST_WAIT_MS = 400;
 const MAP_WAIT_MS = 12_000;
@@ -51,6 +57,8 @@ function PlaceInput({
   const suggestRef = useRef(suggest);
   suggestRef.current = suggest;
   const listId = useId();
+  const ticketRef = useRef("");
+  if (!ticketRef.current) ticketRef.current = fieldTicket();
   const boxRef = useRef<HTMLDivElement>(null);
   const [draft, setDraft] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
@@ -84,7 +92,7 @@ function PlaceInput({
       let scheduled = false;
       setLoading(true);
       void suggestRef
-        .current({ data: { query: lookupQuery, ticket: listId } })
+        .current({ data: { query: lookupQuery, ticket: ticketRef.current } })
         .then((result) => {
           if (cancelled || gaveUp) return;
           window.clearTimeout(fail);
@@ -101,7 +109,14 @@ function PlaceInput({
         })
         .catch((error: unknown) => {
           if (cancelled || gaveUp) return;
-          const message = authErrorMessage(error);
+          if (isAuthorizationRequired(error)) {
+            window.clearTimeout(fail);
+            setSuggestions([]);
+            setOpen(false);
+            setMapError(MAP_TEMPORARILY_UNAVAILABLE);
+            return;
+          }
+          const message = authErrorText(error);
           if (message.startsWith("Слишком много") && tries < 4) {
             scheduled = true;
             retryTimer = window.setTimeout(run, 1200);
@@ -124,7 +139,7 @@ function PlaceInput({
       window.clearTimeout(fail);
       window.clearTimeout(retryTimer);
     };
-  }, [listId, lookupQuery, showMenu]);
+  }, [lookupQuery, showMenu]);
 
   function finishEditing() {
     setOpen(false);

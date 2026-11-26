@@ -54,16 +54,21 @@ export function isAuthorizationRequired(error: unknown): boolean {
   return (issue ?? raw) === AUTHORIZATION_REQUIRED;
 }
 
-export function authErrorMessage(error: unknown): string {
+/** The sentence a person can read. This does not leave the page. */
+export function authErrorText(error: unknown): string {
   if (error instanceof Error && error.name === "StepUpCancelled") return "";
-  if (isAuthorizationRequired(error)) {
-    if (redirectToLogin()) return "";
-    return AUTHORIZATION_REQUIRED;
-  }
   if (isAuthError(error)) return error.message;
   const raw = readMessage(error);
   const issue = raw ? firstIssueMessage(raw) : null;
   if (issue) return issue;
   if (raw && !raw.trim().startsWith("[") && !raw.trim().startsWith("{")) return raw;
   return "Произошла ошибка. Попробуйте ещё раз.";
+}
+
+export function authErrorMessage(error: unknown): string {
+  if (isAuthorizationRequired(error)) {
+    if (redirectToLogin()) return "";
+    return AUTHORIZATION_REQUIRED;
+  }
+  return authErrorText(error);
 }

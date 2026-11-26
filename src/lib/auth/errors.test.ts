@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { AuthError, authErrorMessage, isAuthorizationRequired } from "@/lib/auth/errors";
+import { AuthError, authErrorMessage, authErrorText, isAuthorizationRequired } from "@/lib/auth/errors";
 import { loginHref } from "@/lib/auth/return-path";
 
 test("a Zod payload becomes the first human message", () => {
@@ -23,6 +23,11 @@ test("a missing session is recognized and stays written when there is no browser
   assert.equal(isAuthorizationRequired(error), true);
   assert.equal(isAuthorizationRequired({ message: "Требуется авторизация." }), true);
   assert.equal(authErrorMessage(error), "Требуется авторизация.");
+});
+
+test("the address field can read a missing session without leaving the page", () => {
+  assert.equal(authErrorText(new Error("Требуется авторизация.")), "Требуется авторизация.");
+  assert.equal(authErrorText(new Error("Слишком много попыток. Подождите и попробуйте снова.")), "Слишком много попыток. Подождите и попробуйте снова.");
 });
 
 test("a closed account is not treated as a missing session", () => {
