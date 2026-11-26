@@ -4,15 +4,15 @@ import type { CatalogPulse, CatalogShare } from "@/lib/admin/catalog-pulse";
 import { countRu } from "@/lib/ru-plural";
 
 export function AdminCatalogPulse({ pulse }: { pulse: CatalogPulse }) {
-  const days = [...pulse.days].reverse();
-  const today = pulse.days.at(-1)?.day;
+  const days = pulse.days;
+  const today = days.at(-1)?.day;
   const rail = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     const node = rail.current;
     if (!node) return;
     let held = false;
     const pin = () => {
-      if (!held) node.scrollLeft = 0;
+      if (!held) node.scrollLeft = node.scrollWidth;
     };
     const hold = () => { held = true; };
     node.addEventListener("pointerdown", hold);
@@ -39,21 +39,22 @@ export function AdminCatalogPulse({ pulse }: { pulse: CatalogPulse }) {
 
         <PulseBlock
           title="Календарь"
-          hint={`${countRu(pulse.publishedInWindow, "выход в каталог", "выхода в каталог", "выходов в каталог")} и ${countRu(pulse.addedInWindow, "новая карточка", "новые карточки", "новых карточек")} за последние ${pulse.days.length} дней. Слева сегодня, прокрутка открывает более ранние дни. Крупное число — сколько вышло, мелкое — сколько добавлено. День считается по Минску.`}
+          hint={`${countRu(pulse.publishedInWindow, "публикация в каталог", "публикации в каталог", "публикаций в каталог")} и ${countRu(pulse.addedInWindow, "новая карточка", "новые карточки", "новых карточек")} за ${pulse.days.length} дней. Слева более ранние дни, справа сегодня.`}
         >
           <div className="admin-pulse__rail" ref={rail}>
-            {days.map((day, index) => (
+            {days.map((day) => (
               <div
                 key={day.day}
                 className={`admin-day${day.published > 0 ? " is-hot" : ""}${day.day === today ? " is-today" : ""}`}
                 aria-label={day.label}
                 title={day.label}
               >
-                <span className="admin-day__month">{index === 0 || day.date === 1 ? day.month : "\u00a0"}</span>
+                <span className="admin-day__date">{day.date} {day.month}</span>
                 <span className="admin-day__week">{day.weekday}</span>
-                <span className="admin-day__num">{day.date}</span>
                 <strong>{day.published}</strong>
-                <span className="admin-day__added">{day.added}</span>
+                <span className="admin-day__cap">в каталог</span>
+                <span className="admin-day__added">+{day.added}</span>
+                <span className="admin-day__cap">новые</span>
               </div>
             ))}
           </div>
@@ -61,10 +62,6 @@ export function AdminCatalogPulse({ pulse }: { pulse: CatalogPulse }) {
 
         <PulseBlock title="Статусы" hint={pulse.cardsTotal ? `Всего ${countRu(pulse.cardsTotal, "карточка", "карточки", "карточек")}. Доля — от этого числа.` : "Карточек пока нет."}>
           <ShareList rows={pulse.statuses} />
-        </PulseBlock>
-
-        <PulseBlock title="Путь в каталог" hint="Сколько карточек прошло каждый шаг. Доля — от всех карточек.">
-          <ShareList rows={pulse.funnel} />
         </PulseBlock>
 
         <PulseBlock title="Чего не хватает у опубликованных" hint="Только карточки, которые сейчас в каталоге.">

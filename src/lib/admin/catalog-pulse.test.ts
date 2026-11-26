@@ -64,7 +64,7 @@ test("each calendar day counts cards added and first publications inside the win
   assert.equal(byDay.get("2026-11-26")?.month, "ноя");
 });
 
-test("status, funnel, gaps, and sports describe the cards staff can act on", () => {
+test("status, gaps, and sports describe the cards staff can act on", () => {
   const pulse = buildCatalogPulse([
     card({
       slug: "ready",
@@ -97,9 +97,6 @@ test("status, funnel, gaps, and sports describe the cards staff can act on", () 
     ["Сняты", 0],
     ["Отказались", 0],
   ]);
-  assert.equal(pulse.funnel[0]?.percent, 100);
-  assert.equal(pulse.funnel.find((row) => row.label === "Сообщение отправлено")?.count, 2);
-  assert.equal(pulse.funnel.find((row) => row.label === "В каталоге")?.count, 2);
   assert.deepEqual(pulse.gaps.map((row) => row.label), [
     "Без фото",
     "Без цены",

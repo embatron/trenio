@@ -46,7 +46,6 @@ export type CatalogPulse = {
   addedInWindow: number;
   publishedInWindow: number;
   statuses: CatalogShare[];
-  funnel: CatalogShare[];
   gaps: CatalogShare[];
   sports: CatalogShare[];
 };
@@ -149,7 +148,7 @@ export function buildCatalogPulse(rows: CatalogPulseInput[], today: string): Cat
       month: parts.month,
       added: addedCount,
       published: publishedCount,
-      label: `${parts.date} ${parts.monthFull}: вышло ${publishedCount}, добавлено ${addedCount}`,
+      label: `${parts.date} ${parts.monthFull}: ${publishedCount} в каталог, ${addedCount} новых`,
     });
   }
 
@@ -157,18 +156,6 @@ export function buildCatalogPulse(rows: CatalogPulseInput[], today: string): Cat
   for (const row of cards) statusCounts.set(row.status, (statusCounts.get(row.status) ?? 0) + 1);
   const statuses = shares(
     STATUS_ORDER.map((status) => ({ label: STATUS_LABEL[status], count: statusCounts.get(status) ?? 0 })),
-    cards.length,
-  );
-
-  const funnel = shares(
-    [
-      { label: "Карточки", count: cards.length },
-      { label: "Сообщение отправлено", count: cards.filter((row) => row.outreach).length },
-      { label: "Ссылка скопирована", count: cards.filter((row) => row.invite).length },
-      { label: "Заход по ссылке", count: cards.filter((row) => row.door).length },
-      { label: "Аккаунт привязан", count: cards.filter((row) => row.owned).length },
-      { label: "В каталоге", count: publishedTotal },
-    ],
     cards.length,
   );
 
@@ -213,7 +200,6 @@ export function buildCatalogPulse(rows: CatalogPulseInput[], today: string): Cat
     addedInWindow: [...added.values()].reduce((sum, count) => sum + count, 0),
     publishedInWindow: [...appeared.values()].reduce((sum, count) => sum + count, 0),
     statuses,
-    funnel,
     gaps,
     sports,
   };

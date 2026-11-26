@@ -699,13 +699,15 @@ a.cabinet-stat:hover { border-color: var(--primary); }
 .admin-pulse__percent { width: 3.2em; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
 .admin-pulse__rail { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
 .admin-pulse__rail::-webkit-scrollbar { display: none; }
-.admin-day { flex: 0 0 52px; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 6px 4px 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--white); color: var(--muted); font-size: 11px; line-height: 1.2; }
-.admin-day__month { height: 14px; font-size: 10px; letter-spacing: 0.02em; }
-.admin-day__num { color: var(--dark); font-size: 13px; }
-.admin-day strong { color: var(--dark); font-size: 16px; font-variant-numeric: tabular-nums; line-height: 1.1; }
-.admin-day__added { font-variant-numeric: tabular-nums; }
-.admin-day.is-hot { background: color-mix(in srgb, var(--primary) 12%, var(--white)); }
+.admin-day { flex: 0 0 76px; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 8px 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--white); color: var(--muted); font-size: 11px; line-height: 1.2; text-align: center; }
+.admin-day__date { color: var(--dark); font-size: 13px; font-weight: var(--fw-title); }
+.admin-day__week { margin-bottom: 4px; }
+.admin-day strong { color: var(--dark); font-size: 18px; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.admin-day__cap { font-size: 10px; line-height: 1.2; }
+.admin-day__added { margin-top: 4px; color: var(--dark); font-size: 13px; font-variant-numeric: tabular-nums; }
+.admin-day.is-hot { background: color-mix(in srgb, #16a34a 16%, var(--white)); border-color: color-mix(in srgb, #16a34a 42%, var(--line)); }
 .admin-day.is-today { border-color: var(--primary); }
+.admin-day.is-hot.is-today { border-color: #16a34a; }
 @media (max-width: 640px) {
   .admin-pulse__shares li { grid-template-columns: minmax(0, 1fr) auto auto; }
   .admin-pulse__bar { grid-column: 1 / -1; order: 3; }
