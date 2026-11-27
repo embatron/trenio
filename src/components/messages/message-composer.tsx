@@ -50,7 +50,7 @@ export function MessageComposer({
   filesRef.current = files;
   const pendingAdds = useRef(Promise.resolve());
   const max = limit > 0 ? limit : 4000;
-  const length = reviewTextLength(html);
+  const length = reviewTextLength(html.replaceAll("\u200b", ""));
   const over = length > max;
   const empty = reviewPlainText(html).length === 0 && files.length === 0;
 
@@ -88,11 +88,11 @@ export function MessageComposer({
     setFileError(null);
   }
 
-  async function submit(liveHtml?: string) {
+  function startSend(liveHtml?: string) {
     const raw = composerBody(liveHtml, html);
     const body = messageMarkup(raw);
     const plain = reviewPlainText(body);
-    if ((!plain && files.length === 0) || disabled || busy || sending.current || over) return;
+    if ((!plain && files.length === 0) || disabled || busy || sending.current || over) return false;
     const sentFiles = files;
     sending.current = true;
     setHtml("");
@@ -100,17 +100,20 @@ export function MessageComposer({
     onActivity?.(false);
     setFileError(null);
     setBusy(true);
-    try {
-      await onSend(plain ? body : "", sentFiles);
-      for (const item of sentFiles) URL.revokeObjectURL(item.url);
-    } catch (error) {
-      setHtml((current) => (reviewPlainText(current).length > 0 ? current : body));
-      setFiles((current) => (current.length > 0 ? current : sentFiles));
-      throw error;
-    } finally {
-      sending.current = false;
-      setBusy(false);
-    }
+    void (async () => {
+      try {
+        await onSend(plain ? body : "", sentFiles);
+        for (const item of sentFiles) URL.revokeObjectURL(item.url);
+      } catch (error) {
+        setHtml((current) => (reviewPlainText(current).length > 0 ? current : body));
+        setFiles((current) => (current.length > 0 ? current : sentFiles));
+        throw error;
+      } finally {
+        sending.current = false;
+        setBusy(false);
+      }
+    })();
+    return true;
   }
 
   return (
@@ -118,7 +121,7 @@ export function MessageComposer({
       className="direct-composer"
       onSubmit={(event) => {
         event.preventDefault();
-        void submit();
+        startSend();
       }}
     >
       {hint ? <p className="direct-composer__hint">{hint}</p> : null}
@@ -185,12 +188,12 @@ export function MessageComposer({
               onActivity?.(reviewPlainText(value).trim().length > 0);
             }}
             disabled={disabled}
-            onSubmit={(live) => void submit(live)}
+            onSubmit={startSend}
             onAttach={addFiles}
           />
         </div>
-        <button type="submit" className="direct-composer__send" aria-label={editing ? "Сохранить" : "Отправить"} disabled={disabled || busy || over || empty}>
-          {busy ? "…" : editing ? (
+        <button type="submit" className="direct-composer__send" aria-label={editing ? "Сохранить" : "Отправить"} aria-busy={busy} disabled={disabled || busy || over || empty}>
+          {editing ? (
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7" /></svg>
           ) : (
             <DirectMark />

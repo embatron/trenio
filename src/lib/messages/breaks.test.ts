@@ -20,6 +20,11 @@ test("a million line breaks collapse to one blank line", () => {
   assert.equal((html.match(/<br>/g) ?? []).length <= MESSAGE_BREAK_CAP, true);
 });
 
+test("a caret mark after a break is not stored", () => {
+  assert.equal(collapseMessageHtml("Привет<br>\u200bещё"), "Привет<br>ещё");
+  assert.equal(collapseMessageHtml("Привет<br>\u200b"), "Привет<br>");
+});
+
 test("breaks between words stop at the cap", () => {
   const html = collapseMessageHtml(Array.from({ length: 1_000 }, () => "а<br>").join(""));
   assert.equal((html.match(/<br>/g) ?? []).length, MESSAGE_BREAK_CAP);

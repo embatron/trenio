@@ -81,7 +81,7 @@ function capNewlinesOutsidePre(html: string, cap: number): string {
  * A million breaks stay within the cap, including inside the editor.
  */
 export function collapseMessageHtml(html: string, cap = MESSAGE_BREAK_CAP): string {
-  const safe = sanitizeReviewHtml(html);
+  const safe = sanitizeReviewHtml(html).replace(/\u200b/g, "");
   const run = MESSAGE_BREAK_RUN;
   let out = safe.replace(new RegExp(`(?:<br>\\s*){${run + 1},}`, "gi"), "<br>".repeat(run));
   out = out.replace(/(?:<p>(?:\s|<br>)*<\/p>\s*){3,}/gi, "<p><br></p>");

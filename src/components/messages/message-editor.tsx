@@ -64,6 +64,17 @@ function applyClosedMarker(root: HTMLElement) {
   selection.addRange(range);
 }
 
+/** A trailing break draws no line in contenteditable until a character follows it. */
+const CARET_MARK = "\u200b";
+
+function sameDraft(dom: string, value: string) {
+  return dom.replaceAll(CARET_MARK, "") === value.replaceAll(CARET_MARK, "");
+}
+
+function editorHtmlLength(html: string) {
+  return reviewTextLength(html.replaceAll(CARET_MARK, ""));
+}
+
 function placeCaretAtEnd(field: HTMLElement) {
   const selection = window.getSelection();
   const range = document.createRange();
@@ -130,13 +141,16 @@ export const MessageEditor = memo(function MessageEditor({
   maxLength: number;
   onChange: (html: string) => void;
   disabled: boolean;
-  onSubmit: (html: string) => void;
+  onSubmit: (html: string) => boolean;
   onAttach: (files: File[]) => void;
 }) {
   const field = useRef<HTMLDivElement>(null);
   const keyedEnter = useRef(0);
   const stick = useRef(false);
+  const justSent = useRef(false);
   const written = useRef<string | null>(null);
+  const submitRef = useRef(onSubmit);
+  submitRef.current = onSubmit;
   const tookPaste = useRef(0);
   const [emoji, setEmoji] = useState(false);
   const box = useRef<HTMLDivElement>(null);
@@ -144,17 +158,27 @@ export const MessageEditor = memo(function MessageEditor({
   const attachRef = useRef(onAttach);
   attachRef.current = onAttach;
   const placeholder = disabled ? "Сообщения закрыты" : "Написать сообщение";
-  const empty = value.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").trim().length === 0;
+  const visible = value.replaceAll(CARET_MARK, "").replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ");
+  const empty = visible.trim().length === 0 && !/<br\b/i.test(value);
 
   useLayoutEffect(() => {
     const el = field.current;
     if (!el || disabled) return;
     const focused = document.activeElement === el;
-    if (el.innerHTML !== value) {
+    if (justSent.current) {
+      if (el.innerHTML !== "") el.innerHTML = "";
+      written.current = "";
+      if (value === "") justSent.current = false;
+      if (document.activeElement !== el) el.focus();
+      if (!el.contains(window.getSelection()?.anchorNode ?? null)) placeCaretAtEnd(el);
+      return;
+    }
+    if (!sameDraft(el.innerHTML, value)) {
       const draft = el.innerText.replace(/\u200b/g, "").trim();
       const typingAhead = focused && value === "" && written.current === "" && draft.length > 0;
       if (!typingAhead) {
         el.innerHTML = value;
+        if (el.lastChild instanceof HTMLBRElement) el.append(document.createTextNode(CARET_MARK));
         written.current = value;
         if (stick.current || focused) {
           el.focus();
@@ -247,7 +271,7 @@ export const MessageEditor = memo(function MessageEditor({
     if (!el || disabled) return;
     const breaks = (el.innerText.match(/\n/g) ?? []).length;
     if (breaks >= MESSAGE_BREAK_CAP || breaksBeforeCaret(el) >= MESSAGE_BREAK_RUN) return;
-    if (reviewTextLength(el.innerHTML) >= maxLength) return;
+    if (editorHtmlLength(el.innerHTML) >= maxLength) return;
     el.focus();
     const selection = window.getSelection();
     const range = document.createRange();
@@ -255,13 +279,29 @@ export const MessageEditor = memo(function MessageEditor({
       const current = selection.getRangeAt(0);
       current.deleteContents();
       range.setStart(current.startContainer, current.startOffset);
+      range.collapse(true);
     } else {
       range.selectNodeContents(el);
       range.collapse(false);
     }
     const br = document.createElement("br");
     range.insertNode(br);
-    range.setStartAfter(br);
+    let next = br.nextSibling;
+    while (next instanceof Text && next.data === "") {
+      const drop = next;
+      next = next.nextSibling;
+      drop.remove();
+    }
+    let caret: Text | null = null;
+    if (!next) {
+      caret = document.createTextNode(CARET_MARK);
+      br.parentNode?.insertBefore(caret, null);
+    } else if (next instanceof Text && next.data.replaceAll(CARET_MARK, "") === "") {
+      if (!next.data.includes(CARET_MARK)) next.data = CARET_MARK;
+      caret = next;
+    }
+    if (caret) range.setStart(caret, 0);
+    else range.setStartAfter(br);
     range.collapse(true);
     selection?.removeAllRanges();
     selection?.addRange(range);
@@ -272,9 +312,20 @@ export const MessageEditor = memo(function MessageEditor({
     const el = field.current;
     if (!el || disabled) return;
     applyClosedMarker(el);
+    const html = el.innerHTML;
+    if (!submitRef.current(html)) return;
+    justSent.current = true;
     stick.current = true;
-    onChange(el.innerHTML);
-    onSubmit(el.innerHTML);
+    el.innerHTML = "";
+    written.current = "";
+    el.focus();
+    placeCaretAtEnd(el);
+    requestAnimationFrame(() => {
+      const node = field.current;
+      if (!node || node.innerHTML !== "" || document.activeElement === node) return;
+      node.focus();
+      placeCaretAtEnd(node);
+    });
   }
 
   return (
@@ -344,6 +395,7 @@ export const MessageEditor = memo(function MessageEditor({
         }}
         onBeforeInput={(event) => {
           const type = event.nativeEvent.inputType;
+          if (!type) return;
           if ((type === "insertParagraph" || type === "insertLineBreak") && performance.now() - keyedEnter.current < 50) {
             event.preventDefault();
             return;
@@ -360,7 +412,7 @@ export const MessageEditor = memo(function MessageEditor({
           }
           if (!type.startsWith("insert") || type === "insertCompositionText") return;
           const el = field.current;
-          if (el && reviewTextLength(el.innerHTML) >= maxLength) event.preventDefault();
+          if (el && editorHtmlLength(el.innerHTML) >= maxLength) event.preventDefault();
         }}
         onKeyDown={(event) => {
           if (event.key !== "Enter" || event.nativeEvent.isComposing) return;

@@ -582,7 +582,7 @@ export const DIRECT_CSS = `
 .direct-bubble__like.is-seen { cursor: default; }
 .direct-bubble__like.is-seen::before { display: none; }
 .direct-bubble__like.is-pop { animation: direct-like 0.5s ease; }
-.is-arriving { animation: direct-arrive 0.32s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.is-arriving { animation: direct-arrive 0.22s ease both; }
 .direct-thread__typing, .direct-banner, .direct-menu__list, .direct-day, .direct-cleared { animation: direct-fade 0.22s ease both; }
 .direct-log [data-message-id] { scroll-margin-top: 12px; }
 .direct-list ul { list-style: none; margin: 0; padding: 0; overflow: auto; }
@@ -823,7 +823,7 @@ export const DIRECT_CSS = `
   .direct-field, .direct-field__placeholder { font-size: 14px; }
 }
 @keyframes direct-switch { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-@keyframes direct-arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes direct-arrive { from { opacity: 0; } to { opacity: 1; } }
 @keyframes direct-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes direct-like {
   0%, 100% { opacity: 1; }
