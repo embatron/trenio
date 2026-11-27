@@ -122,7 +122,7 @@ export function AdminAccountPage({ account }: { account: AdminAccountDetail }) {
                       {trainer.status === "published" ? (
                         <>
                           {" · "}
-                          <Link to="/trainers/$slug" params={{ slug: trainer.slug }} target="_blank" rel="noopener noreferrer">в каталоге</Link>
+                          <Link to="/trainers/$slug" params={{ slug: trainer.slug }} search={{ src: "catalog" }} target="_blank" rel="noopener noreferrer">в каталоге</Link>
                         </>
                       ) : null}
                     </span>

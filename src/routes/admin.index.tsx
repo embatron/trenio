@@ -239,7 +239,7 @@ function OnlineGroup({
           {people.map((person) => (
             <li key={person.id}>
               {person.kind === "public" ? (
-                <a className="cabinet-stat__who" href={`/trainers/${person.slug}`} target="_blank" rel="noopener noreferrer">
+                <a className="cabinet-stat__who" href={`/trainers/${person.slug}?src=catalog`} target="_blank" rel="noopener noreferrer">
                   {person.name}
                   <OpenMark />
                 </a>
@@ -262,7 +262,7 @@ function LeaderName({ trainer }: { trainer: { slug: string; name: string; publis
   if (!trainer.slug) return <span className="cabinet-stat__who">{trainer.name}</span>;
   if (trainer.published) {
     return (
-      <a className="cabinet-stat__who" href={`/trainers/${trainer.slug}`} target="_blank" rel="noopener noreferrer" title="Открыть публичный профиль">
+      <a className="cabinet-stat__who" href={`/trainers/${trainer.slug}?src=catalog`} target="_blank" rel="noopener noreferrer" title="Открыть публичный профиль">
         {trainer.name}
         <OpenMark />
       </a>

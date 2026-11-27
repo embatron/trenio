@@ -8,6 +8,9 @@ import { CabinetModal } from "@/components/cabinet";
 import { TablePager, useTablePage } from "@/components/table-pager";
 import { TrainerCardFields, type TrainerCardValues } from "@/components/trainer-card-fields";
 import { TrainerName } from "@/components/trainer-name";
+import { TrainerOverviewRating } from "@/components/trainer-cabinet-pulse";
+import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
+import { pageStatusOf, type OwnTrainerProfile } from "@/lib/catalog/trainer-own";
 import { displayAccountLogin } from "@/lib/auth/login-name";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
 import {
@@ -66,6 +69,52 @@ function draftFrom(trainer: AdminTrainer): Draft {
     avatarPath: fields.avatarPath.split("?")[0],
     priceFrom: trainer.priceFrom != null && trainer.priceFrom >= 1 ? trainer.priceFrom : null,
     experienceYears: trainer.experienceYears >= 1 ? trainer.experienceYears : 0,
+  };
+}
+
+function pulseProfile(detail: AdminTrainerDetail): OwnTrainerProfile {
+  const trainer = detail.trainer;
+  const pageStatus = pageStatusOf(trainer.status);
+  return {
+    firstName: trainer.firstName,
+    lastName: trainer.lastName,
+    headline: trainer.headline,
+    bio: trainer.bio,
+    about: trainer.about,
+    sportSlugs: trainer.sportSlugs,
+    city: trainer.city,
+    district: trainer.district,
+    places: trainer.places,
+    priceFrom: trainer.priceFrom,
+    phone: trainer.phone,
+    instagram: cabinetInstagram({
+      instagramUrl: trainer.instagram,
+      instagramHandle: trainer.instagramHandle,
+      createdSource: detail.stats.createdSource,
+    }),
+    telegram: trainer.telegram,
+    email: trainer.account?.email || trainer.email,
+    experienceYears: trainer.experienceYears,
+    formats: trainer.formats,
+    audiences: trainer.audiences,
+    avatarPath: trainer.avatarPath,
+    slug: trainer.slug,
+    photos: detail.photos,
+    certificates: detail.certificates,
+    phoneVerified: trainer.account?.phoneVerified ?? false,
+    emailVerified: trainer.account?.emailVerified ?? false,
+    verified: trainer.verified,
+    telegramVerified: detail.stats.telegramVerified,
+    createdSource: detail.stats.createdSource,
+    hidePhone: false,
+    hideInstagram: false,
+    hideTelegram: false,
+    hideEmail: false,
+    offerAccepted: trainer.offerAccepted,
+    privacyAccepted: false,
+    status: pageStatus === "published" || pageStatus === "hidden" || pageStatus === "archived" ? pageStatus : "archived",
+    pageStatus,
+    publishAsked: trainer.publishAsked,
   };
 }
 
@@ -145,6 +194,7 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
   const requestPhone = useAuthServerFn(requestAdminTrainerPhoneCodeFn);
   const confirmPhone = useAuthServerFn(confirmAdminTrainerPhoneCodeFn);
   const [tab, setTab] = useState<TabId>("profile");
+  const [gap, setGap] = useState<string | null>(null);
   const [draft, setDraft] = useState<Draft>(() => draftFrom(detail.trainer));
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -152,6 +202,12 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
   const { facts } = detail;
   const logins = useTablePage(detail.logins);
   const logs = useTablePage(detail.logs);
+
+  useEffect(() => {
+    if (tab !== "profile" || !gap) return;
+    document.getElementById(gap)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setGap(null);
+  }, [tab, gap]);
 
   function setField<K extends keyof Draft>(key: K, value: Draft[K]) {
     setDraft((current) => ({ ...current, [key]: value }));
@@ -209,7 +265,7 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
         }}
         leading={(
           <>
-            <label>
+            <label id="trainer-page-status">
               <span>Статус</span>
               <select value={draft.status} onChange={(event) => setField("status", event.target.value as TrainerPublishStatus)}>
                 <optgroup label="Страница">
@@ -256,12 +312,17 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
         )}
       />
       <p className="cabinet-note">
-        <a href={`/trainers/${draft.slug}`} target="_blank" rel="noopener noreferrer">Открыть карточку в каталоге</a>
+        <a href={`/trainers/${draft.slug}?src=catalog`} target="_blank" rel="noopener noreferrer">Открыть карточку в каталоге</a>
       </p>
       {error ? <p className="cabinet-form__error">{error}</p> : null}
       {saved ? <p className="cabinet-form__ok">{saved}</p> : null}
     </>
   );
+
+  function openGap(hash?: string) {
+    setTab("profile");
+    setGap(hash === "trainer-contact-block" ? "trainer-contacts" : hash || "trainer-contacts");
+  }
 
   function scrollTab(node: ReactNode) {
     if (!onDismiss) return node;
@@ -284,6 +345,13 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
           draft.slug
         )}
       </h2>
+      <TrainerOverviewRating
+        trainer={pulseProfile(detail)}
+        views={detail.stats.views}
+        ratings={{ [detail.trainer.slug]: detail.stats.rating }}
+        scope="staff"
+        onStep={(hash) => openGap(hash ?? "trainer-contacts")}
+      />
       <div className="cabinet-tabs" role="tablist" aria-label="Карточка тренера">
         {TABS.map((item) => (
           <button

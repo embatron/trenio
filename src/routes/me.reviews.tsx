@@ -77,7 +77,7 @@ function WrittenReview({ review, onReject }: { review: UserCabinetReview; onReje
     <div className="cabinet-row">
       <div>
         <span className="cabinet-review__pair">
-          <Link className="cabinet-id__line" to="/trainers/$slug" params={{ slug: review.trainerSlug }} target="_blank" rel="noreferrer" title="Открыть страницу">
+          <Link className="cabinet-id__line" to="/trainers/$slug" params={{ slug: review.trainerSlug }} search={{ src: "catalog" }} target="_blank" rel="noreferrer" title="Открыть страницу">
             <strong>{review.trainerName}</strong>
             <CabinetOpenMark />
           </Link>

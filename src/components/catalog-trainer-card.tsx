@@ -99,7 +99,7 @@ export function CatalogTrainerCard({
         className="trainer-card__hit"
         to="/trainers/$slug"
         params={{ slug: trainer.slug }}
-        search={{ sport: fromSport || undefined }}
+        search={{ sport: fromSport || undefined, src: "catalog" }}
         aria-label={trainer.name}
       />
       <div className="trainer-card__media">

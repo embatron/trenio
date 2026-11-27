@@ -538,7 +538,7 @@ export function TrainerCardFields({
         {leading}
         {nickFirst ? null : nickBlock}
         {self && !signup ? null : signup ? (
-          <label>
+          <label id="trainer-name">
             <span>Заголовок страницы</span>
             <input
               value={values.headline}
@@ -549,7 +549,7 @@ export function TrainerCardFields({
           </label>
         ) : (
           <>
-            <label>
+            <label id="trainer-name">
               <span>Заголовок страницы</span>
               <input
                 value={values.headline}

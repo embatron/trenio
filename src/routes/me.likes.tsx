@@ -64,7 +64,7 @@ function MeLikesPage() {
 
 function HistoryRow({ row }: { row: AccountLikeHistoryItem }) {
   const name = row.slug ? (
-    <Link className="cabinet-id__line" to="/trainers/$slug" params={{ slug: row.slug }} target="_blank" rel="noreferrer" title="Открыть страницу">
+    <Link className="cabinet-id__line" to="/trainers/$slug" params={{ slug: row.slug }} search={{ src: "catalog" }} target="_blank" rel="noreferrer" title="Открыть страницу">
       <strong>{row.name}</strong>
       <CabinetOpenMark />
     </Link>

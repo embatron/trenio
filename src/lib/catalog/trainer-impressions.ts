@@ -6,6 +6,7 @@ import { getSessionUserFromToken } from "@/auth/service";
 import { readSessionToken } from "@/auth/session";
 import { getDb } from "@/db";
 import { trainerCardImpressions, trainerProfiles } from "@/db/schema";
+import { contactClickIgnored } from "@/lib/catalog/trainer-contact-clicks";
 import { ensureTrainerImpressionTable } from "@/lib/catalog/trainer-impression-store";
 import { minskToday } from "@/lib/catalog/trainer-periods";
 import { visitorId } from "@/lib/catalog/trainer-visitor";
@@ -14,7 +15,7 @@ import { publishCabinet } from "@/lib/messages/live-hub";
 
 const slugSchema = z.string().trim().regex(/^[a-z0-9._-]{1,30}$/);
 
-/** One catalog impression per browser per Minsk day. The profile owner is not counted. */
+/** One catalog impression per browser per Minsk day. The owner and staff are not counted. */
 export const recordTrainerCardImpressionsFn = createServerFn({ method: "POST" })
   .validator(z.object({ slugs: z.array(slugSchema).max(80) }))
   .handler(async ({ data }) => {
@@ -33,7 +34,7 @@ export const recordTrainerCardImpressionsFn = createServerFn({ method: "POST" })
         .from(trainerProfiles)
         .where(inArray(trainerProfiles.slug, slugs));
       const session = await getSessionUserFromToken(readSessionToken());
-      const visible = profiles.filter((profile) => profile.status === "published" && !(session && profile.ownerUserId && session.id === profile.ownerUserId));
+      const visible = profiles.filter((profile) => profile.status === "published" && !contactClickIgnored(session, profile.ownerUserId));
       if (visible.length === 0) return { ok: true as const };
 
       const visitor = visitorId();

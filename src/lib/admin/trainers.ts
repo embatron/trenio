@@ -7,7 +7,7 @@ import { and, avg, count, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { requireAuthMiddleware } from "@/auth/middleware";
-import { markLogged, writeLog } from "@/lib/log/logger";
+import { markLogged, writeLog, logCaught } from "@/lib/log/logger";
 import { logTrainerPresence } from "@/lib/log/trainer-journal";
 import { sendProfileStatusNotice } from "@/lib/mail/account-notices";
 import { listActorJournal, mergeJournal } from "@/lib/log/journal";
@@ -44,6 +44,9 @@ import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
 import { popularityChecklist, popularityScore, recentReviewStart } from "@/lib/catalog/trainer-popularity";
 import { trainerAccountReady } from "@/lib/catalog/trainer-verified";
 import { emptyTrainerInterest, loadTrainerInterest, type TrainerInterest } from "@/lib/catalog/trainer-interest";
+import type { TrainerRatingSnapshot } from "@/lib/catalog/trainer-popularity";
+import { blankTrainerPulse, loadProfilePulse } from "@/lib/catalog/trainer-views.server";
+import type { TrainerCabinetPulse } from "@/lib/catalog/trainer-views";
 import { ensureTrainerPublishedAt, stampTrainerPublished } from "@/lib/catalog/trainer-published";
 import { listTrainerRevisionViews, stampTrainerRevision, type TrainerRevisionView } from "@/lib/catalog/trainer-revision";
 import { getSportTaxonomyChild, getTopLevelSportCategory, listSecondLevelSports, MAX_TRAINER_SPORTS, trainerSectionBySlug, trainerSportsFromSlugs } from "@/lib/catalog/sport-taxonomy";
@@ -1036,6 +1039,13 @@ export type AdminTrainerFacts = {
   lastLoginAt: string;
 };
 
+export type AdminTrainerStats = {
+  views: TrainerCabinetPulse;
+  rating: TrainerRatingSnapshot;
+  telegramVerified: boolean;
+  createdSource: string;
+};
+
 export type AdminTrainerDetail = {
   trainer: AdminTrainer;
   photos: string[];
@@ -1044,6 +1054,7 @@ export type AdminTrainerDetail = {
   logs: AdminTrainerLog[];
   history: TrainerRevisionView[];
   facts: AdminTrainerFacts;
+  stats: AdminTrainerStats;
 };
 
 export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
@@ -1060,7 +1071,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
 
     const hidden = await hiddenStaffIds(context.user.roles);
     const ownerVisible = Boolean(row.ownerUserId) && !hidden.has(row.ownerUserId ?? "");
-    const [ratingRows, reviewRows, owner, roleRows, interest] = await Promise.all([
+    const [ratingRows, reviewRows, owner, roleRows, interest, pulse] = await Promise.all([
       db
         .select({
           reviews: count(),
@@ -1106,6 +1117,13 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         ? db.select({ role: userRoles.role }).from(userRoles).where(eq(userRoles.userId, row.ownerUserId))
         : Promise.resolve([]),
       loadTrainerInterest(),
+      loadProfilePulse(
+        { id: row.id, slug: row.slug, ownerUserId: row.ownerUserId },
+        context.user.id,
+      ).catch((error: unknown) => {
+        logCaught("catalog", "catalog.view", error, { actorUserId: context.user.id, target: row.slug });
+        return blankTrainerPulse();
+      }),
     ]);
 
     const ownerId = owner?.id ?? null;
@@ -1324,6 +1342,18 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         accountRoles: roles.join(", "),
         accountStatus: owner ? ACCOUNT_STATUS_LABEL[owner.status] ?? owner.status : "",
         lastLoginAt: owner?.lastLoginAt ? owner.lastLoginAt.toISOString() : "",
+      },
+      stats: {
+        views: pulse,
+        rating: {
+          rating: reviews > 0 && Number.isFinite(average) ? average.toFixed(1) : "0",
+          reviews,
+          positiveReviews,
+          recentPositiveReviews,
+          ...(interest[row.slug] ?? emptyTrainerInterest),
+        },
+        telegramVerified: row.telegramVerifiedAt != null,
+        createdSource: row.createdSource,
       },
     };
   });

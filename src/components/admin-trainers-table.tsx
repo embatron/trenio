@@ -196,6 +196,7 @@ function TrainerProfileLink({ trainer }: { trainer: AdminTrainer }) {
       className="cabinet-trainer-name"
       to="/trainers/$slug"
       params={{ slug: trainer.slug }}
+      search={{ src: "catalog" }}
       target="_blank"
       rel="noopener noreferrer"
       title={label}

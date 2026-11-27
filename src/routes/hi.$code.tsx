@@ -4,6 +4,7 @@ import { ExpiredLink } from "@/components/expired-link";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { peekCabinetEntryFn } from "@/lib/catalog/cabinet-entry";
 import { enterTrainerDoorFn, peekTrainerMailFn, peekTrainerPhoneFn } from "@/lib/catalog/trainer-magic";
+import { knownVisitSource } from "@/lib/catalog/visit-source";
 
 export const Route = createFileRoute("/hi/$code")({
   head: () => ({
@@ -14,6 +15,7 @@ export const Route = createFileRoute("/hi/$code")({
   }),
   loader: async ({ params, location }) => {
     const paramsQuery = new URLSearchParams(location.searchStr);
+    const src = knownVisitSource(paramsQuery.get("src"));
     const phone = paramsQuery.get("phone") ?? "";
     if (phone) {
       const peek = await peekTrainerPhoneFn({ data: { code: params.code, token: phone } });
@@ -21,6 +23,7 @@ export const Route = createFileRoute("/hi/$code")({
       const door = await enterTrainerDoorFn({ data: { code: params.code } });
       if (!door) return { ready: false, desk: null };
       const query = new URLSearchParams({ phone, door: params.code });
+      if (src) query.set("src", src);
       throw redirect({ href: `/trainers/${door.slug}?${query.toString()}` });
     }
     const desk = paramsQuery.get("desk") ?? "";
@@ -36,14 +39,15 @@ export const Route = createFileRoute("/hi/$code")({
       const door = await enterTrainerDoorFn({ data: { code: params.code } });
       if (!door) return { ready: false, desk: null };
       if (peek.renew) {
-        throw redirect({ to: "/trainers/$slug", params: { slug: door.slug } });
+        throw redirect({ href: src ? `/trainers/${door.slug}?src=${src}` : `/trainers/${door.slug}` });
       }
       const query = new URLSearchParams({ mail, door: params.code });
+      if (src) query.set("src", src);
       throw redirect({ href: `/trainers/${door.slug}?${query.toString()}` });
     }
     const door = await enterTrainerDoorFn({ data: { code: params.code } });
     if (!door) return { ready: false, desk: null };
-    throw redirect({ to: "/trainers/$slug", params: { slug: door.slug } });
+    throw redirect({ href: src ? `/trainers/${door.slug}?src=${src}` : `/trainers/${door.slug}` });
   },
   component: DoorPage,
   errorComponent: DoorError,

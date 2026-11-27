@@ -388,7 +388,7 @@ function ClubPage() {
                       <div className="club-trainer-grid">
                         {c.trainers.map((t) => (
                           <article key={t.slug || t.name} className="club-trainer-card">
-                            {t.slug ? <Link className="club-trainer-card__hit" to="/trainers/$slug" params={{ slug: t.slug }} aria-label={t.name} /> : null}
+                            {t.slug ? <Link className="club-trainer-card__hit" to="/trainers/$slug" params={{ slug: t.slug }} search={{ src: "catalog" }} aria-label={t.name} /> : null}
                             <div className="club-trainer-card__photo-wrap">
                               <img className="club-trainer-card__photo" src={t.photo || placeholder(t.name, 420, 315)} alt={t.name} loading="lazy" />
                             </div>

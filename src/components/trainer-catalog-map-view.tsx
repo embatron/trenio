@@ -476,7 +476,7 @@ export function TrainerCatalogMapView({
           <ul className="catalog-map__people">
             {active.trainers.slice(0, MAP_TOOLTIP_CAP).map((trainer) => (
               <li key={trainer.slug}>
-                <Link to="/trainers/$slug" params={{ slug: trainer.slug }}>
+                <Link to="/trainers/$slug" params={{ slug: trainer.slug }} search={{ src: "catalog" }}>
                   {trainer.photo ? (
                     <PhotoImage
                       className="catalog-map__photo"

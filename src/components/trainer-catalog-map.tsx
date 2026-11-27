@@ -67,7 +67,7 @@ export function TrainerCatalogMap({
             <ul>
               {features.flatMap((feature) => feature.kind === "pin" ? feature.trainers.map((trainer) => (
                 <li key={`${feature.key}-${trainer.slug}`}>
-                  <Link to="/trainers/$slug" params={{ slug: trainer.slug }}>{trainer.name}</Link>
+                  <Link to="/trainers/$slug" params={{ slug: trainer.slug }} search={{ src: "catalog" }}>{trainer.name}</Link>
                   <span>{feature.label}</span>
                 </li>
               )) : [])}

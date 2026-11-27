@@ -41,7 +41,7 @@ function AccountReviewsPage() {
             <div>
               <strong>{review.trainerName} · {review.rating} из 5</strong>
               <ReviewHtml html={review.body} />
-              <Link className="cabinet-inline-link" to="/trainers/$slug" params={{ slug: review.trainerSlug }}>Профиль тренера</Link>
+              <Link className="cabinet-inline-link" to="/trainers/$slug" params={{ slug: review.trainerSlug }} search={{ src: "catalog" }}>Профиль тренера</Link>
             </div>
             <div className="cabinet-status-stack">
               <div className="cabinet-status-line">

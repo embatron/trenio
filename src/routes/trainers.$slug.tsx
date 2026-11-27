@@ -293,12 +293,14 @@ export const Route = createFileRoute("/trainers/$slug")({
     phone?: string;
     door?: string;
     created?: 1;
+    src?: string;
   } => ({
     sport: typeof search.sport === "string" && /^[a-z0-9-]{1,30}$/.test(search.sport) ? search.sport : undefined,
     mail: typeof search.mail === "string" ? search.mail : undefined,
     phone: typeof search.phone === "string" ? search.phone : undefined,
     door: typeof search.door === "string" ? search.door : undefined,
     created: search.created === "1" || search.created === 1 ? 1 : undefined,
+    src: typeof search.src === "string" && /^(direct|search|social|instagram|chat|catalog|other)$/.test(search.src) ? search.src : undefined,
   }),
   component: TrainerPage,
 });
@@ -855,7 +857,10 @@ function TrainerPage() {
   };
   useEffect(() => {
     if (access !== "public") return;
-    void recordTrainerProfileViewFn({ data: { slug: t.slug } });
+    const src = new URLSearchParams(window.location.search).get("src") ?? "";
+    void recordTrainerProfileViewFn({
+      data: { slug: t.slug, referrer: document.referrer.slice(0, 500), src: src.slice(0, 16) },
+    });
   }, [access, t.slug]);
   const documentPhrase = trainerDocumentPhrase(t.sportDatives, t.city, t.name, t.headline);
   const { user } = useRouteContext({ from: "__root__" });
@@ -1373,6 +1378,7 @@ function TrainerPage() {
                                 className="review-item__author"
                                 to="/trainers/$slug"
                                 params={{ slug: r.authorSlug }}
+                                search={{ src: "catalog" }}
                                 title="Открыть профиль"
                               >
                                 {r.author}

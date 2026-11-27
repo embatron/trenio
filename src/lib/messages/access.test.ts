@@ -118,7 +118,7 @@ test("getCounterparty shows the trainer to the initiator and the user to everyon
     getCounterparty({ ...base, viewerId: staffId, userHref: "/trainers/anna", userAvatarPath: "/trainers/anna.jpg" }).href,
     "/trainers/anna",
   );
-  assert.equal(publicTrainerHref("ivan", "published"), "/trainers/ivan");
+  assert.equal(publicTrainerHref("ivan", "published"), "/trainers/ivan?src=chat");
   assert.equal(publicTrainerHref("ivan", "draft"), null);
   assert.equal(cardPortrait("/a.jpg?v=1", []), "/a.jpg");
   assert.equal(portraitPath("/card.jpg", "/account.jpg"), "/card.jpg");

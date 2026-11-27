@@ -218,7 +218,7 @@ function AdminReviewsPage() {
                     </div>
                   </td>
                   <td>
-                    <Link className="cabinet-inline-link" to="/trainers/$slug" params={{ slug: review.trainerSlug }}>{review.trainerName}</Link>
+                    <Link className="cabinet-inline-link" to="/trainers/$slug" params={{ slug: review.trainerSlug }} search={{ src: "catalog" }}>{review.trainerName}</Link>
                   </td>
                   <td>{review.rating} из 5</td>
                   <td><ReviewHtml html={review.body} /></td>

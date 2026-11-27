@@ -506,7 +506,7 @@ function ReportQueue({
                     </td>
                     <td>
                       {row.trainerSlug ? (
-                        <Link className="cabinet-inline-link" to="/trainers/$slug" params={{ slug: row.trainerSlug }}>{row.trainerName}</Link>
+                        <Link className="cabinet-inline-link" to="/trainers/$slug" params={{ slug: row.trainerSlug }} search={{ src: "catalog" }}>{row.trainerName}</Link>
                       ) : (
                         row.trainerName
                       )}

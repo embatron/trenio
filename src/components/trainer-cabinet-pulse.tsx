@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { Component, lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
 
 import { CabinetMark, CabinetModal, CabinetNotice, type CabinetIcon, type MeSectionPath } from "@/components/cabinet";
@@ -18,10 +18,30 @@ import {
   type TrainerRatingSnapshot,
 } from "@/lib/catalog/trainer-popularity";
 import type { TrainerCabinetPulse, TrainerViewPeriod } from "@/lib/catalog/trainer-views";
-import { accountLikeLabel, accountLikeWord } from "@/lib/catalog/account-like-rules";
+import { contactAttempts, pulseStory, trainerNextStep, type PulseMode as StoryMode } from "@/lib/catalog/trainer-pulse-story";
+import { pulseChartSpan } from "@/lib/catalog/pulse-chart";
+import { VISIT_SOURCE_NOTE, VISIT_SOURCE_TITLE } from "@/lib/catalog/visit-source";
+import { accountLikeLabel } from "@/lib/catalog/account-like-rules";
 import { countRu, pluralRu } from "@/lib/ru-plural";
 
-type PulseMode = "day" | "week" | "month";
+const TrainerPulseChart = lazy(() => import("@/components/trainer-pulse-chart"));
+
+class PulseChartBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  render() {
+    if (this.state.failed) {
+      return <p className="cabinet-story__note">График сейчас не открылся. Остальные цифры на месте.</p>;
+    }
+    return this.props.children;
+  }
+}
+
+type PulseMode = StoryMode;
 
 const PERIOD_COPY: Record<PulseMode, {
   link: string;
@@ -41,11 +61,16 @@ const PERIOD_COPY: Record<PulseMode, {
 };
 
 function periodDelta(period: TrainerViewPeriod, same: string, against: string) {
+  if (period.current === 0 && period.previous === 0) {
+    return { className: "is-flat", text: "никого не было" };
+  }
   const diff = period.current - period.previous;
   if (diff === 0) return { className: "is-flat", text: same };
   const sign = diff > 0 ? "+" : "−";
   return { className: diff > 0 ? "is-up" : "is-down", text: `${sign}${Math.abs(diff)} ${against}` };
 }
+
+const PERIOD_ORDER: PulseMode[] = ["day", "week", "month"];
 
 function StatMark({ children }: { children: ReactNode }) {
   return <span className="cabinet-stat__mark" aria-hidden="true"><svg viewBox="0 0 24 24">{children}</svg></span>;
@@ -62,7 +87,7 @@ function PeriodSwitch({
 }) {
   return (
     <div className="cabinet-stat__switch" role="group" aria-label={label}>
-      {(Object.keys(PERIOD_COPY) as PulseMode[]).map((mode) => (
+      {PERIOD_ORDER.map((mode) => (
         <button
           key={mode}
           type="button"
@@ -248,10 +273,6 @@ export function PageStatusCard({
 
 const PERIOD_SPAN: Record<PulseMode, string> = { day: "сутки", week: "неделю", month: "месяц" };
 
-function likeLabel(count: number, mode: PulseMode) {
-  return `${accountLikeWord(count)} за ${PERIOD_SPAN[mode]}`;
-}
-
 function likeWeightDetail(shown: number, weight: number) {
   const label = accountLikeLabel(shown);
   if (shown <= 0) return "Пока нет лайкосов";
@@ -428,6 +449,9 @@ type PulseProps = {
   trainer: OwnTrainerProfile | null;
   views: TrainerCabinetPulse | null;
   ratings: Record<string, TrainerRatingSnapshot>;
+  /** Staff read another trainer's card. The numbers stay. The links into that trainer's cabinet do not. */
+  scope?: "owner" | "staff";
+  onStep?: (hash?: string) => void;
 };
 
 function usePulseScore(trainer: OwnTrainerProfile | null, _views: TrainerCabinetPulse | null, ratings: Record<string, TrainerRatingSnapshot>) {
@@ -496,46 +520,58 @@ function ratingLevel(score: number) {
   };
 }
 
-function OverviewTileLink({ tile }: { tile: OverviewTile }) {
-  return (
-    <Link className={`cabinet-overview-tile is-${tile.tone}`} to={tile.to} hash={tile.hash} reloadDocument>
+function OverviewTileLink({ tile, linked }: { tile: OverviewTile; linked: boolean }) {
+  const body = (
+    <>
       <span className="cabinet-overview-tile__top">
         <span>{tile.title}</span>
         <CabinetMark icon={tile.icon} />
       </span>
       <strong>{tile.value}</strong>
       <span className="cabinet-overview-tile__detail">{tile.detail}</span>
-      <span className="cabinet-overview-tile__action">
-        Открыть раздел
-        <span aria-hidden="true">→</span>
-      </span>
+      {linked ? (
+        <span className="cabinet-overview-tile__action">
+          Открыть раздел
+          <span aria-hidden="true">→</span>
+        </span>
+      ) : null}
+    </>
+  );
+  if (!linked) return <article className={`cabinet-overview-tile is-${tile.tone}`}>{body}</article>;
+  return (
+    <Link className={`cabinet-overview-tile is-${tile.tone}`} to={tile.to} hash={tile.hash} reloadDocument>
+      {body}
     </Link>
   );
 }
 
-export function TrainerOverviewRating({ trainer, views, ratings }: PulseProps) {
+export function TrainerOverviewRating({ trainer, views, ratings, scope = "owner", onStep }: PulseProps) {
   const [ratingOpen, setRatingOpen] = useState(false);
-  const { hasProfile, rating, checklist, parts } = usePulseScore(trainer, views, ratings);
-  if (!hasProfile || !views) return <p className="cabinet-empty">Карточка ещё не привязана.</p>;
+  const [mode, setMode] = useState<PulseMode>("week");
+  const { rating, checklist, parts } = usePulseScore(trainer, views, ratings);
+  if (!trainer || !views) return <p className="cabinet-empty">Карточка ещё не привязана.</p>;
   const score = parts?.total ?? 0;
   const level = ratingLevel(score);
-  const previousLikes = views.likes.week.previous;
-  const previousVisits = views.visits.week.previous;
-  const previousSaves = views.favorites.week.previous;
-  const previousMessages = views.contacts.message.week.previous;
+  const span = PERIOD_SPAN[mode];
+  const likes = views.likes[mode].current;
+  const visits = views.visits[mode].current;
+  const saves = views.favorites[mode].current;
+  const messages = views.contacts.message[mode].current;
+  const step = trainerNextStep(trainer);
+  const staff = scope === "staff";
   const tiles: OverviewTile[] = [
     {
       title: "Лайкосы",
-      value: previousLikes,
-      detail: `${pluralRu(previousLikes, "лайкос", "лайкоса", "лайкосов")} за прошлую неделю`,
+      value: likes,
+      detail: `${pluralRu(likes, "лайкос", "лайкоса", "лайкосов")} за ${span}`,
       icon: "likes",
       tone: "coral",
       to: "/me/likes",
     },
     {
       title: "Посещения",
-      value: previousVisits,
-      detail: `${pluralRu(previousVisits, "открытие", "открытия", "открытий")} страницы за прошлую неделю`,
+      value: visits,
+      detail: `${pluralRu(visits, "открытие", "открытия", "открытий")} страницы за ${span}`,
       icon: "stats",
       tone: "aqua",
       to: "/me",
@@ -543,8 +579,8 @@ export function TrainerOverviewRating({ trainer, views, ratings }: PulseProps) {
     },
     {
       title: "Сохранения",
-      value: previousSaves,
-      detail: `${pluralRu(previousSaves, "сохранение", "сохранения", "сохранений")} карточки за прошлую неделю`,
+      value: saves,
+      detail: `${pluralRu(saves, "сохранение", "сохранения", "сохранений")} карточки за ${span}`,
       icon: "favorites",
       tone: "gold",
       to: "/me/favorites",
@@ -559,8 +595,8 @@ export function TrainerOverviewRating({ trainer, views, ratings }: PulseProps) {
     },
     {
       title: "Сообщения",
-      value: previousMessages,
-      detail: `${pluralRu(previousMessages, "переход", "перехода", "переходов")} в сообщения за прошлую неделю`,
+      value: messages,
+      detail: `${pluralRu(messages, "переход", "перехода", "переходов")} в сообщения за ${span}`,
       icon: "messages",
       tone: "green",
       to: "/me/messages",
@@ -581,11 +617,18 @@ export function TrainerOverviewRating({ trainer, views, ratings }: PulseProps) {
           <span className="cabinet-overview-rating__mark" aria-hidden="true">
             <CabinetMark icon="stats" />
           </span>
-          <span className="cabinet-overview-rating__eyebrow">Рейтинг вашего профиля</span>
-          <Link className="cabinet-overview-rating__score" to="/me" hash="cabinet-stats" reloadDocument aria-label={`Рейтинг ${score} из ${POPULARITY_MAX}. Открыть статистику`}>
-            <strong>{score}</strong>
-            <span>из {POPULARITY_MAX}</span>
-          </Link>
+          <span className="cabinet-overview-rating__eyebrow">{staff ? "Рейтинг профиля" : "Рейтинг вашего профиля"}</span>
+          {staff ? (
+            <div className="cabinet-overview-rating__score" aria-label={`Рейтинг ${score} из ${POPULARITY_MAX}`}>
+              <strong>{score}</strong>
+              <span>из {POPULARITY_MAX}</span>
+            </div>
+          ) : (
+            <Link className="cabinet-overview-rating__score" to="/me" hash="cabinet-stats" reloadDocument aria-label={`Рейтинг ${score} из ${POPULARITY_MAX}. Открыть статистику`}>
+              <strong>{score}</strong>
+              <span>из {POPULARITY_MAX}</span>
+            </Link>
+          )}
           <div className="cabinet-overview-rating__level">
             <span className="cabinet-overview-rating__step">Уровень {level.index} из 10</span>
             <strong>{level.label}</strong>
@@ -595,7 +638,7 @@ export function TrainerOverviewRating({ trainer, views, ratings }: PulseProps) {
           <div
             className="cabinet-overview-rating__progress"
             role="progressbar"
-            aria-label="Рейтинг вашего профиля"
+            aria-label={staff ? "Рейтинг профиля" : "Рейтинг вашего профиля"}
             aria-valuemin={0}
             aria-valuemax={POPULARITY_MAX}
             aria-valuenow={score}
@@ -603,17 +646,33 @@ export function TrainerOverviewRating({ trainer, views, ratings }: PulseProps) {
             <span style={{ width: `${Math.min(100, (score / POPULARITY_MAX) * 100)}%` }} />
           </div>
           <div className="cabinet-overview-rating__actions">
-            <Link to="/me" hash="cabinet-stats" reloadDocument>Вся статистика</Link>
             <button type="button" onClick={() => setRatingOpen(true)} aria-haspopup="dialog">
               Как работает рейтинг?
             </button>
           </div>
         </article>
+        {step ? (
+          staff ? (
+            <button type="button" className="cabinet-next" onClick={() => onStep?.(step.hash)}>
+              <span className="cabinet-next__label">Следующий шаг</span>
+              <span>{step.text}</span>
+            </button>
+          ) : (
+            <Link className="cabinet-next" to={step.to} hash={step.hash}>
+              <span className="cabinet-next__label">Следующий шаг</span>
+              <span>{step.text}</span>
+            </Link>
+          )
+        ) : null}
+        <div className="cabinet-period">
+          <PeriodSwitch value={mode} label="Срок статистики" onChange={setMode} />
+        </div>
         <div className="cabinet-overview-tiles">
-          {tiles.map((tile) => <OverviewTileLink key={tile.title} tile={tile} />)}
+          {tiles.map((tile) => <OverviewTileLink key={tile.title} tile={tile} linked={!staff} />)}
         </div>
       </section>
-      <TrainerOwnStats trainer={trainer} views={views} ratings={ratings} />
+      <TrainerOwnStats trainer={trainer} views={views} ratings={ratings} mode={mode} onMode={setMode} />
+      {staff ? null : (
       <section className="cabinet-faq" aria-labelledby="overview-faq">
         <h2 id="overview-faq">Частые вопросы о рейтинге</h2>
         <SiteFaq
@@ -660,11 +719,11 @@ export function TrainerOverviewRating({ trainer, views, ratings }: PulseProps) {
             },
             {
               q: "За какой период показаны цифры в цветных плитках?",
-              a: "Лайкосы, посещения, сохранения и переходы в сообщения показаны за прошлую полную неделю — с понедельника по воскресенье. Отзывы показывают текущее число опубликованных отзывов, а карточка — сколько основных пунктов профиля заполнено.",
+              a: "Лайкосы, посещения, сохранения и переходы в сообщения берутся за тот же срок, что и текст ниже: сутки, текущая неделя с понедельника или текущий месяц. Переключатель стоит над плитками. Сначала открыта неделя. Отзывы показывают текущее число опубликованных отзывов, а карточка — сколько основных пунктов профиля заполнено.",
             },
             {
               q: "Как часто обновляются показатели?",
-              a: "Новые лайкосы, отзывы, сохранения и переходы обычно появляются сразу после действия или обновления страницы. Плитки за прошлую неделю меняются по понедельникам. Отклики за 90 дней, свежие лайкосы за 20 дней и свежие отзывы за 180 дней пересчитываются каждый день.",
+              a: "Новые лайкосы, отзывы, сохранения и переходы обычно появляются сразу после действия или обновления страницы. Плитки и текст статистики показывают выбранный срок, включая сегодняшний день. Отклики за 90 дней, свежие лайкосы за 20 дней и свежие отзывы за 180 дней пересчитываются каждый день.",
             },
             {
               q: "Почему рейтинг может уменьшиться?",
@@ -677,6 +736,7 @@ export function TrainerOverviewRating({ trainer, views, ratings }: PulseProps) {
           ]}
         />
       </section>
+      )}
       {ratingOpen && parts && rating && checklist ? (
         <RatingDialog
           parts={parts}
@@ -689,66 +749,121 @@ export function TrainerOverviewRating({ trainer, views, ratings }: PulseProps) {
   );
 }
 
-export function TrainerOwnStats({ trainer, views, ratings }: PulseProps) {
-  const [visitMode, setVisitMode] = useState<PulseMode>("day");
-  const [showMode, setShowMode] = useState<PulseMode>("day");
-  const [likeMode, setLikeMode] = useState<PulseMode>("day");
-  const [contactMode, setContactMode] = useState<PulseMode>("day");
+export function TrainerOwnStats({
+  trainer,
+  views,
+  ratings,
+  mode,
+  onMode,
+}: PulseProps & {
+  mode: PulseMode;
+  onMode: (mode: PulseMode) => void;
+}) {
   const { hasProfile } = usePulseScore(trainer, views, ratings);
+  const copy = PERIOD_COPY[mode];
+  const attempts = views ? contactAttempts(views.contacts, mode) : { current: 0, previous: 0 };
+  const story = views ? pulseStory(mode, views.impressions[mode], views.visits[mode], attempts) : [];
+  const sources = views?.visitSources[mode] ?? [];
+  const sourced = sources.reduce((sum, row) => sum + row.count, 0);
+  const [openStory, setOpenStory] = useState<string | null>(null);
+  const [openSource, setOpenSource] = useState<string | null>(null);
+  const [chartOpen, setChartOpen] = useState(true);
+  const [chartReady, setChartReady] = useState(false);
+  useEffect(() => {
+    setOpenStory(null);
+    setOpenSource(null);
+  }, [mode]);
+  useEffect(() => {
+    setChartReady(true);
+  }, []);
 
   return (
     <>
       {hasProfile && views ? (
         <div id="cabinet-stats" className="cabinet-stats cabinet-stats--pulse">
-          <div className="cabinet-stat cabinet-stat--visits">
+          <div className="cabinet-stat cabinet-stat--story">
             <StatMark>
-              <circle cx="12" cy="12" r="3.2" />
-              <path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12z" />
+              <path d="M4 5h16l-5 6.5V19l-6-2v-5.5L4 5z" />
             </StatMark>
-            <PeriodSwitch value={visitMode} label="Период посещений" onChange={setVisitMode} />
-            <Figure
-              value={views.visits[visitMode].current}
-              label={PERIOD_COPY[visitMode].visit}
-              period={views.visits[visitMode]}
-              same={PERIOD_COPY[visitMode].same}
-              against={PERIOD_COPY[visitMode].against}
-            />
-            <Figure
-              value={views.favorites[visitMode].current}
-              label={PERIOD_COPY[visitMode].saved}
-              period={views.favorites[visitMode]}
-              same={PERIOD_COPY[visitMode].same}
-              against={PERIOD_COPY[visitMode].against}
-              note={`сейчас в избранном у ${countRu(views.favorites.total, "человека", "человек", "человек")}`}
-            />
+            <div className="cabinet-story">
+              {story.map((line) => {
+                const open = openStory === line.id;
+                return (
+                  <div key={line.id}>
+                    <button
+                      type="button"
+                      className={open ? "is-open" : undefined}
+                      aria-expanded={open}
+                      aria-controls={`cabinet-story-${line.id}`}
+                      onClick={() => setOpenStory(open ? null : line.id)}
+                    >
+                      {line.before}<strong>{line.emphasis}</strong>{line.after}
+                    </button>
+                    <p id={`cabinet-story-${line.id}`} className="cabinet-story__note" hidden={!open}>
+                      {line.note}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          <div className="cabinet-stat cabinet-stat--shows">
-            <StatMark>
-              <rect x="7" y="3" width="14" height="12" rx="2" />
-              <path d="M3 7v12a2 2 0 0 0 2 2h12" />
-            </StatMark>
-            <PeriodSwitch value={showMode} label="Период показов" onChange={setShowMode} />
-            <Figure
-              value={views.impressions[showMode].current}
-              label={PERIOD_COPY[showMode].shown}
-              period={views.impressions[showMode]}
-              same={PERIOD_COPY[showMode].same}
-              against={PERIOD_COPY[showMode].against}
-            />
+          <div className="cabinet-stat cabinet-stat--chart">
+            <div className="cabinet-chart__head">
+              <h2 id="cabinet-chart-title">Показы и открытия</h2>
+              <button
+                type="button"
+                aria-expanded={chartOpen}
+                aria-controls="cabinet-chart"
+                onClick={() => setChartOpen((open) => !open)}
+              >
+                {chartOpen ? "Скрыть" : "Показать"}
+              </button>
+            </div>
+            {chartOpen ? (
+              <div id="cabinet-chart">
+                {chartReady ? (
+                  <PulseChartBoundary>
+                    <Suspense fallback={<p className="cabinet-story__note">График загружается.</p>}>
+                      <TrainerPulseChart points={pulseChartSpan(Array.isArray(views.series) ? views.series : [], mode)} />
+                    </Suspense>
+                  </PulseChartBoundary>
+                ) : (
+                  <div className="cabinet-chart__scroll" />
+                )}
+              </div>
+            ) : null}
           </div>
-          <div className="cabinet-stat cabinet-stat--likes">
-            <StatMark>
-              <path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
-            </StatMark>
-            <PeriodSwitch value={likeMode} label="Период лайкосов" onChange={setLikeMode} />
-            <Figure
-              value={views.likes[likeMode].current}
-              label={likeLabel(views.likes[likeMode].current, likeMode)}
-              period={views.likes[likeMode]}
-              same={PERIOD_COPY[likeMode].same}
-              against={PERIOD_COPY[likeMode].against}
-              note={`всего ${accountLikeLabel(views.likes.total)}`}
-            />
+          <div className="cabinet-stat cabinet-stat--sources">
+            <h2>Откуда заходят</h2>
+            {sourced > 0 ? (
+              <div className="cabinet-sources">
+                {sources.map((row) => {
+                  const open = openSource === row.source;
+                  const percent = Math.round((row.count / sourced) * 100);
+                  return (
+                    <div key={row.source}>
+                      <button
+                        type="button"
+                        className={open ? "is-open" : undefined}
+                        aria-expanded={open}
+                        aria-controls={`cabinet-source-${row.source}`}
+                        onClick={() => setOpenSource(open ? null : row.source)}
+                      >
+                        <span>{VISIT_SOURCE_TITLE[row.source]}</span>
+                        <span className="cabinet-sources__bar" aria-hidden="true"><span style={{ width: `${percent}%` }} /></span>
+                        <strong>{row.count}</strong>
+                        <span className="cabinet-sources__percent">{percent}%</span>
+                      </button>
+                      <p id={`cabinet-source-${row.source}`} className="cabinet-story__note" hidden={!open}>
+                        {VISIT_SOURCE_NOTE[row.source]}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="cabinet-story__note">За этот срок источник ещё не записан. Он появляется со следующего захода.</p>
+            )}
           </div>
           <div className="cabinet-stat cabinet-stat--contacts">
             <StatMark>
@@ -756,35 +871,36 @@ export function TrainerOwnStats({ trainer, views, ratings }: PulseProps) {
               <path d="M19 5l-8 8" />
               <path d="M10 6H6a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4" />
             </StatMark>
-            <PeriodSwitch value={contactMode} label="Период переходов" onChange={setContactMode} />
+            <div className="cabinet-channels">
             <Figure
-              value={views.contacts.phone[contactMode].current}
-              label={PERIOD_COPY[contactMode].phone}
-              period={views.contacts.phone[contactMode]}
-              same={PERIOD_COPY[contactMode].same}
-              against={PERIOD_COPY[contactMode].against}
+              value={views.contacts.phone[mode].current}
+              label={copy.phone}
+              period={views.contacts.phone[mode]}
+              same={copy.same}
+              against={copy.against}
             />
             <Figure
-              value={views.contacts.instagram[contactMode].current}
-              label={PERIOD_COPY[contactMode].instagram}
-              period={views.contacts.instagram[contactMode]}
-              same={PERIOD_COPY[contactMode].same}
-              against={PERIOD_COPY[contactMode].against}
+              value={views.contacts.instagram[mode].current}
+              label={copy.instagram}
+              period={views.contacts.instagram[mode]}
+              same={copy.same}
+              against={copy.against}
             />
             <Figure
-              value={views.contacts.telegram[contactMode].current}
-              label={PERIOD_COPY[contactMode].telegram}
-              period={views.contacts.telegram[contactMode]}
-              same={PERIOD_COPY[contactMode].same}
-              against={PERIOD_COPY[contactMode].against}
+              value={views.contacts.telegram[mode].current}
+              label={copy.telegram}
+              period={views.contacts.telegram[mode]}
+              same={copy.same}
+              against={copy.against}
             />
             <Figure
-              value={views.contacts.message[contactMode].current}
-              label={PERIOD_COPY[contactMode].message}
-              period={views.contacts.message[contactMode]}
-              same={PERIOD_COPY[contactMode].same}
-              against={PERIOD_COPY[contactMode].against}
+              value={views.contacts.message[mode].current}
+              label={copy.message}
+              period={views.contacts.message[mode]}
+              same={copy.same}
+              against={copy.against}
             />
+            </div>
           </div>
         </div>
       ) : (

@@ -62,7 +62,7 @@ export async function ensureLocalDoorCode(profileId: string, current: string | n
 }
 
 export function doorUrl(code: string) {
-  return `${SITE_ORIGIN}/hi/${code}`;
+  return `${SITE_ORIGIN}/hi/${code}?src=instagram`;
 }
 
 /**
@@ -286,7 +286,7 @@ export async function markOutreachSent(handle: string, options?: { link?: boolea
   if (needOutreach) patch.outreachSentAt = sentAt;
   if (needLink) patch.inviteSentAt = sentAt;
   await db.update(trainerProfiles).set(patch).where(eq(trainerProfiles.id, row.id));
-  const code = url.split("/hi/")[1] ?? "";
+  const code = (url.split("/hi/")[1] ?? "").split(/[?#]/)[0];
   const mirrored = await relayDoorMark({
     handle: row.handle || row.slug,
     token: code,
