@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { TRAINER_LEGACY_SLUGS } from "@/lib/catalog/trainer-slugs";
+
 export const Route = createFileRoute("/og/trainers/{$slug}.jpg")({
   server: {
     handlers: {
       GET: async ({ params }) => {
         const { trainerShareJpeg } = await import("@/lib/images/share-card.server");
-        const body = await trainerShareJpeg(params.slug);
+        const body = await trainerShareJpeg(TRAINER_LEGACY_SLUGS[params.slug] ?? params.slug);
         if (!body) {
           return new Response(null, {
             status: 404,

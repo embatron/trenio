@@ -23,4 +23,5 @@ export const TRAINER_LEGACY_SLUGS: Record<string, string> = {
   akhmejanau: "farkhad_akhmejanau",
   shumilova: "shum_ann",
   newborn_swimming_kobrin: "hanna_lukyanionak",
+  "ivan-krutko": "ivan_krutsko",
 };
