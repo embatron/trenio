@@ -20,7 +20,6 @@ export type CatalogPulseInput = {
   hasPrice: boolean;
   hasPhone: boolean;
   hasAddress: boolean;
-  hasStreet: boolean;
   section: string;
 };
 
@@ -168,7 +167,6 @@ export function buildCatalogPulse(rows: CatalogPulseInput[], today: string): Cat
       { label: "Без телефона", count: published.filter((row) => !row.hasPhone).length },
       { label: "Без города", count: published.filter((row) => !row.city.trim()).length },
       { label: "Без адреса", count: published.filter((row) => !row.hasAddress).length },
-      { label: "Без улицы", count: published.filter((row) => !row.hasStreet).length },
       { label: "Аккаунт не подтверждён", count: published.filter((row) => !row.verified).length },
     ].filter((row) => row.count > 0),
     publishedTotal,

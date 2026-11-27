@@ -4,7 +4,7 @@ import { getDb } from "@/db";
 import { buildCatalogPulse, emptyCatalogPulse, type CatalogPulse } from "@/lib/admin/catalog-pulse";
 import { getSportTaxonomyParent, getTopLevelSportCategory } from "@/lib/catalog/sport-taxonomy";
 import { ensureTrainerPublishedAt } from "@/lib/catalog/trainer-published";
-import { isSpecificAddress, readTrainingPlaces } from "@/lib/geo/schemas";
+import { readTrainingPlaces } from "@/lib/geo/schemas";
 import { logCaught } from "@/lib/log/logger";
 
 function sportRecord(value: unknown): { slug: string; parentSlug: string } | null {
@@ -49,7 +49,6 @@ function placeFlags(address: unknown, places: unknown) {
   const lines = addressLines(address, places);
   return {
     hasAddress: lines.length > 0,
-    hasStreet: lines.some((line) => isSpecificAddress(line)),
   };
 }
 

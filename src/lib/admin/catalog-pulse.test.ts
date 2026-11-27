@@ -21,7 +21,6 @@ function card(patch: Partial<CatalogPulseInput> & Pick<CatalogPulseInput, "slug"
     hasPrice: true,
     hasPhone: true,
     hasAddress: true,
-    hasStreet: true,
     section: "",
     ...patch,
   };
@@ -90,7 +89,6 @@ test("status, gaps, and sports describe the cards staff can act on", () => {
       hasPrice: false,
       hasPhone: false,
       hasAddress: false,
-      hasStreet: false,
       publishedAt: "2026-11-21T10:00:00+03:00",
     }),
     card({ slug: "draft", status: "draft", outreach: true }),
@@ -108,7 +106,6 @@ test("status, gaps, and sports describe the cards staff can act on", () => {
     "Без телефона",
     "Без города",
     "Без адреса",
-    "Без улицы",
     "Аккаунт не подтверждён",
   ]);
   assert.equal(pulse.gaps[0]?.count, 1);
