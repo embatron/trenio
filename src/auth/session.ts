@@ -2,7 +2,7 @@ import { getCookie, setCookie, deleteCookie } from "@tanstack/react-start/server
 
 const SESSION_COOKIE = "trenio_session";
 const TOTP_COOKIE = "trenio_totp";
-const SESSION_DAYS = 21;
+const SESSION_DAYS = 60;
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * SESSION_DAYS;
 const TOTP_MAX_AGE_SECONDS = 5 * 60;
 
@@ -24,8 +24,9 @@ export function readSessionToken(): string | null {
   return getCookie(SESSION_COOKIE) ?? null;
 }
 
-export function setSessionCookie(token: string, _remember = true) {
-  setCookie(SESSION_COOKIE, token, cookieBaseOptions(SESSION_MAX_AGE_SECONDS));
+export function setSessionCookie(token: string, _remember = true, maxAgeSeconds = SESSION_MAX_AGE_SECONDS) {
+  const maxAge = Math.max(1, Math.floor(maxAgeSeconds));
+  setCookie(SESSION_COOKIE, token, cookieBaseOptions(maxAge));
 }
 
 /** Same cookie as `setSessionCookie`, for a redirect response the router returns itself. */

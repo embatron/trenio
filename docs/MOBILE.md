@@ -151,7 +151,7 @@ Drizzle-описание: `src/db/schema/users.ts`, `src/db/schema/push-subscrip
    - почта подтверждена и `apple_sub` пуст или тот же — прикрепить;
    - у строки уже чужой `apple_sub` — отказать.
 5. Отказ — 403 и `reason`: `deleted`, `blocked`, `taken` или `invalid`.
-6. Успех — сессия через `beginLogin`. Сотрудник с TOTP получает куку `trenio_totp` и `redirectTo: /auth/totp`. Остальные получают куку `trenio_session` (HttpOnly, 3 недели, SameSite=Lax, Secure в production) и адрес из `destinationAfterAuth`.
+6. Успех — сессия через `beginLogin`. Сотрудник с TOTP получает куку `trenio_totp` и `redirectTo: /auth/totp`. Остальные получают куку `trenio_session` (HttpOnly, 60 дней, SameSite=Lax, Secure в production) и адрес из `destinationAfterAuth`.
 7. Журнал `auth.login.apple`. В `subject` почта, если это не `pending.…@users.trenio.invalid`.
 
 Новая строка:

@@ -167,6 +167,36 @@ export async function deleteOwnAccount(
     if (!matches) throw new AuthError("Неверный пароль.", "INVALID_CREDENTIALS");
   }
 
+  await closeAccount(user, {
+    message: "Пользователь удалил аккаунт.",
+    actorUserId: user.id,
+    holdMonths: ACCOUNT_HOLD_MONTHS,
+  });
+}
+
+/** Soft-close, then the same anonymising purge that runs after the six-month hold. */
+export async function eraseAccount(userId: string): Promise<"missing" | "kept" | "erased"> {
+  if (isGodUser(userId) || PERMANENT_USER_IDS.has(userId)) return "kept";
+  const [user] = await getDb().select().from(users).where(eq(users.id, userId)).limit(1);
+  if (!user || isTombstoneEmail(user.email)) return user ? "kept" : "missing";
+  if (user.status !== "deleted") {
+    await closeAccount(user, {
+      message: "Аккаунт удалён.",
+      actorUserId: null,
+      holdMonths: 0,
+    });
+  }
+  const [fresh] = await getDb().select().from(users).where(eq(users.id, userId)).limit(1);
+  if (!fresh || isTombstoneEmail(fresh.email)) return "kept";
+  await purgeAccountRecord(fresh, "Данные удалённого аккаунта стёрты.");
+  return "erased";
+}
+
+async function closeAccount(
+  user: User,
+  note: { message: string; actorUserId: string | null; holdMonths: number },
+) {
+  const db = getDb();
   const profiles = await db
     .select({ id: trainerProfiles.id, status: trainerProfiles.status, slug: trainerProfiles.slug })
     .from(trainerProfiles)
@@ -203,11 +233,11 @@ export async function deleteOwnAccount(
     domain: "account",
     action: "account.delete",
     outcome: "success",
-    message: "Пользователь удалил аккаунт.",
+    message: note.message,
     subject: user.email,
-    actorUserId: user.id,
+    actorUserId: note.actorUserId,
     target: profiles[0]?.slug ?? null,
-    context: { profiles: profiles.length, holdMonths: ACCOUNT_HOLD_MONTHS },
+    context: { profiles: profiles.length, holdMonths: note.holdMonths },
   });
   void sendAccountClosedNotice({
     email: user.email,
@@ -261,7 +291,7 @@ async function dropPersonalRecords(userId: string, profileIds: string[], slugs: 
   return conversationIds;
 }
 
-async function purgeAccountRecord(user: User): Promise<void> {
+async function purgeAccountRecord(user: User, message = "Срок хранения удалённого аккаунта истёк."): Promise<void> {
   if (isTombstoneEmail(user.email) || isGodUser(user.id) || PERMANENT_USER_IDS.has(user.id)) return;
   const db = getDb();
   const profiles = await db.select().from(trainerProfiles).where(eq(trainerProfiles.ownerUserId, user.id));
@@ -474,7 +504,7 @@ async function purgeAccountRecord(user: User): Promise<void> {
     domain: "account",
     action: "account.purge",
     outcome: "success",
-    message: "Срок хранения удалённого аккаунта истёк.",
+    message,
     subject: user.email,
     actorUserId: user.id,
     target: slugs[0] ?? null,

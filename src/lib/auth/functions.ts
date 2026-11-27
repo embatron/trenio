@@ -71,6 +71,7 @@ import { isPendingSignupEmail } from "@/lib/auth/pending-email";
 import { staffNeedsTotp } from "@/lib/auth/staff-totp";
 import {
   getSessionUserFromToken,
+  sessionRemainingSeconds,
   confirmSignupEmailToken,
   createSession,
   listAccountSessions,
@@ -203,6 +204,11 @@ export const getSessionFn = createServerFn({ method: "GET" })
   .middleware([optionalAuthMiddleware])
   .handler(async ({ context }) => {
     if (!context.user) return null;
+    const token = readSessionToken();
+    if (token) {
+      const remaining = await sessionRemainingSeconds(token);
+      if (remaining) setSessionCookie(token, true, remaining);
+    }
     const user = toPublicUser(context.user);
     if (!hasAnyRole(context.user.roles, ["trainer", "club"])) return user;
     const face = await trainerHeaderFace(context.user.id);

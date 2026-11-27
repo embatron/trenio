@@ -19,6 +19,7 @@ import {
   type User,
   type UserRole,
 } from "@/db/schema";
+import { SESSION_DAYS } from "@/auth/session";
 import { addDays, addMinutes, generateSecureToken, hashToken } from "@/auth/tokens";
 import {
   getDummyPasswordHash,
@@ -230,7 +231,7 @@ export async function createSession(
   const db = getDb();
   const rawToken = generateSecureToken();
   const tokenHash = hashToken(rawToken);
-  const expiresAt = addDays(new Date(), 21);
+  const expiresAt = addDays(new Date(), SESSION_DAYS);
   const incomingAgent = meta?.userAgent?.trim() ?? "";
   const live = incomingAgent
     ? await db
@@ -448,6 +449,19 @@ export async function findValidSession(rawToken: string): Promise<SessionUser | 
 
   const roles = await getUserRoles(user.id);
   return toSessionUser(user, roles);
+}
+
+/** Remaining life of an open session, in seconds. The browser cookie follows this clock. */
+export async function sessionRemainingSeconds(rawToken: string): Promise<number | null> {
+  const tokenHash = hashToken(rawToken);
+  const [row] = await getDb()
+    .select({ expiresAt: sessions.expiresAt })
+    .from(sessions)
+    .where(and(eq(sessions.tokenHash, tokenHash), gt(sessions.expiresAt, new Date())))
+    .limit(1);
+  if (!row) return null;
+  const seconds = Math.floor((row.expiresAt.getTime() - Date.now()) / 1000);
+  return seconds > 0 ? seconds : null;
 }
 
 export async function loginUser(input: {
