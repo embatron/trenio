@@ -125,6 +125,8 @@ export const conversationReads = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     lastReadMessageId: bigint("last_read_message_id", { mode: "number" }).notNull(),
     lastReadAt: timestamp("last_read_at", { withTimezone: true }).notNull().defaultNow(),
+    /** Newest message id this person's client has fetched. Empty until that fetch. Read implies this. */
+    lastDeliveredMessageId: bigint("last_delivered_message_id", { mode: "number" }),
   },
   (table) => [primaryKey({ columns: [table.conversationId, table.userId] })],
 );

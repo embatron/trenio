@@ -12,7 +12,7 @@ import { reviewTextLength } from "@/lib/catalog/review-html";
 import { freshReactionIds, patchMessageReaction, reactionSnapshot } from "@/lib/messages/like-flash";
 import { notifyTyping, remoteTyping, subscribeReaction, subscribeTyping } from "@/lib/messages/live-client";
 import { REPORT_COMMENT_MAX_LENGTH, REPORT_REASONS, messagePreview, type MessageDto, type ThreadResult } from "@/lib/messages/schemas";
-import { firstUnreadMessageId, messageScrollTop, prependedScrollTop, seenMessageId } from "@/lib/messages/thread-scroll";
+import { approachScrollTop, firstUnreadMessageId, messageScrollTop, prependedScrollTop, seenMessageId } from "@/lib/messages/thread-scroll";
 
 function dayKey(iso: string) {
   const date = new Date(iso);
@@ -197,7 +197,31 @@ export function ConversationThread({
     const seen = seenMessageId(rows, edge);
     if (seen != null) report(seen);
   };
+  const ownScroll = useRef(false);
+  const scrollLog = (el: HTMLElement, top: number) => {
+    if (Math.abs(el.scrollTop - top) <= 0.5) return;
+    ownScroll.current = true;
+    el.scrollTop = top;
+  };
+  const settleOwnSend = (el: HTMLElement) => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const token = gliding.current + 1;
+    gliding.current = token;
+    const start = performance.now();
+    const step = (now: number) => {
+      if (gliding.current !== token) return;
+      const dest = Math.max(0, el.scrollHeight - el.clientHeight);
+      scrollLog(el, reduce ? dest : approachScrollTop(el.scrollTop, dest));
+      if (now - start < 420) requestAnimationFrame(step);
+      else {
+        scrollLog(el, Math.max(0, el.scrollHeight - el.clientHeight));
+        gliding.current = 0;
+      }
+    };
+    requestAnimationFrame(step);
+  };
   const stick = useRef(true);
+  const gliding = useRef(0);
   const released = useRef(false);
   const placedFor = useRef<string | null>(null);
   const cursorFor = useRef<string | null>(null);
@@ -241,6 +265,7 @@ export function ConversationThread({
       readAtOpen.current = current.viewerReadMessageId;
       released.current = false;
       heightTries.current = 0;
+      gliding.current = 0;
     }
     if (el.clientHeight < 1) {
       if (heightTries.current >= 8) return;
@@ -264,11 +289,12 @@ export function ConversationThread({
       && released.current
       && !stick.current;
     if (prepended) {
-      el.scrollTop = prependedScrollTop({
+      gliding.current = 0;
+      scrollLog(el, prependedScrollTop({
         scrollTop: el.scrollTop,
         previousHeight: box.height,
         nextHeight: el.scrollHeight,
-      });
+      }));
       remember();
       return;
     }
@@ -277,11 +303,14 @@ export function ConversationThread({
     const ownSend = alreadyPlaced && lastMine && followedId.current !== (lastId ?? null);
     if (ownSend) {
       released.current = true;
-      const top = Math.max(0, el.scrollHeight - el.clientHeight);
-      if (Math.abs(el.scrollTop - top) > 1) el.scrollTop = top;
+      settleOwnSend(el);
       stick.current = true;
       followedId.current = lastId ?? null;
       reportSeen();
+      remember();
+      return;
+    }
+    if (gliding.current) {
       remember();
       return;
     }
@@ -303,7 +332,7 @@ export function ConversationThread({
       scrollHeight: el.scrollHeight,
       clientHeight: el.clientHeight,
     });
-    el.scrollTop = place.top;
+    scrollLog(el, place.top);
     stick.current = place.stick;
     placedFor.current = current.conversationId;
     followedId.current = lastId ?? null;
@@ -327,10 +356,16 @@ export function ConversationThread({
     const thread = el?.closest(".direct-thread");
     if (!el || !(thread instanceof HTMLElement)) return;
     const pin = () => {
-      if (!stick.current) return;
+      if (!stick.current || gliding.current) return;
       const top = Math.max(0, el.scrollHeight - el.clientHeight);
-      if (Math.abs(el.scrollTop - top) > 1) el.scrollTop = top;
-      reportSeen();
+      const delta = top - el.scrollTop;
+      if (delta <= 1) return;
+      if (delta < 24 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        scrollLog(el, top);
+        reportSeen();
+        return;
+      }
+      settleOwnSend(el);
     };
     const observer = new ResizeObserver(pin);
     observer.observe(thread);
@@ -697,7 +732,12 @@ export function ConversationThread({
             className="direct-log"
             ref={scroller}
             onScroll={(event) => {
+              if (ownScroll.current) {
+                ownScroll.current = false;
+                return;
+              }
               if (!event.nativeEvent.isTrusted) return;
+              gliding.current = 0;
               const el = event.currentTarget;
               released.current = true;
               stick.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;

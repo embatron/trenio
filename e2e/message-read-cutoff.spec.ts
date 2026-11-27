@@ -216,9 +216,9 @@ test("a message is read only after its bottom enters the log", async ({ page }) 
       expect(cursor, `${viewport.name} read cursor`).toBe(opened.seen);
 
       await ownerPage.goto(`/me/messages/${thread.conversationId}`);
-      await expect(ownerPage.locator(`[data-message-id="${thread.longId}"] .direct-bubble__state`)).toHaveText("Доставлено");
+      await expect(ownerPage.locator(`[data-message-id="${thread.longId}"] .direct-receipt`)).toHaveAttribute("title", "Доставлено");
       if (opened.seen === thread.shortId) {
-        await expect(ownerPage.locator(`[data-message-id="${thread.shortId}"] .direct-bubble__state.is-read`)).toHaveText("Прочитано");
+        await expect(ownerPage.locator(`[data-message-id="${thread.shortId}"] .direct-receipt.is-read`)).toHaveAttribute("title", "Прочитано");
       }
       const listMark = ownerPage.locator(".direct-list a.is-active .direct-receipt");
       await expect(listMark).not.toHaveClass(/is-read/);
@@ -230,8 +230,8 @@ test("a message is read only after its bottom enters the log", async ({ page }) 
       await expect.poll(() => readCursor(sql, thread.conversationId, client.id), { timeout: 8_000 }).toBe(thread.longId);
 
       await ownerPage.reload();
-      const receipt = ownerPage.locator(`[data-message-id="${thread.longId}"] .direct-bubble__state.is-read`);
-      await expect(receipt).toHaveText("Прочитано");
+      const receipt = ownerPage.locator(`[data-message-id="${thread.longId}"] .direct-receipt.is-read`);
+      await expect(receipt).toHaveAttribute("title", "Прочитано");
       const fit = await receipt.evaluate((el) => {
         const rect = el.getBoundingClientRect();
         const bubble = el.closest(".direct-bubble")?.getBoundingClientRect();

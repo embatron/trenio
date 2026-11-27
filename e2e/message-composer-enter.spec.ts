@@ -98,7 +98,7 @@ test("Enter sends, Shift+Enter breaks, and a million breaks stay small", async (
     await field.press("Enter");
     const sent = page.locator(".direct-bubble").filter({ hasText: "Привет" });
     await expect(sent).toBeVisible();
-    await expect(sent.getByText("Доставлено")).toBeVisible();
+    await expect(sent.getByTitle("Отправлено")).toBeVisible();
     await expect(field).toBeFocused();
     await expect(bubbles).toHaveCount(2);
     const sentBreaks = await page.locator(".direct-bubble").filter({ hasText: "Привет" }).evaluate((node) => node.querySelectorAll("br").length);

@@ -43,6 +43,13 @@ export function seenMessageId(
   return seen;
 }
 
+/** One frame of the ease that follows the bottom while a sent message settles. */
+export function approachScrollTop(current: number, dest: number, rate = 0.38): number {
+  if (rate <= 0 || rate >= 1) return dest;
+  const next = current + (dest - current) * rate;
+  return Math.abs(dest - next) < 0.5 ? dest : next;
+}
+
 /** Keep the same line on screen when older messages are added above it. */
 export function prependedScrollTop(input: {
   scrollTop: number;

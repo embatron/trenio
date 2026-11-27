@@ -582,7 +582,8 @@ export const DIRECT_CSS = `
 .direct-bubble__like.is-seen { cursor: default; }
 .direct-bubble__like.is-seen::before { display: none; }
 .direct-bubble__like.is-pop { animation: direct-like 0.5s ease; }
-.is-arriving { animation: direct-arrive 0.22s ease both; }
+.is-arriving > .direct-row { animation: direct-arrive 0.42s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: bottom left; }
+.is-arriving > .direct-row.is-mine { transform-origin: bottom right; }
 .direct-thread__typing, .direct-banner, .direct-menu__list, .direct-day, .direct-cleared { animation: direct-fade 0.22s ease both; }
 .direct-log [data-message-id] { scroll-margin-top: 12px; }
 .direct-list ul { list-style: none; margin: 0; padding: 0; overflow: auto; }
@@ -606,9 +607,10 @@ export const DIRECT_CSS = `
 .direct-list__text em { color: var(--muted); font-style: normal; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .direct-list__meta { display: grid; justify-items: end; gap: 4px; color: var(--muted); font-size: 12px; }
 .direct-list__when { display: inline-flex; align-items: center; justify-content: flex-end; gap: 3px; }
-.direct-receipt { display: inline-flex; color: var(--muted); }
+.direct-receipt { display: inline-flex; }
 .direct-receipt svg { width: 18px; height: 14px; display: block; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
-.direct-receipt.is-read { color: var(--primary); }
+.direct-receipt.is-sent { color: var(--dark); }
+.direct-receipt.is-delivered, .direct-receipt.is-read { color: var(--primary); }
 .direct-receipt__label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .direct-unread { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--primary); color: #fff; font-size: 11px; font-weight: var(--fw-title); line-height: 20px; text-align: center; }
 .direct-thread { display: flex; flex-direction: column; }
@@ -677,9 +679,9 @@ export const DIRECT_CSS = `
 .direct-bubble .review-html ul { list-style: disc; }
 .direct-bubble .review-html ol { list-style: decimal; }
 .direct-bubble .review-html li + li { margin-top: 0.25em; }
-.direct-bubble__meta { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 2px; }
+.direct-bubble__meta { display: flex; justify-content: flex-end; align-items: center; gap: 6px; margin-top: 2px; }
 .direct-bubble__meta time, .direct-bubble__meta .direct-bubble__state { margin: 0; font-size: 12px; opacity: 0.85; }
-.direct-bubble__state.is-read { color: var(--dark); font-weight: 600; opacity: 1; }
+.direct-bubble__meta .direct-receipt svg { width: 16px; height: 12px; }
 .direct-bubble.is-deleted { opacity: 0.7; font-style: italic; }
 .direct-bubble__retry { min-height: 44px; border: 0; background: transparent; color: var(--muted); padding: 0 4px; }
 .direct-thread__actions button.direct-icon { width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
@@ -823,7 +825,10 @@ export const DIRECT_CSS = `
   .direct-field, .direct-field__placeholder { font-size: 14px; }
 }
 @keyframes direct-switch { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-@keyframes direct-arrive { from { opacity: 0; } to { opacity: 1; } }
+@keyframes direct-arrive {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
 @keyframes direct-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes direct-like {
   0%, 100% { opacity: 1; }
@@ -848,6 +853,6 @@ export const DIRECT_CSS = `
   .direct.is-suggest:not(.is-thread) .direct-list { min-height: 0; flex: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .direct-thread__pane, .direct.is-thread, .direct.is-thread .direct-thread, .is-arriving, .direct-thread__typing, .direct-banner, .direct-menu__list, .direct-day, .direct-cleared, .direct-bubble__like { animation: none; transition: none; }
+  .direct-thread__pane, .direct.is-thread, .direct.is-thread .direct-thread, .is-arriving, .is-arriving > .direct-row, .direct-thread__typing, .direct-banner, .direct-menu__list, .direct-day, .direct-cleared, .direct-bubble__like { animation: none; transition: none; }
 }
 `;

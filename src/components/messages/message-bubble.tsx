@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { ReceiptMarks } from "@/components/messages/receipt-marks";
 import { ReviewHtml } from "@/components/review-html";
 import type { MessageDto } from "@/lib/messages/schemas";
 
@@ -132,13 +133,7 @@ export function MessageBubble({
   const failed = message.status === "failed";
   const sending = message.status === "sending" || pending;
 
-  const receipt = !mine || message.deleted || failed
-    ? null
-    : sending
-      ? "Отправка…"
-      : message.receipt === "read"
-        ? "Прочитано"
-        : "Доставлено";
+  const receipt = !mine || message.deleted || failed || sending ? null : message.receipt;
 
   const replyButton = onQuote ? (
     <button type="button" className="direct-bubble__reply" onClick={onQuote} aria-label="Ответить">
@@ -211,7 +206,8 @@ export function MessageBubble({
           ) : null}
           <time dateTime={message.createdAt}>{timeLabel(message.createdAt)}</time>
           {message.editedAt ? <span className="direct-bubble__state">изменено</span> : null}
-          {receipt ? <span className={`direct-bubble__state${receipt === "Прочитано" ? " is-read" : ""}`}>{receipt}</span> : null}
+          {sending ? <span className="direct-bubble__state">Отправка…</span> : null}
+          {receipt ? <ReceiptMarks receipt={receipt} /> : null}
           {onLike ? (
             <button
               type="button"

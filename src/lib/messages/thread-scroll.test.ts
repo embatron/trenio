@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { firstUnreadMessageId, messageScrollTop, prependedScrollTop, seenMessageId } from "@/lib/messages/thread-scroll";
+import { approachScrollTop, firstUnreadMessageId, messageScrollTop, prependedScrollTop, seenMessageId } from "@/lib/messages/thread-scroll";
 
 const thread = [
   { id: 1, mine: false },
@@ -67,6 +67,14 @@ test("no unread anchor pins to the bottom", () => {
   const place = messageScrollTop({ anchorTop: null, scrollHeight: 2100, clientHeight: 500 });
   assert.equal(place.top, 1600);
   assert.equal(place.stick, true);
+});
+
+test("a sent message eases toward the bottom instead of jumping there", () => {
+  assert.equal(approachScrollTop(100, 180, 0.5), 140);
+  assert.equal(approachScrollTop(179.7, 180), 180);
+  let top = 100;
+  for (let i = 0; i < 4; i += 1) top = approachScrollTop(top, 180);
+  assert.equal(top > 160 && top < 180, true);
 });
 
 test("older messages keep the line that was on screen", () => {

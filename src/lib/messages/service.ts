@@ -37,6 +37,7 @@ import { logCaught, writeLog } from "@/lib/log/logger";
 import { notifyStaffAboutReport, scheduleMessageNotification } from "@/lib/messages/notify";
 import { publishReaction, publishThread } from "@/lib/messages/live-hub";
 import { presenceFor } from "@/lib/messages/presence";
+import { messageReceipt } from "@/lib/messages/receipts";
 import type { Presence } from "@/lib/messages/schemas";
 import { messageEditable, messagePersonMatches, messageSearchPattern, pickPairThread, preferClickedProfile } from "@/lib/messages/pair";
 
@@ -138,7 +139,7 @@ export function cardPortrait(avatarPath: string, photos: readonly string[] | nul
 
 export function publicTrainerHref(slug: string, status: string) {
   if (status !== "published" || !slug) return null;
-  return `/trainers/${slug}`;
+  return `/trainers/${slug}?src=chat`;
 }
 
 export function portraitPath(cardPath: string, accountPath: string) {
@@ -816,7 +817,7 @@ async function toMessageDto(row: {
   editedAt?: Date | string | null;
   deletedAt: Date | string | null;
   replyToId?: number | string | null;
-}, actor: MessageActor, conversationUserId: string, staffSeesBody: boolean, readUpTo: number | null, files: MessageAttachmentDto[] = [], quote?: MessageQuoteDto | null, liked = false, peerLiked = false): Promise<MessageDto> {
+}, actor: MessageActor, conversationUserId: string, staffSeesBody: boolean, readUpTo: number | null, deliveredUpTo: number | null, files: MessageAttachmentDto[] = [], quote?: MessageQuoteDto | null, liked = false, peerLiked = false): Promise<MessageDto> {
   const deleted = row.deletedAt != null;
   const id = asNumber(row.id);
   const mine = row.senderId === actor.id;
@@ -834,7 +835,7 @@ async function toMessageDto(row: {
     deleted,
     mine,
     side: row.senderId === conversationUserId ? "user" : "trainer",
-    receipt: !mine || deleted ? null : readUpTo != null && id <= readUpTo ? "read" : "delivered",
+    receipt: !mine || deleted ? null : messageReceipt(id, readUpTo, deliveredUpTo),
     liked: deleted ? false : liked,
     peerLiked: deleted ? false : peerLiked,
     attachments: deleted && !staffSeesBody ? [] : files,
@@ -872,19 +873,40 @@ async function viewerReadUpTo(actorId: string, conversationId: string) {
   return read?.id == null ? null : asNumber(read.id);
 }
 
-async function counterpartReadUpTo(actor: MessageActor, conversation: Conversation, ownerUserId: string | null) {
+async function counterpartCursors(actor: MessageActor, conversation: Conversation, ownerUserId: string | null) {
   const otherId = actor.id === conversation.userId
     ? ownerUserId
     : ownerUserId != null && actor.id === ownerUserId
       ? conversation.userId
       : null;
-  if (!otherId) return null;
+  if (!otherId) return { read: null, delivered: null };
   const [read] = await getDb()
-    .select({ id: conversationReads.lastReadMessageId })
+    .select({
+      id: conversationReads.lastReadMessageId,
+      delivered: conversationReads.lastDeliveredMessageId,
+    })
     .from(conversationReads)
     .where(and(eq(conversationReads.conversationId, conversation.id), eq(conversationReads.userId, otherId)))
     .limit(1);
-  return read?.id == null ? null : asNumber(read.id);
+  return {
+    read: read?.id == null ? null : asNumber(read.id),
+    delivered: read?.delivered == null ? null : asNumber(read.delivered),
+  };
+}
+
+/** The client fetched this message. A read already covers it. Returns whether the cursor moved. */
+async function advanceDeliveredCursor(userId: string, conversationId: string, messageId: number) {
+  if (messageId <= 0) return false;
+  const rows = await getDb().execute<{ id: number | string }>(sql`
+    INSERT INTO conversation_reads (conversation_id, user_id, last_read_message_id, last_read_at, last_delivered_message_id)
+    VALUES (${conversationId}::uuid, ${userId}::uuid, 0, now(), ${messageId})
+    ON CONFLICT (conversation_id, user_id) DO UPDATE
+    SET last_delivered_message_id = GREATEST(COALESCE(conversation_reads.last_delivered_message_id, 0), EXCLUDED.last_delivered_message_id)
+    WHERE conversation_reads.last_delivered_message_id IS NULL
+       OR conversation_reads.last_delivered_message_id < EXCLUDED.last_delivered_message_id
+    RETURNING last_delivered_message_id AS id
+  `);
+  return rows.length > 0;
 }
 
 async function readyAttachments(actorId: string, conversationId: string, clientId: string, attachmentIds: string[]) {
@@ -1122,6 +1144,7 @@ export async function sendMessage(
       loaded.conversation.userId,
       false,
       null,
+      null,
       files.get(asNumber(saved.row.id)) ?? [],
       quoted ? { id: quoted.id, preview: quotePreview(quoted.body, quoted.deletedAt != null) } : null,
     ),
@@ -1175,14 +1198,15 @@ export async function editMessage(actor: MessageActor, input: { messageId: numbe
   const quoteId = saved.replyToId == null ? null : asNumber(saved.replyToId);
   const quotes = await quotesById(quoteId == null ? [] : [quoteId], row.conversationId);
   const quoted = quoteId == null ? null : quotes.get(quoteId);
-  const readUpTo = await counterpartReadUpTo(actor, loaded.conversation, loaded.profile.ownerUserId);
+  const cursors = await counterpartCursors(actor, loaded.conversation, loaded.profile.ownerUserId);
   return {
     message: await toMessageDto(
       saved,
       actor,
       loaded.conversation.userId,
       false,
-      readUpTo,
+      cursors.read,
+      cursors.delivered,
       files.get(asNumber(saved.id)) ?? [],
       quoted ? { id: quoted.id, preview: quotePreview(quoted.body, quoted.deletedAt != null) } : null,
     ),
@@ -1218,14 +1242,19 @@ function lastMessageReceipt(
   last: { id: number; senderId: string } | undefined,
   conversation: { id: string; userId: string; ownerUserId: string | null; hostUserId: string | null },
   readCursor: Map<string, number>,
-): "delivered" | "read" | null {
+  deliveredCursor: Map<string, number>,
+  actorId: string,
+): "sent" | "delivered" | "read" | null {
   if (!last) return null;
   const addresseeId = last.senderId === conversation.userId
     ? conversation.ownerUserId ?? conversation.hostUserId
     : conversation.userId;
-  if (!addresseeId) return "delivered";
-  const cursor = readCursor.get(`${conversation.id}:${addresseeId}`);
-  return cursor != null && last.id <= cursor ? "read" : "delivered";
+  if (!addresseeId) return "sent";
+  const key = `${conversation.id}:${addresseeId}`;
+  const read = readCursor.get(key) ?? null;
+  const fetched = deliveredCursor.get(key) ?? null;
+  const delivered = addresseeId === actorId ? Math.max(fetched ?? 0, last.id) : fetched;
+  return messageReceipt(last.id, read, delivered);
 }
 
 const activityAt = sql<Date>`COALESCE(${conversations.lastMessageAt}, ${conversations.createdAt})`;
@@ -1397,6 +1426,7 @@ export async function listConversations(
   const previews = new Map<string, string>();
   const lastMessages = new Map<string, { id: number; senderId: string }>();
   const readCursor = new Map<string, number>();
+  const deliveredCursor = new Map<string, number>();
   const unread = new Map<string, number>();
   if (ids.length > 0) {
     const previewRows = await getDb().execute<{ conversationId: string; messageId: number | string; senderId: string; body: string; files: number }>(sql`
@@ -1419,15 +1449,24 @@ export async function listConversations(
       lastMessages.set(row.conversationId, { id: asNumber(row.messageId), senderId: row.senderId });
     }
 
-    const readRows = await getDb().execute<{ conversationId: string; userId: string; messageId: number | string }>(sql`
+    const readRows = await getDb().execute<{
+      conversationId: string;
+      userId: string;
+      messageId: number | string;
+      deliveredId: number | string | null;
+    }>(sql`
       SELECT
         conversation_id AS "conversationId",
         user_id AS "userId",
-        last_read_message_id AS "messageId"
+        last_read_message_id AS "messageId",
+        last_delivered_message_id AS "deliveredId"
       FROM conversation_reads
       WHERE conversation_id IN (${sql.join(ids.map((id) => sql`${id}::uuid`), sql`, `)})
     `);
-    for (const row of readRows) readCursor.set(`${row.conversationId}:${row.userId}`, asNumber(row.messageId));
+    for (const row of readRows) {
+      readCursor.set(`${row.conversationId}:${row.userId}`, asNumber(row.messageId));
+      if (row.deliveredId != null) deliveredCursor.set(`${row.conversationId}:${row.userId}`, asNumber(row.deliveredId));
+    }
 
     const unreadRows = await getDb().execute<{ conversationId: string; count: number }>(sql`
       SELECT m.conversation_id AS "conversationId", count(*)::int AS count
@@ -1488,12 +1527,27 @@ export async function listConversations(
       activityAt: activity,
       preview: previews.get(row.id) ?? "",
       unread: input.view === "staff" && !involved ? 0 : unread.get(row.id) ?? 0,
-      receipt: lastMessageReceipt(lastMessages.get(row.id), row, readCursor),
+      receipt: lastMessageReceipt(lastMessages.get(row.id), row, readCursor, deliveredCursor, actor.id),
       trainerSlug: trainer.slug,
       counterpart,
       aside: input.view === "staff" ? (counterpart.kind === "user" ? trainer.name : clientName) : undefined,
     };
   });
+  const deliveries = page.flatMap((row) => {
+    const involved = row.userId === actor.id || row.ownerUserId === actor.id || row.hostUserId === actor.id;
+    const last = lastMessages.get(row.id);
+    if (!involved || !last) return [];
+    const parties = [row.userId, row.ownerUserId ?? row.hostUserId].filter((id): id is string => Boolean(id));
+    return [{ conversationId: row.id, messageId: last.id, parties }];
+  });
+  await Promise.all(deliveries.map(async (item) => {
+    try {
+      const moved = await advanceDeliveredCursor(actor.id, item.conversationId, item.messageId);
+      if (moved) publishThread(item.conversationId, item.parties);
+    } catch (error) {
+      logCaught("message", "message.deliver", error, { target: item.conversationId });
+    }
+  }));
   const last = items[items.length - 1];
   return {
     items,
@@ -1584,8 +1638,16 @@ export async function listMessages(
   const otherId = actor.id === loaded.conversation.userId
     ? loaded.profile.ownerUserId ?? loaded.conversation.hostUserId
     : loaded.conversation.userId;
-  const [readUpTo, viewerReadMessageId, files, quotes, states, likedIds, peerLikedIds] = await Promise.all([
-    counterpartReadUpTo(actor, loaded.conversation, loaded.profile.ownerUserId),
+  if (isParticipant(actor.id, loaded.access) && !input.cursor && page[0]) {
+    try {
+      const moved = await advanceDeliveredCursor(actor.id, loaded.conversation.id, asNumber(page[0].id));
+      if (moved) notifyThread(loaded);
+    } catch (error) {
+      logCaught("message", "message.deliver", error, { target: loaded.conversation.id });
+    }
+  }
+  const [cursors, viewerReadMessageId, files, quotes, states, likedIds, peerLikedIds] = await Promise.all([
+    counterpartCursors(actor, loaded.conversation, loaded.profile.ownerUserId),
     viewerReadUpTo(actor.id, loaded.conversation.id),
     attachmentDtos(messageIds),
     quotesById(replyIds, loaded.conversation.id),
@@ -1635,7 +1697,8 @@ export async function listMessages(
         actor,
         loaded.conversation.userId,
         staff,
-        readUpTo,
+        cursors.read,
+        cursors.delivered,
         files.get(asNumber(row.id)) ?? [],
         quoted ? { id: quoted.id, preview: quotePreview(quoted.body, quoted.deletedAt != null) } : null,
         likedIds.has(asNumber(row.id)),
@@ -1657,12 +1720,14 @@ async function advanceReadCursor(userId: string, conversationId: string, message
       userId,
       lastReadMessageId: messageId,
       lastReadAt: new Date(),
+      lastDeliveredMessageId: messageId,
     })
     .onConflictDoUpdate({
       target: [conversationReads.conversationId, conversationReads.userId],
       set: {
         lastReadMessageId: sql`GREATEST(${conversationReads.lastReadMessageId}, ${messageId})`,
         lastReadAt: new Date(),
+        lastDeliveredMessageId: sql`GREATEST(COALESCE(${conversationReads.lastDeliveredMessageId}, 0), ${messageId})`,
       },
     });
 }

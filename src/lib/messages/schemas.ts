@@ -144,8 +144,8 @@ export type ConversationListItem = {
   activityAt: string;
   preview: string;
   unread: number;
-  /** Last message: stored on the server, or already read by the person it was sent to. */
-  receipt: "delivered" | "read" | null;
+  /** Latest message for its addressee: sent, on their client, or read. */
+  receipt: "sent" | "delivered" | "read" | null;
   counterpart: CounterpartDto;
   trainerSlug: string;
   /** The other person in a staff row: trainer when the title is the client, and the reverse. */
@@ -188,7 +188,7 @@ export type MessageDto = {
   /** Client side of the thread is turquoise. The profile side is coral. */
   side: "user" | "trainer";
   /** Set on the sender's own messages. Null for everyone else's. */
-  receipt: "delivered" | "read" | null;
+  receipt: "sent" | "delivered" | "read" | null;
   /** This account marked the message with a thumb. */
   liked: boolean;
   /** The other person marked this message. The author sees it and cannot press it. */

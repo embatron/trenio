@@ -2,31 +2,11 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
 import { PresenceDot } from "@/components/messages/presence-dot";
+import { ReceiptMarks } from "@/components/messages/receipt-marks";
 import { UnreadBadge } from "@/components/messages/unread-badge";
 import { TrainerName } from "@/components/trainer-name";
 import { UserAvatar } from "@/components/user-avatar";
 import type { ConversationListItem } from "@/lib/messages/schemas";
-
-function ReceiptMarks({ receipt }: { receipt: "delivered" | "read" | null }) {
-  if (!receipt) return null;
-  const read = receipt === "read";
-  const label = read ? "Прочитано" : "Доставлено";
-  return (
-    <span className={`direct-receipt${read ? " is-read" : ""}`} title={label}>
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        {read ? (
-          <>
-            <path d="M1.5 12.5 6 17l7.5-9" />
-            <path d="M8 12.5 12.5 17 22 6.5" />
-          </>
-        ) : (
-          <path d="M5 12.5 10 17.5 19.5 7" />
-        )}
-      </svg>
-      <span className="direct-receipt__label">{label}</span>
-    </span>
-  );
-}
 
 function whenLabel(iso: string) {
   const date = new Date(iso);
@@ -116,7 +96,7 @@ export function ConversationList({
                 </span>
                 <span className="direct-list__meta">
                   <span className="direct-list__when">
-                    <ReceiptMarks receipt={item.receipt} />
+                    {item.receipt ? <ReceiptMarks receipt={item.receipt} /> : null}
                     <time dateTime={item.activityAt}>{whenLabel(item.activityAt)}</time>
                   </span>
                   <UnreadBadge count={item.unread} />

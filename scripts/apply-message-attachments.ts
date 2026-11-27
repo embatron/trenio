@@ -123,6 +123,10 @@ const STATEMENTS = [
      visible boolean NOT NULL DEFAULT false
    )`,
   "COMMENT ON TABLE user_presence IS 'Last open-page signal. Green is a visible tab, orange is hidden or seen within 10 minutes, gray is offline.'",
+  "ALTER TABLE conversation_reads ADD COLUMN IF NOT EXISTS last_delivered_message_id bigint",
+  `UPDATE conversation_reads
+   SET last_delivered_message_id = last_read_message_id
+   WHERE last_delivered_message_id IS NULL`,
   "ALTER TABLE message_attachments DROP CONSTRAINT IF EXISTS message_attachments_size",
   "ALTER TABLE message_attachments ADD CONSTRAINT message_attachments_size CHECK (byte_size BETWEEN 1 AND 5242880)",
   `CREATE TABLE IF NOT EXISTS message_notices (
