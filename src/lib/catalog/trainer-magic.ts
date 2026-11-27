@@ -34,6 +34,7 @@ import { publicTrainerCityLabel } from "@/lib/catalog/trainer-city";
 import { trainerAccountReady } from "@/lib/catalog/trainer-verified";
 import { trainerDoorClaimable } from "@/lib/catalog/trainer-door-policy";
 import { isLinkPreviewVisit } from "@/lib/catalog/door-visit";
+import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
 import { relayDoorMark } from "@/lib/sync/relay";
 import { ensurePublicDoorLink } from "@/lib/catalog/trainer-outreach";
 import { publishConfirmedDraft } from "@/lib/catalog/trainer-door-claim";
@@ -623,15 +624,22 @@ export const publishMagicTrainerFn = createServerFn({ method: "POST" })
   .handler(async ({ data }) => saveFromCookie(data, true));
 
 async function markDoorEntered(row: { id: string; slug: string; doorEnteredAt: Date | null }) {
-  if (row.doorEnteredAt) return;
   try {
     const request = getRequest();
     const userAgent = request.headers.get("user-agent") ?? "";
     const ip = clientIpFromHeaders(request.headers.get("x-real-ip"));
     if (isLinkPreviewVisit(userAgent, ip)) return;
-    await getDb()
+    await ensureTrainerDoorSchema();
+    const now = new Date();
+    const db = getDb();
+    await db
       .update(trainerProfiles)
-      .set({ doorEnteredAt: new Date() })
+      .set({ doorSeenAt: now })
+      .where(eq(trainerProfiles.id, row.id));
+    if (row.doorEnteredAt) return;
+    await db
+      .update(trainerProfiles)
+      .set({ doorEnteredAt: now })
       .where(and(eq(trainerProfiles.id, row.id), isNull(trainerProfiles.doorEnteredAt)));
   } catch (error) {
     logCaught("catalog", "catalog.trainer_preview", error, { target: row.slug });

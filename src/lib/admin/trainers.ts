@@ -168,6 +168,8 @@ export type AdminTrainer = {
   inviteSentAt: string;
   /** First open of the short link. Empty until that visit. */
   doorEnteredAt: string;
+  /** Latest open of the short link. Empty until that visit. */
+  doorSeenAt: string;
   /** Last time the owner signed in. Empty when the card has no account or they have not signed in. */
   lastLoginAt: string;
 };
@@ -441,6 +443,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         outreachSentAt: trainerProfiles.outreachSentAt,
         inviteSentAt: trainerProfiles.inviteSentAt,
         doorEnteredAt: trainerProfiles.doorEnteredAt,
+        doorSeenAt: trainerProfiles.doorSeenAt,
         ownerId: users.id,
         email: users.email,
         accountEmailVerifiedAt: users.emailVerifiedAt,
@@ -553,6 +556,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       outreachSentAt: row.outreachSentAt?.toISOString() ?? "",
       inviteSentAt: row.inviteSentAt?.toISOString() ?? "",
       doorEnteredAt: row.doorEnteredAt?.toISOString() ?? "",
+      doorSeenAt: row.doorSeenAt?.toISOString() ?? "",
       lastLoginAt: row.ownerId && !hidden.has(row.ownerId) && row.lastLoginAt ? row.lastLoginAt.toISOString() : "",
       account: row.ownerId && !hidden.has(row.ownerId)
         ? {
@@ -623,6 +627,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       outreachSentAt: "",
       inviteSentAt: "",
       doorEnteredAt: "",
+      doorSeenAt: "",
       lastLoginAt: "",
     }));
 
@@ -1046,6 +1051,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
   .validator(z.object({ slug: slugSchema }))
   .handler(async ({ data, context }): Promise<AdminTrainerDetail | null> => {
     assertStaff(context.user.roles);
+    await ensureTrainerDoorSchema();
     const db = getDb();
     const [row] = await db.select().from(trainerProfiles).where(eq(trainerProfiles.slug, data.slug)).limit(1);
     if (!row) return null;
@@ -1145,6 +1151,9 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
     }
     if (row.claimedAt) logs.push({ at: row.claimedAt.toISOString(), title: "Профиль забран", detail: CLAIM_LABEL[row.claimStatus] });
     if (row.doorEnteredAt) logs.push({ at: row.doorEnteredAt.toISOString(), title: "Открыл короткую ссылку", detail: "" });
+    if (row.doorSeenAt && (!row.doorEnteredAt || row.doorSeenAt.getTime() - row.doorEnteredAt.getTime() > 1000)) {
+      logs.push({ at: row.doorSeenAt.toISOString(), title: "Снова открыл короткую ссылку", detail: "" });
+    }
     for (const review of reviewRows) {
       if (hidden.has(review.userId)) continue;
       logs.push({
@@ -1259,6 +1268,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         outreachSentAt: row.outreachSentAt?.toISOString() ?? "",
         inviteSentAt: row.inviteSentAt?.toISOString() ?? "",
         doorEnteredAt: row.doorEnteredAt?.toISOString() ?? "",
+        doorSeenAt: row.doorSeenAt?.toISOString() ?? "",
         lastLoginAt: owner?.lastLoginAt ? owner.lastLoginAt.toISOString() : "",
         account: owner
           ? {

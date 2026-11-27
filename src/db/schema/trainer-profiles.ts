@@ -137,6 +137,8 @@ export const trainerProfiles = pgTable(
     inviteSentAt: timestamp("invite_sent_at", { withTimezone: true }),
     /** First time someone opened the short link `/hi/{code}`. Stays after later visits. */
     doorEnteredAt: timestamp("door_entered_at", { withTimezone: true }),
+    /** Latest human open of that same link. Moves forward on every later visit. */
+    doorSeenAt: timestamp("door_seen_at", { withTimezone: true }),
     claimedAt: timestamp("claimed_at", { withTimezone: true }),
     /** Set when the trainer accepts the public offer while claiming the profile. */
     offerAcceptedAt: timestamp("offer_accepted_at", { withTimezone: true }),

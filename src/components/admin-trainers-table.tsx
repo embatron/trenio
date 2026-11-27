@@ -378,8 +378,8 @@ function sortTrainers(rows: AdminTrainer[], sort: TrainerSort, when: "added" | "
       return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
     }
     if (sort === "visit") {
-      const left = a.doorEnteredAt ? Date.parse(a.doorEnteredAt) : 0;
-      const right = b.doorEnteredAt ? Date.parse(b.doorEnteredAt) : 0;
+      const left = Date.parse(a.doorSeenAt || a.doorEnteredAt) || 0;
+      const right = Date.parse(b.doorSeenAt || b.doorEnteredAt) || 0;
       return (right > 0 ? 1 : 0) - (left > 0 ? 1 : 0) || right - left || byName(a, b);
     }
     if (sort === "seen") {
@@ -411,7 +411,7 @@ const SORT_OPTIONS: Array<{ id: TrainerSort; label: string }> = [
   { id: "rating", label: "По оценке" },
   { id: "popularity", label: "По рейтингу" },
   { id: "link", label: "Сначала со ссылкой" },
-  { id: "visit", label: "Сначала зашедшие" },
+  { id: "visit", label: "Последний заход по ссылке" },
   { id: "seen", label: "Сначала недавно на сайте" },
 ];
 
@@ -450,7 +450,8 @@ export function AdminTrainersTable({
   const [statusFilter, setStatusFilter] = useState<TrainerStatusFilter>("");
   const [link, setLink] = useState<"" | "sent" | "unsent">("");
   const [visit, setVisit] = useState<"" | "yes" | "no">("");
-  const [sort, setSort] = useState<TrainerSort>("date-desc");
+  const defaultSort: TrainerSort = list === "unclear" ? "visit" : "date-desc";
+  const [sort, setSort] = useState<TrainerSort>(defaultSort);
   const sportOptions = useMemo(
     () => listSecondLevelSports().filter((item) => !category || item.parentSlug === category),
     [category],
@@ -564,7 +565,7 @@ export function AdminTrainersTable({
             </button>
           </div>
         )}
-        active={[category, sport, city, format, audience, statusFilter, link, visit].filter(Boolean).length + (sort === "date-desc" ? 0 : 1)}
+        active={[category, sport, city, format, audience, statusFilter, link, visit].filter(Boolean).length + (sort === defaultSort ? 0 : 1)}
       >
         <label>
           <span>Категория</span>
@@ -651,7 +652,7 @@ export function AdminTrainersTable({
           <span>Сортировка</span>
           <select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}>
             {SORT_OPTIONS.filter((option) => {
-              if ((list === "unvisited" || list === "unclear") && option.id === "visit") return false;
+              if (list === "unvisited" && option.id === "visit") return false;
               if (list === "published" && option.id === "link") return false;
               return true;
             }).map((option) => (
@@ -717,7 +718,7 @@ export function AdminTrainersTable({
                       </button>
                     </div>
                   </td>
-                  <td><FlagMark at={trainer.doorEnteredAt} sent="Был по ссылке" waiting="Ещё не заходил" /></td>
+                  <td><FlagMark at={trainer.doorSeenAt || trainer.doorEnteredAt} sent="Был по ссылке" waiting="Ещё не заходил" /></td>
                   <td className="is-publish">
                     <span className="cabinet-publish">
                       <PublishMark status={trainer.status} />
