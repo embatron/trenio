@@ -226,13 +226,14 @@ function toTrainer(
 }
 
 export const Route = createFileRoute("/trainers/$slug")({
-  loader: async ({ params }) => {
+  loader: async ({ params, location }) => {
     const legacy = TRAINER_LEGACY_SLUGS[params.slug];
     if (legacy) throw redirect({ to: "/trainers/$slug", params: { slug: legacy } });
+    const door = new URLSearchParams(location.searchStr).get("door") ?? "";
     const [visible, doorDraft] = params.slug
       ? await Promise.all([
           loadVisibleTrainerFn({ data: { slug: params.slug } }),
-          getMagicTrainerFn().catch(() => null),
+          getMagicTrainerFn({ data: { door } }).catch(() => null),
         ])
       : [null, null];
     const published = visible?.trainer ?? (params.slug ? getPublishedTrainer(params.slug) : undefined);

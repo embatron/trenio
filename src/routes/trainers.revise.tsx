@@ -9,7 +9,7 @@ import { getMagicTrainerFn } from "@/lib/catalog/trainer-magic";
 
 export const Route = createFileRoute("/trainers/revise")({
   loader: async () => {
-    const draft = await getMagicTrainerFn();
+    const draft = await getMagicTrainerFn({ data: {} });
     if (!draft) return null;
     if (draft.status === "published") throw redirect({ to: "/trainers/$slug", params: { slug: draft.slug } });
     if (!draft.magicDoor) throw redirect({ to: "/trainers/$slug", params: { slug: draft.slug } });

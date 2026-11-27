@@ -26,7 +26,7 @@ Every verification and every real publish writes one journal row. The message na
 - Publish the draft when the confirmation letter is opened, Google or Yandex binds the card, or the SMS code on the short link is accepted.
 - Keep the mailbox letter alive for 24 hours. A newer letter retires the previous unused one. A dead open is a warn row on `account.claim` (`missing`, `used`, `expired`, `owned`, or `closed`) and stores no link.
 - Leave the account window on the short link until the card has an owner.
-- Let staff copy the same `/hi/{code}` link while the card is unowned, including after an unverified publication. On that published page the controls say «Подтвердить профиль», not «Опубликовать страницу».
+- Let staff copy the same `/hi/{code}` link while the card is unowned, including after an unverified publication. That link opens the trainer page with its own door mark. Only that address shows the controls: «Подтвердить профиль» when the page is already published, «Опубликовать страницу» when it is still a draft. A plain `/trainers/{slug}` visit stays the public page, even in a browser that opened the short link earlier.
 - Let the trainer set the page to hidden in the cabinet.
 - When the account is not confirmed, «Опубликована» plus «Да» only stores the request. Only staff (`admin` or `superadmin`) publish that card, from the switch beside «Публик.» on `/admin/trainers`. The server function refuses every other role. The popup asks first. The page becomes published and the seal stays gray. If the card was on «Непонятные», it stays on that tab. Turning the switch off returns it to unpublished. Confirmation clears that hold. A trainer, a club, and a plain user cannot set the status or the hold.
 

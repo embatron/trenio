@@ -32,7 +32,7 @@ import { readCertificates } from "@/lib/catalog/certificate-file";
 import { sanitizeReviewHtml, reviewPlainText } from "@/lib/catalog/review-html";
 import { publicTrainerCityLabel } from "@/lib/catalog/trainer-city";
 import { trainerAccountReady } from "@/lib/catalog/trainer-verified";
-import { trainerDoorClaimable } from "@/lib/catalog/trainer-door-policy";
+import { trainerDoorClaimable, trainerMagicDoorOpen } from "@/lib/catalog/trainer-door-policy";
 import { isLinkPreviewVisit } from "@/lib/catalog/door-visit";
 import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
 import { relayDoorMark } from "@/lib/sync/relay";
@@ -502,9 +502,19 @@ export type MagicTrainerDraft = {
 };
 
 export const getMagicTrainerFn = createServerFn({ method: "GET" })
-  .handler(async (): Promise<MagicTrainerDraft | null> => {
+  .validator(z.object({ door: z.string().trim().max(16).optional() }))
+  .handler(async ({ data }): Promise<MagicTrainerDraft | null> => {
     const row = await profileFromEditCookie();
     if (!row) return null;
+    const magicDoor = trainerMagicDoorOpen({
+      previewCookie: getCookie(PREVIEW_COOKIE),
+      slug: row.slug,
+      previewToken: row.previewToken,
+      claimable: trainerDoorClaimable(row),
+      doorCode: data.door,
+    });
+    // A catalog address passes the mark. Without this card's code it stays a public page.
+    if (data.door !== undefined && !magicDoor) return null;
     const sports = trainerSportSlugs((row.sports ?? []).map((sport) => sport.slug));
     const latestMail = row.ownerUserId ? null : await latestDoorMailbox(row.id);
     return {
@@ -529,7 +539,7 @@ export const getMagicTrainerFn = createServerFn({ method: "GET" })
       audiences: row.audiences,
       phone: row.phone,
       phoneLocked: Boolean(row.ownerUserId),
-      magicDoor: getCookie(PREVIEW_COOKIE) === row.slug && Boolean(row.previewToken) && trainerDoorClaimable(row),
+      magicDoor,
       mailSentTo: latestMail,
       renewMail: null,
       photos: (row.photos?.length ? row.photos : row.avatarPath ? [row.avatarPath] : []).slice(0, 9),

@@ -7,7 +7,13 @@ export const Route = createFileRoute("/hi/$code/view")({
   head: () => ({ meta: [{ title: "Профиль тренера · Я ищу тренера на trenio.by" }, { name: "robots", content: "noindex,follow" }] }),
   loader: async ({ params }) => {
     const door = await enterTrainerDoorFn({ data: { code: params.code } });
-    if (door) throw redirect({ to: "/trainers/$slug", params: { slug: door.slug } });
+    if (door) {
+      throw redirect({
+        to: "/trainers/$slug",
+        params: { slug: door.slug },
+        search: { door: params.code },
+      });
+    }
     return { ok: false as const };
   },
   component: Missing,

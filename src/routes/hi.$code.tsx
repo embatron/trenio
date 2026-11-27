@@ -47,7 +47,9 @@ export const Route = createFileRoute("/hi/$code")({
     }
     const door = await enterTrainerDoorFn({ data: { code: params.code } });
     if (!door) return { ready: false, desk: null };
-    throw redirect({ href: src ? `/trainers/${door.slug}?src=${src}` : `/trainers/${door.slug}` });
+    const query = new URLSearchParams({ door: params.code });
+    if (src) query.set("src", src);
+    throw redirect({ href: `/trainers/${door.slug}?${query.toString()}` });
   },
   component: DoorPage,
   errorComponent: DoorError,
