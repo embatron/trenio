@@ -150,7 +150,7 @@ function toTrainer(
     name: trainer.name,
     firstName: trainer.firstName,
     lastName: trainer.lastName,
-    trusted: trainer.trusted === true || demo != null,
+    trusted: trainer.trusted === true,
     sports: trainer.sports.map((sport) => sport.label),
     sportLabel: sportLine(trainer),
     sportDatives: trainerSportDatives(trainer.sports),
@@ -168,14 +168,18 @@ function toTrainer(
         label: sport.label,
       })),
       groups: [
-        { label: "С кем я работаю", brand: true, items: audienceLabels(trainer) },
-        ...(trainer.formats.length ? [{ label: "Формат занятий", brand: true, items: trainer.formats.map(formatLabel) }] : []),
+        { label: "С кем я работаю:", brand: true, items: audienceLabels(trainer) },
+        ...(trainer.formats.length ? [{ label: "Формат занятий:", brand: true, items: trainer.formats.map(formatLabel) }] : []),
         {
-          label: "Стоимость одного персонального занятия",
-          brand: true,
-          items: [sessionPrice != null ? `${sessionPrice} BYN` : NEGOTIABLE_PRICE_LABEL],
+          label: "Стоимость персоналки:",
+          brand: sessionPrice != null,
+          quiet: sessionPrice == null,
+          items: [sessionPrice != null ? `От ${sessionPrice} BYN` : NEGOTIABLE_PRICE_LABEL],
+          ...(sessionPrice != null
+            ? { hint: "Это не окончательная стоимость, пожалуйста, уточняйте у тренера. Стоимость групповых занятий может отличаться от индивидуальных." }
+            : {}),
         },
-        ...(trainer.experience ? [{ label: "Мой тренерский стаж", brand: true, items: [`${trainer.experience} ${pluralRu(trainer.experience, "год", "года", "лет")}`] }] : []),
+        ...(trainer.experience ? [{ label: "Мой тренерский стаж:", brand: true, items: [`${trainer.experience} ${pluralRu(trainer.experience, "год", "года", "лет")}`] }] : []),
       ],
     },
     note: "",
@@ -223,6 +227,29 @@ function toTrainer(
       };
     }),
   };
+}
+
+function PriceHint({ text }: { text: string }) {
+  return (
+    <span className="profile-hint">
+      <button
+        type="button"
+        className="profile-hint__button"
+        aria-label="О стоимости"
+        aria-describedby="profile-price-hint"
+        onKeyDown={(event) => {
+          if (event.key === "Escape") event.currentTarget.blur();
+        }}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M9.2 9.4a2.8 2.8 0 1 1 3.9 2.6c-.8.4-1.3 1-1.3 1.9" />
+          <path d="M12 17.2h.01" />
+        </svg>
+      </button>
+      <span className="profile-hint__bubble" id="profile-price-hint" role="tooltip" aria-hidden="true">{text}</span>
+    </span>
+  );
 }
 
 export const Route = createFileRoute("/trainers/$slug")({
@@ -280,6 +307,7 @@ export const Route = createFileRoute("/trainers/$slug")({
       photo: [...(loaderData?.photos ?? []), t.photo].map((item) => item.trim()).find(Boolean) ?? "",
       instagram: t.instagram,
       telegram: loaderData?.contacts?.telegram,
+      threads: loaderData?.contacts?.threads,
       places: t.places,
       priceLines: t.taxonomy.groups.flatMap((group) => group.items),
       createdAt: t.createdAt,
@@ -377,8 +405,13 @@ body:has(.tg-tabbar.is-telegram) .door-publish { bottom: calc(env(safe-area-inse
 .profile-message-cta.is-quiet,
 .profile-message-cta.is-quiet:hover,
 .profile-message-cta.is-quiet:focus-visible {
-  background: #e6e8ee; color: var(--muted); cursor: default; transform: none;
+  background: #e6e8ee; color: var(--muted); cursor: pointer; transform: none;
+  border: 0; appearance: none; font: inherit; font-size: 15px; font-weight: var(--fw-title);
 }
+.profile-actions button.profile-write { padding: 0; margin: 0; appearance: none; font: inherit; }
+.profile-actions button.profile-write.is-quiet,
+.profile-actions button.profile-write.is-quiet:hover,
+.profile-actions button.profile-write.is-quiet:focus-visible { cursor: pointer; }
 .profile-message-cta svg {
   width: 21px; height: 21px; flex: 0 0 auto; fill: none; stroke: currentColor;
   stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round;
@@ -449,34 +482,55 @@ body:has(.tg-tabbar.is-telegram) .door-publish { bottom: calc(env(safe-area-inse
 .profile-rating.is-empty .profile-rating__counts,
 .profile-rating.is-empty .profile-rating__reviews-link { color: var(--muted); font-weight: var(--fw-body); }
 
-.profile-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; min-width: 0; }
+.profile-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; min-width: 0; container-type: inline-size; }
 .profile-block { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; min-width: 0; }
 .profile-copy { display: grid; gap: 8px; }
-.profile-heading { margin: 0; font-size: 14px; font-weight: var(--fw-title); letter-spacing: 0.01em; text-transform: none; color: var(--muted); }
+.profile-heading { margin: 0; font-size: 14px; font-weight: var(--fw-title); letter-spacing: 0.01em; text-transform: none; color: var(--muted); overflow-wrap: break-word; }
 .profile-text { margin: 0; color: var(--text); font-size: 15px; line-height: 1.65; font-weight: 500; }
 .profile-text + .profile-text { margin-top: 12px; }
 .profile-text.review-html p + p { margin-top: 12px; }
-.profile-taxonomy { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
-.profile-taxonomy__group { display: grid; gap: 8px; }
-.profile-taxonomy__tags { display: flex; flex-wrap: wrap; gap: 8px; }
-.taxonomy-tag { padding: 7px 12px; border-radius: 999px; background: var(--light-bg); color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); line-height: 1.2; }
+.profile-taxonomy { display: grid; row-gap: 12px; margin: 0; padding: 0; list-style: none; }
+.profile-taxonomy .profile-heading { flex: 0 0 auto; line-height: 1.3; padding-top: 5px; }
+.profile-taxonomy__group { display: flex; flex-wrap: nowrap; align-items: flex-start; gap: 8px; min-width: 0; }
+.profile-taxonomy__group:has(.profile-hint) { flex-wrap: wrap; position: relative; }
+.profile-taxonomy__tags { display: flex; flex: 1 1 auto; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
+.profile-taxonomy__group:has(.profile-hint) .profile-taxonomy__tags { min-width: min-content; }
+.profile-taxonomy__price { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; }
+.profile-hint { position: relative; display: inline-flex; align-items: center; }
+.profile-hint__button { position: relative; width: 18px; height: 18px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--muted); display: grid; place-items: center; cursor: pointer; }
+.profile-hint__button::after { content: ""; position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
+.profile-hint__button svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.profile-hint__button:hover, .profile-hint__button:focus-visible { color: var(--primary); }
+.profile-hint__button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.profile-hint__bubble { position: absolute; z-index: 6; top: calc(100% + 8px); left: 0; width: max-content; max-width: min(260px, calc(100vw - 2 * var(--layout-gutter))); padding: 8px 10px; border: 1px solid rgba(var(--dark-rgb), 0.08); border-radius: 10px; background: var(--white); color: var(--text); box-shadow: 0 8px 22px rgba(var(--dark-rgb), 0.08); font-size: 12px; font-weight: var(--fw-body); letter-spacing: 0; line-height: 1.45; text-align: left; text-transform: none; white-space: normal; opacity: 0; visibility: hidden; pointer-events: none; }
+@media (max-width: 767px) {
+  .profile-hint { position: static; }
+  .profile-hint__bubble { width: min(260px, 100%); max-width: 100%; }
+}
+.profile-hint:hover .profile-hint__bubble,
+.profile-hint:focus-within .profile-hint__bubble { opacity: 1; visibility: visible; }
+.taxonomy-tag { max-width: 100%; padding: 7px 12px; border-radius: 999px; background: var(--light-bg); color: var(--muted); font-size: 12px; font-weight: var(--fw-ui); line-height: 1.2; overflow-wrap: anywhere; }
 .taxonomy-tag--brand { background: var(--primary); color: var(--white); }
+.taxonomy-tag--quiet { background: #e6e8ee; color: var(--muted); }
 a.taxonomy-tag { text-decoration: none; cursor: pointer; transition: background-color 0.16s ease, color 0.16s ease; }
 a.taxonomy-tag--brand:hover,
 a.taxonomy-tag--brand:focus-visible { background: var(--primary-dark); color: var(--white); text-decoration: none; }
 .profile-note { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; font-weight: 500; }
-.profile-reach .trainer-contacts { margin-left: 0; gap: 4px; flex-wrap: wrap; max-width: 100%; min-width: 0; }
-.profile-reach .trainer-contacts__link { width: 68px; height: 68px; opacity: 0.82; transition: opacity 0.18s ease, background 0.18s ease, color 0.18s ease; }
-.profile-reach .trainer-contacts__link:hover, .profile-reach .trainer-contacts__link:focus-visible { opacity: 1; }
-.profile-reach .trainer-contacts__link--line:not(.trainer-contacts__link--send):hover,
-.profile-reach .trainer-contacts__link--line:not(.trainer-contacts__link--send):focus-visible { background: rgba(var(--primary-rgb), 0.08); }
-.profile-reach .trainer-contacts__link svg { width: 34px; height: 34px; }
-.profile-reach .trainer-contacts__link--send svg { overflow: hidden; }
-@media (max-width: 767px) {
-  .profile-reach .trainer-contacts { gap: 2px; }
-  .profile-reach .trainer-contacts__link { width: 52px; height: 52px; }
-  .profile-reach .trainer-contacts__link svg { width: 34px; height: 34px; }
+.profile-reach .trainer-contacts { display: flex; flex-wrap: nowrap; align-items: center; margin-left: 0; gap: 8px; max-width: 100%; min-width: 0; }
+.profile-reach .trainer-contacts__link { width: 44px; height: 44px; border-radius: 0; background: transparent; opacity: 1; }
+.profile-reach button.trainer-contacts__link.is-quiet,
+.profile-reach button.trainer-contacts__link.is-quiet:hover,
+.profile-reach button.trainer-contacts__link.is-quiet:focus-visible {
+  border: 0; margin: 0; padding: 0; font: inherit; color: var(--muted); appearance: none; cursor: pointer;
 }
+.profile-reach .trainer-contacts__link:hover,
+.profile-reach .trainer-contacts__link:focus-visible,
+.profile-reach .trainer-contacts__link--line:not(.trainer-contacts__link--send):hover,
+.profile-reach .trainer-contacts__link--line:not(.trainer-contacts__link--send):focus-visible { background: transparent; opacity: 1; }
+.profile-reach .trainer-contacts__link svg { width: 32px; height: 32px; display: block; }
+.profile-reach .trainer-contacts__link--send svg,
+.profile-reach .trainer-contacts__link--send:hover svg,
+.profile-reach .trainer-contacts__link--send:focus-visible svg { transform: none; }
 
 .profile-spotlight { display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 16px; align-items: center; padding: 18px 20px; border-radius: var(--card-radius); background: var(--white); border: 1px solid rgba(var(--dark-rgb),0.06); box-shadow: 0 10px 32px rgba(var(--dark-rgb),0.05); }
 .profile-spotlight__logo { width: 56px; height: 56px; border-radius: var(--radius-tile); background: var(--dark); color: var(--white); display: grid; place-items: center; font-size: 18px; font-weight: var(--fw-heading); letter-spacing: -0.04em; }
@@ -518,6 +572,8 @@ a.review-item__author:focus-visible { color: var(--primary); }
 .review-add { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(var(--primary-rgb), 0.35); background: var(--white); color: var(--primary-dark); font-size: 14px; font-weight: var(--fw-title); cursor: pointer; text-decoration: none; }
 .review-add:hover { background: var(--light-bg); }
 .review-add:disabled { border-color: var(--line); color: var(--muted); background: var(--white); cursor: default; }
+.review-gate { display: grid; justify-items: end; gap: 6px; max-width: 280px; }
+.review-gate p { margin: 0; color: var(--muted); font-size: 13px; font-weight: var(--fw-body); line-height: 1.4; text-align: right; }
 .review-form { display: grid; gap: 12px; padding: 16px; border-radius: var(--card-radius); background: var(--white); border: 1px solid rgba(var(--dark-rgb), 0.06); box-shadow: 0 10px 32px rgba(var(--dark-rgb), 0.05); scroll-margin: 88px 0 96px; }
 .review-form__label { margin: 0; font-size: 14px; font-weight: var(--fw-title); color: var(--muted); }
 .review-stars { display: flex; gap: 2px; }
@@ -870,6 +926,11 @@ function TrainerPage() {
   const thumbsRef = useRef<HTMLUListElement>(null);
   const [reviewsShown, setReviewsShown] = useState(5);
   const [reviewFormOpen, setReviewFormOpen] = useState(false);
+  useEffect(() => {
+    if (!user || !t.trusted || isOwner) return;
+    if (window.location.hash !== "#reviews") return;
+    setReviewFormOpen(true);
+  }, [user, t.trusted, isOwner]);
   const [reviewSent, setReviewSent] = useState(false);
   const ownNote = t.ownStatus === "rejected"
       ? "Отзыв отклонён"
@@ -1175,7 +1236,7 @@ function TrainerPage() {
                   <div className="profile-actions">
                     <AccountLikeButton slug={t.slug} className="trainer-card__like profile-like" />
                     <FavoriteButton target={{ type: "trainer", slug: t.slug }} className="trainer-card__save profile-save" />
-                    <CardDirectLink slug={t.slug} className="trainer-card__write profile-write" locked={!t.trusted} />
+                    <CardDirectLink slug={t.slug} className="trainer-card__write profile-write" locked={!t.trusted} ask />
                     <ShareProfileButton slug={t.slug} className="trainer-card__share profile-share" />
                   </div>
                   {photos.length > 1 ? (
@@ -1283,7 +1344,7 @@ function TrainerPage() {
                 <ul className="profile-taxonomy" aria-label="Характеристики тренера">
                   {t.taxonomy.main.length > 0 ? (
                     <li className="profile-taxonomy__group">
-                      <h2 className="profile-heading">Я тренирую</h2>
+                      <h2 className="profile-heading">Я тренирую:</h2>
                       <div className="profile-taxonomy__tags">
                         {t.taxonomy.main.map((tag) => (
                           <TrainerSportLink
@@ -1300,8 +1361,15 @@ function TrainerPage() {
                     <li key={g.label} className="profile-taxonomy__group">
                       <h2 className="profile-heading">{g.label}</h2>
                       <div className="profile-taxonomy__tags">
-                        {g.items.map((it) => (
-                          <span key={it} className={`taxonomy-tag${g.brand ? " taxonomy-tag--brand" : ""}`}>{it}</span>
+                        {"hint" in g && g.hint ? (
+                          <span className="profile-taxonomy__price">
+                            {g.items.map((it) => (
+                              <span key={it} className={`taxonomy-tag${g.brand ? " taxonomy-tag--brand" : ""}`}>{it}</span>
+                            ))}
+                            <PriceHint text={g.hint} />
+                          </span>
+                        ) : g.items.map((it) => (
+                          <span key={it} className={`taxonomy-tag${g.brand ? " taxonomy-tag--brand" : ""}${"quiet" in g && g.quiet ? " taxonomy-tag--quiet" : ""}`}>{it}</span>
                         ))}
                       </div>
                     </li>
@@ -1328,6 +1396,16 @@ function TrainerPage() {
                 </div>
                 <p className="profile-note">Занятия проходят в клубе — адрес и расписание уточняйте у тренера.</p>
               </section> : null}
+
+              <TrainerContactIcons
+                slug={t.slug}
+                phone={contacts.phone}
+                telegram={contacts.telegram}
+                threads={contacts.threads}
+                instagram={contacts.instagram}
+                heading="Как со мной связаться"
+                locked={!t.trusted}
+              />
 
               <section className="profile-block" id="reviews">
                 <div className="profile-block__head">
@@ -1358,9 +1436,12 @@ function TrainerPage() {
                       </button>
                     )
                   ) : (
-                    <Link className="review-add" to="/auth/login" search={{ redirect: `/trainers/${t.slug}` }}>
-                      {reviewLabel}
-                    </Link>
+                    <div className="review-gate">
+                      <Link className="review-add" to="/auth/login" search={{ redirect: `/trainers/${t.slug}#reviews` }}>
+                        {reviewLabel}
+                      </Link>
+                      <p>Отзыв можно оставить после регистрации. После входа вы вернётесь к этой форме.</p>
+                    </div>
                   )}
                 </div>
                 {hasRating ? <p className="profile-block__head-meta">{t.rating.value} из 5 · {t.rating.reviewCount} {pluralRu(t.rating.reviewCount, "отзыв", "отзыва", "отзывов")}</p> : null}
@@ -1422,15 +1503,6 @@ function TrainerPage() {
                   </button>
                 )}
               </section>
-
-              <TrainerContactIcons
-                slug={t.slug}
-                phone={contacts.phone}
-                telegram={contacts.telegram}
-                instagram={contacts.instagram}
-                heading="Как со мной связаться"
-                locked={!t.trusted}
-              />
             </div>
 
             {t.similar.length > 0 ? (

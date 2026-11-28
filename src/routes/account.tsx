@@ -8,6 +8,7 @@ import { useMessaging } from "@/components/messages/messages-live";
 import { logoutFn } from "@/lib/auth/functions";
 import { logoutWithShell } from "@/lib/native/shell";
 import { useLiveAvatar } from "@/lib/auth/live-avatar";
+import { loginReturn } from "@/lib/auth/return-path";
 import { deniedCabinetTarget, ROLE_LABELS } from "@/lib/auth/roles";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { getUserCabinetFn } from "@/lib/cabinet";
@@ -28,7 +29,7 @@ const SECTIONS: Array<{ id: string; label: string; icon: CabinetIcon; to: Accoun
 export const Route = createFileRoute("/account")({
   beforeLoad: ({ context, location }) => {
     if (!context.user) {
-      const next = location.pathname.startsWith("/account") ? location.pathname : "/account";
+      const next = loginReturn(location.pathname, location.searchStr, "/account");
       throw redirect({ to: "/auth/login", search: { redirect: next } });
     }
     const away = deniedCabinetTarget("account", context.user.roles, location.pathname, location.searchStr);

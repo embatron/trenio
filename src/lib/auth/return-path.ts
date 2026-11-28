@@ -39,6 +39,14 @@ export function destinationAfterAuth(
   return page ?? "/";
 }
 
+/** Cabinet login keeps the open thread query, so «Написать» returns to that trainer. */
+export function loginReturn(pathname: string, searchStr: string, fallback: string): string {
+  const path = pathname.startsWith(fallback) ? pathname : fallback;
+  const search = searchStr.startsWith("?") ? searchStr : "";
+  const next = `${path}${search}`;
+  return next.length > 200 ? path : next;
+}
+
 /** Login URL that returns to a same-site path after a successful sign-in. */
 export function loginHref(returnPath?: string | null): string {
   const next = safeReturnPath(returnPath);

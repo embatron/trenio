@@ -119,7 +119,6 @@ export function canMessage(input: {
   ownerUserId: string | null;
   published: boolean;
   blocked: boolean;
-  /** Omitted means the caller did not check. False refuses a new thread. */
   accountReady?: boolean;
 }): { ok: true } | { ok: false; message: string } {
   if (isGodUser(input.actorId)) return { ok: true };
@@ -127,7 +126,9 @@ export function canMessage(input: {
     return { ok: false, message: "Нельзя написать своему профилю." };
   }
   if (!input.published) return { ok: false, message: "Этот профиль пока не принимает сообщения." };
-  if (input.accountReady === false) return { ok: false, message: "Написать можно, когда аккаунт тренера подтверждён." };
+  if (input.accountReady === false) {
+    return { ok: false, message: "Написать можно, когда аккаунт тренера подтверждён." };
+  }
   if (input.blocked) return { ok: false, message: "Переписка с этим профилем недоступна." };
   return { ok: true };
 }
@@ -597,11 +598,8 @@ async function profileAccountReady(profileId: string) {
     .leftJoin(users, eq(users.id, trainerProfiles.ownerUserId))
     .where(eq(trainerProfiles.id, profileId))
     .limit(1);
-  return trainerAccountReady({
-    verified: row?.verified === true,
-    emailVerifiedAt: row?.emailVerifiedAt ?? null,
-    phoneVerifiedAt: row?.phoneVerifiedAt ?? null,
-  });
+  if (!row) return false;
+  return trainerAccountReady(row);
 }
 
 async function openOrCreate(actorId: string, profile: ProfileRow) {

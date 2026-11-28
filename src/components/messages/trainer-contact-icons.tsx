@@ -1,8 +1,9 @@
 import { useRouteContext } from "@tanstack/react-router";
-import { useState, type MouseEvent } from "react";
+import { useState, type MouseEvent, type ReactNode } from "react";
 
-import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
+import { InstagramIcon, TelegramIcon, ThreadsIcon } from "@/components/brand-icons";
 import { DirectMark } from "@/components/messages/direct-mark";
+import { UnconfirmedContactDialog } from "@/components/messages/unconfirmed-contact-dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,12 +16,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { formatBelarusPhone } from "@/lib/auth/phone";
 import { recordTrainerContactClick } from "@/lib/catalog/trainer-contact-client";
+import { canonicalThreadsUrl } from "@/lib/catalog/threads-url";
 import { directMessageHref } from "@/lib/auth/roles";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
 
 const PHONE_PATH =
   "M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.5 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.5c.9.2 1.8.4 2.7.5A2 2 0 0 1 22 16.9z";
-type ExternalContactKind = "phone" | "instagram" | "telegram";
+type ExternalContactKind = "phone" | "instagram" | "telegram" | "threads";
 type PendingContact = {
   kind: ExternalContactKind;
   href: string;
@@ -66,10 +68,46 @@ function stopCardNavigation(event: { stopPropagation: () => void }) {
   event.stopPropagation();
 }
 
+function QuietContact({
+  className,
+  label,
+  onOpen,
+  children,
+}: {
+  className: string;
+  label: string;
+  onOpen?: () => void;
+  children: ReactNode;
+}) {
+  if (!onOpen) {
+    return (
+      <span className={className} aria-disabled="true" title="Аккаунт не подтверждён">
+        {children}
+      </span>
+    );
+  }
+  return (
+    <button
+      type="button"
+      className={className}
+      aria-label={`${label}. Аккаунт не подтверждён`}
+      title="Аккаунт не подтверждён"
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        onOpen();
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
 export function TrainerContactIcons({
   slug,
   instagram,
   telegram,
+  threads,
   phone,
   heading,
   locked = false,
@@ -77,19 +115,22 @@ export function TrainerContactIcons({
   slug: string;
   instagram?: string;
   telegram?: string;
+  threads?: string;
   phone?: string;
   heading?: string;
-  /** Gray, inert phone, Instagram, Telegram, and the direct message. */
+  /** Gray phone, Instagram, Telegram, Threads, and the direct message. The profile opens the note. */
   locked?: boolean;
 }) {
   const { user, messaging } = useRouteContext({ from: "__root__" });
   const [pendingContact, setPendingContact] = useState<PendingContact | null>(null);
+  const [askOpen, setAskOpen] = useState(false);
   const trainer = getPublishedTrainer(slug);
   const instagramUrl = instagramHref(instagram ?? trainer?.instagram ?? "");
   const telegramUrl = telegramHref(telegram ?? "");
+  const threadsUrl = canonicalThreadsUrl(threads ?? "") || null;
   const phoneLink = phoneHref(phone ?? "");
   const showDirect = !messaging.ownedSlugs.includes(slug);
-  if (!phoneLink && !instagramUrl && !telegramUrl && !showDirect) return null;
+  if (!phoneLink && !instagramUrl && !telegramUrl && !threadsUrl && !showDirect) return null;
 
   const thread = `/account/messages?trainer=${encodeURIComponent(slug)}`;
   const directHref = user
@@ -100,21 +141,20 @@ export function TrainerContactIcons({
     setPendingContact(contact);
   };
 
-  const quietTitle = "Аккаунт не подтверждён";
+  const openAsk = heading ? () => setAskOpen(true) : undefined;
   const icons = (
     <div className="trainer-contacts" onClick={stopCardNavigation}>
       {phoneLink ? (
         locked ? (
-          <span
+          <QuietContact
             className="trainer-contacts__link trainer-contacts__link--line trainer-contacts__link--phone is-quiet"
-            aria-disabled="true"
-            aria-label={`Телефон. ${quietTitle}`}
-            title={quietTitle}
+            label="Телефон"
+            onOpen={openAsk}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d={PHONE_PATH} />
             </svg>
-          </span>
+          </QuietContact>
         ) : (
           <a
             className="trainer-contacts__link trainer-contacts__link--line trainer-contacts__link--phone"
@@ -139,14 +179,9 @@ export function TrainerContactIcons({
       ) : null}
       {instagramUrl ? (
         locked ? (
-          <span
-            className="trainer-contacts__link is-quiet"
-            aria-disabled="true"
-            aria-label={`Instagram. ${quietTitle}`}
-            title={quietTitle}
-          >
+          <QuietContact className="trainer-contacts__link is-quiet" label="Instagram" onOpen={openAsk}>
             <InstagramIcon />
-          </span>
+          </QuietContact>
         ) : (
           <a
             className="trainer-contacts__link"
@@ -171,14 +206,9 @@ export function TrainerContactIcons({
       ) : null}
       {telegramUrl ? (
         locked ? (
-          <span
-            className="trainer-contacts__link is-quiet"
-            aria-disabled="true"
-            aria-label={`Telegram. ${quietTitle}`}
-            title={quietTitle}
-          >
+          <QuietContact className="trainer-contacts__link is-quiet" label="Telegram" onOpen={openAsk}>
             <TelegramIcon />
-          </span>
+          </QuietContact>
         ) : (
           <a
             className="trainer-contacts__link"
@@ -201,16 +231,46 @@ export function TrainerContactIcons({
           </a>
         )
       ) : null}
+      {threadsUrl ? (
+        locked ? (
+          <QuietContact
+            className="trainer-contacts__link trainer-contacts__link--threads is-quiet"
+            label="Threads"
+            onOpen={openAsk}
+          >
+            <ThreadsIcon />
+          </QuietContact>
+        ) : (
+          <a
+            className="trainer-contacts__link trainer-contacts__link--threads"
+            href={threadsUrl}
+            target="_blank"
+            rel="ugc noopener noreferrer"
+            aria-label="Threads"
+            aria-haspopup="dialog"
+            title="Threads"
+            onClick={(event) =>
+              askBeforeLeaving(event, {
+                kind: "threads",
+                href: threadsUrl,
+                label: "Threads",
+                newTab: true,
+              })
+            }
+          >
+            <ThreadsIcon />
+          </a>
+        )
+      ) : null}
       {showDirect ? (
         locked ? (
-          <span
+          <QuietContact
             className="trainer-contacts__link trainer-contacts__link--line trainer-contacts__link--send is-quiet"
-            aria-disabled="true"
-            aria-label={`Написать. ${quietTitle}`}
-            title={quietTitle}
+            label="Написать"
+            onOpen={openAsk}
           >
             <DirectMark disc />
-          </span>
+          </QuietContact>
         ) : (
           <a
             className="trainer-contacts__link trainer-contacts__link--line trainer-contacts__link--send"
@@ -219,7 +279,10 @@ export function TrainerContactIcons({
             rel="noopener noreferrer"
             aria-label="Написать"
             title="Написать"
-            onClick={() => recordTrainerContactClick(slug, "message")}
+            onClick={(event) => {
+              event.stopPropagation();
+              recordTrainerContactClick(slug, "message");
+            }}
           >
             <DirectMark disc />
           </a>
@@ -287,6 +350,7 @@ export function TrainerContactIcons({
         {icons}
       </section>
       {dialog}
+      {locked ? <UnconfirmedContactDialog slug={slug} open={askOpen} onOpenChange={setAskOpen} /> : null}
     </>
   );
 }

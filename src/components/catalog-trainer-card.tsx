@@ -108,7 +108,7 @@ export function CatalogTrainerCard({
         <div className="trainer-card__actions">
           <AccountLikeButton slug={trainer.slug} className="trainer-card__like" />
           <FavoriteButton target={{ type: "trainer", slug: trainer.slug }} className="trainer-card__save" />
-          <CardDirectLink slug={trainer.slug} className="trainer-card__write" locked={!shownTrusted} />
+          <CardDirectLink slug={trainer.slug} className="trainer-card__write" locked={!trainer.trusted} />
           <ShareProfileButton slug={trainer.slug} className="trainer-card__share" />
         </div>
       </div>

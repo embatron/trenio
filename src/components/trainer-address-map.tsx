@@ -67,7 +67,7 @@ export function TrainerAddressMap({ places }: { places: TrainerProfilePlace[] })
 
   return (
     <section className="profile-block trainer-address">
-      <h2 className="profile-heading">Где я тренирую</h2>
+      <h2 className="profile-heading">Где я тренирую:</h2>
       <ol className="trainer-places">
         {listed.map((place, index) => (
           <li key={`${placeLine(place)}-${index}`}>
