@@ -1,6 +1,8 @@
 import postgres from "postgres";
 
 const STATEMENTS = [
+  "ALTER TABLE trainer_profiles ADD COLUMN IF NOT EXISTS threads varchar(300) NOT NULL DEFAULT ''",
+  "ALTER TABLE trainer_profiles ADD COLUMN IF NOT EXISTS hide_threads boolean NOT NULL DEFAULT false",
   `CREATE TABLE IF NOT EXISTS trainer_revisions (
     id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     profile_id uuid NOT NULL,
@@ -63,6 +65,7 @@ AS $fn$
     'email', card.email,
     'instagramUrl', card.instagram_url,
     'telegram', card.telegram,
+    'threads', card.threads,
     'website', card.website,
     'formats', coalesce((
       SELECT string_agg(CASE item WHEN 'individual' THEN 'индивидуально' WHEN 'group' THEN 'группа' ELSE item END, ', ' ORDER BY ord)
@@ -83,6 +86,7 @@ AS $fn$
     'hidePhone', CASE WHEN card.hide_phone THEN 'да' ELSE 'нет' END,
     'hideInstagram', CASE WHEN card.hide_instagram THEN 'да' ELSE 'нет' END,
     'hideTelegram', CASE WHEN card.hide_telegram THEN 'да' ELSE 'нет' END,
+    'hideThreads', CASE WHEN card.hide_threads THEN 'да' ELSE 'нет' END,
     'hideEmail', CASE WHEN card.hide_email THEN 'да' ELSE 'нет' END,
     'photos', coalesce((
       SELECT string_agg(regexp_replace(item, '^.*/', ''), E'\\n' ORDER BY ord)

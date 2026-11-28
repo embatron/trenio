@@ -21,6 +21,7 @@ import { logCaught } from "../../../../src/lib/log/logger.ts";
 import { closeDb } from "../../../../src/db/index.ts";
 import { isSilentInstagram } from "../../../../src/lib/catalog/instagram-silence.ts";
 import { duplicateTrainerSlug } from "../../../../src/db/trainer-profiles.ts";
+import { canonicalThreadsUrl } from "../../../../src/lib/catalog/threads-url.ts";
 
 type RawPhoto = {
   url?: string;
@@ -123,7 +124,7 @@ type RawExtract = {
   externalUrl?: string;
   highlights?: string[];
   highlightLinks?: Array<{ title?: string; href?: string }>;
-  contacts?: { emails?: string[]; phones?: string[]; telegrams?: string[] };
+  contacts?: { emails?: string[]; phones?: string[]; telegrams?: string[]; threads?: string[] };
   aboutFrames?: string[];
   pinned?: PinnedPost[];
   /** Primary trainer-written description from a CSV or another supplied source. */
@@ -268,11 +269,40 @@ function oneFromNote(noteValues: string[], pageValues: string[], label: string, 
   return pageValues;
 }
 
+/** Profile URL, including `threads.net/handle` without `@`. A post or another site stays empty. */
+function threadsProfileUrl(raw: string): string {
+  const trimmed = raw.trim().split("?")[0].replace(/\/+$/, "");
+  const direct = canonicalThreadsUrl(trimmed);
+  if (direct) return direct;
+  const withAt = trimmed.replace(/^(https:\/\/(?:www\.)?threads\.(?:net|com))\/(?!@)/i, "$1/@");
+  if (withAt === trimmed) return "";
+  return canonicalThreadsUrl(withAt) || "";
+}
+
+/** The attached Threads profile wins. Otherwise one profile link from the Instagram page is stored. */
+function threadsContactUrl(raw: RawExtract, rawPath: string): string {
+  const attached = threadsProfileUrl(raw.threads?.url || "");
+  if (raw.threads?.url?.trim() && !attached) {
+    fail(rawPath, "Threads URL must be a profile on threads.net or threads.com.");
+  }
+  if (attached) return attached;
+  const blob = [raw.headerText || "", raw.externalUrl || "", raw.ogDescription || ""].join("\n");
+  const found = [
+    ...(raw.contacts?.threads || []),
+    ...(blob.match(/https?:\/\/(?:www\.)?threads\.(?:net|com)\/@?[A-Za-z0-9._]{1,30}/gi) || []),
+  ];
+  const urls = [...new Set(found.flatMap((item) => {
+    const next = threadsProfileUrl(item);
+    return next ? [next] : [];
+  }))];
+  if (urls.length > 1) fail(rawPath, `Several Threads profiles: ${urls.join(", ")}. Keep one.`);
+  return urls[0] || "";
+}
+
 function assertThreads(raw: RawExtract, rawPath: string) {
   const threads = raw.threads;
   if (!threads) return;
-  const url = (threads.url || "").trim().split("?")[0];
-  if (!/^https:\/\/(?:www\.)?threads\.(?:net|com)\/@?[A-Za-z0-9._]{1,30}\/?$/i.test(url)) {
+  if (!threadsProfileUrl(threads.url || "")) {
     fail(rawPath, "Threads URL must be a profile on threads.net or threads.com.");
   }
   const posts = threads.posts || [];
@@ -855,6 +885,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
   const handle = handleFromUrl(sourceUrl);
   if (isSilentInstagram(handle)) fail(rawPath, "This Instagram account is closed. Do not import it or write to it.");
   assertThreads(raw, rawPath);
+  const threadsUrl = threadsContactUrl(raw, rawPath);
   const note = noteBlob(raw);
   const threadsText = threadsBlob(raw);
   const pageCorpus = [corpusOf(raw), threadsText].join("\n");
@@ -1358,7 +1389,7 @@ async function saveOne(rawPath: string, settlements: string[]) {
     sourceAbout: aboutFrames.map(stripPhones),
     sourceThreads: storedThreads,
     operatorNotes: storedNotes,
-    threadsUrl: (raw.threads?.url || "").trim(),
+    threadsUrl,
     presentationMode,
     bio: stripPhones(presentation),
     about: trainingParagraphs.map(stripPhones).filter(Boolean),
@@ -1406,7 +1437,8 @@ async function saveOne(rawPath: string, settlements: string[]) {
       phone: phoneValue,
       email: emailValue,
       telegram: telegramValue,
-      website: raw.externalUrl || "",
+      threads: threadsUrl,
+      website: /threads\.(?:net|com)/i.test(raw.externalUrl || "") ? "" : (raw.externalUrl || ""),
     },
     missing,
   };

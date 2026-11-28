@@ -358,6 +358,7 @@ const emptyBasics: JoinProfile = {
   experienceYears: 0,
   instagram: "",
   telegram: "",
+  threads: "",
   email: "",
   phone: "",
   formats: [],

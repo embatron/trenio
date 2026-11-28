@@ -122,6 +122,8 @@ Keep going while a post adds a fact or a still photo. Scroll the Threads profile
 
 Store `threads.url`, `threads.headerText`, `threads.bio`, and `threads.posts[]` with `url`, `text`, and `photos`. Contacts and other facts found there fill the same fields as Instagram. A Threads post may supply a quote for the card text. A pinned Instagram caption may do the same only with `textRole: about` or `training`.
 
+`threads.url` is also the public Threads contact. `save-draft.ts` stores it as `https://www.threads.com/@handle` on `contacts.threads` and `threadsUrl`, and the import writes that URL to `trainer_profiles.threads`. When the message has no Threads profile, the same contact is the one profile link on the Instagram page: a header button, or `threads.com` / `threads.net` in the biography. A post URL is not the contact. Several different profile links and no attached profile fail the save. An older draft with no Threads URL does not clear a link the trainer already saved in the cabinet.
+
 Thought 2 is the Threads verdict: which facts the text supports, and for every stored still, gallery or skip and why. Threads stills compete with Instagram frames for the two or three gallery slots. Keep a Threads frame when it shows the trainer more clearly than a weaker Instagram frame, or when Instagram has no still. Do not add one only to increase the count.
 
 On a Threads login wall, use the same import Chrome profile and `LOGIN.md`. Do not print the password. A checkpoint stops the batch.
@@ -135,7 +137,7 @@ On a Threads login wall, use the same import Chrome profile and `LOGIN.md`. Do n
 - Checkpoint: stop the batch.
 - Unavailable profile: record the failure and continue.
 
-The extract clicks `more` / `ещё` when the biography is folded. Wait and evaluate a second time, then keep that `headerText`. Also read `contacts` (`mailto:`, `tel:`, `t.me`) and `highlightLinks`.
+The extract clicks `more` / `ещё` when the biography is folded. Wait and evaluate a second time, then keep that `headerText`. Also read `contacts` (`mailto:`, `tel:`, `t.me`, and a Threads profile link) and `highlightLinks`.
 
 Pass `.cursor/skills/trenio-instagram-trainers/scripts/extract-profile.fn.js` as `function` to `browser_evaluate`. `pinnedPosts` lists only tiles with a pin mark, at most three. If the snapshot shows a pin and `pinnedPosts` is empty, evaluate once more. If it is still empty, continue with no pinned posts. Other grid posts are opened later, and only to choose two or three gallery photos.
 
@@ -146,6 +148,8 @@ If a highlight title is `Обо мне`, `О себе`, `About`, or `About me`, 
 ### Contacts
 
 Phone, email, and Telegram come from the biography, the about frames, the contact buttons, Threads, the operator note, and `t.me` / `mailto:` / `tel:` links. Put each value into the matching profile field. Do not create an account, do not send SMS or email, and do not mark the contact confirmed. Leave the field empty when none of those sources show it. A Threads or YouTube link is not Telegram.
+
+The Threads contact is the profile URL, not the post text. An attached Threads profile wins. Otherwise store one profile link found on the Instagram page. The save script canonicalizes it to `https://www.threads.com/@handle`. Do not confirm it. The public icon stays hidden until that URL is stored and the trainer publishes the page.
 
 A Belarus mobile in the biography, the about highlight, a pinned caption, a `tel:` button, Threads, or the operator note is copied into the phone field. `save-draft.ts` stores that same number as `+375 29 123-45-67` and then deletes it from `sourceBio`, `sourceAbout`, `bio`, and `about`. `+375(29)123-45-67`, `+375291234567`, and `80291234567` are one mobile and become that spaced form. The script does not send SMS and does not mark the number confirmed. The public profile hides it until the owner confirms it. Leave the field empty when no source shows a mobile. When the note states one mobile, store that number even if the page prints a different one.
 

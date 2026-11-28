@@ -33,6 +33,8 @@ async function apply() {
   await addTimestamp(db, "door_entered_at");
   await addTimestamp(db, "door_seen_at");
   await addTimestamp(db, "outreach_sent_at");
+  await db.execute(sql`ALTER TABLE trainer_profiles ADD COLUMN IF NOT EXISTS threads varchar(300) NOT NULL DEFAULT ''`);
+  await db.execute(sql`ALTER TABLE trainer_profiles ADD COLUMN IF NOT EXISTS hide_threads boolean NOT NULL DEFAULT false`);
   const found = await db.execute(sql`SELECT to_regclass('public.app_logs') AS rel`);
   const rel = found[0]?.rel;
   if (!rel) {

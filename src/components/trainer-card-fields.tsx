@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { BelarusPhoneInput } from "@/components/belarus-phone-input";
 import { PhoneCodeDialogs, usePhoneCodeDialog } from "@/components/phone-code-dialog";
-import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
+import { InstagramIcon, TelegramIcon, ThreadsIcon } from "@/components/brand-icons";
 import { ReviewEditor } from "@/components/review-editor";
 import { TrainerPlacesField } from "@/components/trainer-address-field";
 import { SportEntityInput } from "@/components/sport-entity-input";
@@ -35,6 +35,7 @@ export type TrainerCardValues = {
   experienceYears: number;
   instagram: string;
   telegram: string;
+  threads: string;
   email: string;
   formats: TrainerFormat[];
   audiences: TrainerAudience[];
@@ -774,6 +775,22 @@ export function TrainerCardFields({
             </p>
           ) : null}
         </label>
+        {signup ? null : (
+          <label>
+            <span>Threads</span>
+            <ContactControl>
+              <span className="threads-mark">
+                <ThreadsIcon />
+              </span>
+              <input
+                value={values.threads}
+                maxLength={300}
+                placeholder="https://www.threads.com/@…"
+                onChange={(event) => patch({ threads: event.target.value })}
+              />
+            </ContactControl>
+          </label>
+        )}
         {signup ? (
           <p className="cabinet-note">
             Телефон, Instagram и Telegram сохраняются на карточке. Телефон и Telegram подтверждаются в кабинете и до этого не показываются на странице.

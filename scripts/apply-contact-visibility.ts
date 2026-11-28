@@ -5,6 +5,8 @@ const STATEMENTS = [
   "ALTER TABLE trainer_profiles ADD COLUMN IF NOT EXISTS hide_instagram boolean NOT NULL DEFAULT false",
   "ALTER TABLE trainer_profiles ADD COLUMN IF NOT EXISTS hide_telegram boolean NOT NULL DEFAULT false",
   "ALTER TABLE trainer_profiles ADD COLUMN IF NOT EXISTS hide_email boolean NOT NULL DEFAULT false",
+  "ALTER TABLE trainer_profiles ADD COLUMN IF NOT EXISTS threads varchar(300) NOT NULL DEFAULT ''",
+  "ALTER TABLE trainer_profiles ADD COLUMN IF NOT EXISTS hide_threads boolean NOT NULL DEFAULT false",
 ];
 
 async function main() {

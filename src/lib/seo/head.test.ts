@@ -371,6 +371,7 @@ test("each indexable page kind emits its schema types", () => {
     photo: "/trainers/instagram/antipenko.training.jpg",
     instagram: "https://www.instagram.com/antipenko.training/",
     telegram: "https://t.me/antipenko",
+    threads: "https://www.threads.com/@antipenko.training",
     places: [],
     priceLines: ["35 BYN"],
     createdAt: "2026-10-01T08:00:00.000Z",
@@ -384,6 +385,7 @@ test("each indexable page kind emits its schema types", () => {
   assert.deepEqual(person?.sameAs, [
     "https://www.instagram.com/antipenko.training/",
     "https://t.me/antipenko",
+    "https://www.threads.com/@antipenko.training",
   ]);
   assert.equal(person?.aggregateRating?.reviewCount, 3);
   const profile = trainer.scripts

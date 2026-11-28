@@ -2,7 +2,7 @@ import { useRouter } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { useContactStepUp } from "@/components/auth/step-up-fields";
-import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
+import { InstagramIcon, TelegramIcon, ThreadsIcon } from "@/components/brand-icons";
 import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
 import { BelarusPhoneInput } from "@/components/belarus-phone-input";
 import { PhoneCodeDialogs, usePhoneCodeDialog } from "@/components/phone-code-dialog";
@@ -21,7 +21,8 @@ import {
 import type { TelegramWidgetUser } from "@/lib/auth/telegram-widget";
 import { useAuthServerFn } from "@/lib/auth/use-auth-form";
 import { instagramCabinetVerified } from "@/lib/catalog/trainer-contact-cross";
-import { saveOwnTrainerHeadlineFn, setOwnContactHiddenFn, type OwnTrainerProfile } from "@/lib/catalog/trainer-own";
+import { saveOwnTrainerHeadlineFn, saveOwnTrainerThreadsFn, setOwnContactHiddenFn, type OwnTrainerProfile } from "@/lib/catalog/trainer-own";
+import { threadsLabel } from "@/lib/catalog/threads-url";
 import { getTelegramWebAppInitData, requestTelegramContact } from "@/lib/telegram-webapp";
 
 const PHONE_PATH = "M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.5 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.5c.9.2 1.8.4 2.7.5A2 2 0 0 1 22 16.9z";
@@ -52,7 +53,8 @@ function VerifiedMark({ label }: { label: string }) {
   );
 }
 
-function channelLabel(raw: string, kind: "instagram" | "telegram") {
+function channelLabel(raw: string, kind: "instagram" | "telegram" | "threads") {
+  if (kind === "threads") return threadsLabel(raw);
   const handle = kind === "instagram"
     ? raw.match(/instagram\.com\/([A-Za-z0-9._]+)/i)?.[1]
     : raw.match(/(?:t\.me|telegram\.me)\/([A-Za-z0-9_]+)/i)?.[1] ?? raw.replace(/^@/, "");
@@ -287,7 +289,7 @@ function HideOnPage({
   channel,
   hidden,
 }: {
-  channel: "phone" | "instagram" | "telegram";
+  channel: "phone" | "instagram" | "telegram" | "threads";
   hidden: boolean;
 }) {
   const router = useRouter();
@@ -330,6 +332,8 @@ function Row({
   editor,
   channel,
   hidden,
+  keepEditor = false,
+  iconClass,
 }: {
   icon: ReactNode;
   label: string;
@@ -339,12 +343,15 @@ function Row({
   gender: "m" | "f";
   confirm?: ReactNode;
   editor?: ReactNode;
-  channel?: "phone" | "instagram" | "telegram";
+  channel?: "phone" | "instagram" | "telegram" | "threads";
   hidden?: boolean;
+  /** The field stays open after the contact is saved, so the trainer can change it. */
+  keepEditor?: boolean;
+  iconClass?: string;
 }) {
   return (
     <div className="cabinet-contact">
-      <span className="cabinet-contact__icon" aria-hidden="true">{icon}</span>
+      <span className={iconClass ? `cabinet-contact__icon ${iconClass}` : "cabinet-contact__icon"} aria-hidden="true">{icon}</span>
       <span className="cabinet-contact__body">
         <span className="cabinet-contact__name">{label}</span>
         {added ? <span className="cabinet-contact__value">{value}</span> : null}
@@ -353,9 +360,9 @@ function Row({
         <ContactStatusMark added={added} verified={verified} gender={gender} />
       </span>
       {added && channel ? <HideOnPage channel={channel} hidden={hidden === true} /> : null}
-      {(!added && editor) || (verified === false && confirm) ? (
+      {(keepEditor && editor) || (!added && editor) || (verified === false && confirm) ? (
         <div className="cabinet-contact__panel">
-          {!added ? editor : null}
+          {keepEditor || !added ? editor : null}
           {verified === false ? confirm : null}
         </div>
       ) : null}
@@ -619,6 +626,48 @@ export function TrainerIdentityFields({ profile }: { profile: OwnTrainerProfile 
   );
 }
 
+function ThreadsEditor({ initial }: { initial: string }) {
+  const router = useRouter();
+  const save = useAuthServerFn(saveOwnTrainerThreadsFn);
+  const [value, setValue] = useState(initial);
+  const [pending, setPending] = useState(false);
+  const [status, setStatus] = useState("");
+  useEffect(() => setValue(initial), [initial]);
+
+  return (
+    <div className="cabinet-contact__field">
+      <input
+        value={value}
+        maxLength={300}
+        placeholder="https://www.threads.com/@…"
+        aria-label="Threads"
+        onChange={(event) => setValue(event.target.value)}
+      />
+      <div className="cabinet-contact__actions">
+        <button
+          className="cabinet-form__cta"
+          type="button"
+          disabled={pending}
+          onClick={() => {
+            setPending(true);
+            setStatus("");
+            void save({ data: { threads: value } })
+              .then(async (result) => {
+                setStatus(result.message);
+                await router.invalidate();
+              })
+              .catch((error: unknown) => setStatus(authErrorMessage(error)))
+              .finally(() => setPending(false));
+          }}
+        >
+          {pending ? "Сохранение…" : "Сохранить"}
+        </button>
+      </div>
+      {status ? <p className="cabinet-note" role="status">{status}</p> : null}
+    </div>
+  );
+}
+
 export function TrainerContactStatus({ profile }: { profile: OwnTrainerProfile }) {
   const requestPhone = useAuthServerFn(requestAccountPhoneCodeFn);
   const requestEmail = useAuthServerFn(requestTrainerContactEmailCodeFn);
@@ -627,6 +676,7 @@ export function TrainerContactStatus({ profile }: { profile: OwnTrainerProfile }
   const step = useContactStepUp();
   const instagram = profile.instagram.trim();
   const telegram = profile.telegram.trim();
+  const threads = profile.threads.trim();
   const email = profile.email.trim();
 
   return (
@@ -673,6 +723,19 @@ export function TrainerContactStatus({ profile }: { profile: OwnTrainerProfile }
         gender="m"
         channel="instagram"
         hidden={profile.hideInstagram}
+      />
+      <Row
+        icon={<ThreadsIcon />}
+        iconClass="cabinet-contact__icon--threads"
+        label="Threads"
+        value={channelLabel(threads, "threads")}
+        added={Boolean(threads)}
+        verified={null}
+        gender="m"
+        channel="threads"
+        hidden={profile.hideThreads}
+        keepEditor
+        editor={<ThreadsEditor initial={threads} />}
       />
       <Row
         icon={<TelegramIcon />}

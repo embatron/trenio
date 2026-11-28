@@ -601,6 +601,7 @@ a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
 .cabinet-nav__sub a.is-current { background: rgba(var(--primary-rgb), 0.1); color: var(--primary-dark); }
 .cabinet-logout { color: var(--muted); justify-content: center; }
 .cabinet-main { display: grid; gap: 16px; min-width: 0; overflow-x: clip; }
+.admin-trainer-sheet { display: grid; gap: 16px; min-width: 0; margin: 0; }
 @keyframes profile-card-in {
   from { opacity: 0; transform: translateX(64px); }
   to { opacity: 1; transform: none; }
@@ -636,7 +637,7 @@ a.cabinet-stat:hover { border-color: var(--primary); }
 .cabinet-story button:hover strong,
 .cabinet-story button.is-open strong { color: var(--primary-dark); text-decoration-color: var(--primary-dark); text-decoration-style: solid; }
 .cabinet-story__note { margin: 0 0 8px; max-width: 68ch; color: var(--muted); font-size: 14px; line-height: 1.45; }
-.cabinet-channels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px 16px; }
+.cabinet-channels { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px 16px; }
 .cabinet-channels .cabinet-stat__figure + .cabinet-stat__figure { margin-top: 0; }
 .cabinet-next { display: grid; gap: 4px; min-height: 44px; padding: 14px 18px; border: 1px solid var(--line); border-radius: var(--card-radius); background: var(--light-bg); color: var(--dark); text-decoration: none; }
 button.cabinet-next { width: 100%; font: inherit; text-align: left; cursor: pointer; }
@@ -681,6 +682,7 @@ button.cabinet-next { width: 100%; font: inherit; text-align: left; cursor: poin
 .cabinet-contact { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; grid-template-areas: "icon body marks" "hide hide hide" "panel panel panel"; column-gap: 12px; row-gap: 8px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--line); }
 .cabinet-contact:last-child { border-bottom: 0; }
 .cabinet-contact__icon { grid-area: icon; display: grid; place-items: center; width: 28px; height: 28px; color: var(--dark); }
+.cabinet-contact__icon--threads { color: #000; }
 .cabinet-contact__icon svg { width: 20px; height: 20px; }
 .cabinet-contact__icon .cabinet-line { fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .cabinet-contact__body { grid-area: body; display: grid; gap: 2px; min-width: 0; }
@@ -952,6 +954,7 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-tabs button { flex: 0 0 auto; min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: var(--text); font: inherit; font-size: 14px; font-weight: var(--fw-title); cursor: pointer; }
 .cabinet-tabs button[aria-selected="true"] { background: rgba(var(--primary-rgb), 0.12); color: var(--primary); }
 .trainer-history { display: grid; gap: 10px; }
+.cabinet-card > .trainer-history { padding: 16px 18px; }
 .trainer-history__item { border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); }
 .trainer-history__item summary { min-height: 44px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 8px 14px; cursor: pointer; font-size: 14px; line-height: 1.3; }
 .trainer-history__item summary::-webkit-details-marker { display: none; }
@@ -1220,6 +1223,7 @@ html.is-credentials-locked .cabinet-modal--lock { pointer-events: auto; }
 .entity-input__error { flex: 1 1 100%; margin: 0; color: var(--primary-dark); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
 .cabinet-brand-field { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); }
 .cabinet-brand-field svg { width: 20px; height: 20px; flex: 0 0 auto; overflow: visible; }
+.cabinet-brand-field .threads-mark { display: grid; color: #000; }
 .cabinet-brand-field svg.line-icon { color: var(--muted); stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .cabinet-form .cabinet-brand-field input { flex: 1; width: auto; min-width: 0; border: 0; min-height: 42px; padding: 0; background: transparent; }
 .cabinet-brand-field.is-locked { background: #eceff3; }

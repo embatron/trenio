@@ -117,11 +117,14 @@ export const trainerProfiles = pgTable(
     telegram: varchar("telegram", { length: 300 }).notNull().default(""),
     /** Set when the trainer confirms this Telegram through the bot. Until then the public profile hides it. */
     telegramVerifiedAt: timestamp("telegram_verified_at", { withTimezone: true }),
+    /** Public Threads profile, stored as https://www.threads.com/@handle. Empty until the trainer adds one. */
+    threads: varchar("threads", { length: 300 }).notNull().default(""),
     /** Trainer turned «Не показывать на странице» on. The contact stays in the cabinet. */
     hidePhone: boolean("hide_phone").notNull().default(false),
     hideInstagram: boolean("hide_instagram").notNull().default(false),
     hideTelegram: boolean("hide_telegram").notNull().default(false),
     hideEmail: boolean("hide_email").notNull().default(false),
+    hideThreads: boolean("hide_threads").notNull().default(false),
     experienceYears: integer("experience_years").notNull().default(0),
     /** Secret segment of the invite link. Kept so the same link can be sent later. */
     claimToken: varchar("claim_token", { length: 64 }).notNull(),

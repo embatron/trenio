@@ -19,6 +19,7 @@ export type TrainerSeoSource = {
   photo: string;
   instagram: string;
   telegram?: string;
+  threads?: string;
   places: Array<{ city: string; address: string; lat: number | null; lng: number | null }>;
   priceLines: string[];
   /** ISO timestamps from the profile row. Omitted on a fixture that has no clock. */
@@ -115,7 +116,7 @@ function sportPath(citySlug: string, sport: TrainerSeoSource["primarySport"]) {
 }
 
 function sameAs(trainer: TrainerSeoSource) {
-  return [trainer.instagram, trainer.telegram]
+  return [trainer.instagram, trainer.telegram, trainer.threads]
     .map((value) => value?.trim() ?? "")
     .filter((value) => value.startsWith("https://") || value.startsWith("http://"));
 }
