@@ -20,7 +20,6 @@ function DirectMessageLink({
   locked?: boolean;
 }) {
   const { user, messaging } = useRouteContext({ from: "__root__" });
-  if (messaging.ownedSlugs.includes(slug)) return null;
   if (locked) {
     return (
       <span
@@ -34,6 +33,7 @@ function DirectMessageLink({
       </span>
     );
   }
+  if (messaging.ownedSlugs.includes(slug)) return null;
   const thread = `/account/messages?trainer=${encodeURIComponent(slug)}`;
   const href = user
     ? directMessageHref(user.roles, slug)
