@@ -1201,7 +1201,7 @@ function TrainerPage() {
                   </ul>
                 ) : null}
               </div>
-              {access === "public" ? <ProfileDirectButton slug={t.slug} locked={!t.trusted} /> : null}
+              <ProfileDirectButton slug={t.slug} locked={!t.trusted} />
             </div>
           </aside>
 
