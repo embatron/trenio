@@ -14,7 +14,6 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { users } from "./users";
-import { catalogProfiles } from "./catalog-profiles";
 
 export const trainerProfileStatusEnum = pgEnum("trainer_profile_status", [
   "draft",
@@ -53,7 +52,6 @@ export const trainerProfiles = pgTable(
   "trainer_profiles",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    catalogProfileId: uuid("catalog_profile_id").references(() => catalogProfiles.id, { onDelete: "restrict" }),
     slug: varchar("slug", { length: 30 }).notNull(),
     instagramHandle: varchar("instagram_handle", { length: 30 }).notNull(),
     sourceUrl: varchar("source_url", { length: 300 }).notNull(),
@@ -154,7 +152,6 @@ export const trainerProfiles = pgTable(
   },
   (table) => [
     uniqueIndex("trainer_profiles_slug_unique").on(table.slug),
-    uniqueIndex("trainer_profiles_catalog_profile_unique").on(table.catalogProfileId),
     uniqueIndex("trainer_profiles_instagram_handle_unique").on(table.instagramHandle),
     uniqueIndex("trainer_profiles_claim_token_unique").on(table.claimToken),
     uniqueIndex("trainer_profiles_claim_path_unique").on(table.claimPath),
