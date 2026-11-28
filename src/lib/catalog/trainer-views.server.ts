@@ -22,6 +22,7 @@ const emptyContacts: TrainerContactStats = {
   phone: emptyViewStats,
   instagram: emptyViewStats,
   telegram: emptyViewStats,
+  threads: emptyViewStats,
   message: emptyViewStats,
 };
 
@@ -109,6 +110,7 @@ function contactsFromDaily(
     phone: pick("phone"),
     instagram: pick("instagram"),
     telegram: pick("telegram"),
+    threads: pick("threads"),
     message: pick("message"),
   };
 }

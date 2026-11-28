@@ -6,7 +6,7 @@ import { isStaff } from "@/lib/auth/roles";
 import type { UserRole } from "@/lib/auth/types";
 import { logCaught } from "@/lib/log/logger";
 
-export const CONTACT_CLICK_KINDS = ["phone", "instagram", "telegram", "message"] as const;
+export const CONTACT_CLICK_KINDS = ["phone", "instagram", "telegram", "threads", "message"] as const;
 export type ContactClickKind = (typeof CONTACT_CLICK_KINDS)[number];
 
 /** Two taps in this window are one click. */

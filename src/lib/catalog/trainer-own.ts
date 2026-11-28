@@ -23,6 +23,8 @@ import { sendMail } from "@/lib/mail/send.server";
 import { SITE_EMAIL } from "@/lib/seo/site";
 import { formatBelarusPhone } from "@/lib/auth/phone";
 import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
+import { ensureTrainerDoorSchema } from "@/lib/catalog/trainer-door-schema";
+import { canonicalThreadsUrl } from "@/lib/catalog/threads-url";
 import { parseTelegramHandle } from "@/lib/catalog/trainer-welcome";
 import { normalizeEmail } from "@/auth/password";
 import { hasAnyRole } from "@/lib/auth/roles";
@@ -63,6 +65,7 @@ export type OwnTrainerProfile = {
   phone: string;
   instagram: string;
   telegram: string;
+  threads: string;
   email: string;
   experienceYears: number;
   formats: TrainerFormat[];
@@ -81,6 +84,7 @@ export type OwnTrainerProfile = {
   hidePhone: boolean;
   hideInstagram: boolean;
   hideTelegram: boolean;
+  hideThreads: boolean;
   hideEmail: boolean;
   offerAccepted: boolean;
   privacyAccepted: boolean;
@@ -300,6 +304,7 @@ const emptyProfile: OwnTrainerProfile = {
   phone: "",
   instagram: "",
   telegram: "",
+  threads: "",
   email: "",
   experienceYears: 0,
   formats: [],
@@ -316,6 +321,7 @@ const emptyProfile: OwnTrainerProfile = {
   hidePhone: false,
   hideInstagram: false,
   hideTelegram: false,
+  hideThreads: false,
   hideEmail: false,
   offerAccepted: false,
   privacyAccepted: false,
@@ -359,6 +365,7 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
   .middleware([requireAuthMiddleware])
   .handler(async ({ context }) => {
     assertTrainer(context.user.roles);
+    await ensureTrainerDoorSchema();
     const db = getDb();
     const [account] = await db
       .select({
@@ -400,6 +407,7 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
         createdSource: row.createdSource,
       }),
       telegram: row.telegram,
+      threads: row.threads,
       email,
       experienceYears: row.experienceYears >= 1 ? row.experienceYears : 0,
       formats: row.formats,
@@ -416,6 +424,7 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
       hidePhone: row.hidePhone,
       hideInstagram: row.hideInstagram,
       hideTelegram: row.hideTelegram,
+      hideThreads: row.hideThreads,
       hideEmail: row.hideEmail,
       offerAccepted: row.offerAcceptedAt != null,
       privacyAccepted: row.privacyAcceptedAt != null,
@@ -425,7 +434,7 @@ export const getOwnTrainerProfileFn = createServerFn({ method: "GET" })
     };
   });
 
-const CONTACT_CHANNELS = ["phone", "instagram", "telegram", "email"] as const;
+const CONTACT_CHANNELS = ["phone", "instagram", "telegram", "threads", "email"] as const;
 
 export const setOwnContactHiddenFn = createServerFn({ method: "POST" })
   .middleware([requireAuthMiddleware])
@@ -435,6 +444,7 @@ export const setOwnContactHiddenFn = createServerFn({ method: "POST" })
   }))
   .handler(async ({ data, context }) => {
     assertTrainer(context.user.roles);
+    await ensureTrainerDoorSchema();
     const [row] = await getDb()
       .select({ id: trainerProfiles.id, slug: trainerProfiles.slug })
       .from(trainerProfiles)
@@ -445,6 +455,7 @@ export const setOwnContactHiddenFn = createServerFn({ method: "POST" })
       phone: { hidePhone: data.hidden },
       instagram: { hideInstagram: data.hidden },
       telegram: { hideTelegram: data.hidden },
+      threads: { hideThreads: data.hidden },
       email: { hideEmail: data.hidden },
     }[data.channel];
     await getDb().transaction(async (tx) => {
@@ -853,4 +864,63 @@ export const saveOwnTrainerContactsFn = createServerFn({ method: "POST" })
       target: existing.slug,
     });
     return { ok: true as const, message: "Контакты сохранены." };
+  });
+
+export const saveOwnTrainerThreadsFn = createServerFn({ method: "POST" })
+  .middleware([requireAuthMiddleware])
+  .validator(z.object({
+    threads: z.string().trim().max(300),
+  }))
+  .handler(async ({ data, context }) => {
+    assertTrainer(context.user.roles);
+    await ensureTrainerDoorSchema();
+    const stored = canonicalThreadsUrl(data.threads);
+    const [existing] = await getDb()
+      .select({ id: trainerProfiles.id, slug: trainerProfiles.slug })
+      .from(trainerProfiles)
+      .where(eq(trainerProfiles.ownerUserId, context.user.id))
+      .limit(1);
+    if (!existing) {
+      void writeLog({
+        level: "warn",
+        domain: "form",
+        action: "form.trainer_contacts",
+        outcome: "denied",
+        message: "Карточка тренера не привязана.",
+        actorUserId: context.user.id,
+        subject: context.user.email,
+      });
+      throw new AuthError("Карточка в каталоге к этому аккаунту пока не привязана.", "VALIDATION");
+    }
+    if (stored == null) {
+      void writeLog({
+        level: "warn",
+        domain: "form",
+        action: "form.trainer_contacts",
+        outcome: "denied",
+        message: "Threads не сохранился: нужна ссылка на профиль или имя аккаунта.",
+        actorUserId: context.user.id,
+        subject: context.user.email,
+        target: existing.slug,
+      });
+      throw new AuthError("Укажите ссылку на профиль Threads или имя аккаунта.", "VALIDATION");
+    }
+    await getDb().transaction(async (tx) => {
+      await stampTrainerRevision(tx, "cabinet", context.user.id);
+      await tx.update(trainerProfiles).set({
+        threads: stored,
+        updatedAt: new Date(),
+      }).where(eq(trainerProfiles.id, existing.id));
+    });
+    void writeLog({
+      level: "info",
+      domain: "form",
+      action: "form.trainer_contacts",
+      outcome: "success",
+      message: stored ? "Threads профиля сохранён." : "Threads профиля убран.",
+      actorUserId: context.user.id,
+      subject: context.user.email,
+      target: existing.slug,
+    });
+    return { ok: true as const, message: stored ? "Threads сохранён." : "Threads убран со страницы." };
   });

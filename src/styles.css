@@ -531,6 +531,12 @@ html.is-staff-layout {
   color: var(--dark); text-decoration: none;
 }
 .trainer-contacts__link:hover { color: var(--primary); }
+.trainer-contacts__link--threads,
+.trainer-contacts__link--threads:hover,
+.trainer-contacts__link--threads:focus-visible { color: #000; }
+.trainer-contacts__link--threads.is-quiet,
+.trainer-contacts__link--threads.is-quiet:hover,
+.trainer-contacts__link--threads.is-quiet:focus-visible { color: var(--muted); }
 .trainer-contacts__link.is-quiet,
 .trainer-contacts__link.is-quiet:hover {
   color: var(--muted);
@@ -648,6 +654,7 @@ nav.welcome-crumbs,
 nav.info-crumbs,
 nav.categories-hero__crumbs,
 nav.join-account__crumbs,
+nav.blog-crumbs,
 div.clubs-hero__crumbs {
   font-weight: var(--fw-body);
 }
@@ -660,6 +667,7 @@ ol.breadcrumbs li + li::before,
   nav.info-crumbs,
   nav.categories-hero__crumbs,
   nav.join-account__crumbs,
+  nav.blog-crumbs,
   div.clubs-hero__crumbs
 ) > span[aria-hidden] {
   color: var(--muted);
@@ -675,6 +683,7 @@ ol.breadcrumbs li + li::before,
   nav.info-crumbs,
   nav.categories-hero__crumbs,
   nav.join-account__crumbs,
+  nav.blog-crumbs,
   div.clubs-hero__crumbs {
     font-size: 12px;
     line-height: 1.3;

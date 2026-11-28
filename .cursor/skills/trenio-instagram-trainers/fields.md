@@ -28,6 +28,7 @@ The name and the description are decided in sequential thinking, then checked by
 | `contacts.phone` | The Belarus mobile in the operator note, when the note states one. Otherwise the mobile printed in the biography, the highlight, a pinned caption, Threads, or a `tel:` button. Stored as `+375 29 123-45-67`. Those digits are removed from the biography, the highlight, and the card text. No SMS and no confirmed mark | Not shown |
 | `contacts.email` | An email in the operator note, when the note states one. Otherwise an email in the text, on Threads, or on a `mailto:` button. Stored on the card. No confirmation letter | Not shown |
 | `contacts.telegram` | A Telegram link in the operator note, when the note states one. Otherwise a `t.me` link, or `@name` on a line that says Telegram, including Threads. Stored on the card. No bot confirmation | Not shown |
+| `contacts.threads` | The attached Threads profile, when the message has one. Otherwise the one Threads profile link on the Instagram page (header button or biography). Stored as `https://www.threads.com/@handle` on the card. A post URL is not this field. No confirmation | Not shown |
 | `contacts.website` | The profile external link, except Instagram, Threads, and Telegram | None |
 
 ## Name

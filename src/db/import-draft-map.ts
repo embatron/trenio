@@ -1,6 +1,7 @@
 import { formatBelarusPhone } from "@/lib/auth/phone";
 import { PUBLISHED_TRAINERS } from "@/lib/catalog/published-trainers";
 import { joinTrainerName } from "@/lib/catalog/trainer-name";
+import { canonicalThreadsUrl } from "@/lib/catalog/threads-url";
 
 import type { ImportedTrainerDraft } from "./trainer-profiles";
 
@@ -36,7 +37,15 @@ export type DraftFile = {
   avatarPath?: string;
   photos?: string[];
   certificates?: ImportedTrainerDraft["certificates"];
-  contacts?: { instagram?: string; phone?: string; email?: string; telegram?: string; website?: string };
+  contacts?: {
+    instagram?: string;
+    phone?: string;
+    email?: string;
+    telegram?: string;
+    threads?: string;
+    website?: string;
+  };
+  threadsUrl?: string;
 };
 
 function publishedExtras(instagramUrl: string) {
@@ -94,6 +103,7 @@ export function draftFileToImported(draft: DraftFile): ImportedTrainerDraft {
     phone: formatBelarusPhone(draft.contacts?.phone || published?.phone || ""),
     email: draft.contacts?.email || "",
     telegram: draft.contacts?.telegram || "",
+    threads: canonicalThreadsUrl(draft.threadsUrl || draft.contacts?.threads || "") ?? "",
     website: draft.contacts?.website || "",
     instagramUrl,
     experienceYears: draft.experienceYears || published?.experience || 0,

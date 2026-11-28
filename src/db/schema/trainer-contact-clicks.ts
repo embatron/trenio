@@ -2,7 +2,7 @@ import { date, index, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-c
 
 import { trainerProfiles } from "./trainer-profiles";
 
-/** One row is one click on a published profile's phone, Instagram, or Telegram. */
+/** One row is one click on a published profile's phone, Instagram, Telegram, Threads, or direct message. */
 export const trainerContactClicks = pgTable(
   "trainer_contact_clicks",
   {

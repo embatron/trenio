@@ -280,6 +280,7 @@ export const Route = createFileRoute("/trainers/$slug")({
       photo: [...(loaderData?.photos ?? []), t.photo].map((item) => item.trim()).find(Boolean) ?? "",
       instagram: t.instagram,
       telegram: loaderData?.contacts?.telegram,
+      threads: loaderData?.contacts?.threads,
       places: t.places,
       priceLines: t.taxonomy.groups.flatMap((group) => group.items),
       createdAt: t.createdAt,
@@ -1427,6 +1428,7 @@ function TrainerPage() {
                 slug={t.slug}
                 phone={contacts.phone}
                 telegram={contacts.telegram}
+                threads={contacts.threads}
                 instagram={contacts.instagram}
                 heading="Как со мной связаться"
                 locked={!t.trusted}

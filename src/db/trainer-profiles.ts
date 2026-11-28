@@ -47,6 +47,8 @@ export type ImportedTrainerDraft = {
   phone?: string;
   email?: string;
   telegram?: string;
+  /** Canonical Threads profile URL. Empty means the draft did not find one. */
+  threads?: string;
   website?: string;
   instagramUrl?: string;
   experienceYears?: number;
@@ -209,6 +211,7 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
   const claimToken = existing?.claimToken ?? newClaimToken();
   const claimPath = existing?.claimPath ?? claimPathFor(claimToken);
   const audiences: Array<"adult" | "teen" | "kid"> = draft.audiences?.length ? draft.audiences : ["adult"];
+  const threads = (draft.threads ?? "").trim();
   const values = {
     slug,
     instagramHandle: slug,
@@ -244,6 +247,8 @@ export async function upsertImportedTrainer(draft: ImportedTrainerDraft) {
     email: draft.email ?? "",
     website: draft.website ?? "",
     telegram: draft.telegram ?? "",
+    // An older draft has no Threads URL. Leave a link the trainer saved in the cabinet.
+    ...(threads || !existing ? { threads } : {}),
     instagramUrl: draft.instagramUrl || draft.sourceUrl,
     experienceYears: draft.experienceYears ?? 0,
     claimToken,

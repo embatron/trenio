@@ -136,6 +136,18 @@ async () => {
     return match ? [decodeURIComponent(match[1])] : [];
   }))];
   const telegrams = [...new Set(pageHrefs.filter((href) => /(?:t\.me|telegram\.me|telegram\.org)\//i.test(href)))];
+  const threads = [...new Set(pageHrefs.flatMap((href) => {
+    try {
+      const url = new URL(href);
+      if (!/^(?:www\.)?threads\.(?:com|net)$/i.test(url.hostname)) return [];
+      const path = decodeURIComponent(url.pathname).replace(/\/+$/, "");
+      const match = path.match(/^\/@?([A-Za-z0-9._]{1,30})$/);
+      if (!match || !/[A-Za-z0-9]/.test(match[1])) return [];
+      return [`https://www.threads.com/@${match[1]}`];
+    } catch {
+      return [];
+    }
+  }))];
   const externalUrl =
     pageHrefs.find((href) => /^https?:/i.test(href) && !/instagram\.com|facebook\.com|threads\.|about\.instagram|t\.me|telegram\./i.test(href)) || "";
 
@@ -235,7 +247,7 @@ async () => {
     headerText: (document.querySelector("header")?.innerText || headerText).trim(),
     headerImages: headerImages.map(({ alt, src, width }) => ({ alt, src, width })),
     externalUrl,
-    contacts: { emails, phones, telegrams },
+    contacts: { emails, phones, telegrams, threads },
     highlights,
     highlightLinks,
     posts,

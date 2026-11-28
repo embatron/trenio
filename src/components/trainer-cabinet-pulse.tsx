@@ -51,13 +51,14 @@ const PERIOD_COPY: Record<PulseMode, {
   phone: string;
   instagram: string;
   telegram: string;
+  threads: string;
   message: string;
   same: string;
   against: string;
 }> = {
-  day: { link: "сутки", visit: "Посещения за сутки", saved: "Сохранения за сутки", shown: "Показы за сутки", phone: "Телефон за сутки", instagram: "Instagram за сутки", telegram: "Telegram за сутки", message: "Сообщения за сутки", same: "как вчера", against: "ко вчерашнему" },
-  week: { link: "неделя", visit: "Посещения за неделю", saved: "Сохранения за неделю", shown: "Показы за неделю", phone: "Телефон за неделю", instagram: "Instagram за неделю", telegram: "Telegram за неделю", message: "Сообщения за неделю", same: "как на прошлой неделе", against: "к прошлой неделе" },
-  month: { link: "месяц", visit: "Посещения за месяц", saved: "Сохранения за месяц", shown: "Показы за месяц", phone: "Телефон за месяц", instagram: "Instagram за месяц", telegram: "Telegram за месяц", message: "Сообщения за месяц", same: "как в прошлом месяце", against: "к прошлому месяцу" },
+  day: { link: "сутки", visit: "Посещения за сутки", saved: "Сохранения за сутки", shown: "Показы за сутки", phone: "Телефон за сутки", instagram: "Instagram за сутки", telegram: "Telegram за сутки", threads: "Threads за сутки", message: "Сообщения за сутки", same: "как вчера", against: "ко вчерашнему" },
+  week: { link: "неделя", visit: "Посещения за неделю", saved: "Сохранения за неделю", shown: "Показы за неделю", phone: "Телефон за неделю", instagram: "Instagram за неделю", telegram: "Telegram за неделю", threads: "Threads за неделю", message: "Сообщения за неделю", same: "как на прошлой неделе", against: "к прошлой неделе" },
+  month: { link: "месяц", visit: "Посещения за месяц", saved: "Сохранения за месяц", shown: "Показы за месяц", phone: "Телефон за месяц", instagram: "Instagram за месяц", telegram: "Telegram за месяц", threads: "Threads за месяц", message: "Сообщения за месяц", same: "как в прошлом месяце", against: "к прошлому месяцу" },
 };
 
 function periodDelta(period: TrainerViewPeriod, same: string, against: string) {
@@ -890,6 +891,13 @@ export function TrainerOwnStats({
               value={views.contacts.telegram[mode].current}
               label={copy.telegram}
               period={views.contacts.telegram[mode]}
+              same={copy.same}
+              against={copy.against}
+            />
+            <Figure
+              value={views.contacts.threads[mode].current}
+              label={copy.threads}
+              period={views.contacts.threads[mode]}
               same={copy.same}
               against={copy.against}
             />

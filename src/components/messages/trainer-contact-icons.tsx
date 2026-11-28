@@ -1,7 +1,7 @@
 import { useRouteContext } from "@tanstack/react-router";
 import { useState, type MouseEvent } from "react";
 
-import { InstagramIcon, TelegramIcon } from "@/components/brand-icons";
+import { InstagramIcon, TelegramIcon, ThreadsIcon } from "@/components/brand-icons";
 import { DirectMark } from "@/components/messages/direct-mark";
 import {
   AlertDialog,
@@ -15,12 +15,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { formatBelarusPhone } from "@/lib/auth/phone";
 import { recordTrainerContactClick } from "@/lib/catalog/trainer-contact-client";
+import { canonicalThreadsUrl } from "@/lib/catalog/threads-url";
 import { directMessageHref } from "@/lib/auth/roles";
 import { getPublishedTrainer } from "@/lib/catalog/published-trainers";
 
 const PHONE_PATH =
   "M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.5 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.5c.9.2 1.8.4 2.7.5A2 2 0 0 1 22 16.9z";
-type ExternalContactKind = "phone" | "instagram" | "telegram";
+type ExternalContactKind = "phone" | "instagram" | "telegram" | "threads";
 type PendingContact = {
   kind: ExternalContactKind;
   href: string;
@@ -70,6 +71,7 @@ export function TrainerContactIcons({
   slug,
   instagram,
   telegram,
+  threads,
   phone,
   heading,
   locked = false,
@@ -77,9 +79,10 @@ export function TrainerContactIcons({
   slug: string;
   instagram?: string;
   telegram?: string;
+  threads?: string;
   phone?: string;
   heading?: string;
-  /** Gray, inert phone, Instagram, Telegram, and the direct message. */
+  /** Gray, inert phone, Instagram, Telegram, Threads, and the direct message. */
   locked?: boolean;
 }) {
   const { user, messaging } = useRouteContext({ from: "__root__" });
@@ -87,9 +90,10 @@ export function TrainerContactIcons({
   const trainer = getPublishedTrainer(slug);
   const instagramUrl = instagramHref(instagram ?? trainer?.instagram ?? "");
   const telegramUrl = telegramHref(telegram ?? "");
+  const threadsUrl = canonicalThreadsUrl(threads ?? "") || null;
   const phoneLink = phoneHref(phone ?? "");
   const showDirect = !messaging.ownedSlugs.includes(slug);
-  if (!phoneLink && !instagramUrl && !telegramUrl && !showDirect) return null;
+  if (!phoneLink && !instagramUrl && !telegramUrl && !threadsUrl && !showDirect) return null;
 
   const thread = `/account/messages?trainer=${encodeURIComponent(slug)}`;
   const directHref = user
@@ -198,6 +202,38 @@ export function TrainerContactIcons({
             }
           >
             <TelegramIcon />
+          </a>
+        )
+      ) : null}
+      {threadsUrl ? (
+        locked ? (
+          <span
+            className="trainer-contacts__link trainer-contacts__link--threads is-quiet"
+            aria-disabled="true"
+            aria-label={`Threads. ${quietTitle}`}
+            title={quietTitle}
+          >
+            <ThreadsIcon />
+          </span>
+        ) : (
+          <a
+            className="trainer-contacts__link trainer-contacts__link--threads"
+            href={threadsUrl}
+            target="_blank"
+            rel="ugc noopener noreferrer"
+            aria-label="Threads"
+            aria-haspopup="dialog"
+            title="Threads"
+            onClick={(event) =>
+              askBeforeLeaving(event, {
+                kind: "threads",
+                href: threadsUrl,
+                label: "Threads",
+                newTab: true,
+              })
+            }
+          >
+            <ThreadsIcon />
           </a>
         )
       ) : null}

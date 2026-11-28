@@ -24,6 +24,7 @@ export type TrainerContactStats = {
   phone: TrainerViewStats;
   instagram: TrainerViewStats;
   telegram: TrainerViewStats;
+  threads: TrainerViewStats;
   message: TrainerViewStats;
 };
 
