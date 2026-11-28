@@ -41,6 +41,7 @@ import { publishMessage, verificationClearedMessage, verificationMessage } from 
 import { outreachTemplate } from "@/lib/site-texts/defaults";
 import { loadSiteText } from "@/lib/site-texts/store";
 import { cabinetInstagram } from "@/lib/catalog/trainer-contact-cross";
+import { canonicalThreadsUrl } from "@/lib/catalog/threads-url";
 import { popularityChecklist, popularityScore, recentReviewStart } from "@/lib/catalog/trainer-popularity";
 import { trainerAccountReady } from "@/lib/catalog/trainer-verified";
 import { emptyTrainerInterest, loadTrainerInterest, type TrainerInterest } from "@/lib/catalog/trainer-interest";
@@ -151,6 +152,7 @@ export type AdminTrainer = {
   instagram: string;
   instagramHandle: string;
   telegram: string;
+  threads: string;
   email: string;
   experienceYears: number;
   formats: TrainerFormat[];
@@ -336,6 +338,7 @@ const saveSchema = z.object({
   phone: z.string().trim().max(32),
   instagram: z.string().trim().max(300),
   telegram: z.string().trim().max(300),
+  threads: z.string().trim().max(300),
   email: z.string().trim().max(320),
   experienceYears: z.number().int().min(0).max(80),
   formats: z.array(z.enum(["individual", "group"])).max(2),
@@ -433,6 +436,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
         contactEmail: trainerProfiles.email,
         instagramUrl: trainerProfiles.instagramUrl,
         telegram: trainerProfiles.telegram,
+        threads: trainerProfiles.threads,
         experienceYears: trainerProfiles.experienceYears,
         formats: trainerProfiles.formats,
         audiences: trainerProfiles.audiences,
@@ -519,6 +523,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       instagram: row.instagramUrl,
       instagramHandle: row.instagramHandle,
       telegram: row.telegram,
+      threads: row.threads,
       email: row.ownerId
         ? hidden.has(row.ownerId) ? "" : (row.email ?? "")
         : row.contactEmail,
@@ -604,6 +609,7 @@ export const getAdminTrainersFn = createServerFn({ method: "GET" })
       instagram: trainer.instagram,
       instagramHandle: trainer.instagram.match(/instagram\.com\/([A-Za-z0-9._]{1,30})/i)?.[1]?.toLowerCase() ?? "",
       telegram: "",
+      threads: "",
       email: "",
       experienceYears: trainer.experience ?? 0,
       formats: trainer.formats,
@@ -691,6 +697,10 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
       ownerPhoneVerifiedAt = owner?.phoneVerifiedAt ?? null;
       if (owner) ownerNotice = { email: owner.email, emailVerifiedAt: owner.emailVerifiedAt };
     }
+    const threads = canonicalThreadsUrl(data.threads);
+    if (threads == null) {
+      throw new AuthError("Укажите профиль Threads: https://www.threads.com/@имя", "VALIDATION");
+    }
     const values = {
       firstName,
       lastName,
@@ -718,6 +728,7 @@ export const saveAdminTrainerFn = createServerFn({ method: "POST" })
           : { emailVerifiedAt: null }),
       instagramUrl: data.instagram,
       telegram: data.telegram,
+      threads,
       experienceYears: data.experienceYears,
       formats: [...new Set(data.formats)],
       audiences: effectiveAudiences(data.audiences),
@@ -1017,6 +1028,7 @@ export type AdminTrainerFacts = {
   createdSource: string;
   instagramHandle: string;
   telegram: string;
+  threads: string;
   email: string;
   sourceBio: string;
   audiences: string;
@@ -1259,6 +1271,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         instagram: row.instagramUrl,
         instagramHandle: row.instagramHandle,
         telegram: row.telegram,
+        threads: row.threads,
         email: owner ? owner.email : row.email,
         experienceYears: row.experienceYears,
         formats: row.formats,
@@ -1322,6 +1335,7 @@ export const getAdminTrainerDetailFn = createServerFn({ method: "GET" })
         createdSource: SOURCE_LABEL[row.createdSource],
         instagramHandle: row.instagramHandle,
         telegram: row.telegram,
+        threads: row.threads,
         email: owner ? owner.email : row.email,
         sourceBio: row.sourceBio,
         audiences: effectiveAudiences(row.audiences).map((item) => AUDIENCE_LABEL[item]).join(", "),

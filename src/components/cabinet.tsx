@@ -1223,6 +1223,7 @@ html.is-credentials-locked .cabinet-modal--lock { pointer-events: auto; }
 .entity-input__error { flex: 1 1 100%; margin: 0; color: var(--primary-dark); font-size: 13px; font-weight: var(--fw-body); line-height: 1.45; }
 .cabinet-brand-field { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); }
 .cabinet-brand-field svg { width: 20px; height: 20px; flex: 0 0 auto; overflow: visible; }
+.cabinet-brand-field .threads-mark { display: grid; color: #000; }
 .cabinet-brand-field svg.line-icon { color: var(--muted); stroke: currentColor; fill: none; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .cabinet-form .cabinet-brand-field input { flex: 1; width: auto; min-width: 0; border: 0; min-height: 42px; padding: 0; background: transparent; }
 .cabinet-brand-field.is-locked { background: #eceff3; }

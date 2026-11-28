@@ -2,7 +2,6 @@ import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 import { AccountSeal } from "@/components/account-seal";
-import { UnverifiedPublish } from "@/components/admin-unverified-publish";
 import { CabinetModal } from "@/components/cabinet";
 
 import { TablePager, useTablePage } from "@/components/table-pager";
@@ -93,7 +92,7 @@ function pulseProfile(detail: AdminTrainerDetail): OwnTrainerProfile {
       createdSource: detail.stats.createdSource,
     }),
     telegram: trainer.telegram,
-    threads: "",
+    threads: trainer.threads,
     email: trainer.account?.email || trainer.email,
     experienceYears: trainer.experienceYears,
     formats: trainer.formats,
@@ -316,11 +315,6 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
               </select>
               <p className="cabinet-note">Включается сама, когда тренер подтверждает почту или телефон. Сотрудник может поставить её вручную.</p>
             </label>
-            <UnverifiedPublish
-              slug={draft.slug}
-              published={draft.status === "published" && !draft.trusted}
-              enabled={!draft.trusted && draft.status !== "declined"}
-            />
           </>
   );
 
@@ -386,6 +380,7 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
         phone: draft.phone,
         instagram: draft.instagram,
         telegram: draft.telegram,
+        threads: draft.threads,
         email: draft.email,
         experienceYears: draft.experienceYears,
         formats: draft.formats,
@@ -619,6 +614,7 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
           <div><dt>Откуда карточка</dt><dd>{facts.createdSource}</dd></div>
           <div><dt>Instagram</dt><dd>{facts.instagramHandle || "—"}</dd></div>
           <div><dt>Telegram</dt><dd>{facts.telegram || "—"}</dd></div>
+          <div><dt>Threads</dt><dd>{facts.threads || "—"}</dd></div>
           <div><dt>Почта в карточке</dt><dd>{displayAccountLogin(facts.email, facts.accountPhone) || "—"}</dd></div>
           <div><dt>Создана</dt><dd>{formatWhen(facts.createdAt)}</dd></div>
           <div><dt>Изменена</dt><dd>{formatWhen(facts.updatedAt)}</dd></div>
