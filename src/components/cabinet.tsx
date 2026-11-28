@@ -601,6 +601,7 @@ a.cabinet-id__line:hover .trainer-name__line { color: var(--primary); }
 .cabinet-nav__sub a.is-current { background: rgba(var(--primary-rgb), 0.1); color: var(--primary-dark); }
 .cabinet-logout { color: var(--muted); justify-content: center; }
 .cabinet-main { display: grid; gap: 16px; min-width: 0; overflow-x: clip; }
+.admin-trainer-sheet { display: grid; gap: 16px; min-width: 0; margin: 0; }
 @keyframes profile-card-in {
   from { opacity: 0; transform: translateX(64px); }
   to { opacity: 1; transform: none; }
@@ -953,6 +954,7 @@ button.cabinet-name-link { border: 0; background: transparent; padding: 0; font:
 .cabinet-tabs button { flex: 0 0 auto; min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: var(--text); font: inherit; font-size: 14px; font-weight: var(--fw-title); cursor: pointer; }
 .cabinet-tabs button[aria-selected="true"] { background: rgba(var(--primary-rgb), 0.12); color: var(--primary); }
 .trainer-history { display: grid; gap: 10px; }
+.cabinet-card > .trainer-history { padding: 16px 18px; }
 .trainer-history__item { border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--white); }
 .trainer-history__item summary { min-height: 44px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 8px 14px; cursor: pointer; font-size: 14px; line-height: 1.3; }
 .trainer-history__item summary::-webkit-details-marker { display: none; }

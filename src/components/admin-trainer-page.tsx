@@ -1,5 +1,5 @@
 import { Link, useRouter } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 import { AccountSeal } from "@/components/account-seal";
 import { UnverifiedPublish } from "@/components/admin-unverified-publish";
@@ -215,10 +215,17 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
     setDraft((current) => ({ ...current, [key]: value }));
   }
 
-  const profileFields = (
-    <>
+  function cardFields(
+    mode: "full" | "profile" | "contacts",
+    options?: { self?: boolean; nickFirst?: boolean; leading?: ReactNode },
+  ) {
+    return (
       <TrainerCardFields
         nick={draft.slug}
+        nickFirst={options?.nickFirst}
+        self={options?.self}
+        mode={mode}
+        leading={options?.leading}
         values={draft}
         onChange={(values: TrainerCardValues) => setDraft((current) => ({
           ...current,
@@ -265,9 +272,13 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
           value: draft.phone,
           onChange: (phone) => setField("phone", phone),
         }}
-        leading={(
+      />
+    );
+  }
+
+  const staffStatus = (
           <>
-            <label id="trainer-page-status">
+            <label id={onDismiss ? "trainer-page-status" : undefined}>
               <span>Статус</span>
               <select value={draft.status} onChange={(event) => setField("status", event.target.value as TrainerPublishStatus)}>
                 <optgroup label="Страница">
@@ -311,8 +322,10 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
               enabled={!draft.trusted && draft.status !== "declined"}
             />
           </>
-        )}
-      />
+  );
+
+  const saveNote = (
+    <>
       <p className="cabinet-note">
         <a href={`/trainers/${draft.slug}?src=catalog`} target="_blank" rel="noopener noreferrer">Открыть карточку в каталоге</a>
       </p>
@@ -323,7 +336,8 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
 
   function openGap(hash?: string) {
     setTab("profile");
-    setGap(hash === "trainer-contact-block" ? "trainer-contacts" : hash || "trainer-contacts");
+    const target = hash || (onDismiss ? "trainer-contacts" : "trainer-contact-block");
+    setGap(onDismiss && target === "trainer-contact-block" ? "trainer-contacts" : target);
   }
 
   function scrollTab(node: ReactNode) {
@@ -338,22 +352,148 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
     );
   }
 
+  const overview = (
+    <TrainerOverviewRating
+      trainer={pulseProfile(detail)}
+      views={detail.stats.views}
+      ratings={{ [detail.trainer.slug]: detail.stats.rating }}
+      scope="staff"
+      onStep={(hash) => openGap(hash ?? (onDismiss ? "trainer-contacts" : "trainer-contact-block"))}
+    />
+  );
+
+  function saveProfile(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPending(true);
+    setError(null);
+    setSaved(null);
+    void save({
+      data: {
+        id: draft.id,
+        slug: draft.slug,
+        status: draft.status,
+        verified: draft.verified,
+        firstName: draft.firstName,
+        lastName: draft.lastName,
+        headline: draft.headline,
+        bio: draft.bio,
+        about: draft.about,
+        sportSlugs: draft.sportSlugs,
+        city: draft.city,
+        district: draft.district,
+        places: draft.places,
+        priceFrom: draft.priceFrom,
+        phone: draft.phone,
+        instagram: draft.instagram,
+        telegram: draft.telegram,
+        email: draft.email,
+        experienceYears: draft.experienceYears,
+        formats: draft.formats,
+        audiences: draft.audiences,
+      },
+    })
+      .then((result) => {
+        const payload = result as { places: TrainerPlace[]; message?: string };
+        setDraft((current) => ({ ...current, places: payload.places }));
+        setSaved(payload.message ?? "Профиль сохранён.");
+        return router.invalidate();
+      })
+      .catch((err: unknown) => setError(authErrorMessage(err)))
+      .finally(() => setPending(false));
+  }
+
+  const saveActions = (
+    <div className="cabinet-form__actions">
+      <button className="cabinet-form__submit" type="submit" disabled={pending}>{pending ? "Сохранение…" : "Сохранить"}</button>
+      <ListAction onDismiss={onDismiss} />
+    </div>
+  );
+
+  const pageProfile = (
+    <form className="admin-trainer-sheet" onSubmit={saveProfile}>
+      <article className="cabinet-card" id="trainer-name">
+        <h2>Имя и заголовок</h2>
+        <div className="cabinet-form">
+          <label>
+            <span>Заголовок страницы</span>
+            <input
+              name="headline"
+              required
+              value={draft.headline}
+              maxLength={200}
+              placeholder="Фитнес-тренер"
+              onChange={(event) => setField("headline", event.target.value)}
+            />
+          </label>
+          <div className="cabinet-form__row">
+            <label>
+              <span>Имя</span>
+              <input
+                required
+                value={draft.firstName}
+                maxLength={100}
+                autoComplete="given-name"
+                onChange={(event) => {
+                  const firstName = event.target.value;
+                  setDraft((current) => ({
+                    ...current,
+                    firstName,
+                    fullName: joinTrainerName(firstName, current.lastName),
+                  }));
+                }}
+              />
+            </label>
+            <label>
+              <span>Фамилия</span>
+              <input
+                value={draft.lastName}
+                maxLength={100}
+                autoComplete="family-name"
+                onChange={(event) => {
+                  const lastName = event.target.value;
+                  setDraft((current) => ({
+                    ...current,
+                    lastName,
+                    fullName: joinTrainerName(current.firstName, lastName),
+                  }));
+                }}
+              />
+            </label>
+          </div>
+        </div>
+      </article>
+      <article className="cabinet-card" id="trainer-page-status">
+        <h2>Страница</h2>
+        <div className="cabinet-form">{staffStatus}</div>
+      </article>
+      <article className="cabinet-card" id="trainer-contact-block">
+        <h2>Контакты</h2>
+        <div className="cabinet-form">{cardFields("contacts")}</div>
+      </article>
+      <article className="cabinet-card">
+        <h2>Моя страница</h2>
+        <div className="cabinet-form">
+          {cardFields("profile", { self: true, nickFirst: true })}
+          {saveNote}
+          {saveActions}
+        </div>
+      </article>
+    </form>
+  );
+
   return (
+    <>
+    {onDismiss ? null : overview}
     <article className={onDismiss ? "cabinet-card trainer-edit-card" : "cabinet-card"}>
-      <h2>
-        {draft.firstName || draft.lastName ? (
-          <TrainerName firstName={draft.firstName} lastName={draft.lastName} />
-        ) : (
-          draft.slug
-        )}
-      </h2>
-      <TrainerOverviewRating
-        trainer={pulseProfile(detail)}
-        views={detail.stats.views}
-        ratings={{ [detail.trainer.slug]: detail.stats.rating }}
-        scope="staff"
-        onStep={(hash) => openGap(hash ?? "trainer-contacts")}
-      />
+      {onDismiss ? (
+        <h2>
+          {draft.firstName || draft.lastName ? (
+            <TrainerName firstName={draft.firstName} lastName={draft.lastName} />
+          ) : (
+            draft.slug
+          )}
+        </h2>
+      ) : null}
       <div className="cabinet-tabs" role="tablist" aria-label="Карточка тренера">
         {TABS.map((item) => (
           <button
@@ -367,54 +507,13 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
           </button>
         ))}
       </div>
-      {tab === "profile" ? (
-        <form
-          className={onDismiss ? "cabinet-form trainer-edit-form" : "cabinet-form"}
-          onSubmit={(event) => {
-            event.preventDefault();
-            setPending(true);
-            setError(null);
-            setSaved(null);
-            void save({
-              data: {
-                id: draft.id,
-                slug: draft.slug,
-                status: draft.status,
-                verified: draft.verified,
-                firstName: draft.firstName,
-                lastName: draft.lastName,
-                headline: draft.headline,
-                bio: draft.bio,
-                about: draft.about,
-                sportSlugs: draft.sportSlugs,
-                city: draft.city,
-                district: draft.district,
-                places: draft.places,
-                priceFrom: draft.priceFrom,
-                phone: draft.phone,
-                instagram: draft.instagram,
-                telegram: draft.telegram,
-                email: draft.email,
-                experienceYears: draft.experienceYears,
-                formats: draft.formats,
-                audiences: draft.audiences,
-              },
-            })
-              .then((result) => {
-                const payload = result as { places: TrainerPlace[]; message?: string };
-                setDraft((current) => ({ ...current, places: payload.places }));
-                setSaved(payload.message ?? "Профиль сохранён.");
-                return router.invalidate();
-              })
-              .catch((err: unknown) => setError(authErrorMessage(err)))
-              .finally(() => setPending(false));
-          }}
-        >
-          {onDismiss ? <div className="trainer-edit-scroll">{profileFields}</div> : profileFields}
-          <div className="cabinet-form__actions">
-            <button className="cabinet-form__submit" type="submit" disabled={pending}>{pending ? "Сохранение…" : "Сохранить"}</button>
-            <ListAction onDismiss={onDismiss} />
+      {onDismiss && tab === "profile" ? (
+        <form className="cabinet-form trainer-edit-form" onSubmit={saveProfile}>
+          <div className="trainer-edit-scroll">
+            {cardFields("full", { leading: staffStatus })}
+            {saveNote}
           </div>
+          {saveActions}
         </form>
       ) : null}
       {tab === "logins" ? scrollTab(
@@ -557,5 +656,7 @@ export function AdminTrainerPage({ detail, onDismiss }: { detail: AdminTrainerDe
         </dl>
       ) : null}
     </article>
+    {onDismiss || tab !== "profile" ? null : pageProfile}
+    </>
   );
 }

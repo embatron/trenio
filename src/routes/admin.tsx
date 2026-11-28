@@ -50,10 +50,19 @@ export const Route = createFileRoute("/admin")({
   component: AdminLayout,
 });
 
+const TRAINER_LIST_SEGMENTS = new Set(["active", "drafts", "unclear", "declined"]);
+
+/** A trainer card uses the same 1240px grid as the trainer cabinet. The lists stay wide. */
+function isAdminTrainerCard(pathname: string) {
+  const match = pathname.match(/^\/admin\/trainers\/([^/]+)\/?$/);
+  return Boolean(match && !TRAINER_LIST_SEGMENTS.has(match[1]));
+}
+
 function AdminLayout() {
   const loaded = Route.useLoaderData();
   const { user } = Route.useRouteContext();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const trainerCard = isAdminTrainerCard(pathname);
   const [pending, setPending] = useState(false);
   const logout = useAuthServerFn(logoutFn);
   const face = useLiveAvatar(user?.id, user?.avatarPath);
@@ -61,9 +70,13 @@ function AdminLayout() {
   const live = useCabinetLive();
   const counts = live?.staff ?? loaded;
   useLayoutEffect(() => {
+    if (trainerCard) {
+      document.documentElement.classList.remove("is-staff-layout");
+      return;
+    }
     document.documentElement.classList.add("is-staff-layout");
     return () => document.documentElement.classList.remove("is-staff-layout");
-  }, []);
+  }, [trainerCard]);
   if (!user) return null;
 
   const role = user.roles.map((item) => ROLE_LABELS[item]).join(", ");
@@ -89,7 +102,7 @@ function AdminLayout() {
   });
 
   return (
-    <div className="layout-staff">
+    <div className={trainerCard ? undefined : "layout-staff"}>
       <CabinetShell
         title="Кабинет администратора"
         firstName={user.firstName}
